@@ -5,6 +5,7 @@ extends CanvasLayer
 var _panel: PanelContainer = null
 var _header_lbl: Label = null
 var _rows_vbox: VBoxContainer = null
+var _refresh_accum: float = 0.0
 
 
 func _ready() -> void:
@@ -45,24 +46,39 @@ func _ready() -> void:
 	_header_lbl.add_theme_color_override("font_color", Color(1.0, 0.7, 0.15))
 	vbox.add_child(_header_lbl)
 
+	var rows_scroll := ScrollContainer.new()
+	rows_scroll.size_flags_vertical = Control.SIZE_EXPAND_FILL
+	rows_scroll.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	rows_scroll.horizontal_scroll_mode = ScrollContainer.SCROLL_MODE_DISABLED
+	vbox.add_child(rows_scroll)
+
 	_rows_vbox = VBoxContainer.new()
-	_rows_vbox.add_theme_constant_override("separation", 4)
-	vbox.add_child(_rows_vbox)
+	_rows_vbox.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	_rows_vbox.add_theme_constant_override("separation", 3)
+	rows_scroll.add_child(_rows_vbox)
 
 
-func _process(_delta: float) -> void:
+func _process(delta: float) -> void:
 	var want_show := Input.is_action_pressed("scoreboard")
 	if want_show != visible:
 		visible = want_show
-	if visible:
-		_refresh()
+		if visible:
+			_refresh()
+			_refresh_accum = 0.0
+	elif visible:
+		_refresh_accum += delta
+		if _refresh_accum >= 0.25:
+			_refresh_accum = 0.0
+			_refresh()
 
 
 func _refresh() -> void:
 	var mname := String(RoundManager.current_map_data.get("name", "de_dust2"))
 	_header_lbl.text = "Counter-Strike 1.5  —  Map: %s  |  Round %d" % [mname, RoundManager.round_number]
 
-	for c in _rows_vbox.get_children():
+	var old_rows := _rows_vbox.get_children()
+	for c in old_rows:
+		_rows_vbox.remove_child(c)
 		c.queue_free()
 
 	_add_team_section("Counter-Terrorists", "CT", RoundManager.ct_score, Color(0.58, 0.82, 1.0))

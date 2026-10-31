@@ -31,10 +31,11 @@ func _build_ui() -> void:
 	panel.anchor_right = 0.5
 	panel.anchor_top = 0.5
 	panel.anchor_bottom = 0.5
-	panel.offset_left = -360
-	panel.offset_right = 360
-	panel.offset_top = -230
-	panel.offset_bottom = 230
+	panel.offset_left = -350
+	panel.offset_right = 350
+	panel.offset_top = -225
+	panel.offset_bottom = 225
+	panel.clip_contents = true
 	var sb := StyleBoxFlat.new()
 	sb.bg_color = Color(0.03, 0.03, 0.03, 0.88)
 	sb.border_color = AMBER
@@ -71,16 +72,23 @@ func _build_ui() -> void:
 	hbox.add_child(right_vbox)
 
 	_portrait = TextureRect.new()
-	_portrait.custom_minimum_size = Vector2(220, 150)
+	_portrait.custom_minimum_size = Vector2(210, 135)
 	_portrait.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
 	_portrait.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
 	right_vbox.add_child(_portrait)
 
+	var bio_scroll := ScrollContainer.new()
+	bio_scroll.size_flags_vertical = Control.SIZE_EXPAND_FILL
+	bio_scroll.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	bio_scroll.horizontal_scroll_mode = ScrollContainer.SCROLL_MODE_DISABLED
+	right_vbox.add_child(bio_scroll)
+
 	_bio_lbl = Label.new()
+	_bio_lbl.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	_bio_lbl.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
-	_bio_lbl.add_theme_font_size_override("font_size", 13)
+	_bio_lbl.add_theme_font_size_override("font_size", 12)
 	_bio_lbl.add_theme_color_override("font_color", Color(0.88, 0.85, 0.74))
-	right_vbox.add_child(_bio_lbl)
+	bio_scroll.add_child(_bio_lbl)
 
 
 func open_menu() -> void:

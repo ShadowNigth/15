@@ -42,7 +42,14 @@ func setup_drop(id: String, clip: int, reserve: int, throw_vel: Vector3, is_sile
 
 func _set_layer_recursive(n: Node) -> void:
 	if n is MeshInstance3D:
-		(n as MeshInstance3D).layers = 2
+		var mi := n as MeshInstance3D
+		mi.layers = 2
+		mi.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
+		if mi.mesh:
+			for s in range(mi.mesh.get_surface_count()):
+				var styled := GameData.get_styled_model_material(mi.mesh.surface_get_material(s), "char")
+				if styled:
+					mi.set_surface_override_material(s, styled)
 	for c in n.get_children():
 		_set_layer_recursive(c)
 

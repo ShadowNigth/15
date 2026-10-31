@@ -28,6 +28,8 @@ static func build_map(parent: Node3D, map_data: Dictionary) -> Dictionary:
 	var lm_path := String(map_data.get("lightmap", ""))
 	var lm_tex := GameData.get_texture(lm_path)
 	var world_shader := load("res://assets/shaders/goldsrc_world.gdshader") as Shader
+	var masked_shader := load("res://assets/shaders/goldsrc_world_masked.gdshader") as Shader
+	var alpha_shader := load("res://assets/shaders/goldsrc_world_alpha.gdshader") as Shader
 
 	var glb_scene := load(glb_path) as PackedScene
 	if not glb_scene:
@@ -42,8 +44,9 @@ static func build_map(parent: Node3D, map_data: Dictionary) -> Dictionary:
 	for be in map_data.get("brush_entities", []):
 		brush_by_sub[int(be.get("submodel", -1))] = be
 
-	# Cache ShaderMaterials per (tex_name, alpha_val, is_water)
+	# Cache ShaderMaterials per (tex_name, alpha_val, is_masked, is_water) & retain on map_root
 	var mat_cache: Dictionary = {}
+	map_root.set_meta("world_materials", mat_cache)
 
 	for child in glb_inst.get_children():
 		if not (child is MeshInstance3D):
@@ -74,7 +77,7 @@ static func build_map(parent: Node3D, map_data: Dictionary) -> Dictionary:
 		elif is_water:
 			alpha_f = 0.78
 
-		# Apply GoldSrc baked lightmap shader to all surfaces of this mesh
+		# Apply GoldSrc baked lightmap shader (opaque vs alpha-scissor vs translucent)
 		mi.layers = 1
 		if mi.mesh and world_shader:
 			for surf_i in range(mi.mesh.get_surface_count()):
@@ -91,19 +94,25 @@ static func build_map(parent: Node3D, map_data: Dictionary) -> Dictionary:
 				var tmeta: Dictionary = GameData.world_textures_meta.get(tex_safe, {})
 				var is_masked := bool(tmeta.get("masked", tex_safe.begins_with("mask_")))
 				var surf_water := is_water or tex_safe.begins_with("water_")
+				var use_alpha := (alpha_f < 0.99) or surf_water
 
-				var ckey := "%s_%.2f_%s" % [tex_safe, alpha_f, str(surf_water)]
+				var ckey := "%s_%.2f_%s_%s" % [tex_safe, alpha_f, str(is_masked), str(surf_water)]
 				var smat: ShaderMaterial = mat_cache.get(ckey)
 				if not smat:
 					smat = ShaderMaterial.new()
-					smat.shader = world_shader
+					smat.resource_name = tex_safe
+					if use_alpha and alpha_shader:
+						smat.shader = alpha_shader
+						smat.set_shader_parameter("alpha_Val", alpha_f)
+						smat.set_shader_parameter("is_water", surf_water)
+					elif is_masked and masked_shader:
+						smat.shader = masked_shader
+					else:
+						smat.shader = world_shader
 					if albedo:
 						smat.set_shader_parameter("albedo_tex", albedo)
 					if lm_tex:
 						smat.set_shader_parameter("lightmap_tex", lm_tex)
-					smat.set_shader_parameter("use_alpha_scissor", is_masked)
-					smat.set_shader_parameter("alpha_Val", alpha_f)
-					smat.set_shader_parameter("is_water", surf_water)
 					mat_cache[ckey] = smat
 				mi.set_surface_override_material(surf_i, smat)
 

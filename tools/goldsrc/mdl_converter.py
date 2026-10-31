@@ -187,13 +187,20 @@ def convert_mdl_to_glb(mdl_path: str, out_glb_path: str, model_kind: str = "prop
         pal = tex_buf[tdata_ofs + tw * th : tdata_ofs + tw * th + 768]
         is_masked = bool(tflags & 0x0040)  # STUDIO_NF_MASKED
         arr = np.frombuffer(pix, dtype=np.uint8).reshape((th, tw))
-        img = Image.fromarray(arr, mode="P")
-        img.putpalette(list(pal) + [0] * max(0, 768 - len(pal)))
+        pal_padded = pal + b"\x00" * max(0, 768 - len(pal))
+        pal_arr = np.frombuffer(pal_padded[:768], dtype=np.uint8).reshape((256, 3))
+        rgb = pal_arr[arr]
         bio = io.BytesIO()
         if is_masked:
-            img.save(bio, format="PNG", optimize=True, transparency=255)
+            alpha = np.where(arr == 255, np.uint8(0), np.uint8(255))
+            opaque_mask = arr != 255
+            fill_rgb = rgb[opaque_mask].mean(axis=0).astype(np.uint8) if np.any(opaque_mask) else np.array([64, 64, 64], dtype=np.uint8)
+            rgb = np.where(opaque_mask[..., None], rgb, fill_rgb)
+            Image.fromarray(np.dstack([rgb, alpha]), mode="RGBA").save(bio, format="PNG", optimize=True)
         else:
-            img.save(bio, format="PNG", optimize=True)
+            img_p = Image.fromarray(arr, mode="P")
+            img_p.putpalette(list(pal_padded[:768]))
+            img_p.save(bio, format="PNG", optimize=True)
         textures_info.append({
             "name": tname or f"tex_{ti}",
             "width": max(1, tw),

@@ -15,8 +15,11 @@ const GROUND_ACCEL: float = 5.6
 const AIR_ACCEL: float = 10.0
 const FRICTION: float = 4.2
 const STOP_SPEED_MPS: float = 100.0 * (1.0 / 32.0)
-const STAND_HEIGHT: float = 2.05
-const CROUCH_HEIGHT: float = 1.25
+const STAND_HEIGHT: float = 1.88
+const CROUCH_HEIGHT: float = 1.08
+const STEP_HEIGHT: float = 0.54
+const MODEL_STAND_OFFSET_Y: float = 1.125
+const MODEL_CROUCH_OFFSET_Y: float = 0.5625
 
 var actor_name: String = "Player"
 var team: String = "CT"  # "CT" or "T"
@@ -60,7 +63,7 @@ func _ready() -> void:
 
 	_col_shape = CollisionShape3D.new()
 	_capsule = CapsuleShape3D.new()
-	_capsule.radius = 0.42
+	_capsule.radius = 0.36
 	_capsule.height = STAND_HEIGHT
 	_col_shape.shape = _capsule
 	_col_shape.position = Vector3(0.0, STAND_HEIGHT * 0.5, 0.0)
@@ -68,6 +71,7 @@ func _ready() -> void:
 
 	_body_root = Node3D.new()
 	_body_root.name = "CharacterModel"
+	_body_root.position = Vector3(0.0, MODEL_STAND_OFFSET_Y, 0.0)
 	add_child(_body_root)
 
 	weapon_ctrl = WeaponController.new()
@@ -89,7 +93,9 @@ func set_team_and_class(new_team: String, new_class: String) -> void:
 
 
 func _rebuild_character_model() -> void:
-	for c in _body_root.get_children():
+	var old_children := _body_root.get_children()
+	for c in old_children:
+		_body_root.remove_child(c)
 		c.queue_free()
 	_body_anim = null
 	var mdl_id := "vip" if is_vip else class_id
@@ -99,7 +105,9 @@ func _rebuild_character_model() -> void:
 		_configure_character_meshes(inst)
 		_body_root.add_child(inst)
 		_body_anim = _find_anim(inst)
-		_play_body_anim("idle")
+		GameData.ensure_looping_animations(_body_anim)
+		_play_body_anim("idle1")
+	_body_root.position.y = MODEL_CROUCH_OFFSET_Y if is_crouching else MODEL_STAND_OFFSET_Y
 	_body_root.visible = not is_human
 
 
@@ -107,16 +115,13 @@ func _configure_character_meshes(n: Node) -> void:
 	if n is MeshInstance3D:
 		var mi := n as MeshInstance3D
 		mi.layers = 2
+		mi.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
 		if mi.mesh:
 			for s in range(mi.mesh.get_surface_count()):
 				var mat := mi.mesh.surface_get_material(s)
-				if mat is BaseMaterial3D:
-					var dup := mat.duplicate() as BaseMaterial3D
-					dup.texture_filter = BaseMaterial3D.TEXTURE_FILTER_LINEAR_WITH_MIPMAPS_ANISOTROPIC
-					dup.diffuse_mode = BaseMaterial3D.DIFFUSE_LAMBERT_WRAP
-					# GoldSrc studio_render texgamma compensation so dark SEAL/GSG9 suits stay crisp & visible
-					dup.albedo_color = Color(1.55, 1.55, 1.55, 1.0)
-					mi.set_surface_override_material(s, dup)
+				var styled := GameData.get_styled_model_material(mat, "char")
+				if styled:
+					mi.set_surface_override_material(s, styled)
 	for c in n.get_children():
 		_configure_character_meshes(c)
 
@@ -134,11 +139,34 @@ func _find_anim(n: Node) -> AnimationPlayer:
 func _play_body_anim(keyword: String) -> void:
 	if not _body_anim:
 		return
-	for aname in _body_anim.get_animation_list():
-		if keyword in aname.to_lower():
-			if _body_anim.current_animation != aname:
-				_body_anim.play(aname)
-			return
+	var kw := keyword.to_lower()
+	var anims := _body_anim.get_animation_list()
+	var chosen := ""
+	# 1. Exact case-insensitive match first (prevents 'run' matching 'crouchrun' or 'idle' matching 'crouch_idle'!)
+	for aname in anims:
+		if aname.to_lower() == kw:
+			chosen = aname
+			break
+	# 2. Prefix match (excluding crouch sequences when standing)
+	if chosen.is_empty():
+		for aname in anims:
+			var low := aname.to_lower()
+			if not kw.begins_with("crouch") and "crouch" in low:
+				continue
+			if low.begins_with(kw):
+				chosen = aname
+				break
+	# 3. Substring fallback
+	if chosen.is_empty():
+		for aname in anims:
+			var low := aname.to_lower()
+			if not kw.begins_with("crouch") and "crouch" in low:
+				continue
+			if kw in low:
+				chosen = aname
+				break
+	if not chosen.is_empty() and (_body_anim.current_animation != chosen or not _body_anim.is_playing()):
+		_body_anim.play(chosen)
 
 
 func spawn_for_round(pos: Vector3, yaw_rad: float, reset_weapons: bool) -> void:
@@ -149,10 +177,24 @@ func spawn_for_round(pos: Vector3, yaw_rad: float, reset_weapons: bool) -> void:
 	stamina_factor = 1.0
 	is_crouching = false
 	velocity = Vector3.ZERO
-	global_position = pos + Vector3(0.0, 0.06, 0.0)
+
+	# Snap GoldSrc waist-origin spawn entities (+36u above floor) cleanly down onto the BSP floor!
+	var floor_pos := pos
+	if is_inside_tree() and get_world_3d():
+		var space := get_world_3d().direct_space_state
+		var q := PhysicsRayQueryParameters3D.create(pos + Vector3(0.0, 0.45, 0.0), pos - Vector3(0.0, 2.25, 0.0))
+		q.collision_mask = 1
+		var hit := space.intersect_ray(q)
+		if hit:
+			floor_pos = (hit["position"] as Vector3) + Vector3(0.0, 0.03, 0.0)
+		else:
+			floor_pos = pos + Vector3(0.0, 0.04, 0.0)
+
+	global_position = floor_pos
 	look_yaw = yaw_rad
 	look_pitch = 0.0
-	rotation = Vector3(0.0, look_yaw, 0.0)
+	# Keep CharacterBody3D root unrotated so child Camera3D and _body_root never double-rotate!
+	rotation = Vector3.ZERO
 	_col_shape.disabled = false
 	_update_hull_height(false)
 
@@ -223,6 +265,8 @@ func _update_hull_height(crouch_want: bool) -> void:
 	var h := CROUCH_HEIGHT if is_crouching else STAND_HEIGHT
 	_capsule.height = h
 	_col_shape.position.y = h * 0.5
+	if _body_root:
+		_body_root.position.y = MODEL_CROUCH_OFFSET_Y if is_crouching else MODEL_STAND_OFFSET_Y
 
 
 func apply_goldsrc_movement(wish_dir_world: Vector3, want_jump: bool, want_crouch: bool, want_walk: bool, delta: float) -> void:
@@ -304,7 +348,12 @@ func apply_goldsrc_movement(wish_dir_world: Vector3, want_jump: bool, want_crouc
 		velocity.y -= GRAVITY_MPS2 * delta
 
 	var prev_vy := velocity.y
+	var pre_step_vel := Vector3(velocity.x, 0.0, velocity.z)
 	move_and_slide()
+
+	# GoldSrc PM_StepMove: smoothly climb 90-degree BSP stairs, curbs & crate ledges (up to 18u = 0.54m)
+	if grounded and is_on_wall() and pre_step_vel.length_squared() > 0.02:
+		_try_step_up(pre_step_vel * delta, pre_step_vel)
 
 	# Fall damage & landing sound (GoldSrc > 580u/s = 18.1 m/s)
 	if not grounded and is_on_floor():
@@ -356,6 +405,20 @@ func _tick_footsteps(delta: float, climbing_ladder: bool) -> void:
 		AudioManager.play_footstep(mchar, global_position, team)
 
 
+func _try_step_up(horiz_motion: Vector3, preserve_hvel: Vector3) -> void:
+	var up_vec := Vector3(0.0, STEP_HEIGHT, 0.0)
+	if test_move(global_transform, up_vec):
+		return
+	var raised_xf := global_transform.translated(up_vec)
+	var step_dir := horiz_motion.normalized() * maxf(horiz_motion.length(), 0.08)
+	if test_move(raised_xf, step_dir):
+		return
+	global_position += up_vec + step_dir
+	move_and_collide(Vector3(0.0, -STEP_HEIGHT - 0.06, 0.0))
+	velocity.x = preserve_hvel.x
+	velocity.z = preserve_hvel.z
+
+
 func _sample_floor_material() -> String:
 	var space := get_world_3d().direct_space_state
 	var q := PhysicsRayQueryParameters3D.create(global_position + Vector3(0, 0.2, 0), global_position - Vector3(0, 0.45, 0))
@@ -363,10 +426,14 @@ func _sample_floor_material() -> String:
 	var hit := space.intersect_ray(q)
 	if hit and hit["collider"] is Node:
 		var p := (hit["collider"] as Node).get_parent()
-		if p is MeshInstance3D and (p as MeshInstance3D).mesh and (p as MeshInstance3D).mesh.get_surface_count() > 0:
-			var m := (p as MeshInstance3D).mesh.surface_get_material(0)
-			if m:
-				return GameData.get_material_char(m.resource_name)
+		if p is MeshInstance3D:
+			var mi := p as MeshInstance3D
+			if mi.mesh and mi.mesh.get_surface_count() > 0:
+				var m := mi.get_surface_override_material(0)
+				if not m:
+					m = mi.mesh.surface_get_material(0)
+				if m:
+					return GameData.get_material_char(m.resource_name)
 	return "C"
 
 
@@ -374,17 +441,18 @@ func _update_third_person_anim() -> void:
 	if not _body_root.visible:
 		return
 	_body_root.rotation.y = look_yaw
+	_body_root.position.y = MODEL_CROUCH_OFFSET_Y if is_crouching else MODEL_STAND_OFFSET_Y
 	var hspd := Vector2(velocity.x, velocity.z).length()
 	if is_crouching:
 		_play_body_anim("crouchrun" if hspd > 0.8 else "crouch_idle")
 	elif not is_on_floor():
 		_play_body_anim("jump")
-	elif hspd > 4.2:
+	elif hspd > 4.0:
 		_play_body_anim("run")
-	elif hspd > 0.6:
+	elif hspd > 0.55:
 		_play_body_anim("walk")
 	else:
-		_play_body_anim("idle")
+		_play_body_anim("idle1")
 
 
 func take_bullet_damage(

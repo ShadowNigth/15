@@ -25,14 +25,14 @@ static func setup_environment(parent: Node3D, skyname: String) -> WorldEnvironme
 	we.environment = env
 	parent.add_child(we)
 
-	# Key + Fill directional lights masked to Visual Layer 2 (Players, Bots, Viewmodels, Props)
-	# so BSP world brushes use pure hlrad lightmaps while characters look bright & readable!
+	# Key + Fill directional lights masked to Visual Layers 2 & 3 (mask 6 = Characters + Viewmodels)
+	# so BSP world brushes (Layer 1) use pure hlrad lightmaps while characters & weapons look crisp!
 	var sun := DirectionalLight3D.new()
 	sun.name = "CharacterSunLight"
 	sun.rotation_degrees = Vector3(-48.0, 38.0, 0.0)
 	sun.light_color = Color(1.0, 0.96, 0.88)
 	sun.light_energy = 1.15
-	sun.light_cull_mask = 2
+	sun.light_cull_mask = 6
 	sun.shadow_enabled = false
 	parent.add_child(sun)
 
@@ -41,7 +41,7 @@ static func setup_environment(parent: Node3D, skyname: String) -> WorldEnvironme
 	fill.rotation_degrees = Vector3(32.0, -142.0, 0.0)
 	fill.light_color = Color(0.80, 0.86, 0.95)
 	fill.light_energy = 0.55
-	fill.light_cull_mask = 2
+	fill.light_cull_mask = 6
 	fill.shadow_enabled = false
 	parent.add_child(fill)
 

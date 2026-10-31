@@ -7,7 +7,7 @@
     "t_spawns": 21,
     "bombsites": 0,
     "hostages": 0,
-    "waypoints": 340,
+    "waypoints": 325,
     "briefing": "OilRig - Assassination\nMap by MacMan (macmaninfi@aol.com)\nTextures by MacMan\nWestland Wessex helicopter by Agent Orange \n[agentorange@freemail.nl]\n\nBackground: The most important criminal \nwitness in history has been hiding out on \nan oilrig as part of a witness protection \nprogram. But word is that"
   },
   {
@@ -18,7 +18,7 @@
     "t_spawns": 10,
     "bombsites": 0,
     "hostages": 0,
-    "waypoints": 340,
+    "waypoints": 314,
     "briefing": "Tundra - Assassination\nby Zaphod_Beeblebrox \n(zaphod_beeblebrox@eudoramail.com)\nTextures by MacMan\n\nBackground:\nSecurity has been breached at a covert\nweapons sales meeting deep in Alaska.\nAfter stealing the weapons, they are waiting\nto take out the VIP. \n\nCounter-Terrorists: \nEscort the VIP to one "
   },
   {
@@ -29,7 +29,7 @@
     "t_spawns": 13,
     "bombsites": 0,
     "hostages": 5,
-    "waypoints": 278,
+    "waypoints": 103,
     "briefing": "747 Hijack - Hostage Rescue\nby Stephen \"Judas\" Superville \n(witchdawn@hotmail.com)\ntextures by  \"The Postman\" \n(heavengame@yahoo.com)\n\nCounter-Terrorists:  Infiltrate the \nplane and rescue the remaining hostages \nfrom the Terrorists holding them.  \n\nTerrorists: Prevent the Counter-\nTerrorist team fr"
   },
   {
@@ -40,7 +40,7 @@
     "t_spawns": 10,
     "bombsites": 0,
     "hostages": 4,
-    "waypoints": 340,
+    "waypoints": 214,
     "briefing": "Assault - Hostage Rescue\nby CryptR (lmuur@dlc.fi)\n\nCounter-Terrorists: Rescue the hostages. \nTake out the Terrorists without jeopardizing \nthe hostages. The Terrorists may be watching\nyou with their cameras.\n\nTerrorists: Prevent Counter-Terrorist\nforce from rescuing the hostages. Use\nwhatever force "
   },
   {
@@ -51,7 +51,7 @@
     "t_spawns": 10,
     "bombsites": 0,
     "hostages": 4,
-    "waypoints": 325,
+    "waypoints": 159,
     "briefing": "Alleyway - Hostage Rescue\nby TYR (tyr@barking-dog.com)\n\nCounter-Terrorists: \nInfiltrate Terrorist stronghold and escort \nthe hostages to the rescue zone. Take out \nthe Terrorists without jeopardizing the \nhostages.\n\nTerrorists:\nEliminate the Counter-Terrorist\nforce before they rescue any hostages.\n\n"
   },
   {
@@ -62,7 +62,7 @@
     "t_spawns": 10,
     "bombsites": 0,
     "hostages": 3,
-    "waypoints": 233,
+    "waypoints": 187,
     "briefing": "Zaphod's Estate - Hostage Rescue\nby Zaphod Beeblebrox \nzaphod@mapcore.com\n\nCounter-Terrorists: Rescue the three\nhostages being held captive in the mansion.\n\nTerrorists: Prevent the Counter-Terrorists\nfrom rescuing the hostages."
   },
   {
@@ -73,7 +73,7 @@
     "t_spawns": 16,
     "bombsites": 0,
     "hostages": 4,
-    "waypoints": 340,
+    "waypoints": 325,
     "briefing": "Havana- Hostage Rescue\n\nIdo Magal *ido@valvesoftware.com*\nMacman    *chrisa@valvesoftware.com*\n\n\nTerrorists: You are holding political hostages\nin Habana Vieja, awaiting a chopper lift which\nwill arrive to evacuate you immediately after the\nround ends.\n\nCounter-Terrorists:  You have control of the p"
   },
   {
@@ -84,7 +84,7 @@
     "t_spawns": 10,
     "bombsites": 0,
     "hostages": 4,
-    "waypoints": 340,
+    "waypoints": 278,
     "briefing": "Italy - Hostage Rescue\nMapping by:\nglenC AKA [HOTSHEEP]Bastard (glenc@hotsheep.com)\nTextures/Graphics by:\nDigiChaos (digichaos@hotsheep.com)\n\nCounter-Terrorists: Navigate your way\naround the Italian city and get those\nHostages from the foreign Terrorists.\n\nTerrorists: Prevent the Counter-Terrorists\n"
   },
   {
@@ -95,7 +95,7 @@
     "t_spawns": 10,
     "bombsites": 0,
     "hostages": 4,
-    "waypoints": 340,
+    "waypoints": 309,
     "briefing": "Militia - Hostage Rescue\nby Andrew Aumann (andrewja@home.com)\n\nCounter-Terrorists: Enter Cliffe's \nCompound to rescue the hostages. Take \nout the Terrorists without jeopardizing \nthe hostages.\n\nTerrorists: Prevent Counter-Terrorist\nforce from rescuing the hostages.\n\nOther Notes: There are 4 hostages"
   },
   {
@@ -106,7 +106,7 @@
     "t_spawns": 10,
     "bombsites": 0,
     "hostages": 4,
-    "waypoints": 340,
+    "waypoints": 264,
     "briefing": "The Office Complex - Hostage Rescue\n\nby Hobbit (Hobbit6@MicroDSI.net)\t\ntextures by Sphinx and George_Pooshoes.\n\nCounter-Terrorists: Enter the office \nbuilding and rescue the hostages. \nTake out the Terrorists without \njeopardizing the hostages.\n\nTerrorists: Prevent Counter-Terrorist\nforce from rescu"
   },
   {
@@ -117,7 +117,7 @@
     "t_spawns": 10,
     "bombsites": 0,
     "hostages": 4,
-    "waypoints": 340,
+    "waypoints": 273,
     "briefing": "Canyon Siege - Hostage Rescue\nby N0TH1NG  (n0th1ng@mailcity.com)\n\nCounter-Terrorists: Enter the POW\nstronghold and rescue the hostages. \nTake out the Terrorists without \njeopardizing the hostages.\n\nTerrorists: Prevent Counter-Terrorist\nforce from rescuing the hostages.\n\nOther Notes: There are 4 host"
   },
   {
@@ -128,7 +128,7 @@
     "t_spawns": 16,
     "bombsites": 2,
     "hostages": 0,
-    "waypoints": 340,
+    "waypoints": 380,
     "briefing": "Aztec - Defusion\nby Chris Auty (Barney) (fragged101@yahoo.com)\nTexture builds by Macman \n\nCounter-Terrorists: Prevent the Terrorists\nbombing the archiological site.\n\nTerrorists: Destroy the valuable aztec ruins.\n\nOther Notes: There are 2 bomb sites in this \nmission. \n\n(Press FIRE to continue)"
   },
   {
@@ -139,7 +139,7 @@
     "t_spawns": 16,
     "bombsites": 2,
     "hostages": 0,
-    "waypoints": 340,
+    "waypoints": 246,
     "briefing": "Cobble - Bomb/Defuse\nby DaveJ (dv@btinternet.com)\ntextures by MacMan (MacManInfi@aol.com)\n\nCounter-Terrorists: Prevent Terrorists\nfrom bombing Lord William's country \nfarmhouse. He has been the target of \nassassination in light of recent government\nproposals.\n\nTerrorists: The Terrorist carrying the\n"
   },
   {
@@ -150,7 +150,7 @@
     "t_spawns": 17,
     "bombsites": 2,
     "hostages": 0,
-    "waypoints": 340,
+    "waypoints": 298,
     "briefing": "Chateau - Bomb-Defuse\n\nMacman    *chrisa@valvesoftware.com*\nIdo Magal *ido@valvesoftware.com*\n\nTerrorists: After the loss of\nCobble, Lord Williams is rebuilding\nhis summer chateau.  You must prevent\nhis remodeling.  Plant the C4 at\neither the front, or the rear courtyard.\n\n\nCounter-Terrorists:  Prot"
   },
   {
@@ -161,7 +161,7 @@
     "t_spawns": 16,
     "bombsites": 2,
     "hostages": 0,
-    "waypoints": 340,
+    "waypoints": 380,
     "briefing": "Dust - Bomb/Defuse\nby DaveJ (dv@btinternet.com)\ntextures by Macman (MacManInfi@aol.com)\n\nCounter-Terrorists: Prevent Terrorists\nfrom bombing chemical weapon crates.\nTeam members must defuse any bombs \nthat threaten targeted areas.\n\nTerrorists: The Terrorist carrying the\nC4 must destroy one of the ch"
   },
   {
@@ -172,7 +172,7 @@
     "t_spawns": 20,
     "bombsites": 2,
     "hostages": 0,
-    "waypoints": 340,
+    "waypoints": 380,
     "briefing": "Dust II - Bomb/Defuse\n*** GameHelper.com exclusive ***\nby DaveJ (dv@btinternet.com)\ntextures by MacMan (MacManInfi@aol.com)\n\nCounter-Terrorists: Prevent Terrorists\nfrom bombing chemical weapon crates.\nTeam members must defuse any bombs \nthat threaten targeted areas.\n\nTerrorists: The Terrorist carryi"
   },
   {
@@ -183,7 +183,7 @@
     "t_spawns": 16,
     "bombsites": 2,
     "hostages": 0,
-    "waypoints": 340,
+    "waypoints": 329,
     "briefing": "Inferno - Defusion\nby Chris Auty (Barney) (fragged101@yahoo.com)\nTexture builds by Valve software\n\nTerrorist are attempting to blow up two critical\ngas pipeline through part of a small village.\n\nCounter-Terrorists: Prevent the terrorists\nfrom destroying the pipelines.\n\nTerrorists: Destroy the two ga"
   },
   {
@@ -194,7 +194,7 @@
     "t_spawns": 10,
     "bombsites": 2,
     "hostages": 0,
-    "waypoints": 340,
+    "waypoints": 371,
     "briefing": "Nuke - Bomb/Defuse\nby Jo Bieg (MEEEEDIC@gmx.net)\n\nCounter-Terrorists: Prevent Terrorists\nfrom bombing the nuclear missile. The \nmission can be targeted from above and\nbelow. Team members must defuse any \nbombs that threaten targeted areas.\n\nTerrorists: The Terrorist carrying the\nC4 must destroy the "
   },
   {
@@ -205,7 +205,7 @@
     "t_spawns": 16,
     "bombsites": 2,
     "hostages": 0,
-    "waypoints": 340,
+    "waypoints": 380,
     "briefing": "Piranesi - Bomb-Defuse\n\nFingers - iikkak@valvesoftware.com\n\nThanks to Ido Magal for texture sources\n\nBackground: a sprawling neo-romanesque\npalace known as Villa Piranesi is to be\nopened to the public as a museum. \nRestored furniture and works of art are \nbeing shipped into the compound.\n\nTerrorists"
   },
   {
@@ -216,7 +216,7 @@
     "t_spawns": 10,
     "bombsites": 4,
     "hostages": 0,
-    "waypoints": 264,
+    "waypoints": 236,
     "briefing": "Prodigy - Bomb/Defuse\nby Hobbit (hobbit6@bellatlantic.net)\n\nCounter-Terrorists: Prevent Terrorists\nfrom bombing the computer lab or the fuel\npipeline control room. Team members must\ndefuse any bombs that threaten targeted \nareas.\n\nTerrorists: The Terrorist carrying the\nC4 must destroy one of the tar"
   },
   {
@@ -227,7 +227,7 @@
     "t_spawns": 16,
     "bombsites": 2,
     "hostages": 0,
-    "waypoints": 340,
+    "waypoints": 366,
     "briefing": "Storm - Bomb/Defuse\nby: FLiPMoDE|Daank\n      (daankvirus420k@icqmail.com)\ntextures:  Fingers - jOeSmOe - MattC\n\nCounter-Terrorists: Protect weapons\ncrates. These weapons are to be \ndelivered to an allied country \nthreatened by terrorists. \n\nTerrorists: There is an attempt to arm\na small country your"
   },
   {
@@ -238,7 +238,7 @@
     "t_spawns": 10,
     "bombsites": 2,
     "hostages": 0,
-    "waypoints": 340,
+    "waypoints": 380,
     "briefing": "DE_SURVIVOR - DEFUSION\nBy Michael Visser aka 3D_Mike\n(3D_Mike@soneramail.nl) (3DMike@nmtrix.com)\nwww.lanmaniax.com\n\nTerrorists:\n-Bomb Truck or Crashed plane.\n\nCounter-Terrorists:\n-Prevent the Terrorists from bombing.\n\nStoryline:\nIn a heavy snowstorm a plane carrying a \ntopsecret load gets in trouble"
   },
   {
@@ -249,7 +249,7 @@
     "t_spawns": 16,
     "bombsites": 4,
     "hostages": 0,
-    "waypoints": 340,
+    "waypoints": 307,
     "briefing": "Torn - Bomb/Defuse\nby Crinity & Madcross\nwww.planethalflife.com/crinity/\n\nTerrorists: Detonate a toxic nerve agent \ninto the town's water supply that will \nspread to nearby cities.\n\nCounter-Terrorists: Contain the situation. \nPrevent hostiles from completing their \nobjectives.\n\nOther Notes: There ar"
   },
   {
@@ -260,7 +260,7 @@
     "t_spawns": 12,
     "bombsites": 2,
     "hostages": 0,
-    "waypoints": 338,
+    "waypoints": 296,
     "briefing": "Trainyard - Bomb/Defuse\n\nCounter-Terrorists: Prevent Terrorists\nfrom bombing the nuclear payloads on two\ntrains. Team members must defuse any \nbombs that threaten the payloads.\n\nTerrorists: The Terrorist carrying the\nC4 must destroy one of the payloads. \n\nOther Notes: There are 2 payloads on the\ntra"
   },
   {
@@ -271,7 +271,7 @@
     "t_spawns": 10,
     "bombsites": 2,
     "hostages": 0,
-    "waypoints": 340,
+    "waypoints": 299,
     "briefing": "Vegas - Defusion\nBy +Cadaver+ (cadaver@planethalflife.com)\nTextures by George_Pooshoes \n(pooshoes@mapcore.com)\nAnd by JOeSmOe (joesmoe@home.com)\n\nCounter-Terrorists: Infiltrate the Hax0r\nComplex and secure the bomb targets. \nEliminate all resistance.\n\nTerrorists: Blow open the safe; failing that,\nde"
   },
   {
@@ -282,7 +282,7 @@
     "t_spawns": 16,
     "bombsites": 2,
     "hostages": 0,
-    "waypoints": 340,
+    "waypoints": 322,
     "briefing": "Vertigo - Defusion\nby Chris Auty (Barney) (fragged101@yahoo.com)\nTexture builds by Telnets and J0esm0e\n\nTerrorists are trying to bomb rizzleton tower \nbefore it reaches completion. \n\nCounter-Terrorists: Prevent the builing from \nbeing destroyed.\n\nTerrorists: Plant the bomb and blow up the\nbuilding.\n"
   }
 ]

@@ -31,6 +31,7 @@ var friendly_fire: bool = false
 
 # Player preferences
 var mouse_sensitivity: float = 0.16
+var invert_mouse_y: bool = false
 var master_volume_db: float = 0.0
 var fov: float = 74.0  # Vertical FOV 74 deg = authentic CS 1.5 horizontal 90 deg (4:3) / 106 deg (16:9 Hor+)
 var right_hand: bool = true  # cl_righthand 1
@@ -43,6 +44,7 @@ var _tex_cache: Dictionary = {}
 var _scene_cache: Dictionary = {}
 var _hud_atlas_cache: Dictionary = {}
 var _wav_cache: Dictionary = {}
+var _styled_mat_cache: Dictionary = {}
 
 
 func _ready() -> void:
@@ -112,6 +114,41 @@ func get_model_scene(rel_path: String) -> PackedScene:
 	if sc:
 		_scene_cache[full] = sc
 	return sc
+
+
+func get_styled_model_material(orig: Material, mode: String) -> Material:
+	if orig == null or not (orig is BaseMaterial3D):
+		return orig
+	var key := "%d_%s" % [orig.get_instance_id(), mode]
+	if _styled_mat_cache.has(key):
+		return _styled_mat_cache[key] as Material
+	var dup := orig.duplicate() as BaseMaterial3D
+	dup.texture_filter = BaseMaterial3D.TEXTURE_FILTER_LINEAR_WITH_MIPMAPS_ANISOTROPIC
+	dup.diffuse_mode = BaseMaterial3D.DIFFUSE_LAMBERT_WRAP
+	dup.roughness = 0.92
+	dup.metallic = 0.0
+	if mode == "vm":
+		dup.cull_mode = BaseMaterial3D.CULL_BACK
+		dup.albedo_color = Color(1.38, 1.38, 1.38, 1.0)
+	elif mode == "vm_flip":
+		dup.cull_mode = BaseMaterial3D.CULL_FRONT
+		dup.albedo_color = Color(1.38, 1.38, 1.38, 1.0)
+	else:
+		dup.cull_mode = BaseMaterial3D.CULL_BACK
+		dup.albedo_color = Color(1.48, 1.48, 1.48, 1.0)
+	_styled_mat_cache[key] = dup
+	return dup
+
+
+func ensure_looping_animations(ap: AnimationPlayer) -> void:
+	if not ap:
+		return
+	for aname in ap.get_animation_list():
+		var low := aname.to_lower()
+		if low.begins_with("idle") or low.begins_with("walk") or low.begins_with("run") or low.begins_with("crouch"):
+			var anim := ap.get_animation(aname)
+			if anim:
+				anim.loop_mode = Animation.LOOP_LINEAR
 
 
 func get_sound(rel_path: String) -> AudioStream:

@@ -16,6 +16,10 @@ var viewmodel_holder: Node3D = null
 var flashlight_spot: SpotLight3D = null
 var nvg_light: OmniLight3D = null
 
+var _vm_layer: CanvasLayer = null
+var _vm_container: SubViewportContainer = null
+var _vm_viewport: SubViewport = null
+var _vm_camera: Camera3D = null
 var _vm_anim: AnimationPlayer = null
 var _muzzle_sprite: Sprite3D = null
 var _muzzle_light: OmniLight3D = null
@@ -34,29 +38,63 @@ func _ready() -> void:
 
 	camera = Camera3D.new()
 	camera.name = "FPSCamera"
+	camera.rotation_order = EULER_ORDER_YXZ
 	camera.fov = GameData.fov
-	camera.near = 0.025
+	camera.near = 0.05
 	camera.far = 1600.0
-	camera.position = Vector3(0.0, 1.85, 0.0)
+	camera.cull_mask = 3  # Layers 1 (World) + 2 (Characters/Props); Layer 3 (mask 4) is rendered by _vm_camera!
+	camera.position = Vector3(0.0, 1.66, 0.0)
 	camera.current = true
 	add_child(camera)
 
-	# Scaled 0.22 around camera origin: identical perspective size, zero wall clipping inside 0.42m hull!
+	# Dedicated transparent SubViewport for CS 1.5 first-person weapon viewmodel:
+	# - Own clean depth buffer -> gun NEVER clips into walls or near-plane!
+	# - Native 1:1 GoldSrc metric scale -> crisp textures & authentic 65-deg viewmodel FOV!
+	_vm_layer = CanvasLayer.new()
+	_vm_layer.name = "ViewModelLayer"
+	_vm_layer.layer = 2
+	add_child(_vm_layer)
+
+	_vm_container = SubViewportContainer.new()
+	_vm_container.name = "ViewModelContainer"
+	_vm_container.set_anchors_preset(Control.PRESET_FULL_RECT)
+	_vm_container.stretch = true
+	_vm_container.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	_vm_layer.add_child(_vm_container)
+
+	_vm_viewport = SubViewport.new()
+	_vm_viewport.name = "ViewModelViewport"
+	_vm_viewport.transparent_bg = true
+	_vm_viewport.handle_input_locally = false
+	_vm_viewport.msaa_3d = Viewport.MSAA_2X
+	_vm_viewport.world_3d = get_world_3d()
+	_vm_container.add_child(_vm_viewport)
+
+	_vm_camera = Camera3D.new()
+	_vm_camera.name = "ViewModelCamera"
+	_vm_camera.rotation_order = EULER_ORDER_YXZ
+	_vm_camera.fov = 65.0
+	_vm_camera.near = 0.015
+	_vm_camera.far = 6.0
+	_vm_camera.cull_mask = 4  # Visual Layer 3 ONLY (first-person weapon + muzzle flash)
+	_vm_camera.current = true
+	_vm_viewport.add_child(_vm_camera)
+
 	viewmodel_pivot = Node3D.new()
 	viewmodel_pivot.name = "ViewModelPivot"
-	viewmodel_pivot.scale = Vector3(0.22, 0.22, 0.22)
-	camera.add_child(viewmodel_pivot)
+	_vm_camera.add_child(viewmodel_pivot)
 
 	viewmodel_holder = Node3D.new()
 	viewmodel_holder.name = "ViewModelHolder"
 	viewmodel_pivot.add_child(viewmodel_holder)
 
 	_muzzle_sprite = Sprite3D.new()
+	_muzzle_sprite.layers = 4
 	_muzzle_sprite.texture = GameData.get_texture("res://assets/sprites/muzzleflash1.png")
 	_muzzle_sprite.billboard = BaseMaterial3D.BILLBOARD_ENABLED
-	_muzzle_sprite.pixel_size = 0.0032
+	_muzzle_sprite.pixel_size = 0.0028
 	_muzzle_sprite.modulate = Color(1.0, 0.88, 0.55, 0.92)
-	_muzzle_sprite.position = Vector3(0.22, -0.14, -0.82)
+	_muzzle_sprite.position = Vector3(0.18, -0.11, -0.68)
 	_muzzle_sprite.visible = false
 	viewmodel_pivot.add_child(_muzzle_sprite)
 
@@ -89,8 +127,15 @@ func _ready() -> void:
 
 func spawn_for_round(pos: Vector3, yaw_rad: float, reset_weapons: bool) -> void:
 	super.spawn_for_round(pos, yaw_rad, reset_weapons)
+	camera.top_level = false
+	camera.position = Vector3(0.0, 1.66, 0.0)
+	camera.rotation = Vector3(0.0, look_yaw, 0.0)
 	camera.current = true
 	camera.fov = GameData.fov
+	if _vm_viewport and _vm_viewport.world_3d != get_world_3d():
+		_vm_viewport.world_3d = get_world_3d()
+	if _vm_container:
+		_vm_container.visible = true
 	viewmodel_pivot.visible = true
 	flashlight_spot.visible = false
 	nvg_light.visible = nvg_active
@@ -106,12 +151,13 @@ func _unhandled_input(event: InputEvent) -> void:
 	if event is InputEventMouseMotion and Input.get_mouse_mode() == Input.MOUSE_MODE_CAPTURED:
 		var sens := GameData.mouse_sensitivity * 0.0022
 		if camera.fov < 60.0:
-			sens *= (camera.fov / 90.0)
+			sens *= (camera.fov / 74.0)
 		var mm := event as InputEventMouseMotion
+		var pitch_sign := 1.0 if GameData.invert_mouse_y else -1.0
 		look_yaw -= mm.relative.x * sens
-		look_pitch = clampf(look_pitch - mm.relative.y * sens, deg_to_rad(-89.0), deg_to_rad(89.0))
-		_sway_offset.x = clampf(_sway_offset.x - mm.relative.x * 0.0005, -0.04, 0.04)
-		_sway_offset.y = clampf(_sway_offset.y + mm.relative.y * 0.0005, -0.04, 0.04)
+		look_pitch = clampf(look_pitch + mm.relative.y * sens * pitch_sign, deg_to_rad(-89.0), deg_to_rad(89.0))
+		_sway_offset.x = clampf(_sway_offset.x - mm.relative.x * 0.00025, -0.02, 0.02)
+		_sway_offset.y = clampf(_sway_offset.y + mm.relative.y * 0.00025, -0.02, 0.02)
 
 	if not is_alive:
 		if event.is_action_pressed("attack1") or event.is_action_pressed("jump"):
@@ -195,8 +241,8 @@ func _physics_process(delta: float) -> void:
 
 	apply_goldsrc_movement(wish_dir, want_jump, want_crouch, want_walk, delta)
 
-	# Smooth camera eye height & recoil punch angles
-	var target_eye_y := 1.08 if is_crouching else 1.85
+	# Smooth camera eye height & recoil punch angles (GoldSrc stand view_ofs = 64u-10u = ~1.66m, crouch = 0.96m)
+	var target_eye_y := 0.96 if is_crouching else 1.66
 	camera.position.y = lerpf(camera.position.y, target_eye_y, minf(1.0, 14.0 * delta))
 	var punch := weapon_ctrl.punch_angles
 	camera.rotation = Vector3(
@@ -204,19 +250,26 @@ func _physics_process(delta: float) -> void:
 		look_yaw + deg_to_rad(punch.y * 0.85),
 		0.0
 	)
+	if _vm_camera:
+		_vm_camera.global_transform = camera.global_transform
+	if _vm_viewport and _vm_viewport.world_3d != get_world_3d():
+		_vm_viewport.world_3d = get_world_3d()
 
 	# Viewmodel bobbing & mouse sway (classic GoldSrc cl_bob)
 	_sway_offset = _sway_offset.lerp(Vector2.ZERO, minf(1.0, 10.0 * delta))
 	var hspd := Vector2(velocity.x, velocity.z).length()
 	if is_on_floor() and hspd > 0.4:
 		_bob_phase += delta * hspd * 1.65
-	var bob_x := sin(_bob_phase) * 0.012 * clampf(hspd / 7.0, 0.0, 1.0)
-	var bob_y := absf(cos(_bob_phase)) * -0.014 * clampf(hspd / 7.0, 0.0, 1.0)
-	# Mirror X when right-handed (Gooseman's original CS 1.5 .mdl viewmodels were modeled left-handed!)
-	var hand_sign := -1.0 if GameData.right_hand else 1.0
-	viewmodel_holder.scale.x = hand_sign
+	var bob_x := sin(_bob_phase) * 0.008 * clampf(hspd / 7.0, 0.0, 1.0)
+	var bob_y := absf(cos(_bob_phase)) * -0.010 * clampf(hspd / 7.0, 0.0, 1.0)
+	viewmodel_holder.scale = Vector3.ONE
 	viewmodel_holder.position = Vector3(bob_x + _sway_offset.x, bob_y + _sway_offset.y, 0.0)
-	_muzzle_sprite.position.x = -0.22 * hand_sign
+	if _vm_container:
+		# cs15_retail v_*.mdl models are authored right-handed at scale (1,1,1);
+		# flip 2D SubViewportContainer when left-handed (cl_righthand 0) so 3D Skeleton3D never gets negative scale!
+		_vm_container.pivot_offset = _vm_container.size * 0.5
+		_vm_container.scale = Vector2(1.0 if GameData.right_hand else -1.0, 1.0)
+	_muzzle_sprite.position.x = 0.18
 
 	# Primary attack (just pressed or held)
 	if not ui_blocking_input:
@@ -272,7 +325,9 @@ func _on_weapon_switched(wid: String, _spec: Dictionary) -> void:
 
 
 func _rebuild_viewmodel(wid: String) -> void:
-	for c in viewmodel_holder.get_children():
+	var old_children := viewmodel_holder.get_children()
+	for c in old_children:
+		viewmodel_holder.remove_child(c)
 		c.queue_free()
 	_vm_anim = null
 	var spec: Dictionary = GameData.weapons.get(wid, {})
@@ -281,8 +336,8 @@ func _rebuild_viewmodel(wid: String) -> void:
 	if not sc:
 		return
 	var inst := sc.instantiate()
-	# Position viewmodel in authentic CS 1.5 lower-corner framing (hides cut-off forearm stumps!)
-	inst.position = Vector3(-0.04, -0.06, 0.13)
+	# Native GoldSrc camera-space framing (verified on v_usp, v_ak47, v_m4a1, v_awp, v_knife)
+	inst.position = Vector3(0.0, -0.015, -0.03)
 	_prepare_viewmodel_materials(inst)
 	viewmodel_holder.add_child(inst)
 	_vm_anim = _find_anim(inst)
@@ -296,17 +351,14 @@ func _rebuild_viewmodel(wid: String) -> void:
 func _prepare_viewmodel_materials(n: Node) -> void:
 	if n is MeshInstance3D:
 		var mi := n as MeshInstance3D
-		mi.layers = 2
+		mi.layers = 4  # Visual Layer 3: rendered exclusively by _vm_camera!
 		mi.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
 		if mi.mesh:
 			for s in range(mi.mesh.get_surface_count()):
 				var mat := mi.mesh.surface_get_material(s)
-				if mat is BaseMaterial3D:
-					var dup := mat.duplicate() as BaseMaterial3D
-					dup.cull_mode = BaseMaterial3D.CULL_DISABLED
-					dup.texture_filter = BaseMaterial3D.TEXTURE_FILTER_LINEAR_WITH_MIPMAPS_ANISOTROPIC
-					dup.diffuse_mode = BaseMaterial3D.DIFFUSE_LAMBERT_WRAP
-					mi.set_surface_override_material(s, dup)
+				var styled := GameData.get_styled_model_material(mat, "vm")
+				if styled:
+					mi.set_surface_override_material(s, styled)
 	for c in n.get_children():
 		_prepare_viewmodel_materials(c)
 
@@ -342,11 +394,15 @@ func _on_fired_shot(wid: String, silenced: bool) -> void:
 func _on_zoom_changed(fov_deg: float, scoped_overlay: bool) -> void:
 	camera.fov = fov_deg
 	viewmodel_pivot.visible = not scoped_overlay
+	if _vm_container:
+		_vm_container.visible = not scoped_overlay
 	scoped_overlay_changed.emit(scoped_overlay)
 
 
 func _die(killer: Node3D, weapon_id: String, headshot: bool) -> void:
 	viewmodel_pivot.visible = false
+	if _vm_container:
+		_vm_container.visible = false
 	scoped_overlay_changed.emit(false)
 	defuse_progress_changed.emit(0.0)
 	camera.fov = GameData.fov

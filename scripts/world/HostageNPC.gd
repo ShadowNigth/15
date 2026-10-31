@@ -34,12 +34,20 @@ func _ready() -> void:
 		_configure_hostage_meshes(mdl)
 		add_child(mdl)
 		_anim_player = _find_anim_player(mdl)
+		GameData.ensure_looping_animations(_anim_player)
 		_play_anim("idle")
 
 
 func _configure_hostage_meshes(n: Node) -> void:
 	if n is MeshInstance3D:
-		(n as MeshInstance3D).layers = 2
+		var mi := n as MeshInstance3D
+		mi.layers = 2
+		mi.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
+		if mi.mesh:
+			for s in range(mi.mesh.get_surface_count()):
+				var styled := GameData.get_styled_model_material(mi.mesh.surface_get_material(s), "char")
+				if styled:
+					mi.set_surface_override_material(s, styled)
 	for c in n.get_children():
 		_configure_hostage_meshes(c)
 
@@ -57,8 +65,12 @@ func _find_anim_player(n: Node) -> AnimationPlayer:
 func _play_anim(substr: String) -> void:
 	if not _anim_player:
 		return
+	var kw := substr.to_lower()
 	for aname in _anim_player.get_animation_list():
-		if substr in aname.to_lower():
+		var low := aname.to_lower()
+		if "crouch" in low and not kw.begins_with("crouch"):
+			continue
+		if low.begins_with(kw) or kw in low:
 			if _anim_player.current_animation != aname:
 				_anim_player.play(aname)
 			return
@@ -72,7 +84,14 @@ func reset_for_round() -> void:
 	_touched_once = false
 	_nav_path.clear()
 	visible = true
-	global_position = spawn_pos + Vector3(0, 0.08, 0)
+	var floor_p := spawn_pos + Vector3(0.0, 0.05, 0.0)
+	if is_inside_tree() and get_world_3d():
+		var q := PhysicsRayQueryParameters3D.create(spawn_pos + Vector3(0, 0.5, 0), spawn_pos - Vector3(0, 2.2, 0))
+		q.collision_mask = 1
+		var hit := get_world_3d().direct_space_state.intersect_ray(q)
+		if hit:
+			floor_p = (hit["position"] as Vector3) + Vector3(0.0, 0.03, 0.0)
+	global_position = floor_p
 	rotation = Vector3(0, spawn_yaw, 0)
 	velocity = Vector3.ZERO
 	_play_anim("idle")

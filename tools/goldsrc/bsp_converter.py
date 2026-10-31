@@ -185,6 +185,7 @@ def build_bot_nav_graph(
     grid: Dict[Tuple[int, int, int], np.ndarray] = {}
 
     # Prioritize objective/spawn seed points first
+    seed_keys = []
     for pt in seed_points_gs:
         p_test = pt.copy()
         if len(clipnodes) > 0:
@@ -197,6 +198,7 @@ def build_bot_nav_graph(
         key = (int(round(p_test[0] / CELL)), int(round(p_test[1] / CELL)), int(round(p_test[2] / 96.0)))
         if key not in grid:
             grid[key] = p_test
+            seed_keys.append(key)
 
     # Add walkable floor face centroids (hull-1 clearance verified)
     for fpt in floor_samples_gs:
@@ -211,7 +213,7 @@ def build_bot_nav_graph(
                     continue
                 stand_pt = stand_hi
         grid[key] = stand_pt
-        if len(grid) >= 340:
+        if len(grid) >= 540:
             break
 
     pts_gs = list(grid.values())
@@ -225,9 +227,9 @@ def build_bot_nav_graph(
     for i in range(n):
         diffs = pts_arr - pts_arr[i]
         dists = np.hypot(diffs[:, 0], diffs[:, 1])
-        # Candidate neighbors within ~380 GoldSrc units horizontally and reasonable vertical step
-        cands = np.where((dists > 1.0) & (dists < 380.0) & (np.abs(diffs[:, 2]) < 120.0))[0]
-        cands = sorted(cands, key=lambda j: float(dists[j]))[:10]
+        # Candidate neighbors within ~420 GoldSrc units horizontally and walkable stair/ramp vertical delta
+        cands = np.where((dists > 1.0) & (dists < 420.0) & (np.abs(diffs[:, 2]) < 110.0))[0]
+        cands = sorted(cands, key=lambda j: float(dists[j]))[:12]
         for j in cands:
             if j <= i:
                 continue
@@ -235,23 +237,52 @@ def build_bot_nav_graph(
                 adj[i].append(int(j))
                 adj[j].append(int(i))
 
-    # Ensure no isolated nodes: connect any degree-0 node to nearest neighbor if within 450u
-    for i in range(n):
-        if not adj[i] and n > 1:
-            diffs = pts_arr - pts_arr[i]
-            d3 = np.linalg.norm(diffs, axis=1)
-            d3[i] = 1e9
-            nearest = int(np.argmin(d3))
-            if d3[nearest] < 550.0:
-                adj[i].append(nearest)
-                adj[nearest].append(i)
+    # Prune unreachable rooftop clusters: retain components reachable from spawn/objective seeds (or largest component)
+    num_seeds = min(len(seed_keys), n)
+    visited: Set[int] = set()
+    stack = list(range(num_seeds)) if num_seeds > 0 else [0]
+    for s in stack:
+        visited.add(s)
+    while stack:
+        u = stack.pop()
+        for v in adj[u]:
+            if v not in visited:
+                visited.add(v)
+                stack.append(v)
 
-    # Convert waypoint positions to floor-level Godot coordinates (subtract 36u hull center offset)
-    waypoints_gd = [
-        gs_vec_to_gd(float(p[0]), float(p[1]), float(p[2] - 34.0))
-        for p in pts_gs
+    # If very small (< 25% of nodes), also include the largest connected component
+    if len(visited) < max(16, n // 4):
+        rem = set(range(n)) - visited
+        best_comp: Set[int] = set()
+        while rem:
+            r0 = rem.pop()
+            comp = {r0}
+            q = [r0]
+            while q:
+                u = q.pop()
+                for v in adj[u]:
+                    if v in rem:
+                        rem.remove(v)
+                        comp.add(v)
+                        q.append(v)
+            if len(comp) > len(best_comp):
+                best_comp = comp
+        visited |= best_comp
+
+    keep_indices = sorted(visited)[:380]
+    keep_set = set(keep_indices)
+    old_to_new = {old_i: new_i for new_i, old_i in enumerate(keep_indices)}
+    pruned_adj: List[List[int]] = [
+        [old_to_new[nb] for nb in adj[old_i] if nb in keep_set]
+        for old_i in keep_indices
     ]
-    return waypoints_gd, adj
+
+    # Convert waypoint positions to floor-level Godot coordinates (subtract 35u hull center offset)
+    waypoints_gd = [
+        gs_vec_to_gd(float(pts_gs[old_i][0]), float(pts_gs[old_i][1]), float(pts_gs[old_i][2] - 35.0))
+        for old_i in keep_indices
+    ]
+    return waypoints_gd, pruned_adj
 
 
 def convert_single_bsp(
@@ -518,10 +549,17 @@ def convert_single_bsp(
                 "func_door",
                 "func_door_rotating",
                 "func_button",
+                "func_rot_button",
                 "func_pendulum",
                 "func_plat",
                 "func_train",
+                "func_tracktrain",
                 "func_rotating",
+                "func_pushable",
+                "func_conveyor",
+                "func_vehicle",
+                "func_tank",
+                "func_tankmortar",
             ):
                 rmode = int(ent.get("rendermode", "0") or "0")
                 ramt = int(ent.get("renderamt", "255") or "255")
@@ -693,11 +731,13 @@ def convert_single_bsp(
             rx, ry = packed_coords.get(fi, (1, 1))
 
             face_idxs = []
-            for v_gs in pts_gs:
+            raw_sv_tv = [(float(np.dot(v_gs, s_vec) + s_shift), float(np.dot(v_gs, t_vec) + t_shift)) for v_gs in pts_gs]
+            # Shift integer repeat cycles per face so UV0 stays near [0, 8] -> 20x higher GLES3 UNORM16 UV precision!
+            u_base = math.floor(min(st[0] / tw for st in raw_sv_tv))
+            v_base = math.floor(min(st[1] / th for st in raw_sv_tv))
+            for v_gs, (sv, tv) in zip(pts_gs, raw_sv_tv):
                 p_gd = [-float(v_gs[1]) * SCALE, float(v_gs[2]) * SCALE, -float(v_gs[0]) * SCALE]
-                sv = float(np.dot(v_gs, s_vec) + s_shift)
-                tv = float(np.dot(v_gs, t_vec) + t_shift)
-                uv0 = (sv / tw, tv / th)
+                uv0 = (sv / tw - u_base, tv / th - v_base)
                 if lw > 1 or lh > 1:
                     lu = (rx + 0.5 + (sv / 16.0 - min_s)) * inv_aw
                     lv = (ry + 0.5 + (tv / 16.0 - min_t)) * inv_ah

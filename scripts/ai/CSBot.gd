@@ -20,6 +20,9 @@ var _nav_path: Array[Vector3] = []
 var _goal_pos: Vector3 = Vector3.ZERO
 var _has_goal: bool = false
 var _stuck_timer: float = 0.0
+var _jump_cooldown: float = 0.0
+var _crouch_burst_timer: float = 0.0
+var _avoid_side: float = 1.0
 var _last_pos: Vector3 = Vector3.ZERO
 var _strafe_dir: float = 1.0
 var _strafe_timer: float = 0.0
@@ -32,6 +35,7 @@ var _bought_this_round: bool = false
 func _ready() -> void:
 	is_human = false
 	super._ready()
+	_avoid_side = 1.0 if randf() < 0.5 else -1.0
 	AudioManager.world_sound_emitted.connect(_on_world_sound)
 	RoundManager.radio_order_issued.connect(_on_radio_order)
 
@@ -45,6 +49,9 @@ func spawn_for_round(pos: Vector3, yaw_rad: float, reset_weapons: bool) -> void:
 	_hold_pos_timer = 0.0
 	_defusing_ref = null
 	_bought_this_round = false
+	_stuck_timer = 0.0
+	_jump_cooldown = 0.0
+	_crouch_burst_timer = 0.0
 	_last_pos = global_position
 	_think_timer = randf_range(0.1, 0.45)
 
@@ -223,15 +230,20 @@ func _engage_enemy(delta: float) -> void:
 
 	_strafe_timer -= delta
 	if _strafe_timer <= 0.0:
-		_strafe_timer = randf_range(0.45, 1.1)
+		_strafe_timer = randf_range(0.55, 1.25)
 		_strafe_dir = -_strafe_dir
+		if skill_level >= 2 and global_position.distance_to(target_enemy.global_position) > 18.0 and randf() < 0.22:
+			_crouch_burst_timer = randf_range(0.35, 0.75)
+
+	if _crouch_burst_timer > 0.0:
+		_crouch_burst_timer = maxf(0.0, _crouch_burst_timer - delta)
 
 	var dist := global_position.distance_to(target_enemy.global_position)
-	var crouch_shoot := dist > 14.0 and skill_level >= 1
+	var crouch_shoot := _crouch_burst_timer > 0.0
 	var strafe_vec := Vector3.ZERO
 	if not crouch_shoot:
 		var right := Basis(Vector3.UP, look_yaw).x
-		strafe_vec = right * _strafe_dir
+		strafe_vec = _steer_around_obstacles(right * _strafe_dir)
 
 	apply_goldsrc_movement(strafe_vec, false, crouch_shoot, false, delta)
 
@@ -326,42 +338,123 @@ func _set_nav_goal(nav: BotNavigator, dest: Vector3) -> void:
 
 
 func _follow_navigation_path(delta: float) -> void:
+	if _jump_cooldown > 0.0:
+		_jump_cooldown = maxf(0.0, _jump_cooldown - delta)
+
 	if _hold_pos_timer > 0.0 or _nav_path.is_empty():
 		apply_goldsrc_movement(Vector3.ZERO, false, false, false, delta)
+		_last_pos = global_position
 		return
 
 	var wp := _nav_path[0]
 	var flat_d := Vector2(wp.x - global_position.x, wp.z - global_position.z).length()
-	if flat_d < 1.15:
+	var vert_d := absf(wp.y - global_position.y)
+	if flat_d < 1.35 and vert_d < 2.2:
 		_nav_path.remove_at(0)
+		_stuck_timer = 0.0
 		if _nav_path.is_empty():
 			_has_goal = false
 			apply_goldsrc_movement(Vector3.ZERO, false, false, false, delta)
+			_last_pos = global_position
 			return
 		wp = _nav_path[0]
 
-	var move_dir := Vector3(wp.x - global_position.x, 0.0, wp.z - global_position.z)
-	if move_dir.length_squared() > 0.001:
-		move_dir = move_dir.normalized()
+	var raw_dir := Vector3(wp.x - global_position.x, 0.0, wp.z - global_position.z)
+	if raw_dir.length_squared() > 0.001:
+		raw_dir = raw_dir.normalized()
 
-	_look_smoothly_toward(wp + Vector3(0.0, 1.45, 0.0), delta * 6.5)
+	var move_dir := _steer_around_obstacles(raw_dir)
+	var look_pt := global_position + move_dir * 3.5 + Vector3(0.0, 1.45, 0.0)
+	_look_smoothly_toward(look_pt, delta * 7.0)
 
-	# Stuck detection -> jump or repath!
+	# True stuck detection (< 1.1 m/s actual progress while trying to walk):
+	# Single jump ONLY over waist-high crates (clear at head height), otherwise reroute around wall!
 	var want_jump := false
 	if not RoundManager.is_movement_frozen():
-		if global_position.distance_to(_last_pos) < 0.12 * delta * 60.0:
+		var moved_dist := Vector2(global_position.x - _last_pos.x, global_position.z - _last_pos.z).length()
+		if moved_dist < 1.1 * delta:
 			_stuck_timer += delta
-			if _stuck_timer > 0.45:
-				want_jump = true
-			if _stuck_timer > 1.35:
+			if _stuck_timer > 0.35 and _jump_cooldown <= 0.0 and is_on_floor():
+				if _is_jumpable_ledge(raw_dir):
+					want_jump = true
+					_jump_cooldown = 1.85
+			if _stuck_timer > 0.70:
 				_stuck_timer = 0.0
-				_nav_path.clear()
-				_has_goal = false
+				_avoid_side = -_avoid_side
+				if _nav_path.size() > 1:
+					_nav_path.remove_at(0)
+				else:
+					_nav_path.clear()
+					_has_goal = false
 		else:
-			_stuck_timer = 0.0
+			_stuck_timer = maxf(0.0, _stuck_timer - delta * 2.0)
 		_last_pos = global_position
 
 	apply_goldsrc_movement(move_dir, want_jump, false, false, delta)
+
+
+func _steer_around_obstacles(desired_dir: Vector3) -> Vector3:
+	if desired_dir.length_squared() < 0.001 or not is_inside_tree() or not get_world_3d():
+		return desired_dir
+
+	var steer := desired_dir
+	var space := get_world_3d().direct_space_state
+	var origin := global_position + Vector3(0.0, 0.95, 0.0)
+
+	# 3-whisker wall feelers (center, left -36 deg, right +36 deg)
+	var q_mid := PhysicsRayQueryParameters3D.create(origin, origin + desired_dir * 1.25)
+	q_mid.collision_mask = 1
+	var hit_mid := space.intersect_ray(q_mid)
+	if not hit_mid.is_empty():
+		var left_dir := desired_dir.rotated(Vector3.UP, deg_to_rad(42.0))
+		var right_dir := desired_dir.rotated(Vector3.UP, deg_to_rad(-42.0))
+		var q_l := PhysicsRayQueryParameters3D.create(origin, origin + left_dir * 1.55)
+		q_l.collision_mask = 1
+		var q_r := PhysicsRayQueryParameters3D.create(origin, origin + right_dir * 1.55)
+		q_r.collision_mask = 1
+		var l_clear := space.intersect_ray(q_l).is_empty()
+		var r_clear := space.intersect_ray(q_r).is_empty()
+		if l_clear and not r_clear:
+			steer = left_dir
+		elif r_clear and not l_clear:
+			steer = right_dir
+		else:
+			var nrm := hit_mid["normal"] as Vector3
+			nrm.y = 0.0
+			var slide := (desired_dir - nrm * desired_dir.dot(nrm))
+			if slide.length_squared() > 0.04:
+				steer = slide.normalized()
+			else:
+				steer = desired_dir.rotated(Vector3.UP, deg_to_rad(65.0 * _avoid_side))
+
+	# Gentle separation from nearby alive actors so Bots never bunch up in doorways
+	for a in RoundManager.actors:
+		if not is_instance_valid(a) or a == self or not bool(a.get("is_alive")):
+			continue
+		var a_node := a as Node3D
+		if a_node == null:
+			continue
+		var diff := global_position - a_node.global_position
+		diff.y = 0.0
+		var dsq := diff.length_squared()
+		if dsq > 0.0001 and dsq < 1.15:
+			steer += diff.normalized() * (0.65 * (1.15 - sqrt(dsq)))
+
+	steer.y = 0.0
+	return steer.normalized() if steer.length_squared() > 0.001 else desired_dir
+
+
+func _is_jumpable_ledge(fwd_dir: Vector3) -> bool:
+	if fwd_dir.length_squared() < 0.001 or not is_inside_tree() or not get_world_3d():
+		return false
+	var space := get_world_3d().direct_space_state
+	var low_from := global_position + Vector3(0.0, 0.68, 0.0)
+	var high_from := global_position + Vector3(0.0, 1.68, 0.0)
+	var q_low := PhysicsRayQueryParameters3D.create(low_from, low_from + fwd_dir * 1.05)
+	q_low.collision_mask = 1
+	var q_high := PhysicsRayQueryParameters3D.create(high_from, high_from + fwd_dir * 1.15)
+	q_high.collision_mask = 1
+	return (not space.intersect_ray(q_low).is_empty()) and space.intersect_ray(q_high).is_empty()
 
 
 func _look_smoothly_toward(world_pt: Vector3, weight: float) -> void:
