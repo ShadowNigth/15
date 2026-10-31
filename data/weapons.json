@@ -1,0 +1,3836 @@
+{
+  "weapons": {
+    "knife": {
+      "id": "knife",
+      "cls": "CKnife",
+      "name": "Knife",
+      "slot": 3,
+      "buy_cat": 0,
+      "buy_num": 0,
+      "team": "ANY",
+      "price": 0,
+      "clip_size": -1,
+      "max_ammo": 0,
+      "ammo_type": "none",
+      "damage": 20,
+      "alt_damage": 65,
+      "backstab_damage": 195,
+      "armor_ratio": 1.7,
+      "cycle_time": 0.4,
+      "alt_cycle_time": 1.1,
+      "range": 48.0,
+      "alt_range": 32.0,
+      "range_modifier": 1.0,
+      "penetration": 0,
+      "reload_time": 0.0,
+      "automatic": true,
+      "recoil_up": 0.0,
+      "recoil_lat": 0.0,
+      "spread_base": 0.0,
+      "spread_move": 0.0,
+      "v_model": "v_knife",
+      "w_model": "w_knife",
+      "p_model": "p_knife",
+      "vgui": "",
+      "fire_sounds": [
+        "weapons/knife_slash1.wav",
+        "weapons/knife_slash2.wav"
+      ],
+      "hit_sounds": [
+        "weapons/knife_hit1.wav",
+        "weapons/knife_hit2.wav",
+        "weapons/knife_hit3.wav"
+      ],
+      "wall_sound": "weapons/knife_hitwall1.wav",
+      "stab_sound": "weapons/knife_stab.wav",
+      "deploy_sound": "weapons/knife_deploy1.wav",
+      "max_speed": 260.0,
+      "zoomed_speed": 260.0,
+      "description": "",
+      "hud": {
+        "weapon_320": {
+          "sprite": "320hud1",
+          "rect": [
+            0,
+            0,
+            80,
+            20
+          ]
+        },
+        "weapon_s_320": {
+          "sprite": "320hud1",
+          "rect": [
+            0,
+            20,
+            80,
+            20
+          ]
+        },
+        "ammo_320": {
+          "sprite": "320hud2",
+          "rect": [
+            0,
+            16,
+            18,
+            18
+          ]
+        },
+        "crosshair_320": {
+          "sprite": "crosshairs",
+          "rect": [
+            24,
+            0,
+            24,
+            24
+          ]
+        },
+        "autoaim_320": {
+          "sprite": "crosshairs",
+          "rect": [
+            0,
+            72,
+            24,
+            24
+          ]
+        },
+        "weapon_640": {
+          "sprite": "640hud10",
+          "rect": [
+            0,
+            135,
+            170,
+            45
+          ]
+        },
+        "weapon_s_640": {
+          "sprite": "640hud11",
+          "rect": [
+            0,
+            135,
+            170,
+            45
+          ]
+        },
+        "ammo_640": {
+          "sprite": "640hud7",
+          "rect": [
+            0,
+            72,
+            24,
+            24
+          ]
+        },
+        "crosshair_640": {
+          "sprite": "crosshairs",
+          "rect": [
+            24,
+            0,
+            24,
+            24
+          ]
+        },
+        "autoaim_640": {
+          "sprite": "crosshairs",
+          "rect": [
+            0,
+            72,
+            24,
+            24
+          ]
+        }
+      }
+    },
+    "usp": {
+      "id": "usp",
+      "cls": "CUSP",
+      "name": "H&K USP .45 Tactical",
+      "slot": 2,
+      "buy_cat": 1,
+      "buy_num": 1,
+      "team": "ANY",
+      "price": 500,
+      "clip_size": 12,
+      "max_ammo": 100,
+      "ammo_type": "45acp",
+      "damage": 34,
+      "silenced_damage": 30,
+      "armor_ratio": 1.0,
+      "cycle_time": 0.15,
+      "range": 4096.0,
+      "range_modifier": 0.79,
+      "penetration": 1,
+      "reload_time": 2.7,
+      "automatic": false,
+      "silencer": true,
+      "recoil_up": 2.0,
+      "recoil_lat": 0.4,
+      "spread_base": 0.01,
+      "spread_move": 0.08,
+      "v_model": "v_usp",
+      "w_model": "w_usp",
+      "p_model": "p_usp",
+      "vgui": "640_usp",
+      "fire_sounds": [
+        "weapons/usp_unsil-1.wav"
+      ],
+      "silenced_sounds": [
+        "weapons/usp1.wav",
+        "weapons/usp2.wav"
+      ],
+      "reload_sound": "weapons/usp_clipin.wav",
+      "deploy_sound": "weapons/usp_sliderelease.wav",
+      "max_speed": 250.0,
+      "zoomed_speed": 250.0,
+      "description": "Price\t\t\t: $500\nCountry of Origin\t: Germany\nCalibre\t\t: .45 ACP\nClip Capacity\t: 12 rounds\nRate of Fire\t: N/A\nWeight(EMPTY)\t: 1 kg.\nProjectile Weight\t: 15.2 grams\nMuzzle Velocity\t: 886 feet/second\nMuzzle Energy\t: 553 joules",
+      "hud": {
+        "weapon_320": {
+          "sprite": "320hud1",
+          "rect": [
+            0,
+            40,
+            80,
+            20
+          ]
+        },
+        "weapon_s_320": {
+          "sprite": "320hud1",
+          "rect": [
+            0,
+            60,
+            80,
+            20
+          ]
+        },
+        "ammo_320": {
+          "sprite": "640hud7",
+          "rect": [
+            96,
+            72,
+            24,
+            24
+          ]
+        },
+        "crosshair_320": {
+          "sprite": "crosshairs",
+          "rect": [
+            24,
+            0,
+            24,
+            24
+          ]
+        },
+        "autoaim_320": {
+          "sprite": "crosshairs",
+          "rect": [
+            0,
+            72,
+            24,
+            24
+          ]
+        },
+        "weapon_640": {
+          "sprite": "640hud1",
+          "rect": [
+            0,
+            90,
+            170,
+            45
+          ]
+        },
+        "weapon_s_640": {
+          "sprite": "640hud4",
+          "rect": [
+            0,
+            90,
+            170,
+            45
+          ]
+        },
+        "ammo_640": {
+          "sprite": "640hud7",
+          "rect": [
+            96,
+            72,
+            24,
+            24
+          ]
+        },
+        "crosshair_640": {
+          "sprite": "crosshairs",
+          "rect": [
+            24,
+            0,
+            24,
+            24
+          ]
+        },
+        "autoaim_640": {
+          "sprite": "crosshairs",
+          "rect": [
+            0,
+            72,
+            24,
+            24
+          ]
+        }
+      }
+    },
+    "glock18": {
+      "id": "glock18",
+      "cls": "CGLOCK18",
+      "name": "Glock 18C Select Fire",
+      "slot": 2,
+      "buy_cat": 1,
+      "buy_num": 2,
+      "team": "ANY",
+      "price": 400,
+      "clip_size": 20,
+      "max_ammo": 120,
+      "ammo_type": "9mm",
+      "damage": 25,
+      "armor_ratio": 1.05,
+      "cycle_time": 0.15,
+      "range": 4096.0,
+      "range_modifier": 0.75,
+      "penetration": 1,
+      "reload_time": 2.2,
+      "automatic": false,
+      "burst": true,
+      "recoil_up": 1.6,
+      "recoil_lat": 0.35,
+      "spread_base": 0.012,
+      "spread_move": 0.07,
+      "v_model": "v_glock18",
+      "w_model": "w_glock18",
+      "p_model": "p_glock18",
+      "vgui": "640_glock18",
+      "fire_sounds": [
+        "weapons/glock18-2.wav"
+      ],
+      "burst_sound": "weapons/glock18-1.wav",
+      "reload_sound": "weapons/clipin1.wav",
+      "deploy_sound": "weapons/sliderelease1.wav",
+      "max_speed": 250.0,
+      "zoomed_speed": 250.0,
+      "description": "Price\t\t\t: $400\nCountry of Origin\t: Austria\nCalibre\t\t: 9mm Parabellum\nClip Capacity\t: 20 rounds\nRate of Fire\t: N/A\nWeight(LOADED)\t: 0.9 kg.\nProjectile Weight\t: 8 grams\nMuzzle Velocity\t: 1132 feet/second\nMuzzle Energy\t: 475 joules",
+      "hud": {
+        "weapon_320": {
+          "sprite": "320hud2",
+          "rect": [
+            0,
+            168,
+            80,
+            20
+          ]
+        },
+        "weapon_s_320": {
+          "sprite": "320hud2",
+          "rect": [
+            0,
+            188,
+            80,
+            20
+          ]
+        },
+        "ammo_320": {
+          "sprite": "640hud7",
+          "rect": [
+            48,
+            72,
+            24,
+            24
+          ]
+        },
+        "crosshair_320": {
+          "sprite": "crosshairs",
+          "rect": [
+            24,
+            0,
+            24,
+            24
+          ]
+        },
+        "autoaim_320": {
+          "sprite": "crosshairs",
+          "rect": [
+            0,
+            72,
+            24,
+            24
+          ]
+        },
+        "weapon_640": {
+          "sprite": "640hud1",
+          "rect": [
+            0,
+            45,
+            170,
+            45
+          ]
+        },
+        "weapon_s_640": {
+          "sprite": "640hud4",
+          "rect": [
+            0,
+            45,
+            170,
+            45
+          ]
+        },
+        "ammo_640": {
+          "sprite": "640hud7",
+          "rect": [
+            48,
+            72,
+            24,
+            24
+          ]
+        },
+        "crosshair_640": {
+          "sprite": "crosshairs",
+          "rect": [
+            24,
+            0,
+            24,
+            24
+          ]
+        },
+        "autoaim_640": {
+          "sprite": "crosshairs",
+          "rect": [
+            0,
+            72,
+            24,
+            24
+          ]
+        }
+      }
+    },
+    "deagle": {
+      "id": "deagle",
+      "cls": "CDEAGLE",
+      "name": "Desert Eagle .50 AE",
+      "slot": 2,
+      "buy_cat": 1,
+      "buy_num": 3,
+      "team": "ANY",
+      "price": 650,
+      "clip_size": 7,
+      "max_ammo": 35,
+      "ammo_type": "50ae",
+      "damage": 54,
+      "armor_ratio": 1.5,
+      "cycle_time": 0.225,
+      "range": 4096.0,
+      "range_modifier": 0.81,
+      "penetration": 2,
+      "reload_time": 2.2,
+      "automatic": false,
+      "recoil_up": 4.2,
+      "recoil_lat": 0.8,
+      "spread_base": 0.008,
+      "spread_move": 0.11,
+      "v_model": "v_deagle",
+      "w_model": "w_deagle",
+      "p_model": "p_deagle",
+      "vgui": "640_deagle",
+      "fire_sounds": [
+        "weapons/deagle-1.wav",
+        "weapons/deagle-2.wav"
+      ],
+      "reload_sound": "weapons/de_clipin.wav",
+      "deploy_sound": "weapons/de_deploy.wav",
+      "max_speed": 250.0,
+      "zoomed_speed": 250.0,
+      "description": "Price\t\t\t: $650\nCountry of Origin\t: Israel\nCalibre\t\t: .50 Action Express\nClip Capacity(CS)\t: 7\nRate of Fire\t: N/A\nWeight(EMPTY)\t: 1.8 kg\nProjectile Weight\t: 19.4 grams\nMuzzle Velocity\t: 1380 feet/second\nMuzzle Energy\t: 1650 joules",
+      "hud": {
+        "weapon_320": {
+          "sprite": "320hud2",
+          "rect": [
+            0,
+            128,
+            80,
+            20
+          ]
+        },
+        "weapon_s_320": {
+          "sprite": "320hud2",
+          "rect": [
+            0,
+            148,
+            80,
+            20
+          ]
+        },
+        "ammo_320": {
+          "sprite": "640hud7",
+          "rect": [
+            24,
+            72,
+            24,
+            24
+          ]
+        },
+        "crosshair_320": {
+          "sprite": "crosshairs",
+          "rect": [
+            24,
+            0,
+            24,
+            24
+          ]
+        },
+        "autoaim_320": {
+          "sprite": "crosshairs",
+          "rect": [
+            0,
+            72,
+            24,
+            24
+          ]
+        },
+        "weapon_640": {
+          "sprite": "640hud10",
+          "rect": [
+            0,
+            90,
+            170,
+            45
+          ]
+        },
+        "weapon_s_640": {
+          "sprite": "640hud11",
+          "rect": [
+            0,
+            90,
+            170,
+            45
+          ]
+        },
+        "ammo_640": {
+          "sprite": "640hud7",
+          "rect": [
+            24,
+            72,
+            24,
+            24
+          ]
+        },
+        "crosshair_640": {
+          "sprite": "crosshairs",
+          "rect": [
+            24,
+            0,
+            24,
+            24
+          ]
+        },
+        "autoaim_640": {
+          "sprite": "crosshairs",
+          "rect": [
+            0,
+            72,
+            24,
+            24
+          ]
+        }
+      }
+    },
+    "p228": {
+      "id": "p228",
+      "cls": "CP228",
+      "name": "SIG P228",
+      "slot": 2,
+      "buy_cat": 1,
+      "buy_num": 4,
+      "team": "ANY",
+      "price": 600,
+      "clip_size": 13,
+      "max_ammo": 52,
+      "ammo_type": "357sig",
+      "damage": 32,
+      "armor_ratio": 1.25,
+      "cycle_time": 0.15,
+      "range": 4096.0,
+      "range_modifier": 0.8,
+      "penetration": 1,
+      "reload_time": 2.7,
+      "automatic": false,
+      "recoil_up": 2.0,
+      "recoil_lat": 0.45,
+      "spread_base": 0.011,
+      "spread_move": 0.08,
+      "v_model": "v_p228",
+      "w_model": "w_p228",
+      "p_model": "p_p228",
+      "vgui": "640_p228",
+      "fire_sounds": [
+        "weapons/p228-1.wav"
+      ],
+      "reload_sound": "weapons/p228_clipin.wav",
+      "deploy_sound": "weapons/p228_sliderelease.wav",
+      "max_speed": 250.0,
+      "zoomed_speed": 250.0,
+      "description": "Price\t\t\t: $600\nCountry of Origin\t: Switzerland/Germany\nCalibre\t\t: .357 SIG\nClip Capacity(CS)\t: 13 rounds\nRate of Fire\t: N/A\nWeight(EMPTY)\t: 1.03 kg.\nProjectile Weight\t: 8.1 grams\nMuzzle Velocity\t: 1400 feet/second\nMuzzle Energy\t: 600 joules",
+      "hud": {
+        "weapon_320": {
+          "sprite": "320hud2",
+          "rect": [
+            0,
+            208,
+            80,
+            20
+          ]
+        },
+        "weapon_s_320": {
+          "sprite": "320hud2",
+          "rect": [
+            0,
+            228,
+            80,
+            20
+          ]
+        },
+        "ammo_320": {
+          "sprite": "640hud7",
+          "rect": [
+            120,
+            72,
+            24,
+            24
+          ]
+        },
+        "crosshair_320": {
+          "sprite": "crosshairs",
+          "rect": [
+            24,
+            0,
+            24,
+            24
+          ]
+        },
+        "autoaim_320": {
+          "sprite": "crosshairs",
+          "rect": [
+            0,
+            72,
+            24,
+            24
+          ]
+        },
+        "weapon_640": {
+          "sprite": "640hud12",
+          "rect": [
+            0,
+            90,
+            170,
+            45
+          ]
+        },
+        "weapon_s_640": {
+          "sprite": "640hud13",
+          "rect": [
+            0,
+            90,
+            170,
+            45
+          ]
+        },
+        "ammo_640": {
+          "sprite": "640hud7",
+          "rect": [
+            120,
+            72,
+            24,
+            24
+          ]
+        },
+        "crosshair_640": {
+          "sprite": "crosshairs",
+          "rect": [
+            24,
+            0,
+            24,
+            24
+          ]
+        },
+        "autoaim_640": {
+          "sprite": "crosshairs",
+          "rect": [
+            0,
+            72,
+            24,
+            24
+          ]
+        }
+      }
+    },
+    "elite": {
+      "id": "elite",
+      "cls": "CELITE",
+      "name": "Dual Beretta 96G Elite",
+      "slot": 2,
+      "buy_cat": 1,
+      "buy_num": 5,
+      "team": "T",
+      "price": 1000,
+      "clip_size": 30,
+      "max_ammo": 120,
+      "ammo_type": "9mm",
+      "damage": 36,
+      "armor_ratio": 1.05,
+      "cycle_time": 0.12,
+      "range": 4096.0,
+      "range_modifier": 0.75,
+      "penetration": 1,
+      "reload_time": 4.5,
+      "automatic": false,
+      "recoil_up": 2.1,
+      "recoil_lat": 0.6,
+      "spread_base": 0.014,
+      "spread_move": 0.09,
+      "v_model": "v_elite",
+      "w_model": "w_elite",
+      "p_model": "p_elite",
+      "vgui": "640_elite",
+      "fire_sounds": [
+        "weapons/elite_fire.wav"
+      ],
+      "reload_sound": "weapons/elite_rightclipin.wav",
+      "deploy_sound": "weapons/elite_deploy.wav",
+      "max_speed": 250.0,
+      "zoomed_speed": 250.0,
+      "description": "Price\t\t\t: $1000\nCountry of Origin\t: Italy\nCalibre\t\t: 9mm Parabellum\nClip Capacity\t: 15 rounds\nRate of Fire\t: N/A\nWeight(LOADED)\t: 1.15 kg.\nProjectile Weight\t: 8 grams\nMuzzle Velocity\t: 1280 feet/second\nMuzzle Energy\t: 606 joules",
+      "hud": {
+        "weapon_320": {
+          "sprite": "320hud2",
+          "rect": [
+            80,
+            208,
+            80,
+            20
+          ]
+        },
+        "weapon_s_320": {
+          "sprite": "320hud2",
+          "rect": [
+            80,
+            228,
+            80,
+            20
+          ]
+        },
+        "ammo_320": {
+          "sprite": "640hud7",
+          "rect": [
+            48,
+            72,
+            24,
+            24
+          ]
+        },
+        "crosshair_320": {
+          "sprite": "crosshairs",
+          "rect": [
+            24,
+            0,
+            24,
+            24
+          ]
+        },
+        "autoaim_320": {
+          "sprite": "crosshairs",
+          "rect": [
+            0,
+            72,
+            24,
+            24
+          ]
+        },
+        "weapon_640": {
+          "sprite": "640hud14",
+          "rect": [
+            0,
+            90,
+            170,
+            45
+          ]
+        },
+        "weapon_s_640": {
+          "sprite": "640hud15",
+          "rect": [
+            0,
+            90,
+            170,
+            45
+          ]
+        },
+        "ammo_640": {
+          "sprite": "640hud7",
+          "rect": [
+            48,
+            72,
+            24,
+            24
+          ]
+        },
+        "crosshair_640": {
+          "sprite": "crosshairs",
+          "rect": [
+            24,
+            0,
+            24,
+            24
+          ]
+        },
+        "autoaim_640": {
+          "sprite": "crosshairs",
+          "rect": [
+            0,
+            72,
+            24,
+            24
+          ]
+        }
+      }
+    },
+    "fiveseven": {
+      "id": "fiveseven",
+      "cls": "CFiveSeven",
+      "name": "FN Five-SeveN",
+      "slot": 2,
+      "buy_cat": 1,
+      "buy_num": 6,
+      "team": "CT",
+      "price": 750,
+      "clip_size": 20,
+      "max_ammo": 100,
+      "ammo_type": "57mm",
+      "damage": 25,
+      "armor_ratio": 1.5,
+      "cycle_time": 0.15,
+      "range": 4096.0,
+      "range_modifier": 0.885,
+      "penetration": 1,
+      "reload_time": 2.7,
+      "automatic": false,
+      "recoil_up": 1.8,
+      "recoil_lat": 0.4,
+      "spread_base": 0.01,
+      "spread_move": 0.075,
+      "v_model": "v_fiveseven",
+      "w_model": "w_fiveseven",
+      "p_model": "p_fiveseven",
+      "vgui": "640_fiveseven",
+      "fire_sounds": [
+        "weapons/fiveseven-1.wav"
+      ],
+      "reload_sound": "weapons/fiveseven_clipin.wav",
+      "deploy_sound": "weapons/fiveseven_sliderelease.wav",
+      "max_speed": 250.0,
+      "zoomed_speed": 250.0,
+      "description": "Price\t\t\t: $750\nCountry of Origin\t: Belgium\nCalibre\t\t: 5.7 x 28mm\nClip Capacity\t: 20 rounds\nRate of Fire\t: N/A\nWeight(LOADED)\t: 0.618 kg.\nProjectile Weight\t: 2 grams\nMuzzle Velocity\t: 2345 feet/second\nMuzzle Energy\t: 465 joules",
+      "hud": {
+        "weapon_320": {
+          "sprite": "320hud2",
+          "rect": [
+            160,
+            128,
+            80,
+            20
+          ]
+        },
+        "weapon_s_320": {
+          "sprite": "320hud2",
+          "rect": [
+            160,
+            148,
+            80,
+            20
+          ]
+        },
+        "ammo_320": {
+          "sprite": "640hud7",
+          "rect": [
+            120,
+            96,
+            24,
+            24
+          ]
+        },
+        "crosshair_320": {
+          "sprite": "crosshairs",
+          "rect": [
+            24,
+            0,
+            24,
+            24
+          ]
+        },
+        "autoaim_320": {
+          "sprite": "crosshairs",
+          "rect": [
+            0,
+            72,
+            24,
+            24
+          ]
+        },
+        "weapon_640": {
+          "sprite": "640hud14",
+          "rect": [
+            0,
+            135,
+            170,
+            45
+          ]
+        },
+        "weapon_s_640": {
+          "sprite": "640hud15",
+          "rect": [
+            0,
+            135,
+            170,
+            45
+          ]
+        },
+        "ammo_640": {
+          "sprite": "640hud7",
+          "rect": [
+            120,
+            96,
+            24,
+            24
+          ]
+        },
+        "crosshair_640": {
+          "sprite": "crosshairs",
+          "rect": [
+            24,
+            0,
+            24,
+            24
+          ]
+        },
+        "autoaim_640": {
+          "sprite": "crosshairs",
+          "rect": [
+            0,
+            72,
+            24,
+            24
+          ]
+        }
+      }
+    },
+    "m3": {
+      "id": "m3",
+      "cls": "CM3",
+      "name": "Benelli M3 Super 90",
+      "slot": 1,
+      "buy_cat": 2,
+      "buy_num": 1,
+      "team": "ANY",
+      "price": 1700,
+      "clip_size": 8,
+      "max_ammo": 32,
+      "ammo_type": "buckshot",
+      "damage": 20,
+      "pellets": 9,
+      "armor_ratio": 1.0,
+      "cycle_time": 0.875,
+      "range": 3000.0,
+      "range_modifier": 0.7,
+      "penetration": 0,
+      "reload_time": 3.2,
+      "automatic": true,
+      "shotgun_reload": true,
+      "recoil_up": 5.0,
+      "recoil_lat": 1.2,
+      "spread_base": 0.067,
+      "spread_move": 0.08,
+      "v_model": "v_m3",
+      "w_model": "w_m3",
+      "p_model": "p_m3",
+      "vgui": "640_m3",
+      "fire_sounds": [
+        "weapons/m3-1.wav"
+      ],
+      "reload_sound": "weapons/m3_insertshell.wav",
+      "deploy_sound": "weapons/m3_pump.wav",
+      "max_speed": 230.0,
+      "zoomed_speed": 230.0,
+      "description": "Price\t\t\t: $1700\nCountry of Origin\t: Italy\nCalibre\t\t: 12 gauge\nClip Capacity(CS)\t: 8 rounds\nRate of Fire\t: N/A\nWeight(EMPTY)\t: 3.5 kg\nProjectile Weight\t: 3.8 grams/pellet\nMuzzle Velocity\t: 1250 feet/second\nMuzzle Energy\t: 2429 joules",
+      "hud": {
+        "weapon_320": {
+          "sprite": "320hud1",
+          "rect": [
+            0,
+            120,
+            80,
+            20
+          ]
+        },
+        "weapon_s_320": {
+          "sprite": "320hud1",
+          "rect": [
+            0,
+            140,
+            80,
+            20
+          ]
+        },
+        "ammo_320": {
+          "sprite": "640hud7",
+          "rect": [
+            0,
+            72,
+            24,
+            24
+          ]
+        },
+        "crosshair_320": {
+          "sprite": "crosshairs",
+          "rect": [
+            24,
+            0,
+            24,
+            24
+          ]
+        },
+        "autoaim_320": {
+          "sprite": "crosshairs",
+          "rect": [
+            0,
+            72,
+            24,
+            24
+          ]
+        },
+        "weapon_640": {
+          "sprite": "640hud1",
+          "rect": [
+            0,
+            135,
+            170,
+            45
+          ]
+        },
+        "weapon_s_640": {
+          "sprite": "640hud4",
+          "rect": [
+            0,
+            135,
+            170,
+            45
+          ]
+        },
+        "ammo_640": {
+          "sprite": "640hud7",
+          "rect": [
+            0,
+            72,
+            24,
+            24
+          ]
+        },
+        "crosshair_640": {
+          "sprite": "crosshairs",
+          "rect": [
+            24,
+            0,
+            24,
+            24
+          ]
+        },
+        "autoaim_640": {
+          "sprite": "crosshairs",
+          "rect": [
+            0,
+            72,
+            24,
+            24
+          ]
+        }
+      }
+    },
+    "xm1014": {
+      "id": "xm1014",
+      "cls": "CXM1014",
+      "name": "Benelli XM1014",
+      "slot": 1,
+      "buy_cat": 2,
+      "buy_num": 2,
+      "team": "ANY",
+      "price": 3000,
+      "clip_size": 7,
+      "max_ammo": 32,
+      "ammo_type": "buckshot",
+      "damage": 20,
+      "pellets": 6,
+      "armor_ratio": 1.0,
+      "cycle_time": 0.25,
+      "range": 3000.0,
+      "range_modifier": 0.7,
+      "penetration": 0,
+      "reload_time": 2.8,
+      "automatic": true,
+      "shotgun_reload": true,
+      "recoil_up": 3.8,
+      "recoil_lat": 1.0,
+      "spread_base": 0.072,
+      "spread_move": 0.09,
+      "v_model": "v_xm1014",
+      "w_model": "w_xm1014",
+      "p_model": "p_xm1014",
+      "vgui": "640_xm1014",
+      "fire_sounds": [
+        "weapons/xm1014-1.wav"
+      ],
+      "reload_sound": "weapons/m3_insertshell.wav",
+      "deploy_sound": "weapons/m3_pump.wav",
+      "max_speed": 240.0,
+      "zoomed_speed": 240.0,
+      "description": "Price\t\t\t: $3000\nCountry of Origin\t: Italy\nCalibre\t\t: 12 gauge\nClip Capacity\t: 7 rounds\nRate of Fire(CS)\t: 400 rpm\nWeight(EMPTY)\t: 4 kg.\nProjectile Weight\t: 3.8 grams/pellet\nMuzzle Velocity\t: 1250 feet/second\nMuzzle Energy\t: 2429 joules",
+      "hud": {
+        "weapon_320": {
+          "sprite": "320hud1",
+          "rect": [
+            160,
+            160,
+            80,
+            20
+          ]
+        },
+        "weapon_s_320": {
+          "sprite": "320hud1",
+          "rect": [
+            160,
+            180,
+            80,
+            20
+          ]
+        },
+        "ammo_320": {
+          "sprite": "640hud7",
+          "rect": [
+            0,
+            72,
+            24,
+            24
+          ]
+        },
+        "crosshair_320": {
+          "sprite": "crosshairs",
+          "rect": [
+            24,
+            0,
+            24,
+            24
+          ]
+        },
+        "autoaim_320": {
+          "sprite": "crosshairs",
+          "rect": [
+            0,
+            72,
+            24,
+            24
+          ]
+        },
+        "zoom_320": {
+          "sprite": "ch_sniper",
+          "rect": [
+            0,
+            0,
+            256,
+            256
+          ]
+        },
+        "zoom_autoaim_320": {
+          "sprite": "ch_sniper",
+          "rect": [
+            0,
+            0,
+            256,
+            256
+          ]
+        },
+        "weapon_640": {
+          "sprite": "640hud12",
+          "rect": [
+            0,
+            135,
+            170,
+            45
+          ]
+        },
+        "weapon_s_640": {
+          "sprite": "640hud13",
+          "rect": [
+            0,
+            135,
+            170,
+            45
+          ]
+        },
+        "ammo_640": {
+          "sprite": "640hud7",
+          "rect": [
+            0,
+            72,
+            24,
+            24
+          ]
+        },
+        "crosshair_640": {
+          "sprite": "crosshairs",
+          "rect": [
+            24,
+            0,
+            24,
+            24
+          ]
+        },
+        "autoaim_640": {
+          "sprite": "crosshairs",
+          "rect": [
+            0,
+            72,
+            24,
+            24
+          ]
+        },
+        "zoom_640": {
+          "sprite": "ch_sniper",
+          "rect": [
+            0,
+            0,
+            256,
+            256
+          ]
+        },
+        "zoom_autoaim_640": {
+          "sprite": "ch_sniper",
+          "rect": [
+            0,
+            0,
+            256,
+            256
+          ]
+        }
+      }
+    },
+    "mp5navy": {
+      "id": "mp5navy",
+      "cls": "CMP5N",
+      "name": "H&K MP5-Navy",
+      "slot": 1,
+      "buy_cat": 3,
+      "buy_num": 1,
+      "team": "ANY",
+      "price": 1500,
+      "clip_size": 30,
+      "max_ammo": 120,
+      "ammo_type": "9mm",
+      "damage": 26,
+      "armor_ratio": 1.0,
+      "cycle_time": 0.08,
+      "range": 4096.0,
+      "range_modifier": 0.84,
+      "penetration": 1,
+      "reload_time": 2.63,
+      "automatic": true,
+      "recoil_up": 1.35,
+      "recoil_lat": 0.45,
+      "spread_base": 0.012,
+      "spread_move": 0.045,
+      "v_model": "v_mp5",
+      "w_model": "w_mp5",
+      "p_model": "p_mp5",
+      "vgui": "640_mp5",
+      "fire_sounds": [
+        "weapons/mp5-1.wav",
+        "weapons/mp5-2.wav"
+      ],
+      "reload_sound": "weapons/mp5_clipin.wav",
+      "deploy_sound": "weapons/mp5_slideback.wav",
+      "class_key": "mp5",
+      "max_speed": 250.0,
+      "zoomed_speed": 250.0,
+      "description": "Price\t\t\t: $1500\nCountry of Origin\t: Germany\nCalibre\t\t: 9mm Parabellum\nClip Capacity(CS)\t: 30 rounds\nRate of Fire\t: 800 rpm\nWeight(EMPTY)\t: 3.42 kg\nProjectile Weight\t: 8 grams\nMuzzle Velocity\t: 1312 feet/second\nMuzzle Energy\t: 637 joules",
+      "hud": {
+        "weapon_320": {
+          "sprite": "320hud1",
+          "rect": [
+            0,
+            160,
+            80,
+            20
+          ]
+        },
+        "weapon_s_320": {
+          "sprite": "320hud1",
+          "rect": [
+            0,
+            180,
+            80,
+            20
+          ]
+        },
+        "ammo_320": {
+          "sprite": "640hud7",
+          "rect": [
+            48,
+            72,
+            24,
+            24
+          ]
+        },
+        "crosshair_320": {
+          "sprite": "crosshairs",
+          "rect": [
+            24,
+            0,
+            24,
+            24
+          ]
+        },
+        "autoaim_320": {
+          "sprite": "crosshairs",
+          "rect": [
+            0,
+            72,
+            24,
+            24
+          ]
+        },
+        "weapon_640": {
+          "sprite": "640hud1",
+          "rect": [
+            0,
+            180,
+            170,
+            45
+          ]
+        },
+        "weapon_s_640": {
+          "sprite": "640hud4",
+          "rect": [
+            0,
+            180,
+            170,
+            45
+          ]
+        },
+        "ammo_640": {
+          "sprite": "640hud7",
+          "rect": [
+            48,
+            72,
+            24,
+            24
+          ]
+        },
+        "crosshair_640": {
+          "sprite": "crosshairs",
+          "rect": [
+            24,
+            0,
+            24,
+            24
+          ]
+        },
+        "autoaim_640": {
+          "sprite": "crosshairs",
+          "rect": [
+            0,
+            72,
+            24,
+            24
+          ]
+        }
+      }
+    },
+    "tmp": {
+      "id": "tmp",
+      "cls": "CTMP",
+      "name": "Steyr Tactical Machine Pistol",
+      "slot": 1,
+      "buy_cat": 3,
+      "buy_num": 2,
+      "team": "CT",
+      "price": 1250,
+      "clip_size": 30,
+      "max_ammo": 120,
+      "ammo_type": "9mm",
+      "damage": 20,
+      "armor_ratio": 1.0,
+      "cycle_time": 0.07,
+      "range": 4096.0,
+      "range_modifier": 0.85,
+      "penetration": 1,
+      "reload_time": 2.12,
+      "automatic": true,
+      "quiet": true,
+      "recoil_up": 1.15,
+      "recoil_lat": 0.4,
+      "spread_base": 0.015,
+      "spread_move": 0.04,
+      "v_model": "v_tmp",
+      "w_model": "w_tmp",
+      "p_model": "p_tmp",
+      "vgui": "640_tmp",
+      "fire_sounds": [
+        "weapons/tmp-1.wav",
+        "weapons/tmp-2.wav"
+      ],
+      "reload_sound": "weapons/clipin1.wav",
+      "deploy_sound": "weapons/slideback1.wav",
+      "max_speed": 250.0,
+      "zoomed_speed": 250.0,
+      "description": "Price\t\t\t: $1250\nCountry of Origin\t: Austria\nCalibre\t\t: 9mm Parabellum\nClip Capacity\t: 30 rounds\nRate of Fire(CS)\t: 857 rpm\nWeight(EMPTY)\t: 1.3 kg.\nProjectile Weight\t: 8 grams\nMuzzle Velocity\t: 1280 feet/second\nMuzzle Energy\t: 606 joules",
+      "hud": {
+        "weapon_320": {
+          "sprite": "320hud1",
+          "rect": [
+            80,
+            0,
+            80,
+            20
+          ]
+        },
+        "weapon_s_320": {
+          "sprite": "320hud1",
+          "rect": [
+            80,
+            20,
+            80,
+            20
+          ]
+        },
+        "ammo_320": {
+          "sprite": "640hud7",
+          "rect": [
+            48,
+            72,
+            24,
+            24
+          ]
+        },
+        "crosshair_320": {
+          "sprite": "crosshairs",
+          "rect": [
+            24,
+            0,
+            24,
+            24
+          ]
+        },
+        "autoaim_320": {
+          "sprite": "crosshairs",
+          "rect": [
+            0,
+            72,
+            24,
+            24
+          ]
+        },
+        "weapon_640": {
+          "sprite": "640hud2",
+          "rect": [
+            0,
+            0,
+            170,
+            45
+          ]
+        },
+        "weapon_s_640": {
+          "sprite": "640hud5",
+          "rect": [
+            0,
+            0,
+            170,
+            45
+          ]
+        },
+        "ammo_640": {
+          "sprite": "640hud7",
+          "rect": [
+            48,
+            72,
+            24,
+            24
+          ]
+        },
+        "crosshair_640": {
+          "sprite": "crosshairs",
+          "rect": [
+            24,
+            0,
+            24,
+            24
+          ]
+        },
+        "autoaim_640": {
+          "sprite": "crosshairs",
+          "rect": [
+            0,
+            72,
+            24,
+            24
+          ]
+        }
+      }
+    },
+    "p90": {
+      "id": "p90",
+      "cls": "CP90",
+      "name": "FN P90",
+      "slot": 1,
+      "buy_cat": 3,
+      "buy_num": 3,
+      "team": "ANY",
+      "price": 2350,
+      "clip_size": 50,
+      "max_ammo": 100,
+      "ammo_type": "57mm",
+      "damage": 21,
+      "armor_ratio": 1.5,
+      "cycle_time": 0.066,
+      "range": 4096.0,
+      "range_modifier": 0.885,
+      "penetration": 1,
+      "reload_time": 3.4,
+      "automatic": true,
+      "recoil_up": 1.3,
+      "recoil_lat": 0.5,
+      "spread_base": 0.013,
+      "spread_move": 0.05,
+      "v_model": "v_p90",
+      "w_model": "w_p90",
+      "p_model": "p_p90",
+      "vgui": "640_p90",
+      "fire_sounds": [
+        "weapons/p90-1.wav"
+      ],
+      "reload_sound": "weapons/p90_clipin.wav",
+      "deploy_sound": "weapons/p90_boltpull.wav",
+      "max_speed": 245.0,
+      "zoomed_speed": 245.0,
+      "description": "Price\t\t\t: $2350\nCountry of Origin\t: Belgium\nCalibre\t\t: .338 Lapua Magnum\nClip Capacity\t: 50 rounds\nRate of Fire\t: 900\nWeight(LOADED)\t: 3 kg.\nProjectile Weight\t: 2 grams\nMuzzle Velocity\t: 2345 feet/second\nMuzzle Energy\t: 465 joules",
+      "hud": {
+        "weapon_320": {
+          "sprite": "320hud1",
+          "rect": [
+            160,
+            120,
+            80,
+            20
+          ]
+        },
+        "weapon_s_320": {
+          "sprite": "320hud1",
+          "rect": [
+            160,
+            140,
+            80,
+            20
+          ]
+        },
+        "ammo_320": {
+          "sprite": "640hud7",
+          "rect": [
+            120,
+            96,
+            24,
+            24
+          ]
+        },
+        "crosshair_320": {
+          "sprite": "crosshairs",
+          "rect": [
+            24,
+            0,
+            24,
+            24
+          ]
+        },
+        "autoaim_320": {
+          "sprite": "crosshairs",
+          "rect": [
+            0,
+            72,
+            24,
+            24
+          ]
+        },
+        "weapon_640": {
+          "sprite": "640hud12",
+          "rect": [
+            0,
+            0,
+            170,
+            45
+          ]
+        },
+        "weapon_s_640": {
+          "sprite": "640hud13",
+          "rect": [
+            0,
+            0,
+            170,
+            45
+          ]
+        },
+        "ammo_640": {
+          "sprite": "640hud7",
+          "rect": [
+            120,
+            96,
+            24,
+            24
+          ]
+        },
+        "crosshair_640": {
+          "sprite": "crosshairs",
+          "rect": [
+            24,
+            0,
+            24,
+            24
+          ]
+        },
+        "autoaim_640": {
+          "sprite": "crosshairs",
+          "rect": [
+            0,
+            72,
+            24,
+            24
+          ]
+        }
+      }
+    },
+    "mac10": {
+      "id": "mac10",
+      "cls": "CMAC10",
+      "name": "Ingram MAC-10",
+      "slot": 1,
+      "buy_cat": 3,
+      "buy_num": 4,
+      "team": "T",
+      "price": 1400,
+      "clip_size": 30,
+      "max_ammo": 100,
+      "ammo_type": "45acp",
+      "damage": 29,
+      "armor_ratio": 0.95,
+      "cycle_time": 0.07,
+      "range": 4096.0,
+      "range_modifier": 0.82,
+      "penetration": 1,
+      "reload_time": 3.15,
+      "automatic": true,
+      "recoil_up": 1.55,
+      "recoil_lat": 0.65,
+      "spread_base": 0.018,
+      "spread_move": 0.05,
+      "v_model": "v_mac10",
+      "w_model": "w_mac10",
+      "p_model": "p_mac10",
+      "vgui": "640_mac10",
+      "fire_sounds": [
+        "weapons/mac10-1.wav"
+      ],
+      "reload_sound": "weapons/mac10_clipin.wav",
+      "deploy_sound": "weapons/mac10_boltpull.wav",
+      "max_speed": 250.0,
+      "zoomed_speed": 250.0,
+      "description": "Price\t\t\t: $1400\nCountry of Origin\t: United States of America\nCalibre\t\t: .45 ACP\nClip Capacity\t: 30 rounds\nRate of Fire(CS)\t: 857 rpm\nWeight(EMPTY)\t: 3.82 kg.\nProjectile Weight\t: 15.2 grams\nMuzzle Velocity\t: 919 feet/second\nMuzzle Energy\t: 584 joules",
+      "hud": {
+        "weapon_320": {
+          "sprite": "320hud2",
+          "rect": [
+            80,
+            128,
+            80,
+            20
+          ]
+        },
+        "weapon_s_320": {
+          "sprite": "320hud2",
+          "rect": [
+            80,
+            148,
+            80,
+            20
+          ]
+        },
+        "ammo_320": {
+          "sprite": "640hud7",
+          "rect": [
+            96,
+            72,
+            24,
+            24
+          ]
+        },
+        "crosshair_320": {
+          "sprite": "crosshairs",
+          "rect": [
+            24,
+            0,
+            24,
+            24
+          ]
+        },
+        "autoaim_320": {
+          "sprite": "crosshairs",
+          "rect": [
+            0,
+            72,
+            24,
+            24
+          ]
+        },
+        "weapon_640": {
+          "sprite": "640hud14",
+          "rect": [
+            0,
+            0,
+            170,
+            45
+          ]
+        },
+        "weapon_s_640": {
+          "sprite": "640hud15",
+          "rect": [
+            0,
+            0,
+            170,
+            45
+          ]
+        },
+        "ammo_640": {
+          "sprite": "640hud7",
+          "rect": [
+            96,
+            72,
+            24,
+            24
+          ]
+        },
+        "crosshair_640": {
+          "sprite": "crosshairs",
+          "rect": [
+            24,
+            0,
+            24,
+            24
+          ]
+        },
+        "autoaim_640": {
+          "sprite": "crosshairs",
+          "rect": [
+            0,
+            72,
+            24,
+            24
+          ]
+        }
+      }
+    },
+    "ump45": {
+      "id": "ump45",
+      "cls": "CUMP45",
+      "name": "H&K UMP45",
+      "slot": 1,
+      "buy_cat": 3,
+      "buy_num": 5,
+      "team": "ANY",
+      "price": 1700,
+      "clip_size": 25,
+      "max_ammo": 100,
+      "ammo_type": "45acp",
+      "damage": 30,
+      "armor_ratio": 1.0,
+      "cycle_time": 0.105,
+      "range": 4096.0,
+      "range_modifier": 0.82,
+      "penetration": 1,
+      "reload_time": 3.5,
+      "automatic": true,
+      "recoil_up": 1.4,
+      "recoil_lat": 0.45,
+      "spread_base": 0.012,
+      "spread_move": 0.045,
+      "v_model": "v_ump45",
+      "w_model": "w_ump45",
+      "p_model": "p_ump45",
+      "vgui": "640_ump45",
+      "fire_sounds": [
+        "weapons/ump45-1.wav"
+      ],
+      "reload_sound": "weapons/ump45_clipin.wav",
+      "deploy_sound": "weapons/ump45_boltslap.wav",
+      "max_speed": 250.0,
+      "zoomed_speed": 250.0,
+      "description": "Price\t\t\t: $1700\nCountry of Origin\t: Germany\nCalibre\t\t: .45 ACP\nClip Capacity(CS)\t: 25 rounds\nRate of Fire\t: 600 rpm\nWeight(EMPTY)\t: 2.27 kg\nProjectile Weight\t: 15.2 grams\nMuzzle Velocity\t: 1005 feet/second\nMuzzle Energy\t: 625 joules",
+      "hud": {
+        "weapon_320": {
+          "sprite": "320hud2",
+          "rect": [
+            160,
+            208,
+            80,
+            20
+          ]
+        },
+        "weapon_s_320": {
+          "sprite": "320hud2",
+          "rect": [
+            160,
+            228,
+            80,
+            20
+          ]
+        },
+        "ammo_320": {
+          "sprite": "640hud7",
+          "rect": [
+            96,
+            72,
+            24,
+            24
+          ]
+        },
+        "crosshair_320": {
+          "sprite": "crosshairs",
+          "rect": [
+            24,
+            0,
+            24,
+            24
+          ]
+        },
+        "autoaim_320": {
+          "sprite": "crosshairs",
+          "rect": [
+            0,
+            72,
+            24,
+            24
+          ]
+        },
+        "weapon_640": {
+          "sprite": "640hud16",
+          "rect": [
+            0,
+            0,
+            170,
+            45
+          ]
+        },
+        "weapon_s_640": {
+          "sprite": "640hud16",
+          "rect": [
+            0,
+            0,
+            170,
+            45
+          ]
+        },
+        "ammo_640": {
+          "sprite": "640hud7",
+          "rect": [
+            96,
+            72,
+            24,
+            24
+          ]
+        },
+        "crosshair_640": {
+          "sprite": "crosshairs",
+          "rect": [
+            24,
+            0,
+            24,
+            24
+          ]
+        },
+        "autoaim_640": {
+          "sprite": "crosshairs",
+          "rect": [
+            0,
+            72,
+            24,
+            24
+          ]
+        }
+      }
+    },
+    "ak47": {
+      "id": "ak47",
+      "cls": "CAK47",
+      "name": "CV-47 (AK-47)",
+      "slot": 1,
+      "buy_cat": 4,
+      "buy_num": 1,
+      "team": "T",
+      "price": 2500,
+      "clip_size": 30,
+      "max_ammo": 90,
+      "ammo_type": "762nato",
+      "damage": 36,
+      "armor_ratio": 1.55,
+      "cycle_time": 0.0955,
+      "range": 8192.0,
+      "range_modifier": 0.98,
+      "penetration": 2,
+      "reload_time": 2.45,
+      "automatic": true,
+      "recoil_up": 2.45,
+      "recoil_lat": 0.75,
+      "spread_base": 0.006,
+      "spread_move": 0.095,
+      "v_model": "v_ak47",
+      "w_model": "w_ak47",
+      "p_model": "p_ak47",
+      "vgui": "640_ak47",
+      "fire_sounds": [
+        "weapons/ak47-1.wav",
+        "weapons/ak47-2.wav"
+      ],
+      "reload_sound": "weapons/ak47_clipin.wav",
+      "deploy_sound": "weapons/ak47_boltpull.wav",
+      "max_speed": 221.0,
+      "zoomed_speed": 221.0,
+      "description": "Price\t\t\t: $2500\nCountry of Origin\t: Russia\nCalibre\t\t: 7.62mm NATO\nClip Capacity\t: 30 rounds\nRate of Fire\t: 600 rpm\nWeight(LOADED)\t: 4.79 kg.\nProjectile Weight\t: 7.9 grams\nMuzzle Velocity\t: 2329 feet/second\nMuzzle Energy\t: 1992 joules",
+      "hud": {
+        "weapon_320": {
+          "sprite": "320hud1",
+          "rect": [
+            160,
+            80,
+            80,
+            20
+          ]
+        },
+        "weapon_s_320": {
+          "sprite": "320hud1",
+          "rect": [
+            160,
+            100,
+            80,
+            20
+          ]
+        },
+        "ammo_320": {
+          "sprite": "640hud7",
+          "rect": [
+            72,
+            72,
+            24,
+            24
+          ]
+        },
+        "crosshair_320": {
+          "sprite": "crosshairs",
+          "rect": [
+            24,
+            0,
+            24,
+            24
+          ]
+        },
+        "autoaim_320": {
+          "sprite": "crosshairs",
+          "rect": [
+            0,
+            72,
+            24,
+            24
+          ]
+        },
+        "weapon_640": {
+          "sprite": "640hud10",
+          "rect": [
+            0,
+            0,
+            170,
+            45
+          ]
+        },
+        "weapon_s_640": {
+          "sprite": "640hud11",
+          "rect": [
+            0,
+            0,
+            170,
+            45
+          ]
+        },
+        "ammo_640": {
+          "sprite": "640hud7",
+          "rect": [
+            72,
+            72,
+            24,
+            24
+          ]
+        },
+        "crosshair_640": {
+          "sprite": "crosshairs",
+          "rect": [
+            24,
+            0,
+            24,
+            24
+          ]
+        },
+        "autoaim_640": {
+          "sprite": "crosshairs",
+          "rect": [
+            0,
+            72,
+            24,
+            24
+          ]
+        }
+      }
+    },
+    "sg552": {
+      "id": "sg552",
+      "cls": "CSG552",
+      "name": "SIG SG-552 Commando",
+      "slot": 1,
+      "buy_cat": 4,
+      "buy_num": 2,
+      "team": "T",
+      "price": 3500,
+      "clip_size": 30,
+      "max_ammo": 90,
+      "ammo_type": "556nato",
+      "damage": 33,
+      "armor_ratio": 1.4,
+      "cycle_time": 0.0825,
+      "zoomed_cycle_time": 0.135,
+      "range": 8192.0,
+      "range_modifier": 0.955,
+      "penetration": 2,
+      "reload_time": 3.0,
+      "automatic": true,
+      "zoom_fovs": [
+        55
+      ],
+      "recoil_up": 2.0,
+      "recoil_lat": 0.65,
+      "spread_base": 0.006,
+      "spread_move": 0.085,
+      "v_model": "v_sg552",
+      "w_model": "w_sg552",
+      "p_model": "p_sg552",
+      "vgui": "640_sg552",
+      "fire_sounds": [
+        "weapons/sg552-1.wav",
+        "weapons/sg552-2.wav"
+      ],
+      "reload_sound": "weapons/sg552_clipin.wav",
+      "deploy_sound": "weapons/sg552_boltpull.wav",
+      "max_speed": 235.0,
+      "zoomed_speed": 200.0,
+      "description": "Price\t\t\t: $3500\nCountry of Origin\t: Switzerland\nCalibre\t\t: 5.56mm NATO\nClip Capacity\t: 30 rounds\nRate of Fire(CS)\t: 727 rpm\nWeight(EMPTY)\t: 3.1 kg.\nProjectile Weight\t: 4 grams\nMuzzle Velocity\t: 2900 feet/second\nMuzzle Energy\t: 1570 joules",
+      "hud": {
+        "weapon_320": {
+          "sprite": "320hud1",
+          "rect": [
+            80,
+            80,
+            80,
+            20
+          ]
+        },
+        "weapon_s_320": {
+          "sprite": "320hud1",
+          "rect": [
+            80,
+            100,
+            80,
+            20
+          ]
+        },
+        "ammo_320": {
+          "sprite": "640hud7",
+          "rect": [
+            0,
+            96,
+            24,
+            24
+          ]
+        },
+        "crosshair_320": {
+          "sprite": "crosshairs",
+          "rect": [
+            24,
+            0,
+            24,
+            24
+          ]
+        },
+        "autoaim_320": {
+          "sprite": "crosshairs",
+          "rect": [
+            0,
+            72,
+            24,
+            24
+          ]
+        },
+        "weapon_640": {
+          "sprite": "640hud10",
+          "rect": [
+            0,
+            45,
+            170,
+            45
+          ]
+        },
+        "weapon_s_640": {
+          "sprite": "640hud11",
+          "rect": [
+            0,
+            45,
+            170,
+            45
+          ]
+        },
+        "ammo_640": {
+          "sprite": "640hud7",
+          "rect": [
+            0,
+            96,
+            24,
+            24
+          ]
+        },
+        "crosshair_640": {
+          "sprite": "crosshairs",
+          "rect": [
+            24,
+            0,
+            24,
+            24
+          ]
+        },
+        "autoaim_640": {
+          "sprite": "crosshairs",
+          "rect": [
+            0,
+            72,
+            24,
+            24
+          ]
+        }
+      }
+    },
+    "m4a1": {
+      "id": "m4a1",
+      "cls": "CM4A1",
+      "name": "Colt M4A1 Carbine",
+      "slot": 1,
+      "buy_cat": 4,
+      "buy_num": 3,
+      "team": "CT",
+      "price": 3100,
+      "clip_size": 30,
+      "max_ammo": 90,
+      "ammo_type": "556nato",
+      "damage": 32,
+      "silenced_damage": 33,
+      "armor_ratio": 1.4,
+      "cycle_time": 0.0875,
+      "range": 8192.0,
+      "range_modifier": 0.97,
+      "penetration": 2,
+      "reload_time": 3.05,
+      "automatic": true,
+      "silencer": true,
+      "recoil_up": 1.85,
+      "recoil_lat": 0.55,
+      "spread_base": 0.005,
+      "spread_move": 0.085,
+      "v_model": "v_m4a1",
+      "w_model": "w_m4a1",
+      "p_model": "p_m4a1",
+      "vgui": "640_m4a1",
+      "fire_sounds": [
+        "weapons/m4a1_unsil-1.wav",
+        "weapons/m4a1_unsil-2.wav"
+      ],
+      "silenced_sounds": [
+        "weapons/m4a1-1.wav"
+      ],
+      "reload_sound": "weapons/m4a1_clipin.wav",
+      "deploy_sound": "weapons/m4a1_deploy.wav",
+      "max_speed": 230.0,
+      "zoomed_speed": 230.0,
+      "description": "Price\t\t\t: $3100\nCountry of Origin\t: United States of America\nCalibre\t\t: 5.56mm NATO\nClip Capacity(CS)\t: 30 rounds\nRate of Fire(CS)\t: 685 rpm\nWeight(EMPTY)\t: 3.22 kg\nProjectile Weight\t: 4 grams\nMuzzle Velocity\t: 2900 feet/second\nMuzzle Energy\t: 1570 joules",
+      "hud": {
+        "weapon_320": {
+          "sprite": "320hud1",
+          "rect": [
+            80,
+            40,
+            80,
+            20
+          ]
+        },
+        "weapon_s_320": {
+          "sprite": "320hud1",
+          "rect": [
+            80,
+            60,
+            80,
+            20
+          ]
+        },
+        "ammo_320": {
+          "sprite": "640hud7",
+          "rect": [
+            0,
+            96,
+            24,
+            24
+          ]
+        },
+        "crosshair_320": {
+          "sprite": "crosshairs",
+          "rect": [
+            24,
+            0,
+            24,
+            24
+          ]
+        },
+        "autoaim_320": {
+          "sprite": "crosshairs",
+          "rect": [
+            0,
+            72,
+            24,
+            24
+          ]
+        },
+        "weapon_640": {
+          "sprite": "640hud2",
+          "rect": [
+            0,
+            45,
+            170,
+            45
+          ]
+        },
+        "weapon_s_640": {
+          "sprite": "640hud5",
+          "rect": [
+            0,
+            45,
+            170,
+            45
+          ]
+        },
+        "ammo_640": {
+          "sprite": "640hud7",
+          "rect": [
+            0,
+            96,
+            24,
+            24
+          ]
+        },
+        "crosshair_640": {
+          "sprite": "crosshairs",
+          "rect": [
+            24,
+            0,
+            24,
+            24
+          ]
+        },
+        "autoaim_640": {
+          "sprite": "crosshairs",
+          "rect": [
+            0,
+            72,
+            24,
+            24
+          ]
+        }
+      }
+    },
+    "aug": {
+      "id": "aug",
+      "cls": "CAUG",
+      "name": "Steyr AUG",
+      "slot": 1,
+      "buy_cat": 4,
+      "buy_num": 4,
+      "team": "CT",
+      "price": 3500,
+      "clip_size": 30,
+      "max_ammo": 90,
+      "ammo_type": "556nato",
+      "damage": 32,
+      "armor_ratio": 1.4,
+      "cycle_time": 0.0825,
+      "zoomed_cycle_time": 0.135,
+      "range": 8192.0,
+      "range_modifier": 0.96,
+      "penetration": 2,
+      "reload_time": 3.3,
+      "automatic": true,
+      "zoom_fovs": [
+        55
+      ],
+      "recoil_up": 1.8,
+      "recoil_lat": 0.55,
+      "spread_base": 0.005,
+      "spread_move": 0.08,
+      "v_model": "v_aug",
+      "w_model": "w_aug",
+      "p_model": "p_aug",
+      "vgui": "640_aug",
+      "fire_sounds": [
+        "weapons/aug-1.wav"
+      ],
+      "reload_sound": "weapons/aug_clipin.wav",
+      "deploy_sound": "weapons/aug_forearm.wav",
+      "max_speed": 240.0,
+      "zoomed_speed": 240.0,
+      "description": "Price\t\t\t: $3500\nCountry of Origin\t: Austria\nCalibre\t\t: 5.56mm NATO\nClip Capacity\t: 30 rounds\nRate of Fire(CS)\t: 727 rpm\nWeight(LOADED)\t: 4.09 kg.\nProjectile Weight\t: 4 grams\nMuzzle Velocity\t: 2900 feet/second\nMuzzle Energy\t: 1570 joules",
+      "hud": {
+        "weapon_320": {
+          "sprite": "320hud2",
+          "rect": [
+            80,
+            168,
+            80,
+            20
+          ]
+        },
+        "weapon_s_320": {
+          "sprite": "320hud2",
+          "rect": [
+            80,
+            188,
+            80,
+            20
+          ]
+        },
+        "ammo_320": {
+          "sprite": "640hud7",
+          "rect": [
+            0,
+            96,
+            24,
+            24
+          ]
+        },
+        "crosshair_320": {
+          "sprite": "crosshairs",
+          "rect": [
+            24,
+            0,
+            24,
+            24
+          ]
+        },
+        "autoaim_320": {
+          "sprite": "crosshairs",
+          "rect": [
+            0,
+            72,
+            24,
+            24
+          ]
+        },
+        "weapon_640": {
+          "sprite": "640hud14",
+          "rect": [
+            0,
+            45,
+            170,
+            45
+          ]
+        },
+        "weapon_s_640": {
+          "sprite": "640hud15",
+          "rect": [
+            0,
+            45,
+            170,
+            45
+          ]
+        },
+        "ammo_640": {
+          "sprite": "640hud7",
+          "rect": [
+            0,
+            96,
+            24,
+            24
+          ]
+        },
+        "crosshair_640": {
+          "sprite": "crosshairs",
+          "rect": [
+            24,
+            0,
+            24,
+            24
+          ]
+        },
+        "autoaim_640": {
+          "sprite": "crosshairs",
+          "rect": [
+            0,
+            72,
+            24,
+            24
+          ]
+        }
+      }
+    },
+    "scout": {
+      "id": "scout",
+      "cls": "CSCOUT",
+      "name": "Steyr Scout",
+      "slot": 1,
+      "buy_cat": 4,
+      "buy_num": 5,
+      "team": "ANY",
+      "price": 2750,
+      "clip_size": 10,
+      "max_ammo": 90,
+      "ammo_type": "762nato",
+      "damage": 75,
+      "armor_ratio": 1.7,
+      "cycle_time": 1.25,
+      "range": 8192.0,
+      "range_modifier": 0.98,
+      "penetration": 3,
+      "reload_time": 2.0,
+      "automatic": false,
+      "sniper_scope": true,
+      "zoom_fovs": [
+        40,
+        15
+      ],
+      "recoil_up": 3.2,
+      "recoil_lat": 0.3,
+      "spread_base": 0.001,
+      "spread_unscoped": 0.05,
+      "spread_move": 0.09,
+      "v_model": "v_scout",
+      "w_model": "w_scout",
+      "p_model": "p_scout",
+      "vgui": "640_scout",
+      "fire_sounds": [
+        "weapons/scout_fire-1.wav"
+      ],
+      "reload_sound": "weapons/scout_clipin.wav",
+      "deploy_sound": "weapons/scout_bolt.wav",
+      "max_speed": 260.0,
+      "zoomed_speed": 220.0,
+      "description": "Price\t\t\t: $2750\nCountry of Origin\t: Austria\nCalibre\t\t: 7.62mm NATO\nClip Capacity\t: 10 rounds\nRate of Fire\t: N/A\nWeight(EMPTY)\t: 3.3 kg.\nProjectile Weight\t: 8 grams\nMuzzle Velocity\t: 2800 feet/second\nMuzzle Energy\t: 2200 joules",
+      "hud": {
+        "weapon_320": {
+          "sprite": "320hud1",
+          "rect": [
+            0,
+            80,
+            80,
+            20
+          ]
+        },
+        "weapon_s_320": {
+          "sprite": "320hud1",
+          "rect": [
+            0,
+            100,
+            80,
+            20
+          ]
+        },
+        "ammo_320": {
+          "sprite": "640hud7",
+          "rect": [
+            72,
+            72,
+            24,
+            24
+          ]
+        },
+        "crosshair_320": {
+          "sprite": "crosshairs",
+          "rect": [
+            24,
+            0,
+            24,
+            24
+          ]
+        },
+        "autoaim_320": {
+          "sprite": "crosshairs",
+          "rect": [
+            0,
+            72,
+            24,
+            24
+          ]
+        },
+        "zoom_320": {
+          "sprite": "ch_sniper",
+          "rect": [
+            0,
+            0,
+            256,
+            256
+          ]
+        },
+        "zoom_autoaim_320": {
+          "sprite": "ch_sniper",
+          "rect": [
+            0,
+            0,
+            256,
+            256
+          ]
+        },
+        "weapon_640": {
+          "sprite": "640hud12",
+          "rect": [
+            0,
+            45,
+            170,
+            45
+          ]
+        },
+        "weapon_s_640": {
+          "sprite": "640hud13",
+          "rect": [
+            0,
+            45,
+            170,
+            45
+          ]
+        },
+        "ammo_640": {
+          "sprite": "640hud7",
+          "rect": [
+            72,
+            72,
+            24,
+            24
+          ]
+        },
+        "crosshair_640": {
+          "sprite": "crosshairs",
+          "rect": [
+            24,
+            0,
+            24,
+            24
+          ]
+        },
+        "autoaim_640": {
+          "sprite": "crosshairs",
+          "rect": [
+            0,
+            72,
+            24,
+            24
+          ]
+        },
+        "zoom_640": {
+          "sprite": "sniper_scope",
+          "rect": [
+            0,
+            0,
+            256,
+            256
+          ]
+        },
+        "zoom_autoaim_640": {
+          "sprite": "sniper_scope",
+          "rect": [
+            0,
+            0,
+            256,
+            256
+          ]
+        }
+      }
+    },
+    "awp": {
+      "id": "awp",
+      "cls": "CAWP",
+      "name": "AI Arctic Warfare/Magnum",
+      "slot": 1,
+      "buy_cat": 4,
+      "buy_num": 6,
+      "team": "ANY",
+      "price": 4750,
+      "clip_size": 10,
+      "max_ammo": 30,
+      "ammo_type": "338magnum",
+      "damage": 115,
+      "armor_ratio": 1.95,
+      "cycle_time": 1.45,
+      "range": 8192.0,
+      "range_modifier": 0.99,
+      "penetration": 3,
+      "reload_time": 2.9,
+      "automatic": false,
+      "sniper_scope": true,
+      "zoom_fovs": [
+        40,
+        10
+      ],
+      "recoil_up": 5.5,
+      "recoil_lat": 0.5,
+      "spread_base": 0.0005,
+      "spread_unscoped": 0.085,
+      "spread_move": 0.14,
+      "v_model": "v_awp",
+      "w_model": "w_awp",
+      "p_model": "p_awp",
+      "vgui": "640_awp",
+      "fire_sounds": [
+        "weapons/awp1.wav"
+      ],
+      "reload_sound": "weapons/awp_clipin.wav",
+      "deploy_sound": "weapons/awp_deploy.wav",
+      "max_speed": 210.0,
+      "zoomed_speed": 150.0,
+      "description": "Price\t\t\t: $4750\nCountry of Origin\t: United Kingdom\nCalibre\t\t: .338 Lapua Magnum\nClip Capacity(CS)\t: 10 rounds\nRate of Fire\t: N/A\nWeight(EMPTY)\t: 6 kg.\nProjectile Weight\t: 16.2 grams\nMuzzle Velocity\t: 3000 feet/second\nMuzzle Energy\t: 7000 joules",
+      "hud": {
+        "weapon_320": {
+          "sprite": "320hud1",
+          "rect": [
+            80,
+            120,
+            80,
+            20
+          ]
+        },
+        "weapon_s_320": {
+          "sprite": "320hud1",
+          "rect": [
+            80,
+            140,
+            80,
+            20
+          ]
+        },
+        "ammo_320": {
+          "sprite": "640hud7",
+          "rect": [
+            24,
+            96,
+            24,
+            24
+          ]
+        },
+        "crosshair_320": {
+          "sprite": "crosshairs",
+          "rect": [
+            24,
+            0,
+            24,
+            24
+          ]
+        },
+        "autoaim_320": {
+          "sprite": "crosshairs",
+          "rect": [
+            0,
+            72,
+            24,
+            24
+          ]
+        },
+        "zoom_320": {
+          "sprite": "ch_sniper",
+          "rect": [
+            0,
+            0,
+            256,
+            256
+          ]
+        },
+        "zoom_autoaim_320": {
+          "sprite": "ch_sniper",
+          "rect": [
+            0,
+            0,
+            256,
+            256
+          ]
+        },
+        "weapon_640": {
+          "sprite": "640hud2",
+          "rect": [
+            0,
+            135,
+            170,
+            45
+          ]
+        },
+        "weapon_s_640": {
+          "sprite": "640hud5",
+          "rect": [
+            0,
+            135,
+            170,
+            45
+          ]
+        },
+        "ammo_640": {
+          "sprite": "640hud7",
+          "rect": [
+            24,
+            96,
+            24,
+            24
+          ]
+        },
+        "crosshair_640": {
+          "sprite": "crosshairs",
+          "rect": [
+            24,
+            0,
+            24,
+            24
+          ]
+        },
+        "autoaim_640": {
+          "sprite": "crosshairs",
+          "rect": [
+            0,
+            72,
+            24,
+            24
+          ]
+        },
+        "zoom_640": {
+          "sprite": "sniper_scope",
+          "rect": [
+            0,
+            0,
+            256,
+            256
+          ]
+        },
+        "zoom_autoaim_640": {
+          "sprite": "sniper_scope",
+          "rect": [
+            0,
+            0,
+            256,
+            256
+          ]
+        }
+      }
+    },
+    "g3sg1": {
+      "id": "g3sg1",
+      "cls": "CG3SG1",
+      "name": "H&K G3/SG-1 Sniper Rifle",
+      "slot": 1,
+      "buy_cat": 4,
+      "buy_num": 7,
+      "team": "T",
+      "price": 5000,
+      "clip_size": 20,
+      "max_ammo": 90,
+      "ammo_type": "762nato",
+      "damage": 80,
+      "armor_ratio": 1.65,
+      "cycle_time": 0.25,
+      "range": 8192.0,
+      "range_modifier": 0.98,
+      "penetration": 3,
+      "reload_time": 3.5,
+      "automatic": true,
+      "sniper_scope": true,
+      "zoom_fovs": [
+        40,
+        15
+      ],
+      "recoil_up": 2.8,
+      "recoil_lat": 0.6,
+      "spread_base": 0.002,
+      "spread_unscoped": 0.055,
+      "spread_move": 0.11,
+      "v_model": "v_g3sg1",
+      "w_model": "w_g3sg1",
+      "p_model": "p_g3sg1",
+      "vgui": "640_g3sg1",
+      "fire_sounds": [
+        "weapons/g3sg1-1.wav"
+      ],
+      "reload_sound": "weapons/g3sg1_clipin.wav",
+      "deploy_sound": "weapons/g3sg1_slide.wav",
+      "max_speed": 210.0,
+      "zoomed_speed": 150.0,
+      "description": "Price\t\t\t: $5000\nCountry of Origin\t: Germany\nCalibre\t\t: 7.62mm NATO\nClip Capacity(CS)\t: 20 rounds\nRate of Fire\t: N/A\nWeight(EMPTY)\t: 4.41 kg\nProjectile Weight\t: 8 grams\nMuzzle Velocity\t: 2800 feet/second\nMuzzle Energy\t: 2200 joules",
+      "hud": {
+        "weapon_320": {
+          "sprite": "320hud1",
+          "rect": [
+            80,
+            160,
+            80,
+            20
+          ]
+        },
+        "weapon_s_320": {
+          "sprite": "320hud1",
+          "rect": [
+            80,
+            180,
+            80,
+            20
+          ]
+        },
+        "ammo_320": {
+          "sprite": "640hud7",
+          "rect": [
+            72,
+            72,
+            24,
+            24
+          ]
+        },
+        "crosshair_320": {
+          "sprite": "crosshairs",
+          "rect": [
+            24,
+            0,
+            24,
+            24
+          ]
+        },
+        "autoaim_320": {
+          "sprite": "crosshairs",
+          "rect": [
+            0,
+            72,
+            24,
+            24
+          ]
+        },
+        "zoom_320": {
+          "sprite": "ch_sniper2",
+          "rect": [
+            0,
+            0,
+            256,
+            256
+          ]
+        },
+        "zoom_autoaim_320": {
+          "sprite": "ch_sniper2",
+          "rect": [
+            0,
+            0,
+            256,
+            256
+          ]
+        },
+        "weapon_640": {
+          "sprite": "640hud2",
+          "rect": [
+            0,
+            180,
+            170,
+            45
+          ]
+        },
+        "weapon_s_640": {
+          "sprite": "640hud5",
+          "rect": [
+            0,
+            180,
+            170,
+            45
+          ]
+        },
+        "ammo_640": {
+          "sprite": "640hud7",
+          "rect": [
+            72,
+            72,
+            24,
+            24
+          ]
+        },
+        "crosshair_640": {
+          "sprite": "crosshairs",
+          "rect": [
+            24,
+            0,
+            24,
+            24
+          ]
+        },
+        "autoaim_640": {
+          "sprite": "crosshairs",
+          "rect": [
+            0,
+            72,
+            24,
+            24
+          ]
+        },
+        "zoom_640": {
+          "sprite": "sniper_scope",
+          "rect": [
+            0,
+            0,
+            256,
+            256
+          ]
+        },
+        "zoom_autoaim_640": {
+          "sprite": "sniper_scope",
+          "rect": [
+            0,
+            0,
+            256,
+            256
+          ]
+        }
+      }
+    },
+    "sg550": {
+      "id": "sg550",
+      "cls": "CSG550",
+      "name": "SIG SG-550 Sniper",
+      "slot": 1,
+      "buy_cat": 4,
+      "buy_num": 8,
+      "team": "CT",
+      "price": 4200,
+      "clip_size": 30,
+      "max_ammo": 90,
+      "ammo_type": "556nato",
+      "damage": 70,
+      "armor_ratio": 1.45,
+      "cycle_time": 0.25,
+      "range": 8192.0,
+      "range_modifier": 0.98,
+      "penetration": 2,
+      "reload_time": 3.35,
+      "automatic": true,
+      "sniper_scope": true,
+      "zoom_fovs": [
+        40,
+        15
+      ],
+      "recoil_up": 2.4,
+      "recoil_lat": 0.5,
+      "spread_base": 0.002,
+      "spread_unscoped": 0.05,
+      "spread_move": 0.1,
+      "v_model": "v_sg550",
+      "w_model": "w_sg550",
+      "p_model": "p_sg550",
+      "vgui": "640_sg550",
+      "fire_sounds": [
+        "weapons/sg550-1.wav"
+      ],
+      "reload_sound": "weapons/sg550_clipin.wav",
+      "deploy_sound": "weapons/sg550_boltpull.wav",
+      "max_speed": 210.0,
+      "zoomed_speed": 150.0,
+      "description": "Price\t\t\t: $4200\nCountry of Origin\t: Switzerland\nCalibre\t\t: 5.56mm NATO\nClip Capacity\t: 30 rounds\nRate of Fire(CS)\t: N/A\nWeight(EMPTY)\t: 7.02 kg.\nProjectile Weight\t: 4 grams\nMuzzle Velocity\t: 3100 feet/second\nMuzzle Energy\t: 1650 joules",
+      "hud": {
+        "weapon_320": {
+          "sprite": "320hud2",
+          "rect": [
+            160,
+            168,
+            80,
+            20
+          ]
+        },
+        "weapon_s_320": {
+          "sprite": "320hud2",
+          "rect": [
+            160,
+            188,
+            80,
+            20
+          ]
+        },
+        "ammo_320": {
+          "sprite": "640hud7",
+          "rect": [
+            0,
+            96,
+            24,
+            24
+          ]
+        },
+        "crosshair_320": {
+          "sprite": "crosshairs",
+          "rect": [
+            24,
+            0,
+            24,
+            24
+          ]
+        },
+        "autoaim_320": {
+          "sprite": "crosshairs",
+          "rect": [
+            0,
+            72,
+            24,
+            24
+          ]
+        },
+        "zoom_320": {
+          "sprite": "ch_sniper2",
+          "rect": [
+            0,
+            0,
+            256,
+            256
+          ]
+        },
+        "zoom_autoaim_320": {
+          "sprite": "ch_sniper2",
+          "rect": [
+            0,
+            0,
+            256,
+            256
+          ]
+        },
+        "weapon_640": {
+          "sprite": "640hud14",
+          "rect": [
+            0,
+            180,
+            170,
+            45
+          ]
+        },
+        "weapon_s_640": {
+          "sprite": "640hud15",
+          "rect": [
+            0,
+            180,
+            170,
+            45
+          ]
+        },
+        "ammo_640": {
+          "sprite": "640hud7",
+          "rect": [
+            0,
+            96,
+            24,
+            24
+          ]
+        },
+        "crosshair_640": {
+          "sprite": "crosshairs",
+          "rect": [
+            24,
+            0,
+            24,
+            24
+          ]
+        },
+        "autoaim_640": {
+          "sprite": "crosshairs",
+          "rect": [
+            0,
+            72,
+            24,
+            24
+          ]
+        },
+        "zoom_640": {
+          "sprite": "sniper_scope",
+          "rect": [
+            0,
+            0,
+            256,
+            256
+          ]
+        },
+        "zoom_autoaim_640": {
+          "sprite": "sniper_scope",
+          "rect": [
+            0,
+            0,
+            256,
+            256
+          ]
+        }
+      }
+    },
+    "m249": {
+      "id": "m249",
+      "cls": "CM249",
+      "name": "FN M249 Para",
+      "slot": 1,
+      "buy_cat": 5,
+      "buy_num": 1,
+      "team": "ANY",
+      "price": 5750,
+      "clip_size": 100,
+      "max_ammo": 200,
+      "ammo_type": "556natobox",
+      "damage": 32,
+      "armor_ratio": 1.5,
+      "cycle_time": 0.1,
+      "range": 8192.0,
+      "range_modifier": 0.97,
+      "penetration": 2,
+      "reload_time": 4.7,
+      "automatic": true,
+      "recoil_up": 2.35,
+      "recoil_lat": 0.85,
+      "spread_base": 0.012,
+      "spread_move": 0.095,
+      "v_model": "v_m249",
+      "w_model": "w_m249",
+      "p_model": "p_m249",
+      "vgui": "640_m249",
+      "fire_sounds": [
+        "weapons/m249-1.wav",
+        "weapons/m249-2.wav"
+      ],
+      "reload_sound": "weapons/m249_boxin.wav",
+      "deploy_sound": "weapons/m249_chain.wav",
+      "max_speed": 220.0,
+      "zoomed_speed": 220.0,
+      "description": "Price\t\t\t: $5750\nCountry of Origin\t: Belgium\nCalibre\t\t: 5.56mm Nato\nClip Capacity(CS)\t: 100 rounds\nRate of Fire\t: 600 rpm\nWeight(EMPTY)\t: 6 kg.\nProjectile Weight\t: 4 grams\nMuzzle Velocity\t: 3000 feet/second\nMuzzle Energy\t: 1600 joules",
+      "hud": {
+        "weapon_320": {
+          "sprite": "320hud1",
+          "rect": [
+            160,
+            0,
+            80,
+            20
+          ]
+        },
+        "weapon_s_320": {
+          "sprite": "320hud1",
+          "rect": [
+            160,
+            20,
+            80,
+            20
+          ]
+        },
+        "ammo_320": {
+          "sprite": "640hud7",
+          "rect": [
+            0,
+            96,
+            24,
+            24
+          ]
+        },
+        "crosshair_320": {
+          "sprite": "crosshairs",
+          "rect": [
+            24,
+            0,
+            24,
+            24
+          ]
+        },
+        "autoaim_320": {
+          "sprite": "crosshairs",
+          "rect": [
+            0,
+            72,
+            24,
+            24
+          ]
+        },
+        "weapon_640": {
+          "sprite": "640hud3",
+          "rect": [
+            0,
+            0,
+            170,
+            45
+          ]
+        },
+        "weapon_s_640": {
+          "sprite": "640hud6",
+          "rect": [
+            0,
+            0,
+            170,
+            45
+          ]
+        },
+        "ammo_640": {
+          "sprite": "640hud7",
+          "rect": [
+            0,
+            96,
+            24,
+            24
+          ]
+        },
+        "crosshair_640": {
+          "sprite": "crosshairs",
+          "rect": [
+            24,
+            0,
+            24,
+            24
+          ]
+        },
+        "autoaim_640": {
+          "sprite": "crosshairs",
+          "rect": [
+            0,
+            72,
+            24,
+            24
+          ]
+        }
+      }
+    },
+    "flashbang": {
+      "id": "flashbang",
+      "cls": "CFlashbang",
+      "name": "Flashbang",
+      "slot": 4,
+      "buy_cat": 8,
+      "buy_num": 3,
+      "team": "ANY",
+      "price": 200,
+      "clip_size": 1,
+      "max_ammo": 2,
+      "ammo_type": "flashbang",
+      "damage": 0,
+      "armor_ratio": 1.0,
+      "cycle_time": 1.0,
+      "range": 1500.0,
+      "range_modifier": 1.0,
+      "penetration": 0,
+      "reload_time": 0.0,
+      "automatic": false,
+      "grenade": true,
+      "v_model": "v_flashbang",
+      "w_model": "w_flashbang",
+      "p_model": "p_flashbang",
+      "vgui": "640_flashbang",
+      "fire_sounds": [
+        "weapons/pinpull.wav"
+      ],
+      "explode_sounds": [
+        "weapons/flashbang-1.wav",
+        "weapons/flashbang-2.wav"
+      ],
+      "bounce_sounds": [
+        "weapons/grenade_hit1.wav",
+        "weapons/grenade_hit2.wav",
+        "weapons/grenade_hit3.wav"
+      ],
+      "max_speed": 250.0,
+      "zoomed_speed": 250.0,
+      "description": "Price\t\t: $300\nDescription\t: Makes a loud noise and blinding flash when thrown at enemy (pull pin first). Useful for causing distractions\nbefore entering an area.",
+      "hud": {
+        "weapon_320": {
+          "sprite": "320hud1",
+          "rect": [
+            160,
+            40,
+            80,
+            20
+          ]
+        },
+        "weapon_s_320": {
+          "sprite": "320hud1",
+          "rect": [
+            160,
+            60,
+            80,
+            20
+          ]
+        },
+        "ammo_320": {
+          "sprite": "640hud7",
+          "rect": [
+            48,
+            96,
+            24,
+            24
+          ]
+        },
+        "crosshair_320": {
+          "sprite": "crosshairs",
+          "rect": [
+            24,
+            0,
+            24,
+            24
+          ]
+        },
+        "autoaim_320": {
+          "sprite": "crosshairs",
+          "rect": [
+            0,
+            72,
+            24,
+            24
+          ]
+        },
+        "weapon_640": {
+          "sprite": "640hud3",
+          "rect": [
+            0,
+            90,
+            170,
+            45
+          ]
+        },
+        "weapon_s_640": {
+          "sprite": "640hud6",
+          "rect": [
+            0,
+            90,
+            170,
+            45
+          ]
+        },
+        "ammo_640": {
+          "sprite": "640hud7",
+          "rect": [
+            48,
+            96,
+            24,
+            24
+          ]
+        },
+        "crosshair_640": {
+          "sprite": "crosshairs",
+          "rect": [
+            24,
+            0,
+            24,
+            24
+          ]
+        },
+        "autoaim_640": {
+          "sprite": "crosshairs",
+          "rect": [
+            0,
+            72,
+            24,
+            24
+          ]
+        }
+      }
+    },
+    "hegrenade": {
+      "id": "hegrenade",
+      "cls": "CHEGrenade",
+      "name": "HE Grenade",
+      "slot": 4,
+      "buy_cat": 8,
+      "buy_num": 4,
+      "team": "ANY",
+      "price": 300,
+      "clip_size": 1,
+      "max_ammo": 1,
+      "ammo_type": "hegrenade",
+      "damage": 98,
+      "armor_ratio": 1.2,
+      "cycle_time": 1.0,
+      "range": 350.0,
+      "range_modifier": 1.0,
+      "penetration": 0,
+      "reload_time": 0.0,
+      "automatic": false,
+      "grenade": true,
+      "v_model": "v_hegrenade",
+      "w_model": "w_hegrenade",
+      "p_model": "p_hegrenade",
+      "vgui": "640_hegrenade",
+      "fire_sounds": [
+        "weapons/pinpull.wav"
+      ],
+      "explode_sounds": [
+        "weapons/hegrenade-1.wav",
+        "weapons/hegrenade-2.wav"
+      ],
+      "bounce_sounds": [
+        "weapons/he_bounce-1.wav"
+      ],
+      "max_speed": 260.0,
+      "zoomed_speed": 260.0,
+      "description": "Price\t\t: $300\nDescription\t: A high-explosive device. Pull the pin, release the spoon and throw.",
+      "hud": {
+        "weapon_320": {
+          "sprite": "320hud1",
+          "rect": [
+            80,
+            200,
+            80,
+            20
+          ]
+        },
+        "weapon_s_320": {
+          "sprite": "320hud1",
+          "rect": [
+            80,
+            220,
+            80,
+            20
+          ]
+        },
+        "ammo_320": {
+          "sprite": "640hud7",
+          "rect": [
+            72,
+            96,
+            24,
+            24
+          ]
+        },
+        "crosshair_320": {
+          "sprite": "crosshairs",
+          "rect": [
+            24,
+            0,
+            24,
+            24
+          ]
+        },
+        "autoaim_320": {
+          "sprite": "crosshairs",
+          "rect": [
+            0,
+            72,
+            24,
+            24
+          ]
+        },
+        "weapon_640": {
+          "sprite": "640hud3",
+          "rect": [
+            0,
+            45,
+            170,
+            45
+          ]
+        },
+        "weapon_s_640": {
+          "sprite": "640hud6",
+          "rect": [
+            0,
+            45,
+            170,
+            45
+          ]
+        },
+        "ammo_640": {
+          "sprite": "640hud7",
+          "rect": [
+            72,
+            96,
+            24,
+            24
+          ]
+        },
+        "crosshair_640": {
+          "sprite": "crosshairs",
+          "rect": [
+            24,
+            0,
+            24,
+            24
+          ]
+        },
+        "autoaim_640": {
+          "sprite": "crosshairs",
+          "rect": [
+            0,
+            72,
+            24,
+            24
+          ]
+        }
+      }
+    },
+    "smokegrenade": {
+      "id": "smokegrenade",
+      "cls": "CSmokeGrenade",
+      "name": "Smoke Grenade",
+      "slot": 4,
+      "buy_cat": 8,
+      "buy_num": 5,
+      "team": "ANY",
+      "price": 300,
+      "clip_size": 1,
+      "max_ammo": 1,
+      "ammo_type": "smokegrenade",
+      "damage": 0,
+      "armor_ratio": 1.0,
+      "cycle_time": 1.0,
+      "range": 280.0,
+      "range_modifier": 1.0,
+      "penetration": 0,
+      "reload_time": 0.0,
+      "automatic": false,
+      "grenade": true,
+      "v_model": "v_smokegrenade",
+      "w_model": "w_smokegrenade",
+      "p_model": "p_smokegrenade",
+      "vgui": "640_smokegrenade",
+      "fire_sounds": [
+        "weapons/pinpull.wav"
+      ],
+      "explode_sounds": [
+        "weapons/sg_explode.wav"
+      ],
+      "bounce_sounds": [
+        "weapons/grenade_hit1.wav"
+      ],
+      "max_speed": 250.0,
+      "zoomed_speed": 250.0,
+      "description": "Price\t\t: $300\nDescription\t: A diversionary device that can be used to provide temporary cover\nfor moving from place to place.",
+      "hud": {
+        "weapon_320": {
+          "sprite": "320hud1",
+          "rect": [
+            80,
+            200,
+            80,
+            20
+          ]
+        },
+        "weapon_s_320": {
+          "sprite": "320hud1",
+          "rect": [
+            80,
+            220,
+            80,
+            20
+          ]
+        },
+        "ammo_320": {
+          "sprite": "640hud7",
+          "rect": [
+            144,
+            96,
+            24,
+            24
+          ]
+        },
+        "crosshair_320": {
+          "sprite": "crosshairs",
+          "rect": [
+            24,
+            0,
+            24,
+            24
+          ]
+        },
+        "autoaim_320": {
+          "sprite": "crosshairs",
+          "rect": [
+            0,
+            72,
+            24,
+            24
+          ]
+        },
+        "weapon_640": {
+          "sprite": "640hud3",
+          "rect": [
+            0,
+            135,
+            170,
+            45
+          ]
+        },
+        "weapon_s_640": {
+          "sprite": "640hud6",
+          "rect": [
+            0,
+            135,
+            170,
+            45
+          ]
+        },
+        "ammo_640": {
+          "sprite": "640hud7",
+          "rect": [
+            144,
+            96,
+            24,
+            24
+          ]
+        },
+        "crosshair_640": {
+          "sprite": "crosshairs",
+          "rect": [
+            24,
+            0,
+            24,
+            24
+          ]
+        },
+        "autoaim_640": {
+          "sprite": "crosshairs",
+          "rect": [
+            0,
+            72,
+            24,
+            24
+          ]
+        }
+      }
+    },
+    "c4": {
+      "id": "c4",
+      "cls": "CC4",
+      "name": "C4 Plastic Explosive",
+      "slot": 5,
+      "buy_cat": 0,
+      "buy_num": 0,
+      "team": "T",
+      "price": 0,
+      "clip_size": 1,
+      "max_ammo": 1,
+      "ammo_type": "c4",
+      "damage": 500,
+      "armor_ratio": 1.0,
+      "cycle_time": 0.3,
+      "range": 1750.0,
+      "range_modifier": 1.0,
+      "penetration": 0,
+      "reload_time": 0.0,
+      "automatic": false,
+      "v_model": "v_c4",
+      "w_model": "w_backpack",
+      "planted_model": "w_c4",
+      "p_model": "p_c4",
+      "vgui": "",
+      "fire_sounds": [
+        "weapons/c4_click.wav"
+      ],
+      "plant_sound": "weapons/c4_plant.wav",
+      "explode_sounds": [
+        "weapons/c4_explode1.wav"
+      ],
+      "beep_sounds": [
+        "weapons/c4_beep1.wav",
+        "weapons/c4_beep2.wav",
+        "weapons/c4_beep3.wav",
+        "weapons/c4_beep4.wav",
+        "weapons/c4_beep5.wav"
+      ],
+      "max_speed": 250.0,
+      "zoomed_speed": 250.0,
+      "description": "",
+      "hud": {
+        "weapon_320": {
+          "sprite": "320hud1",
+          "rect": [
+            0,
+            200,
+            80,
+            20
+          ]
+        },
+        "weapon_s_320": {
+          "sprite": "320hud1",
+          "rect": [
+            0,
+            220,
+            80,
+            20
+          ]
+        },
+        "ammo_320": {
+          "sprite": "640hud7",
+          "rect": [
+            96,
+            96,
+            24,
+            24
+          ]
+        },
+        "weapon_640": {
+          "sprite": "640hud1",
+          "rect": [
+            0,
+            0,
+            170,
+            45
+          ]
+        },
+        "weapon_s_640": {
+          "sprite": "640hud4",
+          "rect": [
+            0,
+            0,
+            170,
+            45
+          ]
+        },
+        "ammo_640": {
+          "sprite": "640hud7",
+          "rect": [
+            96,
+            96,
+            24,
+            24
+          ]
+        }
+      }
+    }
+  },
+  "ammo": {
+    "9mm": {
+      "name": "9x19mm Parabellum",
+      "clip_amount": 30,
+      "max": 120,
+      "price": 20
+    },
+    "45acp": {
+      "name": ".45 ACP",
+      "clip_amount": 12,
+      "max": 100,
+      "price": 25
+    },
+    "50ae": {
+      "name": ".50 Action Express",
+      "clip_amount": 7,
+      "max": 35,
+      "price": 40
+    },
+    "357sig": {
+      "name": ".357 SIG",
+      "clip_amount": 13,
+      "max": 52,
+      "price": 50
+    },
+    "57mm": {
+      "name": "5.7x28mm FN",
+      "clip_amount": 50,
+      "max": 100,
+      "price": 50
+    },
+    "buckshot": {
+      "name": "12 Gauge Buckshot",
+      "clip_amount": 8,
+      "max": 32,
+      "price": 65
+    },
+    "556nato": {
+      "name": "5.56x45mm NATO",
+      "clip_amount": 30,
+      "max": 90,
+      "price": 60
+    },
+    "556natobox": {
+      "name": "5.56mm Belt Box",
+      "clip_amount": 30,
+      "max": 200,
+      "price": 60
+    },
+    "762nato": {
+      "name": "7.62x51mm NATO",
+      "clip_amount": 30,
+      "max": 90,
+      "price": 80
+    },
+    "338magnum": {
+      "name": ".338 Lapua Magnum",
+      "clip_amount": 10,
+      "max": 30,
+      "price": 125
+    }
+  },
+  "equipment": {
+    "kevlar": {
+      "id": "kevlar",
+      "name": "Kevlar Vest",
+      "buy_cat": 8,
+      "buy_num": 1,
+      "team": "ANY",
+      "price": 650,
+      "description": "Price\t\t: $650\nDescription\t: A Kevlar vest that protects against projectiles.",
+      "sound": "items/kevlar.wav"
+    },
+    "kevlar_helmet": {
+      "id": "kevlar_helmet",
+      "name": "Kevlar + Helmet",
+      "buy_cat": 8,
+      "buy_num": 2,
+      "team": "ANY",
+      "price": 1000,
+      "upgrade_price": 350,
+      "description": "Price\t\t: $1000\nDescription : A kevlar vest and a ballistic helmet which both protect against projectiles.",
+      "sound": "items/tr_kevlar.wav"
+    },
+    "defuser": {
+      "id": "defuser",
+      "name": "Defusal Kit",
+      "buy_cat": 8,
+      "buy_num": 6,
+      "team": "CT",
+      "price": 200,
+      "description": "Price\t\t: $200\nDescription\t: A bomb defusal kit used to speed up the bomb defusal process.",
+      "w_model": "w_thighpack"
+    },
+    "nightvision": {
+      "id": "nightvision",
+      "name": "NightVision Goggles",
+      "buy_cat": 8,
+      "buy_num": 7,
+      "team": "ANY",
+      "price": 1250,
+      "description": "Price\t\t: $1250\nDescription\t: Nightvision goggles which supposedly allow the user\nto see more effectively in dark areas.",
+      "sound": "items/equip_nvg.wav",
+      "on_sound": "items/nvg_on.wav",
+      "off_sound": "items/nvg_off.wav"
+    }
+  },
+  "economy": {
+    "start_money": 800,
+    "max_money": 16000,
+    "kill_reward": 300,
+    "teamkill_penalty": -3300,
+    "hostage_touch_reward": 150,
+    "hostage_rescue_reward": 1000,
+    "round_win_elimination": 3250,
+    "round_win_bomb_exploded": 3500,
+    "round_win_bomb_defused": 3250,
+    "round_win_time_ct_de": 3250,
+    "round_loss_base": 1400,
+    "round_loss_streak_bonus": 500,
+    "round_loss_max": 3400,
+    "bomb_planted_team_bonus": 800
+  }
+}

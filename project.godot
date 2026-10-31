@@ -1,0 +1,38 @@
+; Engine configuration file.
+; Counter-Strike 1.5 Retail Remake in Godot 4.x
+; Assets & binary weapon data extracted from Ch0wW/counterstrike-betas (cs15_retail)
+
+config_version=5
+
+[application]
+
+config/name="Counter-Strike 1.5 (Godot 4)"
+config/description="Remake de Counter-Strike 1.5 Retail en Godot 4 con los 26 mapas BSP, 27 armas con stats reales de cs_i386.so, modelos StudioMDL animados, 379 sonidos originales y Bots IA."
+run/main_scene="res://scenes/MainMenu.tscn"
+config/features=PackedStringArray("4.3", "GL Compatibility")
+config/icon="res://icon.png"
+
+[autoload]
+
+GameData="*res://scripts/core/GameData.gd"
+AudioManager="*res://scripts/core/AudioManager.gd"
+RoundManager="*res://scripts/core/RoundManager.gd"
+
+[display]
+
+window/size/viewport_width=1280
+window/size/viewport_height=720
+window/stretch/mode="canvas_items"
+window/stretch/aspect="expand"
+
+[layer_names]
+
+3d_physics/layer_1="WorldBSP"
+3d_physics/layer_2="ActorsAndHostages"
+
+[rendering]
+
+renderer/rendering_method="gl_compatibility"
+renderer/rendering_method.mobile="gl_compatibility"
+textures/canvas_textures/default_texture_filter=0
+anti_aliasing/quality/msaa_3d=1

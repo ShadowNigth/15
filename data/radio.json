@@ -1,0 +1,143 @@
+{
+  "radio1": {
+    "title": "Radio Commands (Z)",
+    "items": [
+      {
+        "num": 1,
+        "label": "Cover Me",
+        "sound": "radio/ct_coverme.wav",
+        "action": "cover_me"
+      },
+      {
+        "num": 2,
+        "label": "You Take the Point",
+        "sound": "radio/takepoint.wav",
+        "action": "take_point"
+      },
+      {
+        "num": 3,
+        "label": "Hold This Position",
+        "sound": "radio/position.wav",
+        "action": "hold_position"
+      },
+      {
+        "num": 4,
+        "label": "Regroup Team",
+        "sound": "radio/regroup.wav",
+        "action": "regroup"
+      },
+      {
+        "num": 5,
+        "label": "Follow Me",
+        "sound": "radio/followme.wav",
+        "action": "follow_me"
+      },
+      {
+        "num": 6,
+        "label": "Taking Fire, Need Assistance",
+        "sound": "radio/fireassis.wav",
+        "action": "need_assist"
+      }
+    ]
+  },
+  "radio2": {
+    "title": "Group Radio Commands (X)",
+    "items": [
+      {
+        "num": 1,
+        "label": "Go, Go, Go!",
+        "sound": "radio/com_go.wav",
+        "action": "go"
+      },
+      {
+        "num": 2,
+        "label": "Team, Fall Back!",
+        "sound": "radio/fallback.wav",
+        "action": "fallback"
+      },
+      {
+        "num": 3,
+        "label": "Stick Together, Team",
+        "sound": "radio/sticktog.wav",
+        "action": "stick_together"
+      },
+      {
+        "num": 4,
+        "label": "Get in Position and Wait",
+        "sound": "radio/com_getinpos.wav",
+        "action": "get_in_pos"
+      },
+      {
+        "num": 5,
+        "label": "Storm the Front!",
+        "sound": "radio/stormfront.wav",
+        "action": "storm_front"
+      },
+      {
+        "num": 6,
+        "label": "Report In, Team",
+        "sound": "radio/com_reportin.wav",
+        "action": "report_in"
+      }
+    ]
+  },
+  "radio3": {
+    "title": "Report Radio Commands (C)",
+    "items": [
+      {
+        "num": 1,
+        "label": "Affirmative / Roger",
+        "sound": "radio/roger.wav",
+        "action": "roger"
+      },
+      {
+        "num": 2,
+        "label": "Enemy Spotted",
+        "sound": "radio/ct_enemys.wav",
+        "action": "enemy_spotted"
+      },
+      {
+        "num": 3,
+        "label": "Need Backup",
+        "sound": "radio/ct_backup.wav",
+        "action": "need_backup"
+      },
+      {
+        "num": 4,
+        "label": "Sector Clear",
+        "sound": "radio/clear.wav",
+        "action": "sector_clear"
+      },
+      {
+        "num": 5,
+        "label": "I'm in Position",
+        "sound": "radio/ct_inpos.wav",
+        "action": "in_position"
+      },
+      {
+        "num": 6,
+        "label": "Reporting In",
+        "sound": "radio/ct_reportingin.wav",
+        "action": "reporting_in"
+      },
+      {
+        "num": 7,
+        "label": "She's Gonna Blow!",
+        "sound": "radio/blow.wav",
+        "action": "gonna_blow"
+      },
+      {
+        "num": 8,
+        "label": "Negative",
+        "sound": "radio/negative.wav",
+        "action": "negative"
+      },
+      {
+        "num": 9,
+        "label": "Enemy Down",
+        "sound": "radio/enemydown.wav",
+        "action": "enemy_down"
+      }
+    ]
+  }
+}

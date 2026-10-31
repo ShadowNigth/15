@@ -1,1 +1,104 @@
-# 15
+# Counter-Strike 1.5 Retail — Remake en Godot 4 (GDScript)
+
+Remake jugable de **Counter-Strike 1.5 Retail** construido íntegramente en **Godot 4.x (GDScript)**, extrayendo y convirtiendo directamente todos los mapas, texturas, lightmaps, modelos animados, sprites, HUD, tarjetas VGUI, sonidos y constantes binarias desde [`Ch0wW/counterstrike-betas` (`cs15_retail`)](https://github.com/Ch0wW/counterstrike-betas/tree/cs15_retail).
+
+---
+
+## Cómo abrir y jugar en Godot 4
+
+1. Abre **Godot Engine 4.3+** (compatible con Godot 4.3, 4.4, 4.5, 4.6+ en Windows, Linux, macOS y exportación HTML5/Web gracias al renderer `GL Compatibility`).
+2. Haz clic en **Import** y selecciona el archivo `project.godot` en la raíz del repositorio (en la primera apertura Godot importará automáticamente las texturas y los `.glb`).
+3. Pulsa **F5 (Run Project)**:
+   - Se abrirá el **Menú Clásico WON de Counter-Strike 1.5** (`splash.png` original + sonidos `launch_glow1.wav` / `launch_select1.wav`).
+   - Elige **Quick Launch: de_dust2** o **Play CS 1.5 (LAN / Bots)** para escoger cualquiera de los **26 mapas originales**, cantidad de **Bots IA**, nivel de habilidad y dinero inicial (`$800` / `$3500` / `$16000`).
+   - También puedes abrir el **3D Arsenal & Model Viewer** desde el menú principal para inspeccionar en 3D los modelos `.glb` de armas y personajes convertidos desde `.mdl` junto con sus estadísticas extraídas de `cs_i386.so`.
+
+---
+
+## Contenido extraído e incluido en el proyecto
+
+Todo el contenido de `cstrike/` fue procesado mediante la suite de ingeniería inversa GoldSrc en `tools/goldsrc/`:
+
+| Categoría | Origen en `cs15_retail` | Formato en Godot 4 | Cantidad |
+| :--- | :--- | :--- | :--- |
+| **Mapas 3D + Lightmaps** | `maps/*.bsp` (GoldSrc BSP v30 + 23 WAD3) | `assets/maps/*.glb` + `*_lm.png` + `data/maps/*.json` | **26 / 26 mapas** |
+| **Grafo de Navegación IA** | Hull 1 (`CLIPNODES`) de cada `.bsp` | `waypoints` A* en `data/maps/*.json` | **26 grafos** (230–340 nodos/mapa) |
+| **Texturas de Mundo + Cielos** | `*.wad` (`de_aztec`, `cs_dust`, `halflife`…) + `gfx/env/*.tga` | `assets/textures/world/*.png` (`{` alpha Fence) + `sky/*.png` | **2,346 texturas + 109 caras skybox** |
+| **Modelos 3D Animados** | `models/v_*.mdl`, `w_*.mdl`, `player/*/*.mdl` (StudioMDL v10) | `assets/models/**/*.glb` (esqueleto + animaciones + winding CCW) | **108 modelos `.glb`** |
+| **Estadísticas Binarias Armas** | desensamblado x86 de `dlls/cs_i386.so` (`GetMaxSpeed`, daño, ciclo) | `data/weapons.json` | **27 armas + equipamiento** |
+| **Audio Espacial & Radio** | `sound/weapons`, `player`, `radio`, `hostage`, `UI` | `assets/sounds/**/*.wav` (PCM 16-bit limpio) | **379 archivos `.wav`** |
+| **Sprites HUD & VGUI** | `sprites/*.spr`, `hud.txt`, `gfx/vgui/*.tga`, `overviews/*.bmp` | `assets/sprites/*.png`, `assets/ui/**`, `data/hud_sprites.json` | **88 sprites + 42 VGUI + 26 radares** |
+
+### Los 26 Mapas Clásicos Incluidos
+- **Bomb / Defuse (`de_*`)**: `de_aztec`, `de_cbble`, `de_chateau`, `de_dust`, `de_dust2`, `de_inferno`, `de_nuke`, `de_piranesi`, `de_prodigy`, `de_storm`, `de_survivor`, `de_torn`, `de_train`, `de_vegas`, `de_vertigo`.
+- **Hostage Rescue (`cs_*`)**: `cs_747`, `cs_assault`, `cs_backalley`, `cs_estate`, `cs_havana`, `cs_italy`, `cs_militia`, `cs_office`, `cs_siege`.
+- **VIP Assassination (`as_*`)**: `as_oilrig`, `as_tundra`.
+
+---
+
+## Mecánicas de Juego Implementadas
+
+- **Física GoldSrc Auténtica (`CSActor.gd`)**: Aceleración terrestre y strafe aéreo estilo GoldSrc, velocidades máximas por arma extraídas de `cs_i386.so` (`260` Scout, `250` Cuchillo/Pistolas, `221` AK-47, `210` AWP), agachado (`Ctrl`), caminata silenciosa (`Shift`), escaleras (`func_ladder`) y sonidos de pisadas por tipo de superficie (`materials.txt`).
+- **Arsenal Completo de CS 1.5 (`WeaponController.gd`)**:
+  - **Pistolas**: USP `.45` (con silenciador desmontable `Mouse2`), Glock 18 (modo ráfaga de 3 disparos `Mouse2`), Desert Eagle, P228, Dual Berettas, Five-Seven.
+  - **Escopetas**: M3 Super 90 y XM1014 (recarga cartucho por cartucho interrumpible al disparar).
+  - **SMGs**: MP5 Navy, TMP silenciada, P90, MAC-10, UMP-45.
+  - **Rifles y Francotiradores**: AK-47, Colt M4A1 Carbine (con silenciador desmontable `Mouse2`), SG-552, Steyr AUG, Scout, **AWP Magnum** (mira telescópica doble zoom), G3SG1, SG-550.
+  - **Pesadas / Tácticas**: M249 Para, Cuchillo (corte rápido y **puñalada por la espalda de 195 de daño**), C4 Plastic Explosive, HE Grenade, Flashbang (ceguera direccional en pantalla y a Bots), Smoke Grenade (bloquea visión de Bots IA) y Wallbanging en paredes delgadas.
+- **Economía, Rondas y Objetivos (`RoundManager.gd`, `BuyMenu.gd`)**:
+  - Freeze time, Buy time en `func_buyzone`, menú VGUI clásico con previsualización de armas y **atajos rápidos clásicos** (ej. `B-4-1` AK-47, `B-4-3` M4A1, `B-4-6` AWP, `B-8-2` Kevlar+Casco, `,` y `.` para munición primaria/secundaria).
+  - Plantado y desactivación del **C4** (`de_*`, 5s con Defuse Kit / 10s sin Kit), rescate de **Rehenes** (`cs_*` con `E`) y escolta de **VIP** (`as_*`).
+- **HUD Ámbar Original y VGUI (`CSHud.gd`, `TeamSelectMenu.gd`, `Scoreboard.gd`, `RadioMenu.gd`)**:
+  - Números ámbar recortados del atlas original `640hud7.spr`, radar giratorio con puntos de aliados/bomba/rehenes, killfeed con iconos `d_*` de `hud.txt`, indicador de zona de compra/C4/Kit, linterna (`F`) y **Visión Nocturna verde (`N`)**.
+- **Bots IA estilo PodBot (`CSBot.gd`, `BotNavigator.gd`)**:
+  - Compra automática según presupuesto y equipo, navegación A* sobre el grafo del BSP, plantado/desactivación de C4, rescate de rehenes, escolta VIP, reacción a sonidos de disparos, ceguera por Flashbang, bloqueo visual por humo y órdenes de radio (`Z` / `X` / `C`).
+
+---
+
+## Controles Clásicos
+
+| Tecla | Acción |
+| :--- | :--- |
+| `W A S D` | Movimiento |
+| `Espacio` / `Ctrl` / `Shift` | Saltar / Agacharse / Caminar en silencio |
+| `Click Izquierdo` | Disparar / Plantar C4 en Bombsite |
+| `Click Derecho` | Zoom (AWP/Scout/AUG/SG552) / Silenciador (M4A1, USP) / Ráfaga (Glock) / Puñalada |
+| `R` / `G` / `Q` | Recargar / Soltar arma al suelo / Última arma usada |
+| `1` `2` `3` `4` `5` | Primaria / Pistola / Cuchillo / Granadas / C4 |
+| `B` | Menú de Compra VGUI (soporta combinaciones numéricas como `B-4-3`, `B-8-2`) |
+| `,` (Coma) / `.` (Punto) | Comprar munición primaria / secundaria |
+| `E` | Desactivar C4 / Guiar Rehén / Abrir Puerta |
+| `F` / `N` | Linterna / Gafas de Visión Nocturna |
+| `M` | Cambiar de Equipo / Clase (Terrorist / Counter-Terrorist) |
+| `Z` / `X` / `C` | Menús de Radio Táctica |
+| `Tab` / `Esc` | Tabla de Puntuaciones / Menú de Pausa (añadir Bots, reiniciar ronda) |
+
+---
+
+## Estructura del Proyecto y Herramientas de Extracción
+
+```text
+├── project.godot                # Configuración de Godot 4 (GL Compatibility, Autoloads)
+├── scenes/
+│   ├── MainMenu.tscn            # Escena inicial (Menú WON + Selector de 26 mapas + Visor 3D)
+│   └── GameWorld.tscn           # Escena principal de partida
+├── scripts/
+│   ├── core/                    # GameData.gd, AudioManager.gd, RoundManager.gd
+│   ├── actors/                  # CSActor.gd (física GoldSrc), PlayerController.gd
+│   ├── weapons/                 # WeaponController.gd (balística, retroceso, recarga, C4)
+│   ├── ai/                      # BotNavigator.gd (AStar3D), CSBot.gd (IA táctica)
+│   ├── world/                   # MapLoader.gd, SkyBuilder.gd, PlantedC4.gd, HostageNPC.gd...
+│   └── ui/                      # MainMenu.gd, CSHud.gd, BuyMenu.gd, TeamSelectMenu.gd...
+├── assets/                      # Mapas .glb, lightmaps, modelos .glb, sonidos .wav, sprites, shaders
+├── data/                        # JSONs de armas, clases, mapas, waypoints, HUD, overviews y radio
+└── tools/
+    ├── extract_cs15.py          # Pipeline completo para regenerar todos los assets desde cs15_retail
+    ├── verify_godot_project.py  # Verificador AST GDScript + integridad binaria GLB/JSON/WAV
+    └── goldsrc/                 # Convertidores Python de BSP v30, StudioMDL v10, WAD3, SPR y cs_i386.so
+```
+
+Para volver a ejecutar la extracción desde un clon local de `cs15_retail` o validar la integridad completa del proyecto:
+```bash
+python3 tools/extract_cs15.py --src /ruta/a/counterstrike-betas/cstrike --out .
+python3 tools/verify_godot_project.py
+```

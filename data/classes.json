@@ -1,0 +1,76 @@
+{
+  "T": [
+    {
+      "id": "terror",
+      "num": 1,
+      "name": "Phoenix Connexion",
+      "vgui": "640_terror",
+      "model": "terror",
+      "description": "The Phoenix Faction was formed shortly after the breakup of the USSR. Having established a reputation for killing anyone that gets in their way, the Phoenix Faction is one of the most feared terrorist groups in Eastern Europe."
+    },
+    {
+      "id": "leet",
+      "num": 2,
+      "name": "L337 Krew",
+      "vgui": "640_leet",
+      "model": "leet",
+      "description": "Middle Eastern fundamentalist group bent on world domination and various other evil deeds."
+    },
+    {
+      "id": "arctic",
+      "num": 3,
+      "name": "Arctic Avengers",
+      "vgui": "640_arctic",
+      "model": "arctic",
+      "description": "Swedish terrorist faction founded in 1977. Famous for their bombing of the Canadian embassy in 1990."
+    },
+    {
+      "id": "guerilla",
+      "num": 4,
+      "name": "Guerilla Warfare",
+      "vgui": "640_guerilla",
+      "model": "guerilla",
+      "description": "A terrorist faction founded in the Middle East, Guerilla Warfare, has a reputation for ruthlessness. Their disgust for the American lifestyle was demonstrated in their 1982 bombing of a school bus full of Rock and Roll musicians."
+    }
+  ],
+  "CT": [
+    {
+      "id": "urban",
+      "num": 1,
+      "name": "Seal Team 6",
+      "vgui": "640_urban",
+      "model": "urban",
+      "description": "Seal Team 6 (to be known later as DEVGRU) was founded in 1980 under the command of Lieutenant-Commander Richard Marcincko. ST-6 was placed on permanent alert to respond to terrorist attacks against American targets worldwide."
+    },
+    {
+      "id": "gsg9",
+      "num": 2,
+      "name": "GSG-9",
+      "vgui": "640_gsg9",
+      "model": "gsg9",
+      "description": "GSG-9 was born out of the tragic events that led to the death of several Israeli athletes during the 1972 Olympic games in Munich, Germany."
+    },
+    {
+      "id": "sas",
+      "num": 3,
+      "name": "SAS",
+      "vgui": "640_sas",
+      "model": "sas",
+      "description": "The world-renowned British SAS was founded in the Second World War by a man named David Stirling. Their role during WW2 involved gathering intelligence behind enemy lines and executing sabotage strikes and assassinations against key targets."
+    },
+    {
+      "id": "gign",
+      "num": 4,
+      "name": "GIGN",
+      "vgui": "640_gign",
+      "model": "gign",
+      "description": "France's elite Counter-Terrorist unit, the GIGN, was designed to be a fast response force that could decisively react to any large-scale terrorist incident. Consisting of no more than 100 men, the GIGN has earned its reputation through a history of successful ops."
+    }
+  ],
+  "VIP": {
+    "id": "vip",
+    "name": "VIP",
+    "vgui": "640_vip",
+    "model": "vip"
+  }
+}

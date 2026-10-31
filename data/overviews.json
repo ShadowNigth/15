@@ -1,0 +1,262 @@
+{
+  "as_oilrig": {
+    "zoom": 2.67,
+    "origin": [
+      647.0,
+      -732.0,
+      -1110.0
+    ],
+    "rotated": 1,
+    "image": "res://assets/ui/overviews/as_oilrig.png"
+  },
+  "as_tundra": {
+    "zoom": 1.12,
+    "origin": [
+      20.0,
+      143.0,
+      -800.0
+    ],
+    "rotated": 1,
+    "image": "res://assets/ui/overviews/as_tundra.png"
+  },
+  "cs_747": {
+    "zoom": 1.63,
+    "origin": [
+      32.0,
+      -578.0,
+      -256.0
+    ],
+    "rotated": 0,
+    "image": "res://assets/ui/overviews/cs_747.png"
+  },
+  "cs_assault": {
+    "zoom": 2.13,
+    "origin": [
+      -531.0,
+      1390.0,
+      0.0
+    ],
+    "rotated": 0,
+    "image": "res://assets/ui/overviews/cs_assault.png"
+  },
+  "cs_backalley": {
+    "zoom": 2.17,
+    "origin": [
+      213.0,
+      1229.0,
+      -656.0
+    ],
+    "rotated": 0,
+    "image": "res://assets/ui/overviews/cs_backalley.png"
+  },
+  "cs_estate": {
+    "zoom": 2.08,
+    "origin": [
+      -144.0,
+      -925.0,
+      -800.0
+    ],
+    "rotated": 0,
+    "image": "res://assets/ui/overviews/cs_estate.png"
+  },
+  "cs_havana": {
+    "zoom": 1.36,
+    "origin": [
+      256.0,
+      56.0,
+      0.0
+    ],
+    "rotated": 1,
+    "image": "res://assets/ui/overviews/cs_havana.png"
+  },
+  "cs_italy": {
+    "zoom": 1.76,
+    "origin": [
+      -212.0,
+      243.0,
+      -240.0
+    ],
+    "rotated": 0,
+    "image": "res://assets/ui/overviews/cs_italy.png"
+  },
+  "cs_militia": {
+    "zoom": 1.72,
+    "origin": [
+      615.0,
+      -476.0,
+      -380.0
+    ],
+    "rotated": 0,
+    "image": "res://assets/ui/overviews/cs_militia.png"
+  },
+  "cs_office": {
+    "zoom": 1.56,
+    "origin": [
+      280.0,
+      -351.0,
+      -435.0
+    ],
+    "rotated": 1,
+    "image": "res://assets/ui/overviews/cs_office.png"
+  },
+  "cs_siege": {
+    "zoom": 1.14,
+    "origin": [
+      564.0,
+      1252.0,
+      -640.0
+    ],
+    "rotated": 1,
+    "image": "res://assets/ui/overviews/cs_siege.png"
+  },
+  "de_aztec": {
+    "zoom": 1.39,
+    "origin": [
+      767.0,
+      -98.0,
+      -545.0
+    ],
+    "rotated": 1,
+    "image": "res://assets/ui/overviews/de_aztec.png"
+  },
+  "de_cbble": {
+    "zoom": 1.16,
+    "origin": [
+      -832.0,
+      332.0,
+      -256.0
+    ],
+    "rotated": 1,
+    "image": "res://assets/ui/overviews/de_cbble.png"
+  },
+  "de_chateau": {
+    "zoom": 1.61,
+    "origin": [
+      1258.56,
+      652.56,
+      -176.0
+    ],
+    "rotated": 0,
+    "image": "res://assets/ui/overviews/de_chateau.png"
+  },
+  "de_dust": {
+    "zoom": 1.2,
+    "origin": [
+      101.0,
+      1071.0,
+      -192.0
+    ],
+    "rotated": 0,
+    "image": "res://assets/ui/overviews/de_dust.png"
+  },
+  "de_dust2": {
+    "zoom": 1.5,
+    "origin": [
+      -223.0,
+      1097.0,
+      -192.0
+    ],
+    "rotated": 0,
+    "image": "res://assets/ui/overviews/de_dust2.png"
+  },
+  "de_inferno": {
+    "zoom": 1.49,
+    "origin": [
+      404.0,
+      1282.0,
+      -64.0
+    ],
+    "rotated": 1,
+    "image": "res://assets/ui/overviews/de_inferno.png"
+  },
+  "de_nuke": {
+    "zoom": 1.24,
+    "origin": [
+      264.0,
+      -912.0,
+      -768.0
+    ],
+    "rotated": 1,
+    "image": "res://assets/ui/overviews/de_nuke.png"
+  },
+  "de_piranesi": {
+    "zoom": 1.37,
+    "origin": [
+      48.0,
+      864.0,
+      400.0
+    ],
+    "rotated": 1,
+    "image": "res://assets/ui/overviews/de_piranesi.png"
+  },
+  "de_prodigy": {
+    "zoom": 2.24,
+    "origin": [
+      1623.0,
+      -272.0,
+      -480.0
+    ],
+    "rotated": 1,
+    "image": "res://assets/ui/overviews/de_prodigy.png"
+  },
+  "de_storm": {
+    "zoom": 1.56,
+    "origin": [
+      -14.0,
+      -50.0,
+      -520.0
+    ],
+    "rotated": 0,
+    "image": "res://assets/ui/overviews/de_storm.png"
+  },
+  "de_survivor": {
+    "zoom": 1.43,
+    "origin": [
+      837.0,
+      955.0,
+      -480.0
+    ],
+    "rotated": 1,
+    "image": "res://assets/ui/overviews/de_survivor.png"
+  },
+  "de_torn": {
+    "zoom": 1.35,
+    "origin": [
+      82.0,
+      663.0,
+      -470.0
+    ],
+    "rotated": 0,
+    "image": "res://assets/ui/overviews/de_torn.png"
+  },
+  "de_train": {
+    "zoom": 1.56,
+    "origin": [
+      32.0,
+      156.0,
+      -360.0
+    ],
+    "rotated": 1,
+    "image": "res://assets/ui/overviews/de_train.png"
+  },
+  "de_vegas": {
+    "zoom": 1.63,
+    "origin": [
+      1903.0,
+      -1283.0,
+      -1088.0
+    ],
+    "rotated": 0,
+    "image": "res://assets/ui/overviews/de_vegas.png"
+  },
+  "de_vertigo": {
+    "zoom": 2.39,
+    "origin": [
+      -1280.0,
+      -256.0,
+      -288.0
+    ],
+    "rotated": 1,
+    "image": "res://assets/ui/overviews/de_vertigo.png"
+  }
+}

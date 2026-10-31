@@ -1,0 +1,9 @@
+# Godot 4+ local cache & export builds
+.godot/
+export/
+*.import.tmp
+
+# Python bytecode & virtualenvs
+__pycache__/
+*.pyc
+.venv/
