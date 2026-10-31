@@ -143,7 +143,7 @@ func _physics_process(delta: float) -> void:
 				_repath_timer = 0.7
 				var nav = RoundManager.game_world.get("bot_navigator")
 				if nav != null and nav.has_method("find_path"):
-					_nav_path = nav.find_path(global_position, leader.global_position)
+					_nav_path.assign(nav.find_path(global_position, leader.global_position))
 			if not _nav_path.is_empty():
 				if global_position.distance_to(_nav_path[0]) < 1.4:
 					_nav_path.remove_at(0)

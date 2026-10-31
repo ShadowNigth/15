@@ -184,22 +184,25 @@ func _perform_bot_buy() -> void:
 		var want_sniper: bool = (personality == PERSONALITY_CAREFUL and randf() < 0.55) or randf() < 0.16
 		if team == "T":
 			if money >= 4750 and want_sniper:
-				choices = ["awp"]
+				choices.assign(["awp"])
 			elif money >= 2750 and want_sniper and randf() < 0.45:
-				choices = ["scout", "ak47"]
+				choices.assign(["scout", "ak47"])
 			elif money >= 2600:
-				choices = ["ak47", "sg552"] if personality != PERSONALITY_RUSHER else ["ak47", "ak47", "sg552"]
+				if personality == PERSONALITY_RUSHER:
+					choices.assign(["ak47", "ak47", "sg552"])
+				else:
+					choices.assign(["ak47", "sg552"])
 			elif money >= 1500:
-				choices = ["mp5navy", "mac10", "ump45", "m3"]
+				choices.assign(["mp5navy", "mac10", "ump45", "m3"])
 		else:
 			if money >= 4750 and want_sniper:
-				choices = ["awp"]
+				choices.assign(["awp"])
 			elif money >= 2750 and want_sniper and randf() < 0.40:
-				choices = ["scout", "m4a1"]
+				choices.assign(["scout", "m4a1"])
 			elif money >= 3150:
-				choices = ["m4a1", "aug"]
+				choices.assign(["m4a1", "aug"])
 			elif money >= 1500:
-				choices = ["mp5navy", "tmp", "ump45", "m3"]
+				choices.assign(["mp5navy", "tmp", "ump45", "m3"])
 
 		for wid in choices:
 			if buy_weapon(wid):
