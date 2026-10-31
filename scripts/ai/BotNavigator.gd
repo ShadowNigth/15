@@ -230,7 +230,12 @@ func are_directly_linked(from_idx: int, to_idx: int) -> bool:
 	return true
 
 
-func get_nearest_node(pos: Vector3, space: PhysicsDirectSpaceState3D = null, max_dy: float = 3.6) -> int:
+func get_nearest_node(
+	pos: Vector3,
+	space: PhysicsDirectSpaceState3D = null,
+	max_dy: float = 3.6,
+	for_walk_start: bool = false
+) -> int:
 	var n: int = waypoints.size()
 	if n == 0:
 		return -1
@@ -240,38 +245,51 @@ func get_nearest_node(pos: Vector3, space: PhysicsDirectSpaceState3D = null, max
 
 	for i in range(n):
 		var wp: Vector3 = waypoints[i]
-		var dy: float = absf(wp.y - pos.y)
-		if dy > max_dy:
+		var signed_dy: float = wp.y - pos.y
+		var dy: float = absf(signed_dy)
+		# Never snap an actor's walk-start onto a ledge/ramp-top above GoldSrc step height!
+		if for_walk_start:
+			if (wp_flags[i] & FLAG_LADDER) == 0 and signed_dy > 0.56:
+				continue
+			if signed_dy < -2.4:
+				continue
+		elif dy > max_dy:
 			continue
 		var d_xz: float = Vector2(wp.x - pos.x, wp.z - pos.z).length()
 		if d_xz > 18.0:
 			continue
-		var score: float = d_xz + dy * 3.2
+		var score: float = d_xz + dy * 3.5 + (maxf(0.0, signed_dy) * 8.0 if for_walk_start else 0.0)
 		cands.append([score, i])
 
 	if cands.is_empty():
 		for i in range(n):
 			var wp2: Vector3 = waypoints[i]
-			var d2: float = Vector2(wp2.x - pos.x, wp2.z - pos.z).length() + absf(wp2.y - pos.y) * 2.4
+			var s_dy2: float = wp2.y - pos.y
+			var climb_pen: float = 35.0 if (for_walk_start and s_dy2 > 0.60 and (wp_flags[i] & FLAG_LADDER) == 0) else 0.0
+			var d2: float = Vector2(wp2.x - pos.x, wp2.z - pos.z).length() + absf(s_dy2) * 2.8 + climb_pen
 			if d2 < best_cost:
 				best_cost = d2
 				best_id = i
 		return best_id
 
 	cands.sort_custom(func(a: Array, b: Array) -> bool: return float(a[0]) < float(b[0]))
-	var check_n: int = mini(cands.size(), 8)
-	var eye_from: Vector3 = pos + Vector3(0.0, 0.95, 0.0)
+	var check_n: int = mini(cands.size(), 10)
+	var shin_from: Vector3 = pos + Vector3(0.0, 0.42, 0.0)
+	var chest_from: Vector3 = pos + Vector3(0.0, 1.05, 0.0)
 	for k in range(check_n):
 		var sc: float = float(cands[k][0])
 		var idx: int = int(cands[k][1])
-		if space != null and sc < 16.0:
-			var eye_to: Vector3 = waypoints[idx] + Vector3(0.0, 0.85, 0.0)
-			if _is_solid_wall_between(space, eye_from, eye_to):
-				sc += 35.0
+		if space != null and sc < 18.0:
+			var wp_k: Vector3 = waypoints[idx]
+			# Both shin (+0.42m, catches retaining walls/parapets!) and chest (+1.05m) must be clear!
+			if _is_solid_wall_between(space, chest_from, wp_k + Vector3(0.0, 1.00, 0.0)) or (
+				for_walk_start and _is_solid_wall_between(space, shin_from, wp_k + Vector3(0.0, 0.42, 0.0))
+			):
+				sc += 48.0
 		if sc < best_cost:
 			best_cost = sc
 			best_id = idx
-			if sc < 2.2:
+			if sc < 1.8:
 				break
 
 	return best_id if best_id >= 0 else int(cands[0][1])
@@ -302,13 +320,14 @@ func plan_node_path(
 	path_mode: int = PATH_OPTIMAL,
 	leading_hostage: bool = false,
 	space: PhysicsDirectSpaceState3D = null,
-	diversity_seed: int = 0
+	diversity_seed: int = 0,
+	banned_nodes: Dictionary = {}
 ) -> PackedInt32Array:
 	var n: int = waypoints.size()
 	if n == 0 or goal_idx < 0 or goal_idx >= n:
 		return PackedInt32Array()
 
-	var start_idx: int = get_nearest_node(from_pos, space)
+	var start_idx: int = get_nearest_node(from_pos, space, 3.6, true)
 	if start_idx < 0:
 		return PackedInt32Array()
 	if start_idx == goal_idx:
@@ -396,6 +415,8 @@ func plan_node_path(
 
 			var danger_val: float = _danger_t[v] if use_t_danger else _danger_ct[v]
 			var extra_cost: float = _congestion[v]
+			if banned_nodes.has(v):
+				extra_cost += 180.0
 			if path_mode == PATH_OPTIMAL:
 				extra_cost += danger_val * 0.22
 			elif path_mode == PATH_SAFE:
@@ -431,7 +452,7 @@ func plan_node_path(
 
 	# If hostage-safe search couldn't reach, fall back to normal directed search
 	if parent[goal_idx] == -1 and leading_hostage:
-		return plan_node_path(from_pos, goal_idx, team, path_mode, false, space, diversity_seed)
+		return plan_node_path(from_pos, goal_idx, team, path_mode, false, space, diversity_seed, banned_nodes)
 	if parent[goal_idx] == -1:
 		return PackedInt32Array([start_idx])
 

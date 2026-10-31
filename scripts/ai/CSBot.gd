@@ -25,12 +25,13 @@ var target_enemy: CSActor = null
 # YaPB directed node-graph navigation state
 var _node_path: PackedInt32Array = PackedInt32Array()
 var _prev_node_idx: int = -1
-var _cur_node_idx: int = -1
 var _goal_node_idx: int = -1
 var _goal_pos: Vector3 = Vector3.ZERO
 var _has_goal: bool = false
 var _cur_node_offset: Vector3 = Vector3.ZERO
-var _jump_link_done: bool = false
+var _cur_node_elapsed: float = 0.0
+var _banned_nodes: Dictionary = {}
+var _rechoice_count: int = 0
 var _air_crouch_timer: float = 0.0
 var _diversity_seed: int = 0
 
@@ -110,11 +111,12 @@ func spawn_for_round(pos: Vector3, yaw_rad: float, reset_weapons: bool) -> void:
 	target_enemy = null
 	_node_path = PackedInt32Array()
 	_prev_node_idx = -1
-	_cur_node_idx = -1
 	_goal_node_idx = -1
 	_has_goal = false
 	_cur_node_offset = Vector3.ZERO
-	_jump_link_done = false
+	_cur_node_elapsed = 0.0
+	_banned_nodes.clear()
+	_rechoice_count = 0
 	_air_crouch_timer = 0.0
 	_diversity_seed = randi()
 	_camp_timer = 0.0
@@ -563,12 +565,25 @@ func _pick_path_mode() -> int:
 
 
 func _update_tactical_objective() -> void:
+	# Never overwrite or cancel an active open-corridor escape maneuver!
+	if _escape_timer > 0.0:
+		return
 	if not is_instance_valid(RoundManager.game_world):
 		return
 	var gw := RoundManager.game_world
 	var nav: BotNavigator = gw.get("bot_navigator")
 	if nav == null or nav.waypoints.is_empty():
 		return
+
+	# Expire old temporary node bans
+	if not _banned_nodes.is_empty():
+		var now_s: float = float(Time.get_ticks_msec()) * 0.001
+		var expired: Array[int] = []
+		for k in _banned_nodes.keys():
+			if float(_banned_nodes[k]) <= now_s:
+				expired.append(int(k))
+		for ek in expired:
+			_banned_nodes.erase(ek)
 
 	# Radio order follow
 	if is_instance_valid(_follow_target) and bool(_follow_target.get("is_alive")):
@@ -699,22 +714,21 @@ func _plan_to_node(nav: BotNavigator, goal_idx: int, hostage_safe: bool, mode: i
 	_goal_node_idx = goal_idx
 	_goal_pos = nav.get_node_pos(goal_idx)
 	_has_goal = true
-	_node_path = nav.plan_node_path(global_position, goal_idx, team, use_mode, hostage_safe, space, _diversity_seed)
-	_prev_node_idx = nav.get_nearest_node(global_position, space)
+	_node_path = nav.plan_node_path(global_position, goal_idx, team, use_mode, hostage_safe, space, _diversity_seed, _banned_nodes)
+	_prev_node_idx = nav.get_nearest_node(global_position, space, 3.6, true)
 	if not _node_path.is_empty():
 		_advance_to_node_entry(nav, _node_path[0])
 
 
 func _advance_to_node_entry(nav: BotNavigator, next_idx: int) -> void:
-	_cur_node_idx = next_idx
-	_jump_link_done = false
+	_cur_node_elapsed = 0.0
 	var fl := nav.get_node_flags(next_idx)
 	var rad := nav.get_node_radius(next_idx)
 	var lnk := nav.get_link_info(_prev_node_idx, next_idx)
 	var is_jump_lnk: bool = lnk.size() >= 2 and (int(lnk[1]) & BotNavigator.LINK_JUMP) != 0
 	# YaPB SetPathOrigin: ONLY apply gentle wander offset in wide open areas, NEVER on narrow/jump/crouch/ladder nodes!
-	if not is_jump_lnk and (fl & BotNavigator.ACTION_FLAGS) == 0 and rad >= 0.45:
-		var max_r := minf(rad * 0.42, 0.55)
+	if not is_jump_lnk and (fl & BotNavigator.ACTION_FLAGS) == 0 and rad >= 0.55:
+		var max_r := minf(rad * 0.35, 0.42)
 		var ang := randf() * TAU
 		_cur_node_offset = Vector3(cos(ang) * max_r, 0.0, sin(ang) * max_r)
 	else:
@@ -744,14 +758,21 @@ func _follow_navigation_path(delta: float) -> void:
 		var esc_raw := _steer_around_obstacles(_escape_dir)
 		_smoothed_move_dir = _blend_move_dir(_smoothed_move_dir, esc_raw, delta * 10.0)
 		_look_smoothly_toward(global_position + _smoothed_move_dir * 3.5 + Vector3(0.0, 1.45, 0.0), delta * 7.5)
-		apply_goldsrc_movement(_smoothed_move_dir, false, _vent_crouch_timer > 0.0, false, delta)
+		var esc_jump := false
+		if _jump_cooldown <= 0.0 and is_on_floor() and _is_jumpable_ledge(_smoothed_move_dir):
+			esc_jump = true
+			_jump_cooldown = 1.25
+			_air_crouch_timer = 0.55
+		apply_goldsrc_movement(_smoothed_move_dir, esc_jump, _vent_crouch_timer > 0.0 or (_air_crouch_timer > 0.0 and not is_on_floor()), false, delta)
 		_last_pos = global_position
 		if _escape_timer <= 0.0:
 			_diversity_seed = randi()
-			if _goal_node_idx >= 0:
-				_plan_to_node(nav, _goal_node_idx, _is_leading_hostage(), BotNavigator.PATH_DIVERSITY)
-			else:
+			if _rechoice_count >= 2 or _goal_node_idx < 0 or _banned_nodes.has(_goal_node_idx):
+				_rechoice_count = 0
+				_has_goal = false
 				_plan_to_node(nav, nav.pick_roam_node(global_position, team), false, BotNavigator.PATH_DIVERSITY)
+			else:
+				_plan_to_node(nav, _goal_node_idx, _is_leading_hostage(), BotNavigator.PATH_DIVERSITY)
 		return
 
 	if _hold_pos_timer > 0.0 or _node_path.is_empty():
@@ -773,7 +794,7 @@ func _follow_navigation_path(delta: float) -> void:
 		var next_flags: int = nav.get_node_flags(next_id)
 		if (next_flags & BotNavigator.ACTION_FLAGS) == 0 and nav.are_directly_linked(cur_id, next_id):
 			var p_next := nav.get_node_pos(next_id)
-			if absf(p_next.y - global_position.y) < 0.55 and global_position.distance_to(p_next) < 5.6:
+			if absf(p_next.y - global_position.y) < 0.32 and global_position.distance_to(p_next) < 5.0:
 				if _has_wide_corridor_sight(global_position, p_next):
 					_prev_node_idx = cur_id
 					_node_path.remove_at(0)
@@ -788,12 +809,14 @@ func _follow_navigation_path(delta: float) -> void:
 	var signed_dy: float = wp.y - global_position.y
 	var vert_d: float = absf(signed_dy)
 
-	# Tight arrival radius on narrow/ladder/jump nodes; relaxed smooth touch radius in open lanes
-	var touch_r: float = 0.72 if ((cur_flags & BotNavigator.ACTION_FLAGS) != 0 or is_jump_link) else 1.28
-	if flat_d < touch_r and vert_d < (2.1 if (cur_flags & BotNavigator.FLAG_LADDER) != 0 else 1.55):
+	# Tight arrival radius on narrow/ramp/ladder/jump nodes; NEVER mark an upper ledge reached from below!
+	var touch_r: float = 0.54 if ((cur_flags & BotNavigator.ACTION_FLAGS) != 0 or is_jump_link) else 1.15
+	var max_vert_touch: float = 2.1 if (cur_flags & BotNavigator.FLAG_LADDER) != 0 else (0.68 if signed_dy > 0.0 else 1.45)
+	if flat_d < touch_r and vert_d < max_vert_touch:
 		_prev_node_idx = cur_id
 		_node_path.remove_at(0)
 		_stuck_timer = 0.0
+		_rechoice_count = 0
 		if _node_path.is_empty():
 			_has_goal = false
 			_try_enter_camp_at_node(nav, cur_id)
@@ -814,38 +837,40 @@ func _follow_navigation_path(delta: float) -> void:
 	if on_ladder:
 		bot_ladder_dir = 1.0 if signed_dy >= -0.30 else -1.0
 
-	# Pure-pursuit corner rounding ONLY on non-action, non-jump, same-elevation links
+	# Pure-pursuit corner rounding ONLY on flat, non-action, non-jump links
 	var steer_target: Vector3 = wp
-	if not on_ladder and not is_jump_link and (cur_flags & BotNavigator.ACTION_FLAGS) == 0 and _node_path.size() >= 2 and flat_d < 2.4:
+	if not on_ladder and not is_jump_link and (cur_flags & BotNavigator.ACTION_FLAGS) == 0 and _node_path.size() >= 2 and flat_d < 2.0:
 		var next_id2: int = _node_path[1]
-		if nav.are_directly_linked(cur_id, next_id2):
+		if (nav.get_node_flags(next_id2) & BotNavigator.ACTION_FLAGS) == 0 and nav.are_directly_linked(cur_id, next_id2):
 			var wp2 := nav.get_node_pos(next_id2)
-			if absf(wp2.y - wp.y) < 0.65:
-				var corner_blend := clampf((2.4 - flat_d) / 2.4, 0.0, 0.45)
+			if absf(wp2.y - wp.y) < 0.30:
+				var corner_blend := clampf((2.0 - flat_d) / 2.0, 0.0, 0.38)
 				steer_target = wp.lerp(wp2, corner_blend)
 
 	var raw_dir := Vector3(steer_target.x - global_position.x, 0.0, steer_target.z - global_position.z)
 	if raw_dir.length_squared() > 0.001:
 		raw_dir = raw_dir.normalized()
 
-	var target_move_dir := raw_dir if (on_ladder or is_jump_link) else _steer_around_obstacles(raw_dir)
-	_smoothed_move_dir = target_move_dir if (on_ladder or is_jump_link) else _blend_move_dir(_smoothed_move_dir, target_move_dir, delta * 12.5)
+	# Do NOT let obstacle whiskers deflect away from a climbable step/ledge when heading to a higher node!
+	var is_climb_step: bool = (not on_ladder) and (is_jump_link or (signed_dy > 0.44 and signed_dy < 1.90 and flat_d < 2.6 and _is_jumpable_ledge(raw_dir)))
+	var target_move_dir := raw_dir if (on_ladder or is_climb_step) else _steer_around_obstacles(raw_dir)
+	_smoothed_move_dir = target_move_dir if (on_ladder or is_climb_step) else _blend_move_dir(_smoothed_move_dir, target_move_dir, delta * 12.5)
 	var move_dir := _smoothed_move_dir
 
-	# YaPB Jump-Link Execution (yapb/src/navigate.cpp:1730):
-	# Launch with exact .graph horizontal velocity + mid-air crouch-jump!
+	# YaPB Jump-Link & Ledge Crouch-Jump Execution:
+	# Launch right at the ledge lip (flat_d < 2.15 or ledge face within 1.25m) and allow clean retries!
 	var want_jump := false
-	if is_jump_link and not _jump_link_done and (is_on_floor() or on_ladder) and not RoundManager.is_movement_frozen():
-		want_jump = true
-		_jump_link_done = true
-		_jump_cooldown = 0.85
-		_air_crouch_timer = 0.58
-		if lnk_cur.size() >= 5:
-			var jvx := float(lnk_cur[2])
-			var jvz := float(lnk_cur[4])
-			if Vector2(jvx, jvz).length_squared() > 0.25:
-				velocity.x = jvx
-				velocity.z = jvz
+	if is_climb_step and _jump_cooldown <= 0.0 and (is_on_floor() or on_ladder) and not RoundManager.is_movement_frozen():
+		if flat_d < 2.15 or _is_jumpable_ledge(raw_dir):
+			want_jump = true
+			_jump_cooldown = 0.78
+			_air_crouch_timer = 0.60
+			if lnk_cur.size() >= 5 and Vector2(float(lnk_cur[2]), float(lnk_cur[4])).length_squared() > 0.25:
+				velocity.x = float(lnk_cur[2])
+				velocity.z = float(lnk_cur[4])
+			elif raw_dir.length_squared() > 0.01:
+				velocity.x = raw_dir.x * 6.8
+				velocity.z = raw_dir.z * 6.8
 
 	# Auto-crouch on YaPB FLAG_CROUCH nodes or low vents/ducts!
 	if (cur_flags & BotNavigator.FLAG_CROUCH) != 0 or (not on_ladder and _needs_crouch_clearance(move_dir)):
@@ -876,27 +901,36 @@ func _follow_navigation_path(delta: float) -> void:
 	_look_smoothly_toward(look_pt, delta * 7.5)
 
 	if not RoundManager.is_movement_frozen():
+		_cur_node_elapsed += delta
 		var moved_dist := global_position.distance_to(_last_pos)
 		if on_ladder and absf(velocity.y) > 0.55:
 			_stuck_timer = 0.0
 		elif moved_dist < 1.05 * delta:
 			_stuck_timer += delta
-			if _stuck_timer > 0.28 and _jump_cooldown <= 0.0 and is_on_floor():
-				if _is_jumpable_ledge(move_dir):
+			if _stuck_timer > 0.24 and _jump_cooldown <= 0.0 and is_on_floor():
+				if _is_jumpable_ledge(raw_dir) or _is_jumpable_ledge(move_dir):
 					want_jump = true
-					_jump_cooldown = 1.65
-					_air_crouch_timer = 0.52
+					_jump_cooldown = 1.05
+					_air_crouch_timer = 0.58
+					velocity.x = raw_dir.x * 6.5
+					velocity.z = raw_dir.z * 6.5
 				elif _needs_crouch_clearance(move_dir):
 					_vent_crouch_timer = 0.65
-			if _stuck_timer > 0.58:
-				_stuck_timer = 0.0
-				_avoid_side = -_avoid_side
-				nav.report_blocked_segment(global_position, wp)
-				_escape_dir = _pick_open_escape_direction(raw_dir)
-				_escape_timer = 0.68
-				_node_path = PackedInt32Array()
 		else:
 			_stuck_timer = maxf(0.0, _stuck_timer - delta * 2.2)
+
+		# YaPB FindValidNode Timeout + Node Ban: NEVER remain stuck on any node for > 3.2s!
+		var reach_deadline: float = maxf(3.2, flat_d * 0.65 + 1.8) if not on_ladder else 7.5
+		if _stuck_timer > 0.56 or _cur_node_elapsed > reach_deadline:
+			_stuck_timer = 0.0
+			_cur_node_elapsed = 0.0
+			_rechoice_count += 1
+			_avoid_side = -_avoid_side
+			_banned_nodes[cur_id] = float(Time.get_ticks_msec()) * 0.001 + 18.0
+			nav.report_blocked_segment(global_position, wp)
+			_escape_dir = _pick_open_escape_direction(raw_dir)
+			_escape_timer = 0.92
+			_node_path = PackedInt32Array()
 		_last_pos = global_position
 
 	# Dismount ladder at bottom if target is below & behind
@@ -1117,13 +1151,21 @@ func _is_jumpable_ledge(fwd_dir: Vector3) -> bool:
 	if fwd_dir.length_squared() < 0.001 or not is_inside_tree() or not get_world_3d():
 		return false
 	var space := get_world_3d().direct_space_state
-	var low_from := global_position + Vector3(0.0, 0.65, 0.0)
-	var high_from := global_position + Vector3(0.0, 1.68, 0.0)
-	var q_low := PhysicsRayQueryParameters3D.create(low_from, low_from + fwd_dir * 1.05)
-	q_low.collision_mask = 1
-	var q_high := PhysicsRayQueryParameters3D.create(high_from, high_from + fwd_dir * 1.15)
+	# Check both shin (+0.42m) and waist (+0.85m) blocked while crouch-jump head (+1.78m) is clear!
+	var shin_from := global_position + Vector3(0.0, 0.42, 0.0)
+	var waist_from := global_position + Vector3(0.0, 0.85, 0.0)
+	var high_from := global_position + Vector3(0.0, 1.78, 0.0)
+	var q_high := PhysicsRayQueryParameters3D.create(high_from, high_from + fwd_dir * 1.28)
 	q_high.collision_mask = 1
-	return (not space.intersect_ray(q_low).is_empty()) and space.intersect_ray(q_high).is_empty()
+	if not space.intersect_ray(q_high).is_empty():
+		return false
+	var q_shin := PhysicsRayQueryParameters3D.create(shin_from, shin_from + fwd_dir * 1.20)
+	q_shin.collision_mask = 1
+	if not space.intersect_ray(q_shin).is_empty():
+		return true
+	var q_waist := PhysicsRayQueryParameters3D.create(waist_from, waist_from + fwd_dir * 1.20)
+	q_waist.collision_mask = 1
+	return not space.intersect_ray(q_waist).is_empty()
 
 
 func _look_smoothly_toward(world_pt: Vector3, weight: float) -> void:
