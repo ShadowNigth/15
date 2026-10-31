@@ -155,37 +155,66 @@ func ensure_looping_animations(ap: AnimationPlayer) -> void:
 
 
 func get_smoke_cloud_texture() -> Texture2D:
-	if _tex_cache.has("__proc_smoke_cloud"):
-		return _tex_cache["__proc_smoke_cloud"] as Texture2D
+	return get_smoke_cloud_variant(0)
+
+
+func get_smoke_cloud_variant(variant_idx: int) -> Texture2D:
+	var v_clamped: int = posmod(variant_idx, 4)
+	var ckey: String = "__proc_smoke_cloud_%d" % v_clamped
+	if _tex_cache.has(ckey):
+		return _tex_cache[ckey] as Texture2D
+
+	var seeds := [15015, 29311, 44701, 61909]
 	var sz := 128
 	var img := Image.create(sz, sz, false, Image.FORMAT_RGBA8)
+
+	var warp_noise := FastNoiseLite.new()
+	warp_noise.seed = int(seeds[v_clamped]) + 701
+	warp_noise.noise_type = FastNoiseLite.TYPE_SIMPLEX_SMOOTH
+	warp_noise.fractal_type = FastNoiseLite.FRACTAL_FBM
+	warp_noise.fractal_octaves = 2
+	warp_noise.frequency = 0.026
+
 	var noise := FastNoiseLite.new()
-	noise.seed = 15015
+	noise.seed = int(seeds[v_clamped])
 	noise.noise_type = FastNoiseLite.TYPE_SIMPLEX_SMOOTH
 	noise.fractal_type = FastNoiseLite.FRACTAL_FBM
 	noise.fractal_octaves = 4
-	noise.frequency = 0.042
+	noise.frequency = 0.038
+
 	var half := float(sz) * 0.5
 	for y in range(sz):
 		for x in range(sz):
-			var dx := (float(x) + 0.5 - half) / half
-			var dy := (float(y) + 0.5 - half) / half
+			var fx := float(x) + 0.5
+			var fy := float(y) + 0.5
+			var dx := (fx - half) / half
+			var dy := (fy - half) / half
 			var r := sqrt(dx * dx + dy * dy)
-			if r >= 1.0:
-				img.set_pixel(x, y, Color(0.85, 0.86, 0.88, 0.0))
+			if r >= 0.99:
+				img.set_pixel(x, y, Color(0.84, 0.86, 0.88, 0.0))
 				continue
-			var n := noise.get_noise_2d(float(x), float(y)) * 0.5 + 0.5
-			var n2 := noise.get_noise_2d(float(x) * 2.1 + 71.0, float(y) * 2.1 - 37.0) * 0.5 + 0.5
-			# Perturb outer silhouette with multi-octave FBM while keeping inner core 98% opaque!
-			var eff_r := r + (n - 0.5) * 0.26 * smoothstep(0.18, 0.85, r)
-			var core_alpha := 1.0 - smoothstep(0.42, 0.98, eff_r)
-			core_alpha = clampf(core_alpha * (0.86 + 0.22 * n2), 0.0, 0.98)
-			# Subtle internal volumetric shading (brighter crown, slightly cooler/deeper folds)
-			var shade := clampf(0.84 + 0.14 * n - 0.10 * dy - 0.08 * r, 0.66, 0.98)
-			img.set_pixel(x, y, Color(shade, shade * 1.01, shade * 1.025, core_alpha))
+
+			# Domain-warped coordinates produce authentic curling cauliflower smoke billows!
+			var wx := fx + warp_noise.get_noise_2d(fx, fy) * 16.5
+			var wy := fy + warp_noise.get_noise_2d(fx + 93.0, fy - 57.0) * 16.5
+			var n := noise.get_noise_2d(wx, wy) * 0.5 + 0.5
+			var n_fine := noise.get_noise_2d(wx * 2.15 + 41.0, wy * 2.15 - 29.0) * 0.5 + 0.5
+
+			# Organic lobed silhouette with zero hard card edges
+			var lobe_perturb := (n - 0.5) * 0.34 * smoothstep(0.10, 0.78, r) + (n_fine - 0.5) * 0.12 * smoothstep(0.25, 0.90, r)
+			var eff_r := r + lobe_perturb
+			var radial_env := 1.0 - smoothstep(0.24, 0.95, eff_r)
+			var soft_outer := 1.0 - smoothstep(0.76, 0.99, r)
+			var alpha := clampf(radial_env * soft_outer * (0.82 + 0.28 * n_fine), 0.0, 0.96)
+
+			# Rich volumetric self-shading: sunlit silver crown, cool slate creases & belly
+			var crease := smoothstep(0.22, 0.82, n * 0.72 + n_fine * 0.28)
+			var shade := clampf(0.74 + 0.19 * crease - 0.11 * dy - 0.06 * r, 0.58, 0.98)
+			img.set_pixel(x, y, Color(shade * 0.985, shade, shade * 1.022, alpha))
+
 	img.generate_mipmaps()
 	var tex := ImageTexture.create_from_image(img)
-	_tex_cache["__proc_smoke_cloud"] = tex
+	_tex_cache[ckey] = tex
 	return tex
 
 

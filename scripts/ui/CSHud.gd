@@ -42,7 +42,6 @@ var _center_timer: float = 0.0
 var _money_delta_timer: float = 0.0
 var _banner_timer: float = 0.0
 var _c4_blink_phase: float = 0.0
-var _pain_flash_alpha: float = 0.0
 var _crosshair_gap_cur: float = 5.0
 var _damage_arcs: Array = []
 var _is_bomb_planted: bool = false
@@ -344,9 +343,6 @@ func _process(delta: float) -> void:
 		if _banner_timer <= 0.0:
 			_weapon_banner_panel.visible = false
 
-	if _pain_flash_alpha > 0.0:
-		_pain_flash_alpha = maxf(0.0, _pain_flash_alpha - delta * 2.4)
-
 	for di in range(_damage_arcs.size() - 1, -1, -1):
 		var arc_d := _damage_arcs[di] as Dictionary
 		var next_a: float = float(arc_d["alpha"]) - delta * 1.15
@@ -400,20 +396,7 @@ func _draw_crosshair() -> void:
 	var sz := _crosshair_ctrl.size
 	var center := sz * 0.5
 
-	# 1. Subtle crimson pain flash & low-HP warning edge vignette
-	var low_hp_pulse: float = 0.0
-	if player.is_alive and player.health <= 25:
-		low_hp_pulse = (0.5 + 0.5 * sin(_c4_blink_phase * 1.35)) * 0.14
-	var vig_a: float = clampf(_pain_flash_alpha * 0.34 + low_hp_pulse, 0.0, 0.42)
-	if vig_a > 0.005:
-		var edge_w: float = minf(sz.x, sz.y) * 0.09
-		var vcol := Color(0.88, 0.06, 0.04, vig_a)
-		_crosshair_ctrl.draw_rect(Rect2(0.0, 0.0, sz.x, edge_w), vcol)
-		_crosshair_ctrl.draw_rect(Rect2(0.0, sz.y - edge_w, sz.x, edge_w), vcol)
-		_crosshair_ctrl.draw_rect(Rect2(0.0, edge_w, edge_w, sz.y - edge_w * 2.0), vcol)
-		_crosshair_ctrl.draw_rect(Rect2(sz.x - edge_w, edge_w, edge_w, sz.y - edge_w * 2.0), vcol)
-
-	# 2. Classic CS 1.5 Directional Damage Indicator Arcs around reticle
+	# Classic CS 1.5 Directional Damage Indicator Arcs around reticle (no screen-edge red box!)
 	if player.is_alive and not _damage_arcs.is_empty():
 		var arc_r: float = minf(sz.x, sz.y) * 0.165
 		for item in _damage_arcs:
@@ -424,7 +407,6 @@ func _draw_crosshair() -> void:
 				var src_p: Vector3 = d_arc["pos"]
 				var rel_w: Vector3 = src_p - player.global_position
 				var local_v: Vector3 = Basis(Vector3.UP, -player.look_yaw) * rel_w
-				# Screen angle: forward (-Z) -> -PI/2 (top), right (+X) -> 0 (right), back (+Z) -> +PI/2 (bottom)
 				var ang: float = atan2(local_v.z, local_v.x)
 				_crosshair_ctrl.draw_arc(center, arc_r, ang - 0.42, ang + 0.42, 20, acol, 6.5)
 			else:
@@ -570,7 +552,12 @@ func _on_nvg_toggled(active: bool) -> void:
 
 
 func _on_spec_changed(tname: String) -> void:
-	_spec_label.text = ("Spectating: " + tname + "  [Mouse1: Next]") if not tname.is_empty() else ""
+	if tname.is_empty():
+		_spec_label.text = ""
+	elif tname.begins_with("Killed by"):
+		_spec_label.text = tname
+	else:
+		_spec_label.text = "Spectating: " + tname + "  [Mouse1: Next]"
 
 
 func _on_bomb_state_changed(planted: bool, pos: Vector3) -> void:
@@ -580,7 +567,6 @@ func _on_bomb_state_changed(planted: bool, pos: Vector3) -> void:
 
 func _on_player_damaged(source_pos: Vector3, dmg_amount: int, directional: bool) -> void:
 	var strength: float = clampf(0.45 + float(dmg_amount) / 55.0, 0.45, 1.0)
-	_pain_flash_alpha = clampf(maxf(_pain_flash_alpha, strength), 0.0, 1.0)
 	while _damage_arcs.size() >= 6:
 		_damage_arcs.pop_front()
 	_damage_arcs.append({

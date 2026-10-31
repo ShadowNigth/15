@@ -44,6 +44,8 @@ var _shake_time: float = 0.0
 var _eye_height_cur: float = 1.66
 var _last_in_x: float = 0.0
 var _spec_free_orbit_timer: float = 0.0
+var _deathcam_timer: float = 0.0
+var _deathcam_killer: Node3D = null
 var _elite_muzzle_left: bool = false
 var _defusing_c4: PlantedC4 = null
 var _spec_index: int = 0
@@ -158,6 +160,8 @@ func spawn_for_round(pos: Vector3, yaw_rad: float, reset_weapons: bool) -> void:
 	_dmg_punch = Vector3.ZERO
 	_jump_buffer_timer = 0.0
 	_coyote_timer = 0.0
+	_deathcam_timer = 0.0
+	_deathcam_killer = null
 	camera.position = Vector3(0.0, 1.66, 0.0)
 	camera.rotation = Vector3(0.0, look_yaw, 0.0)
 	camera.current = true
@@ -192,6 +196,11 @@ func _unhandled_input(event: InputEvent) -> void:
 		_sway_offset.y = clampf(_sway_offset.y + mm.relative.y * 0.00025, -0.02, 0.02)
 
 	if not is_alive:
+		if _deathcam_timer > 0.0:
+			# Guard first 0.95s so combat clicks at the moment of death never accidentally skip your death animation!
+			if _deathcam_timer < 1.90 and (event.is_action_pressed("attack1") or event.is_action_pressed("jump") or event.is_action_pressed("attack2")):
+				_finish_deathcam_to_spectator()
+			return
 		if event.is_action_pressed("attack1") or event.is_action_pressed("jump"):
 			_cycle_spectator(1)
 		elif event.is_action_pressed("attack2"):
@@ -659,6 +668,7 @@ func _on_zoom_changed(fov_deg: float, scoped_overlay: bool) -> void:
 
 
 func _die(killer: Node3D, weapon_id: String, headshot: bool) -> void:
+	var eye_xf: Transform3D = camera.global_transform
 	viewmodel_pivot.visible = false
 	if _vm_container:
 		_vm_container.visible = false
@@ -666,6 +676,38 @@ func _die(killer: Node3D, weapon_id: String, headshot: bool) -> void:
 	defuse_progress_changed.emit(0.0)
 	camera.fov = GameData.fov
 	super._die(killer, weapon_id, headshot)
+
+	# Keep camera seamlessly at death eye transform & pull back into CS 1.5 3rd-person Deathcam!
+	camera.top_level = true
+	camera.global_transform = eye_xf
+	_deathcam_timer = 2.85
+	_spec_free_orbit_timer = 0.0
+	if is_instance_valid(killer) and killer != self:
+		_deathcam_killer = killer
+		spectator_target_changed.emit("Killed by %s [%s]" % [String(killer.get("actor_name")), weapon_id.to_upper()])
+	else:
+		_deathcam_killer = null
+		spectator_target_changed.emit("")
+
+
+func _finish_deathcam_to_spectator() -> void:
+	_deathcam_timer = 0.0
+	var alive_list: Array = []
+	for a in RoundManager.actors:
+		if is_instance_valid(a) and a != self and bool(a.get("is_alive")):
+			alive_list.append(a)
+	if alive_list.is_empty():
+		spectator_target_changed.emit("")
+		return
+	var found_idx: int = -1
+	if is_instance_valid(_deathcam_killer):
+		found_idx = alive_list.find(_deathcam_killer)
+	if found_idx >= 0:
+		_spec_index = found_idx
+	else:
+		_spec_index = clampi(_spec_index, 0, alive_list.size() - 1)
+	var tgt := alive_list[_spec_index] as CSActor
+	spectator_target_changed.emit("%s (%s - %d HP)" % [tgt.actor_name, tgt.team, tgt.health])
 
 
 func _cycle_spectator(step: int) -> void:
@@ -682,6 +724,46 @@ func _cycle_spectator(step: int) -> void:
 
 
 func _update_spectator_camera(delta: float) -> void:
+	# Phase 1: Authentic CS 1.5 3rd-Person Deathcam watching your own body collapse & settle!
+	if _deathcam_timer > 0.0:
+		_deathcam_timer -= delta
+		if _deathcam_timer <= 0.0:
+			_finish_deathcam_to_spectator()
+		else:
+			var body_focus: Vector3 = global_position + Vector3(0.0, 0.68, 0.0)
+			if _spec_free_orbit_timer > 0.0:
+				_spec_free_orbit_timer = maxf(0.0, _spec_free_orbit_timer - delta)
+			else:
+				var desired_yaw: float = look_yaw
+				if is_instance_valid(_deathcam_killer):
+					var to_k: Vector3 = _deathcam_killer.global_position - global_position
+					if Vector2(to_k.x, to_k.z).length_squared() > 0.04:
+						desired_yaw = atan2(-to_k.x, -to_k.z)
+				look_yaw = lerp_angle(look_yaw, desired_yaw, minf(1.0, 3.8 * delta))
+				look_pitch = lerpf(look_pitch, deg_to_rad(-24.0), minf(1.0, 4.2 * delta))
+
+			var d_pitch: float = clampf(look_pitch, deg_to_rad(-62.0), deg_to_rad(18.0))
+			var d_basis := Basis.from_euler(Vector3(d_pitch, look_yaw, 0.0), EULER_ORDER_YXZ)
+			var pull_t: float = clampf((2.85 - _deathcam_timer) / 0.65, 0.15, 1.0)
+			var death_cam_pos: Vector3 = body_focus + d_basis.z * (2.65 * pull_t) + Vector3(0.0, 0.55 * pull_t, 0.0)
+
+			if get_world_3d() != null and get_world_3d().direct_space_state != null:
+				var sp_d := get_world_3d().direct_space_state
+				var q_d := PhysicsRayQueryParameters3D.create(body_focus + Vector3(0.0, 0.25, 0.0), death_cam_pos)
+				q_d.collision_mask = 1
+				var h_d: Dictionary = sp_d.intersect_ray(q_d)
+				if not h_d.is_empty():
+					var hp_d: Vector3 = h_d["position"]
+					var hn_d: Vector3 = h_d["normal"]
+					death_cam_pos = hp_d + hn_d * 0.24
+
+			camera.top_level = true
+			camera.global_position = camera.global_position.lerp(death_cam_pos, minf(1.0, 9.5 * delta))
+			if camera.global_position.distance_squared_to(body_focus) > 0.02:
+				camera.look_at(body_focus, Vector3.UP)
+			return
+
+	# Phase 2: Chase-Cam Spectator on Killer / Surviving Bots
 	var alive_list: Array = []
 	for a in RoundManager.actors:
 		if is_instance_valid(a) and a != self and bool(a.get("is_alive")):

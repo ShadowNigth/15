@@ -1114,6 +1114,9 @@ func _apply_raw_hp_loss(attacker: Node3D, dmg_int: int, weapon_id: String, heads
 
 
 func _die(killer: Node3D, weapon_id: String, headshot: bool) -> void:
+	if is_human and _body_root != null:
+		_gait_yaw = look_yaw
+		_evaluate_character_pose(0.016)
 	is_alive = false
 	_col_shape.set_deferred("disabled", true)
 	AudioManager.play_3d("player/die%d.wav" % randi_range(1, 3), global_position, 1.0, 32.0)
