@@ -1,10 +1,12 @@
 class_name CSBot
 extends CSActor
-## Tactical Counter-Strike 1.5 Bot AI (PodBot / CSBot inspired):
-##   - Economy buy logic during freeze time (rifles, SMGs, Kevlar+Helmet, Defuser, HE)
-##   - A* navigation across all 26 BSP maps with stuck-jump/crouch recovery
-##   - Full DE (plant/guard/defuse C4), CS (lead/defend hostages), and AS (escort/hunt VIP) tactics
-##   - Realistic reaction times, burst shooting, strafing, flashbang blindness, smoke occlusion, radio orders
+## Authentic YaPB-Powered Counter-Strike 1.5 Bot AI:
+##   - Navigates official human-curated YaPB (.graph) directed waypoint graphs across all 26 maps
+##   - Personalities (Rusher, Normal, Careful/Sniper) driving weapon buys, route diversity & danger avoidance
+##   - Executes YaPB Jump-Links (ballistic launch velocity + crouch-jump), Crouch vents, Ladders & Doors
+##   - Holds human-authored Camp & Sniper sightlines (start/end sweep vectors + node reservation)
+##   - Full DE (plant/guard/defuse C4), CS (hostage-safe escort & defense), and AS (VIP escort/ambush) tactics
+##   - Counter-strafed rifle bursts, recoil compensation, reload cover-seeking, grenades & squad callouts
 
 const BOT_NAMES: Array[String] = [
 	"[POD]Gooseman", "[POD]Cliffe", "HeatoN", "Potti", "SpawN", "elemeNt",
@@ -12,13 +14,36 @@ const BOT_NAMES: Array[String] = [
 	"vesslan", "Bullseye", "rambo", "Method", "XeqtR", "bds",
 ]
 
+const PERSONALITY_RUSHER: int = 0
+const PERSONALITY_NORMAL: int = 1
+const PERSONALITY_CAREFUL: int = 2
+
 var skill_level: int = 1  # 0=Easy, 1=Normal, 2=Hard, 3=Expert
+var personality: int = PERSONALITY_NORMAL
 var target_enemy: CSActor = null
-var _reaction_timer: float = 0.0
-var _think_timer: float = 0.0
-var _nav_path: Array[Vector3] = []
+
+# YaPB directed node-graph navigation state
+var _node_path: PackedInt32Array = PackedInt32Array()
+var _prev_node_idx: int = -1
+var _cur_node_idx: int = -1
+var _goal_node_idx: int = -1
 var _goal_pos: Vector3 = Vector3.ZERO
 var _has_goal: bool = false
+var _cur_node_offset: Vector3 = Vector3.ZERO
+var _jump_link_done: bool = false
+var _air_crouch_timer: float = 0.0
+var _diversity_seed: int = 0
+
+# YaPB Camp / Sniper sightline state
+var _camping_node_idx: int = -1
+var _camp_timer: float = 0.0
+var _camp_cooldown: float = 0.0
+var _camp_sweep_timer: float = 0.0
+var _camp_look_alt: bool = false
+
+# Timers & combat state
+var _reaction_timer: float = 0.0
+var _think_timer: float = 0.0
 var _stuck_timer: float = 0.0
 var _jump_cooldown: float = 0.0
 var _crouch_burst_timer: float = 0.0
@@ -52,25 +77,48 @@ func _ready() -> void:
 	is_human = false
 	super._ready()
 	_avoid_side = 1.0 if randf() < 0.5 else -1.0
+	_assign_personality()
 	AudioManager.world_sound_emitted.connect(_on_world_sound)
 	RoundManager.radio_order_issued.connect(_on_radio_order)
 	RoundManager.freeze_ended.connect(_on_bot_freeze_ended)
 
 
+func _assign_personality() -> void:
+	if actor_name in ["Johnny_R", "Ksharp", "Method", "vesslan"]:
+		personality = PERSONALITY_CAREFUL
+	elif actor_name in ["HeatoN", "SpawN", "shaGuar", "fisker", "moto"]:
+		personality = PERSONALITY_RUSHER
+	else:
+		personality = randi() % 3
+
+
 func _on_bot_freeze_ended() -> void:
 	if not is_alive or is_vip:
 		return
-	_rollout_delay = randf_range(0.0, 0.48)
-	# Classic CS 1.5 / PodBot opening rush: pull out Knife (250 u/s) for first 3-5 seconds out of spawn!
-	if randf() < 0.78:
-		_knife_rush_timer = randf_range(2.6, 4.6)
+	_assign_personality()
+	_diversity_seed = randi()
+	_rollout_delay = randf_range(0.0, 0.42)
+	# YaPB opening Knife sprint (250 u/s) out of spawn!
+	var knife_chance: float = 0.90 if personality == PERSONALITY_RUSHER else (0.72 if personality == PERSONALITY_NORMAL else 0.50)
+	if randf() < knife_chance:
+		_knife_rush_timer = randf_range(2.6, 4.8)
 
 
 func spawn_for_round(pos: Vector3, yaw_rad: float, reset_weapons: bool) -> void:
 	super.spawn_for_round(pos, yaw_rad, reset_weapons)
+	_release_camp_spot()
 	target_enemy = null
-	_nav_path.clear()
+	_node_path = PackedInt32Array()
+	_prev_node_idx = -1
+	_cur_node_idx = -1
+	_goal_node_idx = -1
 	_has_goal = false
+	_cur_node_offset = Vector3.ZERO
+	_jump_link_done = false
+	_air_crouch_timer = 0.0
+	_diversity_seed = randi()
+	_camp_timer = 0.0
+	_camp_cooldown = 0.0
 	_follow_target = null
 	_hold_pos_timer = 0.0
 	_defusing_ref = null
@@ -93,7 +141,26 @@ func spawn_for_round(pos: Vector3, yaw_rad: float, reset_weapons: bool) -> void:
 	_vent_crouch_timer = 0.0
 	_grenade_cooldown = randf_range(3.0, 9.0)
 	_last_pos = global_position
-	_think_timer = randf_range(0.1, 0.45)
+	_think_timer = randf_range(0.08, 0.35)
+
+
+func _release_camp_spot() -> void:
+	if _camping_node_idx >= 0 and is_instance_valid(RoundManager.game_world):
+		var nav: BotNavigator = RoundManager.game_world.get("bot_navigator")
+		if nav != null:
+			nav.release_actor_claims(self)
+	_camping_node_idx = -1
+	_camp_timer = 0.0
+
+
+func _die(killer: Node3D, weapon_id: String, headshot: bool) -> void:
+	if is_instance_valid(RoundManager.game_world):
+		var nav: BotNavigator = RoundManager.game_world.get("bot_navigator")
+		if nav != null:
+			nav.release_actor_claims(self)
+			nav.report_team_damage(team, global_position, 125.0)
+	_camping_node_idx = -1
+	super._die(killer, weapon_id, headshot)
 
 
 func _perform_bot_buy() -> void:
@@ -102,28 +169,33 @@ func _perform_bot_buy() -> void:
 		return
 
 	# CT buys defusal kit on DE maps when affordable
-	if team == "CT" and RoundManager.map_mode == "de" and money >= 1200 and randf() < 0.75:
+	if team == "CT" and RoundManager.map_mode == "de" and money >= 1200 and randf() < 0.80:
 		buy_equipment("defuser")
 
 	# Armor priority
-	if money >= 3800:
+	if money >= 3700:
 		buy_equipment("kevlar_helmet")
-	elif money >= 1900:
+	elif money >= 1850:
 		buy_equipment("kevlar")
 
-	# Primary weapon purchase if slot 1 empty
+	# Personality-driven weapon purchase (YaPB buying.cpp)
 	if String(weapon_ctrl.slots.get(1, "")).is_empty():
 		var choices: Array[String] = []
+		var want_sniper: bool = (personality == PERSONALITY_CAREFUL and randf() < 0.55) or randf() < 0.16
 		if team == "T":
-			if money >= 4750 and randf() < 0.22:
+			if money >= 4750 and want_sniper:
 				choices = ["awp"]
+			elif money >= 2750 and want_sniper and randf() < 0.45:
+				choices = ["scout", "ak47"]
 			elif money >= 2600:
-				choices = ["ak47", "sg552"]
+				choices = ["ak47", "sg552"] if personality != PERSONALITY_RUSHER else ["ak47", "ak47", "sg552"]
 			elif money >= 1500:
 				choices = ["mp5navy", "mac10", "ump45", "m3"]
 		else:
-			if money >= 4750 and randf() < 0.22:
+			if money >= 4750 and want_sniper:
 				choices = ["awp"]
+			elif money >= 2750 and want_sniper and randf() < 0.40:
+				choices = ["scout", "m4a1"]
 			elif money >= 3150:
 				choices = ["m4a1", "aug"]
 			elif money >= 1500:
@@ -133,19 +205,19 @@ func _perform_bot_buy() -> void:
 			if buy_weapon(wid):
 				break
 
-		# Attach silencer on M4A1/USP half the time for authentic CS 1.5 feel!
+		# Sniper bots pair AWP/Scout with a Desert Eagle when rich!
 		var cur_p := String(weapon_ctrl.slots.get(1, ""))
-		if cur_p == "m4a1" and randf() < 0.55:
+		if cur_p in ["awp", "scout"] and money >= 900 and randf() < 0.65:
+			buy_weapon("deagle")
+		elif cur_p == "m4a1" and randf() < 0.55:
 			weapon_ctrl.silenced_state["m4a1"] = true
 
-	# Refill ammo!
 	buy_ammo_for_slot(1, true)
 	buy_ammo_for_slot(2, true)
 
-	# Buy HE / Smoke grenade if spare cash
-	if money >= 600 and randf() < 0.48:
+	if money >= 600 and randf() < 0.52:
 		buy_weapon("hegrenade")
-	if money >= 500 and randf() < 0.25:
+	if money >= 500 and randf() < 0.30:
 		buy_weapon("smokegrenade")
 
 
@@ -157,7 +229,7 @@ func _physics_process(delta: float) -> void:
 	if not _bought_this_round and RoundManager.can_buy_now():
 		_perform_bot_buy()
 
-	# Blinded by Flashbang!
+	# Blinded by Flashbang (YaPB TaskId::Blind)!
 	if flash_alpha > 0.65:
 		var blind_move := Basis(Vector3.UP, look_yaw) * Vector3(_strafe_dir * 0.5, 0.0, 0.3)
 		apply_goldsrc_movement(blind_move.normalized(), false, false, false, delta)
@@ -165,12 +237,14 @@ func _physics_process(delta: float) -> void:
 
 	_think_timer -= delta
 	if _think_timer <= 0.0:
-		_think_timer = randf_range(0.14, 0.26)
+		_think_timer = randf_range(0.12, 0.22)
 		_scan_for_enemies()
 		_update_tactical_objective()
 
 	if _hold_pos_timer > 0.0:
-		_hold_pos_timer -= delta
+		_hold_pos_timer = maxf(0.0, _hold_pos_timer - delta)
+	if _camp_cooldown > 0.0:
+		_camp_cooldown = maxf(0.0, _camp_cooldown - delta)
 	if _knife_rush_timer > 0.0:
 		_knife_rush_timer = maxf(0.0, _knife_rush_timer - delta)
 	if _stealth_walk_timer > 0.0:
@@ -179,6 +253,8 @@ func _physics_process(delta: float) -> void:
 		_sound_investigate_timer = maxf(0.0, _sound_investigate_timer - delta)
 	if _grenade_cooldown > 0.0:
 		_grenade_cooldown = maxf(0.0, _grenade_cooldown - delta)
+	if _air_crouch_timer > 0.0:
+		_air_crouch_timer = maxf(0.0, _air_crouch_timer - delta)
 	_last_enemy_seen_age += delta
 
 	# Reload safely when out of combat
@@ -190,17 +266,17 @@ func _physics_process(delta: float) -> void:
 			var csize := int(weapon_ctrl.get_current_spec().get("clip_size", 30))
 			if cr.x < int(float(csize) * 0.34) and not weapon_ctrl.is_reloading:
 				weapon_ctrl.start_reload()
-		# Clear sniper scope when navigating out of combat
-		if weapon_ctrl.zoom_index >= 0:
+		if _camp_timer <= 0.0 and weapon_ctrl.zoom_index >= 0:
 			weapon_ctrl.clear_zoom()
 
-	# Priority 1: CT Defusing Planted C4 when clear!
+	# Priority 1: CT Defusing Planted C4 when clear (YaPB TaskId::DefuseBomb)!
 	if team == "CT" and target_enemy == null and is_instance_valid(RoundManager.planted_c4):
 		var c4 := RoundManager.planted_c4 as PlantedC4
-		if c4 and global_position.distance_to(c4.global_position) <= 2.3:
+		if c4 and global_position.distance_to(c4.global_position) <= 2.35:
 			if c4.defuser_actor == null or c4.defuser_actor == self:
+				_release_camp_spot()
 				_defusing_ref = c4
-				_look_smoothly_toward(c4.global_position + Vector3(0, 0.1, 0), delta * 8.0)
+				_look_smoothly_toward(c4.global_position + Vector3(0.0, 0.1, 0.0), delta * 8.0)
 				c4.begin_or_continue_defuse(self, delta)
 				apply_goldsrc_movement(Vector3.ZERO, false, true, false, delta)
 				return
@@ -210,20 +286,22 @@ func _physics_process(delta: float) -> void:
 			_defusing_ref.cancel_defuse(self)
 		_defusing_ref = null
 
-	# Priority 2: T Planting C4 when inside Bombsite!
+	# Priority 2: T Planting C4 when inside Bombsite (YaPB TaskId::PlantBomb)!
 	if team == "T" and target_enemy == null and String(weapon_ctrl.slots.get(5, "")) == "c4":
 		if RoundManager.state == RoundManager.State.LIVE and is_instance_valid(RoundManager.game_world):
 			if bool(RoundManager.game_world.call("is_in_bombsite", global_position)):
+				_release_camp_spot()
 				if weapon_ctrl.current_weapon_id != "c4":
 					weapon_ctrl.equip_slot(5)
 				apply_goldsrc_movement(Vector3.ZERO, false, true, false, delta)
 				weapon_ctrl.trigger_primary(true, delta)
 				return
 
-	# Priority 3: Engage Visible Enemy!
+	# Priority 3: Engage Visible Enemy (YaPB TaskId::Attack)!
 	if is_instance_valid(target_enemy) and target_enemy.is_alive:
 		_knife_rush_timer = 0.0
 		_stealth_walk_timer = 0.0
+		_camp_timer = 0.0
 		_last_enemy_pos = target_enemy.global_position
 		_last_enemy_seen_age = 0.0
 		_engage_enemy(delta)
@@ -232,13 +310,18 @@ func _physics_process(delta: float) -> void:
 	# Priority 3.5: Flush out an enemy that just ducked behind cover with an HE grenade!
 	if _last_enemy_seen_age > 0.25 and _last_enemy_seen_age < 1.85 and _grenade_cooldown <= 0.0 and health > 40:
 		var d_last := global_position.distance_to(_last_enemy_pos)
-		if d_last > 8.5 and d_last < 23.0 and int(weapon_ctrl.grenades.get("hegrenade", 0)) > 0 and randf() < 0.08:
+		if d_last > 8.5 and d_last < 23.0 and int(weapon_ctrl.grenades.get("hegrenade", 0)) > 0 and randf() < 0.09:
 			_grenade_cooldown = 14.0
 			if weapon_ctrl.equip_weapon_by_id("hegrenade"):
 				weapon_ctrl.fire_cooldown = 0.0
 				_look_smoothly_toward(_last_enemy_pos + Vector3(0.0, 2.1, 0.0), 1.0)
 				weapon_ctrl.trigger_primary(false, delta)
 				return
+
+	# Priority 4: Active YaPB Camp / Sniper Sightline Holding (TaskId::Camp)!
+	if _camp_timer > 0.0 and _camping_node_idx >= 0:
+		_execute_camp_behavior(delta)
+		return
 
 	# Weapon discipline during navigation: Knife rush out of spawn, then draw Primary Rifle before contact!
 	if not weapon_ctrl.is_reloading:
@@ -249,8 +332,48 @@ func _physics_process(delta: float) -> void:
 			if not weapon_ctrl.equip_slot(1):
 				weapon_ctrl.equip_slot(2)
 
-	# Priority 4: Navigate toward tactical goal!
+	# Priority 5: Navigate along YaPB directed node graph!
 	_follow_navigation_path(delta)
+
+
+func _execute_camp_behavior(delta: float) -> void:
+	_camp_timer -= delta
+	if _camp_timer <= 0.0 or (is_instance_valid(RoundManager.planted_c4) and team == "CT"):
+		_camp_cooldown = 9.0
+		_release_camp_spot()
+		return
+
+	if not weapon_ctrl.is_reloading and weapon_ctrl.current_weapon_id in ["knife", "c4", "hegrenade", "flashbang", "smokegrenade"]:
+		if not weapon_ctrl.equip_slot(1):
+			weapon_ctrl.equip_slot(2)
+
+	var wid := weapon_ctrl.current_weapon_id
+	var is_sniper := wid in ["awp", "scout", "g3sg1", "sg550"]
+	if is_sniper and weapon_ctrl.zoom_index < 0 and not weapon_ctrl.is_reloading:
+		weapon_ctrl.trigger_secondary()
+
+	var crouch_camp := false
+	var look_target := global_position + get_look_forward() * 12.0 + Vector3(0.0, 1.4, 0.0)
+	if is_instance_valid(RoundManager.game_world):
+		var nav: BotNavigator = RoundManager.game_world.get("bot_navigator")
+		if nav != null:
+			var nflags := nav.get_node_flags(_camping_node_idx)
+			crouch_camp = (nflags & BotNavigator.FLAG_CROUCH) != 0
+			var cdirs := nav.get_camp_dirs(_camping_node_idx)
+			if cdirs.size() >= 2:
+				_camp_sweep_timer -= delta
+				if _camp_sweep_timer <= 0.0:
+					_camp_sweep_timer = randf_range(2.2, 4.2)
+					_camp_look_alt = not _camp_look_alt
+				var aim_dir: Vector3 = cdirs[1] if _camp_look_alt else cdirs[0]
+				look_target = get_eye_position() + aim_dir * 18.0
+
+	if _sound_investigate_timer > 0.0:
+		look_target = _sound_investigate_pos + Vector3(0.0, 1.4, 0.0)
+
+	_look_smoothly_toward(look_target, delta * 4.5)
+	apply_goldsrc_movement(Vector3.ZERO, false, crouch_camp, false, delta)
+	_last_pos = global_position
 
 
 func _scan_for_enemies() -> void:
@@ -258,7 +381,7 @@ func _scan_for_enemies() -> void:
 		return
 	target_enemy = null
 
-	var best_dist := 95.0
+	var best_score := 1e9
 	var my_eye := get_eye_position()
 	var my_fwd := get_look_forward()
 
@@ -271,17 +394,22 @@ func _scan_for_enemies() -> void:
 		if a_actor == null:
 			continue
 		var d: float = my_eye.distance_to(a_actor.global_position)
-		if d > best_dist:
+		if d > 105.0:
 			continue
-		var dir_to: Vector3 = (a_actor.global_position + Vector3(0, 1.2, 0) - my_eye).normalized()
-		# Field of view check (~135 deg cone, or 360 if very close < 4.5m)
-		if d > 4.5 and my_fwd.dot(dir_to) < -0.22:
+		var dir_to: Vector3 = (a_actor.global_position + Vector3(0.0, 1.2, 0.0) - my_eye).normalized()
+		var cos_ang: float = my_fwd.dot(dir_to)
+		if d > 4.8 and cos_ang < -0.20:
 			continue
 		if _can_see_actor(a_actor):
-			best_dist = d
-			target_enemy = a_actor
-			var base_react: float = float([0.42, 0.27, 0.17, 0.09][clampi(skill_level, 0, 3)])
-			_reaction_timer = base_react * randf_range(0.85, 1.25)
+			# YaPB target priority: closer + closer to crosshair + VIP/C4 priority
+			var threat_score: float = d - cos_ang * 6.0
+			if a_actor.is_vip:
+				threat_score -= 18.0
+			if threat_score < best_score:
+				best_score = threat_score
+				target_enemy = a_actor
+				var base_react: float = float([0.38, 0.24, 0.15, 0.08][clampi(skill_level, 0, 3)])
+				_reaction_timer = base_react * randf_range(0.85, 1.20)
 
 
 func _can_see_actor(other: Node3D) -> bool:
@@ -298,8 +426,8 @@ func _can_see_actor(other: Node3D) -> bool:
 func _engage_enemy(delta: float) -> void:
 	var dist := global_position.distance_to(target_enemy.global_position)
 
-	# Occasional tactical Smoke / HE grenade toss at medium-long range
-	if _grenade_cooldown <= 0.0 and dist > 12.0 and dist < 25.0 and health > 50 and randf() < 0.025:
+	# Tactical Smoke / HE grenade toss at medium-long range
+	if _grenade_cooldown <= 0.0 and dist > 12.5 and dist < 25.0 and health > 50 and randf() < 0.025:
 		if int(weapon_ctrl.grenades.get("hegrenade", 0)) > 0:
 			_grenade_cooldown = 13.0
 			if weapon_ctrl.equip_weapon_by_id("hegrenade"):
@@ -316,7 +444,7 @@ func _engage_enemy(delta: float) -> void:
 				weapon_ctrl.trigger_primary(false, delta)
 				return
 
-	# Ensure combat gun equipped; quick-switch to sidearm if primary runs dry in close quarters!
+	# Ensure combat gun equipped; quick-switch to pistol if primary runs dry in close quarters!
 	if weapon_ctrl.current_weapon_id in ["c4", "knife", "hegrenade", "flashbang", "smokegrenade"]:
 		if not weapon_ctrl.equip_slot(1):
 			weapon_ctrl.equip_slot(2)
@@ -325,8 +453,7 @@ func _engage_enemy(delta: float) -> void:
 		if cr.x == 0:
 			var cur_slot := int(weapon_ctrl.get_current_spec().get("slot", 1))
 			var sec_id := String(weapon_ctrl.slots.get(2, ""))
-			if cur_slot == 1 and dist < 13.5 and not sec_id.is_empty() and int(weapon_ctrl.clips.get(sec_id, 0)) > 0:
-				# Classic CS 1.5 pro reflex: whip out USP/Glock/Deagle instead of reloading in enemy's face!
+			if cur_slot == 1 and dist < 14.0 and not sec_id.is_empty() and int(weapon_ctrl.clips.get(sec_id, 0)) > 0:
 				weapon_ctrl.equip_slot(2)
 			elif cr.y > 0 and not weapon_ctrl.is_reloading:
 				weapon_ctrl.start_reload()
@@ -334,48 +461,49 @@ func _engage_enemy(delta: float) -> void:
 	var wid := weapon_ctrl.current_weapon_id
 	var is_sniper := wid in ["awp", "scout", "g3sg1", "sg550"]
 
-	# Sniper Bot scopes in at medium/long range before taking the shot!
-	if is_sniper and dist > 11.0 and weapon_ctrl.zoom_index < 0 and not weapon_ctrl.is_reloading and weapon_ctrl.fire_cooldown <= 0.15:
+	if is_sniper and dist > 10.5 and weapon_ctrl.zoom_index < 0 and not weapon_ctrl.is_reloading and weapon_ctrl.fire_cooldown <= 0.15:
 		weapon_ctrl.trigger_secondary()
 
-	var aim_height := 1.48 if skill_level >= 2 else 1.24
+	var aim_height := 1.48 if skill_level >= 2 else 1.26
 	if target_enemy.is_crouching:
-		aim_height *= 0.65
-	# Subtle velocity lead & organic micro-imperfection scaled inversely by bot skill
-	var spread_err := float([0.22, 0.13, 0.06, 0.02][clampi(skill_level, 0, 3)])
-	var lead := target_enemy.velocity * 0.045 + Vector3(sin(Time.get_ticks_msec() * 0.007) * spread_err, 0.0, cos(Time.get_ticks_msec() * 0.006) * spread_err)
+		aim_height *= 0.64
+	var spread_err := float([0.20, 0.11, 0.05, 0.018][clampi(skill_level, 0, 3)])
+	var lead := target_enemy.velocity * 0.05 + Vector3(
+		sin(Time.get_ticks_msec() * 0.007) * spread_err,
+		0.0,
+		cos(Time.get_ticks_msec() * 0.006) * spread_err
+	)
 	var aim_pt := target_enemy.global_position + Vector3(0.0, aim_height, 0.0) + lead
-	var track_spd: float = float([5.5, 8.2, 12.0, 17.0][clampi(skill_level, 0, 3)])
-	_look_smoothly_toward(aim_pt, delta * track_spd)
 
-	# PodBot / CSBot 3-phase combat footwork:
-	#   1) Evasive lateral strafe (_strafe_timer)
-	#   2) Counter-strafe plant / crouch-peek (_burst_stop_timer) for dead-accurate rifle bursts!
+	# YaPB Recoil Compensation: skilled bots pull crosshair down against weapon punch_angles!
+	var recoil_comp: float = float([0.20, 0.48, 0.75, 0.94][clampi(skill_level, 0, 3)])
+	var punch := weapon_ctrl.punch_angles
+	var comp_pt := aim_pt - Vector3(0.0, sin(deg_to_rad(punch.x * 1.35)) * dist * recoil_comp, 0.0)
+	var track_spd: float = float([6.0, 9.0, 13.5, 18.5][clampi(skill_level, 0, 3)])
+	_look_smoothly_toward(comp_pt, delta * track_spd)
+
 	if _burst_pause_timer > 0.0:
 		_burst_pause_timer = maxf(0.0, _burst_pause_timer - delta)
-
 	if _crouch_burst_timer > 0.0:
 		_crouch_burst_timer = maxf(0.0, _crouch_burst_timer - delta)
-
 	if _burst_stop_timer > 0.0:
 		_burst_stop_timer = maxf(0.0, _burst_stop_timer - delta)
 	else:
 		_strafe_timer -= delta
 		if _strafe_timer <= 0.0:
 			_strafe_dir = -_strafe_dir
-			_strafe_timer = randf_range(0.42, 0.86)
+			_strafe_timer = randf_range(0.40, 0.82)
 			if dist > 7.5 and not weapon_ctrl.is_reloading:
-				# Plant feet for counter-strafed burst!
 				_burst_stop_timer = randf_range(0.26, 0.48) if not is_sniper else randf_range(0.38, 0.62)
-				if skill_level >= 2 and dist > 16.0 and randf() < 0.28:
+				if skill_level >= 2 and dist > 15.5 and randf() < 0.30:
 					_crouch_burst_timer = _burst_stop_timer + 0.18
 
 	var crouch_shoot := _crouch_burst_timer > 0.0
 	var strafe_vec := Vector3.ZERO
-	if weapon_ctrl.is_reloading:
-		# Dodge aggressively sideways/backwards toward cover while reloading!
+	if weapon_ctrl.is_reloading or (health < 28 and personality != PERSONALITY_RUSHER):
+		# YaPB SeekCover: dodge sideways & back toward cover while reloading or critically hurt!
 		var right_rel := Basis(Vector3.UP, look_yaw).x
-		var back_rel := Basis(Vector3.UP, look_yaw).z * (0.55 if dist < 12.0 else 0.0)
+		var back_rel := Basis(Vector3.UP, look_yaw).z * (0.65 if dist < 16.0 else 0.25)
 		strafe_vec = _steer_around_obstacles((right_rel * _strafe_dir + back_rel).normalized())
 	elif not crouch_shoot and (_burst_stop_timer <= 0.0 or dist < 6.5):
 		var right := Basis(Vector3.UP, look_yaw).x
@@ -391,23 +519,44 @@ func _engage_enemy(delta: float) -> void:
 	if _reaction_timer > 0.0:
 		_reaction_timer -= delta
 		return
-
 	if _burst_pause_timer > 0.0:
 		return
 
 	var to_tgt := (aim_pt - get_eye_position()).normalized()
-	var align_req := 0.965 if (dist > 20.0 or is_sniper) else 0.925
+	var align_req := 0.965 if (dist > 20.0 or is_sniper) else 0.920
 	if get_look_forward().dot(to_tgt) > align_req:
-		# Authentic CS 1.5 burst discipline: pause briefly to reset recoil after 3-5 shots at range!
 		var max_burst := 100
 		if dist > 23.0:
 			max_burst = 3
 		elif dist > 11.5:
 			max_burst = 5
 		if weapon_ctrl.shots_fired >= max_burst:
-			_burst_pause_timer = randf_range(0.18, 0.30)
+			_burst_pause_timer = randf_range(0.17, 0.28)
 			return
 		weapon_ctrl.trigger_primary(false, delta)
+
+
+func _is_leading_hostage() -> bool:
+	if team != "CT" or RoundManager.map_mode != "cs":
+		return false
+	for h in RoundManager.hostages:
+		var h_npc := h as HostageNPC
+		if is_instance_valid(h_npc) and h_npc.is_alive and not h_npc.is_rescued and h_npc.leader == self:
+			return true
+	return false
+
+
+func _uses_sniper() -> bool:
+	var p_id := String(weapon_ctrl.slots.get(1, ""))
+	return p_id in ["awp", "scout", "g3sg1", "sg550"]
+
+
+func _pick_path_mode() -> int:
+	if is_vip or String(weapon_ctrl.slots.get(5, "")) == "c4" or health < 40 or personality == PERSONALITY_CAREFUL:
+		return BotNavigator.PATH_SAFE
+	if personality == PERSONALITY_RUSHER:
+		return BotNavigator.PATH_DIVERSITY
+	return BotNavigator.PATH_DIVERSITY if randf() < 0.65 else BotNavigator.PATH_OPTIMAL
 
 
 func _update_tactical_objective() -> void:
@@ -415,47 +564,53 @@ func _update_tactical_objective() -> void:
 		return
 	var gw := RoundManager.game_world
 	var nav: BotNavigator = gw.get("bot_navigator")
-	if nav == null:
+	if nav == null or nav.waypoints.is_empty():
 		return
 
 	# Radio order follow
 	if is_instance_valid(_follow_target) and bool(_follow_target.get("is_alive")):
 		if global_position.distance_to(_follow_target.global_position) > 3.8:
-			_set_nav_goal(nav, _follow_target.global_position)
+			_plan_to_world_pos(nav, _follow_target.global_position, false)
 		return
 
-	if _hold_pos_timer > 0.0:
-		_nav_path.clear()
+	if _hold_pos_timer > 0.0 or _camp_timer > 0.0:
 		return
 
 	# Urgent objective: Planted C4!
 	if is_instance_valid(RoundManager.planted_c4):
 		var c4_pos := RoundManager.planted_c4.global_position
 		if team == "CT":
-			if not _has_goal or _goal_pos.distance_to(c4_pos) > 2.5 or _nav_path.is_empty():
-				_set_nav_goal(nav, c4_pos)
+			if not _has_goal or _goal_pos.distance_to(c4_pos) > 2.4 or _node_path.is_empty():
+				_plan_to_world_pos(nav, c4_pos, false, BotNavigator.PATH_FAST)
 			return
 		else:
-			if not _has_goal or _goal_pos.distance_to(c4_pos) > 9.0:
-				_set_nav_goal(nav, c4_pos + Vector3(randf_range(-4, 4), 0, randf_range(-4, 4)))
+			# Terrorists take nearby YaPB Camp spots overlooking the planted C4!
+			if not _has_goal or _node_path.is_empty():
+				var camp_c4 := nav.pick_camp_or_sniper_node(c4_pos, "T", _uses_sniper(), 18.0, self)
+				if camp_c4 >= 0:
+					_plan_to_node(nav, camp_c4, false, BotNavigator.PATH_SAFE)
+				else:
+					_plan_to_world_pos(nav, c4_pos + Vector3(randf_range(-4.5, 4.5), 0.0, randf_range(-4.5, 4.5)), false)
 			return
 
 	# VIP Escape mode (as_*)
 	if is_vip:
 		var ez: Array = gw.get("escape_zones")
-		if not ez.is_empty() and (_nav_path.is_empty() or not _has_goal):
-			_set_nav_goal(nav, (ez[0] as AABB).get_center())
+		if not ez.is_empty() and (_node_path.is_empty() or not _has_goal):
+			var goal_vip := nav.pick_goal_node_near((ez[0] as AABB).get_center(), 20.0)
+			_plan_to_node(nav, goal_vip, false, BotNavigator.PATH_SAFE)
 		return
 
-	# Bomb Carrier T -> head to Bombsite A or B!
+	# Bomb Carrier T -> head to a YaPB Goal node inside Bombsite A or B!
 	if team == "T" and String(weapon_ctrl.slots.get(5, "")) == "c4":
 		var bsites: Array = gw.get("bombsites")
-		if not bsites.is_empty() and (_nav_path.is_empty() or not _has_goal):
-			var site_aabb: AABB = bsites[randi() % bsites.size()]
-			_set_nav_goal(nav, site_aabb.get_center())
+		if not bsites.is_empty() and (_node_path.is_empty() or not _has_goal):
+			var site_aabb: AABB = bsites[absi(_diversity_seed) % bsites.size()]
+			var g_bomb := nav.pick_goal_node_near(site_aabb.get_center(), 14.0)
+			_plan_to_node(nav, g_bomb, false, BotNavigator.PATH_SAFE)
 		return
 
-	# Hostage Rescue Mode (cs_*): CTs distribute across hostages & escort; Ts anchor hostages & patrol approaches!
+	# Hostage Rescue Mode (cs_*)
 	if RoundManager.map_mode == "cs":
 		var live_hostages: Array[HostageNPC] = []
 		for h in RoundManager.hostages:
@@ -464,14 +619,16 @@ func _update_tactical_objective() -> void:
 				live_hostages.append(h_npc)
 
 		if team == "CT" and not live_hostages.is_empty():
-			# First check if already escorting a hostage -> head straight to Rescue Zone!
-			for lh in live_hostages:
-				if lh.leader == self:
+			if _is_leading_hostage():
+				if not nav.rescue_nodes.is_empty():
+					var r_idx: int = nav.rescue_nodes[absi(_diversity_seed) % nav.rescue_nodes.size()]
+					if _node_path.is_empty() or _goal_node_idx != r_idx:
+						_plan_to_node(nav, r_idx, true, BotNavigator.PATH_SAFE)
+				else:
 					var rz: Array = gw.get("rescue_zones")
-					if not rz.is_empty() and (_nav_path.is_empty() or _goal_pos.distance_to((rz[0] as AABB).get_center()) > 3.0):
-						_set_nav_goal(nav, (rz[0] as AABB).get_center())
-					return
-			# Otherwise pick an unled hostage distributed by bot instance id so CTs split up cleanly
+					if not rz.is_empty() and (_node_path.is_empty() or _goal_pos.distance_to((rz[0] as AABB).get_center()) > 3.0):
+						_plan_to_world_pos(nav, (rz[0] as AABB).get_center(), true, BotNavigator.PATH_SAFE)
+				return
 			var free_h: Array[HostageNPC] = []
 			for lh2 in live_hostages:
 				if lh2.leader == null:
@@ -480,44 +637,85 @@ func _update_tactical_objective() -> void:
 				var pick_h: HostageNPC = free_h[absi(get_instance_id()) % free_h.size()]
 				if global_position.distance_to(pick_h.global_position) < 2.35:
 					pick_h.interact(self)
-				elif _nav_path.is_empty() or not _has_goal:
-					_set_nav_goal(nav, pick_h.global_position)
+					_node_path = PackedInt32Array()
+				elif _node_path.is_empty() or not _has_goal:
+					_plan_to_world_pos(nav, pick_h.global_position, false, _pick_path_mode())
 				return
 		elif team == "T" and not live_hostages.is_empty():
-			# 45% of Terrorists guard hostage room / upper catwalks; 55% patrol breach routes
-			var guard_role: bool = (absi(get_instance_id()) % 100) < 45
-			if guard_role and (_nav_path.is_empty() or not _has_goal):
+			if (_node_path.is_empty() or not _has_goal) and (personality == PERSONALITY_CAREFUL or _uses_sniper() or randf() < 0.45):
 				var guard_h: HostageNPC = live_hostages[randi() % live_hostages.size()]
-				var guard_pt := guard_h.global_position + Vector3(randf_range(-5.5, 5.5), 0.0, randf_range(-5.5, 5.5))
-				_set_nav_goal(nav, guard_pt)
-				if global_position.distance_to(guard_h.global_position) < 7.5 and randf() < 0.35:
-					_hold_pos_timer = randf_range(1.8, 3.8)
-				return
+				var camp_h := nav.pick_camp_or_sniper_node(guard_h.global_position, "T", _uses_sniper(), 26.0, self)
+				if camp_h >= 0:
+					_plan_to_node(nav, camp_h, false, _pick_path_mode())
+					return
 
-	# Pursue recent enemy contact or heard gunfire/footsteps aggressively when healthy!
-	if _last_enemy_seen_age < 4.5 and health >= 42:
-		if _nav_path.is_empty() or _goal_pos.distance_to(_last_enemy_pos) > 3.5:
-			_set_nav_goal(nav, _last_enemy_pos)
+	# Pursue recent enemy contact or heard gunfire/footsteps (YaPB TaskId::Hunt)!
+	if _last_enemy_seen_age < 4.5 and health >= 42 and personality != PERSONALITY_CAREFUL:
+		if _node_path.is_empty() or _goal_pos.distance_to(_last_enemy_pos) > 4.0:
+			_plan_to_world_pos(nav, _last_enemy_pos, false, BotNavigator.PATH_OPTIMAL)
 		return
-	if _sound_investigate_timer > 0.4 and (_nav_path.is_empty() or _goal_pos.distance_to(_sound_investigate_pos) > 4.0):
-		_set_nav_goal(nav, _sound_investigate_pos)
+	if _sound_investigate_timer > 0.4 and (_node_path.is_empty() or _goal_pos.distance_to(_sound_investigate_pos) > 4.5):
+		_plan_to_world_pos(nav, _sound_investigate_pos, false, BotNavigator.PATH_OPTIMAL)
 		return
 
-	# General patrol across bombsites / hostages / map waypoints
-	if _nav_path.is_empty() or not _has_goal:
+	# DE Mode CT Bombsite Defense & Sniper Nest Selection + T Split-Push!
+	if _node_path.is_empty() or not _has_goal:
 		var bsites2: Array = gw.get("bombsites")
-		if not bsites2.is_empty() and randf() < 0.65:
+		if _uses_sniper() and _camp_cooldown <= 0.0 and randf() < 0.65:
+			var snp_idx := nav.pick_camp_or_sniper_node(global_position, team, true, 65.0, self)
+			if snp_idx >= 0:
+				_plan_to_node(nav, snp_idx, false, BotNavigator.PATH_SAFE)
+				return
+		if not bsites2.is_empty():
 			var s_aabb: AABB = bsites2[randi() % bsites2.size()]
-			_set_nav_goal(nav, s_aabb.get_center() + Vector3(randf_range(-3.5, 3.5), 0, randf_range(-3.5, 3.5)))
-		else:
-			_set_nav_goal(nav, nav.get_random_waypoint(global_position))
+			if team == "CT" and _camp_cooldown <= 0.0 and randf() < 0.58:
+				var def_camp := nav.pick_camp_or_sniper_node(s_aabb.get_center(), "CT", _uses_sniper(), 22.0, self)
+				if def_camp >= 0:
+					_plan_to_node(nav, def_camp, false, _pick_path_mode())
+					return
+			var g_site := nav.pick_goal_node_near(s_aabb.get_center(), 16.0)
+			if g_site >= 0 and randf() < 0.72:
+				_plan_to_node(nav, g_site, false, _pick_path_mode())
+				return
+		var roam_idx := nav.pick_roam_node(global_position, team)
+		_plan_to_node(nav, roam_idx, false, _pick_path_mode())
 
 
-func _set_nav_goal(nav: BotNavigator, dest: Vector3) -> void:
-	_goal_pos = dest
-	_has_goal = true
+func _plan_to_world_pos(nav: BotNavigator, dest: Vector3, hostage_safe: bool, mode: int = -1) -> void:
+	var g_idx := nav.get_nearest_node(dest, null, 6.5)
+	if g_idx >= 0:
+		_plan_to_node(nav, g_idx, hostage_safe, mode if mode >= 0 else _pick_path_mode())
+		_goal_pos = dest
+
+
+func _plan_to_node(nav: BotNavigator, goal_idx: int, hostage_safe: bool, mode: int = -1) -> void:
+	if goal_idx < 0 or goal_idx >= nav.waypoints.size():
+		return
 	var space: PhysicsDirectSpaceState3D = get_world_3d().direct_space_state if (is_inside_tree() and get_world_3d()) else null
-	_nav_path = nav.find_path(global_position, dest, space)
+	var use_mode: int = mode if mode >= 0 else _pick_path_mode()
+	_goal_node_idx = goal_idx
+	_goal_pos = nav.get_node_pos(goal_idx)
+	_has_goal = true
+	_node_path = nav.plan_node_path(global_position, goal_idx, team, use_mode, hostage_safe, space, _diversity_seed)
+	_prev_node_idx = nav.get_nearest_node(global_position, space)
+	if not _node_path.is_empty():
+		_advance_to_node_entry(nav, _node_path[0])
+
+
+func _advance_to_node_entry(nav: BotNavigator, next_idx: int) -> void:
+	_cur_node_idx = next_idx
+	_jump_link_done = false
+	var fl := nav.get_node_flags(next_idx)
+	var rad := nav.get_node_radius(next_idx)
+	var lnk := nav.get_link_info(_prev_node_idx, next_idx)
+	var is_jump_lnk: bool = lnk.size() >= 2 and (int(lnk[1]) & BotNavigator.LINK_JUMP) != 0
+	# YaPB SetPathOrigin: ONLY apply gentle wander offset in wide open areas, NEVER on narrow/jump/crouch/ladder nodes!
+	if not is_jump_lnk and (fl & BotNavigator.ACTION_FLAGS) == 0 and rad >= 0.45:
+		var max_r := minf(rad * 0.42, 0.55)
+		var ang := randf() * TAU
+		_cur_node_offset = Vector3(cos(ang) * max_r, 0.0, sin(ang) * max_r)
+	else:
+		_cur_node_offset = Vector3.ZERO
 
 
 func _follow_navigation_path(delta: float) -> void:
@@ -531,7 +729,13 @@ func _follow_navigation_path(delta: float) -> void:
 		_last_pos = global_position
 		return
 
-	# Active open-corridor unstick maneuver: walk cleanly out into open space before repathing!
+	if not is_instance_valid(RoundManager.game_world):
+		return
+	var nav: BotNavigator = RoundManager.game_world.get("bot_navigator")
+	if nav == null:
+		return
+
+	# Active open-corridor unstick maneuver
 	if _escape_timer > 0.0:
 		_escape_timer -= delta
 		var esc_raw := _steer_around_obstacles(_escape_dir)
@@ -539,73 +743,117 @@ func _follow_navigation_path(delta: float) -> void:
 		_look_smoothly_toward(global_position + _smoothed_move_dir * 3.5 + Vector3(0.0, 1.45, 0.0), delta * 7.5)
 		apply_goldsrc_movement(_smoothed_move_dir, false, _vent_crouch_timer > 0.0, false, delta)
 		_last_pos = global_position
-		if _escape_timer <= 0.0 and is_instance_valid(RoundManager.game_world):
-			var nav_r: BotNavigator = RoundManager.game_world.get("bot_navigator")
-			if nav_r != null:
-				_set_nav_goal(nav_r, _goal_pos if _has_goal else nav_r.get_random_waypoint(global_position))
+		if _escape_timer <= 0.0:
+			_diversity_seed = randi()
+			if _goal_node_idx >= 0:
+				_plan_to_node(nav, _goal_node_idx, _is_leading_hostage(), BotNavigator.PATH_DIVERSITY)
+			else:
+				_plan_to_node(nav, nav.pick_roam_node(global_position, team), false, BotNavigator.PATH_DIVERSITY)
 		return
 
-	if _hold_pos_timer > 0.0 or _nav_path.is_empty():
+	if _hold_pos_timer > 0.0 or _node_path.is_empty():
 		_smoothed_move_dir = _smoothed_move_dir.lerp(Vector3.ZERO, minf(1.0, 10.0 * delta))
 		apply_goldsrc_movement(Vector3.ZERO, false, false, false, delta)
 		_last_pos = global_position
 		return
 
-	# Path string-pulling: only shortcut to next+1 when BOTH center AND capsule shoulders have clear sight!
-	if _nav_path.size() >= 2 and is_inside_tree() and get_world_3d():
-		var wp_next := _nav_path[1]
-		if absf(wp_next.y - global_position.y) < 0.95 and global_position.distance_to(wp_next) < 6.8:
-			if _has_wide_corridor_sight(global_position, wp_next):
-				_nav_path.remove_at(0)
+	var cur_id: int = _node_path[0]
+	var cur_flags: int = nav.get_node_flags(cur_id)
+	var lnk_cur := nav.get_link_info(_prev_node_idx, cur_id)
+	var is_jump_link: bool = lnk_cur.size() >= 2 and (int(lnk_cur[1]) & BotNavigator.LINK_JUMP) != 0
 
-	var wp := _nav_path[0]
-	var flat_d := Vector2(wp.x - global_position.x, wp.z - global_position.z).length()
-	var signed_dy := wp.y - global_position.y
-	var vert_d := absf(signed_dy)
-	var reach_r := 1.45 if _nav_path.size() >= 2 else 1.20
-	if flat_d < reach_r and vert_d < 1.85:
-		_nav_path.remove_at(0)
+	# Safe YaPB String-Pulling (yapb/src/navigate.cpp:2840):
+	# ONLY shortcut cur_id -> next_id when directly connected in the directed graph, NO action/jump flags,
+	# nearly flat elevation, and wide capsule-shoulder line-of-sight!
+	if _node_path.size() >= 2 and not is_jump_link and (cur_flags & BotNavigator.ACTION_FLAGS) == 0:
+		var next_id: int = _node_path[1]
+		var next_flags: int = nav.get_node_flags(next_id)
+		if (next_flags & BotNavigator.ACTION_FLAGS) == 0 and nav.are_directly_linked(cur_id, next_id):
+			var p_next := nav.get_node_pos(next_id)
+			if absf(p_next.y - global_position.y) < 0.55 and global_position.distance_to(p_next) < 5.6:
+				if _has_wide_corridor_sight(global_position, p_next):
+					_prev_node_idx = cur_id
+					_node_path.remove_at(0)
+					cur_id = _node_path[0]
+					cur_flags = nav.get_node_flags(cur_id)
+					_advance_to_node_entry(nav, cur_id)
+					lnk_cur = nav.get_link_info(_prev_node_idx, cur_id)
+					is_jump_link = lnk_cur.size() >= 2 and (int(lnk_cur[1]) & BotNavigator.LINK_JUMP) != 0
+
+	var wp: Vector3 = nav.get_node_pos(cur_id) + _cur_node_offset
+	var flat_d: float = Vector2(wp.x - global_position.x, wp.z - global_position.z).length()
+	var signed_dy: float = wp.y - global_position.y
+	var vert_d: float = absf(signed_dy)
+
+	# Tight arrival radius on narrow/ladder/jump nodes; relaxed smooth touch radius in open lanes
+	var touch_r: float = 0.72 if ((cur_flags & BotNavigator.ACTION_FLAGS) != 0 or is_jump_link) else 1.28
+	if flat_d < touch_r and vert_d < (2.1 if (cur_flags & BotNavigator.FLAG_LADDER) != 0 else 1.55):
+		_prev_node_idx = cur_id
+		_node_path.remove_at(0)
 		_stuck_timer = 0.0
-		if _nav_path.is_empty():
+		if _node_path.is_empty():
 			_has_goal = false
-			apply_goldsrc_movement(Vector3.ZERO, false, false, false, delta)
+			_try_enter_camp_at_node(nav, cur_id)
+			apply_goldsrc_movement(Vector3.ZERO, false, is_crouching and _camp_timer > 0.0, false, delta)
 			_last_pos = global_position
 			return
-		wp = _nav_path[0]
+		cur_id = _node_path[0]
+		cur_flags = nav.get_node_flags(cur_id)
+		_advance_to_node_entry(nav, cur_id)
+		lnk_cur = nav.get_link_info(_prev_node_idx, cur_id)
+		is_jump_link = lnk_cur.size() >= 2 and (int(lnk_cur[1]) & BotNavigator.LINK_JUMP) != 0
+		wp = nav.get_node_pos(cur_id) + _cur_node_offset
 		flat_d = Vector2(wp.x - global_position.x, wp.z - global_position.z).length()
 		signed_dy = wp.y - global_position.y
 		vert_d = absf(signed_dy)
 
-	# Multi-story Metal Ladder Climbing: drive explicit vertical climb toward target waypoint elevation!
+	# Multi-story Metal Ladder Climbing
 	if on_ladder:
-		bot_ladder_dir = 1.0 if signed_dy >= -0.35 else -1.0
+		bot_ladder_dir = 1.0 if signed_dy >= -0.30 else -1.0
 
-	# Pure-pursuit corner rounding: smoothly blend toward _nav_path[1] as we approach _nav_path[0]!
-	var steer_target := wp
-	if not on_ladder and _nav_path.size() >= 2 and flat_d < 2.85:
-		var wp2 := _nav_path[1]
-		if absf(wp2.y - wp.y) < 1.25:
-			var corner_blend := clampf((2.85 - flat_d) / 2.85, 0.0, 0.55)
-			steer_target = wp.lerp(wp2, corner_blend)
+	# Pure-pursuit corner rounding ONLY on non-action, non-jump, same-elevation links
+	var steer_target: Vector3 = wp
+	if not on_ladder and not is_jump_link and (cur_flags & BotNavigator.ACTION_FLAGS) == 0 and _node_path.size() >= 2 and flat_d < 2.4:
+		var next_id2: int = _node_path[1]
+		if nav.are_directly_linked(cur_id, next_id2):
+			var wp2 := nav.get_node_pos(next_id2)
+			if absf(wp2.y - wp.y) < 0.65:
+				var corner_blend := clampf((2.4 - flat_d) / 2.4, 0.0, 0.45)
+				steer_target = wp.lerp(wp2, corner_blend)
 
 	var raw_dir := Vector3(steer_target.x - global_position.x, 0.0, steer_target.z - global_position.z)
 	if raw_dir.length_squared() > 0.001:
 		raw_dir = raw_dir.normalized()
 
-	var target_move_dir := raw_dir if on_ladder else _steer_around_obstacles(raw_dir)
-	_smoothed_move_dir = target_move_dir if on_ladder else _blend_move_dir(_smoothed_move_dir, target_move_dir, delta * 11.5)
+	var target_move_dir := raw_dir if (on_ladder or is_jump_link) else _steer_around_obstacles(raw_dir)
+	_smoothed_move_dir = target_move_dir if (on_ladder or is_jump_link) else _blend_move_dir(_smoothed_move_dir, target_move_dir, delta * 12.5)
 	var move_dir := _smoothed_move_dir
 
-	# Auto-crouch through vents & low-arch passages (Hull-3 ducts like cs_assault, de_nuke, cs_747)!
-	if not on_ladder and _needs_crouch_clearance(move_dir):
-		_vent_crouch_timer = 0.40
+	# YaPB Jump-Link Execution (yapb/src/navigate.cpp:1730):
+	# Launch with exact .graph horizontal velocity + mid-air crouch-jump!
+	var want_jump := false
+	if is_jump_link and not _jump_link_done and (is_on_floor() or on_ladder) and not RoundManager.is_movement_frozen():
+		want_jump = true
+		_jump_link_done = true
+		_jump_cooldown = 0.85
+		_air_crouch_timer = 0.58
+		if lnk_cur.size() >= 5:
+			var jvx := float(lnk_cur[2])
+			var jvz := float(lnk_cur[4])
+			if Vector2(jvx, jvz).length_squared() > 0.25:
+				velocity.x = jvx
+				velocity.z = jvz
 
-	# PodBot scripted pre-aiming: aim at chest/head height along upcoming corridor or toward heard enemy sound!
+	# Auto-crouch on YaPB FLAG_CROUCH nodes or low vents/ducts!
+	if (cur_flags & BotNavigator.FLAG_CROUCH) != 0 or (not on_ladder and _needs_crouch_clearance(move_dir)):
+		_vent_crouch_timer = 0.35
+
+	# Pre-aiming along upcoming YaPB corridor or toward heard enemy sound
 	_corner_check_timer -= delta
 	if _corner_check_timer <= 0.0:
-		_corner_check_timer = randf_range(1.3, 2.7)
+		_corner_check_timer = randf_range(1.4, 2.8)
 		if randf() < 0.28 and _knife_rush_timer <= 0.0:
-			_corner_yaw_offset = deg_to_rad(randf_range(-18.0, 18.0))
+			_corner_yaw_offset = deg_to_rad(randf_range(-16.0, 16.0))
 		else:
 			_corner_yaw_offset = 0.0
 
@@ -613,7 +861,8 @@ func _follow_navigation_path(delta: float) -> void:
 	if _sound_investigate_timer > 0.0:
 		look_pt = _sound_investigate_pos + Vector3(0.0, 1.42, 0.0)
 	else:
-		var ahead_wp := _nav_path[mini(1, _nav_path.size() - 1)]
+		var ahead_id: int = _node_path[mini(1, _node_path.size() - 1)]
+		var ahead_wp := nav.get_node_pos(ahead_id)
 		var look_dir := Vector3(ahead_wp.x - global_position.x, 0.0, ahead_wp.z - global_position.z)
 		if look_dir.length_squared() < 0.04:
 			look_dir = move_dir
@@ -621,39 +870,64 @@ func _follow_navigation_path(delta: float) -> void:
 			look_dir = look_dir.normalized()
 		look_dir = (look_dir * 0.65 + move_dir * 0.35).normalized().rotated(Vector3.UP, _corner_yaw_offset)
 		look_pt = global_position + look_dir * 4.5 + Vector3(0.0, 1.48, 0.0)
-	_look_smoothly_toward(look_pt, delta * 7.2)
+	_look_smoothly_toward(look_pt, delta * 7.5)
 
-	var want_jump := false
 	if not RoundManager.is_movement_frozen():
-		# Measure full 3D movement so vertical ladder climbing NEVER triggers false stuck disconnects!
 		var moved_dist := global_position.distance_to(_last_pos)
-		if on_ladder and absf(velocity.y) > 0.6:
+		if on_ladder and absf(velocity.y) > 0.55:
 			_stuck_timer = 0.0
-		elif moved_dist < 1.10 * delta:
+		elif moved_dist < 1.05 * delta:
 			_stuck_timer += delta
-			if _stuck_timer > 0.30 and _jump_cooldown <= 0.0 and is_on_floor():
+			if _stuck_timer > 0.28 and _jump_cooldown <= 0.0 and is_on_floor():
 				if _is_jumpable_ledge(move_dir):
 					want_jump = true
-					_jump_cooldown = 1.85
+					_jump_cooldown = 1.65
+					_air_crouch_timer = 0.52
 				elif _needs_crouch_clearance(move_dir):
 					_vent_crouch_timer = 0.65
 			if _stuck_timer > 0.58:
 				_stuck_timer = 0.0
 				_avoid_side = -_avoid_side
-				if is_instance_valid(RoundManager.game_world):
-					var nav_b: BotNavigator = RoundManager.game_world.get("bot_navigator")
-					if nav_b != null:
-						nav_b.report_blocked_segment(global_position, wp)
+				nav.report_blocked_segment(global_position, wp)
 				_escape_dir = _pick_open_escape_direction(raw_dir)
-				_escape_timer = 0.72
-				_nav_path.clear()
+				_escape_timer = 0.68
+				_node_path = PackedInt32Array()
 		else:
 			_stuck_timer = maxf(0.0, _stuck_timer - delta * 2.2)
 		_last_pos = global_position
 
-	var want_crouch := (_vent_crouch_timer > 0.0) or (want_jump and _stuck_timer > 0.25)
-	var want_silent_walk := _stealth_walk_timer > 0.0 and _knife_rush_timer <= 0.0 and not want_jump and not want_crouch
+	# Dismount ladder at bottom if target is below & behind
+	if on_ladder and (cur_flags & BotNavigator.FLAG_LADDER) == 0 and signed_dy < -0.2 and flat_d > 0.9:
+		want_jump = true
+
+	var crouch_air: bool = (_air_crouch_timer > 0.0 and not is_on_floor())
+	var want_crouch: bool = (_vent_crouch_timer > 0.0 and not on_ladder) or crouch_air
+	var approaching_ladder: bool = (cur_flags & BotNavigator.FLAG_LADDER) != 0 and not on_ladder and flat_d < 1.8
+	var want_silent_walk: bool = (approaching_ladder or (_stealth_walk_timer > 0.0 and _knife_rush_timer <= 0.0)) and not want_jump and not want_crouch
 	apply_goldsrc_movement(move_dir, want_jump, want_crouch, want_silent_walk, delta)
+
+
+func _try_enter_camp_at_node(nav: BotNavigator, node_idx: int) -> void:
+	if _camp_cooldown > 0.0 or is_vip or _is_leading_hostage():
+		return
+	if team == "T" and RoundManager.map_mode == "de" and not is_instance_valid(RoundManager.planted_c4) and String(weapon_ctrl.slots.get(5, "")) == "c4":
+		return
+	var fl := nav.get_node_flags(node_idx)
+	if (fl & (BotNavigator.FLAG_CAMP | BotNavigator.FLAG_SNIPER)) == 0:
+		return
+	if (fl & BotNavigator.FLAG_SNIPER) != 0 and not _uses_sniper():
+		return
+	if team == "T" and (fl & BotNavigator.FLAG_CT_ONLY) != 0:
+		return
+	if team == "CT" and (fl & BotNavigator.FLAG_T_ONLY) != 0:
+		return
+	if nav.is_node_occupied(node_idx, self):
+		return
+	nav.claim_node(node_idx, self)
+	_camping_node_idx = node_idx
+	_camp_timer = randf_range(5.5, 11.5) if not _uses_sniper() else randf_range(8.0, 15.0)
+	_camp_sweep_timer = randf_range(2.0, 3.8)
+	_camp_look_alt = false
 
 
 func _blend_move_dir(cur_d: Vector3, tgt_d: Vector3, rate: float) -> Vector3:
@@ -662,9 +936,7 @@ func _blend_move_dir(cur_d: Vector3, tgt_d: Vector3, rate: float) -> Vector3:
 	if cur_d.length_squared() < 0.001:
 		return tgt_d.normalized()
 	var w := clampf(rate, 0.0, 1.0)
-	var cur_ang := atan2(cur_d.x, cur_d.z)
-	var tgt_ang := atan2(tgt_d.x, tgt_d.z)
-	var new_ang := lerp_angle(cur_ang, tgt_ang, w)
+	var new_ang := lerp_angle(atan2(cur_d.x, cur_d.z), atan2(tgt_d.x, tgt_d.z), w)
 	return Vector3(sin(new_ang), 0.0, cos(new_ang))
 
 
@@ -674,15 +946,17 @@ func _has_wide_corridor_sight(from_p: Vector3, to_p: Vector3) -> bool:
 	delta_v.y = 0.0
 	if delta_v.length_squared() < 0.04:
 		return true
-	var right_v := Vector3(-delta_v.z, 0.0, delta_v.x).normalized() * 0.42
-	for ofs in [Vector3.ZERO, right_v, -right_v]:
-		var q := PhysicsRayQueryParameters3D.create(
-			from_p + ofs + Vector3(0.0, 0.85, 0.0),
-			to_p + ofs + Vector3(0.0, 0.80, 0.0)
-		)
-		q.collision_mask = 1
-		if not sp.intersect_ray(q).is_empty():
-			return false
+	var right_v := Vector3(-delta_v.z, 0.0, delta_v.x).normalized() * 0.44
+	# Check BOTH shin height (+0.42m, catches waist-high parapets!) AND chest height (+1.05m)!
+	for h_ofs in [0.42, 1.05]:
+		for lat_ofs in [Vector3.ZERO, right_v, -right_v]:
+			var q := PhysicsRayQueryParameters3D.create(
+				from_p + lat_ofs + Vector3(0.0, float(h_ofs), 0.0),
+				to_p + lat_ofs + Vector3(0.0, float(h_ofs), 0.0)
+			)
+			q.collision_mask = 1
+			if not sp.intersect_ray(q).is_empty():
+				return false
 	return true
 
 
@@ -708,20 +982,25 @@ func _pick_open_escape_direction(blocked_dir: Vector3) -> Vector3:
 	if not is_inside_tree() or not get_world_3d():
 		return -blocked_dir
 	var space := get_world_3d().direct_space_state
-	var origin := global_position + Vector3(0.0, 0.92, 0.0)
+	var shin := global_position + Vector3(0.0, 0.58, 0.0)
+	var chest := global_position + Vector3(0.0, 1.05, 0.0)
 	var best_dir := -blocked_dir
 	var best_score := -1e9
 	var base := blocked_dir if blocked_dir.length_squared() > 0.01 else Vector3.FORWARD
 	for i in range(8):
 		var ang := deg_to_rad(float(i) * 45.0)
 		var cand := base.rotated(Vector3.UP, ang).normalized()
-		var q := PhysicsRayQueryParameters3D.create(origin, origin + cand * 4.5)
-		q.collision_mask = 1
-		var hit := space.intersect_ray(q)
-		var free_d := 4.5 if hit.is_empty() else origin.distance_to(hit["position"] as Vector3)
-		# Prefer wide-open directions angled away from the blocked wall!
+		var q_s := PhysicsRayQueryParameters3D.create(shin, shin + cand * 4.2)
+		q_s.collision_mask = 1
+		var h_s := space.intersect_ray(q_s)
+		var q_c := PhysicsRayQueryParameters3D.create(chest, chest + cand * 4.2)
+		q_c.collision_mask = 1
+		var h_c := space.intersect_ray(q_c)
+		var d_s := 4.2 if h_s.is_empty() else shin.distance_to(h_s["position"] as Vector3)
+		var d_c := 4.2 if h_c.is_empty() else chest.distance_to(h_c["position"] as Vector3)
+		var free_d := minf(d_s, d_c)
 		var away_bonus := (1.0 - cand.dot(base)) * 0.85
-		var score := free_d + away_bonus + randf_range(-0.15, 0.15)
+		var score := free_d + away_bonus + randf_range(-0.12, 0.12)
 		if score > best_score:
 			best_score = score
 			best_dir = cand
@@ -734,24 +1013,30 @@ func _steer_around_obstacles(desired_dir: Vector3) -> Vector3:
 
 	var steer := desired_dir
 	var space := get_world_3d().direct_space_state
-	var origin := global_position + Vector3(0.0, 0.88, 0.0)
+	# Dual-height probe: +0.62m catches waist-high parapets/crates; +1.05m catches mid-chest walls/doors!
+	var shin_org := global_position + Vector3(0.0, 0.62, 0.0)
+	var chest_org := global_position + Vector3(0.0, 1.05, 0.0)
 	var right_sh := Vector3(-desired_dir.z, 0.0, desired_dir.x) * 0.36
 
-	# Center + capsule shoulder rays: detect doorframe jambs & wall edges BEFORE capsule snags!
-	var q_mid := PhysicsRayQueryParameters3D.create(origin, origin + desired_dir * 1.55)
+	var q_mid := PhysicsRayQueryParameters3D.create(chest_org, chest_org + desired_dir * 1.45)
 	q_mid.collision_mask = 1
 	var hit_mid := space.intersect_ray(q_mid)
 	if hit_mid.is_empty():
-		var q_l := PhysicsRayQueryParameters3D.create(origin - right_sh, origin - right_sh + desired_dir * 1.15)
+		var q_low := PhysicsRayQueryParameters3D.create(shin_org, shin_org + desired_dir * 1.25)
+		q_low.collision_mask = 1
+		hit_mid = space.intersect_ray(q_low)
+
+	if hit_mid.is_empty():
+		var q_l := PhysicsRayQueryParameters3D.create(chest_org - right_sh, chest_org - right_sh + desired_dir * 1.05)
 		q_l.collision_mask = 1
 		var h_l := space.intersect_ray(q_l)
-		var q_r := PhysicsRayQueryParameters3D.create(origin + right_sh, origin + right_sh + desired_dir * 1.15)
+		var q_r := PhysicsRayQueryParameters3D.create(chest_org + right_sh, chest_org + right_sh + desired_dir * 1.05)
 		q_r.collision_mask = 1
 		var h_r := space.intersect_ray(q_r)
 		if not h_l.is_empty() and h_r.is_empty():
-			steer = (desired_dir + right_sh.normalized() * 0.48).normalized()
+			steer = (desired_dir + right_sh.normalized() * 0.45).normalized()
 		elif not h_r.is_empty() and h_l.is_empty():
-			steer = (desired_dir - right_sh.normalized() * 0.48).normalized()
+			steer = (desired_dir - right_sh.normalized() * 0.45).normalized()
 	else:
 		var mid_col = hit_mid["collider"]
 		if mid_col is Node and (mid_col as Node).has_meta("door"):
@@ -775,10 +1060,10 @@ func _steer_around_obstacles(desired_dir: Vector3) -> Vector3:
 			var best_clear := -1.0
 			for deg_a in angles:
 				var cand_dir := desired_dir.rotated(Vector3.UP, deg_to_rad(float(deg_a)))
-				var qc := PhysicsRayQueryParameters3D.create(origin, origin + cand_dir * 2.15)
+				var qc := PhysicsRayQueryParameters3D.create(shin_org, shin_org + cand_dir * 2.15)
 				qc.collision_mask = 1
 				var hc := space.intersect_ray(qc)
-				var clear_d := 2.15 if (hc.is_empty() or (hc["collider"] is Node and (hc["collider"] as Node).has_meta("door"))) else origin.distance_to(hc["position"] as Vector3)
+				var clear_d := 2.15 if (hc.is_empty() or (hc["collider"] is Node and (hc["collider"] as Node).has_meta("door"))) else shin_org.distance_to(hc["position"] as Vector3)
 				var align_score := clear_d - absf(float(deg_a)) * 0.012
 				if clear_d > 1.35 and align_score > best_clear:
 					best_clear = align_score
@@ -794,31 +1079,29 @@ func _steer_around_obstacles(desired_dir: Vector3) -> Vector3:
 				else:
 					steer = desired_dir.rotated(Vector3.UP, deg_to_rad(115.0 * _avoid_side))
 
-	# Gentle, wall-safe teammate separation: NEVER shove a Bot sideways into a parapet or corridor wall!
+	# Wall-safe teammate separation (checks shin height +0.62m so bots NEVER push into parapets!)
 	var sep_accum := Vector3.ZERO
 	for a in RoundManager.actors:
 		if not is_instance_valid(a) or a == self or not bool(a.get("is_alive")):
 			continue
 		var a_node := a as Node3D
-		if a_node == null:
-			continue
-		if absf(a_node.global_position.y - global_position.y) > 1.6:
+		if a_node == null or absf(a_node.global_position.y - global_position.y) > 1.6:
 			continue
 		var diff := global_position - a_node.global_position
 		diff.y = 0.0
 		var dsq := diff.length_squared()
-		if dsq > 0.0001 and dsq < 1.35:
+		if dsq > 0.0001 and dsq < 1.25:
 			var dist := sqrt(dsq)
 			var away := diff / dist
 			var tangent := Vector3(-away.z, 0.0, away.x) * _avoid_side
-			var push := (1.16 - minf(1.16, dist)) * 0.42
+			var push := (1.12 - minf(1.12, dist)) * 0.36
 			sep_accum += away * push + tangent * (push * 0.55)
 
 	if sep_accum.length_squared() > 0.0004:
-		if sep_accum.length() > 0.36:
-			sep_accum = sep_accum.normalized() * 0.36
+		if sep_accum.length() > 0.32:
+			sep_accum = sep_accum.normalized() * 0.32
 		var sep_dir := sep_accum.normalized()
-		var q_wall := PhysicsRayQueryParameters3D.create(origin, origin + sep_dir * 0.95)
+		var q_wall := PhysicsRayQueryParameters3D.create(shin_org, shin_org + sep_dir * 1.05)
 		q_wall.collision_mask = 1
 		if space.intersect_ray(q_wall).is_empty():
 			steer += sep_accum
@@ -831,7 +1114,7 @@ func _is_jumpable_ledge(fwd_dir: Vector3) -> bool:
 	if fwd_dir.length_squared() < 0.001 or not is_inside_tree() or not get_world_3d():
 		return false
 	var space := get_world_3d().direct_space_state
-	var low_from := global_position + Vector3(0.0, 0.68, 0.0)
+	var low_from := global_position + Vector3(0.0, 0.65, 0.0)
 	var high_from := global_position + Vector3(0.0, 1.68, 0.0)
 	var q_low := PhysicsRayQueryParameters3D.create(low_from, low_from + fwd_dir * 1.05)
 	q_low.collision_mask = 1
@@ -860,7 +1143,6 @@ func _on_world_sound(spos: Vector3, radius: float, steam: String) -> void:
 		if randf() < 0.65:
 			_sound_investigate_pos = spos
 			_sound_investigate_timer = randf_range(1.4, 2.6)
-		# Skilled CS 1.5 Bots shift-walk silently when creeping up on nearby footsteps/reloads!
 		if skill_level >= 1 and d < 15.5 and d > 4.0 and not is_instance_valid(RoundManager.planted_c4) and randf() < 0.55:
 			_stealth_walk_timer = randf_range(1.3, 2.5)
 
@@ -871,6 +1153,7 @@ func _on_radio_order(sender: Node3D, steam: String, action: String, pos: Vector3
 	match action:
 		"follow_me", "cover_me":
 			if global_position.distance_to(pos) < 24.0:
+				_release_camp_spot()
 				_follow_target = sender
 				_hold_pos_timer = 0.0
 		"hold_position":
@@ -878,6 +1161,7 @@ func _on_radio_order(sender: Node3D, steam: String, action: String, pos: Vector3
 				_follow_target = null
 				_hold_pos_timer = 15.0
 		"go", "storm_front":
+			_release_camp_spot()
 			_follow_target = null
 			_hold_pos_timer = 0.0
 
@@ -887,9 +1171,15 @@ func _on_taken_damage_from(attacker: Node3D, hit_pos: Vector3) -> void:
 		return
 	_knife_rush_timer = 0.0
 	_hold_pos_timer = 0.0
+	_release_camp_spot()
 	_stealth_walk_timer = 0.0
 	_strafe_dir = -_strafe_dir
 	_strafe_timer = randf_range(0.35, 0.70)
+
+	if is_instance_valid(RoundManager.game_world):
+		var nav: BotNavigator = RoundManager.game_world.get("bot_navigator")
+		if nav != null:
+			nav.report_team_damage(team, global_position, 35.0)
 
 	if attacker is CSActor:
 		var enemy := attacker as CSActor
@@ -901,17 +1191,15 @@ func _on_taken_damage_from(attacker: Node3D, hit_pos: Vector3) -> void:
 			if target_enemy == null:
 				if _can_see_actor(enemy):
 					target_enemy = enemy
-					var fast_react: float = float([0.24, 0.16, 0.10, 0.05][clampi(skill_level, 0, 3)])
+					var fast_react: float = float([0.22, 0.14, 0.09, 0.045][clampi(skill_level, 0, 3)])
 					_reaction_timer = fast_react
 				else:
-					# Snap gaze immediately toward unseen shooter & alert nearby squadmates!
-					_look_smoothly_toward(enemy.global_position + Vector3(0.0, 1.35, 0.0), 0.55)
-			# Alert nearby friendly Bots within 16m so squads react cohesively under fire!
+					_look_smoothly_toward(enemy.global_position + Vector3(0.0, 1.35, 0.0), 0.58)
 			for mate in RoundManager.actors:
 				if mate is CSBot and mate != self and is_instance_valid(mate):
 					var m_bot := mate as CSBot
 					if m_bot.is_alive and m_bot.team == team and m_bot.target_enemy == null:
-						if m_bot.global_position.distance_to(global_position) < 16.0:
+						if m_bot.global_position.distance_to(global_position) < 18.0:
 							m_bot.notify_squad_contact(enemy.global_position)
 			return
 
@@ -927,4 +1215,3 @@ func notify_squad_contact(threat_pos: Vector3) -> void:
 	_sound_investigate_timer = maxf(_sound_investigate_timer, 2.8)
 	_last_enemy_pos = threat_pos
 	_last_enemy_seen_age = minf(_last_enemy_seen_age, 1.5)
-
