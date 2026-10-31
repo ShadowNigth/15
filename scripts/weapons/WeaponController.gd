@@ -38,6 +38,13 @@ var burst_remaining: int = 0
 var burst_tick: float = 0.0
 var plant_progress: float = 0.0
 
+var _grenade_pin_pulled: bool = false
+var _grenade_pin_timer: float = 0.0
+var _grenade_want_release: bool = false
+var _post_throw_switch_timer: float = 0.0
+var _knife_combo_idx: int = 0
+var _elite_left_next: bool = true
+
 # View punch recoil angles (degrees: x=pitch up, y=yaw side)
 var punch_angles: Vector2 = Vector2.ZERO
 
@@ -80,6 +87,10 @@ func _reset_states() -> void:
 	shots_fired = 0
 	burst_remaining = 0
 	plant_progress = 0.0
+	_grenade_pin_pulled = false
+	_grenade_pin_timer = 0.0
+	_grenade_want_release = false
+	_post_throw_switch_timer = 0.0
 	punch_angles = Vector2.ZERO
 	_clear_zoom()
 
@@ -197,6 +208,28 @@ func _process(delta: float) -> void:
 	if fire_cooldown > 0.0:
 		fire_cooldown -= delta
 
+	# Delayed switch after grenade throw so player sees the full 'throw' viewmodel animation!
+	if _post_throw_switch_timer > 0.0:
+		_post_throw_switch_timer -= delta
+		if _post_throw_switch_timer <= 0.0:
+			var prev_gid := current_weapon_id
+			if int(grenades.get(prev_gid, 0)) > 0:
+				equip_weapon_by_id(prev_gid)
+			elif not equip_slot(1):
+				if not equip_slot(2):
+					if not equip_slot(4):
+						equip_slot(3)
+		return
+
+	# Grenade pin-pull -> release throw state machine
+	if _grenade_pin_pulled:
+		_grenade_pin_timer = maxf(0.0, _grenade_pin_timer - delta)
+		if _grenade_want_release and _grenade_pin_timer <= 0.0:
+			_grenade_pin_pulled = false
+			_grenade_want_release = false
+			_launch_grenade_now(current_weapon_id)
+			return
+
 	# Burst-fire follow-up shots (Glock18)
 	if burst_remaining > 0:
 		burst_tick -= delta
@@ -232,6 +265,8 @@ func _process(delta: float) -> void:
 func trigger_primary(holding: bool, delta: float) -> void:
 	if not is_instance_valid(actor) or not bool(actor.get("is_alive")):
 		return
+	if _post_throw_switch_timer > 0.0:
+		return
 	var spec := get_current_spec()
 
 	# C4 Planting on Bombsite during LIVE round
@@ -243,6 +278,8 @@ func trigger_primary(holding: bool, delta: float) -> void:
 			if bool(RoundManager.game_world.call("is_in_bombsite", act_body.global_position)) and act_body.is_on_floor():
 				if plant_progress == 0.0:
 					AudioManager.play_3d("weapons/c4_click.wav", actor.global_position, -2.0, 18.0)
+					if actor.has_method("play_viewmodel_sequence"):
+						actor.call("play_viewmodel_sequence", ["pressbutton"])
 				plant_progress += delta
 				plant_progress_changed.emit(clampf(plant_progress / 3.0, 0.0, 1.0))
 				if plant_progress >= 3.0:
@@ -257,6 +294,25 @@ func trigger_primary(holding: bool, delta: float) -> void:
 	if RoundManager.is_movement_frozen():
 		return
 
+	# Grenade hold-pin / release-throw for human player (instant throw for AI bots)
+	if bool(spec.get("grenade", false)):
+		if _grenade_pin_pulled:
+			return
+		if is_reloading or fire_cooldown > 0.0:
+			return
+		if int(grenades.get(current_weapon_id, 0)) <= 0:
+			return
+		if bool(actor.get("is_human")):
+			_grenade_pin_pulled = true
+			_grenade_pin_timer = 0.36
+			_grenade_want_release = false
+			AudioManager.play_3d("weapons/pinpull.wav", actor.global_position, -3.0, 14.0)
+			if actor.has_method("play_viewmodel_sequence"):
+				actor.call("play_viewmodel_sequence", ["pullpin"])
+		else:
+			_throw_grenade(current_weapon_id)
+		return
+
 	# Interruptible shotgun reload!
 	if is_reloading and bool(spec.get("shotgun_reload", false)) and int(clips.get(current_weapon_id, 0)) > 0:
 		is_reloading = false
@@ -264,15 +320,11 @@ func trigger_primary(holding: bool, delta: float) -> void:
 
 	if is_reloading or is_attaching_silencer or fire_cooldown > 0.0:
 		return
-	if holding and not bool(spec.get("automatic", false)):
+	if holding and not bool(spec.get("automatic", false)) and current_weapon_id != "knife":
 		return
 
 	if current_weapon_id == "knife":
 		_swing_knife(false)
-		return
-
-	if bool(spec.get("grenade", false)):
-		_throw_grenade(current_weapon_id)
 		return
 
 	var cur_clip := int(clips.get(current_weapon_id, 0))
@@ -295,9 +347,17 @@ func trigger_primary(holding: bool, delta: float) -> void:
 
 
 func release_primary() -> void:
+	if _grenade_pin_pulled:
+		_grenade_want_release = true
+		if _grenade_pin_timer <= 0.0:
+			_grenade_pin_pulled = false
+			_grenade_want_release = false
+			_launch_grenade_now(current_weapon_id)
 	if plant_progress > 0.0:
 		plant_progress = 0.0
 		plant_progress_changed.emit(0.0)
+		if current_weapon_id == "c4" and is_instance_valid(actor) and actor.has_method("play_viewmodel_sequence"):
+			actor.call("play_viewmodel_sequence", ["idle1", "idle"])
 
 
 func trigger_secondary() -> void:
@@ -374,9 +434,15 @@ func start_reload() -> void:
 	var rwav := String(spec.get("reload_sound", ""))
 	if not rwav.is_empty() and is_instance_valid(actor):
 		AudioManager.play_3d(rwav, actor.global_position, -3.5, 18.0, 1.0, 12.0, String(actor.get("team")))
-	if actor.has_method("play_viewmodel_anim"):
-		var sil := bool(silenced_state.get(current_weapon_id, false))
-		actor.play_viewmodel_anim("reload" if (sil or not spec.get("silencer", false)) else "reload_unsil")
+	if actor.has_method("play_viewmodel_sequence"):
+		if bool(spec.get("shotgun_reload", false)):
+			actor.call("play_viewmodel_sequence", ["start_reload", "reload"])
+		else:
+			var sil := bool(silenced_state.get(current_weapon_id, false))
+			if bool(spec.get("silencer", false)) and not sil:
+				actor.call("play_viewmodel_sequence", ["reload_unsil", "reload"])
+			else:
+				actor.call("play_viewmodel_sequence", ["reload"])
 
 
 func _finish_reload_step() -> void:
@@ -391,11 +457,15 @@ func _finish_reload_step() -> void:
 			clips[current_weapon_id] = cur + 1
 			ammo_pool[atype] = res - 1
 			_emit_ammo()
+			if actor.has_method("play_viewmodel_sequence"):
+				actor.call("play_viewmodel_sequence", ["insert"])
 			if cur + 1 < csize and res - 1 > 0:
 				reload_timer = 0.48
 				AudioManager.play_3d("weapons/m3_insertshell.wav", actor.global_position, -4.0, 16.0)
 				return
 		is_reloading = false
+		if actor.has_method("play_viewmodel_sequence"):
+			actor.call("play_viewmodel_sequence", ["after_reload"])
 		AudioManager.play_3d("weapons/m3_pump.wav", actor.global_position, -4.0, 16.0)
 		return
 
@@ -579,7 +649,6 @@ func _swing_knife(heavy_stab: bool) -> void:
 	var spec := get_current_spec()
 	fire_cooldown = float(spec.get("alt_cycle_time", 1.1)) if heavy_stab else float(spec.get("cycle_time", 0.4))
 	var reach := (float(spec.get("alt_range", 36.0)) if heavy_stab else float(spec.get("range", 52.0))) * GameData.SCALE
-	fired_shot.emit("knife", true)
 
 	var eye: Vector3 = actor.call("get_eye_position")
 	var aim_b: Basis = actor.call("get_aim_basis", Vector2.ZERO)
@@ -589,8 +658,18 @@ func _swing_knife(heavy_stab: bool) -> void:
 	q.collision_mask = 1 | 2
 	q.exclude = [(actor as CollisionObject3D).get_rid()]
 	var hit: Dictionary = space.intersect_ray(q)
+	var did_hit := not hit.is_empty()
 
-	if hit.is_empty():
+	if actor.has_method("play_viewmodel_sequence"):
+		if heavy_stab:
+			actor.call("play_viewmodel_sequence", ["stab"] if did_hit else ["stab_miss", "stab"])
+		else:
+			var slashes := ["midslash1", "midslash2", "slash1", "slash2"]
+			var pick: String = slashes[_knife_combo_idx % slashes.size()]
+			_knife_combo_idx += 1
+			actor.call("play_viewmodel_sequence", [pick, "slash1", "slash2"])
+
+	if not did_hit:
 		AudioManager.play_3d("weapons/knife_slash%d.wav" % randi_range(1, 2), actor.global_position, -3.0, 14.0)
 		return
 
@@ -616,13 +695,21 @@ func _swing_knife(heavy_stab: bool) -> void:
 
 
 func _throw_grenade(gid: String) -> void:
+	AudioManager.play_3d("weapons/pinpull.wav", actor.global_position, -3.0, 14.0)
+	_launch_grenade_now(gid)
+
+
+func _launch_grenade_now(gid: String) -> void:
 	var count := int(grenades.get(gid, 0))
 	if count <= 0 or not is_instance_valid(RoundManager.game_world):
 		return
 	grenades[gid] = count - 1
 	fire_cooldown = 0.75
+	_emit_ammo()
 
-	AudioManager.play_3d("weapons/pinpull.wav", actor.global_position, -3.0, 14.0)
+	if actor.has_method("play_viewmodel_sequence"):
+		actor.call("play_viewmodel_sequence", ["throw"])
+
 	AudioManager.play_radio("radio/ct_fireinhole.wav")
 	RoundManager.chat_radio_message.emit(String(actor.get("actor_name")), String(actor.get("team")), "(RADIO): Fire in the hole!")
 
@@ -636,10 +723,12 @@ func _throw_grenade(gid: String) -> void:
 	var throw_v: Vector3 = fwd * 21.5 + Vector3(0, 2.6, 0) + actor_vel * 0.45
 	proj.setup_grenade(gid, actor, throw_v)
 
-	# Switch back to best available weapon
-	if not equip_slot(1):
-		if not equip_slot(2):
-			equip_slot(3)
+	if bool(actor.get("is_human")):
+		_post_throw_switch_timer = 0.30
+	else:
+		if not equip_slot(1):
+			if not equip_slot(2):
+				equip_slot(3)
 
 
 func _complete_c4_plant() -> void:

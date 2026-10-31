@@ -12,6 +12,7 @@ var player: PlayerController = null
 
 var _nvg_rect: ColorRect = null
 var _scope_root: Control = null
+var _smoke_rect: ColorRect = null
 var _flash_rect: ColorRect = null
 var _crosshair_ctrl: Control = null
 var _radar_ctrl: Control = null
@@ -284,7 +285,13 @@ func _build_hud_tree() -> void:
 	_ammo_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_RIGHT
 	bot_right.add_child(_ammo_label)
 
-	# 11. Flashbang Fullscreen Whiteout (topmost inside HUD)
+	# 11. Inside-Smoke Volumetric Immersion Overlay + Flashbang Fullscreen Whiteout
+	_smoke_rect = ColorRect.new()
+	_smoke_rect.set_anchors_preset(Control.PRESET_FULL_RECT)
+	_smoke_rect.color = Color(0.73, 0.75, 0.77, 0.0)
+	_smoke_rect.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	root.add_child(_smoke_rect)
+
 	_flash_rect = ColorRect.new()
 	_flash_rect.set_anchors_preset(Control.PRESET_FULL_RECT)
 	_flash_rect.color = Color(1.0, 1.0, 1.0, 0.0)
@@ -344,6 +351,8 @@ func _process(delta: float) -> void:
 	_timer_label.text = "%02d:%02d" % [mins, secs % 60]
 
 	if is_instance_valid(player):
+		var smoke_d := RoundManager.get_smoke_density_at(player.get_eye_position()) if player.is_alive else 0.0
+		_smoke_rect.color.a = lerpf(_smoke_rect.color.a, clampf(smoke_d * 0.97, 0.0, 0.97), minf(1.0, delta * 9.0))
 		_flash_rect.color.a = clampf(player.flash_alpha, 0.0, 1.0)
 		_icon_buyzone.visible = player.can_use_buy_menu()
 		var carries_c4 := String(player.weapon_ctrl.slots.get(5, "")) == "c4"

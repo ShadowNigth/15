@@ -26,6 +26,9 @@ var _muzzle_light: OmniLight3D = null
 var _muzzle_timer: float = 0.0
 var _bob_phase: float = 0.0
 var _sway_offset: Vector2 = Vector2.ZERO
+var _shake_trauma: float = 0.0
+var _shake_time: float = 0.0
+var _elite_muzzle_left: bool = false
 var _defusing_c4: PlantedC4 = null
 var _spec_index: int = 0
 var ui_blocking_input: bool = false
@@ -241,14 +244,24 @@ func _physics_process(delta: float) -> void:
 
 	apply_goldsrc_movement(wish_dir, want_jump, want_crouch, want_walk, delta)
 
-	# Smooth camera eye height & recoil punch angles (GoldSrc stand view_ofs = 64u-10u = ~1.66m, crouch = 0.96m)
+	# Smooth camera eye height & recoil punch angles + explosion camera shake
 	var target_eye_y := 0.96 if is_crouching else 1.66
 	camera.position.y = lerpf(camera.position.y, target_eye_y, minf(1.0, 14.0 * delta))
+	var shake_rot := Vector3.ZERO
+	if _shake_trauma > 0.001:
+		_shake_time += delta * 38.0
+		_shake_trauma = maxf(0.0, _shake_trauma - delta * 2.15)
+		var amt := _shake_trauma * _shake_trauma
+		shake_rot = Vector3(
+			sin(_shake_time * 1.3) * 0.065 * amt,
+			cos(_shake_time * 1.7) * 0.055 * amt,
+			sin(_shake_time * 2.3) * 0.045 * amt
+		)
 	var punch := weapon_ctrl.punch_angles
 	camera.rotation = Vector3(
-		look_pitch + deg_to_rad(punch.x * 1.15),
-		look_yaw + deg_to_rad(punch.y * 0.85),
-		0.0
+		look_pitch + deg_to_rad(punch.x * 1.15) + shake_rot.x,
+		look_yaw + deg_to_rad(punch.y * 0.85) + shake_rot.y,
+		shake_rot.z
 	)
 	if _vm_camera:
 		_vm_camera.global_transform = camera.global_transform
@@ -269,7 +282,7 @@ func _physics_process(delta: float) -> void:
 		# flip 2D SubViewportContainer when left-handed (cl_righthand 0) so 3D Skeleton3D never gets negative scale!
 		_vm_container.pivot_offset = _vm_container.size * 0.5
 		_vm_container.scale = Vector2(1.0 if GameData.right_hand else -1.0, 1.0)
-	_muzzle_sprite.position.x = 0.18
+	_muzzle_sprite.position.x = -0.16 if _elite_muzzle_left else 0.18
 
 	# Primary attack (just pressed or held)
 	if not ui_blocking_input:
@@ -324,28 +337,44 @@ func _on_weapon_switched(wid: String, _spec: Dictionary) -> void:
 	_rebuild_viewmodel(wid)
 
 
+func apply_camera_shake(intensity: float) -> void:
+	_shake_trauma = clampf(_shake_trauma + intensity, 0.0, 1.35)
+
+
 func _rebuild_viewmodel(wid: String) -> void:
 	var old_children := viewmodel_holder.get_children()
 	for c in old_children:
 		viewmodel_holder.remove_child(c)
 		c.queue_free()
 	_vm_anim = null
+	_elite_muzzle_left = false
 	var spec: Dictionary = GameData.weapons.get(wid, {})
 	var v_name := String(spec.get("v_model", "v_knife"))
 	var sc := GameData.get_model_scene("weapons/" + v_name)
 	if not sc:
 		return
 	var inst := sc.instantiate()
-	# Native GoldSrc camera-space framing (verified on v_usp, v_ak47, v_m4a1, v_awp, v_knife)
+	# Native GoldSrc camera-space framing (verified across rifles, pistols, knife, grenades & C4)
 	inst.position = Vector3(0.0, -0.015, -0.03)
 	_prepare_viewmodel_materials(inst)
 	viewmodel_holder.add_child(inst)
 	_vm_anim = _find_anim(inst)
+	if _vm_anim:
+		for aname in _vm_anim.get_animation_list():
+			var low := aname.to_lower()
+			var anim_res := _vm_anim.get_animation(aname)
+			if anim_res:
+				anim_res.loop_mode = Animation.LOOP_LINEAR if low.begins_with("idle") else Animation.LOOP_NONE
+		if not _vm_anim.animation_finished.is_connected(_on_vm_anim_finished):
+			_vm_anim.animation_finished.connect(_on_vm_anim_finished)
+
 	var is_sil := bool(weapon_ctrl.silenced_state.get(wid, false)) and bool(spec.get("silencer", false))
-	if bool(spec.get("silencer", false)) and not is_sil:
-		play_viewmodel_anim("draw_unsil")
+	if bool(spec.get("grenade", false)):
+		play_viewmodel_sequence(["deploy", "draw", "idle"])
+	elif bool(spec.get("silencer", false)) and not is_sil:
+		play_viewmodel_sequence(["draw_unsil", "draw", "idle_unsil"])
 	else:
-		play_viewmodel_anim("draw")
+		play_viewmodel_sequence(["draw", "deploy", "idle", "idle1", "idle3"])
 
 
 func _prepare_viewmodel_materials(n: Node) -> void:
@@ -363,27 +392,90 @@ func _prepare_viewmodel_materials(n: Node) -> void:
 		_prepare_viewmodel_materials(c)
 
 
-func play_viewmodel_anim(preferred: String) -> void:
+func play_viewmodel_sequence(candidates: Array) -> void:
 	if not _vm_anim:
 		return
 	var anims := _vm_anim.get_animation_list()
-	if anims.has(preferred):
-		_vm_anim.stop()
-		_vm_anim.play(preferred)
-		return
-	for a in anims:
-		if preferred in a.to_lower():
+	# 1. Exact match against candidate priority list
+	for c in candidates:
+		var cname := String(c)
+		if anims.has(cname):
 			_vm_anim.stop()
-			_vm_anim.play(a)
+			_vm_anim.play(cname)
+			_vm_anim.advance(0.0)
 			return
+		for a in anims:
+			if a.to_lower() == cname.to_lower():
+				_vm_anim.stop()
+				_vm_anim.play(a)
+				_vm_anim.advance(0.0)
+				return
+	# 2. Prefix / substring fallback
+	for c in candidates:
+		var clow := String(c).to_lower()
+		for a in anims:
+			if a.to_lower().begins_with(clow):
+				_vm_anim.stop()
+				_vm_anim.play(a)
+				_vm_anim.advance(0.0)
+				return
+		for a in anims:
+			if a.to_lower().find(clow) >= 0:
+				_vm_anim.stop()
+				_vm_anim.play(a)
+				_vm_anim.advance(0.0)
+				return
+
+
+func play_viewmodel_anim(preferred: String) -> void:
+	play_viewmodel_sequence([preferred])
+
+
+func _on_vm_anim_finished(anim_name: String) -> void:
+	if not _vm_anim or not is_alive:
+		return
+	var low := anim_name.to_lower()
+	# Hold final frame while grenade pin is pulled or while actively throwing/planting
+	if low == "pullpin" and weapon_ctrl._grenade_pin_pulled:
+		return
+	if low == "throw":
+		return
+	if low == "pressbutton" and weapon_ctrl.plant_progress > 0.0:
+		return
+	if weapon_ctrl.is_reloading and low in ["start_reload", "insert"]:
+		return
+	_play_idle_viewmodel()
+
+
+func _play_idle_viewmodel() -> void:
+	if not _vm_anim:
+		return
+	var wid := weapon_ctrl.current_weapon_id
+	var spec: Dictionary = GameData.weapons.get(wid, {})
+	var is_sil := bool(weapon_ctrl.silenced_state.get(wid, false)) and bool(spec.get("silencer", false))
+	if bool(spec.get("silencer", false)) and not is_sil:
+		play_viewmodel_sequence(["idle_unsil", "idle", "idle1"])
+	else:
+		play_viewmodel_sequence(["idle", "idle1", "idle3"])
 
 
 func _on_fired_shot(wid: String, silenced: bool) -> void:
 	var spec: Dictionary = GameData.weapons.get(wid, {})
-	if bool(spec.get("silencer", false)) and not silenced:
-		play_viewmodel_anim("shoot1_unsil")
+	if wid == "elite":
+		_elite_muzzle_left = not _elite_muzzle_left
+		if _elite_muzzle_left:
+			var r_idx := randi_range(1, 5)
+			play_viewmodel_sequence(["shoot_left%d" % r_idx, "shoot_left1", "shoot_leftlast"])
+		else:
+			var l_idx := randi_range(1, 5)
+			play_viewmodel_sequence(["shoot_right%d" % l_idx, "shoot_right1", "shoot_rightlast"])
+	elif bool(spec.get("silencer", false)) and not silenced:
+		var u_idx := randi_range(1, 3)
+		play_viewmodel_sequence(["shoot%d_unsil" % u_idx, "shoot1_unsil", "shoot_unsil", "shoot1"])
 	else:
-		play_viewmodel_anim("shoot1")
+		_elite_muzzle_left = false
+		var s_idx := randi_range(1, 3)
+		play_viewmodel_sequence(["shoot%d" % s_idx, "shoot1", "shoot", "shoot_2"])
 
 	if wid != "knife" and not bool(spec.get("grenade", false)) and wid != "c4" and not silenced:
 		_muzzle_sprite.visible = true

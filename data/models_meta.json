@@ -638,6 +638,146 @@
     ],
     "bones": 7
   },
+  "weapons/p_ak47": {
+    "sequences": [],
+    "hitboxes": [],
+    "bones": 0
+  },
+  "weapons/p_aug": {
+    "sequences": [],
+    "hitboxes": [],
+    "bones": 0
+  },
+  "weapons/p_awp": {
+    "sequences": [],
+    "hitboxes": [],
+    "bones": 0
+  },
+  "weapons/p_c4": {
+    "sequences": [],
+    "hitboxes": [],
+    "bones": 0
+  },
+  "weapons/p_deagle": {
+    "sequences": [],
+    "hitboxes": [],
+    "bones": 0
+  },
+  "weapons/p_elite": {
+    "sequences": [],
+    "hitboxes": [],
+    "bones": 0
+  },
+  "weapons/p_fiveseven": {
+    "sequences": [],
+    "hitboxes": [],
+    "bones": 0
+  },
+  "weapons/p_flashbang": {
+    "sequences": [],
+    "hitboxes": [],
+    "bones": 0
+  },
+  "weapons/p_g3sg1": {
+    "sequences": [],
+    "hitboxes": [],
+    "bones": 0
+  },
+  "weapons/p_glock18": {
+    "sequences": [],
+    "hitboxes": [],
+    "bones": 0
+  },
+  "weapons/p_hegrenade": {
+    "sequences": [],
+    "hitboxes": [],
+    "bones": 0
+  },
+  "weapons/p_knife": {
+    "sequences": [],
+    "hitboxes": [],
+    "bones": 0
+  },
+  "weapons/p_m249": {
+    "sequences": [],
+    "hitboxes": [],
+    "bones": 0
+  },
+  "weapons/p_m3": {
+    "sequences": [],
+    "hitboxes": [],
+    "bones": 0
+  },
+  "weapons/p_m3super90": {
+    "sequences": [],
+    "hitboxes": [],
+    "bones": 0
+  },
+  "weapons/p_m4a1": {
+    "sequences": [],
+    "hitboxes": [],
+    "bones": 0
+  },
+  "weapons/p_mac10": {
+    "sequences": [],
+    "hitboxes": [],
+    "bones": 0
+  },
+  "weapons/p_mp5": {
+    "sequences": [],
+    "hitboxes": [],
+    "bones": 0
+  },
+  "weapons/p_p228": {
+    "sequences": [],
+    "hitboxes": [],
+    "bones": 0
+  },
+  "weapons/p_p90": {
+    "sequences": [],
+    "hitboxes": [],
+    "bones": 0
+  },
+  "weapons/p_scout": {
+    "sequences": [],
+    "hitboxes": [],
+    "bones": 0
+  },
+  "weapons/p_sg550": {
+    "sequences": [],
+    "hitboxes": [],
+    "bones": 0
+  },
+  "weapons/p_sg552": {
+    "sequences": [],
+    "hitboxes": [],
+    "bones": 0
+  },
+  "weapons/p_smokegrenade": {
+    "sequences": [],
+    "hitboxes": [],
+    "bones": 0
+  },
+  "weapons/p_tmp": {
+    "sequences": [],
+    "hitboxes": [],
+    "bones": 0
+  },
+  "weapons/p_ump45": {
+    "sequences": [],
+    "hitboxes": [],
+    "bones": 0
+  },
+  "weapons/p_usp": {
+    "sequences": [],
+    "hitboxes": [],
+    "bones": 0
+  },
+  "weapons/p_xm1014": {
+    "sequences": [],
+    "hitboxes": [],
+    "bones": 0
+  },
   "props/player": {
     "sequences": [
       "dummy"
@@ -4967,11 +5107,17 @@
     "sequences": [
       "dummy",
       "idle1",
+      "idle1_1h",
       "crouch_idle",
+      "crouch_idle_1h",
       "walk",
+      "walk_1h",
       "run",
+      "run_1h",
       "crouchrun",
+      "crouchrun_1h",
       "jump",
+      "jump_1h",
       "longjump",
       "swim",
       "crouch_aim_carbine",
@@ -4988,8 +5134,12 @@
       "ref_aim_ak47",
       "ref_shoot_ak47",
       "ref_reload_ak47",
+      "death1",
+      "death2",
+      "death3",
       "head",
-      "gutshot"
+      "gutshot",
+      "crouch_die"
     ],
     "hitboxes": [
       {
@@ -5279,11 +5429,17 @@
     "sequences": [
       "dummy",
       "idle1",
+      "idle1_1h",
       "crouch_idle",
+      "crouch_idle_1h",
       "walk",
+      "walk_1h",
       "run",
+      "run_1h",
       "crouchrun",
+      "crouchrun_1h",
       "jump",
+      "jump_1h",
       "longjump",
       "swim",
       "crouch_aim_carbine",
@@ -5300,8 +5456,12 @@
       "ref_aim_ak47",
       "ref_shoot_ak47",
       "ref_reload_ak47",
+      "death1",
+      "death2",
+      "death3",
       "head",
-      "gutshot"
+      "gutshot",
+      "crouch_die"
     ],
     "hitboxes": [
       {
@@ -5591,11 +5751,17 @@
     "sequences": [
       "dummy",
       "idle1",
+      "idle1_1h",
       "crouch_idle",
+      "crouch_idle_1h",
       "walk",
+      "walk_1h",
       "run",
+      "run_1h",
       "crouchrun",
+      "crouchrun_1h",
       "jump",
+      "jump_1h",
       "longjump",
       "swim",
       "crouch_aim_carbine",
@@ -5612,8 +5778,12 @@
       "ref_aim_ak47",
       "ref_shoot_ak47",
       "ref_reload_ak47",
+      "death1",
+      "death2",
+      "death3",
       "head",
-      "gutshot"
+      "gutshot",
+      "crouch_die"
     ],
     "hitboxes": [
       {
@@ -5903,11 +6073,17 @@
     "sequences": [
       "dummy",
       "idle1",
+      "idle1_1h",
       "crouch_idle",
+      "crouch_idle_1h",
       "walk",
+      "walk_1h",
       "run",
+      "run_1h",
       "crouchrun",
+      "crouchrun_1h",
       "jump",
+      "jump_1h",
       "longjump",
       "swim",
       "crouch_aim_carbine",
@@ -5924,8 +6100,12 @@
       "ref_aim_ak47",
       "ref_shoot_ak47",
       "ref_reload_ak47",
+      "death1",
+      "death2",
+      "death3",
       "head",
-      "gutshot"
+      "gutshot",
+      "crouch_die"
     ],
     "hitboxes": [
       {
@@ -6215,11 +6395,17 @@
     "sequences": [
       "dummy",
       "idle1",
+      "idle1_1h",
       "crouch_idle",
+      "crouch_idle_1h",
       "walk",
+      "walk_1h",
       "run",
+      "run_1h",
       "crouchrun",
+      "crouchrun_1h",
       "jump",
+      "jump_1h",
       "longjump",
       "swim",
       "crouch_aim_carbine",
@@ -6236,8 +6422,12 @@
       "ref_aim_ak47",
       "ref_shoot_ak47",
       "ref_reload_ak47",
+      "death1",
+      "death2",
+      "death3",
       "head",
-      "gutshot"
+      "gutshot",
+      "crouch_die"
     ],
     "hitboxes": [
       {
@@ -6527,11 +6717,17 @@
     "sequences": [
       "dummy",
       "idle1",
+      "idle1_1h",
       "crouch_idle",
+      "crouch_idle_1h",
       "walk",
+      "walk_1h",
       "run",
+      "run_1h",
       "crouchrun",
+      "crouchrun_1h",
       "jump",
+      "jump_1h",
       "longjump",
       "swim",
       "crouch_aim_carbine",
@@ -6548,8 +6744,12 @@
       "ref_aim_ak47",
       "ref_shoot_ak47",
       "ref_reload_ak47",
+      "death1",
+      "death2",
+      "death3",
       "head",
-      "gutshot"
+      "gutshot",
+      "crouch_die"
     ],
     "hitboxes": [
       {
@@ -6839,11 +7039,17 @@
     "sequences": [
       "dummy",
       "idle1",
+      "idle1_1h",
       "crouch_idle",
+      "crouch_idle_1h",
       "walk",
+      "walk_1h",
       "run",
+      "run_1h",
       "crouchrun",
+      "crouchrun_1h",
       "jump",
+      "jump_1h",
       "longjump",
       "swim",
       "crouch_aim_carbine",
@@ -6860,8 +7066,12 @@
       "ref_aim_ak47",
       "ref_shoot_ak47",
       "ref_reload_ak47",
+      "death1",
+      "death2",
+      "death3",
       "head",
-      "gutshot"
+      "gutshot",
+      "crouch_die"
     ],
     "hitboxes": [
       {
@@ -7151,11 +7361,17 @@
     "sequences": [
       "dummy",
       "idle1",
+      "idle1_1h",
       "crouch_idle",
+      "crouch_idle_1h",
       "walk",
+      "walk_1h",
       "run",
+      "run_1h",
       "crouchrun",
+      "crouchrun_1h",
       "jump",
+      "jump_1h",
       "longjump",
       "swim",
       "crouch_aim_carbine",
@@ -7172,8 +7388,12 @@
       "ref_aim_ak47",
       "ref_shoot_ak47",
       "ref_reload_ak47",
+      "death1",
+      "death2",
+      "death3",
       "head",
-      "gutshot"
+      "gutshot",
+      "crouch_die"
     ],
     "hitboxes": [
       {
@@ -7463,11 +7683,17 @@
     "sequences": [
       "dummy",
       "idle1",
+      "idle1_1h",
       "crouch_idle",
+      "crouch_idle_1h",
       "walk",
+      "walk_1h",
       "run",
+      "run_1h",
       "crouchrun",
+      "crouchrun_1h",
       "jump",
+      "jump_1h",
       "longjump",
       "swim",
       "crouch_aim_carbine",
@@ -7484,8 +7710,12 @@
       "ref_aim_ak47",
       "ref_shoot_ak47",
       "ref_reload_ak47",
+      "death1",
+      "death2",
+      "death3",
       "head",
-      "gutshot"
+      "gutshot",
+      "crouch_die"
     ],
     "hitboxes": [
       {

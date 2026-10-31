@@ -51,6 +51,7 @@ var _col_shape: CollisionShape3D = null
 var _capsule: CapsuleShape3D = null
 var _body_root: Node3D = null
 var _body_anim: AnimationPlayer = null
+var _hand_attachment: BoneAttachment3D = null
 var _step_accum: float = 0.0
 
 
@@ -78,6 +79,7 @@ func _ready() -> void:
 	weapon_ctrl.name = "WeaponController"
 	add_child(weapon_ctrl)
 	weapon_ctrl.setup_for_actor(self)
+	weapon_ctrl.weapon_switched.connect(_on_actor_weapon_switched)
 
 	RoundManager.register_actor(self)
 
@@ -98,6 +100,7 @@ func _rebuild_character_model() -> void:
 		_body_root.remove_child(c)
 		c.queue_free()
 	_body_anim = null
+	_hand_attachment = null
 	var mdl_id := "vip" if is_vip else class_id
 	var sc := GameData.get_model_scene("players/" + mdl_id)
 	if sc:
@@ -106,9 +109,53 @@ func _rebuild_character_model() -> void:
 		_body_root.add_child(inst)
 		_body_anim = _find_anim(inst)
 		GameData.ensure_looping_animations(_body_anim)
-		_play_body_anim("idle1")
+		var skel := _find_skeleton(inst)
+		if skel:
+			var rhand_idx := skel.find_bone("Bip01 R Hand")
+			if rhand_idx >= 0:
+				_hand_attachment = BoneAttachment3D.new()
+				_hand_attachment.name = "RightHandAttachment"
+				_hand_attachment.bone_name = "Bip01 R Hand"
+				skel.add_child(_hand_attachment)
+		if weapon_ctrl:
+			_update_held_weapon_model(weapon_ctrl.current_weapon_id)
+		var use_1h := weapon_ctrl != null and int(weapon_ctrl.get_current_spec().get("slot", 1)) != 1
+		_play_body_anim("idle1_1h" if use_1h else "idle1", true)
 	_body_root.position.y = MODEL_CROUCH_OFFSET_Y if is_crouching else MODEL_STAND_OFFSET_Y
 	_body_root.visible = not is_human
+
+
+func _find_skeleton(n: Node) -> Skeleton3D:
+	if n is Skeleton3D:
+		return n
+	for c in n.get_children():
+		var s := _find_skeleton(c)
+		if s:
+			return s
+	return null
+
+
+func _on_actor_weapon_switched(wid: String, _spec: Dictionary) -> void:
+	_update_held_weapon_model(wid)
+
+
+func _update_held_weapon_model(wid: String) -> void:
+	if _hand_attachment == null:
+		return
+	var old_w := _hand_attachment.get_children()
+	for c in old_w:
+		_hand_attachment.remove_child(c)
+		c.queue_free()
+	if not is_alive or wid.is_empty() or not GameData.weapons.has(wid):
+		return
+	var spec: Dictionary = GameData.weapons[wid]
+	var v_name := String(spec.get("v_model", ""))
+	var p_name := ("p_" + v_name.substr(2)) if v_name.begins_with("v_") else ("p_" + wid)
+	var p_sc := GameData.get_model_scene("weapons/" + p_name)
+	if p_sc:
+		var p_inst := p_sc.instantiate()
+		_configure_character_meshes(p_inst)
+		_hand_attachment.add_child(p_inst)
 
 
 func _configure_character_meshes(n: Node) -> void:
@@ -136,37 +183,48 @@ func _find_anim(n: Node) -> AnimationPlayer:
 	return null
 
 
-func _play_body_anim(keyword: String) -> void:
+func _play_body_anim(keyword: String, immediate: bool = false) -> void:
 	if not _body_anim:
 		return
 	var kw := keyword.to_lower()
 	var anims := _body_anim.get_animation_list()
 	var chosen := ""
-	# 1. Exact case-insensitive match first (prevents 'run' matching 'crouchrun' or 'idle' matching 'crouch_idle'!)
+	# 1. Exact case-insensitive match first (prevents 'run' matching 'crouchrun' or 'idle1' matching 'idle1_1h'!)
 	for aname in anims:
 		if aname.to_lower() == kw:
 			chosen = aname
 			break
-	# 2. Prefix match (excluding crouch sequences when standing)
+	# 2. If _1h suffix requested on a model without _1h (e.g. hostage), strip _1h and retry exact match
+	if chosen.is_empty() and kw.ends_with("_1h"):
+		var base_kw := kw.substr(0, kw.length() - 3)
+		for aname in anims:
+			if aname.to_lower() == base_kw:
+				chosen = aname
+				break
+	# 3. Prefix match (excluding crouch sequences when standing and _1h when not requested)
 	if chosen.is_empty():
 		for aname in anims:
 			var low := aname.to_lower()
 			if not kw.begins_with("crouch") and "crouch" in low:
+				continue
+			if not kw.ends_with("_1h") and low.ends_with("_1h"):
 				continue
 			if low.begins_with(kw):
 				chosen = aname
 				break
-	# 3. Substring fallback
+	# 4. Substring fallback
 	if chosen.is_empty():
 		for aname in anims:
 			var low := aname.to_lower()
 			if not kw.begins_with("crouch") and "crouch" in low:
 				continue
-			if kw in low:
+			if low.find(kw) >= 0:
 				chosen = aname
 				break
 	if not chosen.is_empty() and (_body_anim.current_animation != chosen or not _body_anim.is_playing()):
 		_body_anim.play(chosen)
+		if immediate:
+			_body_anim.advance(0.0)
 
 
 func spawn_for_round(pos: Vector3, yaw_rad: float, reset_weapons: bool) -> void:
@@ -442,17 +500,19 @@ func _update_third_person_anim() -> void:
 		return
 	_body_root.rotation.y = look_yaw
 	_body_root.position.y = MODEL_CROUCH_OFFSET_Y if is_crouching else MODEL_STAND_OFFSET_Y
+	var use_1h := weapon_ctrl != null and int(weapon_ctrl.get_current_spec().get("slot", 1)) != 1
+	var sfx := "_1h" if use_1h else ""
 	var hspd := Vector2(velocity.x, velocity.z).length()
 	if is_crouching:
-		_play_body_anim("crouchrun" if hspd > 0.8 else "crouch_idle")
+		_play_body_anim(("crouchrun" if hspd > 0.8 else "crouch_idle") + sfx)
 	elif not is_on_floor():
-		_play_body_anim("jump")
+		_play_body_anim("jump" + sfx)
 	elif hspd > 4.0:
-		_play_body_anim("run")
+		_play_body_anim("run" + sfx)
 	elif hspd > 0.55:
-		_play_body_anim("walk")
+		_play_body_anim("walk" + sfx)
 	else:
-		_play_body_anim("idle1")
+		_play_body_anim("idle1" + sfx)
 
 
 func take_bullet_damage(
@@ -537,8 +597,19 @@ func _die(killer: Node3D, weapon_id: String, headshot: bool) -> void:
 		has_defuser = false
 		_spawn_drop_entity("defuser")
 
+	if _hand_attachment != null:
+		var held_kids := _hand_attachment.get_children()
+		for c in held_kids:
+			_hand_attachment.remove_child(c)
+			c.queue_free()
+
 	_body_root.visible = true
-	_play_body_anim("head" if headshot else "die_simple")
+	if is_crouching:
+		_play_body_anim("crouch_die", true)
+	elif headshot:
+		_play_body_anim("head", true)
+	else:
+		_play_body_anim("death%d" % randi_range(1, 3), true)
 
 	RoundManager.notify_actor_killed(self, killer, weapon_id, headshot)
 	actor_died.emit(self, killer)

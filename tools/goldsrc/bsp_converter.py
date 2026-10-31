@@ -152,19 +152,31 @@ def hull_line_clear(
     p0: np.ndarray,
     p1: np.ndarray,
 ) -> bool:
-    """Samples segment p0..p1 against Hull-1 clipnodes (allowing slight step height)."""
+    """
+    Samples segment p0..p1 densely against Hull-1 clipnodes AND verifies continuous
+    floor support underneath so nav edges NEVER cut across parapets, ledges, or cliffs.
+    """
     diff = p1 - p0
     dist_xy = math.hypot(float(diff[0]), float(diff[1]))
-    if abs(float(diff[2])) > max(42.0, dist_xy * 0.95):
+    # Walkable ramps/stairs in GoldSrc are <= ~45 deg; reject steep cliff/parapet height jumps!
+    max_dz = min(64.0, 18.0 + dist_xy * 0.58)
+    if abs(float(diff[2])) > max_dz:
         return False
-    steps = max(2, int(dist_xy / 28.0))
+    steps = max(4, int(dist_xy / 16.0))
     for s in range(1, steps):
         t = s / float(steps)
-        mid = p0 + diff * t + np.array([0.0, 0.0, 14.0], dtype=np.float32)
+        base = p0 + diff * t
+        # Check Hull-1 waist clearance (+4u tolerance, or +14u up a single 18u stair step — never +32u over parapets!)
+        mid = base + np.array([0.0, 0.0, 4.0], dtype=np.float32)
         if hull_point_contents(clipnodes, planes_n, planes_d, headnode, mid) != -1:
-            # Try slightly higher (stairs/ramps)
-            mid_hi = mid + np.array([0.0, 0.0, 18.0], dtype=np.float32)
-            if hull_point_contents(clipnodes, planes_n, planes_d, headnode, mid_hi) != -1:
+            mid = base + np.array([0.0, 0.0, 14.0], dtype=np.float32)
+            if hull_point_contents(clipnodes, planes_n, planes_d, headnode, mid) != -1:
+                return False
+        # Verify solid floor exists within 54u below waist origin (prevents mid-air diagonal edges over drops/parapets!)
+        below = mid - np.array([0.0, 0.0, 52.0], dtype=np.float32)
+        if hull_point_contents(clipnodes, planes_n, planes_d, headnode, below) == -1:
+            below_ramp = mid - np.array([0.0, 0.0, 72.0], dtype=np.float32)
+            if hull_point_contents(clipnodes, planes_n, planes_d, headnode, below_ramp) == -1:
                 return False
     return True
 
@@ -181,7 +193,7 @@ def build_bot_nav_graph(
     Generates a clean, Hull-1 collision-verified tactical waypoint graph across the BSP map
     so Bots IA can pathfind via A* between spawns, corridors, bombsites, and hostages.
     """
-    CELL = 168.0  # ~5.25m tactical spacing in GoldSrc units
+    CELL = 136.0  # ~4.25m tactical spacing in GoldSrc units for tighter doorway/ramp routing
     grid: Dict[Tuple[int, int, int], np.ndarray] = {}
 
     # Prioritize objective/spawn seed points first
@@ -195,7 +207,7 @@ def build_bot_nav_graph(
                 if hull_point_contents(clipnodes, planes_n, planes_d, hull1_headnode, cand) == -1:
                     p_test = cand
                     break
-        key = (int(round(p_test[0] / CELL)), int(round(p_test[1] / CELL)), int(round(p_test[2] / 96.0)))
+        key = (int(round(p_test[0] / CELL)), int(round(p_test[1] / CELL)), int(round(p_test[2] / 72.0)))
         if key not in grid:
             grid[key] = p_test
             seed_keys.append(key)
@@ -203,7 +215,7 @@ def build_bot_nav_graph(
     # Add walkable floor face centroids (hull-1 clearance verified)
     for fpt in floor_samples_gs:
         stand_pt = fpt + np.array([0.0, 0.0, 37.0], dtype=np.float32)  # Hull 1 origin is +36 above floor
-        key = (int(round(stand_pt[0] / CELL)), int(round(stand_pt[1] / CELL)), int(round(stand_pt[2] / 96.0)))
+        key = (int(round(stand_pt[0] / CELL)), int(round(stand_pt[1] / CELL)), int(round(stand_pt[2] / 72.0)))
         if key in grid:
             continue
         if len(clipnodes) > 0:
@@ -213,7 +225,7 @@ def build_bot_nav_graph(
                     continue
                 stand_pt = stand_hi
         grid[key] = stand_pt
-        if len(grid) >= 540:
+        if len(grid) >= 720:
             break
 
     pts_gs = list(grid.values())
@@ -227,8 +239,8 @@ def build_bot_nav_graph(
     for i in range(n):
         diffs = pts_arr - pts_arr[i]
         dists = np.hypot(diffs[:, 0], diffs[:, 1])
-        # Candidate neighbors within ~420 GoldSrc units horizontally and walkable stair/ramp vertical delta
-        cands = np.where((dists > 1.0) & (dists < 420.0) & (np.abs(diffs[:, 2]) < 110.0))[0]
+        # Candidate neighbors within ~340 GoldSrc units horizontally and walkable stair/ramp vertical delta
+        cands = np.where((dists > 1.0) & (dists < 340.0) & (np.abs(diffs[:, 2]) < 72.0))[0]
         cands = sorted(cands, key=lambda j: float(dists[j]))[:12]
         for j in cands:
             if j <= i:

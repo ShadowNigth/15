@@ -122,17 +122,39 @@ func can_buy_now() -> bool:
 
 func add_smoke_cloud(pos: Vector3, radius: float = 4.6, duration: float = 18.0) -> void:
 	var now := Time.get_ticks_msec() * 0.001
-	smoke_clouds.append({"pos": pos, "radius": radius, "expire": now + duration})
+	smoke_clouds.append({"pos": pos, "radius": radius, "start": now, "expire": now + duration})
+
+
+func get_smoke_density_at(pt: Vector3) -> float:
+	if smoke_clouds.is_empty():
+		return 0.0
+	var now := Time.get_ticks_msec() * 0.001
+	var best := 0.0
+	for sc in smoke_clouds:
+		var c: Vector3 = sc["pos"]
+		var r: float = float(sc["radius"])
+		var d := pt.distance_to(c)
+		if d > r * 1.15:
+			continue
+		var age := now - float(sc.get("start", now - 1.0))
+		var rem := float(sc["expire"]) - now
+		var time_fac := clampf(age / 0.85, 0.0, 1.0) * clampf(rem / 2.8, 0.0, 1.0)
+		var radial := 1.0 - smoothstep(r * 0.42, r * 1.12, d)
+		best = maxf(best, radial * time_fac)
+	return clampf(best, 0.0, 1.0)
 
 
 func is_line_blocked_by_smoke(a: Vector3, b: Vector3) -> bool:
 	if smoke_clouds.is_empty():
 		return false
+	var now := Time.get_ticks_msec() * 0.001
 	var ab := b - a
 	var len_sq := ab.length_squared()
 	if len_sq < 0.001:
 		return false
 	for sc in smoke_clouds:
+		if now - float(sc.get("start", now - 1.0)) < 0.35:
+			continue
 		var c: Vector3 = sc["pos"]
 		var r: float = float(sc["radius"])
 		var t := clampf((c - a).dot(ab) / len_sq, 0.0, 1.0)

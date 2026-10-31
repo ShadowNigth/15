@@ -145,10 +145,93 @@ func ensure_looping_animations(ap: AnimationPlayer) -> void:
 		return
 	for aname in ap.get_animation_list():
 		var low := aname.to_lower()
-		if low.begins_with("idle") or low.begins_with("walk") or low.begins_with("run") or low.begins_with("crouch"):
-			var anim := ap.get_animation(aname)
-			if anim:
-				anim.loop_mode = Animation.LOOP_LINEAR
+		var anim := ap.get_animation(aname)
+		if not anim:
+			continue
+		if "die" in low or "death" in low or low in ["head", "gutshot"] or "shoot" in low or "aim" in low:
+			anim.loop_mode = Animation.LOOP_NONE
+		elif low.begins_with("idle") or low.begins_with("walk") or low.begins_with("run") or low.begins_with("crouch_idle") or low.begins_with("crouchrun"):
+			anim.loop_mode = Animation.LOOP_LINEAR
+
+
+func get_smoke_cloud_texture() -> Texture2D:
+	if _tex_cache.has("__proc_smoke_cloud"):
+		return _tex_cache["__proc_smoke_cloud"] as Texture2D
+	var sz := 128
+	var img := Image.create(sz, sz, false, Image.FORMAT_RGBA8)
+	var noise := FastNoiseLite.new()
+	noise.seed = 15015
+	noise.noise_type = FastNoiseLite.TYPE_SIMPLEX_SMOOTH
+	noise.fractal_type = FastNoiseLite.FRACTAL_FBM
+	noise.fractal_octaves = 4
+	noise.frequency = 0.042
+	var half := float(sz) * 0.5
+	for y in range(sz):
+		for x in range(sz):
+			var dx := (float(x) + 0.5 - half) / half
+			var dy := (float(y) + 0.5 - half) / half
+			var r := sqrt(dx * dx + dy * dy)
+			if r >= 1.0:
+				img.set_pixel(x, y, Color(0.85, 0.86, 0.88, 0.0))
+				continue
+			var n := noise.get_noise_2d(float(x), float(y)) * 0.5 + 0.5
+			var n2 := noise.get_noise_2d(float(x) * 2.1 + 71.0, float(y) * 2.1 - 37.0) * 0.5 + 0.5
+			# Perturb outer silhouette with multi-octave FBM while keeping inner core 98% opaque!
+			var eff_r := r + (n - 0.5) * 0.26 * smoothstep(0.18, 0.85, r)
+			var core_alpha := 1.0 - smoothstep(0.42, 0.98, eff_r)
+			core_alpha = clampf(core_alpha * (0.86 + 0.22 * n2), 0.0, 0.98)
+			# Subtle internal volumetric shading (brighter crown, slightly cooler/deeper folds)
+			var shade := clampf(0.84 + 0.14 * n - 0.10 * dy - 0.08 * r, 0.66, 0.98)
+			img.set_pixel(x, y, Color(shade, shade * 1.01, shade * 1.025, core_alpha))
+	img.generate_mipmaps()
+	var tex := ImageTexture.create_from_image(img)
+	_tex_cache["__proc_smoke_cloud"] = tex
+	return tex
+
+
+func get_shockwave_ring_texture() -> Texture2D:
+	if _tex_cache.has("__proc_shock_ring"):
+		return _tex_cache["__proc_shock_ring"] as Texture2D
+	var sz := 128
+	var img := Image.create(sz, sz, false, Image.FORMAT_RGBA8)
+	var half := float(sz) * 0.5
+	for y in range(sz):
+		for x in range(sz):
+			var dx := (float(x) + 0.5 - half) / half
+			var dy := (float(y) + 0.5 - half) / half
+			var r := sqrt(dx * dx + dy * dy)
+			var ring := exp(-pow((r - 0.72) / 0.13, 2.0)) * (1.0 - smoothstep(0.90, 1.0, r))
+			var inner := (1.0 - smoothstep(0.0, 0.65, r)) * 0.22
+			var a := clampf(ring + inner, 0.0, 1.0)
+			img.set_pixel(x, y, Color(1.0, 0.78, 0.42, a))
+	img.generate_mipmaps()
+	var tex := ImageTexture.create_from_image(img)
+	_tex_cache["__proc_shock_ring"] = tex
+	return tex
+
+
+func get_scorch_decal_texture() -> Texture2D:
+	if _tex_cache.has("__proc_scorch"):
+		return _tex_cache["__proc_scorch"] as Texture2D
+	var sz := 96
+	var img := Image.create(sz, sz, false, Image.FORMAT_RGBA8)
+	var noise := FastNoiseLite.new()
+	noise.seed = 909
+	noise.frequency = 0.075
+	var half := float(sz) * 0.5
+	for y in range(sz):
+		for x in range(sz):
+			var dx := (float(x) + 0.5 - half) / half
+			var dy := (float(y) + 0.5 - half) / half
+			var r := sqrt(dx * dx + dy * dy)
+			var ang := atan2(dy, dx)
+			var streak := noise.get_noise_2d(cos(ang) * 26.0, sin(ang) * 26.0) * 0.18
+			var a := (1.0 - smoothstep(0.18, 0.92, r + streak)) * 0.88
+			img.set_pixel(x, y, Color(0.05, 0.04, 0.04, clampf(a, 0.0, 0.90)))
+	img.generate_mipmaps()
+	var tex := ImageTexture.create_from_image(img)
+	_tex_cache["__proc_scorch"] = tex
+	return tex
 
 
 func get_sound(rel_path: String) -> AudioStream:
