@@ -239,7 +239,8 @@ func trigger_primary(holding: bool, delta: float) -> void:
 		if RoundManager.state != RoundManager.State.LIVE:
 			return
 		if is_instance_valid(RoundManager.game_world) and RoundManager.game_world.has_method("is_in_bombsite"):
-			if RoundManager.game_world.is_in_bombsite(actor.global_position) and actor.is_on_floor():
+			var act_body := actor as CharacterBody3D
+			if bool(RoundManager.game_world.call("is_in_bombsite", act_body.global_position)) and act_body.is_on_floor():
 				if plant_progress == 0.0:
 					AudioManager.play_3d("weapons/c4_click.wav", actor.global_position, -2.0, 18.0)
 				plant_progress += delta
@@ -455,8 +456,8 @@ func _execute_bullet_shot(spec: Dictionary, is_burst_subshot: bool) -> void:
 	var range_mod := float(spec.get("range_modifier", 0.95))
 	var pen := int(spec.get("penetration", 1))
 
-	var eye_pos: Vector3 = actor.get_eye_position()
-	var aim_basis: Basis = actor.get_aim_basis(punch_angles)
+	var eye_pos: Vector3 = actor.call("get_eye_position")
+	var aim_basis: Basis = actor.call("get_aim_basis", punch_angles)
 
 	for _p in range(pellets):
 		var rx := randfn(0.0, spread)
@@ -484,11 +485,11 @@ func _fire_penetrating_ray(
 	range_mod: float,
 	pen_left: int
 ) -> void:
-	var space := actor.get_world_3d().direct_space_state
-	var cur_from := origin
-	var cur_dmg := base_dmg
-	var rem_dist := max_dist
-	var exclude_rids: Array[RID] = [actor.get_rid()]
+	var space: PhysicsDirectSpaceState3D = (actor as Node3D).get_world_3d().direct_space_state
+	var cur_from: Vector3 = origin
+	var cur_dmg: float = base_dmg
+	var rem_dist: float = max_dist
+	var exclude_rids: Array[RID] = [(actor as CollisionObject3D).get_rid()]
 
 	for _hop in range(pen_left + 1):
 		if rem_dist <= 0.1 or cur_dmg <= 1.0:
@@ -496,7 +497,7 @@ func _fire_penetrating_ray(
 		var q := PhysicsRayQueryParameters3D.create(cur_from, cur_from + dir * rem_dist)
 		q.collision_mask = 1 | 2  # World (1) + Actors/Hostages (2)
 		q.exclude = exclude_rids
-		var hit := space.intersect_ray(q)
+		var hit: Dictionary = space.intersect_ray(q)
 		if hit.is_empty():
 			break
 
@@ -531,10 +532,10 @@ func _fire_penetrating_ray(
 		# CS 1.5 Wallbanging: test thin wall exit within 0.65m (~21 GoldSrc units)
 		if pen_left <= 0:
 			break
-		var probe_start := hit_pos + dir * 0.62
+		var probe_start: Vector3 = hit_pos + dir * 0.62
 		var back_q := PhysicsRayQueryParameters3D.create(probe_start, hit_pos + dir * 0.02)
 		back_q.collision_mask = 1
-		var exit_hit := space.intersect_ray(back_q)
+		var exit_hit: Dictionary = space.intersect_ray(back_q)
 		if exit_hit.is_empty():
 			break  # Wall thicker than penetration depth
 		pen_left -= 1
@@ -580,13 +581,14 @@ func _swing_knife(heavy_stab: bool) -> void:
 	var reach := (float(spec.get("alt_range", 36.0)) if heavy_stab else float(spec.get("range", 52.0))) * GameData.SCALE
 	fired_shot.emit("knife", true)
 
-	var eye := actor.get_eye_position()
-	var dir := -actor.get_aim_basis(Vector2.ZERO).z
-	var space := actor.get_world_3d().direct_space_state
+	var eye: Vector3 = actor.call("get_eye_position")
+	var aim_b: Basis = actor.call("get_aim_basis", Vector2.ZERO)
+	var dir: Vector3 = -aim_b.z
+	var space: PhysicsDirectSpaceState3D = (actor as Node3D).get_world_3d().direct_space_state
 	var q := PhysicsRayQueryParameters3D.create(eye, eye + dir * reach)
 	q.collision_mask = 1 | 2
-	q.exclude = [actor.get_rid()]
-	var hit := space.intersect_ray(q)
+	q.exclude = [(actor as CollisionObject3D).get_rid()]
+	var hit: Dictionary = space.intersect_ray(q)
 
 	if hit.is_empty():
 		AudioManager.play_3d("weapons/knife_slash%d.wav" % randi_range(1, 2), actor.global_position, -3.0, 14.0)
@@ -624,11 +626,13 @@ func _throw_grenade(gid: String) -> void:
 	AudioManager.play_radio("radio/ct_fireinhole.wav")
 	RoundManager.chat_radio_message.emit(String(actor.get("actor_name")), String(actor.get("team")), "(RADIO): Fire in the hole!")
 
-	var eye := actor.get_eye_position()
-	var fwd := -actor.get_aim_basis(Vector2.ZERO).z
+	var eye: Vector3 = actor.call("get_eye_position")
+	var aim_b: Basis = actor.call("get_aim_basis", Vector2.ZERO)
+	var fwd: Vector3 = -aim_b.z
 	var proj := GrenadeProjectile.new()
 	proj.global_position = eye + fwd * 0.45
-	var throw_v := fwd * 21.5 + Vector3(0, 2.6, 0) + actor.velocity * 0.45
+	var actor_vel: Vector3 = (actor as CharacterBody3D).velocity
+	var throw_v: Vector3 = fwd * 21.5 + Vector3(0, 2.6, 0) + actor_vel * 0.45
 	proj.setup_grenade(gid, actor, throw_v)
 	RoundManager.game_world.add_child(proj)
 

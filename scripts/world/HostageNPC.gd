@@ -145,7 +145,7 @@ func _physics_process(delta: float) -> void:
 
 	# Check if inside rescue zone!
 	if is_instance_valid(RoundManager.game_world) and RoundManager.game_world.has_method("is_in_rescue_zone"):
-		if RoundManager.game_world.is_in_rescue_zone(global_position):
+		if bool(RoundManager.game_world.call("is_in_rescue_zone", global_position)):
 			is_rescued = true
 			visible = false
 			RoundManager.notify_hostage_rescued(leader)

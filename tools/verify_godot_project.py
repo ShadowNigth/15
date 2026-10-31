@@ -126,6 +126,18 @@ def main() -> int:
 
     print(f"[verify] Verified {len(midx)} maps and {len(glb_files)} binary .glb files.")
 
+    # 5. Validate all WAV files have RIFF 2-byte word alignment (prevents Godot 4 FileAccessMemory seek past EOF)
+    wav_files = sorted(glob.glob(os.path.join(root, "assets", "sounds", "**", "*.wav"), recursive=True))
+    for wp in wav_files:
+        raw = open(wp, "rb").read()
+        if len(raw) < 44 or (len(raw) & 1) != 0:
+            errors.append(f"[Unaligned WAV file] {wp} (len={len(raw)})")
+            continue
+        riff_sz = struct.unpack_from("<I", raw, 4)[0]
+        if riff_sz + 8 != len(raw):
+            errors.append(f"[RIFF size mismatch] {wp}")
+    print(f"[verify] Verified {len(wav_files)} RIFF 2-byte word-aligned .wav files.")
+
     if errors:
         print("\n=== VALIDATION ERRORS ===")
         for e in errors:

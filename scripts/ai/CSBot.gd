@@ -150,7 +150,7 @@ func _physics_process(delta: float) -> void:
 	# Priority 2: T Planting C4 when inside Bombsite!
 	if team == "T" and target_enemy == null and String(weapon_ctrl.slots.get(5, "")) == "c4":
 		if RoundManager.state == RoundManager.State.LIVE and is_instance_valid(RoundManager.game_world):
-			if RoundManager.game_world.is_in_bombsite(global_position):
+			if bool(RoundManager.game_world.call("is_in_bombsite", global_position)):
 				if weapon_ctrl.current_weapon_id != "c4":
 					weapon_ctrl.equip_slot(5)
 				apply_goldsrc_movement(Vector3.ZERO, false, true, false, delta)
@@ -180,17 +180,20 @@ func _scan_for_enemies() -> void:
 			continue
 		if String(a.get("team")) == team:
 			continue
-		var d := my_eye.distance_to(a.global_position)
+		var a_actor := a as CSActor
+		if a_actor == null:
+			continue
+		var d: float = my_eye.distance_to(a_actor.global_position)
 		if d > best_dist:
 			continue
-		var dir_to := (a.global_position + Vector3(0, 1.2, 0) - my_eye).normalized()
+		var dir_to: Vector3 = (a_actor.global_position + Vector3(0, 1.2, 0) - my_eye).normalized()
 		# Field of view check (~135 deg cone, or 360 if very close < 4.5m)
 		if d > 4.5 and my_fwd.dot(dir_to) < -0.22:
 			continue
-		if _can_see_actor(a):
+		if _can_see_actor(a_actor):
 			best_dist = d
-			target_enemy = a
-			var base_react := [0.42, 0.27, 0.17, 0.09][clampi(skill_level, 0, 3)]
+			target_enemy = a_actor
+			var base_react: float = float([0.42, 0.27, 0.17, 0.09][clampi(skill_level, 0, 3)])
 			_reaction_timer = base_react * randf_range(0.85, 1.25)
 
 
@@ -215,7 +218,7 @@ func _engage_enemy(delta: float) -> void:
 	if target_enemy.is_crouching:
 		aim_height *= 0.65
 	var aim_pt := target_enemy.global_position + Vector3(0.0, aim_height, 0.0)
-	var track_spd := [5.0, 7.5, 11.0, 16.0][clampi(skill_level, 0, 3)]
+	var track_spd: float = float([5.0, 7.5, 11.0, 16.0][clampi(skill_level, 0, 3)])
 	_look_smoothly_toward(aim_pt, delta * track_spd)
 
 	_strafe_timer -= delta
@@ -292,17 +295,18 @@ func _update_tactical_objective() -> void:
 	# Hostage Rescue CT -> rescue nearest unrescued hostage or escort to rescue zone!
 	if team == "CT" and RoundManager.map_mode == "cs":
 		for h in RoundManager.hostages:
-			if is_instance_valid(h) and h.is_alive and not h.is_rescued:
-				if h.leader == self:
+			var h_npc := h as HostageNPC
+			if is_instance_valid(h_npc) and h_npc.is_alive and not h_npc.is_rescued:
+				if h_npc.leader == self:
 					var rz: Array = gw.get("rescue_zones")
 					if not rz.is_empty() and (_nav_path.is_empty() or _goal_pos.distance_to((rz[0] as AABB).get_center()) > 3.0):
 						_set_nav_goal(nav, (rz[0] as AABB).get_center())
 					return
-				elif h.leader == null:
-					if global_position.distance_to(h.global_position) < 2.2:
-						h.interact(self)
+				elif h_npc.leader == null:
+					if global_position.distance_to(h_npc.global_position) < 2.2:
+						h_npc.interact(self)
 					elif _nav_path.is_empty() or not _has_goal:
-						_set_nav_goal(nav, h.global_position)
+						_set_nav_goal(nav, h_npc.global_position)
 					return
 
 	# General patrol across bombsites / hostages / map waypoints

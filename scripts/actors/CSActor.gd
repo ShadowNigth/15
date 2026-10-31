@@ -225,7 +225,7 @@ func apply_goldsrc_movement(wish_dir_world: Vector3, want_jump: bool, want_crouc
 	# Check ladder zone
 	on_ladder = false
 	if is_instance_valid(RoundManager.game_world) and RoundManager.game_world.has_method("is_on_ladder"):
-		on_ladder = RoundManager.game_world.is_on_ladder(global_position + Vector3(0, 0.9, 0))
+		on_ladder = bool(RoundManager.game_world.call("is_on_ladder", global_position + Vector3(0, 0.9, 0)))
 
 	var max_spd := weapon_ctrl.get_max_speed_gs() * GameData.SCALE * stamina_factor
 	if is_crouching:
@@ -312,7 +312,7 @@ func apply_goldsrc_movement(wish_dir_world: Vector3, want_jump: bool, want_crouc
 
 	# Check VIP escape zone on as_* maps!
 	if is_vip and is_instance_valid(RoundManager.game_world) and RoundManager.game_world.has_method("is_in_escape_zone"):
-		if RoundManager.game_world.is_in_escape_zone(global_position):
+		if bool(RoundManager.game_world.call("is_in_escape_zone", global_position)):
 			RoundManager.notify_vip_escaped(self)
 
 
@@ -525,7 +525,7 @@ func can_use_buy_menu() -> bool:
 	if not is_alive or is_vip or not RoundManager.can_buy_now():
 		return false
 	if is_instance_valid(RoundManager.game_world) and RoundManager.game_world.has_method("is_in_buyzone"):
-		return RoundManager.game_world.is_in_buyzone(global_position, team)
+		return bool(RoundManager.game_world.call("is_in_buyzone", global_position, team))
 	return true
 
 

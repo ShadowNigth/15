@@ -347,7 +347,7 @@ func _process(delta: float) -> void:
 		var carries_c4 := String(player.weapon_ctrl.slots.get(5, "")) == "c4"
 		_icon_c4.visible = carries_c4
 		if carries_c4 and is_instance_valid(RoundManager.game_world) and RoundManager.game_world.has_method("is_in_bombsite"):
-			if RoundManager.game_world.is_in_bombsite(player.global_position):
+			if bool(RoundManager.game_world.call("is_in_bombsite", player.global_position)):
 				_icon_c4.modulate = RED_WARN if sin(_c4_blink_phase * 2.5) > 0.0 else GREEN_HUD
 			else:
 				_icon_c4.modulate = GREEN_HUD

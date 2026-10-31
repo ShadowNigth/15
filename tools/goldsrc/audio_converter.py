@@ -50,10 +50,14 @@ def sanitize_wav(src_path: str, dst_path: str) -> bool:
             out.write(raw)
         return True
 
-    # Ensure even byte alignment on 16-bit PCM
+    # Ensure even byte alignment on ALL PCM chunks (RIFF requires 2-byte word alignment;
+    # Godot 4's audio_stream_wav.cpp seeks to file_pos + chunksize + (chunksize & 1))
     bits = struct.unpack_from("<H", fmt_chunk, 14)[0]
-    if bits == 16 and (len(data_chunk) & 1):
-        data_chunk = data_chunk[:-1]
+    if len(data_chunk) & 1:
+        if bits == 8:
+            data_chunk = data_chunk + b"\x80"  # 1 sample of unsigned 8-bit silence
+        else:
+            data_chunk = data_chunk[:-1]
 
     riff_size = 4 + (8 + len(fmt_chunk)) + (8 + len(data_chunk))
     with open(dst_path, "wb") as out:

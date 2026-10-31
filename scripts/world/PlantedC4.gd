@@ -109,11 +109,14 @@ func _detonate() -> void:
 	for a in RoundManager.actors:
 		if not is_instance_valid(a) or not bool(a.get("is_alive")):
 			continue
-		var d := a.global_position.distance_to(global_position)
-		if d < max_r and a.has_method("apply_explosion_damage"):
+		var a_node := a as Node3D
+		if a_node == null:
+			continue
+		var d: float = a_node.global_position.distance_to(global_position)
+		if d < max_r and a_node.has_method("apply_explosion_damage"):
 			var dmg := 500.0 * pow(maxf(0.0, 1.0 - d / max_r), 1.65)
 			if dmg > 1.0:
-				a.apply_explosion_damage(null, dmg, "c4")
+				a_node.call("apply_explosion_damage", null, dmg, "c4")
 
 	RoundManager.notify_bomb_exploded()
 	queue_free()
