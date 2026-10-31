@@ -24,6 +24,9 @@ var _jump_cooldown: float = 0.0
 var _crouch_burst_timer: float = 0.0
 var _escape_timer: float = 0.0
 var _escape_dir: Vector3 = Vector3.ZERO
+var _smoothed_move_dir: Vector3 = Vector3.ZERO
+var _rollout_delay: float = 0.0
+var _vent_crouch_timer: float = 0.0
 var _grenade_cooldown: float = 0.0
 var _avoid_side: float = 1.0
 var _last_pos: Vector3 = Vector3.ZERO
@@ -57,6 +60,7 @@ func _ready() -> void:
 func _on_bot_freeze_ended() -> void:
 	if not is_alive or is_vip:
 		return
+	_rollout_delay = randf_range(0.0, 0.48)
 	# Classic CS 1.5 / PodBot opening rush: pull out Knife (250 u/s) for first 3-5 seconds out of spawn!
 	if randf() < 0.78:
 		_knife_rush_timer = randf_range(2.6, 4.6)
@@ -84,6 +88,9 @@ func spawn_for_round(pos: Vector3, yaw_rad: float, reset_weapons: bool) -> void:
 	_last_enemy_seen_age = 99.0
 	_escape_timer = 0.0
 	_escape_dir = Vector3.ZERO
+	_smoothed_move_dir = Vector3.ZERO
+	_rollout_delay = 0.0
+	_vent_crouch_timer = 0.0
 	_grenade_cooldown = randf_range(3.0, 9.0)
 	_last_pos = global_position
 	_think_timer = randf_range(0.1, 0.45)
@@ -516,13 +523,21 @@ func _set_nav_goal(nav: BotNavigator, dest: Vector3) -> void:
 func _follow_navigation_path(delta: float) -> void:
 	if _jump_cooldown > 0.0:
 		_jump_cooldown = maxf(0.0, _jump_cooldown - delta)
+	if _vent_crouch_timer > 0.0:
+		_vent_crouch_timer = maxf(0.0, _vent_crouch_timer - delta)
+	if _rollout_delay > 0.0 and not RoundManager.is_movement_frozen():
+		_rollout_delay = maxf(0.0, _rollout_delay - delta)
+		apply_goldsrc_movement(Vector3.ZERO, false, false, false, delta)
+		_last_pos = global_position
+		return
 
 	# Active open-corridor unstick maneuver: walk cleanly out into open space before repathing!
 	if _escape_timer > 0.0:
 		_escape_timer -= delta
-		var esc_move := _steer_around_obstacles(_escape_dir)
-		_look_smoothly_toward(global_position + esc_move * 3.5 + Vector3(0.0, 1.45, 0.0), delta * 8.0)
-		apply_goldsrc_movement(esc_move, false, false, false, delta)
+		var esc_raw := _steer_around_obstacles(_escape_dir)
+		_smoothed_move_dir = _blend_move_dir(_smoothed_move_dir, esc_raw, delta * 10.0)
+		_look_smoothly_toward(global_position + _smoothed_move_dir * 3.5 + Vector3(0.0, 1.45, 0.0), delta * 7.5)
+		apply_goldsrc_movement(_smoothed_move_dir, false, _vent_crouch_timer > 0.0, false, delta)
 		_last_pos = global_position
 		if _escape_timer <= 0.0 and is_instance_valid(RoundManager.game_world):
 			var nav_r: BotNavigator = RoundManager.game_world.get("bot_navigator")
@@ -531,28 +546,24 @@ func _follow_navigation_path(delta: float) -> void:
 		return
 
 	if _hold_pos_timer > 0.0 or _nav_path.is_empty():
+		_smoothed_move_dir = _smoothed_move_dir.lerp(Vector3.ZERO, minf(1.0, 10.0 * delta))
 		apply_goldsrc_movement(Vector3.ZERO, false, false, false, delta)
 		_last_pos = global_position
 		return
 
-	# Path string-pulling: if next+1 waypoint is already in clear same-level sight, advance smoothly!
+	# Path string-pulling: only shortcut to next+1 when BOTH center AND capsule shoulders have clear sight!
 	if _nav_path.size() >= 2 and is_inside_tree() and get_world_3d():
 		var wp_next := _nav_path[1]
-		if absf(wp_next.y - global_position.y) < 1.05 and global_position.distance_to(wp_next) < 7.5:
-			var sp := get_world_3d().direct_space_state
-			var q_sc := PhysicsRayQueryParameters3D.create(
-				global_position + Vector3(0.0, 0.85, 0.0),
-				wp_next + Vector3(0.0, 0.75, 0.0)
-			)
-			q_sc.collision_mask = 1
-			if sp.intersect_ray(q_sc).is_empty():
+		if absf(wp_next.y - global_position.y) < 0.95 and global_position.distance_to(wp_next) < 6.8:
+			if _has_wide_corridor_sight(global_position, wp_next):
 				_nav_path.remove_at(0)
 
 	var wp := _nav_path[0]
 	var flat_d := Vector2(wp.x - global_position.x, wp.z - global_position.z).length()
 	var signed_dy := wp.y - global_position.y
 	var vert_d := absf(signed_dy)
-	if flat_d < 1.35 and vert_d < 1.85:
+	var reach_r := 1.45 if _nav_path.size() >= 2 else 1.20
+	if flat_d < reach_r and vert_d < 1.85:
 		_nav_path.remove_at(0)
 		_stuck_timer = 0.0
 		if _nav_path.is_empty():
@@ -569,18 +580,32 @@ func _follow_navigation_path(delta: float) -> void:
 	if on_ladder:
 		bot_ladder_dir = 1.0 if signed_dy >= -0.35 else -1.0
 
-	var raw_dir := Vector3(wp.x - global_position.x, 0.0, wp.z - global_position.z)
+	# Pure-pursuit corner rounding: smoothly blend toward _nav_path[1] as we approach _nav_path[0]!
+	var steer_target := wp
+	if not on_ladder and _nav_path.size() >= 2 and flat_d < 2.85:
+		var wp2 := _nav_path[1]
+		if absf(wp2.y - wp.y) < 1.25:
+			var corner_blend := clampf((2.85 - flat_d) / 2.85, 0.0, 0.55)
+			steer_target = wp.lerp(wp2, corner_blend)
+
+	var raw_dir := Vector3(steer_target.x - global_position.x, 0.0, steer_target.z - global_position.z)
 	if raw_dir.length_squared() > 0.001:
 		raw_dir = raw_dir.normalized()
 
-	var move_dir := raw_dir if on_ladder else _steer_around_obstacles(raw_dir)
+	var target_move_dir := raw_dir if on_ladder else _steer_around_obstacles(raw_dir)
+	_smoothed_move_dir = target_move_dir if on_ladder else _blend_move_dir(_smoothed_move_dir, target_move_dir, delta * 11.5)
+	var move_dir := _smoothed_move_dir
+
+	# Auto-crouch through vents & low-arch passages (Hull-3 ducts like cs_assault, de_nuke, cs_747)!
+	if not on_ladder and _needs_crouch_clearance(move_dir):
+		_vent_crouch_timer = 0.40
 
 	# PodBot scripted pre-aiming: aim at chest/head height along upcoming corridor or toward heard enemy sound!
 	_corner_check_timer -= delta
 	if _corner_check_timer <= 0.0:
-		_corner_check_timer = randf_range(1.1, 2.4)
-		if randf() < 0.36 and _knife_rush_timer <= 0.0:
-			_corner_yaw_offset = deg_to_rad(randf_range(-24.0, 24.0))
+		_corner_check_timer = randf_range(1.3, 2.7)
+		if randf() < 0.28 and _knife_rush_timer <= 0.0:
+			_corner_yaw_offset = deg_to_rad(randf_range(-18.0, 18.0))
 		else:
 			_corner_yaw_offset = 0.0
 
@@ -594,9 +619,9 @@ func _follow_navigation_path(delta: float) -> void:
 			look_dir = move_dir
 		else:
 			look_dir = look_dir.normalized()
-		look_dir = look_dir.rotated(Vector3.UP, _corner_yaw_offset)
+		look_dir = (look_dir * 0.65 + move_dir * 0.35).normalized().rotated(Vector3.UP, _corner_yaw_offset)
 		look_pt = global_position + look_dir * 4.5 + Vector3(0.0, 1.48, 0.0)
-	_look_smoothly_toward(look_pt, delta * 8.5)
+	_look_smoothly_toward(look_pt, delta * 7.2)
 
 	var want_jump := false
 	if not RoundManager.is_movement_frozen():
@@ -604,13 +629,15 @@ func _follow_navigation_path(delta: float) -> void:
 		var moved_dist := global_position.distance_to(_last_pos)
 		if on_ladder and absf(velocity.y) > 0.6:
 			_stuck_timer = 0.0
-		elif moved_dist < 1.15 * delta:
+		elif moved_dist < 1.10 * delta:
 			_stuck_timer += delta
-			if _stuck_timer > 0.32 and _jump_cooldown <= 0.0 and is_on_floor():
-				if _is_jumpable_ledge(raw_dir):
+			if _stuck_timer > 0.30 and _jump_cooldown <= 0.0 and is_on_floor():
+				if _is_jumpable_ledge(move_dir):
 					want_jump = true
-					_jump_cooldown = 1.95
-			if _stuck_timer > 0.56:
+					_jump_cooldown = 1.85
+				elif _needs_crouch_clearance(move_dir):
+					_vent_crouch_timer = 0.65
+			if _stuck_timer > 0.58:
 				_stuck_timer = 0.0
 				_avoid_side = -_avoid_side
 				if is_instance_valid(RoundManager.game_world):
@@ -618,14 +645,63 @@ func _follow_navigation_path(delta: float) -> void:
 					if nav_b != null:
 						nav_b.report_blocked_segment(global_position, wp)
 				_escape_dir = _pick_open_escape_direction(raw_dir)
-				_escape_timer = 0.68
+				_escape_timer = 0.72
 				_nav_path.clear()
 		else:
 			_stuck_timer = maxf(0.0, _stuck_timer - delta * 2.2)
 		_last_pos = global_position
 
-	var want_silent_walk := _stealth_walk_timer > 0.0 and _knife_rush_timer <= 0.0 and not want_jump
-	apply_goldsrc_movement(move_dir, want_jump, false, want_silent_walk, delta)
+	var want_crouch := (_vent_crouch_timer > 0.0) or (want_jump and _stuck_timer > 0.25)
+	var want_silent_walk := _stealth_walk_timer > 0.0 and _knife_rush_timer <= 0.0 and not want_jump and not want_crouch
+	apply_goldsrc_movement(move_dir, want_jump, want_crouch, want_silent_walk, delta)
+
+
+func _blend_move_dir(cur_d: Vector3, tgt_d: Vector3, rate: float) -> Vector3:
+	if tgt_d.length_squared() < 0.001:
+		return Vector3.ZERO
+	if cur_d.length_squared() < 0.001:
+		return tgt_d.normalized()
+	var w := clampf(rate, 0.0, 1.0)
+	var cur_ang := atan2(cur_d.x, cur_d.z)
+	var tgt_ang := atan2(tgt_d.x, tgt_d.z)
+	var new_ang := lerp_angle(cur_ang, tgt_ang, w)
+	return Vector3(sin(new_ang), 0.0, cos(new_ang))
+
+
+func _has_wide_corridor_sight(from_p: Vector3, to_p: Vector3) -> bool:
+	var sp := get_world_3d().direct_space_state
+	var delta_v := to_p - from_p
+	delta_v.y = 0.0
+	if delta_v.length_squared() < 0.04:
+		return true
+	var right_v := Vector3(-delta_v.z, 0.0, delta_v.x).normalized() * 0.42
+	for ofs in [Vector3.ZERO, right_v, -right_v]:
+		var q := PhysicsRayQueryParameters3D.create(
+			from_p + ofs + Vector3(0.0, 0.85, 0.0),
+			to_p + ofs + Vector3(0.0, 0.80, 0.0)
+		)
+		q.collision_mask = 1
+		if not sp.intersect_ray(q).is_empty():
+			return false
+	return true
+
+
+func _needs_crouch_clearance(fwd_dir: Vector3) -> bool:
+	if fwd_dir.length_squared() < 0.001 or not is_inside_tree() or not get_world_3d():
+		return false
+	var sp := get_world_3d().direct_space_state
+	var waist_p := global_position + Vector3(0.0, 0.56, 0.0)
+	var head_p := global_position + Vector3(0.0, 1.66, 0.0)
+	var q_head := PhysicsRayQueryParameters3D.create(head_p, head_p + fwd_dir * 1.15)
+	q_head.collision_mask = 1
+	var h_head := sp.intersect_ray(q_head)
+	if h_head.is_empty():
+		return false
+	if h_head["collider"] is Node and (h_head["collider"] as Node).has_meta("door"):
+		return false
+	var q_waist := PhysicsRayQueryParameters3D.create(waist_p, waist_p + fwd_dir * 1.15)
+	q_waist.collision_mask = 1
+	return sp.intersect_ray(q_waist).is_empty()
 
 
 func _pick_open_escape_direction(blocked_dir: Vector3) -> Vector3:
@@ -658,19 +734,30 @@ func _steer_around_obstacles(desired_dir: Vector3) -> Vector3:
 
 	var steer := desired_dir
 	var space := get_world_3d().direct_space_state
-	var origin := global_position + Vector3(0.0, 0.92, 0.0)
+	var origin := global_position + Vector3(0.0, 0.88, 0.0)
+	var right_sh := Vector3(-desired_dir.z, 0.0, desired_dir.x) * 0.36
 
-	# 5-ray whisker fan (center, +-32 deg, +-62 deg): open BSPDoors & breach vents/glass instead of steering away!
+	# Center + capsule shoulder rays: detect doorframe jambs & wall edges BEFORE capsule snags!
 	var q_mid := PhysicsRayQueryParameters3D.create(origin, origin + desired_dir * 1.55)
 	q_mid.collision_mask = 1
 	var hit_mid := space.intersect_ray(q_mid)
-	if not hit_mid.is_empty():
+	if hit_mid.is_empty():
+		var q_l := PhysicsRayQueryParameters3D.create(origin - right_sh, origin - right_sh + desired_dir * 1.15)
+		q_l.collision_mask = 1
+		var h_l := space.intersect_ray(q_l)
+		var q_r := PhysicsRayQueryParameters3D.create(origin + right_sh, origin + right_sh + desired_dir * 1.15)
+		q_r.collision_mask = 1
+		var h_r := space.intersect_ray(q_r)
+		if not h_l.is_empty() and h_r.is_empty():
+			steer = (desired_dir + right_sh.normalized() * 0.48).normalized()
+		elif not h_r.is_empty() and h_l.is_empty():
+			steer = (desired_dir - right_sh.normalized() * 0.48).normalized()
+	else:
 		var mid_col = hit_mid["collider"]
 		if mid_col is Node and (mid_col as Node).has_meta("door"):
 			var door_ref = (mid_col as Node).get_meta("door")
 			if is_instance_valid(door_ref) and door_ref.has_method("force_open"):
 				door_ref.call("force_open", self)
-			# Keep walking straight toward the parting doorway!
 			steer = desired_dir
 		elif mid_col is Node and (mid_col as Node).has_meta("button_target"):
 			var btgt := String((mid_col as Node).get_meta("button_target"))
@@ -683,18 +770,22 @@ func _steer_around_obstacles(desired_dir: Vector3) -> Vector3:
 				brk_ref.call("apply_damage", 45.0, hit_mid["position"])
 			steer = desired_dir
 		else:
-			var angles := [34.0 * _avoid_side, -34.0 * _avoid_side, 64.0 * _avoid_side, -64.0 * _avoid_side]
-			var found_open := false
+			var angles := [28.0 * _avoid_side, -28.0 * _avoid_side, 54.0 * _avoid_side, -54.0 * _avoid_side, 82.0 * _avoid_side, -82.0 * _avoid_side]
+			var best_cand := desired_dir
+			var best_clear := -1.0
 			for deg_a in angles:
 				var cand_dir := desired_dir.rotated(Vector3.UP, deg_to_rad(float(deg_a)))
-				var qc := PhysicsRayQueryParameters3D.create(origin, origin + cand_dir * 1.75)
+				var qc := PhysicsRayQueryParameters3D.create(origin, origin + cand_dir * 2.15)
 				qc.collision_mask = 1
 				var hc := space.intersect_ray(qc)
-				if hc.is_empty() or (hc["collider"] is Node and (hc["collider"] as Node).has_meta("door")):
-					steer = cand_dir
-					found_open = true
-					break
-			if not found_open:
+				var clear_d := 2.15 if (hc.is_empty() or (hc["collider"] is Node and (hc["collider"] as Node).has_meta("door"))) else origin.distance_to(hc["position"] as Vector3)
+				var align_score := clear_d - absf(float(deg_a)) * 0.012
+				if clear_d > 1.35 and align_score > best_clear:
+					best_clear = align_score
+					best_cand = cand_dir
+			if best_clear > 0.0:
+				steer = best_cand
+			else:
 				var nrm := hit_mid["normal"] as Vector3
 				nrm.y = 0.0
 				var slide := (desired_dir - nrm * desired_dir.dot(nrm))
@@ -703,22 +794,34 @@ func _steer_around_obstacles(desired_dir: Vector3) -> Vector3:
 				else:
 					steer = desired_dir.rotated(Vector3.UP, deg_to_rad(115.0 * _avoid_side))
 
-	# Strong separation + right-hand passing rule so Bots never bunch up shoulder-to-shoulder
+	# Gentle, wall-safe teammate separation: NEVER shove a Bot sideways into a parapet or corridor wall!
+	var sep_accum := Vector3.ZERO
 	for a in RoundManager.actors:
 		if not is_instance_valid(a) or a == self or not bool(a.get("is_alive")):
 			continue
 		var a_node := a as Node3D
 		if a_node == null:
 			continue
+		if absf(a_node.global_position.y - global_position.y) > 1.6:
+			continue
 		var diff := global_position - a_node.global_position
 		diff.y = 0.0
 		var dsq := diff.length_squared()
-		if dsq > 0.0001 and dsq < 2.40:
+		if dsq > 0.0001 and dsq < 1.35:
 			var dist := sqrt(dsq)
 			var away := diff / dist
 			var tangent := Vector3(-away.z, 0.0, away.x) * _avoid_side
-			var push := (1.55 - minf(1.55, dist)) * 1.15
-			steer += away * push + tangent * (push * 0.45)
+			var push := (1.16 - minf(1.16, dist)) * 0.42
+			sep_accum += away * push + tangent * (push * 0.55)
+
+	if sep_accum.length_squared() > 0.0004:
+		if sep_accum.length() > 0.36:
+			sep_accum = sep_accum.normalized() * 0.36
+		var sep_dir := sep_accum.normalized()
+		var q_wall := PhysicsRayQueryParameters3D.create(origin, origin + sep_dir * 0.95)
+		q_wall.collision_mask = 1
+		if space.intersect_ray(q_wall).is_empty():
+			steer += sep_accum
 
 	steer.y = 0.0
 	return steer.normalized() if steer.length_squared() > 0.001 else desired_dir

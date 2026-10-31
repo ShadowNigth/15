@@ -198,6 +198,8 @@ func _spawn_single_bot(tm: String) -> void:
 
 func prepare_round_entities(reset_all_gear: bool) -> void:
 	ImpactEffects.clear_decals()
+	if bot_navigator != null:
+		bot_navigator.reset_round_weights()
 
 	# 1. Clear dropped weapons and planted C4
 	for d in RoundManager.dropped_items:

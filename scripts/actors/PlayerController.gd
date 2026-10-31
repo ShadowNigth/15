@@ -35,6 +35,9 @@ var _pending_vm_events: Array = []
 var _vm_anim_elapsed: float = 0.0
 var _shake_trauma: float = 0.0
 var _shake_time: float = 0.0
+var _eye_height_cur: float = 1.66
+var _last_in_x: float = 0.0
+var _spec_free_orbit_timer: float = 0.0
 var _elite_muzzle_left: bool = false
 var _defusing_c4: PlantedC4 = null
 var _spec_index: int = 0
@@ -138,6 +141,7 @@ func _ready() -> void:
 func spawn_for_round(pos: Vector3, yaw_rad: float, reset_weapons: bool) -> void:
 	super.spawn_for_round(pos, yaw_rad, reset_weapons)
 	camera.top_level = false
+	_eye_height_cur = 1.66
 	camera.position = Vector3(0.0, 1.66, 0.0)
 	camera.rotation = Vector3(0.0, look_yaw, 0.0)
 	camera.current = true
@@ -166,6 +170,8 @@ func _unhandled_input(event: InputEvent) -> void:
 		var pitch_sign := 1.0 if GameData.invert_mouse_y else -1.0
 		look_yaw -= mm.relative.x * sens
 		look_pitch = clampf(look_pitch + mm.relative.y * sens * pitch_sign, deg_to_rad(-89.0), deg_to_rad(89.0))
+		if not is_alive:
+			_spec_free_orbit_timer = 2.5
 		_sway_offset.x = clampf(_sway_offset.x - mm.relative.x * 0.00025, -0.02, 0.02)
 		_sway_offset.y = clampf(_sway_offset.y + mm.relative.y * 0.00025, -0.02, 0.02)
 
@@ -225,7 +231,9 @@ func _cycle_weapon_slot(step: int) -> void:
 			return
 
 
-func _physics_process(delta: float) -> void:
+func _process(delta: float) -> void:
+	super._process(delta)
+
 	if _muzzle_timer > 0.0:
 		_muzzle_timer -= delta
 		if _muzzle_timer <= 0.0:
@@ -249,29 +257,13 @@ func _physics_process(delta: float) -> void:
 		_update_spectator_camera(delta)
 		return
 
-	var in_vec := Vector2.ZERO
-	if not ui_blocking_input:
-		in_vec = Input.get_vector("move_left", "move_right", "move_forward", "move_back")
-
-	var yaw_basis := Basis(Vector3.UP, look_yaw)
-	var wish_dir := (yaw_basis * Vector3(in_vec.x, 0.0, in_vec.y))
-	if wish_dir.length_squared() > 0.001:
-		wish_dir = wish_dir.normalized()
-
-	var want_jump := (not ui_blocking_input) and Input.is_action_just_pressed("jump")
-	var want_crouch := (not ui_blocking_input) and Input.is_action_pressed("crouch")
-	var want_walk := (not ui_blocking_input) and Input.is_action_pressed("walk")
-
-	var prev_vy := velocity.y
-	apply_goldsrc_movement(wish_dir, want_jump, want_crouch, want_walk, delta)
-	if is_on_floor() and not _was_on_floor and prev_vy < -3.0:
-		_land_dip = clampf(-prev_vy * 0.0042, 0.008, 0.038)
-	_was_on_floor = is_on_floor()
+	# Full display-refresh-rate camera + sub-tick physics & stair interpolation!
 	_land_dip = lerpf(_land_dip, 0.0, minf(1.0, 12.0 * delta))
-
-	# Smooth camera eye height & recoil punch angles + explosion camera shake
 	var target_eye_y := (0.96 if is_crouching else 1.66) - _land_dip * 1.4
-	camera.position.y = lerpf(camera.position.y, target_eye_y, minf(1.0, 14.0 * delta))
+	_eye_height_cur = lerpf(_eye_height_cur, target_eye_y, minf(1.0, 16.0 * delta))
+	var sub_ofs: Vector3 = get_visual_world_pos() - global_position
+	camera.position = sub_ofs + Vector3(0.0, _eye_height_cur, 0.0)
+
 	var shake_rot := Vector3.ZERO
 	if _shake_trauma > 0.001:
 		_shake_time += delta * 38.0
@@ -293,8 +285,8 @@ func _physics_process(delta: float) -> void:
 	if _vm_viewport and _vm_viewport.world_3d != get_world_3d():
 		_vm_viewport.world_3d = get_world_3d()
 
-	# Viewmodel bobbing, mouse sway, strafe tilt & recoil spring kickback (classic GoldSrc cl_bob + kick)
-	_sway_offset = _sway_offset.lerp(Vector2.ZERO, minf(1.0, 10.0 * delta))
+	# Viewmodel bobbing, mouse sway, strafe tilt & recoil spring kickback at full render FPS
+	_sway_offset = _sway_offset.lerp(Vector2.ZERO, minf(1.0, 11.0 * delta))
 	_vm_kick_z = lerpf(_vm_kick_z, 0.0, minf(1.0, 18.0 * delta))
 	_vm_kick_pitch = lerpf(_vm_kick_pitch, 0.0, minf(1.0, 16.0 * delta))
 	var hspd := Vector2(velocity.x, velocity.z).length()
@@ -303,18 +295,41 @@ func _physics_process(delta: float) -> void:
 	else:
 		_bob_phase += delta * 1.35
 	var move_fac := clampf(hspd / 7.0, 0.0, 1.0)
-	var bob_x := sin(_bob_phase) * (0.0085 * move_fac + 0.0008)
-	var bob_y := absf(cos(_bob_phase)) * (-0.0105 * move_fac) + sin(_bob_phase * 0.5) * 0.0009 - _land_dip * 0.65
-	var strafe_roll := -in_vec.x * deg_to_rad(1.15) * move_fac
+	var bob_x := sin(_bob_phase) * (0.0082 * move_fac + 0.0007)
+	var bob_y := absf(cos(_bob_phase)) * (-0.0100 * move_fac) + sin(_bob_phase * 0.5) * 0.0008 - _land_dip * 0.65
+	var strafe_roll := -_last_in_x * deg_to_rad(1.15) * move_fac
 	viewmodel_holder.scale = Vector3.ONE
 	viewmodel_holder.position = Vector3(bob_x + _sway_offset.x, bob_y + _sway_offset.y, _vm_kick_z)
 	viewmodel_holder.rotation = Vector3(_vm_kick_pitch, -_sway_offset.x * 1.6, strafe_roll)
 	if _vm_container:
-		# cs15_retail v_*.mdl models are authored right-handed at scale (1,1,1);
-		# flip 2D SubViewportContainer when left-handed (cl_righthand 0) so 3D Skeleton3D never gets negative scale!
 		_vm_container.pivot_offset = _vm_container.size * 0.5
 		_vm_container.scale = Vector2(1.0 if GameData.right_hand else -1.0, 1.0)
 	_muzzle_sprite.position.x = -0.16 if _elite_muzzle_left else 0.18
+
+
+func _physics_process(delta: float) -> void:
+	if not is_alive:
+		return
+
+	var in_vec := Vector2.ZERO
+	if not ui_blocking_input:
+		in_vec = Input.get_vector("move_left", "move_right", "move_forward", "move_back")
+	_last_in_x = lerpf(_last_in_x, in_vec.x, minf(1.0, 14.0 * delta))
+
+	var yaw_basis := Basis(Vector3.UP, look_yaw)
+	var wish_dir := (yaw_basis * Vector3(in_vec.x, 0.0, in_vec.y))
+	if wish_dir.length_squared() > 0.001:
+		wish_dir = wish_dir.normalized()
+
+	var want_jump := (not ui_blocking_input) and Input.is_action_just_pressed("jump")
+	var want_crouch := (not ui_blocking_input) and Input.is_action_pressed("crouch")
+	var want_walk := (not ui_blocking_input) and Input.is_action_pressed("walk")
+
+	var prev_vy := velocity.y
+	apply_goldsrc_movement(wish_dir, want_jump, want_crouch, want_walk, delta)
+	if is_on_floor() and not _was_on_floor and prev_vy < -3.0:
+		_land_dip = clampf(-prev_vy * 0.0042, 0.008, 0.038)
+	_was_on_floor = is_on_floor()
 
 	# Primary attack (just pressed or held)
 	if not ui_blocking_input:
@@ -595,7 +610,34 @@ func _update_spectator_camera(delta: float) -> void:
 		return
 	_spec_index = clampi(_spec_index, 0, alive_list.size() - 1)
 	var tgt: CSActor = alive_list[_spec_index]
-	var behind := -tgt.get_look_forward() * 2.8 + Vector3(0.0, 2.0, 0.0)
+	var tgt_vis: Vector3 = tgt.get_visual_world_pos()
+	var focus_pt: Vector3 = tgt_vis + Vector3(0.0, 1.42, 0.0)
+
+	if _spec_free_orbit_timer > 0.0:
+		_spec_free_orbit_timer = maxf(0.0, _spec_free_orbit_timer - delta)
+	else:
+		look_yaw = lerp_angle(look_yaw, tgt.look_yaw, minf(1.0, 4.5 * delta))
+		look_pitch = lerpf(look_pitch, deg_to_rad(-16.0), minf(1.0, 4.5 * delta))
+
+	var cam_pitch := clampf(look_pitch, deg_to_rad(-58.0), deg_to_rad(32.0))
+	var orbit_basis := Basis.from_euler(Vector3(cam_pitch, look_yaw, 0.0), EULER_ORDER_YXZ)
+	var desired_pos: Vector3 = focus_pt + orbit_basis.z * 3.1 + Vector3(0.0, 0.35, 0.0)
+
+	# Spring-arm wall raycast so chase-cam never clips inside BSP walls/ceilings!
+	if get_world_3d() != null:
+		var sp := get_world_3d().direct_space_state
+		if sp != null:
+			var q_cam := PhysicsRayQueryParameters3D.create(focus_pt, desired_pos)
+			q_cam.collision_mask = 1
+			var h_cam := sp.intersect_ray(q_cam)
+			if not h_cam.is_empty():
+				var hp: Vector3 = h_cam["position"]
+				var hn: Vector3 = h_cam["normal"]
+				desired_pos = hp + hn * 0.24
+
 	camera.top_level = true
-	camera.global_position = camera.global_position.lerp(tgt.global_position + behind, minf(1.0, 8.0 * delta))
-	camera.look_at(tgt.global_position + Vector3(0.0, 1.35, 0.0), Vector3.UP)
+	if camera.global_position.distance_to(desired_pos) > 12.0:
+		camera.global_position = desired_pos
+	else:
+		camera.global_position = camera.global_position.lerp(desired_pos, minf(1.0, 16.0 * delta))
+	camera.look_at(focus_pt, Vector3.UP)

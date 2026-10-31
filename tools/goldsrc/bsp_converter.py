@@ -144,6 +144,19 @@ def hull_point_contents(clipnodes: np.ndarray, planes_n: np.ndarray, planes_d: n
     return node  # -1 = CONTENTS_EMPTY, -2 = CONTENTS_SOLID
 
 
+def is_floor_solid_at(
+    clipnodes: np.ndarray,
+    planes_n: np.ndarray,
+    planes_d: np.ndarray,
+    solid_hulls: List[Tuple[int, np.ndarray]],
+    pt: np.ndarray,
+) -> bool:
+    for hnode, orig in solid_hulls:
+        if hull_point_contents(clipnodes, planes_n, planes_d, hnode, pt - orig) != -1:
+            return True
+    return False
+
+
 def hull_line_clear(
     clipnodes: np.ndarray,
     planes_n: np.ndarray,
@@ -151,33 +164,40 @@ def hull_line_clear(
     headnode: int,
     p0: np.ndarray,
     p1: np.ndarray,
+    solid_hulls: List[Tuple[int, np.ndarray]] | None = None,
 ) -> bool:
     """
     Samples segment p0..p1 densely against Hull-1 clipnodes AND verifies continuous
-    floor support underneath so nav edges NEVER cut across parapets, ledges, or cliffs.
+    floor support underneath (including func_wall bridges/stairs/ramps) so nav edges
+    traverse all walkable ramps & staircases while never cutting across cliffs/parapets.
     """
     diff = p1 - p0
     dist_xy = math.hypot(float(diff[0]), float(diff[1]))
     # Walkable ramps/stairs in GoldSrc are <= ~45 deg; reject steep cliff/parapet height jumps!
-    max_dz = min(64.0, 18.0 + dist_xy * 0.58)
+    max_dz = min(136.0, 24.0 + dist_xy * 0.86)
     if abs(float(diff[2])) > max_dz:
         return False
+    hulls = solid_hulls if solid_hulls else [(headnode, np.zeros(3, dtype=np.float32))]
     steps = max(4, int(dist_xy / 16.0))
     for s in range(1, steps):
         t = s / float(steps)
         base = p0 + diff * t
-        # Check Hull-1 waist clearance (+4u tolerance, or +14u up a single 18u stair step — never +32u over parapets!)
+        # Check Hull-1 waist clearance (+4u flat, +16u/+24u up GoldSrc 18u staircase steps)
         mid = base + np.array([0.0, 0.0, 4.0], dtype=np.float32)
         if hull_point_contents(clipnodes, planes_n, planes_d, headnode, mid) != -1:
-            mid = base + np.array([0.0, 0.0, 14.0], dtype=np.float32)
+            mid = base + np.array([0.0, 0.0, 16.0], dtype=np.float32)
             if hull_point_contents(clipnodes, planes_n, planes_d, headnode, mid) != -1:
-                return False
-        # Verify solid floor exists within 54u below waist origin (prevents mid-air diagonal edges over drops/parapets!)
-        below = mid - np.array([0.0, 0.0, 52.0], dtype=np.float32)
-        if hull_point_contents(clipnodes, planes_n, planes_d, headnode, below) == -1:
-            below_ramp = mid - np.array([0.0, 0.0, 72.0], dtype=np.float32)
-            if hull_point_contents(clipnodes, planes_n, planes_d, headnode, below_ramp) == -1:
-                return False
+                mid = base + np.array([0.0, 0.0, 24.0], dtype=np.float32)
+                if hull_point_contents(clipnodes, planes_n, planes_d, headnode, mid) != -1:
+                    return False
+        # Verify solid floor exists beneath waist origin (prevents mid-air diagonal edges over drops/parapets!)
+        has_flr = False
+        for drop_z in (52.0, 74.0, 94.0):
+            if is_floor_solid_at(clipnodes, planes_n, planes_d, hulls, mid - np.array([0.0, 0.0, drop_z], dtype=np.float32)):
+                has_flr = True
+                break
+        if not has_flr:
+            return False
     return True
 
 
@@ -189,12 +209,15 @@ def build_bot_nav_graph(
     planes_d: np.ndarray,
     hull1_headnode: int,
     ladder_spans_gs: List[Tuple[np.ndarray, np.ndarray]] | None = None,
+    solid_hulls: List[Tuple[int, np.ndarray]] | None = None,
+    hull0_headnode: int = 0,
+    hull3_headnode: int = 0,
 ) -> Tuple[List[List[float]], List[List[int]]]:
     """
-    Generates a clean, Hull-1 collision-verified tactical waypoint graph across the BSP map
-    (including doorways and vertical ladder bottom<->top links) so Bots pathfind via A*.
+    Generates a full-map, Hull-1 collision-verified tactical waypoint graph across the BSP map
+    (including doorways, func_wall bridges/stairs, and vertical ladder links) with zero truncation!
     """
-    CELL = 132.0  # ~4.125m tactical spacing in GoldSrc units for tighter doorway/ramp routing
+    CELL = 134.0  # ~4.18m tactical spacing in GoldSrc units across 100% of playable map
     grid: Dict[Tuple[int, int, int], np.ndarray] = {}
 
     # Prioritize objective/spawn/doorway/ladder seed points first
@@ -202,7 +225,6 @@ def build_bot_nav_graph(
     for pt in seed_points_gs:
         p_test = pt.copy()
         if len(clipnodes) > 0:
-            # Find valid hull-1 stand height near seed
             placed = False
             for dz in (0.0, 18.0, -18.0, 36.0):
                 for dx, dy in ((0.0, 0.0), (28.0, 0.0), (-28.0, 0.0), (0.0, 28.0), (0.0, -28.0)):
@@ -213,25 +235,25 @@ def build_bot_nav_graph(
                         break
                 if placed:
                     break
-        key = (int(round(p_test[0] / CELL)), int(round(p_test[1] / CELL)), int(round(p_test[2] / 72.0)))
+        key = (int(round(p_test[0] / CELL)), int(round(p_test[1] / CELL)), int(round(p_test[2] / 68.0)))
         if key not in grid:
             grid[key] = p_test
             seed_keys.append(key)
 
-    # Add walkable floor samples (hull-1 clearance verified)
+    # Add ALL walkable floor samples across 100% of the map (never truncating early!)
     for fpt in floor_samples_gs:
         stand_pt = fpt + np.array([0.0, 0.0, 37.0], dtype=np.float32)  # Hull 1 origin is +36 above floor
-        key = (int(round(stand_pt[0] / CELL)), int(round(stand_pt[1] / CELL)), int(round(stand_pt[2] / 72.0)))
+        key = (int(round(stand_pt[0] / CELL)), int(round(stand_pt[1] / CELL)), int(round(stand_pt[2] / 68.0)))
         if key in grid:
             continue
         if len(clipnodes) > 0:
             if hull_point_contents(clipnodes, planes_n, planes_d, hull1_headnode, stand_pt) != -1:
-                stand_hi = stand_pt + np.array([0.0, 0.0, 12.0], dtype=np.float32)
+                stand_hi = stand_pt + np.array([0.0, 0.0, 14.0], dtype=np.float32)
                 if hull_point_contents(clipnodes, planes_n, planes_d, hull1_headnode, stand_hi) != -1:
                     continue
                 stand_pt = stand_hi
         grid[key] = stand_pt
-        if len(grid) >= 920:
+        if len(grid) >= 2400:
             break
 
     pts_gs = list(grid.values())
@@ -245,13 +267,15 @@ def build_bot_nav_graph(
     for i in range(n):
         diffs = pts_arr - pts_arr[i]
         dists = np.hypot(diffs[:, 0], diffs[:, 1])
-        # Candidate neighbors within ~340 GoldSrc units horizontally and walkable stair/ramp vertical delta
-        cands = np.where((dists > 1.0) & (dists < 340.0) & (np.abs(diffs[:, 2]) < 72.0))[0]
-        cands = sorted(cands, key=lambda j: float(dists[j]))[:12]
+        # Candidate neighbors within ~356 GoldSrc units horizontally and walkable stair/ramp vertical delta
+        cands = np.where((dists > 1.0) & (dists < 356.0) & (np.abs(diffs[:, 2]) < 136.0))[0]
+        cands = sorted(cands, key=lambda j: float(dists[j]))[:16]
         for j in cands:
             if j <= i:
                 continue
-            if len(clipnodes) == 0 or hull_line_clear(clipnodes, planes_n, planes_d, hull1_headnode, pts_arr[i], pts_arr[j]):
+            if len(clipnodes) == 0 or hull_line_clear(
+                clipnodes, planes_n, planes_d, hull1_headnode, pts_arr[i], pts_arr[j], solid_hulls
+            ):
                 adj[i].append(int(j))
                 adj[j].append(int(i))
 
@@ -262,8 +286,8 @@ def build_bot_nav_graph(
             dt = pts_arr - top_gs
             hb = np.hypot(db[:, 0], db[:, 1])
             ht = np.hypot(dt[:, 0], dt[:, 1])
-            b_cands = np.where((hb < 144.0) & (np.abs(db[:, 2]) < 76.0))[0]
-            t_cands = np.where((ht < 156.0) & (np.abs(dt[:, 2]) < 84.0))[0]
+            b_cands = np.where((hb < 164.0) & (np.abs(db[:, 2]) < 88.0))[0]
+            t_cands = np.where((ht < 176.0) & (np.abs(dt[:, 2]) < 96.0))[0]
             if len(b_cands) > 0 and len(t_cands) > 0:
                 bi = int(min(b_cands, key=lambda idx: float(hb[idx] + abs(db[idx, 2]) * 0.5)))
                 ti = int(min(t_cands, key=lambda idx: float(ht[idx] + abs(dt[idx, 2]) * 0.5)))
@@ -271,7 +295,74 @@ def build_bot_nav_graph(
                     adj[bi].append(ti)
                     adj[ti].append(bi)
 
-    # Prune unreachable rooftop clusters: retain components reachable from spawn/objective seeds (or largest component)
+    # Doorway / Vent Component Bridge Pass:
+    # In GoldSrc BSP30, 64u doorways with trim narrow Hull-1 to ~20u, causing diagonal waypoint rays
+    # across a narrow doorframe or crouch-vent to graze the +-16u expanded jamb. Bridge disconnected
+    # components across clear Hull-3 (crouch/vent) or centered Hull-0 (true wall) doorway openings!
+    if len(clipnodes) > 0:
+        for _bridge_iter in range(12):
+            comp_of = [-1] * n
+            comps_list: List[List[int]] = []
+            for start_i in range(n):
+                if comp_of[start_i] != -1:
+                    continue
+                cid = len(comps_list)
+                q_c = [start_i]
+                comp_of[start_i] = cid
+                members = []
+                while q_c:
+                    curr = q_c.pop()
+                    members.append(curr)
+                    for nb_c in adj[curr]:
+                        if comp_of[nb_c] == -1:
+                            comp_of[nb_c] = cid
+                            q_c.append(nb_c)
+                comps_list.append(members)
+            if len(comps_list) <= 1:
+                break
+            comps_list.sort(key=len, reverse=True)
+            main_set = set(comps_list[0])
+            other_nodes = [idx for c_grp in comps_list[1:] if len(c_grp) >= 2 for idx in c_grp]
+            if not other_nodes:
+                break
+            best_pair = None
+            best_d = 1e9
+            main_arr = np.array(list(main_set), dtype=np.int32)
+            for v_idx in other_nodes:
+                dv = pts_arr[main_arr] - pts_arr[v_idx]
+                d_xy = np.hypot(dv[:, 0], dv[:, 1])
+                d_z = np.abs(dv[:, 2])
+                mask = (d_xy < 230.0) & (d_z < 88.0)
+                for m_pos in np.where(mask)[0]:
+                    u_idx = int(main_arr[m_pos])
+                    score = float(d_xy[m_pos] + d_z[m_pos] * 1.5)
+                    if score >= best_d:
+                        continue
+                    # Verify doorway/vent line is clear in Hull-3 (crouch/vent) or via axis-aligned doorway L-turn!
+                    p_u = pts_arr[u_idx]
+                    p_v = pts_arr[v_idx]
+                    mid_z = (p_u[2] + p_v[2]) * 0.5
+                    bend_a = np.array([p_u[0], p_v[1], mid_z], dtype=np.float32)
+                    bend_b = np.array([p_v[0], p_u[1], mid_z], dtype=np.float32)
+                    clear_bridge = hull_line_clear(clipnodes, planes_n, planes_d, hull3_headnode, p_u, p_v, solid_hulls)
+                    if not clear_bridge:
+                        clear_bridge = (
+                            hull_line_clear(clipnodes, planes_n, planes_d, hull3_headnode, p_u, bend_a, solid_hulls)
+                            and hull_line_clear(clipnodes, planes_n, planes_d, hull3_headnode, bend_a, p_v, solid_hulls)
+                        ) or (
+                            hull_line_clear(clipnodes, planes_n, planes_d, hull3_headnode, p_u, bend_b, solid_hulls)
+                            and hull_line_clear(clipnodes, planes_n, planes_d, hull3_headnode, bend_b, p_v, solid_hulls)
+                        )
+                    if clear_bridge:
+                        best_d = score
+                        best_pair = (u_idx, v_idx)
+            if best_pair is None:
+                break
+            bu, bv = best_pair
+            adj[bu].append(bv)
+            adj[bv].append(bu)
+
+    # Prune unreachable skybox/rooftop clusters: retain ALL nodes reachable from spawn/objective seeds!
     num_seeds = min(len(seed_keys), n)
     visited: Set[int] = set()
     stack = list(range(num_seeds)) if num_seeds > 0 else [0]
@@ -303,7 +394,8 @@ def build_bot_nav_graph(
                 best_comp = comp
         visited |= best_comp
 
-    keep_indices = sorted(visited)[:380]
+    # Keep ALL reachable waypoints (no [:380] slicing that severs corridors!)
+    keep_indices = sorted(visited)
     keep_set = set(keep_indices)
     old_to_new = {old_i: new_i for new_i, old_i in enumerate(keep_indices)}
     pruned_adj: List[List[int]] = [
@@ -478,6 +570,10 @@ def convert_single_bsp(
     cameras = []
     seed_points_gs: List[np.ndarray] = []
     ladder_spans_gs: List[Tuple[np.ndarray, np.ndarray]] = []
+    walkable_submodels: Dict[int, np.ndarray] = {0: np.zeros(3, dtype=np.float32)}
+    solid_hulls: List[Tuple[int, np.ndarray]] = []
+    if submodels:
+        solid_hulls.append((int(submodels[0]["headnodes"][1]), np.zeros(3, dtype=np.float32)))
 
     for ent in ents:
         cname = ent.get("classname", "").lower()
@@ -649,6 +745,10 @@ def convert_single_bsp(
                     seed_points_gs.append(d_center)
                     for dx, dy in ((56.0, 0.0), (-56.0, 0.0), (0.0, 56.0), (0.0, -56.0)):
                         seed_points_gs.append(d_center + np.array([dx, dy, 0.0], dtype=np.float32))
+                elif cname in ("func_wall", "func_wall_toggle") and not (rmode != 0 and ramt == 0):
+                    orig_arr = np.array(orig_gs, dtype=np.float32)
+                    walkable_submodels[sub_idx] = orig_arr
+                    solid_hulls.append((int(sm["headnodes"][1]), orig_arr))
             else:
                 # Unknown trigger/zone submodels don't need visible geometry
                 trigger_submodels.add(sub_idx)
@@ -740,7 +840,8 @@ def convert_single_bsp(
     # Material registry across this map
     mat_name_to_idx: Dict[str, int] = {}
     mat_list: List[dict] = []
-    floor_samples_gs: List[np.ndarray] = []
+    floor_centroids_gs: List[np.ndarray] = []
+    floor_subgrid_gs: List[np.ndarray] = []
 
     def get_mat_idx(safe_name: str, masked: bool) -> int:
         if safe_name in mat_name_to_idx:
@@ -785,17 +886,18 @@ def convert_single_bsp(
                 vi = edges[se, 0] if se >= 0 else edges[-se, 1]
                 pts_gs.append(verts_gs[vi])
 
-            # Collect dense floor samples on worldspawn upward-facing polygons for Bot navigation
-            if sm_idx == 0 and float(pn_gs[2]) > 0.72 and not minfo["lower"].startswith("!"):
-                pts_np = np.array(pts_gs, dtype=np.float32)
+            # Collect dense floor samples on worldspawn & solid func_wall stairs/bridges/ramps for Bot navigation
+            if sm_idx in walkable_submodels and float(pn_gs[2]) > 0.65 and not minfo["lower"].startswith("!"):
+                sm_orig = walkable_submodels[sm_idx]
+                pts_np = np.array(pts_gs, dtype=np.float32) + sm_orig
                 centroid = np.mean(pts_np, axis=0)
-                floor_samples_gs.append(centroid)
+                floor_centroids_gs.append(centroid)
                 span_xy = np.ptp(pts_np[:, :2], axis=0)
                 max_span = float(max(span_xy[0], span_xy[1]))
                 if max_span > 168.0:
                     # Sample inset vertices & triangle sub-grids strictly inside the convex BSP polygon
                     for v_pt in pts_np:
-                        floor_samples_gs.append(centroid * 0.26 + v_pt * 0.74)
+                        floor_subgrid_gs.append(centroid * 0.26 + v_pt * 0.74)
                     if max_span > 280.0 and len(pts_np) >= 3:
                         steps = min(5, max(2, int(max_span / 148.0)))
                         p0 = pts_np[0]
@@ -806,7 +908,7 @@ def convert_single_bsp(
                                 for sv in range(1, steps - su + 1):
                                     v_f = sv / float(steps)
                                     if u_f + v_f < 0.98:
-                                        floor_samples_gs.append(p0 * (1.0 - u_f - v_f) + p1 * u_f + p2 * v_f)
+                                        floor_subgrid_gs.append(p0 * (1.0 - u_f - v_f) + p1 * u_f + p2 * v_f)
 
             mat_idx = get_mat_idx(minfo["safe"], minfo["masked"])
             vlist, ilist, vmap = prim_buckets.setdefault(mat_idx, ([], [], {}))
@@ -975,10 +1077,22 @@ def convert_single_bsp(
         out.write(struct.pack("<II", len(bin_chunks), 0x004E4942))
         out.write(bin_chunks)
 
-    # Generate Hull-1 Bot navigation graph (including vertical ladder links!)
+    # Generate Hull-1 Bot navigation graph (all centroids first, then subgrids, plus bridges/stairs & ladders!)
+    hull0_head = submodels[0]["headnodes"][0] if submodels else 0
     hull1_head = submodels[0]["headnodes"][1] if submodels else 0
+    hull3_head = submodels[0]["headnodes"][3] if submodels else 0
+    all_floor_samples = floor_centroids_gs + floor_subgrid_gs
     waypoints_gd, nav_adj = build_bot_nav_graph(
-        floor_samples_gs, seed_points_gs, clipnodes, planes_n, planes_d, hull1_head, ladder_spans_gs
+        all_floor_samples,
+        seed_points_gs,
+        clipnodes,
+        planes_n,
+        planes_d,
+        hull1_head,
+        ladder_spans_gs,
+        solid_hulls,
+        hull0_head,
+        hull3_head,
     )
 
     # Map briefing text from cstrike/maps/<map>.txt

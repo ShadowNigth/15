@@ -11,9 +11,9 @@ signal actor_died(victim: CSActor, killer: Node3D)
 # GoldSrc physics constants scaled by 1/32 (1u = 0.03125m)
 const GRAVITY_MPS2: float = 800.0 * (1.0 / 32.0)  # 25.0 m/s^2
 const JUMP_VEL_MPS: float = 268.0 * (1.0 / 32.0)  # ~45u jump height (~58u crouch-jump!)
-const GROUND_ACCEL: float = 5.6
-const AIR_ACCEL: float = 10.0
-const FRICTION: float = 4.2
+const GROUND_ACCEL: float = 7.2
+const AIR_ACCEL: float = 11.0
+const FRICTION: float = 4.6
 const STOP_SPEED_MPS: float = 100.0 * (1.0 / 32.0)
 const STAND_HEIGHT: float = 1.88
 const CROUCH_HEIGHT: float = 1.08
@@ -68,12 +68,20 @@ var _anim_res_map: Dictionary = {}  # lower_name -> Animation
 var _gait_yaw: float = 0.0
 var _gait_time: float = 0.0
 var _cur_gait_key: String = "idle1"
+var _prev_gait_key: String = "idle1"
+var _prev_gait_time: float = 0.0
+var _gait_blend_alpha: float = 1.0
 var _upper_action_key: String = ""
 var _upper_action_time: float = 0.0
 var _upper_aim_time: float = 0.0
 var _death_anim_key: String = ""
 var _death_anim_time: float = 0.0
 var _last_hitgroup: int = 2
+
+# Sub-tick render interpolation & GoldSrc stair/crouch visual smoothing
+var _prev_phys_pos: Vector3 = Vector3.ZERO
+var _step_smooth_y: float = 0.0
+var _visual_crouch_t: float = 0.0
 
 
 func _ready() -> void:
@@ -82,6 +90,7 @@ func _ready() -> void:
 	floor_snap_length = 0.35
 	floor_max_angle = deg_to_rad(46.0)
 	wall_min_slide_angle = 0.0
+	max_slides = 6
 
 	_col_shape = CollisionShape3D.new()
 	_capsule = CapsuleShape3D.new()
@@ -286,7 +295,7 @@ func trigger_upper_body_action(action_kind: String) -> void:
 				_upper_action_time = 0.0
 
 
-func _apply_anim_layer(anim_key: String, sample_t: float, mode: int) -> void:
+func _apply_anim_layer(anim_key: String, sample_t: float, mode: int, blend_w: float = 1.0) -> void:
 	# mode: 0 = lower-body bones only, 1 = upper-body bones only, 2 = full skeleton (deaths)
 	if not _anim_res_map.has(anim_key) or _skel == null:
 		return
@@ -294,6 +303,7 @@ func _apply_anim_layer(anim_key: String, sample_t: float, mode: int) -> void:
 	var tracks: Array = _anim_tracks_cache.get(anim_key, [])
 	var dur := maxf(0.001, anim_res.length)
 	var t_clamped := clampf(sample_t, 0.0, dur)
+	var use_blend: bool = (blend_w < 0.999)
 	for entry in tracks:
 		var e := entry as Array
 		var ti := int(e[0])
@@ -303,12 +313,29 @@ func _apply_anim_layer(anim_key: String, sample_t: float, mode: int) -> void:
 		if mode == 1 and _is_upper_bone[bi] == 0:
 			continue
 		if bool(e[2]):
-			_skel.set_bone_pose_position(bi, anim_res.position_track_interpolate(ti, t_clamped))
+			var p_tgt: Vector3 = anim_res.position_track_interpolate(ti, t_clamped)
+			if use_blend:
+				p_tgt = _skel.get_bone_pose_position(bi).lerp(p_tgt, blend_w)
+			_skel.set_bone_pose_position(bi, p_tgt)
 		else:
-			_skel.set_bone_pose_rotation(bi, anim_res.rotation_track_interpolate(ti, t_clamped))
+			var q_tgt: Quaternion = anim_res.rotation_track_interpolate(ti, t_clamped)
+			if use_blend:
+				q_tgt = _skel.get_bone_pose_rotation(bi).slerp(q_tgt, blend_w)
+			_skel.set_bone_pose_rotation(bi, q_tgt)
+
+
+func get_visual_world_pos() -> Vector3:
+	if _prev_phys_pos.distance_squared_to(global_position) > 9.0:
+		_prev_phys_pos = global_position
+	var frac: float = clampf(Engine.get_physics_interpolation_fraction(), 0.0, 1.0)
+	var p: Vector3 = _prev_phys_pos.lerp(global_position, frac)
+	p.y += _step_smooth_y
+	return p
 
 
 func _process(delta: float) -> void:
+	_step_smooth_y = lerpf(_step_smooth_y, 0.0, minf(1.0, 22.0 * delta))
+	_visual_crouch_t = lerpf(_visual_crouch_t, 1.0 if is_crouching else 0.0, minf(1.0, 16.0 * delta))
 	if _tp_muzzle_timer > 0.0:
 		_tp_muzzle_timer -= delta
 		if _tp_muzzle_timer <= 0.0:
@@ -325,13 +352,16 @@ func _evaluate_character_pose(delta: float) -> void:
 		return
 
 	if not is_alive:
+		_body_root.position = Vector3(0.0, MODEL_STAND_OFFSET_Y, 0.0)
 		if not _death_anim_key.is_empty() and _anim_res_map.has(_death_anim_key):
 			var d_anim: Animation = _anim_res_map[_death_anim_key]
 			_death_anim_time = minf(d_anim.length, _death_anim_time + delta)
 			_apply_anim_layer(_death_anim_key, _death_anim_time, 2)
 		return
 
-	_body_root.position.y = MODEL_CROUCH_OFFSET_Y if is_crouching else MODEL_STAND_OFFSET_Y
+	var sub_ofs: Vector3 = get_visual_world_pos() - global_position
+	var base_model_y: float = lerpf(MODEL_STAND_OFFSET_Y, MODEL_CROUCH_OFFSET_Y, _visual_crouch_t)
+	_body_root.position = Vector3(sub_ofs.x, base_model_y + sub_ofs.y, sub_ofs.z)
 
 	# 1. GoldSrc StudioEstimateGait: orient legs/pelvis into strafe/walk direction & reverse on backpedal!
 	var hvel := Vector2(velocity.x, velocity.z)
@@ -378,8 +408,24 @@ func _evaluate_character_pose(delta: float) -> void:
 	if not _anim_res_map.has(want_gait):
 		want_gait = "idle1"
 	if want_gait != _cur_gait_key:
+		var old_anim: Animation = _anim_res_map.get(_cur_gait_key, null)
+		var new_anim: Animation = _anim_res_map.get(want_gait, null)
+		var norm_phase := 0.0
+		if old_anim != null and old_anim.length > 0.05 and _cur_gait_key in ["run", "walk", "crouchrun"] and want_gait in ["run", "walk", "crouchrun"]:
+			norm_phase = fposmod(_gait_time / old_anim.length, 1.0)
+		_prev_gait_key = _cur_gait_key
+		_prev_gait_time = _gait_time
 		_cur_gait_key = want_gait
-		_gait_time = 0.0
+		_gait_blend_alpha = 0.0
+		_gait_time = norm_phase * new_anim.length if (new_anim != null and norm_phase > 0.0) else 0.0
+
+	if _gait_blend_alpha < 1.0:
+		_gait_blend_alpha = minf(1.0, _gait_blend_alpha + delta * 8.0)
+		var p_anim: Animation = _anim_res_map.get(_prev_gait_key, null)
+		if p_anim != null:
+			_prev_gait_time = fposmod(_prev_gait_time + delta * rate, maxf(0.05, p_anim.length))
+			_apply_anim_layer(_prev_gait_key, _prev_gait_time, 0, 1.0)
+
 	var g_anim: Animation = _anim_res_map.get(_cur_gait_key, null)
 	if g_anim != null:
 		var g_len := maxf(0.05, g_anim.length)
@@ -387,7 +433,7 @@ func _evaluate_character_pose(delta: float) -> void:
 			_gait_time = minf(g_len, _gait_time + delta * 1.15)
 		else:
 			_gait_time = fposmod(_gait_time + delta * rate, g_len)
-		_apply_anim_layer(_cur_gait_key, _gait_time, 0)
+		_apply_anim_layer(_cur_gait_key, _gait_time, 0, _gait_blend_alpha)
 
 	# 3. Select & advance upper-body weapon posture (ref_aim_* / crouch_aim_* or shoot/reload/flinch action!)
 	var wid := weapon_ctrl.current_weapon_id if weapon_ctrl else "usp"
@@ -507,6 +553,10 @@ func spawn_for_round(pos: Vector3, yaw_rad: float, reset_weapons: bool) -> void:
 			floor_pos = pos + Vector3(0.0, 0.04, 0.0)
 
 	global_position = floor_pos
+	_prev_phys_pos = floor_pos
+	_step_smooth_y = 0.0
+	_visual_crouch_t = 0.0
+	_gait_blend_alpha = 1.0
 	look_yaw = yaw_rad
 	look_pitch = 0.0
 	# Keep CharacterBody3D root unrotated so child Camera3D and _body_root never double-rotate!
@@ -586,6 +636,7 @@ func _update_hull_height(crouch_want: bool) -> void:
 
 
 func apply_goldsrc_movement(wish_dir_world: Vector3, want_jump: bool, want_crouch: bool, want_walk: bool, delta: float) -> void:
+	_prev_phys_pos = global_position
 	_update_hull_height(want_crouch)
 	is_walking = want_walk
 
@@ -777,17 +828,24 @@ func _tick_footsteps(delta: float, climbing_ladder: bool) -> void:
 
 
 func _try_step_up(horiz_motion: Vector3, preserve_hvel: Vector3) -> void:
-	var up_vec := Vector3(0.0, STEP_HEIGHT, 0.0)
-	if test_move(global_transform, up_vec):
-		return
-	var raised_xf := global_transform.translated(up_vec)
 	var step_dir := horiz_motion.normalized() * maxf(horiz_motion.length(), 0.08)
-	if test_move(raised_xf, step_dir):
+	var old_y := global_position.y
+	# Test progressive step heights so low tunnel/doorway arches still step over curbs cleanly!
+	for sh in [0.22, 0.38, STEP_HEIGHT]:
+		var up_vec := Vector3(0.0, float(sh), 0.0)
+		if test_move(global_transform, up_vec):
+			continue
+		var raised_xf := global_transform.translated(up_vec)
+		if test_move(raised_xf, step_dir):
+			continue
+		global_position += up_vec + step_dir
+		move_and_collide(Vector3(0.0, -float(sh) - 0.06, 0.0))
+		var climbed_dy := global_position.y - old_y
+		if climbed_dy > 0.01:
+			_step_smooth_y = clampf(_step_smooth_y - climbed_dy, -0.58, 0.58)
+		velocity.x = preserve_hvel.x
+		velocity.z = preserve_hvel.z
 		return
-	global_position += up_vec + step_dir
-	move_and_collide(Vector3(0.0, -STEP_HEIGHT - 0.06, 0.0))
-	velocity.x = preserve_hvel.x
-	velocity.z = preserve_hvel.z
 
 
 func _sample_floor_material() -> String:
