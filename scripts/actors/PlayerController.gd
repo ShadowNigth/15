@@ -36,7 +36,7 @@ func _ready() -> void:
 	camera.name = "FPSCamera"
 	camera.fov = GameData.fov
 	camera.near = 0.025
-	camera.far = 950.0
+	camera.far = 1600.0
 	camera.position = Vector3(0.0, 1.85, 0.0)
 	camera.current = true
 	add_child(camera)
@@ -281,7 +281,8 @@ func _rebuild_viewmodel(wid: String) -> void:
 	if not sc:
 		return
 	var inst := sc.instantiate()
-	# Disable backface culling when mirrored for cl_righthand 1!
+	# Position viewmodel in authentic CS 1.5 lower-corner framing (hides cut-off forearm stumps!)
+	inst.position = Vector3(-0.04, -0.06, 0.13)
 	_prepare_viewmodel_materials(inst)
 	viewmodel_holder.add_child(inst)
 	_vm_anim = _find_anim(inst)
@@ -295,6 +296,7 @@ func _rebuild_viewmodel(wid: String) -> void:
 func _prepare_viewmodel_materials(n: Node) -> void:
 	if n is MeshInstance3D:
 		var mi := n as MeshInstance3D
+		mi.layers = 2
 		mi.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
 		if mi.mesh:
 			for s in range(mi.mesh.get_surface_count()):
@@ -302,6 +304,8 @@ func _prepare_viewmodel_materials(n: Node) -> void:
 				if mat is BaseMaterial3D:
 					var dup := mat.duplicate() as BaseMaterial3D
 					dup.cull_mode = BaseMaterial3D.CULL_DISABLED
+					dup.texture_filter = BaseMaterial3D.TEXTURE_FILTER_LINEAR_WITH_MIPMAPS_ANISOTROPIC
+					dup.diffuse_mode = BaseMaterial3D.DIFFUSE_LAMBERT_WRAP
 					mi.set_surface_override_material(s, dup)
 	for c in n.get_children():
 		_prepare_viewmodel_materials(c)

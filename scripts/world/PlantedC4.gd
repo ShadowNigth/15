@@ -19,7 +19,10 @@ func _ready() -> void:
 	time_left = GameData.c4_timer
 	var sc := GameData.get_model_scene("weapons/w_c4")
 	if sc:
-		add_child(sc.instantiate())
+		var inst := sc.instantiate()
+		for c in inst.find_children("*", "MeshInstance3D", true, false):
+			(c as MeshInstance3D).layers = 2
+		add_child(inst)
 
 	_led_sprite = Sprite3D.new()
 	_led_sprite.texture = GameData.get_texture("res://assets/sprites/ledglow.png")
@@ -98,8 +101,8 @@ func _detonate() -> void:
 	flash.light_color = Color(1.0, 0.65, 0.2)
 	flash.light_energy = 12.0
 	flash.omni_range = 45.0
-	flash.global_position = global_position + Vector3(0, 0.6, 0)
 	get_parent().add_child(flash)
+	flash.global_position = global_position + Vector3(0, 0.6, 0)
 	var tw := flash.create_tween()
 	tw.tween_property(flash, "light_energy", 0.0, 0.7)
 	tw.tween_callback(flash.queue_free)

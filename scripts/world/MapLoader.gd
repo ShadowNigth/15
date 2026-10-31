@@ -75,14 +75,19 @@ static func build_map(parent: Node3D, map_data: Dictionary) -> Dictionary:
 			alpha_f = 0.78
 
 		# Apply GoldSrc baked lightmap shader to all surfaces of this mesh
+		mi.layers = 1
 		if mi.mesh and world_shader:
 			for surf_i in range(mi.mesh.get_surface_count()):
 				var orig_mat := mi.mesh.surface_get_material(surf_i)
 				var tex_safe := orig_mat.resource_name if orig_mat else "default_tex"
-				if tex_safe.is_empty() and orig_mat is BaseMaterial3D and orig_mat.albedo_texture:
-					tex_safe = orig_mat.albedo_texture.resource_path.get_file().get_basename()
-				var tex_path := "res://assets/textures/world/%s.png" % tex_safe
-				var albedo := GameData.get_texture(tex_path)
+				var albedo: Texture2D = null
+				if orig_mat is BaseMaterial3D and (orig_mat as BaseMaterial3D).albedo_texture:
+					albedo = (orig_mat as BaseMaterial3D).albedo_texture
+					if tex_safe.is_empty():
+						tex_safe = albedo.resource_path.get_file().get_basename()
+				if albedo == null:
+					var tex_path := "res://assets/textures/world/%s.png" % tex_safe
+					albedo = GameData.get_texture(tex_path)
 				var tmeta: Dictionary = GameData.world_textures_meta.get(tex_safe, {})
 				var is_masked := bool(tmeta.get("masked", tex_safe.begins_with("mask_")))
 				var surf_water := is_water or tex_safe.begins_with("water_")

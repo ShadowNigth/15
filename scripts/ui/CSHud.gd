@@ -259,10 +259,11 @@ func _build_hud_tree() -> void:
 	bot_right.anchor_right = 1.0
 	bot_right.anchor_top = 1.0
 	bot_right.anchor_bottom = 1.0
-	bot_right.offset_left = -310
+	bot_right.offset_left = -320
 	bot_right.offset_right = -24
-	bot_right.offset_top = -126
-	bot_right.offset_bottom = -16
+	bot_right.offset_top = -196
+	bot_right.offset_bottom = -20
+	bot_right.grow_vertical = Control.GROW_DIRECTION_BEGIN
 	bot_right.alignment = BoxContainer.ALIGNMENT_END
 	bot_right.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	root.add_child(bot_right)
@@ -292,14 +293,14 @@ func _build_hud_tree() -> void:
 
 
 func _make_hud_icon(entry: String, tint: Color, sz: Vector2 = Vector2(32, 32)) -> TextureRect:
-	var tr := TextureRect.new()
-	tr.texture = GameData.get_hud_atlas(entry, 320)
-	tr.custom_minimum_size = sz
-	tr.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
-	tr.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
-	tr.modulate = tint
-	tr.mouse_filter = Control.MOUSE_FILTER_IGNORE
-	return tr
+	var icon_rect := TextureRect.new()
+	icon_rect.texture = GameData.get_hud_atlas(entry, 320)
+	icon_rect.custom_minimum_size = sz
+	icon_rect.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
+	icon_rect.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
+	icon_rect.modulate = tint
+	icon_rect.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	return icon_rect
 
 
 func _make_label(txt: String, fsize: int, col: Color) -> Label:
@@ -339,7 +340,8 @@ func _process(delta: float) -> void:
 		_timer_label.add_theme_color_override("font_color", RED_WARN if sin(_c4_blink_phase * 2.0) > 0.0 else AMBER)
 	else:
 		_timer_label.add_theme_color_override("font_color", RED_WARN if secs <= 10 else AMBER)
-	_timer_label.text = "%02d:%02d" % [secs / 60, secs % 60]
+	var mins := int(floor(float(secs) / 60.0))
+	_timer_label.text = "%02d:%02d" % [mins, secs % 60]
 
 	if is_instance_valid(player):
 		_flash_rect.color.a = clampf(player.flash_alpha, 0.0, 1.0)

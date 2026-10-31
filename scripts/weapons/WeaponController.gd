@@ -565,8 +565,8 @@ func _spawn_wall_puff(pos: Vector3, normal: Vector3) -> void:
 	puff.billboard = BaseMaterial3D.BILLBOARD_ENABLED
 	puff.pixel_size = 0.0045
 	puff.modulate = Color(0.85, 0.85, 0.82, 0.8)
-	puff.global_position = pos + normal * 0.04
 	RoundManager.game_world.add_child(puff)
+	puff.global_position = pos + normal * 0.04
 	var tw := puff.create_tween()
 	tw.tween_property(puff, "modulate:a", 0.0, 0.35)
 	tw.tween_callback(puff.queue_free)
@@ -630,11 +630,11 @@ func _throw_grenade(gid: String) -> void:
 	var aim_b: Basis = actor.call("get_aim_basis", Vector2.ZERO)
 	var fwd: Vector3 = -aim_b.z
 	var proj := GrenadeProjectile.new()
+	RoundManager.game_world.add_child(proj)
 	proj.global_position = eye + fwd * 0.45
 	var actor_vel: Vector3 = (actor as CharacterBody3D).velocity
 	var throw_v: Vector3 = fwd * 21.5 + Vector3(0, 2.6, 0) + actor_vel * 0.45
 	proj.setup_grenade(gid, actor, throw_v)
-	RoundManager.game_world.add_child(proj)
 
 	# Switch back to best available weapon
 	if not equip_slot(1):
@@ -647,7 +647,7 @@ func _complete_c4_plant() -> void:
 		return
 	slots[5] = ""
 	var c4 := PlantedC4.new()
-	c4.global_position = actor.global_position + Vector3(0, 0.04, 0)
+	c4.position = (actor as Node3D).global_position + Vector3(0, 0.04, 0)
 	RoundManager.game_world.add_child(c4)
 	RoundManager.notify_bomb_planted(c4, c4.global_position)
 	if not equip_slot(1):

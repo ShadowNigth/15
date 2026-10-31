@@ -128,7 +128,7 @@ func _physics_process(delta: float) -> void:
 		weapon_ctrl.start_reload()
 	elif target_enemy == null and cr.x > 0 and cr.y > 0:
 		var csize := int(weapon_ctrl.get_current_spec().get("clip_size", 30))
-		if cr.x < csize / 3 and not weapon_ctrl.is_reloading:
+		if cr.x < int(float(csize) * 0.34) and not weapon_ctrl.is_reloading:
 			weapon_ctrl.start_reload()
 
 	# Priority 1: CT Defusing Planted C4 when clear!

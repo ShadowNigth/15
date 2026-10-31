@@ -368,9 +368,8 @@ func _build_arsenal_dialog() -> void:
 	svc.add_child(_viewer_viewport)
 
 	var vcam := Camera3D.new()
-	vcam.position = Vector3(0.0, 0.35, 1.35)
-	vcam.look_at(Vector3(0.0, 0.15, 0.0), Vector3.UP)
 	_viewer_viewport.add_child(vcam)
+	vcam.look_at_from_position(Vector3(0.0, 0.35, 1.35), Vector3(0.0, 0.15, 0.0), Vector3.UP)
 
 	var vlight := DirectionalLight3D.new()
 	vlight.rotation_degrees = Vector3(-35, 35, 0)

@@ -31,9 +31,17 @@ func _ready() -> void:
 	var sc := GameData.get_model_scene("players/hostage")
 	if sc:
 		var mdl := sc.instantiate()
+		_configure_hostage_meshes(mdl)
 		add_child(mdl)
 		_anim_player = _find_anim_player(mdl)
 		_play_anim("idle")
+
+
+func _configure_hostage_meshes(n: Node) -> void:
+	if n is MeshInstance3D:
+		(n as MeshInstance3D).layers = 2
+	for c in n.get_children():
+		_configure_hostage_meshes(c)
 
 
 func _find_anim_player(n: Node) -> AnimationPlayer:

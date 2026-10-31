@@ -32,7 +32,7 @@ var friendly_fire: bool = false
 # Player preferences
 var mouse_sensitivity: float = 0.16
 var master_volume_db: float = 0.0
-var fov: float = 90.0
+var fov: float = 74.0  # Vertical FOV 74 deg = authentic CS 1.5 horizontal 90 deg (4:3) / 106 deg (16:9 Hor+)
 var right_hand: bool = true  # cl_righthand 1
 var dynamic_crosshair: bool = true
 var crosshair_color: Color = Color(0.2, 1.0, 0.2, 0.92)

@@ -29,13 +29,22 @@ func setup_drop(id: String, clip: int, reserve: int, throw_vel: Vector3, is_sile
 	var sc := GameData.get_model_scene("weapons/" + mdl_name)
 	if sc:
 		var inst := sc.instantiate()
+		_set_layer_recursive(inst)
 		add_child(inst)
 	else:
 		var mi := MeshInstance3D.new()
+		mi.layers = 2
 		var bm := BoxMesh.new()
 		bm.size = Vector3(0.35, 0.12, 0.18)
 		mi.mesh = bm
 		add_child(mi)
+
+
+func _set_layer_recursive(n: Node) -> void:
+	if n is MeshInstance3D:
+		(n as MeshInstance3D).layers = 2
+	for c in n.get_children():
+		_set_layer_recursive(c)
 
 
 func _physics_process(delta: float) -> void:

@@ -18,7 +18,10 @@ func setup_grenade(gtype: String, owner_actor: Node3D, start_vel: Vector3) -> vo
 
 	var sc := GameData.get_model_scene("weapons/w_" + gtype)
 	if sc:
-		add_child(sc.instantiate())
+		var inst := sc.instantiate()
+		for c in inst.find_children("*", "MeshInstance3D", true, false):
+			(c as MeshInstance3D).layers = 2
+		add_child(inst)
 
 
 func _physics_process(delta: float) -> void:
@@ -76,8 +79,8 @@ func _detonate_he() -> void:
 	puff.billboard = BaseMaterial3D.BILLBOARD_ENABLED
 	puff.pixel_size = 0.022
 	puff.modulate = Color(1.0, 0.75, 0.35, 0.92)
-	puff.global_position = global_position + Vector3(0, 0.45, 0)
 	get_parent().add_child(puff)
+	puff.global_position = global_position + Vector3(0, 0.45, 0)
 	var tw := puff.create_tween()
 	tw.tween_property(puff, "scale", Vector3(2.4, 2.4, 2.4), 0.38)
 	tw.parallel().tween_property(puff, "modulate:a", 0.0, 0.38)
@@ -134,8 +137,8 @@ func _detonate_smoke() -> void:
 	RoundManager.add_smoke_cloud(global_position + Vector3(0, 1.2, 0), 4.6, 18.0)
 
 	var smoke_root := Node3D.new()
-	smoke_root.global_position = global_position
 	get_parent().add_child(smoke_root)
+	smoke_root.global_position = global_position
 
 	var puff_tex := GameData.get_texture("res://assets/sprites/smokepuff.png")
 	if not puff_tex:

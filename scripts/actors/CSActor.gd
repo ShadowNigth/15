@@ -96,10 +96,29 @@ func _rebuild_character_model() -> void:
 	var sc := GameData.get_model_scene("players/" + mdl_id)
 	if sc:
 		var inst := sc.instantiate()
+		_configure_character_meshes(inst)
 		_body_root.add_child(inst)
 		_body_anim = _find_anim(inst)
 		_play_body_anim("idle")
 	_body_root.visible = not is_human
+
+
+func _configure_character_meshes(n: Node) -> void:
+	if n is MeshInstance3D:
+		var mi := n as MeshInstance3D
+		mi.layers = 2
+		if mi.mesh:
+			for s in range(mi.mesh.get_surface_count()):
+				var mat := mi.mesh.surface_get_material(s)
+				if mat is BaseMaterial3D:
+					var dup := mat.duplicate() as BaseMaterial3D
+					dup.texture_filter = BaseMaterial3D.TEXTURE_FILTER_LINEAR_WITH_MIPMAPS_ANISOTROPIC
+					dup.diffuse_mode = BaseMaterial3D.DIFFUSE_LAMBERT_WRAP
+					# GoldSrc studio_render texgamma compensation so dark SEAL/GSG9 suits stay crisp & visible
+					dup.albedo_color = Color(1.55, 1.55, 1.55, 1.0)
+					mi.set_surface_override_material(s, dup)
+	for c in n.get_children():
+		_configure_character_meshes(c)
 
 
 func _find_anim(n: Node) -> AnimationPlayer:
@@ -476,6 +495,7 @@ func _spawn_drop_entity(item_id: String) -> void:
 	if not is_instance_valid(RoundManager.game_world):
 		return
 	var drop := DroppedWeapon.new()
+	RoundManager.game_world.add_child(drop)
 	drop.global_position = global_position + Vector3(0, 1.15, 0)
 	var clip := int(weapon_ctrl.clips.get(item_id, 0))
 	var res := 0
@@ -484,7 +504,6 @@ func _spawn_drop_entity(item_id: String) -> void:
 		res = int(weapon_ctrl.ammo_pool.get(at, 0))
 	var throw_v := get_look_forward() * 5.2 + Vector3(0, 2.0, 0)
 	drop.setup_drop(item_id, clip, res, throw_v, bool(weapon_ctrl.silenced_state.get(item_id, false)))
-	RoundManager.game_world.add_child(drop)
 	RoundManager.dropped_items.append(drop)
 
 
