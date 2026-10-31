@@ -1332,6 +1332,32 @@ func try_pickup_dropped(drop: DroppedWeapon) -> bool:
 	return false
 
 
+## Team economy support: physically drop a gifted primary weapon toward a broke teammate
+## during freezetime (the donor keeps its reserve ammo & rebuys its own gun afterwards).
+func drop_weapon_gift(recipient: CSActor, wid: String, clip: int, reserve: int) -> DroppedWeapon:
+	if not is_instance_valid(RoundManager.game_world) or not is_inside_tree() or wid.is_empty():
+		return null
+	var drop := DroppedWeapon.new()
+	RoundManager.game_world.add_child(drop)
+
+	var drop_pos: Vector3 = global_position + Vector3(0.0, 0.55, 0.0)
+	var toss := Vector3(0.0, 0.7, 0.0)
+	if is_instance_valid(recipient):
+		var to_rec: Vector3 = recipient.global_position - global_position
+		to_rec.y = 0.0
+		if to_rec.length() > 0.35:
+			var flat := to_rec.normalized()
+			drop_pos += flat * minf(1.05, to_rec.length() * 0.55)
+			toss = flat * 1.1 + Vector3(0.0, 0.85, 0.0)
+
+	drop.global_position = drop_pos
+	drop.setup_drop(wid, clip, reserve, toss, bool(weapon_ctrl.silenced_state.get(wid, false)))
+	drop.pickup_lock_actor = self
+	drop.pickup_lock_time = 8.0
+	RoundManager.dropped_items.append(drop)
+	return drop
+
+
 # --- ECONOMY & BUYING ---
 
 func can_use_buy_menu() -> bool:

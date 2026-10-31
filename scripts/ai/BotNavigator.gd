@@ -551,3 +551,38 @@ func pick_roam_node(from_pos: Vector3, team: String) -> int:
 		if waypoints[idx].distance_to(from_pos) > 16.0:
 			return idx
 	return randi() % n
+
+
+## Pick the best escape node OUTSIDE a danger ring (e.g. C4 54m blast radius):
+## among nodes >= min_dist from danger, prefer short runs; fall back to the farthest node.
+func pick_flee_node(from_pos: Vector3, danger_pos: Vector3, min_dist: float, team: String) -> int:
+	var n: int = waypoints.size()
+	if n == 0:
+		return -1
+	var best_idx: int = -1
+	var best_score: float = -1e9
+	var fallback_idx: int = -1
+	var fallback_d: float = -1.0
+	for idx in range(n):
+		var fl: int = wp_flags[idx]
+		if (fl & (FLAG_LADDER | FLAG_CROUCH)) != 0:
+			continue
+		if team == "T" and (fl & FLAG_CT_ONLY) != 0:
+			continue
+		if team == "CT" and (fl & FLAG_T_ONLY) != 0:
+			continue
+		var d_danger: float = waypoints[idx].distance_to(danger_pos)
+		if d_danger > fallback_d:
+			fallback_d = d_danger
+			fallback_idx = idx
+		if d_danger < min_dist:
+			continue
+		# A safe node that is also a short sprint away beats a far one (seconds count near blast!)
+		var d_me: float = waypoints[idx].distance_to(from_pos)
+		var score: float = d_danger * 0.35 - d_me * 0.95 + randf() * 7.0
+		if score > best_score:
+			best_score = score
+			best_idx = idx
+	if best_idx >= 0:
+		return best_idx
+	return fallback_idx

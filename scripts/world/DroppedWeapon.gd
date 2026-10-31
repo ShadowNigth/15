@@ -36,6 +36,10 @@ var _settled: bool = false
 var _clatter_cooldown: float = 0.0
 var _support_recheck_cd: float = 0.20
 
+# Team-share gifts: temporarily lock the donor out so they never re-pick their own drop!
+var pickup_lock_actor: Node3D = null
+var pickup_lock_time: float = 0.0
+
 
 func _ready() -> void:
 	collision_layer = 4  # Raycastable by bullets & knife, non-snagging for player/bot capsules
@@ -271,6 +275,10 @@ func _physics_process(delta: float) -> void:
 		_pickup_cooldown -= delta
 	if _clatter_cooldown > 0.0:
 		_clatter_cooldown -= delta
+	if pickup_lock_time > 0.0:
+		pickup_lock_time -= delta
+		if pickup_lock_time <= 0.0:
+			pickup_lock_actor = null
 
 	if not is_inside_tree() or get_world_3d() == null:
 		return
@@ -585,6 +593,8 @@ func _update_contact_shadow(
 func _check_actor_pickup() -> void:
 	for a in RoundManager.actors:
 		if not is_instance_valid(a) or not bool(a.get("is_alive")):
+			continue
+		if pickup_lock_time > 0.0 and is_instance_valid(pickup_lock_actor) and a == pickup_lock_actor:
 			continue
 		var ap: Vector3 = a.global_position
 		var dx: float = ap.x - global_position.x

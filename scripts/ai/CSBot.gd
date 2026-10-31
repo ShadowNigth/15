@@ -73,6 +73,20 @@ var _hold_pos_timer: float = 0.0
 var _defusing_ref: PlantedC4 = null
 var _bought_this_round: bool = false
 
+# C4 blast escape & equipment-preservation state
+var _bomb_escape_active: bool = false
+var _bomb_flee_node: int = -1
+var _bomb_flee_min_dist: float = 0.0
+
+# Critical-HP disengage (fall back instead of suicide-trading the duel)
+var _disengage_timer: float = 0.0
+var _disengage_dir: Vector3 = Vector3.ZERO
+var _disengage_check_cd: float = 0.0
+
+# Team economy: freezetime weapon-share gift pickup task
+var _share_checked: bool = false
+var _pending_share_drop: DroppedWeapon = null
+
 
 func _ready() -> void:
 	is_human = false
@@ -144,6 +158,13 @@ func spawn_for_round(pos: Vector3, yaw_rad: float, reset_weapons: bool) -> void:
 	_grenade_cooldown = randf_range(3.0, 9.0)
 	_last_pos = global_position
 	_think_timer = randf_range(0.08, 0.35)
+	_bomb_escape_active = false
+	_bomb_flee_node = -1
+	_bomb_flee_min_dist = 0.0
+	_disengage_timer = 0.0
+	_disengage_check_cd = randf_range(0.5, 1.2)
+	_share_checked = false
+	_pending_share_drop = null
 
 
 func _release_camp_spot() -> void:
@@ -170,68 +191,125 @@ func _perform_bot_buy() -> void:
 	if is_vip or not can_use_buy_menu():
 		return
 
-	# CT buys defusal kit on DE maps when affordable
-	if team == "CT" and RoundManager.map_mode == "de" and money >= 1200 and randf() < 0.80:
+	# --- Team economy survey: how many teammates are broke & how many snipers already deployed? ---
+	var team_mates: Array[CSActor] = []
+	var team_broke: int = 0
+	var team_snipers: int = 0
+	for a in RoundManager.actors:
+		if not is_instance_valid(a) or a == self:
+			continue
+		if String(a.get("team")) != team:
+			continue
+		var tm_a := a as CSActor
+		if tm_a == null or not is_instance_valid(tm_a) or tm_a.is_vip:
+			continue
+		team_mates.append(tm_a)
+		if tm_a.money < 1600:
+			team_broke += 1
+		var tm_p := String(tm_a.weapon_ctrl.slots.get(1, ""))
+		if tm_p in ["awp", "g3sg1", "sg550", "scout"]:
+			team_snipers += 1
+
+	var has_primary: bool = not String(weapon_ctrl.slots.get(1, "")).is_empty()
+	var force_full_save: bool = money < 1500
+
+	# CT defusal kit on DE maps when affordable (huge round-win value; reserve the $200 first!)
+	var kit_cost: int = 0
+	if team == "CT" and RoundManager.map_mode == "de" and not has_defuser and money >= 1200:
+		kit_cost = 200
+
+	# Plan the armor budget AFTER the primary so Kevlar never eats the rifle fund!
+	var armor_budget: int = 0
+	if armor < 100 and not force_full_save:
+		if money - kit_cost >= 3300:
+			armor_budget = 1000  # kevlar + helmet
+		elif money - kit_cost >= 2100:
+			armor_budget = 650  # kevlar vest only
+
+	if kit_cost > 0:
 		buy_equipment("defuser")
 
-	# Armor priority
-	if money >= 3700:
-		buy_equipment("kevlar_helmet")
-	elif money >= 1850:
-		buy_equipment("kevlar")
-
-	# Personality-driven weapon purchase (YaPB buying.cpp)
-	if String(weapon_ctrl.slots.get(1, "")).is_empty():
+	# Personality-driven primary purchase with eco-round & sniper-scarcity awareness (YaPB buying.cpp)
+	if not has_primary:
+		var want_sniper: bool = ((personality == PERSONALITY_CAREFUL and randf() < 0.55) or randf() < 0.16) and team_snipers < 2
+		var buy_budget: int = money - armor_budget - kit_cost
 		var choices: Array[String] = []
-		var want_sniper: bool = (personality == PERSONALITY_CAREFUL and randf() < 0.55) or randf() < 0.16
-		if team == "T":
-			if money >= 4750 and want_sniper:
-				choices.assign(["awp"])
-			elif money >= 2750 and want_sniper and randf() < 0.45:
-				choices.assign(["scout", "ak47"])
-			elif money >= 2600:
-				if personality == PERSONALITY_RUSHER:
-					choices.assign(["ak47", "ak47", "sg552"])
-				else:
-					choices.assign(["ak47", "sg552"])
-			elif money >= 1500:
-				choices.assign(["mp5navy", "mac10", "ump45", "m3"])
-		else:
-			if money >= 4750 and want_sniper:
-				choices.assign(["awp"])
-			elif money >= 2750 and want_sniper and randf() < 0.40:
-				choices.assign(["scout", "m4a1"])
-			elif money >= 3150:
-				choices.assign(["m4a1", "aug"])
-			elif money >= 1500:
-				choices.assign(["mp5navy", "tmp", "ump45", "m3"])
+
+		# Pure eco: never buy a weapon under $1500 — the starting pistol survives, a rifle comes next round
+		if money < 1500:
+			force_full_save = true
+		elif (
+			money < 2500
+			and team_broke >= maxi(1, team_mates.size() - 1)
+			and personality != PERSONALITY_RUSHER
+			and randf() < 0.55
+		):
+			# The whole team is broke and a rifle is one saved round away — keep the wallet closed!
+			force_full_save = true
+
+		if not force_full_save:
+			if team == "T":
+				if buy_budget >= 4750 and want_sniper:
+					choices.assign(["awp"])
+				elif buy_budget >= 2750 and want_sniper and randf() < 0.45:
+					choices.assign(["scout", "ak47"])
+				elif buy_budget >= 2600:
+					if personality == PERSONALITY_RUSHER:
+						choices.assign(["ak47", "ak47", "sg552"])
+					else:
+						choices.assign(["ak47", "sg552"])
+				elif buy_budget >= 1500:
+					choices.assign(["mp5navy", "mac10", "ump45", "m3"])
+			else:
+				if buy_budget >= 4750 and want_sniper:
+					choices.assign(["awp"])
+				elif buy_budget >= 2750 and want_sniper and randf() < 0.40:
+					choices.assign(["scout", "m4a1"])
+				elif buy_budget >= 3150:
+					choices.assign(["m4a1", "aug"])
+				elif buy_budget >= 1500:
+					choices.assign(["mp5navy", "tmp", "ump45", "m3"])
 
 		for wid in choices:
 			if buy_weapon(wid):
 				break
 
-		# Sniper bots pair AWP/Scout with a Desert Eagle when rich!
-		var cur_p := String(weapon_ctrl.slots.get(1, ""))
-		if cur_p in ["awp", "scout"] and money >= 900 and randf() < 0.65:
-			buy_weapon("deagle")
-		elif cur_p == "m4a1" and randf() < 0.55:
-			weapon_ctrl.silenced_state["m4a1"] = true
+	# Armor top-up AFTER the weapon so the rifle is never starved by the vest!
+	# On a forced save, only survivors rebuy a vest — protecting a carried rifle is an investment!
+	if armor < 100 and (not force_full_save or has_primary):
+		if money >= 1000:
+			buy_equipment("kevlar_helmet")
+		elif money >= 650:
+			buy_equipment("kevlar")
+
+	# Sniper bots pair AWP/Scout with a Desert Eagle when rich!
+	var cur_p := String(weapon_ctrl.slots.get(1, ""))
+	if cur_p in ["awp", "scout"] and money >= 900 and randf() < 0.65:
+		buy_weapon("deagle")
+	elif cur_p == "m4a1" and randf() < 0.55:
+		weapon_ctrl.silenced_state["m4a1"] = true
 
 	buy_ammo_for_slot(1, true)
 	buy_ammo_for_slot(2, true)
 
-	if money >= 550 and randf() < 0.58:
-		buy_weapon("hegrenade")
-	if money >= 450 and randf() < 0.36:
-		buy_weapon("smokegrenade")
-	if money >= 350 and randf() < 0.40:
-		buy_weapon("flashbang")
+	# Grenades only when not on a forced save (nades are a luxury on eco rounds)
+	if not force_full_save:
+		if money >= 550 and randf() < 0.58:
+			buy_weapon("hegrenade")
+		if money >= 450 and randf() < 0.36:
+			buy_weapon("smokegrenade")
+		if money >= 350 and randf() < 0.40:
+			buy_weapon("flashbang")
 
 
 func _physics_process(delta: float) -> void:
 	bot_ladder_dir = 0.0
 	if not is_alive:
 		return
+
+	if not _share_checked and RoundManager.state == RoundManager.State.FREEZE:
+		_share_checked = true
+		_maybe_share_loadout()
 
 	if not _bought_this_round and RoundManager.can_buy_now():
 		_perform_bot_buy()
@@ -262,7 +340,23 @@ func _physics_process(delta: float) -> void:
 		_grenade_cooldown = maxf(0.0, _grenade_cooldown - delta)
 	if _air_crouch_timer > 0.0:
 		_air_crouch_timer = maxf(0.0, _air_crouch_timer - delta)
+	if _disengage_check_cd > 0.0:
+		_disengage_check_cd = maxf(0.0, _disengage_check_cd - delta)
 	_last_enemy_seen_age += delta
+
+	# Priority 0.5: FLEE the C4 blast zone with the knife out — equipment preservation!
+	if _bomb_escape_active:
+		if _defusing_ref != null:
+			if is_instance_valid(_defusing_ref):
+				_defusing_ref.cancel_defuse(self)
+			_defusing_ref = null
+		target_enemy = null
+		_knife_rush_timer = 0.0
+		_stealth_walk_timer = 0.0
+		if not weapon_ctrl.is_reloading and weapon_ctrl.current_weapon_id != "knife":
+			weapon_ctrl.equip_slot(3)
+		_follow_navigation_path(delta)
+		return
 
 	# Reload safely when out of combat
 	var cr := weapon_ctrl.get_clip_and_reserve()
@@ -303,6 +397,19 @@ func _physics_process(delta: float) -> void:
 				apply_goldsrc_movement(Vector3.ZERO, false, true, false, delta)
 				weapon_ctrl.trigger_primary(true, delta)
 				return
+
+	# Priority 2.5: Critical-HP tactical disengage — break contact & fall back to save the loadout!
+	if _disengage_timer > 0.0:
+		_disengage_timer -= delta
+		var dis_dir := _blend_move_dir(_smoothed_move_dir, _disengage_dir, delta)
+		_smoothed_move_dir = dis_dir
+		_look_smoothly_toward(global_position + _disengage_dir * 9.0 + Vector3(0.0, 1.3, 0.0), delta * 5.5)
+		if weapon_ctrl.current_weapon_id in ["knife", "c4", "hegrenade", "flashbang", "smokegrenade"]:
+			if not weapon_ctrl.equip_slot(1):
+				weapon_ctrl.equip_slot(2)
+		apply_goldsrc_movement(dis_dir, false, false, false, delta)
+		_last_pos = global_position
+		return
 
 	# Priority 3: Engage Visible Enemy (YaPB TaskId::Attack)!
 	if is_instance_valid(target_enemy) and target_enemy.is_alive:
@@ -384,6 +491,10 @@ func _execute_camp_behavior(delta: float) -> void:
 
 
 func _scan_for_enemies() -> void:
+	# While fleeing the blast or disengaging at critical HP, no new duel commitments!
+	if _bomb_escape_active or _disengage_timer > 0.0:
+		target_enemy = null
+		return
 	if is_instance_valid(target_enemy) and target_enemy.is_alive and _can_see_actor(target_enemy):
 		return
 	target_enemy = null
@@ -432,6 +543,27 @@ func _can_see_actor(other: Node3D) -> bool:
 
 func _engage_enemy(delta: float) -> void:
 	var dist := global_position.distance_to(target_enemy.global_position)
+
+	# Critical HP vs a live enemy at range: sometimes break contact instead of suicide-trading!
+	if (
+		health <= 26
+		and personality != PERSONALITY_RUSHER
+		and dist > 8.5
+		and _disengage_timer <= 0.0
+		and _disengage_check_cd <= 0.0
+	):
+		_disengage_check_cd = randf_range(0.55, 1.15)
+		if randf() < 0.34:
+			var away := global_position - target_enemy.global_position
+			away.y = 0.0
+			if away.length_squared() < 0.01:
+				away = -get_look_forward()
+			_disengage_dir = _steer_around_obstacles(away.normalized())
+			_disengage_timer = randf_range(1.5, 2.6)
+			_last_enemy_pos = target_enemy.global_position
+			_last_enemy_seen_age = 0.0
+			target_enemy = null
+			return
 
 	# Tactical Smoke / HE grenade toss at medium-long range
 	if _grenade_cooldown <= 0.0 and dist > 12.5 and dist < 25.0 and health > 50 and randf() < 0.025:
@@ -567,6 +699,13 @@ func _pick_path_mode() -> int:
 
 
 func _update_tactical_objective() -> void:
+	_update_bomb_escape_state()
+
+	# Priority 0: sprint outside the C4 lethal ring — saving the loadout beats a lost round!
+	if _bomb_escape_active:
+		_update_bomb_flee_path()
+		return
+
 	# Never overwrite or cancel an active open-corridor escape maneuver!
 	if _escape_timer > 0.0:
 		return
@@ -592,6 +731,20 @@ func _update_tactical_objective() -> void:
 		if global_position.distance_to(_follow_target.global_position) > 3.8:
 			_plan_to_world_pos(nav, _follow_target.global_position, false)
 		return
+
+	# Weapon-share pickup task: fetch a teammate's gifted primary before rolling out!
+	if is_instance_valid(_pending_share_drop):
+		var gift_pos: Vector3 = _pending_share_drop.global_position
+		if global_position.distance_to(gift_pos) <= 1.65:
+			var gift_take := _pending_share_drop
+			_pending_share_drop = null
+			try_pickup_dropped(gift_take)
+		else:
+			if _node_path.is_empty() or not _has_goal or _goal_pos.distance_to(gift_pos) > 1.4:
+				_plan_to_world_pos(nav, gift_pos, false, BotNavigator.PATH_FAST)
+			return
+	elif _pending_share_drop != null:
+		_pending_share_drop = null
 
 	if _hold_pos_timer > 0.0 or _camp_timer > 0.0:
 		return
@@ -1262,3 +1415,167 @@ func notify_squad_contact(threat_pos: Vector3) -> void:
 	_sound_investigate_timer = maxf(_sound_investigate_timer, 2.8)
 	_last_enemy_pos = threat_pos
 	_last_enemy_seen_age = minf(_last_enemy_seen_age, 1.5)
+
+
+# --- C4 BLAST ESCAPE: HP-scaled survival ring around the planted bomb (dmg = 500 * (1 - d/54)^1.65) ---
+
+func _compute_blast_survive_ring() -> float:
+	var hp_f := clampf(float(health) / 500.0, 0.02, 0.85)
+	return clampf(54.0 * (1.0 - pow(hp_f, 1.0 / 1.65)) + 3.0, 26.0, 50.0)
+
+
+func _update_bomb_escape_state() -> void:
+	if not is_instance_valid(RoundManager.planted_c4):
+		_bomb_escape_active = false
+		_bomb_flee_node = -1
+		return
+	var c4 := RoundManager.planted_c4 as PlantedC4
+	if c4 == null:
+		_bomb_escape_active = false
+		_bomb_flee_node = -1
+		return
+
+	var t_left: float = c4.time_left
+	var d_bomb: float = global_position.distance_to(c4.global_position)
+	var was_active := _bomb_escape_active
+
+	if team == "CT":
+		# Decide honestly whether the defuse is still mathematically possible:
+		# travel (paths run ~1.35x straight-line at knife speed) + remaining defuse + margin
+		var defuse_t: float = 5.0 if has_defuser else 10.0
+		var margin: float = 0.9
+		if _defusing_ref == c4 and c4.defuser_actor == self:
+			# Already holding the keypad: only the REMAINING progress counts!
+			defuse_t = maxf(0.1, float(c4.defuse_required) - float(c4.defuse_progress))
+			margin = 0.15
+		var travel_est: float = d_bomb * 0.235 + 0.55
+		_bomb_escape_active = t_left <= travel_est + defuse_t + margin
+	else:
+		if was_active:
+			# Once committed to fleeing, finish the escape — never return to a ticking bomb post!
+			_bomb_escape_active = true
+		elif d_bomb >= _compute_blast_survive_ring() + 6.0:
+			# Already outside the lethal ring -> keep the guard post
+			_bomb_escape_active = false
+		else:
+			# Deterministic per-bot flee horizon (~9.5s rushers .. ~13s careful) — no threshold dithering
+			var flee_horizon: float = 9.5 + float(personality) * 1.7 + float(absi(get_instance_id() % 13)) * 0.11
+			_bomb_escape_active = t_left <= flee_horizon
+
+	if _bomb_escape_active and not was_active:
+		if is_instance_valid(RoundManager.game_world):
+			var nav_v: Variant = RoundManager.game_world.get("bot_navigator")
+			if is_instance_valid(nav_v):
+				_begin_bomb_escape(nav_v as BotNavigator)
+	elif not _bomb_escape_active and was_active:
+		_bomb_flee_node = -1
+
+
+func _begin_bomb_escape(nav: BotNavigator) -> void:
+	_bomb_escape_active = true
+	_bomb_flee_node = -1
+	_release_camp_spot()
+	_follow_target = null
+	_hold_pos_timer = 0.0
+	_camp_timer = 0.0
+	_sound_investigate_timer = 0.0
+	_disengage_timer = 0.0
+	_knife_rush_timer = 0.0
+	_stealth_walk_timer = 0.0
+	target_enemy = null
+	if is_instance_valid(RoundManager.planted_c4):
+		var c4p: Vector3 = RoundManager.planted_c4.global_position
+		_bomb_flee_min_dist = _compute_blast_survive_ring() + randf_range(4.0, 10.0)
+		_bomb_flee_node = nav.pick_flee_node(global_position, c4p, _bomb_flee_min_dist, team)
+	_has_goal = false
+	_node_path = PackedInt32Array()
+	_update_bomb_flee_path()
+
+
+func _update_bomb_flee_path() -> void:
+	if not is_instance_valid(RoundManager.game_world):
+		return
+	var nav: BotNavigator = RoundManager.game_world.get("bot_navigator")
+	if nav == null or nav.waypoints.is_empty():
+		return
+	if _bomb_flee_node < 0 or _bomb_flee_node >= nav.waypoints.size():
+		var c4p: Vector3 = global_position
+		if is_instance_valid(RoundManager.planted_c4):
+			c4p = RoundManager.planted_c4.global_position
+		_bomb_flee_node = nav.pick_flee_node(global_position, c4p, _bomb_flee_min_dist, team)
+		if _bomb_flee_node < 0:
+			return
+	if _node_path.is_empty() or not _has_goal or _goal_node_idx != _bomb_flee_node:
+		_plan_to_node(nav, _bomb_flee_node, false, BotNavigator.PATH_FAST)
+
+
+# --- TEAM ECONOMY: freezetime weapon sharing — a rich survivor gifts its primary to a broke teammate! ---
+
+func _maybe_share_loadout() -> void:
+	if is_vip or not is_alive or not RoundManager.can_buy_now():
+		return
+	if RoundManager.state != RoundManager.State.FREEZE:
+		return
+	var wid := String(weapon_ctrl.slots.get(1, ""))
+	if wid.is_empty() or not GameData.weapons.has(wid):
+		return
+	var spec: Dictionary = GameData.weapons[wid]
+	if bool(spec.get("grenade", false)):
+		return
+
+	# Only share when an equal-or-better rebuy PLUS full equipment is still affordable afterwards!
+	var own_price := int(spec.get("price", 0))
+	var equip_reserve: int = 1000  # kevlar + helmet
+	if team == "CT" and RoundManager.map_mode == "de" and not has_defuser:
+		equip_reserve += 200
+	equip_reserve += 500  # ammo top-up / grenade buffer
+	if money < own_price + equip_reserve:
+		return
+
+	# Find the most-broke teammate without a primary (bots & the human player alike)
+	var best_rec: CSActor = null
+	var best_money: int = 999999
+	var rec_thresh: int = maxi(1800, int(float(own_price) * 0.55))
+	for a in RoundManager.actors:
+		if not is_instance_valid(a) or a == self:
+			continue
+		if String(a.get("team")) != team:
+			continue
+		var rec := a as CSActor
+		if rec == null or not is_instance_valid(rec) or rec.is_vip:
+			continue
+		if not String(rec.weapon_ctrl.slots.get(1, "")).is_empty():
+			continue
+		if rec.money >= rec_thresh:
+			continue
+		if rec.has_meta("gift_round") and int(rec.get_meta("gift_round")) == RoundManager.round_number:
+			continue
+		if rec.money < best_money:
+			best_money = rec.money
+			best_rec = rec
+	if best_rec == null:
+		return
+
+	best_rec.set_meta("gift_round", RoundManager.round_number)
+	var clip_sz := int(spec.get("clip_size", 30))
+	var atype := String(spec.get("ammo_type", "none"))
+	var keep_reserve := int(weapon_ctrl.ammo_pool.get(atype, 0))
+	var drop_g := drop_weapon_gift(best_rec, wid, clip_sz, 0)
+
+	# Hand over the gun: donor keeps its reserve ammo & rebuys its own primary in _perform_bot_buy!
+	weapon_ctrl.slots[1] = ""
+	weapon_ctrl.clips.erase(wid)
+	weapon_ctrl.silenced_state.erase(wid)
+	if weapon_ctrl.current_weapon_id == wid:
+		if not weapon_ctrl.equip_slot(2):
+			weapon_ctrl.equip_slot(3)
+	weapon_ctrl.ammo_pool[atype] = keep_reserve
+
+	RoundManager.chat_radio_message.emit(actor_name, team, "(TEAM): Here, take this weapon!")
+	if best_rec.is_human:
+		RoundManager.center_message.emit("A teammate dropped a weapon for you!", 2.5)
+
+	# Bot recipient: assign the freezetime pickup task so it fetches the gift before rolling out
+	var rec_bot := best_rec as CSBot
+	if rec_bot != null and is_instance_valid(drop_g):
+		rec_bot._pending_share_drop = drop_g
