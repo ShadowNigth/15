@@ -664,9 +664,10 @@ func _fire_penetrating_ray(
 
 		# Layer 8 visual metal ladder / grate brush: spark & clank on metal rung, and let bullet pass through gaps!
 		if col is StaticBody3D and (col as StaticBody3D).collision_layer == 8:
-			var lmat := String((col as StaticBody3D).get_meta("surface_mat")) if (col as StaticBody3D).has_meta("surface_mat") else "L"
-			_spawn_surface_hit_fx(hit_pos, hit_nrm, dir, col, lmat, cal_scale)
-			exclude_rids.append((col as CollisionObject3D).get_rid())
+			var sb_col := col as StaticBody3D
+			var lmat := String(sb_col.get_meta("surface_mat")) if sb_col.has_meta("surface_mat") else "L"
+			_spawn_surface_hit_fx(hit_pos, hit_nrm, dir, sb_col, lmat, cal_scale)
+			exclude_rids.append(sb_col.get_rid())
 			cur_dmg *= 0.90
 			cur_from = hit_pos + dir * 0.06
 			rem_dist = max_dist - origin.distance_to(cur_from)

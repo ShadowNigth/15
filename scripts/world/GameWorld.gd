@@ -43,13 +43,13 @@ func _ready() -> void:
 	map_runtime = MapLoader.build_map(self, map_data)
 	doors = map_runtime.get("doors", [])
 	breakables = map_runtime.get("breakables", [])
-	ladders = map_runtime.get("ladders", [])
+	ladders.assign(map_runtime.get("ladders", []))
 	ladder_volumes = map_runtime.get("ladder_volumes", [])
 	trigger_zones = map_runtime.get("triggers", [])
-	bombsites = map_runtime.get("bombsites", [])
+	bombsites.assign(map_runtime.get("bombsites", []))
 	buyzones = map_runtime.get("buyzones", [])
-	rescue_zones = map_runtime.get("rescue_zones", [])
-	escape_zones = map_runtime.get("escape_zones", [])
+	rescue_zones.assign(map_runtime.get("rescue_zones", []))
+	escape_zones.assign(map_runtime.get("escape_zones", []))
 
 	# 2. Setup Bot A* Waypoint Graph
 	bot_navigator = BotNavigator.new()

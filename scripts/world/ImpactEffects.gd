@@ -201,7 +201,8 @@ static func spawn_surface_impact(
 			hole_sz = 0.165 * caliber_scale
 
 	var d_parent: Node3D = attach_parent if (attach_parent != null and is_instance_valid(attach_parent)) else world_root
-	_place_decal(d_parent, hit_pos + nrm * 0.008, nrm, _quad_decal, decal_mat, hole_sz / 0.11)
+	if mat_char not in ["L", "G"]:
+		_place_decal(d_parent, hit_pos + nrm * 0.008, nrm, _quad_decal, decal_mat, hole_sz / 0.11)
 
 	# 2. Authentic CS 1.5 animated wall_puff smoke sprite
 	if not _wall_puff_frames.is_empty():

@@ -6,17 +6,22 @@ extends RefCounted
 static func build_map(parent: Node3D, map_data: Dictionary) -> Dictionary:
 	ImpactEffects.clear_decals()
 
+	var ladders_typed: Array[AABB] = []
+	var bombsites_typed: Array[AABB] = []
+	var rescue_typed: Array[AABB] = []
+	var escape_typed: Array[AABB] = []
+
 	var result := {
 		"root": null,
 		"doors": [],
 		"breakables": [],
-		"ladders": [],
+		"ladders": ladders_typed,
 		"ladder_volumes": [],
 		"triggers": [],
-		"bombsites": [],
+		"bombsites": bombsites_typed,
 		"buyzones": [],
-		"rescue_zones": [],
-		"escape_zones": [],
+		"rescue_zones": rescue_typed,
+		"escape_zones": escape_typed,
 	}
 
 	var map_root := Node3D.new()
@@ -235,7 +240,7 @@ static func build_map(parent: Node3D, map_data: Dictionary) -> Dictionary:
 		var c_min: Vector3 = raw_l.position - Vector3(0.48, 0.16, 0.48)
 		var c_max: Vector3 = raw_l.end + Vector3(0.48, 0.56, 0.48)
 		var climb_box := AABB(c_min, c_max - c_min)
-		result["ladders"].append(climb_box)
+		ladders_typed.append(climb_box)
 		var thin_axis: Vector3 = Vector3(1, 0, 0) if raw_l.size.x <= raw_l.size.z else Vector3(0, 0, 1)
 		result["ladder_volumes"].append({
 			"raw_aabb": raw_l,
