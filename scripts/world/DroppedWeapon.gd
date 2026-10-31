@@ -198,6 +198,7 @@ func _physics_process(delta: float) -> void:
 		q_down.collision_mask = 1
 		var floor_hit := space.intersect_ray(q_down)
 		if not floor_hit.is_empty() and _vel.y <= 0.35:
+			var fnrm: Vector3 = floor_hit["normal"]
 			global_position.y = (floor_hit["position"] as Vector3).y + 0.03
 			if _vel.y < 0.0:
 				_vel.y = 0.0
@@ -205,16 +206,19 @@ func _physics_process(delta: float) -> void:
 			_vel.x *= h_drag
 			_vel.z *= h_drag
 			_ang_vel *= maxf(0.0, 1.0 - 9.0 * delta)
+			var local_n: Vector3 = Basis(Vector3.UP, -_visual_root.rotation.y) * fnrm if _visual_root else Vector3.UP
+			var target_rx: float = atan2(local_n.z, maxf(0.25, local_n.y))
+			var target_rz: float = asin(clampf(-local_n.x, -0.68, 0.68))
 			if _visual_root:
-				# Settle weapon flat onto floor while preserving its spun Y yaw!
-				_visual_root.rotation.x = lerpf(_visual_root.rotation.x, 0.0, minf(1.0, 12.0 * delta))
-				_visual_root.rotation.z = lerpf(_visual_root.rotation.z, 0.0, minf(1.0, 12.0 * delta))
+				# Settle weapon flush onto floor/ramp slope while preserving its spun Y yaw!
+				_visual_root.rotation.x = lerpf(_visual_root.rotation.x, target_rx, minf(1.0, 12.0 * delta))
+				_visual_root.rotation.z = lerpf(_visual_root.rotation.z, target_rz, minf(1.0, 12.0 * delta))
 			if _vel.length_squared() < 0.035 and _ang_vel.length_squared() < 0.08:
 				_vel = Vector3.ZERO
 				_ang_vel = Vector3.ZERO
 				if _visual_root:
-					_visual_root.rotation.x = 0.0
-					_visual_root.rotation.z = 0.0
+					_visual_root.rotation.x = target_rx
+					_visual_root.rotation.z = target_rz
 				_settled = true
 
 		if _visual_root and _ang_vel.length_squared() > 0.001:

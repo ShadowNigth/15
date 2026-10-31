@@ -28,7 +28,13 @@ var _bob_phase: float = 0.0
 var _sway_offset: Vector2 = Vector2.ZERO
 var _vm_kick_z: float = 0.0
 var _vm_kick_pitch: float = 0.0
+var _vm_kick_roll: float = 0.0
+var _vm_vert_lag: float = 0.0
+var _vm_draw_offset: float = 0.0
+var _dmg_punch: Vector3 = Vector3.ZERO
 var _land_dip: float = 0.0
+var _jump_buffer_timer: float = 0.0
+var _coyote_timer: float = 0.0
 var _was_on_floor: bool = true
 var _cur_vm_model_name: String = ""
 var _pending_vm_events: Array = []
@@ -105,8 +111,9 @@ func _ready() -> void:
 	_muzzle_sprite.layers = 4
 	_muzzle_sprite.texture = GameData.get_texture("res://assets/sprites/muzzleflash1.png")
 	_muzzle_sprite.billboard = BaseMaterial3D.BILLBOARD_ENABLED
+	_muzzle_sprite.shaded = false
 	_muzzle_sprite.pixel_size = 0.0028
-	_muzzle_sprite.modulate = Color(1.0, 0.88, 0.55, 0.92)
+	_muzzle_sprite.modulate = Color(1.0, 0.90, 0.56, 0.95)
 	_muzzle_sprite.position = Vector3(0.18, -0.11, -0.68)
 	_muzzle_sprite.visible = false
 	viewmodel_pivot.add_child(_muzzle_sprite)
@@ -136,12 +143,21 @@ func _ready() -> void:
 	weapon_ctrl.weapon_switched.connect(_on_weapon_switched)
 	weapon_ctrl.fired_shot.connect(_on_fired_shot)
 	weapon_ctrl.zoom_changed.connect(_on_zoom_changed)
+	damaged_from.connect(_on_player_damaged_from)
 
 
 func spawn_for_round(pos: Vector3, yaw_rad: float, reset_weapons: bool) -> void:
 	super.spawn_for_round(pos, yaw_rad, reset_weapons)
 	camera.top_level = false
 	_eye_height_cur = 1.66
+	_vm_kick_z = 0.0
+	_vm_kick_pitch = 0.0
+	_vm_kick_roll = 0.0
+	_vm_vert_lag = 0.0
+	_vm_draw_offset = 0.0
+	_dmg_punch = Vector3.ZERO
+	_jump_buffer_timer = 0.0
+	_coyote_timer = 0.0
 	camera.position = Vector3(0.0, 1.66, 0.0)
 	camera.rotation = Vector3(0.0, look_yaw, 0.0)
 	camera.current = true
@@ -275,32 +291,47 @@ func _process(delta: float) -> void:
 			sin(_shake_time * 2.3) * 0.045 * amt
 		)
 	var punch := weapon_ctrl.punch_angles
+	_dmg_punch = _dmg_punch.lerp(Vector3.ZERO, minf(1.0, 13.0 * delta))
 	camera.rotation = Vector3(
-		look_pitch + deg_to_rad(punch.x * 1.15) + shake_rot.x,
-		look_yaw + deg_to_rad(punch.y * 0.85) + shake_rot.y,
-		shake_rot.z
+		look_pitch + deg_to_rad(punch.x * 1.15) + shake_rot.x + _dmg_punch.x,
+		look_yaw + deg_to_rad(punch.y * 0.85) + shake_rot.y + _dmg_punch.y,
+		shake_rot.z + _dmg_punch.z
 	)
 	if _vm_camera:
 		_vm_camera.global_transform = camera.global_transform
 	if _vm_viewport and _vm_viewport.world_3d != get_world_3d():
 		_vm_viewport.world_3d = get_world_3d()
 
-	# Viewmodel bobbing, mouse sway, strafe tilt & recoil spring kickback at full render FPS
-	_sway_offset = _sway_offset.lerp(Vector2.ZERO, minf(1.0, 11.0 * delta))
+	# Viewmodel bobbing, mouse sway, airborne inertia, crouch cant, draw spring & recoil kickback at full render FPS
+	_sway_offset = _sway_offset.lerp(Vector2.ZERO, minf(1.0, 11.5 * delta))
 	_vm_kick_z = lerpf(_vm_kick_z, 0.0, minf(1.0, 18.0 * delta))
 	_vm_kick_pitch = lerpf(_vm_kick_pitch, 0.0, minf(1.0, 16.0 * delta))
+	_vm_kick_roll = lerpf(_vm_kick_roll, 0.0, minf(1.0, 15.0 * delta))
+	_vm_draw_offset = lerpf(_vm_draw_offset, 0.0, minf(1.0, 18.0 * delta))
+	var target_v_lag := clampf(-velocity.y * 0.0022, -0.016, 0.020)
+	_vm_vert_lag = lerpf(_vm_vert_lag, target_v_lag, minf(1.0, 12.0 * delta))
+
 	var hspd := Vector2(velocity.x, velocity.z).length()
 	if is_on_floor() and hspd > 0.4:
-		_bob_phase += delta * hspd * 1.65
+		_bob_phase += delta * hspd * 1.68
 	else:
 		_bob_phase += delta * 1.35
 	var move_fac := clampf(hspd / 7.0, 0.0, 1.0)
-	var bob_x := sin(_bob_phase) * (0.0082 * move_fac + 0.0007)
-	var bob_y := absf(cos(_bob_phase)) * (-0.0100 * move_fac) + sin(_bob_phase * 0.5) * 0.0008 - _land_dip * 0.65
-	var strafe_roll := -_last_in_x * deg_to_rad(1.15) * move_fac
+	var bob_x := sin(_bob_phase) * (0.0084 * move_fac + 0.0007)
+	var bob_y := absf(cos(_bob_phase)) * (-0.0102 * move_fac) + sin(_bob_phase * 0.5) * 0.0008 - _land_dip * 0.68 + _vm_vert_lag
+	var crouch_ofs := Vector3(-0.005, -0.007, 0.005) * _visual_crouch_t
+	var strafe_roll := -_last_in_x * deg_to_rad(1.25) * move_fac - _sway_offset.x * 1.2 + deg_to_rad(1.2) * _visual_crouch_t + _vm_kick_roll
 	viewmodel_holder.scale = Vector3.ONE
-	viewmodel_holder.position = Vector3(bob_x + _sway_offset.x, bob_y + _sway_offset.y, _vm_kick_z)
-	viewmodel_holder.rotation = Vector3(_vm_kick_pitch, -_sway_offset.x * 1.6, strafe_roll)
+	viewmodel_holder.position = Vector3(
+		bob_x + _sway_offset.x + crouch_ofs.x,
+		bob_y + _sway_offset.y + crouch_ofs.y - _vm_draw_offset * 0.065,
+		_vm_kick_z + crouch_ofs.z + _vm_draw_offset * 0.025
+	)
+	viewmodel_holder.rotation = Vector3(
+		_vm_kick_pitch - _vm_draw_offset * 0.22 + _sway_offset.y * 0.9,
+		-_sway_offset.x * 1.65,
+		strafe_roll
+	)
 	if _vm_container:
 		_vm_container.pivot_offset = _vm_container.size * 0.5
 		_vm_container.scale = Vector2(1.0 if GameData.right_hand else -1.0, 1.0)
@@ -310,6 +341,13 @@ func _process(delta: float) -> void:
 func _physics_process(delta: float) -> void:
 	if not is_alive:
 		return
+
+	if _jump_buffer_timer > 0.0:
+		_jump_buffer_timer = maxf(0.0, _jump_buffer_timer - delta)
+	if is_on_floor():
+		_coyote_timer = 0.085
+	elif _coyote_timer > 0.0:
+		_coyote_timer = maxf(0.0, _coyote_timer - delta)
 
 	var in_vec := Vector2.ZERO
 	if not ui_blocking_input:
@@ -321,17 +359,29 @@ func _physics_process(delta: float) -> void:
 	if wish_dir.length_squared() > 0.001:
 		wish_dir = wish_dir.normalized()
 
-	var want_jump := (not ui_blocking_input) and Input.is_action_just_pressed("jump")
+	if (not ui_blocking_input) and Input.is_action_just_pressed("jump"):
+		_jump_buffer_timer = 0.11
+	var want_jump := _jump_buffer_timer > 0.0 and (is_on_floor() or on_ladder)
 	var want_crouch := (not ui_blocking_input) and Input.is_action_pressed("crouch")
 	var want_walk := (not ui_blocking_input) and Input.is_action_pressed("walk")
+
+	# Ledge step-off coyote jump forgiveness (85ms grace after walking off a crate/ramp lip)
+	if _jump_buffer_timer > 0.0 and not is_on_floor() and not on_ladder and _coyote_timer > 0.0 and not RoundManager.is_movement_frozen():
+		velocity.y = JUMP_VEL_MPS * stamina_factor
+		stamina_factor = maxf(0.68, stamina_factor - 0.22)
+		_jump_buffer_timer = 0.0
+		_coyote_timer = 0.0
+	elif want_jump:
+		_jump_buffer_timer = 0.0
+		_coyote_timer = 0.0
 
 	var prev_vy := velocity.y
 	apply_goldsrc_movement(wish_dir, want_jump, want_crouch, want_walk, delta)
 	if is_on_floor() and not _was_on_floor and prev_vy < -3.0:
-		_land_dip = clampf(-prev_vy * 0.0042, 0.008, 0.038)
+		_land_dip = clampf(-prev_vy * 0.0044, 0.009, 0.042)
 	_was_on_floor = is_on_floor()
 
-	# Primary attack (just pressed or held)
+	# Primary & secondary attack (just pressed, held, or released)
 	if not ui_blocking_input:
 		if Input.is_action_just_pressed("attack1"):
 			weapon_ctrl.trigger_primary(false, delta)
@@ -339,6 +389,8 @@ func _physics_process(delta: float) -> void:
 			weapon_ctrl.trigger_primary(true, delta)
 		elif Input.is_action_just_released("attack1"):
 			weapon_ctrl.release_primary()
+		if Input.is_action_just_released("attack2"):
+			weapon_ctrl.release_secondary()
 
 		# Use key (E): Defuse C4, Lead Hostage, Open Door
 		_handle_use_interaction(delta)
@@ -387,7 +439,24 @@ func _handle_use_interaction(delta: float) -> void:
 func _on_weapon_switched(wid: String, _spec: Dictionary) -> void:
 	scoped_overlay_changed.emit(false)
 	camera.fov = GameData.fov
+	_vm_draw_offset = 1.0
 	_rebuild_viewmodel(wid)
+
+
+func _on_player_damaged_from(source_pos: Vector3, dmg_amount: int, directional: bool) -> void:
+	var mag: float = clampf(float(dmg_amount) / 34.0, 0.25, 1.45)
+	if directional:
+		var rel: Vector3 = source_pos - global_position
+		rel.y = 0.0
+		if rel.length_squared() > 0.001:
+			rel = rel.normalized()
+			var yb := Basis(Vector3.UP, look_yaw)
+			var f_dot: float = (-yb.z).dot(rel)
+			var r_dot: float = yb.x.dot(rel)
+			_dmg_punch.x = clampf(_dmg_punch.x + (-f_dot * 0.042 + 0.018) * mag, -0.09, 0.09)
+			_dmg_punch.z = clampf(_dmg_punch.z - r_dot * 0.048 * mag, -0.09, 0.09)
+			return
+	_dmg_punch.x = clampf(_dmg_punch.x + 0.035 * mag, -0.09, 0.09)
 
 
 func apply_camera_shake(intensity: float) -> void:
@@ -533,8 +602,9 @@ func _on_fired_shot(wid: String, silenced: bool) -> void:
 	var spec: Dictionary = GameData.weapons.get(wid, {})
 	var rem_clip := int(weapon_ctrl.clips.get(wid, 1))
 	var kick_scale := clampf(float(spec.get("recoil_up", 1.5)) / 3.5, 0.35, 1.35)
-	_vm_kick_z = clampf(_vm_kick_z + 0.016 * kick_scale, 0.0, 0.038)
-	_vm_kick_pitch = clampf(_vm_kick_pitch + deg_to_rad(1.8 * kick_scale), 0.0, deg_to_rad(4.8))
+	_vm_kick_z = clampf(_vm_kick_z + 0.017 * kick_scale, 0.0, 0.040)
+	_vm_kick_pitch = clampf(_vm_kick_pitch + deg_to_rad(1.95 * kick_scale), 0.0, deg_to_rad(5.2))
+	_vm_kick_roll = clampf(_vm_kick_roll + deg_to_rad(randf_range(-1.1, 1.1) * kick_scale), deg_to_rad(-2.8), deg_to_rad(2.8))
 
 	if wid == "elite":
 		_elite_muzzle_left = not _elite_muzzle_left
@@ -564,10 +634,20 @@ func _on_fired_shot(wid: String, silenced: bool) -> void:
 		else:
 			play_viewmodel_sequence(["shoot%d" % s_idx, "shoot1", "shoot", "shoot_2"])
 
-	if wid != "knife" and not bool(spec.get("grenade", false)) and wid != "c4" and not silenced:
-		_muzzle_sprite.visible = true
-		_muzzle_light.visible = true
-		_muzzle_timer = 0.045
+	if wid != "knife" and not bool(spec.get("grenade", false)) and wid != "c4":
+		var muz_x: float = -0.16 if _elite_muzzle_left else 0.18
+		var is_rifle_w: bool = int(spec.get("slot", 1)) == 1
+		if viewmodel_pivot != null:
+			ImpactEffects.spawn_barrel_smoke(viewmodel_pivot, Vector3(muz_x, -0.10, -0.66), is_rifle_w, 4, false)
+		if not silenced:
+			_muzzle_sprite.texture = GameData.get_texture("res://assets/sprites/muzzleflash%d.png" % randi_range(1, 4))
+			_muzzle_sprite.rotation.z = randf() * TAU
+			var mscale: float = clampf(0.86 + kick_scale * 0.28, 0.85, 1.38) * randf_range(0.92, 1.08)
+			_muzzle_sprite.scale = Vector3.ONE * mscale
+			_muzzle_sprite.visible = true
+			_muzzle_light.light_energy = 2.2 + kick_scale * 1.15
+			_muzzle_light.visible = true
+			_muzzle_timer = 0.045
 
 
 func _on_zoom_changed(fov_deg: float, scoped_overlay: bool) -> void:

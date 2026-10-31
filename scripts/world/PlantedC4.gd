@@ -10,6 +10,7 @@ var defuse_required: float = 10.0
 
 var _beep_timer: float = 1.0
 var _led_sprite: Sprite3D = null
+var _led_light: OmniLight3D = null
 var _led_flash_timer: float = 0.0
 var _exploded: bool = false
 var _defused: bool = false
@@ -21,17 +22,33 @@ func _ready() -> void:
 	if sc:
 		var inst := sc.instantiate()
 		for c in inst.find_children("*", "MeshInstance3D", true, false):
-			(c as MeshInstance3D).layers = 2
+			var mi := c as MeshInstance3D
+			mi.layers = 2
+			mi.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
+			if mi.mesh:
+				for s in range(mi.mesh.get_surface_count()):
+					var styled := GameData.get_styled_model_material(mi.mesh.surface_get_material(s), "char")
+					if styled:
+						mi.set_surface_override_material(s, styled)
 		add_child(inst)
 
 	_led_sprite = Sprite3D.new()
 	_led_sprite.texture = GameData.get_texture("res://assets/sprites/ledglow.png")
 	_led_sprite.billboard = BaseMaterial3D.BILLBOARD_ENABLED
-	_led_sprite.modulate = Color(1.0, 0.15, 0.1, 0.95)
-	_led_sprite.pixel_size = 0.006
+	_led_sprite.shaded = false
+	_led_sprite.modulate = Color(1.0, 0.14, 0.08, 0.96)
+	_led_sprite.pixel_size = 0.0062
 	_led_sprite.position = Vector3(0.0, 0.14, 0.0)
 	_led_sprite.visible = false
 	add_child(_led_sprite)
+
+	_led_light = OmniLight3D.new()
+	_led_light.light_color = Color(1.0, 0.12, 0.08)
+	_led_light.light_energy = 2.2
+	_led_light.omni_range = 4.6
+	_led_light.position = Vector3(0.0, 0.22, 0.0)
+	_led_light.visible = false
+	add_child(_led_light)
 
 	AudioManager.play_3d("weapons/c4_plant.wav", global_position, 2.0, 48.0, 1.0, 32.0, "T")
 
@@ -73,8 +90,11 @@ func _process(delta: float) -> void:
 
 	if _led_flash_timer > 0.0:
 		_led_flash_timer -= delta
-		if _led_flash_timer <= 0.0 and _led_sprite:
-			_led_sprite.visible = false
+		if _led_flash_timer <= 0.0:
+			if _led_sprite:
+				_led_sprite.visible = false
+			if _led_light:
+				_led_light.visible = false
 
 	time_left -= delta
 	if time_left <= 0.0:
@@ -89,7 +109,10 @@ func _process(delta: float) -> void:
 		_beep_timer = lerpf(1.45, 0.16, ratio * ratio)
 		if _led_sprite:
 			_led_sprite.visible = true
-			_led_flash_timer = 0.10
+		if _led_light:
+			_led_light.light_energy = lerpf(1.8, 3.4, ratio)
+			_led_light.visible = true
+		_led_flash_timer = 0.10
 
 
 func _detonate() -> void:
@@ -109,7 +132,7 @@ func _detonate() -> void:
 		if d < max_r and a_node.has_method("apply_explosion_damage"):
 			var dmg := 500.0 * pow(maxf(0.0, 1.0 - d / max_r), 1.65)
 			if dmg > 1.0:
-				a_node.call("apply_explosion_damage", null, dmg, "c4")
+				a_node.call("apply_explosion_damage", null, dmg, "c4", global_position)
 
 	RoundManager.notify_bomb_exploded()
 	queue_free()

@@ -145,12 +145,29 @@ func apply_world_explosion_physics(blast_pos: Vector3, blast_radius: float, weap
 	for sv in smoke_volumes:
 		if is_instance_valid(sv) and sv.has_method("apply_explosion_impulse"):
 			sv.call("apply_explosion_impulse", blast_pos, blast_radius, smoke_strength)
+	if is_instance_valid(game_world):
+		var brks: Array = game_world.get("breakables") if game_world.get("breakables") != null else []
+		for brk in brks:
+			if is_instance_valid(brk) and brk.has_method("apply_explosion_impulse"):
+				brk.call("apply_explosion_impulse", blast_pos, blast_radius * 0.92, 95.0 * smoke_strength)
+	for h in hostages:
+		if is_instance_valid(h) and h.has_method("notify_nearby_danger"):
+			h.call("notify_nearby_danger", blast_pos, blast_radius * 1.35)
 
 
 func apply_world_bullet_wake(seg_a: Vector3, seg_b: Vector3, strength: float = 1.0) -> void:
 	for sv in smoke_volumes:
 		if is_instance_valid(sv) and sv.has_method("apply_bullet_wake"):
 			sv.call("apply_bullet_wake", seg_a, seg_b, strength)
+	var ab: Vector3 = seg_b - seg_a
+	var len_sq: float = ab.length_squared()
+	if len_sq > 0.01:
+		for h in hostages:
+			if is_instance_valid(h) and h.has_method("notify_nearby_danger"):
+				var hp: Vector3 = (h as Node3D).global_position + Vector3(0.0, 1.0, 0.0)
+				var t: float = clampf((hp - seg_a).dot(ab) / len_sq, 0.0, 1.0)
+				if (seg_a + ab * t).distance_squared_to(hp) < 12.25:
+					h.call("notify_nearby_danger", seg_a, 6.0)
 
 
 func add_smoke_cloud(pos: Vector3, radius: float = 4.6, duration: float = 18.0) -> void:

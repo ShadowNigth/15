@@ -7,6 +7,7 @@ extends CharacterBody3D
 signal health_armor_changed(hp: int, armor: int, helmet: bool)
 signal money_changed(new_amount: int, delta_amount: int)
 signal actor_died(victim: CSActor, killer: Node3D)
+signal damaged_from(source_pos: Vector3, dmg_amount: int, directional: bool)
 
 # GoldSrc physics constants scaled by 1/32 (1u = 0.03125m)
 const GRAVITY_MPS2: float = 800.0 * (1.0 / 32.0)  # 25.0 m/s^2
@@ -76,6 +77,14 @@ var _upper_action_time: float = 0.0
 var _upper_aim_time: float = 0.0
 var _death_anim_key: String = ""
 var _death_anim_time: float = 0.0
+var _death_from_pos: Array[Vector3] = []
+var _death_from_rot: Array[Quaternion] = []
+var _corpse_vel: Vector3 = Vector3.ZERO
+var _corpse_settled: bool = true
+var _corpse_blood_spawned: bool = false
+var _tp_recoil_pitch: float = 0.0
+var _tp_flinch_angles: Vector2 = Vector2.ZERO
+var _pain_sound_cd: float = 0.0
 var _last_hitgroup: int = 2
 
 # Sub-tick render interpolation & GoldSrc stair/crouch visual smoothing
@@ -165,11 +174,12 @@ func _rebuild_character_model() -> void:
 
 				_tp_muzzle_sprite = Sprite3D.new()
 				_tp_muzzle_sprite.layers = 2
-				_tp_muzzle_sprite.texture = GameData.get_texture("res://assets/sprites/muzzleflash1.png")
+				var mtex := GameData.get_texture("res://assets/sprites/muzzleflash1.png")
+				_tp_muzzle_sprite.texture = mtex
 				_tp_muzzle_sprite.billboard = BaseMaterial3D.BILLBOARD_ENABLED
 				_tp_muzzle_sprite.shaded = false
 				_tp_muzzle_sprite.pixel_size = 0.0048
-				_tp_muzzle_sprite.modulate = Color(1.0, 0.88, 0.52, 0.95)
+				_tp_muzzle_sprite.modulate = Color(1.0, 0.90, 0.56, 0.96)
 				_tp_muzzle_sprite.position = Vector3(-0.04, 0.06, -0.58)
 				_tp_muzzle_sprite.visible = false
 				_hand_attachment.add_child(_tp_muzzle_sprite)
@@ -270,12 +280,23 @@ func trigger_upper_body_action(action_kind: String) -> void:
 			if _anim_res_map.has(key):
 				_upper_action_key = key
 				_upper_action_time = 0.0
+			var wspec: Dictionary = GameData.weapons.get(wid, {})
+			var rec_u: float = float(wspec.get("recoil_up", 1.5))
+			_tp_recoil_pitch = clampf(_tp_recoil_pitch + deg_to_rad(1.4 + rec_u * 1.15), 0.0, deg_to_rad(9.5))
 			if _tp_muzzle_sprite and wid not in ["knife", "hegrenade", "flashbang", "smokegrenade", "c4"]:
 				var is_sil := weapon_ctrl != null and bool(weapon_ctrl.silenced_state.get(wid, false))
+				var is_rifle_w: bool = int(wspec.get("slot", 1)) == 1
+				if not is_human and is_instance_valid(RoundManager.game_world):
+					var mpos: Vector3 = _tp_muzzle_sprite.global_position
+					ImpactEffects.spawn_barrel_smoke(RoundManager.game_world, mpos, is_rifle_w, 2, true)
 				if not is_sil:
 					_tp_muzzle_sprite.texture = GameData.get_texture("res://assets/sprites/muzzleflash%d.png" % randi_range(1, 4))
+					_tp_muzzle_sprite.rotation.z = randf() * TAU
+					var mscale: float = clampf(0.82 + rec_u * 0.14, 0.80, 1.35) * randf_range(0.92, 1.10)
+					_tp_muzzle_sprite.scale = Vector3.ONE * mscale
 					_tp_muzzle_sprite.visible = true
 					if _tp_muzzle_light:
+						_tp_muzzle_light.light_energy = 1.65 + rec_u * 0.25
 						_tp_muzzle_light.visible = true
 					_tp_muzzle_timer = 0.048
 		"reload":
@@ -286,11 +307,11 @@ func trigger_upper_body_action(action_kind: String) -> void:
 				_upper_action_key = rkey
 				_upper_action_time = 0.0
 		"flinch_head":
-			if _upper_action_key.is_empty() and _anim_res_map.has("head_flinch"):
+			if (_upper_action_key.is_empty() or "flinch" in _upper_action_key) and _anim_res_map.has("head_flinch"):
 				_upper_action_key = "head_flinch"
 				_upper_action_time = 0.0
 		"flinch_gut":
-			if _upper_action_key.is_empty() and _anim_res_map.has("gut_flinch"):
+			if (_upper_action_key.is_empty() or "flinch" in _upper_action_key) and _anim_res_map.has("gut_flinch"):
 				_upper_action_key = "gut_flinch"
 				_upper_action_time = 0.0
 
@@ -334,8 +355,14 @@ func get_visual_world_pos() -> Vector3:
 
 
 func _process(delta: float) -> void:
+	if _pain_sound_cd > 0.0:
+		_pain_sound_cd = maxf(0.0, _pain_sound_cd - delta)
 	_step_smooth_y = lerpf(_step_smooth_y, 0.0, minf(1.0, 22.0 * delta))
 	_visual_crouch_t = lerpf(_visual_crouch_t, 1.0 if is_crouching else 0.0, minf(1.0, 16.0 * delta))
+	_tp_recoil_pitch = lerpf(_tp_recoil_pitch, 0.0, minf(1.0, 18.0 * delta))
+	_tp_flinch_angles = _tp_flinch_angles.lerp(Vector2.ZERO, minf(1.0, 14.0 * delta))
+	if not is_alive and not _corpse_settled:
+		_tick_corpse_grounding(delta)
 	if _tp_muzzle_timer > 0.0:
 		_tp_muzzle_timer -= delta
 		if _tp_muzzle_timer <= 0.0:
@@ -347,16 +374,70 @@ func _process(delta: float) -> void:
 		_evaluate_character_pose(delta)
 
 
+func _tick_corpse_grounding(delta: float) -> void:
+	var w3d := get_world_3d()
+	if w3d == null or w3d.direct_space_state == null:
+		_corpse_settled = true
+		return
+	var space := w3d.direct_space_state
+	_corpse_vel.y -= GRAVITY_MPS2 * delta
+	var cur := global_position
+	var step := _corpse_vel * delta
+	if step.length_squared() > 0.00001:
+		var q_move := PhysicsRayQueryParameters3D.create(cur + Vector3(0.0, 0.45, 0.0), cur + Vector3(0.0, 0.45, 0.0) + step)
+		q_move.collision_mask = 1
+		var h_move := space.intersect_ray(q_move)
+		if not h_move.is_empty():
+			var nrm: Vector3 = h_move["normal"]
+			if nrm.y < 0.55:
+				_corpse_vel.x = 0.0
+				_corpse_vel.z = 0.0
+			else:
+				global_position = (h_move["position"] as Vector3) - Vector3(0.0, 0.42, 0.0)
+		else:
+			global_position = cur + step
+
+	var q_flr := PhysicsRayQueryParameters3D.create(global_position + Vector3(0.0, 0.65, 0.0), global_position - Vector3(0.0, 0.14, 0.0))
+	q_flr.collision_mask = 1
+	var h_flr := space.intersect_ray(q_flr)
+	if not h_flr.is_empty() and _corpse_vel.y <= 0.25:
+		var fp: Vector3 = h_flr["position"]
+		var fn: Vector3 = h_flr["normal"]
+		global_position.y = fp.y + 0.02
+		_corpse_vel.y = 0.0
+		var drag: float = maxf(0.0, 1.0 - 9.5 * delta)
+		_corpse_vel.x *= drag
+		_corpse_vel.z *= drag
+		if not _corpse_blood_spawned and is_instance_valid(RoundManager.game_world):
+			_corpse_blood_spawned = true
+			ImpactEffects.spawn_death_blood_pool(RoundManager.game_world, fp, fn)
+		if _corpse_vel.length_squared() < 0.02:
+			_corpse_vel = Vector3.ZERO
+			_corpse_settled = true
+	_prev_phys_pos = global_position
+
+
 func _evaluate_character_pose(delta: float) -> void:
 	if _skel == null or _anim_res_map.is_empty():
 		return
 
 	if not is_alive:
-		_body_root.position = Vector3(0.0, MODEL_STAND_OFFSET_Y, 0.0)
+		var death_base_y: float = MODEL_CROUCH_OFFSET_Y if _death_anim_key == "crouch_die" else MODEL_STAND_OFFSET_Y
+		_body_root.position.y = lerpf(_body_root.position.y, death_base_y, minf(1.0, 16.0 * delta))
+		_body_root.position.x = 0.0
+		_body_root.position.z = 0.0
 		if not _death_anim_key.is_empty() and _anim_res_map.has(_death_anim_key):
 			var d_anim: Animation = _anim_res_map[_death_anim_key]
 			_death_anim_time = minf(d_anim.length, _death_anim_time + delta)
-			_apply_anim_layer(_death_anim_key, _death_anim_time, 2)
+			var cross_w: float = clampf(_death_anim_time / 0.10, 0.0, 1.0)
+			if cross_w < 0.999 and _death_from_pos.size() == _skel.get_bone_count():
+				var nb: int = _skel.get_bone_count()
+				for bi in range(nb):
+					_skel.set_bone_pose_position(bi, _death_from_pos[bi])
+					_skel.set_bone_pose_rotation(bi, _death_from_rot[bi])
+				_apply_anim_layer(_death_anim_key, _death_anim_time, 2, cross_w)
+			else:
+				_apply_anim_layer(_death_anim_key, _death_anim_time, 2, 1.0)
 		return
 
 	var sub_ofs: Vector3 = get_visual_world_pos() - global_position
@@ -420,7 +501,7 @@ func _evaluate_character_pose(delta: float) -> void:
 		_gait_time = norm_phase * new_anim.length if (new_anim != null and norm_phase > 0.0) else 0.0
 
 	if _gait_blend_alpha < 1.0:
-		_gait_blend_alpha = minf(1.0, _gait_blend_alpha + delta * 8.0)
+		_gait_blend_alpha = minf(1.0, _gait_blend_alpha + delta * 8.5)
 		var p_anim: Animation = _anim_res_map.get(_prev_gait_key, null)
 		if p_anim != null:
 			_prev_gait_time = fposmod(_prev_gait_time + delta * rate, maxf(0.05, p_anim.length))
@@ -435,14 +516,26 @@ func _evaluate_character_pose(delta: float) -> void:
 			_gait_time = fposmod(_gait_time + delta * rate, g_len)
 		_apply_anim_layer(_cur_gait_key, _gait_time, 0, _gait_blend_alpha)
 
-	# 3. Select & advance upper-body weapon posture (ref_aim_* / crouch_aim_* or shoot/reload/flinch action!)
+	# 3. Smoothly blended upper-body weapon aim posture (stand <-> crouch) + crossfaded shoot/reload/flinch!
 	var wid := weapon_ctrl.current_weapon_id if weapon_ctrl else "usp"
 	var ext := _get_weapon_anim_ext(wid)
-	var aim_key := ("crouch_aim_" if is_crouching else "ref_aim_") + ext
-	if not _anim_res_map.has(aim_key):
-		aim_key = "crouch_aim_carbine" if is_crouching else "ref_aim_carbine"
+	var stand_aim_key := "ref_aim_" + ext
+	if not _anim_res_map.has(stand_aim_key):
+		stand_aim_key = "ref_aim_carbine"
+	var crouch_aim_key := "crouch_aim_" + ext
+	if not _anim_res_map.has(crouch_aim_key):
+		crouch_aim_key = "crouch_aim_carbine"
 
-	# Cancel upper reload clip immediately if WeaponController finished/interrupted reload
+	if _anim_res_map.has(stand_aim_key) and _visual_crouch_t < 0.995:
+		var sa_anim: Animation = _anim_res_map[stand_aim_key]
+		_upper_aim_time = fposmod(_upper_aim_time + delta, maxf(0.05, sa_anim.length))
+		_apply_anim_layer(stand_aim_key, _upper_aim_time, 1, 1.0)
+	if _anim_res_map.has(crouch_aim_key) and _visual_crouch_t > 0.005:
+		var ca_anim: Animation = _anim_res_map[crouch_aim_key]
+		var ca_t: float = fposmod(_upper_aim_time, maxf(0.05, ca_anim.length))
+		_apply_anim_layer(crouch_aim_key, ca_t, 1, _visual_crouch_t)
+
+	# Cancel upper reload clip smoothly if WeaponController finished/interrupted reload
 	if "reload" in _upper_action_key and weapon_ctrl != null and not weapon_ctrl.is_reloading:
 		_upper_action_key = ""
 
@@ -452,19 +545,18 @@ func _evaluate_character_pose(delta: float) -> void:
 		if _upper_action_time >= act_anim.length:
 			_upper_action_key = ""
 		else:
-			_apply_anim_layer(_upper_action_key, _upper_action_time, 1)
+			var w_in: float = clampf(_upper_action_time / 0.045, 0.0, 1.0)
+			var w_out: float = clampf((act_anim.length - _upper_action_time) / 0.14, 0.0, 1.0)
+			var act_w: float = minf(w_in, w_out)
+			_apply_anim_layer(_upper_action_key, _upper_action_time, 1, act_w)
 
-	if _upper_action_key.is_empty() and _anim_res_map.has(aim_key):
-		var a_anim: Animation = _anim_res_map[aim_key]
-		_upper_aim_time = fposmod(_upper_aim_time + delta, maxf(0.05, a_anim.length))
-		_apply_anim_layer(aim_key, _upper_aim_time, 1)
-
-	# 4. Counter-twist Bip01 Spine back to exact look_yaw & pitch torso/arms cleanly toward look_pitch!
+	# 4. Counter-twist Bip01 Spine back to exact look_yaw + pitch aim + procedural recoil & bullet hit-flinch!
 	if _pelvis_bone_idx >= 0 and _spine_bone_idx >= 0:
 		var yaw_diff := clampf(wrapf(look_yaw - _gait_yaw, -PI, PI), deg_to_rad(-62.0), deg_to_rad(62.0))
-		var pitch_aim := clampf(look_pitch * 0.68, deg_to_rad(-46.0), deg_to_rad(46.0))
+		var pitch_aim := clampf(look_pitch * 0.68 + _tp_recoil_pitch + _tp_flinch_angles.x, deg_to_rad(-52.0), deg_to_rad(52.0))
+		var roll_flinch := clampf(_tp_flinch_angles.y, deg_to_rad(-18.0), deg_to_rad(18.0))
 		var b_pelvis := _skel.get_bone_global_pose(_pelvis_bone_idx).basis
-		var r_twist := Basis.from_euler(Vector3(pitch_aim, yaw_diff, 0.0), EULER_ORDER_YXZ)
+		var r_twist := Basis.from_euler(Vector3(pitch_aim, yaw_diff, roll_flinch), EULER_ORDER_YXZ)
 		var q_spine := _skel.get_bone_pose_rotation(_spine_bone_idx)
 		var b_new := (b_pelvis.inverse() * r_twist * b_pelvis * Basis(q_spine)).orthonormalized()
 		_skel.set_bone_pose_rotation(_spine_bone_idx, b_new.get_rotation_quaternion())
@@ -556,6 +648,12 @@ func spawn_for_round(pos: Vector3, yaw_rad: float, reset_weapons: bool) -> void:
 	_prev_phys_pos = floor_pos
 	_step_smooth_y = 0.0
 	_visual_crouch_t = 0.0
+	_tp_recoil_pitch = 0.0
+	_tp_flinch_angles = Vector2.ZERO
+	_pain_sound_cd = 0.0
+	_corpse_vel = Vector3.ZERO
+	_corpse_settled = true
+	_corpse_blood_spawned = false
 	_gait_blend_alpha = 1.0
 	look_yaw = yaw_rad
 	look_pitch = 0.0
@@ -618,19 +716,36 @@ func _update_hull_height(crouch_want: bool) -> void:
 	if crouch_want == is_crouching:
 		return
 	if not crouch_want and is_crouching:
-		# Verify head clearance before standing up!
+		# Verify full capsule head clearance before standing up so shoulders never wedge under vents/tables!
+		var headroom: float = STAND_HEIGHT - CROUCH_HEIGHT + 0.04
+		if test_move(global_transform, Vector3(0.0, headroom, 0.0)):
+			return
 		var space := get_world_3d().direct_space_state
 		var q := PhysicsRayQueryParameters3D.create(
-			global_position + Vector3(0, CROUCH_HEIGHT, 0),
-			global_position + Vector3(0, STAND_HEIGHT + 0.05, 0)
+			global_position + Vector3(0.0, CROUCH_HEIGHT, 0.0),
+			global_position + Vector3(0.0, STAND_HEIGHT + 0.05, 0.0)
 		)
 		q.collision_mask = 1
 		if not space.intersect_ray(q).is_empty():
 			return
+
+	# Authentic GoldSrc PM_Duck mid-air leg tuck: pull feet upward onto crates/windowsills while keeping visual height seamless!
+	var air_tuck_lift: float = 0.0
+	if crouch_want and not is_crouching and not is_on_floor() and not on_ladder:
+		for cand in [0.40, 0.26, 0.14]:
+			var l_val: float = float(cand)
+			if not test_move(global_transform, Vector3(0.0, l_val, 0.0)):
+				air_tuck_lift = l_val
+				break
+
 	is_crouching = crouch_want
 	var h := CROUCH_HEIGHT if is_crouching else STAND_HEIGHT
 	_capsule.height = h
 	_col_shape.position.y = h * 0.5
+	if air_tuck_lift > 0.0:
+		global_position.y += air_tuck_lift
+		_prev_phys_pos.y += air_tuck_lift
+		_step_smooth_y = clampf(_step_smooth_y - air_tuck_lift, -0.68, 0.68)
 	if _body_root:
 		_body_root.position.y = MODEL_CROUCH_OFFSET_Y if is_crouching else MODEL_STAND_OFFSET_Y
 
@@ -770,8 +885,15 @@ func apply_goldsrc_movement(wish_dir_world: Vector3, want_jump: bool, want_crouc
 		velocity.y -= GRAVITY_MPS2 * delta
 
 	var prev_vy := velocity.y
+	var pre_move_y := global_position.y
 	var pre_step_vel := Vector3(velocity.x, 0.0, velocity.z)
 	move_and_slide()
+
+	# Smooth downward stair/curb drops so descending stairs glides just as cleanly as climbing!
+	if grounded and is_on_floor() and not want_jump:
+		var drop_dy := global_position.y - pre_move_y
+		if drop_dy < -0.04 and drop_dy > -0.58:
+			_step_smooth_y = clampf(_step_smooth_y - drop_dy, -0.62, 0.62)
 
 	# GoldSrc PM_StepMove: smoothly climb 90-degree BSP stairs, curbs & crate ledges (up to 18u = 0.54m)
 	if grounded and is_on_wall() and pre_step_vel.length_squared() > 0.02:
@@ -783,6 +905,7 @@ func apply_goldsrc_movement(wish_dir_world: Vector3, want_jump: bool, want_crouc
 			var fall_dmg := int((absf(prev_vy) - 18.0) * 11.0)
 			if fall_dmg > 0:
 				AudioManager.play_3d("player/pl_fallpain%d.wav" % randi_range(1, 3), global_position, 0.0, 22.0)
+				damaged_from.emit(global_position, fall_dmg, false)
 				_apply_raw_hp_loss(null, fall_dmg, "world", false)
 		elif prev_vy < -6.5 and not is_walking and not is_crouching:
 			AudioManager.play_3d("player/pl_jumpland2.wav", global_position, -5.0, 20.0, 1.0, 14.0, team)
@@ -911,17 +1034,42 @@ func take_bullet_damage(
 		var fwav := ("player/headshot%d.wav" % randi_range(1, 3)) if hitgroup == 1 else ("player/bhit_flesh-%d.wav" % randi_range(1, 3))
 		AudioManager.play_3d(fwav, hit_pos, 0.0, 26.0)
 
-	# CS 1.5 bullet tagging slowdown & hit flinch
+	# CS 1.5 bullet tagging slowdown, directional torso jolt & hit flinch
 	stamina_factor = clampf(stamina_factor - 0.28, 0.42, 1.0)
 	_last_hitgroup = hitgroup
 	trigger_upper_body_action("flinch_head" if hitgroup == 1 else "flinch_gut")
+
+	var src_pos: Vector3 = attacker.global_position if (is_instance_valid(attacker) and attacker != self) else hit_pos
+	var has_src: bool = is_instance_valid(attacker) and attacker != self
+	var jolt_scale: float = clampf(dmg / 32.0, 0.55, 1.65)
+	if has_src:
+		var incoming_dir: Vector3 = (global_position - src_pos)
+		incoming_dir.y = 0.0
+		if incoming_dir.length_squared() > 0.001:
+			incoming_dir = incoming_dir.normalized()
+			var yaw_b := Basis(Vector3.UP, look_yaw)
+			var f_dot: float = (-yaw_b.z).dot(incoming_dir)
+			var r_dot: float = yaw_b.x.dot(incoming_dir)
+			_tp_flinch_angles.x = clampf(_tp_flinch_angles.x + f_dot * deg_to_rad(9.5 * jolt_scale), deg_to_rad(-18.0), deg_to_rad(18.0))
+			_tp_flinch_angles.y = clampf(_tp_flinch_angles.y + r_dot * deg_to_rad(8.5 * jolt_scale), deg_to_rad(-16.0), deg_to_rad(16.0))
+			velocity += incoming_dir * clampf(dmg * 0.026, 0.35, 1.85)
+	else:
+		_tp_flinch_angles.x = clampf(_tp_flinch_angles.x + deg_to_rad(7.0), deg_to_rad(-18.0), deg_to_rad(18.0))
+
 	var final_hp_loss := maxi(1, int(dmg))
+	if _pain_sound_cd <= 0.0 and health - final_hp_loss > 0 and final_hp_loss >= 12:
+		_pain_sound_cd = 0.55
+		var pain_ids := [2, 4, 5, 6, 7]
+		var pid: int = pain_ids[randi() % pain_ids.size()]
+		AudioManager.play_3d("player/pl_pain%d.wav" % pid, global_position, -2.5, 22.0, randf_range(0.96, 1.05))
+
+	damaged_from.emit(src_pos, final_hp_loss, has_src)
 	_apply_raw_hp_loss(attacker, final_hp_loss, weapon_id, hitgroup == 1)
 	if is_alive:
 		_on_taken_damage_from(attacker, hit_pos)
 
 
-func apply_explosion_damage(attacker: Node3D, raw_dmg: float, weapon_id: String) -> void:
+func apply_explosion_damage(attacker: Node3D, raw_dmg: float, weapon_id: String, blast_origin: Vector3 = Vector3.INF) -> void:
 	if not is_alive:
 		return
 	var dmg := raw_dmg
@@ -929,9 +1077,29 @@ func apply_explosion_damage(attacker: Node3D, raw_dmg: float, weapon_id: String)
 		var absorbed := minf(float(armor), dmg * 0.35)
 		armor = maxi(0, armor - int(absorbed))
 		dmg -= absorbed
-	_apply_raw_hp_loss(attacker, maxi(1, int(dmg)), weapon_id, false)
+
+	var src_pt: Vector3 = blast_origin
+	if not src_pt.is_finite():
+		src_pt = attacker.global_position if is_instance_valid(attacker) else global_position
+	var away: Vector3 = (global_position + Vector3(0.0, 0.9, 0.0)) - src_pt
+	var push_scale: float = clampf(raw_dmg / 65.0, 0.25, 1.45)
+	if away.length_squared() > 0.001:
+		var away_dir: Vector3 = away.normalized()
+		velocity += Vector3(away_dir.x * 5.8 * push_scale, maxf(1.6, away_dir.y * 3.8) * push_scale, away_dir.z * 5.8 * push_scale)
+	stamina_factor = clampf(stamina_factor - 0.30 * push_scale, 0.42, 1.0)
+	trigger_upper_body_action("flinch_gut")
+
+	var loss_i := maxi(1, int(dmg))
+	if _pain_sound_cd <= 0.0 and health - loss_i > 0:
+		_pain_sound_cd = 0.55
+		var pain_ids := [2, 4, 5, 6, 7]
+		var pid: int = pain_ids[randi() % pain_ids.size()]
+		AudioManager.play_3d("player/pl_pain%d.wav" % pid, global_position, -1.5, 24.0)
+
+	damaged_from.emit(src_pt, loss_i, src_pt.distance_squared_to(global_position) > 0.04)
+	_apply_raw_hp_loss(attacker, loss_i, weapon_id, false)
 	if is_alive:
-		_on_taken_damage_from(attacker, global_position)
+		_on_taken_damage_from(attacker, src_pt)
 
 
 func _on_taken_damage_from(_attacker: Node3D, _hit_pos: Vector3) -> void:
@@ -972,9 +1140,21 @@ func _die(killer: Node3D, weapon_id: String, headshot: bool) -> void:
 			_hand_attachment.remove_child(c)
 			c.queue_free()
 
+	# Snapshot current live bone pose so death animation crossfades smoothly without popping!
+	_death_from_pos.clear()
+	_death_from_rot.clear()
+	if _skel != null:
+		var nb_snap: int = _skel.get_bone_count()
+		for bi in range(nb_snap):
+			_death_from_pos.append(_skel.get_bone_pose_position(bi))
+			_death_from_rot.append(_skel.get_bone_pose_rotation(bi))
+
+	_corpse_vel = Vector3(velocity.x * 0.55, minf(2.5, velocity.y), velocity.z * 0.55)
+	_corpse_settled = false
+	_corpse_blood_spawned = false
+
 	_body_root.visible = true
 	_body_root.rotation.y = look_yaw
-	_body_root.position.y = MODEL_STAND_OFFSET_Y
 	_death_anim_time = 0.0
 
 	if is_crouching and _anim_res_map.has("crouch_die"):

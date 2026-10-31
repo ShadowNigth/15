@@ -7,7 +7,6 @@ signal team_class_chosen(team_str: String, class_str: String)
 const AMBER := Color(1.0, 0.68, 0.12)
 
 var is_open: bool = false
-var _pending_team: String = ""
 var _title_lbl: Label = null
 var _list_vbox: VBoxContainer = null
 var _portrait: TextureRect = null
@@ -134,7 +133,6 @@ func _show_team_step() -> void:
 
 
 func _show_class_step(tm: String) -> void:
-	_pending_team = tm
 	_clear_list()
 	_title_lbl.text = "SELECT APPEARANCE (%s)" % tm
 	var clist: Array = GameData.classes.get(tm, [])

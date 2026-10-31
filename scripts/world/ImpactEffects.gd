@@ -1,14 +1,20 @@
 class_name ImpactEffects
 extends RefCounted
-## Authentic Counter-Strike 1.5 bullet tracers, surface bullet-hole decals,
-## animated GoldSrc wall_puff sprites, metal ricochet sparks/debris, and enemy blood bursts/splatters.
+## Authentic Counter-Strike 1.5 combat & world effects:
+##   - High-speed 3D crossed-fin bullet tracers & wallbang exit plumes
+##   - Material-specific persistent bullet-hole decals (concrete, dirt/sand, metal, wood, glass)
+##   - Multi-variant GoldSrc wall_puff1..4, fast_wallpuff1, rifle_smoke1..3, and pistol_smoke1..2 sprites
+##   - Real 3D ballistic brass shell casings with wall/floor/crate bounces & clink foley
+##   - Destructible func_breakable glass/wood/metal/stone shatter bursts & corpse blood pools
 
-const MAX_DECALS: int = 96
+const MAX_DECALS: int = 112
+const MAX_SHELLS: int = 36
 
 static var _initialized: bool = false
 static var _decal_ring: Array[Node3D] = []
 
 static var _mat_decal_conc: StandardMaterial3D
+static var _mat_decal_dirt: StandardMaterial3D
 static var _mat_decal_metal: StandardMaterial3D
 static var _mat_decal_wood: StandardMaterial3D
 static var _mat_decal_glass: StandardMaterial3D
@@ -16,8 +22,10 @@ static var _mat_decal_blood: StandardMaterial3D
 
 static var _mat_spark: StandardMaterial3D
 static var _mat_chip_conc: StandardMaterial3D
+static var _mat_chip_dirt: StandardMaterial3D
 static var _mat_chip_wood: StandardMaterial3D
 static var _mat_chip_glass: StandardMaterial3D
+static var _mat_chip_metal: StandardMaterial3D
 static var _mat_blood_drop: StandardMaterial3D
 static var _mat_blood_mist: StandardMaterial3D
 static var _mat_tracer: StandardMaterial3D
@@ -25,11 +33,166 @@ static var _mat_tracer: StandardMaterial3D
 static var _quad_decal: QuadMesh
 static var _quad_blood_decal: QuadMesh
 static var _quad_spark: QuadMesh
-static var _quad_chip: QuadMesh
 static var _quad_drop: QuadMesh
+static var _quad_shard_glass: QuadMesh
+static var _quad_splinter_wood: QuadMesh
 static var _mesh_tracer: ArrayMesh
 
-static var _wall_puff_frames: Array[Texture2D] = []
+static var _wall_puff_sets: Array = []   # Array of Array[Texture2D]
+static var _rifle_smoke_sets: Array = [] # Array of Array[Texture2D]
+static var _pistol_smoke_sets: Array = []
+
+
+class ShellRunner extends Node3D:
+	var _entries: Array = []
+
+	func clear_all() -> void:
+		for item in _entries:
+			var d := item as Dictionary
+			var nd: Node3D = d.get("node", null)
+			if is_instance_valid(nd):
+				if nd.get_parent() != null:
+					nd.get_parent().remove_child(nd)
+				nd.queue_free()
+		_entries.clear()
+
+	func add_shell(
+		shell_node: Node3D,
+		start_pos: Vector3,
+		init_vel: Vector3,
+		ang_vel: Vector3,
+		delay_sec: float
+	) -> void:
+		while _entries.size() >= MAX_SHELLS:
+			var oldest := _entries.pop_front() as Dictionary
+			var old_n: Node3D = oldest.get("node", null)
+			if is_instance_valid(old_n):
+				if old_n.get_parent() != null:
+					old_n.get_parent().remove_child(old_n)
+				old_n.queue_free()
+
+		add_child(shell_node)
+		shell_node.global_position = start_pos
+		shell_node.rotation = Vector3(randf() * TAU, randf() * TAU, randf() * TAU)
+		shell_node.visible = (delay_sec <= 0.0)
+		_entries.append({
+			"node": shell_node,
+			"vel": init_vel,
+			"ang": ang_vel,
+			"delay": delay_sec,
+			"life": 3.4,
+			"bounces": 0,
+			"settled": false,
+		})
+		set_physics_process(true)
+
+	func _physics_process(delta: float) -> void:
+		if _entries.is_empty():
+			set_physics_process(false)
+			return
+
+		var w3d := get_world_3d()
+		var space: PhysicsDirectSpaceState3D = w3d.direct_space_state if w3d != null else null
+		var idx: int = _entries.size() - 1
+		while idx >= 0:
+			var d := _entries[idx] as Dictionary
+			var nd: Node3D = d.get("node", null)
+			if not is_instance_valid(nd):
+				_entries.remove_at(idx)
+				idx -= 1
+				continue
+
+			var delay_t: float = float(d["delay"])
+			if delay_t > 0.0:
+				delay_t -= delta
+				d["delay"] = delay_t
+				if delay_t <= 0.0:
+					nd.visible = true
+				idx -= 1
+				continue
+
+			var life_t: float = float(d["life"]) - delta
+			d["life"] = life_t
+			if life_t <= 0.0:
+				if nd.get_parent() != null:
+					nd.get_parent().remove_child(nd)
+				nd.queue_free()
+				_entries.remove_at(idx)
+				idx -= 1
+				continue
+
+			if life_t < 0.35:
+				var shrink: float = clampf(life_t / 0.35, 0.05, 1.0)
+				nd.scale = Vector3.ONE * shrink
+
+			var settled: bool = bool(d["settled"])
+			if not settled and space != null:
+				var vel: Vector3 = d["vel"]
+				var ang: Vector3 = d["ang"]
+				vel.y -= 19.8 * delta
+				var cur_p: Vector3 = nd.global_position
+				var step_v: Vector3 = vel * delta
+				if step_v.length_squared() > 0.000004:
+					var q := PhysicsRayQueryParameters3D.create(cur_p, cur_p + step_v + step_v.normalized() * 0.03)
+					q.collision_mask = 1
+					var hit: Dictionary = space.intersect_ray(q)
+					if not hit.is_empty():
+						var nrm: Vector3 = hit["normal"]
+						var hpos: Vector3 = hit["position"]
+						var imp: float = absf(vel.dot(nrm))
+						nd.global_position = hpos + nrm * 0.018
+						if nrm.y > 0.62:
+							vel = vel.bounce(nrm)
+							vel.y *= 0.42
+							vel.x *= 0.68
+							vel.z *= 0.68
+							ang *= 0.56
+						else:
+							vel = vel.bounce(nrm) * 0.55
+							ang = -ang * 0.65
+
+						var bcnt: int = int(d["bounces"])
+						if imp > 1.05 and bcnt < 3:
+							d["bounces"] = bcnt + 1
+							var vol_db: float = lerpf(-13.5, -7.8, clampf(imp / 5.5, 0.0, 1.0))
+							AudioManager.play_3d(
+								"player/pl_shell%d.wav" % randi_range(1, 3),
+								nd.global_position,
+								vol_db,
+								13.5,
+								randf_range(0.94, 1.10)
+							)
+						if nrm.y > 0.70 and vel.length_squared() < 0.16:
+							vel = Vector3.ZERO
+							ang = Vector3.ZERO
+							nd.rotation.x = 0.0
+							nd.rotation.z = 0.0
+							d["settled"] = true
+					else:
+						nd.global_position = cur_p + step_v
+
+				if not bool(d["settled"]):
+					nd.rotation += ang * delta
+				d["vel"] = vel
+				d["ang"] = ang
+
+			idx -= 1
+
+
+static func _load_sprite_strip(prefix: String, max_frames: int = 8) -> Array[Texture2D]:
+	var arr: Array[Texture2D] = []
+	var base_p: String = "res://assets/sprites/%s.png" % prefix
+	if ResourceLoader.exists(base_p):
+		var t0 := load(base_p) as Texture2D
+		if t0 != null:
+			arr.append(t0)
+	for fi in range(1, max_frames + 1):
+		var fp: String = "res://assets/sprites/%s_%d.png" % [prefix, fi]
+		if ResourceLoader.exists(fp):
+			var tf := load(fp) as Texture2D
+			if tf != null:
+				arr.append(tf)
+	return arr
 
 
 static func ensure_init() -> void:
@@ -37,24 +200,26 @@ static func ensure_init() -> void:
 		return
 	_initialized = true
 
-	# Load authentic GoldSrc wall_puff1 sprite frames
-	for fi in range(12):
-		var p: String = "res://assets/sprites/wall_puff1_%d.png" % fi
-		if ResourceLoader.exists(p):
-			var tex := load(p) as Texture2D
-			if tex != null:
-				_wall_puff_frames.append(tex)
-	if _wall_puff_frames.is_empty():
-		var fb_p: String = "res://assets/sprites/wall_puff1.png"
-		if ResourceLoader.exists(fb_p):
-			var fb_t := load(fb_p) as Texture2D
-			if fb_t != null:
-				_wall_puff_frames.append(fb_t)
+	for wp in ["wall_puff1", "wall_puff2", "wall_puff3", "wall_puff4", "fast_wallpuff1"]:
+		var strip := _load_sprite_strip(wp, 8)
+		if not strip.is_empty():
+			_wall_puff_sets.append(strip)
+
+	for rs in ["rifle_smoke1", "rifle_smoke2", "rifle_smoke3"]:
+		var rstrip := _load_sprite_strip(rs, 8)
+		if not rstrip.is_empty():
+			_rifle_smoke_sets.append(rstrip)
+
+	for ps in ["pistol_smoke1", "pistol_smoke2"]:
+		var pstrip := _load_sprite_strip(ps, 8)
+		if not pstrip.is_empty():
+			_pistol_smoke_sets.append(pstrip)
 
 	_mat_decal_conc = _make_decal_mat(_build_bullet_hole_tex(0))
 	_mat_decal_metal = _make_decal_mat(_build_bullet_hole_tex(1))
 	_mat_decal_wood = _make_decal_mat(_build_bullet_hole_tex(2))
 	_mat_decal_glass = _make_decal_mat(_build_bullet_hole_tex(3))
+	_mat_decal_dirt = _make_decal_mat(_build_bullet_hole_tex(4))
 	_mat_decal_blood = _make_decal_mat(_build_blood_splatter_tex())
 
 	_quad_decal = QuadMesh.new()
@@ -73,16 +238,23 @@ static func ensure_init() -> void:
 	_mat_spark.albedo_texture = _build_soft_dot_tex(Color(1.0, 0.86, 0.45, 1.0), true)
 
 	_quad_spark = QuadMesh.new()
-	_quad_spark.size = Vector2(0.055, 0.055)
+	_quad_spark.size = Vector2(0.058, 0.058)
 	_quad_spark.material = _mat_spark
 
-	# Concrete / Wood / Glass chip materials
-	_mat_chip_conc = _make_particle_mat(Color(0.62, 0.60, 0.56, 0.95))
-	_mat_chip_wood = _make_particle_mat(Color(0.62, 0.44, 0.25, 0.95))
-	_mat_chip_glass = _make_particle_mat(Color(0.76, 0.92, 0.98, 0.85))
+	# Concrete / Dirt / Wood / Glass / Metal chip materials
+	_mat_chip_conc = _make_particle_mat(Color(0.62, 0.60, 0.56, 0.95), true)
+	_mat_chip_dirt = _make_particle_mat(Color(0.76, 0.66, 0.48, 0.92), true)
+	_mat_chip_wood = _make_particle_mat(Color(0.64, 0.45, 0.25, 0.96), false)
+	_mat_chip_glass = _make_particle_mat(Color(0.78, 0.94, 1.0, 0.86), false)
+	_mat_chip_metal = _make_particle_mat(Color(0.56, 0.60, 0.65, 0.96), false)
 
-	_quad_chip = QuadMesh.new()
-	_quad_chip.size = Vector2(0.036, 0.036)
+	_quad_shard_glass = QuadMesh.new()
+	_quad_shard_glass.size = Vector2(0.095, 0.065)
+	_quad_shard_glass.material = _mat_chip_glass
+
+	_quad_splinter_wood = QuadMesh.new()
+	_quad_splinter_wood.size = Vector2(0.135, 0.038)
+	_quad_splinter_wood.material = _mat_chip_wood
 
 	# Blood droplet & mist materials
 	_mat_blood_drop = StandardMaterial3D.new()
@@ -111,25 +283,23 @@ static func ensure_init() -> void:
 	_mat_tracer.transparency = BaseMaterial3D.TRANSPARENCY_ALPHA
 	_mat_tracer.blend_mode = BaseMaterial3D.BLEND_MODE_ADD
 	_mat_tracer.cull_mode = BaseMaterial3D.CULL_DISABLED
-	_mat_tracer.albedo_color = Color(1.0, 0.84, 0.42, 0.82)
+	_mat_tracer.albedo_color = Color(1.0, 0.86, 0.44, 0.85)
 
 	var st := SurfaceTool.new()
 	st.begin(Mesh.PRIMITIVE_TRIANGLES)
-	var hw: float = 0.014
-	# Horizontal fin along -Z
+	var hw: float = 0.015
 	st.add_vertex(Vector3(-hw, 0.0, 0.0))
 	st.add_vertex(Vector3(hw, 0.0, 0.0))
-	st.add_vertex(Vector3(hw * 0.4, 0.0, -1.0))
+	st.add_vertex(Vector3(hw * 0.35, 0.0, -1.0))
 	st.add_vertex(Vector3(-hw, 0.0, 0.0))
-	st.add_vertex(Vector3(hw * 0.4, 0.0, -1.0))
-	st.add_vertex(Vector3(-hw * 0.4, 0.0, -1.0))
-	# Vertical fin along -Z
+	st.add_vertex(Vector3(hw * 0.35, 0.0, -1.0))
+	st.add_vertex(Vector3(-hw * 0.35, 0.0, -1.0))
 	st.add_vertex(Vector3(0.0, -hw, 0.0))
 	st.add_vertex(Vector3(0.0, hw, 0.0))
-	st.add_vertex(Vector3(0.0, hw * 0.4, -1.0))
+	st.add_vertex(Vector3(0.0, hw * 0.35, -1.0))
 	st.add_vertex(Vector3(0.0, -hw, 0.0))
-	st.add_vertex(Vector3(0.0, hw * 0.4, -1.0))
-	st.add_vertex(Vector3(0.0, -hw * 0.4, -1.0))
+	st.add_vertex(Vector3(0.0, hw * 0.35, -1.0))
+	st.add_vertex(Vector3(0.0, -hw * 0.35, -1.0))
 	_mesh_tracer = st.commit()
 
 
@@ -140,6 +310,86 @@ static func clear_decals() -> void:
 				d.get_parent().remove_child(d)
 			d.queue_free()
 	_decal_ring.clear()
+	if is_instance_valid(RoundManager.game_world):
+		var sr := RoundManager.game_world.get_node_or_null("__ShellRunner") as ShellRunner
+		if sr != null:
+			sr.clear_all()
+
+
+static func spawn_physical_shell(
+	world_root: Node3D,
+	shell_mdl: String,
+	start_pos: Vector3,
+	eject_vel: Vector3,
+	delay_sec: float = 0.0
+) -> void:
+	if world_root == null or not is_instance_valid(world_root):
+		return
+	var sc := GameData.get_model_scene("weapons/" + shell_mdl)
+	if sc == null:
+		return
+	var sr := world_root.get_node_or_null("__ShellRunner") as ShellRunner
+	if sr == null:
+		sr = ShellRunner.new()
+		sr.name = "__ShellRunner"
+		world_root.add_child(sr)
+	var shell := sc.instantiate() as Node3D
+	for c in shell.find_children("*", "MeshInstance3D", true, false):
+		var mi := c as MeshInstance3D
+		mi.layers = 2
+		mi.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
+	var ang_v := Vector3(randf_range(-24.0, 24.0), randf_range(-28.0, 28.0), randf_range(-22.0, 22.0))
+	sr.add_shell(shell, start_pos, eject_vel, ang_v, delay_sec)
+
+
+static func spawn_barrel_smoke(
+	parent_node: Node3D,
+	local_pos: Vector3,
+	is_rifle: bool,
+	layer_mask: int = 4,
+	use_world_pos: bool = false
+) -> void:
+	if parent_node == null or not is_instance_valid(parent_node):
+		return
+	ensure_init()
+	var pool: Array = _rifle_smoke_sets if is_rifle else _pistol_smoke_sets
+	if pool.is_empty():
+		pool = _wall_puff_sets
+	if pool.is_empty():
+		return
+	var frames: Array = pool[randi() % pool.size()]
+	if frames.is_empty():
+		return
+
+	var sp := Sprite3D.new()
+	sp.layers = layer_mask
+	sp.texture = frames[0] as Texture2D
+	sp.billboard = BaseMaterial3D.BILLBOARD_ENABLED
+	sp.shaded = false
+	var base_px: float = (0.0021 if layer_mask == 4 else 0.0038) * (1.22 if is_rifle else 0.92)
+	sp.pixel_size = base_px
+	sp.modulate = Color(0.84, 0.85, 0.88, 0.42 if is_rifle else 0.34)
+	parent_node.add_child(sp)
+	if use_world_pos:
+		sp.global_position = local_pos
+	else:
+		sp.position = local_pos
+
+	var dur: float = 0.32 if is_rifle else 0.25
+	var drift := Vector3(randf_range(-0.025, 0.035), 0.14 if layer_mask == 4 else 0.28, -0.04 if layer_mask == 4 else 0.0)
+	var tw := parent_node.create_tween()
+	tw.set_parallel(true)
+	if use_world_pos:
+		tw.tween_property(sp, "global_position", local_pos + drift, dur).set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_OUT)
+	else:
+		tw.tween_property(sp, "position", local_pos + drift, dur).set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_OUT)
+	tw.tween_property(sp, "pixel_size", base_px * 2.15, dur)
+	tw.tween_property(sp, "modulate:a", 0.0, dur)
+	var fcnt: int = frames.size()
+	for fi in range(1, fcnt):
+		var tex_f: Texture2D = frames[fi] as Texture2D
+		tw.tween_callback(_set_sprite_tex.bind(sp, tex_f)).set_delay((dur * 0.92) * float(fi) / float(fcnt))
+	tw.chain().tween_callback(_safe_retire_node.bind(sp))
 
 
 static func spawn_bullet_tracer(world_root: Node3D, from_pos: Vector3, to_pos: Vector3, is_heavy: bool = false) -> void:
@@ -148,12 +398,12 @@ static func spawn_bullet_tracer(world_root: Node3D, from_pos: Vector3, to_pos: V
 	ensure_init()
 	var span: Vector3 = to_pos - from_pos
 	var total_len: float = span.length()
-	if total_len < 1.6:
+	if total_len < 1.5:
 		return
 	var dir: Vector3 = span / total_len
-	var bolt_len: float = clampf(total_len * 0.32, 1.4, 4.8) if not is_heavy else clampf(total_len * 0.48, 2.2, 7.5)
-	var start_p: Vector3 = from_pos + dir * 0.65
-	var end_p: Vector3 = to_pos - dir * minf(0.35, total_len * 0.15)
+	var bolt_len: float = clampf(total_len * 0.34, 1.5, 5.2) if not is_heavy else clampf(total_len * 0.50, 2.4, 8.0)
+	var start_p: Vector3 = from_pos + dir * 0.58
+	var end_p: Vector3 = to_pos - dir * minf(0.35, total_len * 0.14)
 
 	var mi := MeshInstance3D.new()
 	mi.mesh = _mesh_tracer
@@ -163,10 +413,10 @@ static func spawn_bullet_tracer(world_root: Node3D, from_pos: Vector3, to_pos: V
 	mi.global_position = start_p
 	var up_ref: Vector3 = Vector3.UP if absf(dir.dot(Vector3.UP)) < 0.96 else Vector3.RIGHT
 	mi.look_at(start_p + dir, up_ref)
-	var w_scale: float = 1.45 if is_heavy else 1.0
+	var w_scale: float = 1.50 if is_heavy else 1.0
 	mi.scale = Vector3(w_scale, w_scale, bolt_len)
 
-	var dur: float = clampf(total_len / 240.0, 0.028, 0.065)
+	var dur: float = clampf(total_len / 255.0, 0.026, 0.062)
 	var tw := world_root.create_tween()
 	tw.tween_property(mi, "global_position", end_p, dur)
 	tw.tween_callback(_safe_retire_node.bind(mi))
@@ -195,101 +445,242 @@ static func spawn_surface_impact(
 			hole_sz = 0.088 * caliber_scale
 		"W":
 			decal_mat = _mat_decal_wood
-			hole_sz = 0.108 * caliber_scale
+			hole_sz = 0.110 * caliber_scale
 		"Y":
 			decal_mat = _mat_decal_glass
-			hole_sz = 0.165 * caliber_scale
+			hole_sz = 0.170 * caliber_scale
+		"D":
+			decal_mat = _mat_decal_dirt
+			hole_sz = 0.125 * caliber_scale
 
 	var d_parent: Node3D = attach_parent if (attach_parent != null and is_instance_valid(attach_parent)) else world_root
 	if mat_char not in ["L", "G"]:
 		_place_decal(d_parent, hit_pos + nrm * 0.008, nrm, _quad_decal, decal_mat, hole_sz / 0.11)
 
-	# 2. Authentic CS 1.5 animated wall_puff smoke sprite
-	if not _wall_puff_frames.is_empty():
+	# 2. Authentic CS 1.5 multi-variant animated wall_puff / sand plume
+	if not _wall_puff_sets.is_empty():
+		var pframes: Array = _wall_puff_sets[randi() % _wall_puff_sets.size()]
 		var puff := Sprite3D.new()
-		puff.texture = _wall_puff_frames[0]
+		puff.texture = pframes[0] as Texture2D
 		puff.billboard = BaseMaterial3D.BILLBOARD_ENABLED
 		puff.shaded = false
-		puff.pixel_size = 0.0052 * caliber_scale
-		puff.modulate = Color(0.88, 0.86, 0.82, 0.68) if mat_char != "W" else Color(0.82, 0.72, 0.56, 0.70)
+		var px_mult: float = 1.25 if mat_char == "D" else 1.0
+		puff.pixel_size = 0.0054 * caliber_scale * px_mult
+		if mat_char == "W":
+			puff.modulate = Color(0.84, 0.72, 0.54, 0.74)
+		elif mat_char == "D":
+			puff.modulate = Color(0.88, 0.80, 0.62, 0.78)
+		elif mat_char == "Y":
+			puff.modulate = Color(0.88, 0.96, 1.0, 0.65)
+		else:
+			puff.modulate = Color(0.88, 0.86, 0.82, 0.70)
 		world_root.add_child(puff)
 		puff.global_position = hit_pos + nrm * 0.06
-		var drift_end: Vector3 = puff.global_position + nrm * 0.52 + Vector3(0.0, 0.34, 0.0)
+		var drift_end: Vector3 = puff.global_position + nrm * (0.62 if mat_char == "D" else 0.52) + Vector3(0.0, 0.36, 0.0)
+		var pdur: float = 0.32 if mat_char == "D" else 0.28
 		var tw_p := world_root.create_tween()
 		tw_p.set_parallel(true)
-		tw_p.tween_property(puff, "global_position", drift_end, 0.28).set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_OUT)
-		tw_p.tween_property(puff, "pixel_size", 0.0105 * caliber_scale, 0.28)
-		tw_p.tween_property(puff, "modulate:a", 0.0, 0.28)
-		var fcnt: int = _wall_puff_frames.size()
+		tw_p.tween_property(puff, "global_position", drift_end, pdur).set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_OUT)
+		tw_p.tween_property(puff, "pixel_size", 0.0112 * caliber_scale * px_mult, pdur)
+		tw_p.tween_property(puff, "modulate:a", 0.0, pdur)
+		var fcnt: int = pframes.size()
 		for fi in range(1, fcnt):
-			var tex_f: Texture2D = _wall_puff_frames[fi]
-			tw_p.tween_callback(_set_sprite_tex.bind(puff, tex_f)).set_delay(0.26 * float(fi) / float(fcnt))
+			var tex_f: Texture2D = pframes[fi] as Texture2D
+			tw_p.tween_callback(_set_sprite_tex.bind(puff, tex_f)).set_delay((pdur * 0.92) * float(fi) / float(fcnt))
 		tw_p.chain().tween_callback(_safe_retire_node.bind(puff))
 
 	# 3. Ricochet Sparks (Metal/Doors/Ladders/Vents/Grates or grazing stone hits) & Surface Chips
 	var is_metallic: bool = mat_char in ["M", "V", "L", "G"]
-	var grazing_ric: bool = (not is_metallic and mat_char in ["C", "T"] and absf(bullet_dir.dot(nrm)) < 0.52 and randf() < 0.45)
+	var grazing_ric: bool = (not is_metallic and mat_char in ["C", "T"] and absf(bullet_dir.dot(nrm)) < 0.52 and randf() < 0.48)
 	if is_metallic or grazing_ric:
 		var refl: Vector3 = bullet_dir.bounce(nrm).normalized()
 		var sparks := CPUParticles3D.new()
 		sparks.emitting = false
 		sparks.one_shot = true
 		sparks.explosiveness = 0.96
-		sparks.amount = 12 if is_metallic else 7
-		sparks.lifetime = 0.24
+		sparks.amount = 14 if is_metallic else 8
+		sparks.lifetime = 0.25
 		sparks.mesh = _quad_spark
 		sparks.direction = (refl * 0.65 + nrm * 0.35).normalized()
-		sparks.spread = 34.0
-		sparks.initial_velocity_min = 4.2
-		sparks.initial_velocity_max = 9.6
-		sparks.gravity = Vector3(0.0, -14.5, 0.0)
+		sparks.spread = 36.0
+		sparks.initial_velocity_min = 4.6
+		sparks.initial_velocity_max = 10.4
+		sparks.gravity = Vector3(0.0, -15.5, 0.0)
 		sparks.scale_amount_min = 0.65
-		sparks.scale_amount_max = 1.35
+		sparks.scale_amount_max = 1.40
 		var grad := Gradient.new()
-		grad.set_color(0, Color(1.0, 0.95, 0.68, 1.0))
-		grad.set_color(1, Color(1.0, 0.42, 0.08, 0.0))
+		grad.set_color(0, Color(1.0, 0.96, 0.72, 1.0))
+		grad.set_color(1, Color(1.0, 0.40, 0.06, 0.0))
 		sparks.color_ramp = grad
 		world_root.add_child(sparks)
 		sparks.global_position = hit_pos + nrm * 0.03
 		sparks.emitting = true
 
-		# Brief hot spark flash on metallic ricochet
 		var fl := OmniLight3D.new()
-		fl.light_color = Color(1.0, 0.72, 0.32)
-		fl.light_energy = 1.35 if is_metallic else 0.85
-		fl.omni_range = 2.4
+		fl.light_color = Color(1.0, 0.74, 0.34)
+		fl.light_energy = 1.45 if is_metallic else 0.90
+		fl.omni_range = 2.6
 		world_root.add_child(fl)
 		fl.global_position = hit_pos + nrm * 0.08
 
 		var tw_s := world_root.create_tween()
-		tw_s.tween_callback(_safe_retire_node.bind(fl)).set_delay(0.045)
-		tw_s.tween_callback(_safe_retire_node.bind(sparks)).set_delay(0.28)
+		tw_s.tween_callback(_safe_retire_node.bind(fl)).set_delay(0.05)
+		tw_s.tween_callback(_safe_retire_node.bind(sparks)).set_delay(0.30)
 	else:
 		var chips := CPUParticles3D.new()
 		chips.emitting = false
 		chips.one_shot = true
 		chips.explosiveness = 0.95
-		chips.amount = 8
-		chips.lifetime = 0.34
+		chips.amount = 10 if mat_char in ["W", "D", "Y"] else 8
+		chips.lifetime = 0.38
 		var c_mesh := QuadMesh.new()
-		c_mesh.size = Vector2(0.035, 0.035)
+		c_mesh.size = Vector2(0.052, 0.028) if mat_char == "W" else Vector2(0.038, 0.038)
 		if mat_char == "W":
 			c_mesh.material = _mat_chip_wood
 		elif mat_char == "Y":
 			c_mesh.material = _mat_chip_glass
+		elif mat_char == "D":
+			c_mesh.material = _mat_chip_dirt
 		else:
 			c_mesh.material = _mat_chip_conc
 		chips.mesh = c_mesh
-		chips.direction = (nrm + Vector3(0.0, 0.35, 0.0)).normalized()
-		chips.spread = 42.0
-		chips.initial_velocity_min = 2.0
-		chips.initial_velocity_max = 5.4
-		chips.gravity = Vector3(0.0, -15.0, 0.0)
+		chips.direction = (nrm + Vector3(0.0, 0.38, 0.0)).normalized()
+		chips.spread = 46.0
+		chips.initial_velocity_min = 2.2
+		chips.initial_velocity_max = 5.8
+		chips.gravity = Vector3(0.0, -15.5, 0.0)
 		world_root.add_child(chips)
 		chips.global_position = hit_pos + nrm * 0.03
 		chips.emitting = true
 		var tw_c := world_root.create_tween()
-		tw_c.tween_callback(_safe_retire_node.bind(chips)).set_delay(0.42)
+		tw_c.tween_callback(_safe_retire_node.bind(chips)).set_delay(0.44)
+
+
+static func spawn_breakable_shatter(
+	world_root: Node3D,
+	box_aabb: AABB,
+	hit_pos: Vector3,
+	material_type: int
+) -> void:
+	if world_root == null or not is_instance_valid(world_root):
+		return
+	ensure_init()
+
+	var center: Vector3 = box_aabb.get_center() if box_aabb.size.length_squared() > 0.01 else hit_pos
+	var half_ext: Vector3 = (box_aabb.size * 0.45).clamp(Vector3(0.15, 0.15, 0.15), Vector3(2.8, 2.8, 2.8))
+
+	# 1. Volumetric shard / splinter / shrapnel burst across the brush volume!
+	var burst := CPUParticles3D.new()
+	burst.emitting = false
+	burst.one_shot = true
+	burst.explosiveness = 0.96
+	burst.emission_shape = CPUParticles3D.EMISSION_SHAPE_BOX
+	burst.emission_box_extents = half_ext
+
+	if material_type in [0, 7]:  # Glass
+		burst.amount = 34
+		burst.lifetime = 0.85
+		burst.mesh = _quad_shard_glass
+	elif material_type == 1:  # Wood crate / panel
+		burst.amount = 28
+		burst.lifetime = 0.90
+		burst.mesh = _quad_splinter_wood
+	elif material_type in [2, 6]:  # Metal vent / computer
+		burst.amount = 22
+		burst.lifetime = 0.78
+		var m_quad := QuadMesh.new()
+		m_quad.size = Vector2(0.09, 0.06)
+		m_quad.material = _mat_chip_metal
+		burst.mesh = m_quad
+	else:  # Concrete / Tile / Rock
+		burst.amount = 24
+		burst.lifetime = 0.82
+		var s_quad := QuadMesh.new()
+		s_quad.size = Vector2(0.075, 0.075)
+		s_quad.material = _mat_chip_conc
+		burst.mesh = s_quad
+
+	var out_dir: Vector3 = (center - hit_pos)
+	if out_dir.length_squared() < 0.01:
+		out_dir = Vector3.UP
+	else:
+		out_dir = (out_dir.normalized() * 0.65 + Vector3.UP * 0.35).normalized()
+
+	burst.direction = out_dir
+	burst.spread = 86.0
+	burst.initial_velocity_min = 2.6
+	burst.initial_velocity_max = 7.8
+	burst.gravity = Vector3(0.0, -17.5, 0.0)
+	burst.angular_velocity_min = -360.0
+	burst.angular_velocity_max = 360.0
+	burst.scale_amount_min = 0.75
+	burst.scale_amount_max = 1.65
+	world_root.add_child(burst)
+	burst.global_position = center
+	burst.emitting = true
+
+	var tw_b := world_root.create_tween()
+	tw_b.tween_callback(_safe_retire_node.bind(burst)).set_delay(1.0)
+
+	# 2. Spawn 3D tumbling shrapnel chunks for metal/wood/crate breakables + spark flash on metal!
+	if material_type in [1, 2, 6]:
+		var shrap_sc := GameData.get_model_scene("props/shrapnel")
+		if shrap_sc != null:
+			for ci in range(4):
+				var chunk := shrap_sc.instantiate() as Node3D
+				for mnode in chunk.find_children("*", "MeshInstance3D", true, false):
+					(mnode as MeshInstance3D).layers = 2
+				world_root.add_child(chunk)
+				var ofs := Vector3(
+					randf_range(-half_ext.x, half_ext.x) * 0.5,
+					randf_range(-half_ext.y, half_ext.y) * 0.5,
+					randf_range(-half_ext.z, half_ext.z) * 0.5
+				)
+				var sp_start: Vector3 = center + ofs
+				chunk.global_position = sp_start
+				chunk.rotation = Vector3(randf() * TAU, randf() * TAU, randf() * TAU)
+				var end_c: Vector3 = sp_start + Vector3(randf_range(-2.2, 2.2), randf_range(-1.4, -0.3), randf_range(-2.2, 2.2))
+				var tw_ch := world_root.create_tween()
+				tw_ch.set_parallel(true)
+				tw_ch.tween_property(chunk, "global_position", end_c, 0.52).set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_IN)
+				tw_ch.tween_property(chunk, "rotation", chunk.rotation + Vector3(7.0, 9.0, 5.0), 0.52)
+				tw_ch.tween_property(chunk, "scale", Vector3.ONE * 0.05, 0.52).set_trans(Tween.TRANS_EXPO).set_ease(Tween.EASE_IN)
+				tw_ch.chain().tween_callback(_safe_retire_node.bind(chunk))
+
+		if material_type in [2, 6]:
+			var m_sparks := CPUParticles3D.new()
+			m_sparks.emitting = false
+			m_sparks.one_shot = true
+			m_sparks.explosiveness = 0.96
+			m_sparks.amount = 18
+			m_sparks.lifetime = 0.30
+			m_sparks.mesh = _quad_spark
+			m_sparks.spread = 110.0
+			m_sparks.initial_velocity_min = 4.0
+			m_sparks.initial_velocity_max = 9.5
+			m_sparks.gravity = Vector3(0.0, -15.0, 0.0)
+			world_root.add_child(m_sparks)
+			m_sparks.global_position = center
+			m_sparks.emitting = true
+			var tw_ms := world_root.create_tween()
+			tw_ms.tween_callback(_safe_retire_node.bind(m_sparks)).set_delay(0.36)
+
+	# 3. Billowing dust / vapor puff at breakable center
+	if not _wall_puff_sets.is_empty():
+		var pf: Array = _wall_puff_sets[0]
+		var dust := Sprite3D.new()
+		dust.texture = pf[0] as Texture2D
+		dust.billboard = BaseMaterial3D.BILLBOARD_ENABLED
+		dust.shaded = false
+		dust.pixel_size = 0.015
+		dust.modulate = Color(0.86, 0.95, 1.0, 0.52) if material_type in [0, 7] else Color(0.82, 0.74, 0.60, 0.68)
+		world_root.add_child(dust)
+		dust.global_position = center
+		var tw_d := world_root.create_tween()
+		tw_d.set_parallel(true)
+		tw_d.tween_property(dust, "pixel_size", 0.032, 0.42)
+		tw_d.tween_property(dust, "modulate:a", 0.0, 0.42)
+		tw_d.chain().tween_callback(_safe_retire_node.bind(dust))
 
 
 static func spawn_blood_impact(
@@ -320,8 +711,8 @@ static func spawn_blood_impact(
 
 	var tw_m := world_root.create_tween()
 	tw_m.set_parallel(true)
-	tw_m.tween_property(mist, "scale", Vector3.ONE * 2.25, 0.22).set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_OUT)
-	tw_m.tween_property(mist, "global_position", hit_pos + bullet_dir * 0.24 + Vector3(0.0, -0.08, 0.0), 0.22)
+	tw_m.tween_property(mist, "scale", Vector3.ONE * 2.30, 0.22).set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_OUT)
+	tw_m.tween_property(mist, "global_position", hit_pos + bullet_dir * 0.25 + Vector3(0.0, -0.08, 0.0), 0.22)
 	tw_m.chain().tween_callback(_safe_retire_node.bind(mist))
 
 	# 2. Gravity-arcing crimson blood droplets spray
@@ -329,16 +720,16 @@ static func spawn_blood_impact(
 	drops.emitting = false
 	drops.one_shot = true
 	drops.explosiveness = 0.94
-	drops.amount = 16 if is_head else 10
-	drops.lifetime = 0.38
+	drops.amount = 18 if is_head else 11
+	drops.lifetime = 0.40
 	drops.mesh = _quad_drop
 	drops.direction = (bullet_dir * 0.55 + Vector3(0.0, 0.35, 0.0)).normalized()
-	drops.spread = 48.0 if is_head else 38.0
-	drops.initial_velocity_min = 1.8
-	drops.initial_velocity_max = 4.8 * b_scale
-	drops.gravity = Vector3(0.0, -13.5, 0.0)
+	drops.spread = 50.0 if is_head else 40.0
+	drops.initial_velocity_min = 1.9
+	drops.initial_velocity_max = 5.0 * b_scale
+	drops.gravity = Vector3(0.0, -13.8, 0.0)
 	drops.scale_amount_min = 0.75
-	drops.scale_amount_max = 1.45 * b_scale
+	drops.scale_amount_max = 1.48 * b_scale
 	var b_grad := Gradient.new()
 	b_grad.set_color(0, Color(0.86, 0.05, 0.05, 0.96))
 	b_grad.set_color(1, Color(0.38, 0.02, 0.02, 0.0))
@@ -348,7 +739,7 @@ static func spawn_blood_impact(
 	drops.emitting = true
 
 	var tw_d := world_root.create_tween()
-	tw_d.tween_callback(_safe_retire_node.bind(drops)).set_delay(0.45)
+	tw_d.tween_callback(_safe_retire_node.bind(drops)).set_delay(0.46)
 
 	# 3. Kevlar helmet headshot spark flash ("dink" visual cue!)
 	if is_head and armored_head:
@@ -356,23 +747,23 @@ static func spawn_blood_impact(
 		h_sparks.emitting = false
 		h_sparks.one_shot = true
 		h_sparks.explosiveness = 0.98
-		h_sparks.amount = 10
-		h_sparks.lifetime = 0.18
+		h_sparks.amount = 12
+		h_sparks.lifetime = 0.20
 		h_sparks.mesh = _quad_spark
 		h_sparks.direction = (-bullet_dir + Vector3(0.0, 0.5, 0.0)).normalized()
-		h_sparks.spread = 52.0
-		h_sparks.initial_velocity_min = 3.6
-		h_sparks.initial_velocity_max = 7.8
+		h_sparks.spread = 54.0
+		h_sparks.initial_velocity_min = 3.8
+		h_sparks.initial_velocity_max = 8.2
 		h_sparks.gravity = Vector3(0.0, -12.0, 0.0)
 		world_root.add_child(h_sparks)
 		h_sparks.global_position = hit_pos
 		h_sparks.emitting = true
 		var tw_hs := world_root.create_tween()
-		tw_hs.tween_callback(_safe_retire_node.bind(h_sparks)).set_delay(0.24)
+		tw_hs.tween_callback(_safe_retire_node.bind(h_sparks)).set_delay(0.26)
 
 	# 4. Stamp crimson blood splatter decals on wall behind victim & floor beneath!
 	if space != null:
-		var q_wall := PhysicsRayQueryParameters3D.create(hit_pos, hit_pos + bullet_dir * 3.1)
+		var q_wall := PhysicsRayQueryParameters3D.create(hit_pos, hit_pos + bullet_dir * 3.2)
 		q_wall.collision_mask = 1
 		var wh: Dictionary = space.intersect_ray(q_wall)
 		if not wh.is_empty():
@@ -390,7 +781,18 @@ static func spawn_blood_impact(
 			_place_decal(world_root, fp + fn * 0.009, fn, _quad_blood_decal, _mat_decal_blood, randf_range(0.65, 1.05))
 
 
-static func _place_decal(parent_node: Node3D, pos: Vector3, nrm: Vector3, qmesh: QuadMesh, mat: StandardMaterial3D, scl: float) -> void:
+static func spawn_death_blood_pool(world_root: Node3D, floor_pos: Vector3, floor_nrm: Vector3 = Vector3.UP) -> void:
+	if world_root == null or not is_instance_valid(world_root):
+		return
+	ensure_init()
+	var nrm: Vector3 = floor_nrm.normalized() if floor_nrm.length_squared() > 0.001 else Vector3.UP
+	var d_node: MeshInstance3D = _place_decal(world_root, floor_pos + nrm * 0.007, nrm, _quad_blood_decal, _mat_decal_blood, 0.25)
+	if is_instance_valid(d_node):
+		var tw := world_root.create_tween()
+		tw.tween_property(d_node, "scale", Vector3.ONE * randf_range(1.45, 1.85), 1.35).set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_OUT)
+
+
+static func _place_decal(parent_node: Node3D, pos: Vector3, nrm: Vector3, qmesh: QuadMesh, mat: StandardMaterial3D, scl: float) -> MeshInstance3D:
 	while _decal_ring.size() >= MAX_DECALS:
 		var old_d: Node3D = _decal_ring.pop_front()
 		if is_instance_valid(old_d):
@@ -404,12 +806,12 @@ static func _place_decal(parent_node: Node3D, pos: Vector3, nrm: Vector3, qmesh:
 	mi.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
 	parent_node.add_child(mi)
 	mi.global_position = pos
-	# QuadMesh front face points along +Z; look_at aligns -Z with target, so look_at(pos - nrm) points +Z along +nrm!
 	var up_ref: Vector3 = Vector3.UP if absf(nrm.dot(Vector3.UP)) < 0.96 else Vector3.RIGHT
 	mi.look_at(pos - nrm, up_ref)
 	mi.rotate_object_local(Vector3.FORWARD, randf() * TAU)
 	mi.scale = Vector3.ONE * scl
 	_decal_ring.append(mi)
+	return mi
 
 
 static func _set_sprite_tex(sp: Sprite3D, tex: Texture2D) -> void:
@@ -434,12 +836,14 @@ static func _make_decal_mat(tex: Texture2D) -> StandardMaterial3D:
 	return m
 
 
-static func _make_particle_mat(col: Color) -> StandardMaterial3D:
+static func _make_particle_mat(col: Color, billboard: bool = true) -> StandardMaterial3D:
 	var m := StandardMaterial3D.new()
 	m.shading_mode = BaseMaterial3D.SHADING_MODE_UNSHADED
 	m.transparency = BaseMaterial3D.TRANSPARENCY_ALPHA
-	m.billboard_mode = BaseMaterial3D.BILLBOARD_PARTICLES
-	m.billboard_keep_scale = true
+	m.cull_mode = BaseMaterial3D.CULL_DISABLED
+	if billboard:
+		m.billboard_mode = BaseMaterial3D.BILLBOARD_PARTICLES
+		m.billboard_keep_scale = true
 	m.albedo_color = col
 	return m
 
@@ -462,7 +866,7 @@ static func _build_soft_dot_tex(col: Color, bright_core: bool) -> ImageTexture:
 
 
 static func _build_bullet_hole_tex(kind: int) -> ImageTexture:
-	# kind: 0=concrete, 1=metal, 2=wood, 3=glass
+	# kind: 0=concrete, 1=metal, 2=wood, 3=glass, 4=dirt/sand
 	var sz: int = 32
 	var img := Image.create(sz, sz, false, Image.FORMAT_RGBA8)
 	var c: float = (sz - 1) * 0.5
@@ -477,7 +881,6 @@ static func _build_bullet_hole_tex(kind: int) -> ImageTexture:
 			var d: float = sqrt(dx * dx + dy * dy) / c + jag
 			var col := Color(0, 0, 0, 0)
 			if kind == 3:
-				# Glass fracture: dark impact center + white spiderweb radial cracks
 				var ray: float = absf(sin(ang * 7.0))
 				if d < 0.24:
 					col = Color(0.88, 0.95, 1.0, 0.92)
@@ -486,15 +889,15 @@ static func _build_bullet_hole_tex(kind: int) -> ImageTexture:
 				elif d < 0.52:
 					col = Color(0.75, 0.88, 0.95, (0.52 - d) * 0.9)
 			elif d < 0.30:
-				# Deep dark bullet entry hole
-				col = Color(0.05, 0.05, 0.06, 0.96)
-			elif d < 0.62:
-				# Material-specific rim crater (bright brushed steel on metal, warm splinter on wood, grey chip on stone)
-				var t: float = 1.0 - (d - 0.30) / 0.32
+				col = Color(0.05, 0.05, 0.06, 0.96) if kind != 4 else Color(0.18, 0.14, 0.09, 0.92)
+			elif d < 0.65:
+				var t: float = 1.0 - (d - 0.30) / 0.35
 				if kind == 1:
 					col = Color(0.68, 0.72, 0.76, t * 0.88)
 				elif kind == 2:
 					col = Color(0.46, 0.30, 0.16, t * 0.85)
+				elif kind == 4:
+					col = Color(0.56, 0.46, 0.30, t * 0.80)
 				else:
 					col = Color(0.26, 0.25, 0.24, t * 0.82)
 			elif d < 0.85 and rng.randf() < 0.25:
@@ -515,7 +918,7 @@ static func _build_blood_splatter_tex() -> ImageTexture:
 			var lobes: float = sin(ang * 4.0 + 0.7) * 0.16 + cos(ang * 7.0 - 1.2) * 0.12 + sin(ang * 11.0) * 0.07
 			var d: float = sqrt(dx * dx + dy * dy) / c - lobes
 			if d < 0.68:
-				var shade: float = lerpf(0.32, 0.58, clampf(d / 0.68, 0.0, 1.0))
+				var shade: float = lerpf(0.30, 0.56, clampf(d / 0.68, 0.0, 1.0))
 				var alpha: float = clampf((0.68 - d) * 2.6, 0.0, 0.90)
 				img.set_pixel(x, y, Color(shade, 0.02, 0.02, alpha))
 			else:

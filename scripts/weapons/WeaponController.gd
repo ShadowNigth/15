@@ -41,6 +41,7 @@ var plant_progress: float = 0.0
 var _grenade_pin_pulled: bool = false
 var _grenade_pin_timer: float = 0.0
 var _grenade_want_release: bool = false
+var _grenade_lob_mode: bool = false
 var _post_throw_switch_timer: float = 0.0
 var _knife_combo_idx: int = 0
 
@@ -89,6 +90,7 @@ func _reset_states() -> void:
 	_grenade_pin_pulled = false
 	_grenade_pin_timer = 0.0
 	_grenade_want_release = false
+	_grenade_lob_mode = false
 	_post_throw_switch_timer = 0.0
 	punch_angles = Vector2.ZERO
 	_clear_zoom()
@@ -327,6 +329,7 @@ func trigger_primary(holding: bool, delta: float) -> void:
 			_grenade_pin_pulled = true
 			_grenade_pin_timer = 0.36
 			_grenade_want_release = false
+			_grenade_lob_mode = false
 			AudioManager.play_3d("weapons/pinpull.wav", actor.global_position, -3.0, 14.0)
 			if actor.has_method("play_viewmodel_sequence"):
 				actor.call("play_viewmodel_sequence", ["pullpin"])
@@ -368,7 +371,7 @@ func trigger_primary(holding: bool, delta: float) -> void:
 
 
 func release_primary() -> void:
-	if _grenade_pin_pulled:
+	if _grenade_pin_pulled and not _grenade_lob_mode:
 		_grenade_want_release = true
 		if _grenade_pin_timer <= 0.0:
 			_grenade_pin_pulled = false
@@ -381,13 +384,36 @@ func release_primary() -> void:
 			actor.call("play_viewmodel_sequence", ["idle1", "idle"])
 
 
+func release_secondary() -> void:
+	if _grenade_pin_pulled and _grenade_lob_mode:
+		_grenade_want_release = true
+		if _grenade_pin_timer <= 0.0:
+			_grenade_pin_pulled = false
+			_grenade_want_release = false
+			_launch_grenade_now(current_weapon_id)
+
+
 func trigger_secondary() -> void:
 	if not is_instance_valid(actor) or not bool(actor.get("is_alive")):
 		return
-	if is_reloading or is_attaching_silencer or fire_cooldown > 0.0:
+	if is_reloading or is_attaching_silencer or fire_cooldown > 0.0 or _post_throw_switch_timer > 0.0:
 		return
 
 	var spec := get_current_spec()
+	if bool(spec.get("grenade", false)):
+		if RoundManager.is_movement_frozen() or _grenade_pin_pulled:
+			return
+		if int(grenades.get(current_weapon_id, 0)) <= 0:
+			return
+		_grenade_pin_pulled = true
+		_grenade_pin_timer = 0.32
+		_grenade_want_release = false
+		_grenade_lob_mode = true
+		AudioManager.play_3d("weapons/pinpull.wav", actor.global_position, -3.0, 14.0)
+		if actor.has_method("play_viewmodel_sequence"):
+			actor.call("play_viewmodel_sequence", ["pullpin"])
+		return
+
 	if current_weapon_id == "knife":
 		if not RoundManager.is_movement_frozen():
 			_swing_knife(true)
@@ -676,6 +702,7 @@ func _fire_penetrating_ray(
 		# World, BSPDoor, or func_breakable impact
 		var attach_target: Node3D = null
 		var mat_override := ""
+		var shattered_now := false
 		if col is Node:
 			if col.has_meta("breakable"):
 				var brk = col.get_meta("breakable")
@@ -683,6 +710,7 @@ func _fire_penetrating_ray(
 					attach_target = brk as Node3D
 					if brk.has_method("apply_damage"):
 						brk.apply_damage(dmg_at_dist, hit_pos)
+					shattered_now = bool(brk.get("broken"))
 			elif col.has_meta("door"):
 				var dr_node = col.get_meta("door")
 				if is_instance_valid(dr_node):
@@ -690,7 +718,15 @@ func _fire_penetrating_ray(
 					mat_override = "M"
 
 		var surf_char := _sample_collider_material(col, mat_override)
-		_spawn_surface_hit_fx(hit_pos, hit_nrm, dir, attach_target, surf_char, cal_scale)
+		if not shattered_now:
+			_spawn_surface_hit_fx(hit_pos, hit_nrm, dir, attach_target, surf_char, cal_scale)
+		else:
+			# Bullet smashed right through fragile glass window / crate panel and continues!
+			exclude_rids.append((col as CollisionObject3D).get_rid())
+			cur_dmg *= 0.85
+			cur_from = hit_pos + dir * 0.08
+			rem_dist = max_dist - origin.distance_to(cur_from)
+			continue
 
 		# CS 1.5 Wallbanging: test thin wall exit within 0.65m (~21 GoldSrc units)
 		if pen_left <= 0:
@@ -753,6 +789,8 @@ func _sample_collider_material(col: Variant, fallback_char: String = "") -> Stri
 						return "W"
 					if "glass" in mname or "skkylite" in mname:
 						return "Y"
+					if "sand" in mname or "dust" in mname or "dirt" in mname or "ground" in mname or "mud" in mname or "grass" in mname:
+						return "D"
 					return GameData.get_material_char(m.resource_name)
 	return fallback_char if not fallback_char.is_empty() else "C"
 
@@ -817,9 +855,12 @@ func _swing_knife(heavy_stab: bool) -> void:
 	if col is Node3D and col.has_method("take_bullet_damage"):
 		var dmg := 65.0 if heavy_stab else 20.0
 		if heavy_stab:
-			var target_fwd: Vector3 = -(col as Node3D).global_transform.basis.z
-			if dir.dot(target_fwd) > 0.45:
-				dmg = 195.0  # Classic CS 1.5 Backstab!
+			var target_fwd: Vector3 = (col.call("get_look_forward") as Vector3) if col.has_method("get_look_forward") else (-(col as Node3D).global_transform.basis.z)
+			var flat_tf := Vector3(target_fwd.x, 0.0, target_fwd.z)
+			var flat_dir := Vector3(dir.x, 0.0, dir.z)
+			if flat_tf.length_squared() > 0.001 and flat_dir.length_squared() > 0.001:
+				if flat_dir.normalized().dot(flat_tf.normalized()) > 0.45:
+					dmg = 195.0  # Classic CS 1.5 Backstab!
 		if (String(col.get("team")) != String(actor.get("team")) or GameData.friendly_fire) and is_instance_valid(RoundManager.game_world):
 			ImpactEffects.spawn_blood_impact(RoundManager.game_world, space, hpos, dir, 2, false, dmg)
 		col.call("take_bullet_damage", actor, dmg, 1.7, 2, "knife", hpos)
@@ -874,9 +915,12 @@ func _launch_grenade_now(gid: String) -> void:
 	var fwd: Vector3 = -aim_b.z
 	var proj := GrenadeProjectile.new()
 	RoundManager.game_world.add_child(proj)
-	proj.global_position = eye + fwd * 0.45
+	proj.global_position = eye + fwd * 0.42
 	var actor_vel: Vector3 = (actor as CharacterBody3D).velocity
-	var throw_v: Vector3 = fwd * 21.5 + Vector3(0, 2.6, 0) + actor_vel * 0.45
+	var speed_throw: float = 12.2 if _grenade_lob_mode else 21.5
+	var up_lift: float = 1.95 if _grenade_lob_mode else 2.6
+	_grenade_lob_mode = false
+	var throw_v: Vector3 = fwd * speed_throw + Vector3(0.0, up_lift, 0.0) + actor_vel * 0.48
 	proj.setup_grenade(gid, actor, throw_v)
 
 	if bool(actor.get("is_human")):
@@ -899,59 +943,19 @@ func _spawn_brass_casing(spec: Dictionary) -> void:
 	elif sl == 2 or float(spec.get("max_speed", 220.0)) >= 245.0:
 		shell_mdl = "pshell"
 
-	var sc := GameData.get_model_scene("weapons/" + shell_mdl)
-	if not sc:
-		return
-
-	var act_node := actor as Node3D
 	var eye_p: Vector3 = actor.call("get_eye_position")
 	var aim_b: Basis = actor.call("get_aim_basis", Vector2.ZERO)
 	var side_sign := 1.0 if (not bool(actor.get("is_human")) or GameData.right_hand) else -1.0
 	var start_pos := eye_p + (-aim_b.z * 0.36) + (aim_b.x * 0.22 * side_sign) - (aim_b.y * 0.12)
-	var eject_vel := aim_b.x * randf_range(2.2, 3.6) * side_sign + Vector3(0.0, randf_range(1.4, 2.5), 0.0) - aim_b.z * randf_range(-0.6, 0.8)
-
-	# Find floor height beneath actor so shell bounces & clinks on actual ground!
-	var floor_y := act_node.global_position.y + 0.03
-	if act_node.get_world_3d():
-		var sp := act_node.get_world_3d().direct_space_state
-		var qf := PhysicsRayQueryParameters3D.create(start_pos, start_pos - Vector3(0.0, 4.0, 0.0))
-		qf.collision_mask = 1
-		var hf := sp.intersect_ray(qf)
-		if not hf.is_empty():
-			floor_y = (hf["position"] as Vector3).y + 0.02
-
-	var shell := sc.instantiate() as Node3D
-	for c in shell.find_children("*", "MeshInstance3D", true, false):
-		(c as MeshInstance3D).layers = 2
-	RoundManager.game_world.add_child(shell)
-	shell.global_position = start_pos
-	shell.rotation = Vector3(randf() * TAU, randf() * TAU, randf() * TAU)
-
-	var delay_s := 0.45 if current_weapon_id in ["awp", "scout", "m3"] else 0.0
-	var fall_h := maxf(0.25, start_pos.y - floor_y)
-	var drop_t := clampf(sqrt(2.0 * fall_h / 18.0), 0.24, 0.55)
-	var land_pos := Vector3(start_pos.x + eject_vel.x * drop_t, floor_y, start_pos.z + eject_vel.z * drop_t)
-	var bounce_pos := land_pos + Vector3(eject_vel.x * 0.18, 0.0, eject_vel.z * 0.18)
-
-	if delay_s > 0.0:
-		shell.visible = false
-	var tw := shell.create_tween()
-	if delay_s > 0.0:
-		tw.tween_interval(delay_s)
-		tw.tween_callback(func() -> void: shell.visible = true)
-	tw.tween_property(shell, "global_position", land_pos, drop_t).set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_IN)
-	tw.parallel().tween_property(shell, "rotation", shell.rotation + Vector3(9.0, 12.0, 7.0), drop_t)
-	tw.tween_callback(func() -> void:
-		AudioManager.play_3d("player/pl_shell%d.wav" % randi_range(1, 3), land_pos, -8.5, 14.0, randf_range(0.94, 1.08))
+	var act_vel: Vector3 = (actor as CharacterBody3D).velocity
+	var eject_vel: Vector3 = (
+		aim_b.x * randf_range(2.3, 3.7) * side_sign
+		+ Vector3(0.0, randf_range(1.6, 2.7), 0.0)
+		- aim_b.z * randf_range(-0.5, 0.8)
+		+ act_vel * 0.42
 	)
-	tw.tween_property(shell, "global_position", bounce_pos + Vector3(0.0, 0.14, 0.0), 0.11).set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_OUT)
-	tw.tween_property(shell, "global_position", bounce_pos, 0.11).set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_IN)
-	tw.tween_interval(1.15)
-	tw.tween_callback(func() -> void:
-		if shell.get_parent():
-			shell.get_parent().remove_child(shell)
-		shell.queue_free()
-	)
+	var delay_s := 0.42 if current_weapon_id in ["awp", "scout", "m3"] else 0.0
+	ImpactEffects.spawn_physical_shell(RoundManager.game_world, shell_mdl, start_pos, eject_vel, delay_s)
 
 
 func _complete_c4_plant() -> void:

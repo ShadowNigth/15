@@ -8,6 +8,7 @@ var grenade_type: String = "hegrenade"
 var thrower: Node3D = null
 var velocity: Vector3 = Vector3.ZERO
 var fuse_left: float = 1.65
+var _ang_vel: Vector3 = Vector3.ZERO
 var _detonated: bool = false
 var _bounces: int = 0
 
@@ -235,13 +236,21 @@ func setup_grenade(gtype: String, owner_actor: Node3D, start_vel: Vector3) -> vo
 	grenade_type = gtype
 	thrower = owner_actor
 	velocity = start_vel
+	_ang_vel = Vector3(randf_range(6.0, 11.0), randf_range(-5.5, 5.5), randf_range(-4.5, 4.5))
 	fuse_left = 1.65 if gtype != "smokegrenade" else 1.85
 
 	var sc := GameData.get_model_scene("weapons/w_" + gtype)
 	if sc:
 		var inst := sc.instantiate()
 		for c in inst.find_children("*", "MeshInstance3D", true, false):
-			(c as MeshInstance3D).layers = 2
+			var mi := c as MeshInstance3D
+			mi.layers = 2
+			mi.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
+			if mi.mesh:
+				for s in range(mi.mesh.get_surface_count()):
+					var styled := GameData.get_styled_model_material(mi.mesh.surface_get_material(s), "char")
+					if styled:
+						mi.set_surface_override_material(s, styled)
 		add_child(inst)
 
 
@@ -257,25 +266,68 @@ func _physics_process(delta: float) -> void:
 			return
 
 	velocity.y -= 21.0 * delta  # GoldSrc ~0.55 * 800u gravity on grenades
-	var step := velocity * delta
-	if step.length_squared() > 0.00001:
-		var space := get_world_3d().direct_space_state
-		var q := PhysicsRayQueryParameters3D.create(global_position, global_position + step)
-		q.collision_mask = 1
-		var hit := space.intersect_ray(q)
-		if hit:
-			var n: Vector3 = hit["normal"]
-			global_position = hit["position"] + n * 0.06
-			velocity = velocity.bounce(n) * 0.48
-			if velocity.length() < 1.1 and n.y > 0.7:
-				velocity = Vector3.ZERO
-			elif _bounces < 5:
-				_bounces += 1
-				var bwav := "weapons/he_bounce-1.wav" if grenade_type == "hegrenade" else ("weapons/grenade_hit%d.wav" % randi_range(1, 3))
-				AudioManager.play_3d(bwav, global_position, -4.0, 24.0)
-		else:
+	var space := get_world_3d().direct_space_state
+	var rem_dt: float = delta
+
+	for _sub in range(2):
+		if rem_dt <= 0.0001:
+			break
+		var spd: float = velocity.length()
+		if spd < 0.05:
+			break
+		var step: Vector3 = velocity * rem_dt
+		var dir: Vector3 = step.normalized()
+		var q := PhysicsRayQueryParameters3D.create(global_position, global_position + step + dir * 0.075)
+		q.collision_mask = 1 | 8
+		var hit: Dictionary = space.intersect_ray(q)
+		if hit.is_empty():
 			global_position += step
-			rotate_x(delta * 7.0)
+			rotation += _ang_vel * rem_dt
+			break
+
+		var hit_pos: Vector3 = hit["position"]
+		var n: Vector3 = hit["normal"]
+		var col = hit["collider"]
+
+		# Smash straight through fragile glass windows when thrown hard (classic CS 1.5 window entry!)
+		if col is Node and (col as Node).has_meta("breakable") and spd > 4.2:
+			var brk = (col as Node).get_meta("breakable")
+			if is_instance_valid(brk) and int(brk.get("material_type")) == 0 and brk.has_method("apply_damage"):
+				brk.call("apply_damage", 48.0, hit_pos)
+				if bool(brk.get("broken")):
+					velocity *= 0.74
+					global_position = hit_pos + dir * 0.09
+					rem_dt *= 0.5
+					continue
+
+		var travel_frac: float = clampf(global_position.distance_to(hit_pos) / maxf(0.08, step.length()), 0.0, 1.0)
+		global_position = hit_pos + n * 0.075
+		rem_dt *= (1.0 - travel_frac) * 0.85
+
+		var impact_n_spd: float = absf(velocity.dot(n))
+		if n.y > 0.65:
+			velocity = velocity.bounce(n)
+			velocity.y *= 0.42
+			velocity.x *= 0.74
+			velocity.z *= 0.74
+			_ang_vel *= 0.65
+			if velocity.length() < 1.05 and absf(velocity.y) < 0.55:
+				velocity = Vector3.ZERO
+				_ang_vel = Vector3.ZERO
+				rotation.x = 0.0
+				rotation.z = 0.0
+		else:
+			velocity = velocity.bounce(n) * 0.56
+			_ang_vel = Vector3(-_ang_vel.x * 0.7, _ang_vel.y + randf_range(-4.0, 4.0), -_ang_vel.z * 0.7)
+
+		if impact_n_spd > 1.35 and _bounces < 6:
+			_bounces += 1
+			var is_grate: bool = (col is StaticBody3D and (col as StaticBody3D).collision_layer == 8)
+			var bwav := "weapons/ric_metal-%d.wav" % randi_range(1, 2) if is_grate else (
+				"weapons/he_bounce-1.wav" if grenade_type == "hegrenade" else ("weapons/grenade_hit%d.wav" % randi_range(1, 3))
+			)
+			var vol_db: float = lerpf(-8.5, -2.5, clampf(impact_n_spd / 9.0, 0.0, 1.0))
+			AudioManager.play_3d(bwav, global_position, vol_db, 24.0, randf_range(0.95, 1.06), 14.0)
 
 
 func _detonate() -> void:
@@ -311,7 +363,7 @@ func _detonate_he() -> void:
 		var cover_mult := 0.45 if blocked else 1.0
 		var dmg := 98.0 * (1.0 - d / max_r) * cover_mult
 		if dmg > 1.0 and a.has_method("apply_explosion_damage"):
-			a.apply_explosion_damage(thrower, dmg, "hegrenade")
+			a.call("apply_explosion_damage", thrower, dmg, "hegrenade", global_position)
 
 
 func _detonate_flash() -> void:
@@ -320,15 +372,33 @@ func _detonate_flash() -> void:
 	if is_instance_valid(get_parent()):
 		var flash_fx := Node3D.new()
 		get_parent().add_child(flash_fx)
-		flash_fx.global_position = global_position + Vector3(0.0, 0.3, 0.0)
+		flash_fx.global_position = global_position + Vector3(0.0, 0.32, 0.0)
 		var fl := OmniLight3D.new()
-		fl.light_color = Color(1.0, 0.99, 0.94)
-		fl.light_energy = 10.0
-		fl.omni_range = 24.0
+		fl.light_color = Color(1.0, 0.99, 0.95)
+		fl.light_energy = 11.5
+		fl.omni_range = 26.0
 		flash_fx.add_child(fl)
+
+		var star_tex := GameData.get_texture("res://assets/sprites/3dmflaora.png")
+		if not star_tex:
+			star_tex = GameData.get_texture("res://assets/sprites/ledglow.png")
+		if star_tex:
+			var star_mi := MeshInstance3D.new()
+			var sq := QuadMesh.new()
+			sq.size = Vector2(3.6, 3.6)
+			star_mi.mesh = sq
+			star_mi.layers = 2
+			star_mi.material_override = _get_cached_fx_mat("__fx_flash_star", star_tex, true, true, 0.98)
+			flash_fx.add_child(star_mi)
+			var stw := star_mi.create_tween()
+			stw.tween_property(star_mi, "scale", Vector3.ONE * 2.2, 0.14).set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_OUT)
+			stw.tween_callback(func() -> void: star_mi.visible = false)
+
 		var ftw := flash_fx.create_tween()
-		ftw.tween_property(fl, "light_energy", 0.0, 0.20)
+		ftw.tween_property(fl, "light_energy", 0.0, 0.24).set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_OUT)
 		ftw.tween_callback(func() -> void: _safe_free_node(flash_fx))
+
+	RoundManager.apply_world_explosion_physics(global_position, 5.5, 6.5, 0.35)
 
 	var space := get_world_3d().direct_space_state
 	var max_r := 46.0  # ~1500 GoldSrc units
