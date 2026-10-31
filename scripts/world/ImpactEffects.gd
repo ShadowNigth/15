@@ -11,7 +11,7 @@ const MAX_DECALS: int = 112
 const MAX_SHELLS: int = 36
 
 static var _initialized: bool = false
-static var _decal_ring: Array[Node3D] = []
+static var _decal_ring: Array = []
 
 static var _mat_decal_conc: StandardMaterial3D
 static var _mat_decal_dirt: StandardMaterial3D
@@ -49,11 +49,13 @@ class ShellRunner extends Node3D:
 	func clear_all() -> void:
 		for item in _entries:
 			var d := item as Dictionary
-			var nd: Node3D = d.get("node", null)
-			if is_instance_valid(nd):
-				if nd.get_parent() != null:
-					nd.get_parent().remove_child(nd)
-				nd.queue_free()
+			var nd_v: Variant = d.get("node", null)
+			if is_instance_valid(nd_v):
+				var nd := nd_v as Node3D
+				if nd != null:
+					if nd.get_parent() != null:
+						nd.get_parent().remove_child(nd)
+					nd.queue_free()
 		_entries.clear()
 
 	func add_shell(
@@ -65,11 +67,13 @@ class ShellRunner extends Node3D:
 	) -> void:
 		while _entries.size() >= MAX_SHELLS:
 			var oldest := _entries.pop_front() as Dictionary
-			var old_n: Node3D = oldest.get("node", null)
-			if is_instance_valid(old_n):
-				if old_n.get_parent() != null:
-					old_n.get_parent().remove_child(old_n)
-				old_n.queue_free()
+			var old_v: Variant = oldest.get("node", null)
+			if is_instance_valid(old_v):
+				var old_n := old_v as Node3D
+				if old_n != null:
+					if old_n.get_parent() != null:
+						old_n.get_parent().remove_child(old_n)
+					old_n.queue_free()
 
 		add_child(shell_node)
 		shell_node.global_position = start_pos
@@ -96,11 +100,12 @@ class ShellRunner extends Node3D:
 		var idx: int = _entries.size() - 1
 		while idx >= 0:
 			var d := _entries[idx] as Dictionary
-			var nd: Node3D = d.get("node", null)
-			if not is_instance_valid(nd):
+			var nd_v: Variant = d.get("node", null)
+			if not is_instance_valid(nd_v):
 				_entries.remove_at(idx)
 				idx -= 1
 				continue
+			var nd := nd_v as Node3D
 
 			var delay_t: float = float(d["delay"])
 			if delay_t > 0.0:
@@ -304,11 +309,13 @@ static func ensure_init() -> void:
 
 
 static func clear_decals() -> void:
-	for d in _decal_ring:
-		if is_instance_valid(d):
-			if d.get_parent() != null:
-				d.get_parent().remove_child(d)
-			d.queue_free()
+	for d_var in _decal_ring:
+		if is_instance_valid(d_var):
+			var d_node := d_var as Node3D
+			if d_node != null:
+				if d_node.get_parent() != null:
+					d_node.get_parent().remove_child(d_node)
+				d_node.queue_free()
 	_decal_ring.clear()
 	if is_instance_valid(RoundManager.game_world):
 		var sr := RoundManager.game_world.get_node_or_null("__ShellRunner") as ShellRunner
@@ -454,7 +461,7 @@ static func spawn_surface_impact(
 			hole_sz = 0.125 * caliber_scale
 
 	var d_parent: Node3D = attach_parent if (attach_parent != null and is_instance_valid(attach_parent)) else world_root
-	if mat_char not in ["L", "G"]:
+	if mat_char not in ["L", "G"] and not (attach_parent is DroppedWeapon):
 		_place_decal(d_parent, hit_pos + nrm * 0.008, nrm, _quad_decal, decal_mat, hole_sz / 0.11)
 
 	# 2. Authentic CS 1.5 multi-variant animated wall_puff / sand plume
@@ -793,12 +800,19 @@ static func spawn_death_blood_pool(world_root: Node3D, floor_pos: Vector3, floor
 
 
 static func _place_decal(parent_node: Node3D, pos: Vector3, nrm: Vector3, qmesh: QuadMesh, mat: StandardMaterial3D, scl: float) -> MeshInstance3D:
+	if parent_node == null or not is_instance_valid(parent_node):
+		return null
+	for di in range(_decal_ring.size() - 1, -1, -1):
+		if not is_instance_valid(_decal_ring[di]):
+			_decal_ring.remove_at(di)
 	while _decal_ring.size() >= MAX_DECALS:
-		var old_d: Node3D = _decal_ring.pop_front()
-		if is_instance_valid(old_d):
-			if old_d.get_parent() != null:
-				old_d.get_parent().remove_child(old_d)
-			old_d.queue_free()
+		var old_v: Variant = _decal_ring.pop_front()
+		if is_instance_valid(old_v):
+			var old_d := old_v as Node3D
+			if old_d != null:
+				if old_d.get_parent() != null:
+					old_d.get_parent().remove_child(old_d)
+				old_d.queue_free()
 
 	var mi := MeshInstance3D.new()
 	mi.mesh = qmesh

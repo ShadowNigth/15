@@ -218,6 +218,75 @@ func get_smoke_cloud_variant(variant_idx: int) -> Texture2D:
 	return tex
 
 
+func _sample_seamless_2d(n: FastNoiseLite, u: float, v: float, period: float) -> float:
+	var su := u * u * (3.0 - 2.0 * u)
+	var sv := v * v * (3.0 - 2.0 * v)
+	var px := u * period
+	var py := v * period
+	var n00 := n.get_noise_2d(px, py)
+	var n10 := n.get_noise_2d(px - period, py)
+	var n01 := n.get_noise_2d(px, py - period)
+	var n11 := n.get_noise_2d(px - period, py - period)
+	var nx0 := lerpf(n00, n10, su)
+	var nx1 := lerpf(n01, n11, su)
+	return clampf(lerpf(nx0, nx1, sv) * 0.5 + 0.5, 0.0, 1.0)
+
+
+func get_cs2_smoke_noise_texture() -> Texture2D:
+	if _tex_cache.has("__cs2_smoke_noise_rgb"):
+		return _tex_cache["__cs2_smoke_noise_rgb"] as Texture2D
+
+	var sz := 96
+	var img := Image.create(sz, sz, false, Image.FORMAT_RGBA8)
+
+	var n_low := FastNoiseLite.new()
+	n_low.seed = 31337
+	n_low.noise_type = FastNoiseLite.TYPE_SIMPLEX_SMOOTH
+	n_low.fractal_type = FastNoiseLite.FRACTAL_FBM
+	n_low.fractal_octaves = 3
+	n_low.frequency = 0.036
+
+	var n_mid := FastNoiseLite.new()
+	n_mid.seed = 77419
+	n_mid.noise_type = FastNoiseLite.TYPE_SIMPLEX_SMOOTH
+	n_mid.fractal_type = FastNoiseLite.FRACTAL_FBM
+	n_mid.fractal_octaves = 4
+	n_mid.frequency = 0.068
+
+	var n_cell := FastNoiseLite.new()
+	n_cell.seed = 94111
+	n_cell.noise_type = FastNoiseLite.TYPE_CELLULAR
+	n_cell.cellular_return_type = FastNoiseLite.RETURN_DISTANCE
+	n_cell.frequency = 0.085
+
+	var period := float(sz)
+	for y in range(sz):
+		var v := float(y) / period
+		for x in range(sz):
+			var u := float(x) / period
+			var ch_r := _sample_seamless_2d(n_low, u, v, period)
+			var ch_g := _sample_seamless_2d(n_mid, u, v, period)
+			var cell_raw := _sample_seamless_2d(n_cell, u, v, period)
+			var ch_b := clampf(1.0 - cell_raw * 1.15, 0.0, 1.0)
+			img.set_pixel(x, y, Color(ch_r, ch_g, ch_b, 1.0))
+
+	img.generate_mipmaps()
+	var tex := ImageTexture.create_from_image(img)
+	_tex_cache["__cs2_smoke_noise_rgb"] = tex
+	return tex
+
+
+func get_cs2_smoke_material() -> ShaderMaterial:
+	if _styled_mat_cache.has("__cs2_smoke_shader_mat"):
+		return _styled_mat_cache["__cs2_smoke_shader_mat"] as ShaderMaterial
+	var sh := load("res://assets/shaders/cs2_smoke.gdshader") as Shader
+	var sm := ShaderMaterial.new()
+	sm.shader = sh
+	sm.set_shader_parameter("noise_tex", get_cs2_smoke_noise_texture())
+	_styled_mat_cache["__cs2_smoke_shader_mat"] = sm
+	return sm
+
+
 func get_shockwave_ring_texture() -> Texture2D:
 	if _tex_cache.has("__proc_shock_ring"):
 		return _tex_cache["__proc_shock_ring"] as Texture2D
