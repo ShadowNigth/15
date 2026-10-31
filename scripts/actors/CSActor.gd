@@ -460,50 +460,6 @@ func _find_anim(n: Node) -> AnimationPlayer:
 	return null
 
 
-func _play_body_anim(keyword: String, immediate: bool = false) -> void:
-	if not _body_anim:
-		return
-	var kw := keyword.to_lower()
-	var anims := _body_anim.get_animation_list()
-	var chosen := ""
-	# 1. Exact case-insensitive match first (prevents 'run' matching 'crouchrun' or 'idle1' matching 'idle1_1h'!)
-	for aname in anims:
-		if aname.to_lower() == kw:
-			chosen = aname
-			break
-	# 2. If _1h suffix requested on a model without _1h (e.g. hostage), strip _1h and retry exact match
-	if chosen.is_empty() and kw.ends_with("_1h"):
-		var base_kw := kw.substr(0, kw.length() - 3)
-		for aname in anims:
-			if aname.to_lower() == base_kw:
-				chosen = aname
-				break
-	# 3. Prefix match (excluding crouch sequences when standing and _1h when not requested)
-	if chosen.is_empty():
-		for aname in anims:
-			var low := aname.to_lower()
-			if not kw.begins_with("crouch") and "crouch" in low:
-				continue
-			if not kw.ends_with("_1h") and low.ends_with("_1h"):
-				continue
-			if low.begins_with(kw):
-				chosen = aname
-				break
-	# 4. Substring fallback
-	if chosen.is_empty():
-		for aname in anims:
-			var low := aname.to_lower()
-			if not kw.begins_with("crouch") and "crouch" in low:
-				continue
-			if low.find(kw) >= 0:
-				chosen = aname
-				break
-	if not chosen.is_empty() and (_body_anim.current_animation != chosen or not _body_anim.is_playing()):
-		_body_anim.play(chosen)
-		if immediate:
-			_body_anim.advance(0.0)
-
-
 func spawn_for_round(pos: Vector3, yaw_rad: float, reset_weapons: bool) -> void:
 	var was_alive := is_alive
 	is_alive = true

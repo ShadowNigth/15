@@ -43,7 +43,6 @@ var _grenade_pin_timer: float = 0.0
 var _grenade_want_release: bool = false
 var _post_throw_switch_timer: float = 0.0
 var _knife_combo_idx: int = 0
-var _elite_left_next: bool = true
 
 # View punch recoil angles (degrees: x=pitch up, y=yaw side)
 var punch_angles: Vector2 = Vector2.ZERO
@@ -434,6 +433,10 @@ func trigger_secondary() -> void:
 			zoom_changed.emit(fdeg, bool(spec.get("sniper_scope", false)))
 		AudioManager.play_3d("weapons/zoom.wav", actor.global_position, -4.0, 14.0)
 		fire_cooldown = 0.22
+
+
+func clear_zoom() -> void:
+	_clear_zoom()
 
 
 func start_reload() -> void:

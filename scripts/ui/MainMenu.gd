@@ -522,9 +522,31 @@ func _load_viewer_player(cid: String) -> void:
 		inst.position = Vector3(0.0, 0.12, 0.0)
 		_viewer_pivot.add_child(inst)
 		_viewer_anim = _find_anim_recursive(inst)
+		var skel_list := inst.find_children("*", "Skeleton3D", true, false)
 		if _viewer_anim:
 			GameData.ensure_looping_animations(_viewer_anim)
-			for a in _viewer_anim.get_animation_list():
+			# Apply upper-body rifle aim pose first so lower-only gait clips keep arms in rifle stance!
+			var anim_list := _viewer_anim.get_animation_list()
+			var is_ct_mdl := cid in ["urban", "gsg9", "sas", "gign", "vip"]
+			var aim_cand := "ref_aim_onehanded" if cid == "vip" else ("ref_aim_carbine" if is_ct_mdl else "ref_aim_ak47")
+			for a in anim_list:
+				if a.to_lower() == aim_cand:
+					_viewer_anim.play(a)
+					_viewer_anim.advance(0.0)
+					break
+			if not skel_list.is_empty():
+				var sk := skel_list[0] as Skeleton3D
+				if sk and sk.find_bone("Bip01 R Hand") >= 0 and cid not in ["hostage", "scientist"]:
+					var ba := BoneAttachment3D.new()
+					ba.bone_name = "Bip01 R Hand"
+					sk.add_child(ba)
+					var wmdl := "p_usp" if cid == "vip" else ("p_m4a1" if is_ct_mdl else "p_ak47")
+					var wsc := GameData.get_model_scene("weapons/" + wmdl)
+					if wsc:
+						var wi := wsc.instantiate()
+						_style_viewer_meshes(wi)
+						ba.add_child(wi)
+			for a in anim_list:
 				if a.to_lower() == "idle1" or a.to_lower().begins_with("idle"):
 					_viewer_anim.play(a)
 					break

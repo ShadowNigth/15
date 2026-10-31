@@ -183,8 +183,8 @@ func _physics_process(delta: float) -> void:
 			if cr.x < int(float(csize) * 0.34) and not weapon_ctrl.is_reloading:
 				weapon_ctrl.start_reload()
 		# Clear sniper scope when navigating out of combat
-		if weapon_ctrl.zoom_stage > 0:
-			weapon_ctrl._clear_zoom()
+		if weapon_ctrl.zoom_index >= 0:
+			weapon_ctrl.clear_zoom()
 
 	# Priority 1: CT Defusing Planted C4 when clear!
 	if team == "CT" and target_enemy == null and is_instance_valid(RoundManager.planted_c4):
@@ -327,7 +327,7 @@ func _engage_enemy(delta: float) -> void:
 	var is_sniper := wid in ["awp", "scout", "g3sg1", "sg550"]
 
 	# Sniper Bot scopes in at medium/long range before taking the shot!
-	if is_sniper and dist > 11.0 and weapon_ctrl.zoom_stage == 0 and not weapon_ctrl.is_reloading and weapon_ctrl.fire_cooldown <= 0.15:
+	if is_sniper and dist > 11.0 and weapon_ctrl.zoom_index < 0 and not weapon_ctrl.is_reloading and weapon_ctrl.fire_cooldown <= 0.15:
 		weapon_ctrl.trigger_secondary()
 
 	var aim_height := 1.48 if skill_level >= 2 else 1.24
