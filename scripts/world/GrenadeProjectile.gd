@@ -248,9 +248,11 @@ func setup_grenade(gtype: String, owner_actor: Node3D, start_vel: Vector3) -> vo
 			mi.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
 			if mi.mesh:
 				for s in range(mi.mesh.get_surface_count()):
-					var styled := GameData.get_styled_model_material(mi.mesh.surface_get_material(s), "char")
+					var styled := GameData.get_styled_model_material(mi.mesh.surface_get_material(s), "w_drop")
 					if styled:
 						mi.set_surface_override_material(s, styled)
+		if inst is Node3D:
+			(inst as Node3D).scale = Vector3.ONE * 0.78
 		add_child(inst)
 
 
@@ -277,8 +279,9 @@ func _physics_process(delta: float) -> void:
 			break
 		var step: Vector3 = velocity * rem_dt
 		var dir: Vector3 = step.normalized()
-		var q := PhysicsRayQueryParameters3D.create(global_position, global_position + step + dir * 0.075)
+		var q := PhysicsRayQueryParameters3D.create(global_position, global_position + step + dir * 0.085)
 		q.collision_mask = 1 | 8
+		q.hit_from_inside = true
 		var hit: Dictionary = space.intersect_ray(q)
 		if hit.is_empty():
 			global_position += step

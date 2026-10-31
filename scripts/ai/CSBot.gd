@@ -220,10 +220,12 @@ func _perform_bot_buy() -> void:
 	buy_ammo_for_slot(1, true)
 	buy_ammo_for_slot(2, true)
 
-	if money >= 600 and randf() < 0.52:
+	if money >= 550 and randf() < 0.58:
 		buy_weapon("hegrenade")
-	if money >= 500 and randf() < 0.30:
+	if money >= 450 and randf() < 0.36:
 		buy_weapon("smokegrenade")
+	if money >= 350 and randf() < 0.40:
+		buy_weapon("flashbang")
 
 
 func _physics_process(delta: float) -> void:

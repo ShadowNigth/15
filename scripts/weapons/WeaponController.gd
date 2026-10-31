@@ -889,6 +889,26 @@ func _swing_knife(heavy_stab: bool) -> void:
 	AudioManager.play_3d("weapons/knife_hitwall1.wav", hpos, -3.0, 16.0)
 
 
+func drop_pulled_grenade_on_death() -> void:
+	if not _grenade_pin_pulled or not is_instance_valid(actor) or not is_instance_valid(RoundManager.game_world):
+		return
+	var gid := current_weapon_id
+	var count := int(grenades.get(gid, 0))
+	_grenade_pin_pulled = false
+	_grenade_want_release = false
+	if count <= 0:
+		return
+	grenades[gid] = count - 1
+	var act_body := actor as CharacterBody3D
+	var chest_pos: Vector3 = actor.global_position + Vector3(0.0, 0.85, 0.0)
+	var proj := GrenadeProjectile.new()
+	RoundManager.game_world.add_child(proj)
+	proj.global_position = chest_pos
+	var fwd: Vector3 = actor.call("get_look_forward")
+	var drop_vel: Vector3 = fwd * 2.2 + Vector3(0.0, 1.35, 0.0) + act_body.velocity * 0.35
+	proj.setup_grenade(gid, actor, drop_vel)
+
+
 func _throw_grenade(gid: String) -> void:
 	AudioManager.play_3d("weapons/pinpull.wav", actor.global_position, -3.0, 14.0)
 	_launch_grenade_now(gid)

@@ -27,7 +27,7 @@ func _ready() -> void:
 			mi.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
 			if mi.mesh:
 				for s in range(mi.mesh.get_surface_count()):
-					var styled := GameData.get_styled_model_material(mi.mesh.surface_get_material(s), "char")
+					var styled := GameData.get_styled_model_material(mi.mesh.surface_get_material(s), "w_drop")
 					if styled:
 						mi.set_surface_override_material(s, styled)
 		add_child(inst)

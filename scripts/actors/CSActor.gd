@@ -1121,18 +1121,30 @@ func _die(killer: Node3D, weapon_id: String, headshot: bool) -> void:
 	_col_shape.set_deferred("disabled", true)
 	AudioManager.play_3d("player/die%d.wav" % randi_range(1, 3), global_position, 1.0, 32.0)
 
-	# Drop primary (or pistol if no primary), C4 backpack, and CT Defuse Kit!
+	# Drop primary (or pistol if no primary), C4 backpack, CT Defuse Kit, and ALL carried grenades!
 	var drop_w := String(weapon_ctrl.slots.get(1, ""))
 	if drop_w.is_empty():
 		drop_w = String(weapon_ctrl.slots.get(2, ""))
 	if not drop_w.is_empty():
-		_spawn_drop_entity(drop_w)
+		_spawn_drop_entity(drop_w, 0)
 	if String(weapon_ctrl.slots.get(5, "")) == "c4":
-		_spawn_drop_entity("c4")
+		_spawn_drop_entity("c4", 1)
 		weapon_ctrl.slots[5] = ""
 	if has_defuser:
 		has_defuser = false
-		_spawn_drop_entity("defuser")
+		_spawn_drop_entity("defuser", 2)
+
+	# If pin was already pulled, drop a live armed grenade; then drop all remaining carried grenades!
+	weapon_ctrl.drop_pulled_grenade_on_death()
+	var gren_order := ["hegrenade", "flashbang", "smokegrenade"]
+	var gren_spread_idx: int = 3
+	for gid_k in gren_order:
+		var gid_s := String(gid_k)
+		var g_cnt := int(weapon_ctrl.grenades.get(gid_s, 0))
+		for _gi in range(g_cnt):
+			_spawn_drop_entity(gid_s, gren_spread_idx)
+			gren_spread_idx += 1
+		weapon_ctrl.grenades[gid_s] = 0
 
 	if _hand_attachment != null:
 		var held_kids := _hand_attachment.get_children()
@@ -1193,27 +1205,89 @@ func drop_current_weapon() -> void:
 	var wid := weapon_ctrl.current_weapon_id
 	var spec := weapon_ctrl.get_current_spec()
 	var sl := int(spec.get("slot", 3))
+	if sl == 4 and bool(spec.get("grenade", false)):
+		if weapon_ctrl._grenade_pin_pulled:
+			return
+		var g_cur := int(weapon_ctrl.grenades.get(wid, 0))
+		if g_cur <= 0:
+			return
+		weapon_ctrl.grenades[wid] = g_cur - 1
+		_spawn_drop_entity(wid, 0)
+		if int(weapon_ctrl.grenades.get(wid, 0)) > 0:
+			weapon_ctrl.equip_weapon_by_id(wid)
+		elif not weapon_ctrl.equip_slot(4):
+			if not weapon_ctrl.equip_slot(1):
+				if not weapon_ctrl.equip_slot(2):
+					weapon_ctrl.equip_slot(3)
+		return
 	if sl not in [1, 2, 5]:
 		return
-	_spawn_drop_entity(wid)
+	_spawn_drop_entity(wid, 0)
 	weapon_ctrl.slots[sl] = ""
 	if not weapon_ctrl.equip_slot(1):
 		if not weapon_ctrl.equip_slot(2):
 			weapon_ctrl.equip_slot(3)
 
 
-func _spawn_drop_entity(item_id: String) -> void:
+func _spawn_drop_entity(item_id: String, spread_idx: int = 0) -> void:
 	if not is_instance_valid(RoundManager.game_world):
 		return
 	var drop := DroppedWeapon.new()
 	RoundManager.game_world.add_child(drop)
-	drop.global_position = global_position + Vector3(0, 1.15, 0)
+
+	# Start strictly inside the actor's collision capsule height so crouching under vents/ceilings never spawns out-of-bounds!
+	var chest_h: float = 0.54 if is_crouching else 0.94
+	var safe_origin: Vector3 = global_position + Vector3(0.0, chest_h, 0.0)
+
+	var base_fwd: Vector3 = get_look_forward()
+	var flat_fwd := Vector3(base_fwd.x, 0.0, base_fwd.z)
+	if flat_fwd.length_squared() < 0.001:
+		flat_fwd = Basis(Vector3.UP, look_yaw) * Vector3.FORWARD
+	else:
+		flat_fwd = flat_fwd.normalized()
+
+	var launch_dir: Vector3 = base_fwd
+	var launch_spd: float = 5.0
+	var up_boost: float = 1.85
+	if spread_idx > 0:
+		# Fan secondary death drops (C4, defuser, grenades) radially so items never stack on the same point!
+		var fan_ang: float = float(spread_idx) * 1.18 + randf_range(-0.22, 0.22)
+		launch_dir = Basis(Vector3.UP, fan_ang) * flat_fwd
+		launch_spd = randf_range(2.6, 3.9)
+		up_boost = randf_range(1.65, 2.35)
+
+	# Sweep-check forward spawn offset against Layer 1 walls/crates/doors so throwing nose-to-wall never tunnels!
+	var spawn_pos: Vector3 = safe_origin
+	var desired_ofs: Vector3 = Vector3(launch_dir.x, 0.0, launch_dir.z)
+	if desired_ofs.length_squared() > 0.001:
+		desired_ofs = desired_ofs.normalized() * 0.28
+		if get_world_3d() != null:
+			var space := get_world_3d().direct_space_state
+			var q_sp := PhysicsRayQueryParameters3D.create(safe_origin, safe_origin + desired_ofs * 1.65)
+			q_sp.collision_mask = 1
+			q_sp.hit_from_inside = true
+			var h_sp: Dictionary = space.intersect_ray(q_sp)
+			if h_sp.is_empty():
+				spawn_pos = safe_origin + desired_ofs
+			else:
+				var wn: Vector3 = h_sp["normal"]
+				if wn.length_squared() > 0.001:
+					launch_dir = launch_dir.bounce(wn.normalized()) * 0.45
+
+	drop.global_position = spawn_pos
+
 	var clip := int(weapon_ctrl.clips.get(item_id, 0))
 	var res := 0
+	var is_gren := false
 	if GameData.weapons.has(item_id):
-		var at := String(GameData.weapons[item_id].get("ammo_type", "none"))
-		res = int(weapon_ctrl.ammo_pool.get(at, 0))
-	var throw_v := get_look_forward() * 5.2 + Vector3(0, 2.0, 0)
+		is_gren = bool(GameData.weapons[item_id].get("grenade", false))
+		if is_gren:
+			clip = 1
+		else:
+			var at := String(GameData.weapons[item_id].get("ammo_type", "none"))
+			res = int(weapon_ctrl.ammo_pool.get(at, 0))
+
+	var throw_v: Vector3 = launch_dir * launch_spd + Vector3(0.0, up_boost, 0.0) + velocity * 0.28
 	drop.setup_drop(item_id, clip, res, throw_v, bool(weapon_ctrl.silenced_state.get(item_id, false)))
 	RoundManager.dropped_items.append(drop)
 
@@ -1238,7 +1312,16 @@ func try_pickup_dropped(drop: DroppedWeapon) -> bool:
 		return false
 	if not GameData.weapons.has(id):
 		return false
-	var sl := int(GameData.weapons[id].get("slot", 1))
+	var spec_d: Dictionary = GameData.weapons[id]
+	if bool(spec_d.get("grenade", false)):
+		var max_g := int(spec_d.get("max_ammo", 1))
+		if int(weapon_ctrl.grenades.get(id, 0)) < max_g:
+			weapon_ctrl.give_weapon(id, 1, 0)
+			weapon_ctrl._emit_ammo()
+			AudioManager.play_3d("items/kevlar.wav", global_position, -4.0, 14.0, 1.12)
+			return true
+		return false
+	var sl := int(spec_d.get("slot", 1))
 	if String(weapon_ctrl.slots.get(sl, "")).is_empty():
 		weapon_ctrl.give_weapon(id, drop.clip_ammo, drop.reserve_ammo)
 		weapon_ctrl.silenced_state[id] = drop.silenced

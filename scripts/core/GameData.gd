@@ -133,11 +133,43 @@ func get_styled_model_material(orig: Material, mode: String) -> Material:
 	elif mode == "vm_flip":
 		dup.cull_mode = BaseMaterial3D.CULL_FRONT
 		dup.albedo_color = Color(1.38, 1.38, 1.38, 1.0)
+	elif mode == "w_drop":
+		dup.cull_mode = BaseMaterial3D.CULL_BACK
+		dup.specular_mode = BaseMaterial3D.SPECULAR_SCHLICK_GGX
+		dup.roughness = 0.44
+		dup.metallic = 0.24
+		dup.metallic_specular = 0.64
+		dup.albedo_color = Color(1.25, 1.25, 1.27, 1.0)
 	else:
 		dup.cull_mode = BaseMaterial3D.CULL_BACK
-		dup.albedo_color = Color(1.48, 1.48, 1.48, 1.0)
+		dup.albedo_color = Color(1.36, 1.36, 1.38, 1.0)
 	_styled_mat_cache[key] = dup
 	return dup
+
+
+func get_drop_shadow_material() -> StandardMaterial3D:
+	var ckey := "__proc_drop_shadow_mat"
+	if _styled_mat_cache.has(ckey):
+		return _styled_mat_cache[ckey] as StandardMaterial3D
+	var sz := 64
+	var img := Image.create(sz, sz, false, Image.FORMAT_RGBA8)
+	var half := float(sz) * 0.5
+	for y in range(sz):
+		for x in range(sz):
+			var dx := (float(x) + 0.5 - half) / half
+			var dy := (float(y) + 0.5 - half) / half
+			var r := sqrt(dx * dx + dy * dy)
+			var a := pow(clampf(1.0 - r, 0.0, 1.0), 1.85) * 0.46
+			img.set_pixel(x, y, Color(0.02, 0.02, 0.03, a))
+	var tex := ImageTexture.create_from_image(img)
+	var mat := StandardMaterial3D.new()
+	mat.shading_mode = BaseMaterial3D.SHADING_MODE_UNSHADED
+	mat.transparency = BaseMaterial3D.TRANSPARENCY_ALPHA
+	mat.depth_draw_mode = BaseMaterial3D.DEPTH_DRAW_DISABLED
+	mat.cull_mode = BaseMaterial3D.CULL_DISABLED
+	mat.albedo_texture = tex
+	_styled_mat_cache[ckey] = mat
+	return mat
 
 
 func ensure_looping_animations(ap: AnimationPlayer) -> void:
