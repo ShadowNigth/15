@@ -65,9 +65,7 @@ func _find_best_waypoint(pos: Vector3, space: PhysicsDirectSpaceState3D) -> int:
 		var wid := int(cands[k][1])
 		if space != null:
 			var to_eye := waypoints[wid] + Vector3(0.0, 0.72, 0.0)
-			var q := PhysicsRayQueryParameters3D.create(from_eye, to_eye)
-			q.collision_mask = 1
-			if not space.intersect_ray(q).is_empty():
+			if _is_wall_blocking_ray(space, from_eye, to_eye):
 				cost += 38.0
 		if cost < best_score:
 			best_score = cost
@@ -76,6 +74,23 @@ func _find_best_waypoint(pos: Vector3, space: PhysicsDirectSpaceState3D) -> int:
 				break
 
 	return best_id if best_id >= 0 else _astar.get_closest_point(pos)
+
+
+func _is_wall_blocking_ray(space: PhysicsDirectSpaceState3D, a: Vector3, b: Vector3) -> bool:
+	var excl: Array[RID] = []
+	for _step in range(3):
+		var q := PhysicsRayQueryParameters3D.create(a, b)
+		q.collision_mask = 1
+		q.exclude = excl
+		var hit := space.intersect_ray(q)
+		if hit.is_empty():
+			return false
+		var col = hit["collider"]
+		if col is CollisionObject3D and ((col as Node).has_meta("door") or (col as Node).has_meta("breakable")):
+			excl.append((col as CollisionObject3D).get_rid())
+			continue
+		return true
+	return false
 
 
 func find_path(from_pos: Vector3, to_pos: Vector3, space: PhysicsDirectSpaceState3D = null) -> Array[Vector3]:
@@ -101,12 +116,11 @@ func find_path(from_pos: Vector3, to_pos: Vector3, space: PhysicsDirectSpaceStat
 	if last_wp.distance_to(to_pos) < 7.0 and absf(last_wp.y - to_pos.y) < 1.6:
 		var clear_tail := true
 		if space != null:
-			var q_tail := PhysicsRayQueryParameters3D.create(
+			clear_tail = not _is_wall_blocking_ray(
+				space,
 				last_wp + Vector3(0.0, 0.75, 0.0),
 				to_pos + Vector3(0.0, 0.75, 0.0)
 			)
-			q_tail.collision_mask = 1
-			clear_tail = space.intersect_ray(q_tail).is_empty()
 		if clear_tail:
 			out.append(to_pos)
 	return out

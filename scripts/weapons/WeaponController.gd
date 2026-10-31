@@ -601,21 +601,31 @@ func _fire_penetrating_ray(
 	var cur_dmg: float = base_dmg
 	var rem_dist: float = max_dist
 	var exclude_rids: Array[RID] = [(actor as CollisionObject3D).get_rid()]
+	var tracer_spawned := false
+	var is_heavy_cal: bool = (base_dmg >= 48.0 or current_weapon_id in ["awp", "scout", "g3sg1", "sg550", "deagle", "m249"])
+	var cal_scale: float = clampf(base_dmg / 30.0, 0.78, 1.45)
 
-	for _hop in range(pen_left + 1):
+	for _hop in range(pen_left + 2):
 		if rem_dist <= 0.1 or cur_dmg <= 1.0:
 			break
 		var ray_end: Vector3 = cur_from + dir * rem_dist
 		var q := PhysicsRayQueryParameters3D.create(cur_from, ray_end)
-		q.collision_mask = 1 | 2 | 4  # World (1) + Actors/Hostages (2) + Physical Dropped Weapons (4)!
+		q.collision_mask = 1 | 2 | 4 | 8  # World (1) + Actors/Hostages (2) + Dropped Weapons (4) + Metal Ladders/Grates (8)
 		q.exclude = exclude_rids
 		var hit: Dictionary = space.intersect_ray(q)
 		if hit.is_empty():
+			if not tracer_spawned and is_instance_valid(RoundManager.game_world):
+				tracer_spawned = true
+				ImpactEffects.spawn_bullet_tracer(RoundManager.game_world, _get_tracer_origin(origin, dir), origin + dir * minf(max_dist, 44.0), is_heavy_cal)
 			RoundManager.apply_world_bullet_wake(cur_from, ray_end, clampf(base_dmg / 30.0, 0.5, 2.0))
 			break
 
 		var hit_pos: Vector3 = hit["position"]
 		var hit_nrm: Vector3 = hit["normal"]
+		if not tracer_spawned and is_instance_valid(RoundManager.game_world):
+			tracer_spawned = true
+			ImpactEffects.spawn_bullet_tracer(RoundManager.game_world, _get_tracer_origin(origin, dir), hit_pos, is_heavy_cal)
+
 		RoundManager.apply_world_bullet_wake(cur_from, hit_pos, clampf(base_dmg / 30.0, 0.5, 2.0))
 		var traveled_gs := origin.distance_to(hit_pos) / GameData.SCALE
 		var dmg_at_dist := cur_dmg * pow(range_mod, traveled_gs / 500.0)
@@ -623,6 +633,8 @@ func _fire_penetrating_ray(
 
 		if col is DroppedWeapon:
 			(col as DroppedWeapon).apply_bullet_impulse(hit_pos, dir, dmg_at_dist)
+			if is_instance_valid(RoundManager.game_world):
+				ImpactEffects.spawn_surface_impact(RoundManager.game_world, hit_pos, hit_nrm, dir, "M", 0.85, col as Node3D)
 			exclude_rids.append((col as CollisionObject3D).get_rid())
 			cur_dmg *= 0.82
 			var step_dw := origin.distance_to(hit_pos)
@@ -632,6 +644,10 @@ func _fire_penetrating_ray(
 
 		if col is Node3D and col.has_method("take_bullet_damage"):
 			var hgroup := _determine_hitgroup(col, hit_pos)
+			var is_friendly := (String(col.get("team")) == String(actor.get("team"))) and not GameData.friendly_fire
+			var armored_hd := (hgroup == 1 and bool(col.get("has_helmet")) and int(col.get("armor")) > 0)
+			if not is_friendly and is_instance_valid(RoundManager.game_world):
+				ImpactEffects.spawn_blood_impact(RoundManager.game_world, space, hit_pos, dir, hgroup, armored_hd, dmg_at_dist)
 			col.call("take_bullet_damage", actor, dmg_at_dist, armor_ratio, hgroup, current_weapon_id, hit_pos)
 			exclude_rids.append((col as CollisionObject3D).get_rid())
 			cur_dmg *= 0.65
@@ -641,16 +657,39 @@ func _fire_penetrating_ray(
 			continue
 
 		if col is HostageNPC:
+			if is_instance_valid(RoundManager.game_world):
+				ImpactEffects.spawn_blood_impact(RoundManager.game_world, space, hit_pos, dir, 2, false, dmg_at_dist)
 			(col as HostageNPC).take_damage(actor, dmg_at_dist)
 			break
 
-		# World or func_breakable impact
-		if col is Node and col.has_meta("breakable"):
-			var brk = col.get_meta("breakable")
-			if is_instance_valid(brk) and brk.has_method("apply_damage"):
-				brk.apply_damage(dmg_at_dist, hit_pos)
+		# Layer 8 visual metal ladder / grate brush: spark & clank on metal rung, and let bullet pass through gaps!
+		if col is StaticBody3D and (col as StaticBody3D).collision_layer == 8:
+			var lmat := String((col as StaticBody3D).get_meta("surface_mat")) if (col as StaticBody3D).has_meta("surface_mat") else "L"
+			_spawn_surface_hit_fx(hit_pos, hit_nrm, dir, col, lmat, cal_scale)
+			exclude_rids.append((col as CollisionObject3D).get_rid())
+			cur_dmg *= 0.90
+			cur_from = hit_pos + dir * 0.06
+			rem_dist = max_dist - origin.distance_to(cur_from)
+			continue
 
-		_spawn_wall_puff(hit_pos, hit_nrm)
+		# World, BSPDoor, or func_breakable impact
+		var attach_target: Node3D = null
+		var mat_override := ""
+		if col is Node:
+			if col.has_meta("breakable"):
+				var brk = col.get_meta("breakable")
+				if is_instance_valid(brk):
+					attach_target = brk as Node3D
+					if brk.has_method("apply_damage"):
+						brk.apply_damage(dmg_at_dist, hit_pos)
+			elif col.has_meta("door"):
+				var dr_node = col.get_meta("door")
+				if is_instance_valid(dr_node):
+					attach_target = dr_node as Node3D
+					mat_override = "M"
+
+		var surf_char := _sample_collider_material(col, mat_override)
+		_spawn_surface_hit_fx(hit_pos, hit_nrm, dir, attach_target, surf_char, cal_scale)
 
 		# CS 1.5 Wallbanging: test thin wall exit within 0.65m (~21 GoldSrc units)
 		if pen_left <= 0:
@@ -661,6 +700,9 @@ func _fire_penetrating_ray(
 		var exit_hit: Dictionary = space.intersect_ray(back_q)
 		if exit_hit.is_empty():
 			break  # Wall thicker than penetration depth
+		# Spawn exit bullet hole & puff on the back side of thin wall/door/crate!
+		if is_instance_valid(RoundManager.game_world):
+			ImpactEffects.spawn_surface_impact(RoundManager.game_world, exit_hit["position"], exit_hit["normal"], dir, surf_char, cal_scale * 0.85, attach_target)
 		pen_left -= 1
 		cur_dmg *= 0.55
 		cur_from = exit_hit["position"] + dir * 0.05
@@ -680,22 +722,59 @@ func _determine_hitgroup(target: Node3D, hit_pos: Vector3) -> int:
 	return 4  # Legs
 
 
-func _spawn_wall_puff(pos: Vector3, normal: Vector3) -> void:
+func _get_tracer_origin(eye_pos: Vector3, shot_dir: Vector3) -> Vector3:
+	var aim_b: Basis = actor.call("get_aim_basis", punch_angles)
+	var hand_sign: float = 1.0 if GameData.right_hand else -1.0
+	if not bool(actor.get("is_human")):
+		hand_sign = 1.0
+	return eye_pos + aim_b.x * (0.16 * hand_sign) - aim_b.y * 0.10 + shot_dir * 0.35
+
+
+func _sample_collider_material(col: Variant, fallback_char: String = "") -> String:
+	if col is Node:
+		var cnode := col as Node
+		if cnode.has_meta("surface_mat"):
+			return String(cnode.get_meta("surface_mat"))
+		var p := cnode.get_parent()
+		if p is MeshInstance3D:
+			var mi := p as MeshInstance3D
+			if mi.mesh and mi.mesh.get_surface_count() > 0:
+				var m := mi.get_surface_override_material(0)
+				if not m:
+					m = mi.mesh.surface_get_material(0)
+				if m:
+					var mname := m.resource_name.to_lower()
+					if "ladder" in mname or "rung" in mname:
+						return "L"
+					if "secdr" in mname or "fifties_dr" in mname or "babtech" in mname or "metal" in mname or "steel" in mname or "silo" in mname or "duct" in mname:
+						return "M"
+					if "wood" in mname or "crate" in mname or "plank" in mname or "cardbox" in mname:
+						return "W"
+					if "glass" in mname or "skkylite" in mname:
+						return "Y"
+					return GameData.get_material_char(m.resource_name)
+	return fallback_char if not fallback_char.is_empty() else "C"
+
+
+func _spawn_surface_hit_fx(
+	pos: Vector3,
+	normal: Vector3,
+	bullet_dir: Vector3,
+	attach_node: Node3D,
+	surf_char: String,
+	cal_scale: float
+) -> void:
 	if not is_instance_valid(RoundManager.game_world):
 		return
-	var puff := Sprite3D.new()
-	puff.texture = GameData.get_texture("res://assets/sprites/wall_puff%d.png" % randi_range(1, 4))
-	puff.billboard = BaseMaterial3D.BILLBOARD_ENABLED
-	puff.pixel_size = 0.0045
-	puff.modulate = Color(0.85, 0.85, 0.82, 0.8)
-	RoundManager.game_world.add_child(puff)
-	puff.global_position = pos + normal * 0.04
-	var tw := puff.create_tween()
-	tw.tween_property(puff, "modulate:a", 0.0, 0.35)
-	tw.tween_callback(puff.queue_free)
+	ImpactEffects.spawn_surface_impact(RoundManager.game_world, pos, normal, bullet_dir, surf_char, cal_scale, attach_node)
 
-	if randf() < 0.35:
-		AudioManager.play_3d("weapons/ric%d.wav" % randi_range(1, 5), pos, -9.0, 18.0)
+	if surf_char in ["M", "V", "L", "G"]:
+		if randf() < 0.72:
+			AudioManager.play_3d("weapons/ric_metal-%d.wav" % randi_range(1, 2), pos, -5.5, 22.0, randf_range(0.94, 1.08))
+	elif surf_char in ["C", "T"]:
+		if randf() < 0.42:
+			var rwav := ("weapons/ric_conc-%d.wav" % randi_range(1, 2)) if randf() < 0.55 else ("weapons/ric%d.wav" % randi_range(1, 5))
+			AudioManager.play_3d(rwav, pos, -7.5, 19.0, randf_range(0.95, 1.06))
 
 
 func _swing_knife(heavy_stab: bool) -> void:
@@ -708,7 +787,7 @@ func _swing_knife(heavy_stab: bool) -> void:
 	var dir: Vector3 = -aim_b.z
 	var space: PhysicsDirectSpaceState3D = (actor as Node3D).get_world_3d().direct_space_state
 	var q := PhysicsRayQueryParameters3D.create(eye, eye + dir * reach)
-	q.collision_mask = 1 | 2 | 4
+	q.collision_mask = 1 | 2 | 4 | 8
 	q.exclude = [(actor as CollisionObject3D).get_rid()]
 	var hit: Dictionary = space.intersect_ray(q)
 	var did_hit := not hit.is_empty()
@@ -740,15 +819,30 @@ func _swing_knife(heavy_stab: bool) -> void:
 			var target_fwd: Vector3 = -(col as Node3D).global_transform.basis.z
 			if dir.dot(target_fwd) > 0.45:
 				dmg = 195.0  # Classic CS 1.5 Backstab!
+		if (String(col.get("team")) != String(actor.get("team")) or GameData.friendly_fire) and is_instance_valid(RoundManager.game_world):
+			ImpactEffects.spawn_blood_impact(RoundManager.game_world, space, hpos, dir, 2, false, dmg)
 		col.call("take_bullet_damage", actor, dmg, 1.7, 2, "knife", hpos)
 		var kwav := "weapons/knife_stab.wav" if heavy_stab else ("weapons/knife_hit%d.wav" % randi_range(1, 4))
 		AudioManager.play_3d(kwav, hpos, 0.0, 20.0)
 		return
 
+	var attach_k: Node3D = null
+	var k_override := ""
 	if col is Node and col.has_meta("breakable"):
 		var brk = col.get_meta("breakable")
-		if is_instance_valid(brk) and brk.has_method("apply_damage"):
-			brk.apply_damage(45.0 if heavy_stab else 20.0, hpos)
+		if is_instance_valid(brk):
+			attach_k = brk as Node3D
+			if brk.has_method("apply_damage"):
+				brk.apply_damage(45.0 if heavy_stab else 20.0, hpos)
+	elif col is Node and col.has_meta("door"):
+		var dr_k = col.get_meta("door")
+		if is_instance_valid(dr_k):
+			attach_k = dr_k as Node3D
+			k_override = "M"
+
+	if is_instance_valid(RoundManager.game_world):
+		var k_surf := _sample_collider_material(col, k_override)
+		ImpactEffects.spawn_surface_impact(RoundManager.game_world, hpos, hit["normal"], dir, k_surf, 0.72, attach_k)
 
 	AudioManager.play_3d("weapons/knife_hitwall1.wav", hpos, -3.0, 16.0)
 

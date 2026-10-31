@@ -188,31 +188,37 @@ def build_bot_nav_graph(
     planes_n: np.ndarray,
     planes_d: np.ndarray,
     hull1_headnode: int,
+    ladder_spans_gs: List[Tuple[np.ndarray, np.ndarray]] | None = None,
 ) -> Tuple[List[List[float]], List[List[int]]]:
     """
     Generates a clean, Hull-1 collision-verified tactical waypoint graph across the BSP map
-    so Bots IA can pathfind via A* between spawns, corridors, bombsites, and hostages.
+    (including doorways and vertical ladder bottom<->top links) so Bots pathfind via A*.
     """
-    CELL = 136.0  # ~4.25m tactical spacing in GoldSrc units for tighter doorway/ramp routing
+    CELL = 132.0  # ~4.125m tactical spacing in GoldSrc units for tighter doorway/ramp routing
     grid: Dict[Tuple[int, int, int], np.ndarray] = {}
 
-    # Prioritize objective/spawn seed points first
+    # Prioritize objective/spawn/doorway/ladder seed points first
     seed_keys = []
     for pt in seed_points_gs:
         p_test = pt.copy()
         if len(clipnodes) > 0:
             # Find valid hull-1 stand height near seed
+            placed = False
             for dz in (0.0, 18.0, -18.0, 36.0):
-                cand = p_test + np.array([0.0, 0.0, dz], dtype=np.float32)
-                if hull_point_contents(clipnodes, planes_n, planes_d, hull1_headnode, cand) == -1:
-                    p_test = cand
+                for dx, dy in ((0.0, 0.0), (28.0, 0.0), (-28.0, 0.0), (0.0, 28.0), (0.0, -28.0)):
+                    cand = p_test + np.array([dx, dy, dz], dtype=np.float32)
+                    if hull_point_contents(clipnodes, planes_n, planes_d, hull1_headnode, cand) == -1:
+                        p_test = cand
+                        placed = True
+                        break
+                if placed:
                     break
         key = (int(round(p_test[0] / CELL)), int(round(p_test[1] / CELL)), int(round(p_test[2] / 72.0)))
         if key not in grid:
             grid[key] = p_test
             seed_keys.append(key)
 
-    # Add walkable floor face centroids (hull-1 clearance verified)
+    # Add walkable floor samples (hull-1 clearance verified)
     for fpt in floor_samples_gs:
         stand_pt = fpt + np.array([0.0, 0.0, 37.0], dtype=np.float32)  # Hull 1 origin is +36 above floor
         key = (int(round(stand_pt[0] / CELL)), int(round(stand_pt[1] / CELL)), int(round(stand_pt[2] / 72.0)))
@@ -225,7 +231,7 @@ def build_bot_nav_graph(
                     continue
                 stand_pt = stand_hi
         grid[key] = stand_pt
-        if len(grid) >= 720:
+        if len(grid) >= 920:
             break
 
     pts_gs = list(grid.values())
@@ -248,6 +254,22 @@ def build_bot_nav_graph(
             if len(clipnodes) == 0 or hull_line_clear(clipnodes, planes_n, planes_d, hull1_headnode, pts_arr[i], pts_arr[j]):
                 adj[i].append(int(j))
                 adj[j].append(int(i))
+
+    # Connect bottom <-> top waypoints on every func_ladder so Bots climb ladders in A*!
+    if ladder_spans_gs:
+        for bot_gs, top_gs in ladder_spans_gs:
+            db = pts_arr - bot_gs
+            dt = pts_arr - top_gs
+            hb = np.hypot(db[:, 0], db[:, 1])
+            ht = np.hypot(dt[:, 0], dt[:, 1])
+            b_cands = np.where((hb < 144.0) & (np.abs(db[:, 2]) < 76.0))[0]
+            t_cands = np.where((ht < 156.0) & (np.abs(dt[:, 2]) < 84.0))[0]
+            if len(b_cands) > 0 and len(t_cands) > 0:
+                bi = int(min(b_cands, key=lambda idx: float(hb[idx] + abs(db[idx, 2]) * 0.5)))
+                ti = int(min(t_cands, key=lambda idx: float(ht[idx] + abs(dt[idx, 2]) * 0.5)))
+                if bi != ti and ti not in adj[bi]:
+                    adj[bi].append(ti)
+                    adj[ti].append(bi)
 
     # Prune unreachable rooftop clusters: retain components reachable from spawn/objective seeds (or largest component)
     num_seeds = min(len(seed_keys), n)
@@ -450,10 +472,12 @@ def convert_single_bsp(
     escape_zones = []
     ladders = []
     water_zones = []
+    triggers = []
     brush_entities = []
     ambient_sounds = []
     cameras = []
     seed_points_gs: List[np.ndarray] = []
+    ladder_spans_gs: List[Tuple[np.ndarray, np.ndarray]] = []
 
     for ent in ents:
         cname = ent.get("classname", "").lower()
@@ -465,7 +489,18 @@ def convert_single_bsp(
         model_str = ent.get("model", "")
         sub_idx = int(model_str[1:]) if model_str.startswith("*") and model_str[1:].isdigit() else -1
         orig_gs = parse_vec3_str(ent.get("origin", "0 0 0"))
-        angles_gs = parse_vec3_str(ent.get("angles", "0 0 0"))
+        if "angles" in ent and ent["angles"].strip():
+            angles_gs = parse_vec3_str(ent["angles"])
+        elif "angle" in ent and ent["angle"].strip():
+            ang_val = float(ent["angle"].strip())
+            if ang_val == -1.0:
+                angles_gs = (-90.0, 0.0, 0.0)
+            elif ang_val == -2.0:
+                angles_gs = (90.0, 0.0, 0.0)
+            else:
+                angles_gs = (0.0, ang_val, 0.0)
+        else:
+            angles_gs = (0.0, 0.0, 0.0)
         # GoldSrc yaw (angles[1]): 0 = +X (-Z in Godot), 90 = +Y (-X in Godot) -> yaw_gd = radians(angles[1])
         yaw_gd = round(math.radians(angles_gs[1]), 4)
 
@@ -541,8 +576,18 @@ def convert_single_bsp(
             elif cname == "func_ladder":
                 trigger_submodels.add(sub_idx)
                 ladders.append({"min": lo_gd, "max": hi_gd})
+                cx_gs = (mins_gs[0] + maxs_gs[0]) * 0.5
+                cy_gs = (mins_gs[1] + maxs_gs[1]) * 0.5
+                bot_gs = np.array([cx_gs, cy_gs, mins_gs[2] + 38.0], dtype=np.float32)
+                top_gs = np.array([cx_gs, cy_gs, maxs_gs[2] + 38.0], dtype=np.float32)
+                seed_points_gs.append(bot_gs)
+                seed_points_gs.append(top_gs)
+                ladder_spans_gs.append((bot_gs, top_gs))
             elif cname.startswith("trigger_"):
                 trigger_submodels.add(sub_idx)
+                tgt = ent.get("target", "").strip()
+                if tgt and cname in ("trigger_multiple", "trigger_once"):
+                    triggers.append({"min": lo_gd, "max": hi_gd, "target": tgt})
             elif cname == "func_water":
                 water_zones.append({"min": lo_gd, "max": hi_gd})
                 brush_entities.append({
@@ -575,6 +620,7 @@ def convert_single_bsp(
             ):
                 rmode = int(ent.get("rendermode", "0") or "0")
                 ramt = int(ent.get("renderamt", "255") or "255")
+                lip_val = float(ent.get("lip", "0") or "0")
                 # Skip invisible func_walls (rendermode != 0 and renderamt == 0)
                 brush_entities.append({
                     "classname": cname,
@@ -586,13 +632,23 @@ def convert_single_bsp(
                     "health": float(ent.get("health", "0") or "0"),
                     "material": int(ent.get("material", "0") or "0"),
                     "speed": float(ent.get("speed", "100") or "100"),
-                    "lip": float(ent.get("lip", "8") or "8"),
+                    "lip": lip_val,
+                    "distance": float(ent.get("distance", "90") or "90"),
+                    "wait": float(ent.get("wait", "4") or "4"),
+                    "target": ent.get("target", "").strip(),
+                    "targetname": ent.get("targetname", "").strip(),
                     "spawnflags": int(ent.get("spawnflags", "0") or "0"),
                     "solid": cname != "func_illusionary",
                     "center": center_gd,
+                    "min": lo_gd,
+                    "max": hi_gd,
                 })
-                if cname in ("func_door", "func_door_rotating"):
-                    seed_points_gs.append(center_gs)
+                if cname in ("func_door", "func_door_rotating") and abs(lip_val) < 1000.0:
+                    door_floor_z = mins_gs[2] + 38.0
+                    d_center = np.array([center_gs[0], center_gs[1], door_floor_z], dtype=np.float32)
+                    seed_points_gs.append(d_center)
+                    for dx, dy in ((56.0, 0.0), (-56.0, 0.0), (0.0, 56.0), (0.0, -56.0)):
+                        seed_points_gs.append(d_center + np.array([dx, dy, 0.0], dtype=np.float32))
             else:
                 # Unknown trigger/zone submodels don't need visible geometry
                 trigger_submodels.add(sub_idx)
@@ -729,10 +785,28 @@ def convert_single_bsp(
                 vi = edges[se, 0] if se >= 0 else edges[-se, 1]
                 pts_gs.append(verts_gs[vi])
 
-            # Collect floor sample on worldspawn upward-facing polygons for Bot navigation
+            # Collect dense floor samples on worldspawn upward-facing polygons for Bot navigation
             if sm_idx == 0 and float(pn_gs[2]) > 0.72 and not minfo["lower"].startswith("!"):
-                centroid = np.mean(pts_gs, axis=0)
+                pts_np = np.array(pts_gs, dtype=np.float32)
+                centroid = np.mean(pts_np, axis=0)
                 floor_samples_gs.append(centroid)
+                span_xy = np.ptp(pts_np[:, :2], axis=0)
+                max_span = float(max(span_xy[0], span_xy[1]))
+                if max_span > 168.0:
+                    # Sample inset vertices & triangle sub-grids strictly inside the convex BSP polygon
+                    for v_pt in pts_np:
+                        floor_samples_gs.append(centroid * 0.26 + v_pt * 0.74)
+                    if max_span > 280.0 and len(pts_np) >= 3:
+                        steps = min(5, max(2, int(max_span / 148.0)))
+                        p0 = pts_np[0]
+                        for ti in range(1, len(pts_np) - 1):
+                            p1, p2 = pts_np[ti], pts_np[ti + 1]
+                            for su in range(1, steps):
+                                u_f = su / float(steps)
+                                for sv in range(1, steps - su + 1):
+                                    v_f = sv / float(steps)
+                                    if u_f + v_f < 0.98:
+                                        floor_samples_gs.append(p0 * (1.0 - u_f - v_f) + p1 * u_f + p2 * v_f)
 
             mat_idx = get_mat_idx(minfo["safe"], minfo["masked"])
             vlist, ilist, vmap = prim_buckets.setdefault(mat_idx, ([], [], {}))
@@ -901,10 +975,10 @@ def convert_single_bsp(
         out.write(struct.pack("<II", len(bin_chunks), 0x004E4942))
         out.write(bin_chunks)
 
-    # Generate Hull-1 Bot navigation graph
+    # Generate Hull-1 Bot navigation graph (including vertical ladder links!)
     hull1_head = submodels[0]["headnodes"][1] if submodels else 0
     waypoints_gd, nav_adj = build_bot_nav_graph(
-        floor_samples_gs, seed_points_gs, clipnodes, planes_n, planes_d, hull1_head
+        floor_samples_gs, seed_points_gs, clipnodes, planes_n, planes_d, hull1_head, ladder_spans_gs
     )
 
     # Map briefing text from cstrike/maps/<map>.txt
@@ -939,6 +1013,7 @@ def convert_single_bsp(
         "escape_zones": escape_zones,
         "ladders": ladders,
         "water_zones": water_zones,
+        "triggers": triggers,
         "brush_entities": brush_entities,
         "ambient_sounds": ambient_sounds,
         "cameras": cameras,

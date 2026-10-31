@@ -346,6 +346,12 @@ func _handle_use_interaction(delta: float) -> void:
 				var door = col.get_meta("door")
 				if is_instance_valid(door) and door.has_method("interact"):
 					door.call("interact", self)
+			elif col is Node and col.has_meta("button_target"):
+				var btn_tgt := String(col.get_meta("button_target"))
+				var btn_pos: Vector3 = col.get_meta("button_center") if col.has_meta("button_center") else hit["position"]
+				AudioManager.play_3d("buttons/blip1.wav", btn_pos, -3.5, 18.0, 1.0, 12.0, team)
+				if RoundManager.game_world != null:
+					RoundManager.game_world.trigger_map_target(btn_tgt, self)
 
 	# Continuous hold E to defuse planted C4 (CT only)
 	if team == "CT" and Input.is_action_pressed("use") and is_instance_valid(RoundManager.planted_c4):

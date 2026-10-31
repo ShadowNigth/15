@@ -4,11 +4,15 @@ extends RefCounted
 
 
 static func build_map(parent: Node3D, map_data: Dictionary) -> Dictionary:
+	ImpactEffects.clear_decals()
+
 	var result := {
 		"root": null,
 		"doors": [],
 		"breakables": [],
 		"ladders": [],
+		"ladder_volumes": [],
+		"triggers": [],
 		"bombsites": [],
 		"buyzones": [],
 		"rescue_zones": [],
@@ -77,6 +81,9 @@ static func build_map(parent: Node3D, map_data: Dictionary) -> Dictionary:
 		elif is_water:
 			alpha_f = 0.78
 
+		var has_ladder_tex := false
+		var has_grate_tex := false
+
 		# Apply GoldSrc baked lightmap shader (opaque vs alpha-scissor vs translucent)
 		mi.layers = 1
 		if mi.mesh and world_shader:
@@ -91,6 +98,11 @@ static func build_map(parent: Node3D, map_data: Dictionary) -> Dictionary:
 				if albedo == null:
 					var tex_path := "res://assets/textures/world/%s.png" % tex_safe
 					albedo = GameData.get_texture(tex_path)
+				var tlow := tex_safe.to_lower()
+				if "ladder" in tlow or "rung" in tlow:
+					has_ladder_tex = true
+				elif tlow.begins_with("mask_"):
+					has_grate_tex = true
 				var tmeta: Dictionary = GameData.world_textures_meta.get(tex_safe, {})
 				var is_masked := bool(tmeta.get("masked", tex_safe.begins_with("mask_")))
 				var surf_water := is_water or tex_safe.begins_with("water_")
@@ -117,19 +129,29 @@ static func build_map(parent: Node3D, map_data: Dictionary) -> Dictionary:
 				mi.set_surface_override_material(surf_i, smat)
 
 		# Position submodel origin if specified in BSP entity
+		var orig_vec := Vector3.ZERO
 		if sub_idx > 0 and bmeta.has("origin"):
 			var o: Array = bmeta["origin"]
-			mi.position += Vector3(float(o[0]), float(o[1]), float(o[2]))
+			orig_vec = Vector3(float(o[0]), float(o[1]), float(o[2]))
+			mi.position += orig_vec
 
-		# Attach static trimesh collision on solid world & solid brush entities
-		if is_solid and not is_water and mi.mesh:
+		# Attach trimesh collision:
+		# - Layer 1 on solid world/brushes (unless pure visual ladder rungs, which go to Layer 8 so climbers never snag!)
+		# - Layer 8 on func_illusionary metal ladders/grates so bullets & knives spark/ricochet on metal rungs!
+		var pure_ladder_brush: bool = (sub_idx > 0 and has_ladder_tex and cname in ["func_wall", "func_illusionary"])
+		if not is_water and mi.mesh and (is_solid or has_ladder_tex or has_grate_tex):
 			mi.create_trimesh_collision()
+			var col_layer: int = 8 if (pure_ladder_brush or not is_solid) else 1
 			for sc in mi.get_children():
 				if sc is StaticBody3D:
-					sc.collision_layer = 1
+					sc.collision_layer = col_layer
 					sc.collision_mask = 0
+					if has_ladder_tex:
+						sc.set_meta("surface_mat", "L")
+					elif has_grate_tex:
+						sc.set_meta("surface_mat", "G")
 
-		# Wrap interactive doors & breakables
+		# Wrap interactive breakables, buttons, and doors
 		if cname == "func_breakable":
 			var brk := BSPBreakable.new()
 			brk.name = "Breakable_%d" % sub_idx
@@ -141,42 +163,97 @@ static func build_map(parent: Node3D, map_data: Dictionary) -> Dictionary:
 					sc.set_meta("breakable", brk)
 			result["breakables"].append(brk)
 
+		elif cname in ["func_button", "func_rot_button"]:
+			var btn_tgt := String(bmeta.get("target", ""))
+			var bc_arr: Array = bmeta.get("center", [0.0, 0.0, 0.0])
+			var bc_vec := Vector3(float(bc_arr[0]), float(bc_arr[1]), float(bc_arr[2]))
+			for sc in mi.get_children():
+				if sc is StaticBody3D:
+					sc.set_meta("button_target", btn_tgt)
+					sc.set_meta("button_center", bc_vec)
+
 		elif cname in ["func_door", "func_door_rotating"]:
+			var lip_raw: float = float(bmeta.get("lip", 0.0))
+			# Keep decorative skybox movers (e.g. de_torn jet1..4 with lip=-4096) static
+			if absf(lip_raw) >= 1000.0:
+				continue
+
 			var door := BSPDoor.new()
 			door.name = "Door_%d" % sub_idx
 			var c_arr: Array = bmeta.get("center", [0.0, 0.0, 0.0])
-			door.position = Vector3(float(c_arr[0]), float(c_arr[1]), float(c_arr[2]))
+			var c_vec := Vector3(float(c_arr[0]), float(c_arr[1]), float(c_arr[2]))
+			var is_rot: bool = (cname == "func_door_rotating")
+			# Rotating doors pivot around their GoldSrc origin hinge; sliding doors around center
+			if is_rot and orig_vec.length_squared() > 0.001:
+				door.position = orig_vec
+			else:
+				door.position = c_vec
 			map_root.add_child(door)
 			mi.reparent(door, true)
 
-			if cname == "func_door_rotating":
-				var sflags := int(bmeta.get("spawnflags", 0))
-				var rot_vec := Vector3(0.0, deg_to_rad(90.0), 0.0)
-				if sflags & 64:
-					rot_vec = Vector3(deg_to_rad(90.0), 0.0, 0.0)
-				elif sflags & 128:
-					rot_vec = Vector3(0.0, 0.0, deg_to_rad(90.0))
-				door.setup_rotating(rot_vec, float(bmeta.get("speed", 100.0)))
+			var d_aabb: AABB
+			if bmeta.has("min") and bmeta.has("max"):
+				d_aabb = _dict_to_aabb(bmeta, 0.0)
 			else:
-				var ang: Array = bmeta.get("angles", [0.0, 0.0, 0.0])
-				var yaw_gs := deg_to_rad(float(ang[1]))
-				var move_dir := Vector3(-sin(yaw_gs), 0.0, -cos(yaw_gs))
-				if float(ang[0]) <= -89.0 or absf(float(ang[1]) + 1.0) < 0.1:
-					move_dir = Vector3.UP
-				elif float(ang[0]) >= 89.0 or absf(float(ang[1]) + 2.0) < 0.1:
-					move_dir = Vector3.DOWN
-				var aabb := mi.get_aabb()
-				var span := absf(move_dir.x) * aabb.size.x + absf(move_dir.y) * aabb.size.y + absf(move_dir.z) * aabb.size.z
-				var lip := float(bmeta.get("lip", 8.0)) * GameData.SCALE
-				door.setup_sliding(move_dir * maxf(0.4, span - lip), float(bmeta.get("speed", 100.0)))
+				var la := mi.get_aabb()
+				d_aabb = AABB(mi.global_position + la.position, la.size)
+
+			door.setup_door(
+				is_rot,
+				bmeta.get("angles", [0.0, 0.0, 0.0]),
+				float(bmeta.get("speed", 100.0)),
+				lip_raw,
+				d_aabb,
+				float(bmeta.get("distance", 90.0)),
+				float(bmeta.get("wait", 4.0)),
+				String(bmeta.get("targetname", "")),
+				int(bmeta.get("spawnflags", 0))
+			)
 
 			for sc in mi.get_children():
 				if sc is StaticBody3D:
 					sc.set_meta("door", door)
 			result["doors"].append(door)
 
-	# 3. Parse AABB zones (Ladders, Bombsites, Buyzones, Rescue zones, Escape zones)
-	result["ladders"] = _parse_aabbs(map_data.get("ladders", []), 0.32)
+	# Link adjacent double-door panels (HLSDK LinkDoors: touching closed AABBs with matching target_name)
+	var doors_arr: Array = result["doors"]
+	for i in range(doors_arr.size()):
+		var da: BSPDoor = doors_arr[i]
+		var grow_a: AABB = da.closed_aabb.grow(0.38)
+		for j in range(i + 1, doors_arr.size()):
+			var db: BSPDoor = doors_arr[j]
+			if da.target_name == db.target_name and grow_a.intersects(db.closed_aabb):
+				da.linked_doors.append(db)
+				db.linked_doors.append(da)
+
+	# 3. Parse Precision Metal Ladder Volumes + Trigger Volumes + Objective Zones
+	for ldict in map_data.get("ladders", []):
+		if not (ldict is Dictionary):
+			continue
+		var raw_l: AABB = _dict_to_aabb(ldict, 0.0)
+		# Horizontal pad 0.48m (> 0.36m capsule radius even flush against walls!), +0.56m top vault extension
+		var c_min: Vector3 = raw_l.position - Vector3(0.48, 0.16, 0.48)
+		var c_max: Vector3 = raw_l.end + Vector3(0.48, 0.56, 0.48)
+		var climb_box := AABB(c_min, c_max - c_min)
+		result["ladders"].append(climb_box)
+		var thin_axis: Vector3 = Vector3(1, 0, 0) if raw_l.size.x <= raw_l.size.z else Vector3(0, 0, 1)
+		result["ladder_volumes"].append({
+			"raw_aabb": raw_l,
+			"climb_aabb": climb_box,
+			"axis": thin_axis,
+			"normal": Vector3.ZERO,
+			"resolved": false,
+		})
+
+	for tdict in map_data.get("triggers", []):
+		if tdict is Dictionary:
+			var t_tgt := String(tdict.get("target", ""))
+			if not t_tgt.is_empty():
+				result["triggers"].append({
+					"aabb": _dict_to_aabb(tdict, 0.25),
+					"target": t_tgt,
+				})
+
 	result["bombsites"] = _parse_aabbs(map_data.get("bombsites", []), 0.5)
 	result["rescue_zones"] = _parse_aabbs(map_data.get("rescue_zones", []), 0.6)
 	result["escape_zones"] = _parse_aabbs(map_data.get("escape_zones", []), 0.6)

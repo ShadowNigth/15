@@ -10,6 +10,8 @@ var bot_navigator: BotNavigator = null
 var doors: Array = []
 var breakables: Array = []
 var ladders: Array[AABB] = []
+var ladder_volumes: Array = []
+var trigger_zones: Array = []
 var bombsites: Array[AABB] = []
 var buyzones: Array = []
 var rescue_zones: Array[AABB] = []
@@ -42,6 +44,8 @@ func _ready() -> void:
 	doors = map_runtime.get("doors", [])
 	breakables = map_runtime.get("breakables", [])
 	ladders = map_runtime.get("ladders", [])
+	ladder_volumes = map_runtime.get("ladder_volumes", [])
+	trigger_zones = map_runtime.get("triggers", [])
 	bombsites = map_runtime.get("bombsites", [])
 	buyzones = map_runtime.get("buyzones", [])
 	rescue_zones = map_runtime.get("rescue_zones", [])
@@ -193,6 +197,8 @@ func _spawn_single_bot(tm: String) -> void:
 
 
 func prepare_round_entities(reset_all_gear: bool) -> void:
+	ImpactEffects.clear_decals()
+
 	# 1. Clear dropped weapons and planted C4
 	for d in RoundManager.dropped_items:
 		if is_instance_valid(d):
@@ -334,3 +340,76 @@ func is_on_ladder(pos: Vector3) -> bool:
 		if l.has_point(pos):
 			return true
 	return false
+
+
+func get_ladder_info(feet_pos: Vector3, actor_height: float = 1.75) -> Dictionary:
+	var y_lo: float = feet_pos.y + 0.08
+	var y_hi: float = feet_pos.y + actor_height
+	for lv_raw in ladder_volumes:
+		var lv: Dictionary = lv_raw
+		var cb: AABB = lv["climb_aabb"]
+		if feet_pos.x < cb.position.x or feet_pos.x > cb.end.x:
+			continue
+		if feet_pos.z < cb.position.z or feet_pos.z > cb.end.z:
+			continue
+		if y_hi < cb.position.y or y_lo > cb.end.y:
+			continue
+
+		var raw_box: AABB = lv["raw_aabb"]
+		var raw_c: Vector3 = raw_box.get_center()
+		if not bool(lv["resolved"]) and get_world_3d() != null:
+			var space := get_world_3d().direct_space_state
+			if space != null:
+				var ax: Vector3 = lv["axis"]
+				var q_pos := PhysicsRayQueryParameters3D.create(raw_c, raw_c + ax * 0.78)
+				q_pos.collision_mask = 1
+				var q_neg := PhysicsRayQueryParameters3D.create(raw_c, raw_c - ax * 0.78)
+				q_neg.collision_mask = 1
+				var hit_pos_side: bool = not space.intersect_ray(q_pos).is_empty()
+				var hit_neg_side: bool = not space.intersect_ray(q_neg).is_empty()
+				if hit_pos_side and not hit_neg_side:
+					lv["normal"] = -ax
+				elif hit_neg_side and not hit_pos_side:
+					lv["normal"] = ax
+				lv["resolved"] = true
+
+		var nrm: Vector3 = lv["normal"]
+		if nrm.length_squared() < 0.01:
+			var ax2: Vector3 = lv["axis"]
+			var side_dot: float = (feet_pos - raw_c).dot(ax2)
+			nrm = ax2 if side_dot >= 0.0 else -ax2
+
+		return {
+			"on_ladder": true,
+			"normal": nrm,
+			"top_y": raw_box.end.y,
+			"bottom_y": raw_box.position.y,
+			"center": raw_c,
+		}
+	return {"on_ladder": false}
+
+
+func trigger_map_target(target_id: String, actor: Node3D = null) -> bool:
+	if target_id.is_empty():
+		return false
+	var fired := false
+	for dr in doors:
+		if is_instance_valid(dr) and (dr as BSPDoor).target_name == target_id:
+			(dr as BSPDoor).force_open(actor)
+			fired = true
+	return fired
+
+
+func _physics_process(_delta: float) -> void:
+	if trigger_zones.is_empty():
+		return
+	for tz_raw in trigger_zones:
+		var tz: Dictionary = tz_raw
+		var box: AABB = tz["aabb"]
+		var tgt: String = tz["target"]
+		for a in RoundManager.actors:
+			if is_instance_valid(a) and a.is_alive:
+				if box.has_point(a.global_position + Vector3(0.0, 0.9, 0.0)):
+					trigger_map_target(tgt, a)
+					break
+

@@ -41,6 +41,7 @@ var deaths: int = 0
 var is_crouching: bool = false
 var is_walking: bool = false
 var on_ladder: bool = false
+var bot_ladder_dir: float = 0.0
 var look_yaw: float = 0.0
 var look_pitch: float = 0.0
 var stamina_factor: float = 1.0  # CS 1.5 landing / bullet-tagging slowdown!
@@ -54,6 +55,7 @@ var _body_anim: AnimationPlayer = null
 var _skel: Skeleton3D = null
 var _hand_attachment: BoneAttachment3D = null
 var _tp_muzzle_sprite: Sprite3D = null
+var _tp_muzzle_light: OmniLight3D = null
 var _tp_muzzle_timer: float = 0.0
 var _step_accum: float = 0.0
 
@@ -122,6 +124,7 @@ func _rebuild_character_model() -> void:
 	_skel = null
 	_hand_attachment = null
 	_tp_muzzle_sprite = null
+	_tp_muzzle_light = null
 	_pelvis_bone_idx = -1
 	_spine_bone_idx = -1
 	_is_upper_bone = PackedByteArray()
@@ -155,11 +158,21 @@ func _rebuild_character_model() -> void:
 				_tp_muzzle_sprite.layers = 2
 				_tp_muzzle_sprite.texture = GameData.get_texture("res://assets/sprites/muzzleflash1.png")
 				_tp_muzzle_sprite.billboard = BaseMaterial3D.BILLBOARD_ENABLED
-				_tp_muzzle_sprite.pixel_size = 0.0042
-				_tp_muzzle_sprite.modulate = Color(1.0, 0.86, 0.48, 0.92)
+				_tp_muzzle_sprite.shaded = false
+				_tp_muzzle_sprite.pixel_size = 0.0048
+				_tp_muzzle_sprite.modulate = Color(1.0, 0.88, 0.52, 0.95)
 				_tp_muzzle_sprite.position = Vector3(-0.04, 0.06, -0.58)
 				_tp_muzzle_sprite.visible = false
 				_hand_attachment.add_child(_tp_muzzle_sprite)
+
+				if not is_human:
+					_tp_muzzle_light = OmniLight3D.new()
+					_tp_muzzle_light.light_color = Color(1.0, 0.80, 0.42)
+					_tp_muzzle_light.light_energy = 1.9
+					_tp_muzzle_light.omni_range = 6.2
+					_tp_muzzle_light.position = Vector3(-0.04, 0.08, -0.62)
+					_tp_muzzle_light.visible = false
+					_hand_attachment.add_child(_tp_muzzle_light)
 		if weapon_ctrl:
 			_update_held_weapon_model(weapon_ctrl.current_weapon_id)
 		_evaluate_character_pose(0.0)
@@ -251,8 +264,11 @@ func trigger_upper_body_action(action_kind: String) -> void:
 			if _tp_muzzle_sprite and wid not in ["knife", "hegrenade", "flashbang", "smokegrenade", "c4"]:
 				var is_sil := weapon_ctrl != null and bool(weapon_ctrl.silenced_state.get(wid, false))
 				if not is_sil:
+					_tp_muzzle_sprite.texture = GameData.get_texture("res://assets/sprites/muzzleflash%d.png" % randi_range(1, 4))
 					_tp_muzzle_sprite.visible = true
-					_tp_muzzle_timer = 0.045
+					if _tp_muzzle_light:
+						_tp_muzzle_light.visible = true
+					_tp_muzzle_timer = 0.048
 		"reload":
 			var rkey := pref + "reload_" + ext
 			if not _anim_res_map.has(rkey):
@@ -295,8 +311,11 @@ func _apply_anim_layer(anim_key: String, sample_t: float, mode: int) -> void:
 func _process(delta: float) -> void:
 	if _tp_muzzle_timer > 0.0:
 		_tp_muzzle_timer -= delta
-		if _tp_muzzle_timer <= 0.0 and _tp_muzzle_sprite:
-			_tp_muzzle_sprite.visible = false
+		if _tp_muzzle_timer <= 0.0:
+			if _tp_muzzle_sprite:
+				_tp_muzzle_sprite.visible = false
+			if _tp_muzzle_light:
+				_tp_muzzle_light.visible = false
 	if _body_root and _body_root.visible:
 		_evaluate_character_pose(delta)
 
@@ -340,6 +359,12 @@ func _evaluate_character_pose(delta: float) -> void:
 			rate = clampf(hspd / 2.6, 0.55, 1.45) * gait_dir_sign
 		else:
 			want_gait = "crouch_idle"
+	elif on_ladder:
+		if absf(velocity.y) > 0.35:
+			want_gait = "walk" if _anim_res_map.has("walk") else "run"
+			rate = clampf(absf(velocity.y) / 4.2, 0.75, 1.35) * (1.0 if velocity.y >= 0.0 else -1.0)
+		else:
+			want_gait = "idle1"
 	elif not is_on_floor():
 		want_gait = "jump"
 		rate = 1.0
@@ -578,8 +603,11 @@ func apply_goldsrc_movement(wish_dir_world: Vector3, want_jump: bool, want_crouc
 
 	# Check ladder zone
 	on_ladder = false
-	if is_instance_valid(RoundManager.game_world) and RoundManager.game_world.has_method("is_on_ladder"):
-		on_ladder = bool(RoundManager.game_world.call("is_on_ladder", global_position + Vector3(0, 0.9, 0)))
+	var lad_info: Dictionary = {}
+	var actor_h: float = CROUCH_HEIGHT if is_crouching else STAND_HEIGHT
+	if is_instance_valid(RoundManager.game_world) and RoundManager.game_world.has_method("get_ladder_info"):
+		lad_info = RoundManager.game_world.get_ladder_info(global_position, actor_h)
+		on_ladder = bool(lad_info.get("on_ladder", false))
 
 	var max_spd := weapon_ctrl.get_max_speed_gs() * GameData.SCALE * stamina_factor
 	if is_crouching:
@@ -588,16 +616,68 @@ func apply_goldsrc_movement(wish_dir_world: Vector3, want_jump: bool, want_crouc
 		max_spd *= 0.52
 
 	if on_ladder:
-		var climb_spd := 5.2
-		if wish_dir_world.length_squared() > 0.01:
+		var climb_spd := 5.75
+		var n_ladder: Vector3 = lad_info.get("normal", Vector3(0, 0, 1))
+		var top_y: float = float(lad_info.get("top_y", global_position.y + 4.0))
+		var lad_center: Vector3 = lad_info.get("center", global_position)
+		var lat_axis: Vector3 = Vector3.UP.cross(n_ladder).normalized()
+
+		if want_jump:
+			# Classic CS 1.5 Spacebar kick-off perpendicular to ladder!
+			velocity = n_ladder * 5.6 + Vector3(0.0, 2.75, 0.0)
+			on_ladder = false
+			move_and_slide()
+			_tick_footsteps(delta, false)
+			return
+
+		if not is_human and absf(bot_ladder_dir) > 0.1:
+			# Precision AI Bot ladder climb + automatic top-platform step-forward
+			var to_c: Vector3 = lad_center - global_position
+			var lat_err: float = to_c.dot(lat_axis)
+			velocity = lat_axis * clampf(lat_err * 5.0, -2.5, 2.5)
+			if bot_ladder_dir > 0.0:
+				velocity.y = climb_spd
+				if global_position.y >= top_y - 0.48:
+					velocity += (-n_ladder) * 4.4
+				else:
+					velocity += (-n_ladder) * 1.6
+			else:
+				velocity.y = -climb_spd
+				if is_on_floor():
+					velocity += n_ladder * 3.8
+				else:
+					velocity += (-n_ladder) * 1.4
+		elif wish_dir_world.length_squared() > 0.01:
 			var fwd := get_look_forward()
-			velocity.x = wish_dir_world.x * 3.0
-			velocity.z = wish_dir_world.z * 3.0
-			velocity.y = climb_spd * (1.0 if fwd.y > -0.2 else -1.0)
+			var flat_fwd := Vector3(fwd.x, 0.0, fwd.z)
+			if flat_fwd.length_squared() > 0.001:
+				flat_fwd = flat_fwd.normalized()
+			else:
+				flat_fwd = -n_ladder
+			var fb_dot: float = wish_dir_world.dot(flat_fwd)
+			var lat_in: float = wish_dir_world.dot(lat_axis)
+			var vy: float = 0.0
+			var look_down: bool = (fwd.y < -0.28)
+			if fb_dot > 0.15:
+				vy = -climb_spd if look_down else climb_spd
+			elif fb_dot < -0.15:
+				vy = climb_spd if look_down else -climb_spd
+
+			# Allow walking cleanly off the base of the ladder when on floor & moving away
+			var moving_away: bool = wish_dir_world.dot(n_ladder) > 0.42
+			if is_on_floor() and (vy <= 0.0) and moving_away:
+				velocity.x = wish_dir_world.x * max_spd
+				velocity.z = wish_dir_world.z * max_spd
+				velocity.y = 0.0
+			elif vy > 0.0 and global_position.y >= top_y - 0.56:
+				# Smooth top-ledge vault over roof/catwalk/vent lip!
+				velocity = (-n_ladder) * 4.3 + lat_axis * (lat_in * 2.4) + Vector3(0.0, 4.0, 0.0)
+			else:
+				# Glue gently against rungs while climbing up/down or strafing laterally
+				velocity = (-n_ladder) * 1.55 + lat_axis * (lat_in * 2.8) + Vector3(0.0, vy, 0.0)
 		else:
 			velocity = Vector3.ZERO
-		if want_jump:
-			velocity = get_look_forward() * 5.5 + Vector3(0, 3.0, 0)
+
 		move_and_slide()
 		_tick_footsteps(delta, true)
 		return
@@ -777,7 +857,10 @@ func take_bullet_damage(
 	stamina_factor = clampf(stamina_factor - 0.28, 0.42, 1.0)
 	_last_hitgroup = hitgroup
 	trigger_upper_body_action("flinch_head" if hitgroup == 1 else "flinch_gut")
-	_apply_raw_hp_loss(attacker, maxi(1, int(dmg)), weapon_id, hitgroup == 1)
+	var final_hp_loss := maxi(1, int(dmg))
+	_apply_raw_hp_loss(attacker, final_hp_loss, weapon_id, hitgroup == 1)
+	if is_alive:
+		_on_taken_damage_from(attacker, hit_pos)
 
 
 func apply_explosion_damage(attacker: Node3D, raw_dmg: float, weapon_id: String) -> void:
@@ -789,6 +872,12 @@ func apply_explosion_damage(attacker: Node3D, raw_dmg: float, weapon_id: String)
 		armor = maxi(0, armor - int(absorbed))
 		dmg -= absorbed
 	_apply_raw_hp_loss(attacker, maxi(1, int(dmg)), weapon_id, false)
+	if is_alive:
+		_on_taken_damage_from(attacker, global_position)
+
+
+func _on_taken_damage_from(_attacker: Node3D, _hit_pos: Vector3) -> void:
+	pass
 
 
 func _apply_raw_hp_loss(attacker: Node3D, dmg_int: int, weapon_id: String, headshot: bool) -> void:
@@ -819,8 +908,8 @@ func _die(killer: Node3D, weapon_id: String, headshot: bool) -> void:
 	if _hand_attachment != null:
 		var held_kids := _hand_attachment.get_children()
 		for c in held_kids:
-			if c == _tp_muzzle_sprite:
-				_tp_muzzle_sprite.visible = false
+			if c == _tp_muzzle_sprite or c == _tp_muzzle_light:
+				c.visible = false
 				continue
 			_hand_attachment.remove_child(c)
 			c.queue_free()

@@ -95,48 +95,81 @@ def save_miptex_png(raw_name: str, w: int, h: int, indices: bytes, pal: bytes, o
 
 def generate_fallback_hl_texture(raw_name: str, w: int, h: int, out_path: str) -> bool:
     """
-    Generates crisp, high-detail GoldSrc architectural textures for base Half-Life (halflife.wad)
-    surfaces preserving the exact miptex aspect ratio so crates, trims, ladders, and panels align flush.
+    Generates authentic Half-Life 1 (halflife.wad) industrial, architectural, security door,
+    corrugated warehouse, vehicle, console, crate, glass, and masked ladder/vent textures
+    with neutral GoldSrc palettes (zero purple tinting!) at exact miptex aspect ratios.
     """
     os.makedirs(os.path.dirname(out_path), exist_ok=True)
     w = max(16, min(128, int(w or 64)))
     h = max(16, min(128, int(h or 64)))
     lname = raw_name.lower()
-    seed = int(hashlib.md5(lname.encode("utf-8")).hexdigest()[:8], 16)
+    # Strip GoldSrc animated/toggle prefixes (+0, +a, -0, ~, etc.) for clean material matching
+    clean = re.sub(r"^[+\-][0-9a-z]", "", lname).lstrip("~")
+    seed = int(hashlib.md5(clean.encode("utf-8")).hexdigest()[:8], 16)
     rng = np.random.default_rng(seed)
 
-    # 1. Masked '{' textures: ladders, railings, fences, grates
+    # 1. Masked '{' textures: ladders, duct vents, railings, chain-link fences, razorwire, grates
     if raw_name.startswith("{"):
         rgba = np.zeros((h, w, 4), dtype=np.uint8)
-        metal = np.array([108, 96, 84, 255] if "rust" in lname else [118, 122, 126, 255], dtype=np.uint8)
-        dark = np.clip(metal.astype(np.int16) - 34, 0, 255).astype(np.uint8)
+        is_rust = "rust" in clean
+        metal = np.array([112, 86, 68, 255] if is_rust else [132, 138, 144, 255], dtype=np.uint8)
+        hi_m = np.clip(metal.astype(np.int16) + 34, 0, 255).astype(np.uint8)
+        hi_m[3] = 255
+        dark = np.clip(metal.astype(np.int16) - 42, 0, 255).astype(np.uint8)
         dark[3] = 255
-        if any(k in lname for k in ("rung", "ladder")):
-            rail_w = max(2, w // 10)
-            rgba[:, :rail_w] = metal
-            rgba[:, -rail_w:] = metal
+
+        if any(k in clean for k in ("rung", "ladder")):
+            rail_w = max(3, w // 8)
+            # Left & right tubular steel rails with cylindrical highlight
+            rgba[:, :rail_w] = dark
+            rgba[:, 1 : max(2, rail_w - 1)] = metal
+            if rail_w >= 4:
+                rgba[:, 1] = hi_m
+            rgba[:, -rail_w:] = dark
+            rgba[:, -max(2, rail_w - 1) : -1] = metal
+            if rail_w >= 4:
+                rgba[:, -rail_w + 1] = hi_m
             step_h = max(8, h // 4)
             rung_t = max(2, step_h // 5)
             for ry in range(step_h // 2, h, step_h):
-                rgba[max(0, ry - rung_t) : min(h, ry + rung_t), :] = metal
-                if ry - rung_t >= 0:
-                    rgba[ry - rung_t, :] = dark
-        elif "rail" in lname:
+                y0, y1 = max(0, ry - rung_t), min(h, ry + rung_t)
+                rgba[y0:y1, :] = metal
+                rgba[y0, :] = hi_m
+                if y1 - 1 >= y0:
+                    rgba[y1 - 1, :] = dark
+        elif "vnt" in clean or "vent" in clean:
+            # Slatted air-duct vent louvers with see-through dark slots
+            b = max(3, min(w, h) // 10)
+            rgba[:b, :] = metal
+            rgba[-b:, :] = dark
+            rgba[:, :b] = metal
+            rgba[:, -b:] = dark
+            slat_step = max(6, h // 7)
+            for sy in range(b + 2, h - b - 1, slat_step):
+                rgba[sy : min(h - b, sy + max(2, slat_step - 3)), b : w - b] = metal
+                rgba[sy, b : w - b] = hi_m
+            rgba[:, w // 2 - 1 : w // 2 + 1] = dark
+        elif "razor" in clean:
+            yy, xx = np.mgrid[0:h, 0:w]
+            coil1 = np.abs(np.sin(xx * np.pi * 3.0 / w) * (h * 0.42) + h * 0.5 - yy) < 1.8
+            coil2 = np.abs(np.cos(xx * np.pi * 3.0 / w) * (h * 0.42) + h * 0.5 - yy) < 1.8
+            rgba[coil1 | coil2] = [142, 146, 150, 255]
+        elif "rail" in clean:
             bar = max(3, h // 10)
             rgba[:bar, :] = metal
-            rgba[-bar:, :] = metal
-            rgba[h // 2 - max(1, bar // 2) : h // 2 + max(1, bar // 2), :] = dark
+            rgba[0, :] = hi_m
+            rgba[-bar:, :] = dark
+            rgba[h // 2 - max(1, bar // 2) : h // 2 + max(1, bar // 2), :] = metal
             post_step = max(12, w // 4)
             for px in range(0, w, post_step):
                 rgba[:, px : min(w, px + max(2, bar))] = metal
-        elif "fence" in lname:
+        elif "fence" in clean:
             yy, xx = np.mgrid[0:h, 0:w]
             wire = (((xx + yy) % 8 <= 1) | ((xx - yy) % 8 <= 1))
-            rgba[wire] = [132, 136, 140, 255]
+            rgba[wire] = [138, 144, 148, 255]
             rgba[:2, :] = dark
             rgba[-2:, :] = dark
         else:
-            # Industrial grate
             cell = 8
             yy, xx = np.mgrid[0:h, 0:w]
             bars = ((xx % cell) < 2) | ((yy % cell) < 2)
@@ -149,8 +182,8 @@ def generate_fallback_hl_texture(raw_name: str, w: int, h: int, out_path: str) -
         return True
 
     # 2. Water / Slime
-    if "water" in lname or "slime" in lname or raw_name.startswith("!"):
-        base = np.array([42, 96, 76] if ("green" in lname or "slime" in lname) else [44, 86, 132], dtype=np.float32)
+    if "water" in clean or "slime" in clean or raw_name.startswith("!"):
+        base = np.array([42, 96, 76] if ("green" in clean or "slime" in clean) else [44, 86, 132], dtype=np.float32)
         yy, xx = np.mgrid[0:h, 0:w]
         wave = (
             np.sin(xx * 2 * np.pi / w * 2.0 + yy * 0.14) * 16.0
@@ -161,121 +194,299 @@ def generate_fallback_hl_texture(raw_name: str, w: int, h: int, out_path: str) -
         Image.fromarray(rgb, mode="RGB").quantize(colors=48).save(out_path, format="PNG", optimize=True)
         return False
 
-    # 3. Light fixtures & glowing signs
-    if any(k in lname for k in ("lgt", "light", "lght", "emerg", "exit")) or "~" in lname:
-        base = np.array([238, 232, 206], dtype=np.float32)
-        if "emerg" in lname or "red" in lname:
-            base = np.array([235, 88, 66], dtype=np.float32)
-        elif "exit" in lname:
-            base = np.array([68, 208, 92], dtype=np.float32)
-        elif "blue" in lname:
-            base = np.array([150, 198, 242], dtype=np.float32)
-        yy, xx = np.mgrid[0:h, 0:w]
-        glow = 1.0 - 0.18 * (np.abs(xx - w * 0.5) / (w * 0.5)) - 0.18 * (np.abs(yy - h * 0.5) / (h * 0.5))
-        rgb = np.clip(base * glow[..., None], 0, 255).astype(np.uint8)
-        b = max(2, min(w, h) // 8)
-        rgb[:b, :] = [58, 62, 66]
-        rgb[-b:, :] = [58, 62, 66]
-        rgb[:, :b] = [58, 62, 66]
-        rgb[:, -b:] = [58, 62, 66]
-        Image.fromarray(rgb, mode="RGB").quantize(colors=32).save(out_path, format="PNG", optimize=True)
-        return False
+    # 3. Light fixtures, Emergency beacons & EXIT signs
+    if any(k in clean for k in ("lgt", "light", "lght", "emerg", "exit", "spotyellow")) or "~" in lname:
+        if "comp" not in clean and "crt" not in clean:
+            base = np.array([242, 236, 212], dtype=np.float32)
+            if "emerg" in clean or "red" in clean:
+                base = np.array([235, 76, 58], dtype=np.float32)
+            elif "exit" in clean:
+                base = np.array([58, 206, 88], dtype=np.float32)
+            elif "yellow" in clean:
+                base = np.array([244, 216, 118], dtype=np.float32)
+            elif "blue" in clean:
+                base = np.array([150, 198, 242], dtype=np.float32)
+            yy, xx = np.mgrid[0:h, 0:w]
+            glow = 1.0 - 0.16 * (np.abs(xx - w * 0.5) / (w * 0.5)) - 0.16 * (np.abs(yy - h * 0.5) / (h * 0.5))
+            rgb = np.clip(base * glow[..., None], 0, 255).astype(np.uint8)
+            b = max(2, min(w, h) // 8)
+            rgb[:b, :] = [52, 56, 60]
+            rgb[-b:, :] = [52, 56, 60]
+            rgb[:, :b] = [52, 56, 60]
+            rgb[:, -b:] = [52, 56, 60]
+            Image.fromarray(rgb, mode="RGB").quantize(colors=32).save(out_path, format="PNG", optimize=True)
+            return False
 
-    # 4. Wooden shipping crates & planks (bcrate*, crate*, wood*, box*)
-    if any(k in lname for k in ("crate", "bcrate", "box")):
-        im = Image.new("RGB", (w, h), (146, 108, 66))
+    # 4. Hazard Stripes & Warning Signs (stripes2, sign*)
+    if "stripe" in clean or clean.startswith("sign"):
+        im = Image.new("RGB", (w, h), (196, 158, 36) if "stripe" in clean else (188, 186, 178))
         dr = ImageDraw.Draw(im)
-        plank_h = max(6, h // 6)
-        for py in range(0, h, plank_h):
-            shade = int(rng.integers(-10, 11))
-            dr.rectangle([0, py, w - 1, min(h - 1, py + plank_h - 1)], fill=(146 + shade, 108 + shade, 66 + shade // 2))
-            dr.line([(0, py), (w - 1, py)], fill=(96, 68, 38), width=1)
-        frame = max(3, min(w, h) // 9)
-        # Diagonal brace + outer wooden frame
-        dr.line([(frame, frame), (w - frame - 1, h - frame - 1)], fill=(122, 88, 50), width=max(2, frame - 1))
-        dr.rectangle([0, 0, w - 1, frame], fill=(126, 92, 54))
-        dr.rectangle([0, h - frame - 1, w - 1, h - 1], fill=(116, 84, 48))
-        dr.rectangle([0, 0, frame, h - 1], fill=(124, 90, 52))
-        dr.rectangle([w - frame - 1, 0, w - 1, h - 1], fill=(114, 82, 46))
-        dr.rectangle([0, 0, w - 1, h - 1], outline=(76, 52, 28), width=1)
+        if "stripe" in clean:
+            yy, xx = np.mgrid[0:h, 0:w]
+            blk = ((xx + yy) // max(6, min(w, h) // 4)) % 2 == 0
+            arr = np.array(im, dtype=np.int16)
+            arr[blk] = [34, 34, 36]
+            arr += rng.integers(-8, 9, size=(h, w, 1))
+            Image.fromarray(np.clip(arr, 0, 255).astype(np.uint8), mode="RGB").quantize(colors=32).save(out_path, format="PNG", optimize=True)
+            return False
+        else:
+            dr.rectangle([0, 0, w - 1, h - 1], outline=(48, 52, 56), width=2)
+            dr.rectangle([3, 3, w - 4, max(7, h // 3)], fill=(182, 54, 42))
+            for ty in range(max(10, h // 3 + 4), h - 5, 5):
+                dr.line([(6, ty), (w - 8, ty)], fill=(58, 60, 64), width=2)
+            arr = np.clip(np.array(im, dtype=np.int16) + rng.integers(-6, 7, size=(h, w, 1)), 0, 255).astype(np.uint8)
+            Image.fromarray(arr, mode="RGB").quantize(colors=32).save(out_path, format="PNG", optimize=True)
+            return False
+
+    # 5. Half-Life Automatic Sliding Security Doors & Hinged Facility Doors
+    #    Matches: c1a3secdr02, fifties_dr2/5b/5d/8b, babtech_dr4c, elev2_dr, introdr1e, trk_door, *door*, *_dr*
+    if any(k in clean for k in ("secdr", "door", "introdr", "elev2_dr")) or re.search(r"(?:^|_)dr\d", clean):
+        is_wood_dr = "wood" in clean
+        bg = (118, 86, 56) if is_wood_dr else ((98, 106, 114) if "secdr" in clean or "elev" in clean else (114, 118, 122))
+        im = Image.new("RGB", (w, h), bg)
+        dr = ImageDraw.Draw(im)
+        fr = max(3, min(w, h) // 10)
+        # Heavy dark steel outer door frame + inner bevel
+        dr.rectangle([0, 0, w - 1, h - 1], outline=(46, 50, 54), width=fr)
+        if w >= 32 and h >= 48:
+            # Upper & lower recessed blast panels
+            mid_y = int(h * 0.54)
+            p_in = fr + 3
+            dr.rectangle([p_in, p_in, w - p_in - 1, mid_y - 5], fill=(bg[0] - 12, bg[1] - 12, bg[2] - 10), outline=(58, 62, 68), width=1)
+            dr.rectangle([p_in, mid_y + 5, w - p_in - 1, h - p_in - 1], fill=(bg[0] - 16, bg[1] - 16, bg[2] - 14), outline=(58, 62, 68), width=1)
+            # Small armored vision slit / security window on upper door leaf
+            if "secdr" in clean or "fifties_dr" in clean:
+                wx0, wx1 = int(w * 0.28), int(w * 0.72)
+                wy0, wy1 = int(h * 0.16), int(h * 0.34)
+                dr.rectangle([wx0, wy0, wx1, wy1], fill=(56, 78, 92), outline=(38, 42, 46), width=2)
+                dr.line([(wx0 + 2, wy1 - 3), (wx1 - 2, wy0 + 3)], fill=(118, 152, 168), width=1)
+            # Horizontal lock bar + caution stripe on industrial security doors
+            dr.rectangle([fr, mid_y - 3, w - fr - 1, mid_y + 3], fill=(72, 76, 82))
+            if "secdr" in clean or "babtech" in clean:
+                sy0 = h - fr - max(5, h // 12)
+                for sx in range(fr, w - fr, 8):
+                    col_s = (196, 158, 36) if ((sx // 8) % 2 == 0) else (38, 40, 42)
+                    dr.rectangle([sx, sy0, min(w - fr - 1, sx + 7), h - fr - 1], fill=col_s)
+            # Door latch / handle plate
+            hx = w - fr - max(5, w // 7)
+            dr.rectangle([hx, mid_y - 6, hx + 4, mid_y + 6], fill=(164, 168, 172), outline=(42, 44, 48))
         arr = np.array(im, dtype=np.int16)
-        grain = rng.integers(-8, 9, size=(h, max(4, w // 4), 1)).repeat(4, axis=1)[:, :w]
-        arr = np.clip(arr + grain, 0, 255).astype(np.uint8)
+        # Brushed vertical steel sheen
+        grad = (np.sin(np.linspace(0, np.pi, w)) * 10.0).astype(np.int16)[None, :, None]
+        arr = np.clip(arr + grad + rng.integers(-6, 7, size=(h, w, 1)), 0, 255).astype(np.uint8)
         Image.fromarray(arr, mode="RGB").quantize(colors=48).save(out_path, format="PNG", optimize=True)
         return False
 
-    if any(k in lname for k in ("wood", "plank", "trrm")):
-        arr = np.full((h, w, 3), [136, 98, 60], dtype=np.int16)
+    # 6. Glass & Skylights (glass_bright, glass_med, glassblue1, skkylite)
+    if "glass" in clean or "skkylite" in clean:
+        base = np.array([118, 158, 176] if "blue" not in clean else [88, 134, 172], dtype=np.float32)
+        yy, xx = np.mgrid[0:h, 0:w]
+        diag = ((xx + yy * 0.7) % max(24, w // 2)) < 5
+        arr = np.broadcast_to(base, (h, w, 3)).copy()
+        arr[diag] += 26.0
+        arr += rng.integers(-4, 5, size=(h, w, 1))
+        arr[:2, :] = [64, 74, 82]
+        arr[-2:, :] = [64, 74, 82]
+        arr[:, :2] = [64, 74, 82]
+        arr[:, -2:] = [64, 74, 82]
+        Image.fromarray(np.clip(arr, 0, 255).astype(np.uint8), mode="RGB").quantize(colors=32).save(out_path, format="PNG", optimize=True)
+        return False
+
+    # 7. Wooden, Military & Cardboard Crates (crate*, bcrate*, xcrate*, cardbox*, ammo*)
+    if any(k in clean for k in ("crate", "bcrate", "cardbox", "ammo", "out_box")):
+        if "cardbox" in clean:
+            im = Image.new("RGB", (w, h), (164, 134, 92))
+            dr = ImageDraw.Draw(im)
+            dr.rectangle([0, 0, w - 1, h - 1], outline=(112, 88, 56), width=2)
+            dr.line([(0, h // 2), (w - 1, h // 2)], fill=(124, 96, 62), width=2)
+        elif "ammo" in clean or "c3a1_crate" in clean:
+            # Olive-drab military ordnance crate
+            im = Image.new("RGB", (w, h), (86, 96, 68))
+            dr = ImageDraw.Draw(im)
+            fr = max(2, min(w, h) // 8)
+            dr.rectangle([0, 0, w - 1, h - 1], outline=(48, 54, 38), width=fr)
+            dr.line([(fr, h // 2), (w - fr - 1, h // 2)], fill=(186, 158, 54), width=max(2, h // 14))
+        else:
+            im = Image.new("RGB", (w, h), (148, 110, 68))
+            dr = ImageDraw.Draw(im)
+            plank_h = max(6, h // 6)
+            for py in range(0, h, plank_h):
+                shade = int(rng.integers(-10, 11))
+                dr.rectangle([0, py, w - 1, min(h - 1, py + plank_h - 1)], fill=(148 + shade, 110 + shade, 68 + shade // 2))
+                dr.line([(0, py), (w - 1, py)], fill=(96, 68, 38), width=1)
+            frame = max(3, min(w, h) // 9)
+            dr.line([(frame, frame), (w - frame - 1, h - frame - 1)], fill=(122, 88, 50), width=max(2, frame - 1))
+            dr.rectangle([0, 0, w - 1, frame], fill=(126, 92, 54))
+            dr.rectangle([0, h - frame - 1, w - 1, h - 1], fill=(116, 84, 48))
+            dr.rectangle([0, 0, frame, h - 1], fill=(124, 90, 52))
+            dr.rectangle([w - frame - 1, 0, w - 1, h - 1], fill=(114, 82, 46))
+            dr.rectangle([0, 0, w - 1, h - 1], outline=(76, 52, 28), width=1)
+        arr = np.clip(np.array(im, dtype=np.int16) + rng.integers(-7, 8, size=(h, w, 1)), 0, 255).astype(np.uint8)
+        Image.fromarray(arr, mode="RGB").quantize(colors=48).save(out_path, format="PNG", optimize=True)
+        return False
+
+    if any(k in clean for k in ("wood", "plank", "trrm", "bks", "book", "dsk")):
+        arr = np.full((h, w, 3), [134, 96, 58] if "dsk" not in clean else [118, 114, 106], dtype=np.int16)
         plank_h = max(8, h // 4)
         for py in range(0, h, plank_h):
-            arr[py : py + plank_h] += int(rng.integers(-12, 13))
-            arr[py, :] -= 28
-        grain = rng.integers(-9, 10, size=(h, max(4, w // 4), 1)).repeat(4, axis=1)[:, :w]
-        rgb = np.clip(arr + grain, 0, 255).astype(np.uint8)
+            arr[py : py + plank_h] += int(rng.integers(-10, 11))
+            arr[py, :] -= 24
+        rgb = np.clip(arr + rng.integers(-8, 9, size=(h, w, 1)), 0, 255).astype(np.uint8)
         Image.fromarray(rgb, mode="RGB").quantize(colors=48).save(out_path, format="PNG", optimize=True)
         return False
 
-    # 5. Industrial Metal / Lab / Babtech / Silo / Duct panels
-    if any(k in lname for k in ("steel", "mtl", "metal", "duct", "vent", "elev", "lab", "babtech", "silo", "comp", "scrn", "pnl", "door", "dr4")):
-        tint = np.array([(seed & 15) - 7, ((seed >> 4) & 15) - 7, ((seed >> 8) & 15) - 5], dtype=np.int16)
-        base = np.clip(np.array([106, 112, 118], dtype=np.int16) + tint, 55, 165)
+    # 8. Corrugated Warehouse Siding (cs_assault blue warehouse `baseblue`, `silo2_cor`, `out_galv*`)
+    if any(k in clean for k in ("baseblue", "silo2_cor", "galv", "corrug")):
+        base = np.array([68, 98, 138] if "blue" in clean else [128, 134, 138], dtype=np.float32)
+        yy, xx = np.mgrid[0:h, 0:w]
+        ribs = np.sin(xx * 2.0 * np.pi / 8.0) * 18.0
+        arr = base + ribs[..., None] + rng.integers(-6, 7, size=(h, w, 1))
+        for sy in range(0, h, max(32, h // 2)):
+            arr[sy : min(h, sy + 2), :] -= 26.0
+        Image.fromarray(np.clip(arr, 0, 255).astype(np.uint8), mode="RGB").quantize(colors=48).save(out_path, format="PNG", optimize=True)
+        return False
+
+    # 9. Computers, Security Camera Racks & Power Consoles (lab1_comp*, lab_crt*, recharged, c1a4_pow)
+    if any(k in clean for k in ("comp", "crt", "scrn", "recharg", "c1a4_pow")):
+        im = Image.new("RGB", (w, h), (62, 66, 72))
+        dr = ImageDraw.Draw(im)
+        dr.rectangle([0, 0, w - 1, h - 1], outline=(36, 38, 42), width=2)
+        # CRT monitor screen
+        sy0, sy1 = max(4, h // 7), max(12, h // 2)
+        sx0, sx1 = max(4, w // 7), max(10, w - w // 7 - 1)
+        if sx1 > sx0 + 4 and sy1 > sy0 + 4:
+            dr.rectangle([sx0, sy0, sx1, sy1], fill=(22, 54, 44), outline=(32, 34, 38), width=2)
+            for ly in range(sy0 + 3, sy1 - 2, 4):
+                dr.line([(sx0 + 3, ly), (sx1 - 3, ly)], fill=(68, 196, 118), width=1)
+        # Rack indicator LEDs & switches below screen
+        for by in range(sy1 + 5, h - 5, 8):
+            for bx in range(6, w - 6, 8):
+                led_c = (210, 72, 54) if ((bx + by) % 16 == 0) else ((78, 198, 98) if ((bx + by) % 24 == 0) else (112, 116, 122))
+                dr.rectangle([bx, by, min(w - 3, bx + 4), min(h - 3, by + 3)], fill=led_c)
+        arr = np.clip(np.array(im, dtype=np.int16) + rng.integers(-6, 7, size=(h, w, 1)), 0, 255).astype(np.uint8)
+        Image.fromarray(arr, mode="RGB").quantize(colors=48).save(out_path, format="PNG", optimize=True)
+        return False
+
+    # 10. Trucks, Vehicles & Industrial Dumpsters (trk_*, tankrear, out_dmp*)
+    if clean.startswith("trk_") or "tankrear" in clean or "out_dmp" in clean:
+        if "tire" in clean or "tread" in clean or "rim" in clean:
+            im = Image.new("RGB", (w, h), (38, 40, 42))
+            dr = ImageDraw.Draw(im)
+            if "tire" in clean:
+                r_out = min(w, h) // 2 - 2
+                dr.ellipse([w // 2 - r_out, h // 2 - r_out, w // 2 + r_out, h // 2 + r_out], fill=(32, 34, 36), outline=(56, 58, 60), width=2)
+                r_rim = max(4, r_out // 2)
+                dr.ellipse([w // 2 - r_rim, h // 2 - r_rim, w // 2 + r_rim, h // 2 + r_rim], fill=(116, 120, 124), outline=(72, 74, 78), width=2)
+            else:
+                for tx in range(0, w, 6):
+                    dr.line([(tx, 0), (tx, h - 1)], fill=(58, 60, 64), width=2)
+        elif "grille" in clean:
+            im = Image.new("RGB", (w, h), (52, 56, 60))
+            dr = ImageDraw.Draw(im)
+            for gx in range(4, w - 4, 5):
+                dr.line([(gx, 3), (gx, h - 4)], fill=(124, 128, 134), width=2)
+        elif "out_dmp" in clean:
+            im = Image.new("RGB", (w, h), (58, 92, 66) if "lid" not in clean else (44, 46, 48))
+            dr = ImageDraw.Draw(im)
+            dr.rectangle([0, 0, w - 1, h - 1], outline=(38, 54, 42), width=2)
+            for rx in range(w // 4, w, max(8, w // 4)):
+                dr.rectangle([rx - 2, 2, rx + 2, h - 3], fill=(46, 76, 54))
+        else:
+            col_v = (138, 132, 108) if "canvas" in clean else (76, 88, 78)
+            im = Image.new("RGB", (w, h), col_v)
+            dr = ImageDraw.Draw(im)
+            dr.rectangle([0, 0, w - 1, h - 1], outline=(48, 54, 48), width=2)
+        arr = np.clip(np.array(im, dtype=np.int16) + rng.integers(-7, 8, size=(h, w, 1)), 0, 255).astype(np.uint8)
+        Image.fromarray(arr, mode="RGB").quantize(colors=48).save(out_path, format="PNG", optimize=True)
+        return False
+
+    # 11. Industrial Metal / Ducts / Lab Trim / Silo / Babtech / Generic Metal Panels
+    if any(k in clean for k in ("steel", "mtl", "metal", "duct", "vent", "elev", "babtech", "silo", "pnl", "trim", "generic")):
+        shade_ofs = ((seed & 15) - 8)
+        base = np.clip(np.array([112 + shade_ofs, 116 + shade_ofs, 120 + shade_ofs], dtype=np.int16), 64, 162)
         arr = np.broadcast_to(base, (h, w, 3)).copy()
-        noise = rng.integers(-10, 11, size=(h, w, 1))
-        arr = arr + noise
-        # Beveled panel grid + corner rivets
+        arr = arr + rng.integers(-9, 10, size=(h, w, 1))
         step_x = max(16, w // 2)
         step_y = max(16, h // 2)
         for gy in range(0, h, step_y):
-            arr[gy, :] -= 30
+            arr[gy, :] -= 28
             if gy + 1 < h:
-                arr[gy + 1, :] += 18
+                arr[gy + 1, :] += 16
         for gx in range(0, w, step_x):
-            arr[:, gx] -= 30
+            arr[:, gx] -= 28
             if gx + 1 < w:
-                arr[:, gx + 1] += 18
-        for gy in range(0, h, step_y):
-            for gx in range(0, w, step_x):
-                for ry, rx in ((3, 3), (3, min(w - 2, gx + step_x - 4) - gx), (min(h - 2, gy + step_y - 4) - gy, 3)):
-                    yy, xx = gy + ry, gx + rx
-                    if 0 <= yy < h and 0 <= xx < w:
-                        arr[yy, xx] -= 35
-        if "comp" in lname or "scrn" in lname or "status" in lname:
-            arr[h // 4 : h // 2, w // 6 : w - w // 6] = [34, 72, 58]
-            for sy in range(h // 4 + 2, h // 2 - 2, 4):
-                arr[sy, w // 5 : w - w // 4] = [75, 195, 120]
+                arr[:, gx + 1] += 16
+        if "flr" in clean:
+            # Diamond-plate industrial metal floor pattern
+            yy, xx = np.mgrid[0:h, 0:w]
+            tread = (((xx + yy) % 8 == 0) & ((xx % 8) < 4)) | (((xx - yy) % 8 == 0) & ((yy % 8) < 4))
+            arr[tread] += 18
         rgb = np.clip(arr, 0, 255).astype(np.uint8)
         Image.fromarray(rgb, mode="RGB").quantize(colors=48).save(out_path, format="PNG", optimize=True)
         return False
 
-    # 6. Concrete / Brick / Rock / Stucco / Asphalt / Floor Tile
-    if "glass" in lname:
-        base = np.array([115, 152, 168] if "green" not in lname else [108, 154, 132], dtype=np.int16)
-    elif any(k in lname for k in ("rock", "cliff", "out_", "dirt", "sand")):
-        base = np.array([138, 122, 96], dtype=np.int16)
-    elif "yellow" in lname:
-        base = np.array([198, 166, 48], dtype=np.int16)
-    elif "black" in lname:
-        base = np.array([22, 22, 24], dtype=np.int16)
-    elif "white" in lname:
-        base = np.array([218, 216, 210], dtype=np.int16)
-    else:
-        tint = np.array([(seed & 31) - 15, ((seed >> 5) & 31) - 15, ((seed >> 10) & 31) - 15], dtype=np.int16)
-        base = np.clip(np.array([136, 133, 126], dtype=np.int16) + tint, 72, 188)
+    # 12. Half-Life Facility / Black Mesa Interior Walls (c1a*, c2a*, c3a*, fifties_*, lab*)
+    if re.match(r"^c[0-9]a[0-9]", clean) or "fifties" in clean or "lab" in clean:
+        arr = np.full((h, w, 3), [142, 140, 134], dtype=np.int16)
+        if "flr" in clean:
+            # Clean checkered/tiled laboratory floor (neutral slate & warm grey)
+            yy, xx = np.mgrid[0:h, 0:w]
+            tile_sz = max(16, min(w, h) // 4)
+            chk = ((xx // tile_sz) + (yy // tile_sz)) % 2 == 0
+            arr[chk] = [124, 128, 132]
+            arr[~chk] = [152, 150, 144]
+            arr[(xx % tile_sz == 0) | (yy % tile_sz == 0)] -= 24
+        else:
+            # Classic Half-Life two-tone painted concrete wall with lower wainscot & stripe!
+            split_y = int(h * 0.62)
+            arr[:split_y, :] = [148, 146, 138]
+            arr[split_y:, :] = [104, 108, 112]
+            stripe_h = max(3, h // 20)
+            arr[max(0, split_y - stripe_h) : min(h, split_y + stripe_h), :] = [74, 82, 92]
+            for gx in range(0, w, max(32, w // 2)):
+                arr[:, gx] -= 20
+        arr += rng.integers(-8, 9, size=(h, w, 1))
+        Image.fromarray(np.clip(arr, 0, 255).astype(np.uint8), mode="RGB").quantize(colors=48).save(out_path, format="PNG", optimize=True)
+        return False
 
-    # Multi-scale stone/concrete speckle + staggered mortar courses
-    fine = rng.integers(-11, 12, size=(h, w, 1))
-    coarse = rng.integers(-12, 13, size=(max(2, h // 4), max(2, w // 4), 1)).repeat(4, axis=0).repeat(4, axis=1)[:h, :w]
+    # 13. Neutral Concrete, Tunnel Walls/Floors, Asphalt, Gravel, Grass & Brick (ZERO purple tint!)
+    if "grss" in clean or "grass" in clean:
+        base = np.array([78, 104, 58], dtype=np.int16)
+    elif any(k in clean for k in ("rock", "rk", "cliff", "dirt", "sand", "gravel")):
+        base = np.array([134, 120, 96], dtype=np.int16)
+    elif "pave" in clean or "asph" in clean:
+        base = np.array([92, 94, 98], dtype=np.int16)
+    elif "yellow" in clean:
+        base = np.array([198, 166, 48], dtype=np.int16)
+    elif "black" in clean:
+        base = np.array([24, 24, 26], dtype=np.int16)
+    elif "white" in clean:
+        base = np.array([216, 214, 208], dtype=np.int16)
+    else:
+        # Strictly neutral concrete/stone luminance variation (R~=G~=B, warm-cool within +-4!)
+        lum_ofs = ((seed & 31) - 15)
+        warm = ((seed >> 6) & 7) - 3
+        base = np.clip(np.array([132 + lum_ofs + warm, 131 + lum_ofs, 128 + lum_ofs - warm], dtype=np.int16), 78, 178)
+
+    fine = rng.integers(-10, 11, size=(h, w, 1))
+    coarse = rng.integers(-10, 11, size=(max(2, h // 4), max(2, w // 4), 1)).repeat(4, axis=0).repeat(4, axis=1)[:h, :w]
     arr = base + fine + coarse
-    if "black" not in lname and "white" not in lname and "glass" not in lname:
-        row_h = max(8, min(16, h // 4))
-        col_w = max(16, min(32, w // 2))
+    if "flr" in clean or "pave" in clean:
+        slab = max(16, min(w, h) // 2)
+        for gy in range(0, h, slab):
+            arr[gy, :] -= 20
+        for gx in range(0, w, slab):
+            arr[:, gx] -= 20
+    elif "black" not in clean and "white" not in clean and "grss" not in clean and "gravel" not in clean:
+        row_h = max(12, min(24, h // 4))
+        col_w = max(24, min(48, w // 2))
         for r_idx, ry in enumerate(range(0, h, row_h)):
-            arr[ry, :] -= 26
+            arr[ry, :] -= 22
             if ry + 1 < h:
-                arr[ry + 1, :] += 12
+                arr[ry + 1, :] += 10
             offset = (col_w // 2) if (r_idx % 2 == 1) else 0
             for cx in range(offset, w, col_w):
-                arr[ry : min(h, ry + row_h), cx] -= 22
+                arr[ry : min(h, ry + row_h), cx] -= 18
     rgb = np.clip(arr, 0, 255).astype(np.uint8)
     Image.fromarray(rgb, mode="RGB").quantize(colors=48).save(out_path, format="PNG", optimize=True)
     return False

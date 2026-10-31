@@ -143,6 +143,7 @@ func _perform_bot_buy() -> void:
 
 
 func _physics_process(delta: float) -> void:
+	bot_ladder_dir = 0.0
 	if not is_alive:
 		return
 
@@ -447,22 +448,53 @@ func _update_tactical_objective() -> void:
 			_set_nav_goal(nav, site_aabb.get_center())
 		return
 
-	# Hostage Rescue CT -> rescue nearest unrescued hostage or escort to rescue zone!
-	if team == "CT" and RoundManager.map_mode == "cs":
+	# Hostage Rescue Mode (cs_*): CTs distribute across hostages & escort; Ts anchor hostages & patrol approaches!
+	if RoundManager.map_mode == "cs":
+		var live_hostages: Array[HostageNPC] = []
 		for h in RoundManager.hostages:
 			var h_npc := h as HostageNPC
 			if is_instance_valid(h_npc) and h_npc.is_alive and not h_npc.is_rescued:
-				if h_npc.leader == self:
+				live_hostages.append(h_npc)
+
+		if team == "CT" and not live_hostages.is_empty():
+			# First check if already escorting a hostage -> head straight to Rescue Zone!
+			for lh in live_hostages:
+				if lh.leader == self:
 					var rz: Array = gw.get("rescue_zones")
 					if not rz.is_empty() and (_nav_path.is_empty() or _goal_pos.distance_to((rz[0] as AABB).get_center()) > 3.0):
 						_set_nav_goal(nav, (rz[0] as AABB).get_center())
 					return
-				elif h_npc.leader == null:
-					if global_position.distance_to(h_npc.global_position) < 2.2:
-						h_npc.interact(self)
-					elif _nav_path.is_empty() or not _has_goal:
-						_set_nav_goal(nav, h_npc.global_position)
-					return
+			# Otherwise pick an unled hostage distributed by bot instance id so CTs split up cleanly
+			var free_h: Array[HostageNPC] = []
+			for lh2 in live_hostages:
+				if lh2.leader == null:
+					free_h.append(lh2)
+			if not free_h.is_empty():
+				var pick_h: HostageNPC = free_h[absi(get_instance_id()) % free_h.size()]
+				if global_position.distance_to(pick_h.global_position) < 2.35:
+					pick_h.interact(self)
+				elif _nav_path.is_empty() or not _has_goal:
+					_set_nav_goal(nav, pick_h.global_position)
+				return
+		elif team == "T" and not live_hostages.is_empty():
+			# 45% of Terrorists guard hostage room / upper catwalks; 55% patrol breach routes
+			var guard_role: bool = (absi(get_instance_id()) % 100) < 45
+			if guard_role and (_nav_path.is_empty() or not _has_goal):
+				var guard_h: HostageNPC = live_hostages[randi() % live_hostages.size()]
+				var guard_pt := guard_h.global_position + Vector3(randf_range(-5.5, 5.5), 0.0, randf_range(-5.5, 5.5))
+				_set_nav_goal(nav, guard_pt)
+				if global_position.distance_to(guard_h.global_position) < 7.5 and randf() < 0.35:
+					_hold_pos_timer = randf_range(1.8, 3.8)
+				return
+
+	# Pursue recent enemy contact or heard gunfire/footsteps aggressively when healthy!
+	if _last_enemy_seen_age < 4.5 and health >= 42:
+		if _nav_path.is_empty() or _goal_pos.distance_to(_last_enemy_pos) > 3.5:
+			_set_nav_goal(nav, _last_enemy_pos)
+		return
+	if _sound_investigate_timer > 0.4 and (_nav_path.is_empty() or _goal_pos.distance_to(_sound_investigate_pos) > 4.0):
+		_set_nav_goal(nav, _sound_investigate_pos)
+		return
 
 	# General patrol across bombsites / hostages / map waypoints
 	if _nav_path.is_empty() or not _has_goal:
@@ -518,8 +550,9 @@ func _follow_navigation_path(delta: float) -> void:
 
 	var wp := _nav_path[0]
 	var flat_d := Vector2(wp.x - global_position.x, wp.z - global_position.z).length()
-	var vert_d := absf(wp.y - global_position.y)
-	if flat_d < 1.35 and vert_d < 2.2:
+	var signed_dy := wp.y - global_position.y
+	var vert_d := absf(signed_dy)
+	if flat_d < 1.35 and vert_d < 1.85:
 		_nav_path.remove_at(0)
 		_stuck_timer = 0.0
 		if _nav_path.is_empty():
@@ -528,12 +561,19 @@ func _follow_navigation_path(delta: float) -> void:
 			_last_pos = global_position
 			return
 		wp = _nav_path[0]
+		flat_d = Vector2(wp.x - global_position.x, wp.z - global_position.z).length()
+		signed_dy = wp.y - global_position.y
+		vert_d = absf(signed_dy)
+
+	# Multi-story Metal Ladder Climbing: drive explicit vertical climb toward target waypoint elevation!
+	if on_ladder:
+		bot_ladder_dir = 1.0 if signed_dy >= -0.35 else -1.0
 
 	var raw_dir := Vector3(wp.x - global_position.x, 0.0, wp.z - global_position.z)
 	if raw_dir.length_squared() > 0.001:
 		raw_dir = raw_dir.normalized()
 
-	var move_dir := _steer_around_obstacles(raw_dir)
+	var move_dir := raw_dir if on_ladder else _steer_around_obstacles(raw_dir)
 
 	# PodBot scripted pre-aiming: aim at chest/head height along upcoming corridor or toward heard enemy sound!
 	_corner_check_timer -= delta
@@ -560,14 +600,17 @@ func _follow_navigation_path(delta: float) -> void:
 
 	var want_jump := false
 	if not RoundManager.is_movement_frozen():
-		var moved_dist := Vector2(global_position.x - _last_pos.x, global_position.z - _last_pos.z).length()
-		if moved_dist < 1.15 * delta:
+		# Measure full 3D movement so vertical ladder climbing NEVER triggers false stuck disconnects!
+		var moved_dist := global_position.distance_to(_last_pos)
+		if on_ladder and absf(velocity.y) > 0.6:
+			_stuck_timer = 0.0
+		elif moved_dist < 1.15 * delta:
 			_stuck_timer += delta
 			if _stuck_timer > 0.32 and _jump_cooldown <= 0.0 and is_on_floor():
 				if _is_jumpable_ledge(raw_dir):
 					want_jump = true
 					_jump_cooldown = 1.95
-			if _stuck_timer > 0.52:
+			if _stuck_timer > 0.56:
 				_stuck_timer = 0.0
 				_avoid_side = -_avoid_side
 				if is_instance_valid(RoundManager.game_world):
@@ -617,29 +660,48 @@ func _steer_around_obstacles(desired_dir: Vector3) -> Vector3:
 	var space := get_world_3d().direct_space_state
 	var origin := global_position + Vector3(0.0, 0.92, 0.0)
 
-	# 5-ray whisker fan (center, +-32 deg, +-62 deg) so bots smoothly round wall corners & parapets
-	var q_mid := PhysicsRayQueryParameters3D.create(origin, origin + desired_dir * 1.45)
+	# 5-ray whisker fan (center, +-32 deg, +-62 deg): open BSPDoors & breach vents/glass instead of steering away!
+	var q_mid := PhysicsRayQueryParameters3D.create(origin, origin + desired_dir * 1.55)
 	q_mid.collision_mask = 1
 	var hit_mid := space.intersect_ray(q_mid)
 	if not hit_mid.is_empty():
-		var angles := [34.0 * _avoid_side, -34.0 * _avoid_side, 64.0 * _avoid_side, -64.0 * _avoid_side]
-		var found_open := false
-		for deg_a in angles:
-			var cand_dir := desired_dir.rotated(Vector3.UP, deg_to_rad(float(deg_a)))
-			var qc := PhysicsRayQueryParameters3D.create(origin, origin + cand_dir * 1.75)
-			qc.collision_mask = 1
-			if space.intersect_ray(qc).is_empty():
-				steer = cand_dir
-				found_open = true
-				break
-		if not found_open:
-			var nrm := hit_mid["normal"] as Vector3
-			nrm.y = 0.0
-			var slide := (desired_dir - nrm * desired_dir.dot(nrm))
-			if slide.length_squared() > 0.04:
-				steer = slide.normalized()
-			else:
-				steer = desired_dir.rotated(Vector3.UP, deg_to_rad(115.0 * _avoid_side))
+		var mid_col = hit_mid["collider"]
+		if mid_col is Node and (mid_col as Node).has_meta("door"):
+			var door_ref = (mid_col as Node).get_meta("door")
+			if is_instance_valid(door_ref) and door_ref.has_method("force_open"):
+				door_ref.call("force_open", self)
+			# Keep walking straight toward the parting doorway!
+			steer = desired_dir
+		elif mid_col is Node and (mid_col as Node).has_meta("button_target"):
+			var btgt := String((mid_col as Node).get_meta("button_target"))
+			if RoundManager.game_world != null:
+				RoundManager.game_world.trigger_map_target(btgt, self)
+			steer = desired_dir
+		elif mid_col is Node and (mid_col as Node).has_meta("breakable"):
+			var brk_ref = (mid_col as Node).get_meta("breakable")
+			if is_instance_valid(brk_ref) and brk_ref.has_method("apply_damage"):
+				brk_ref.call("apply_damage", 45.0, hit_mid["position"])
+			steer = desired_dir
+		else:
+			var angles := [34.0 * _avoid_side, -34.0 * _avoid_side, 64.0 * _avoid_side, -64.0 * _avoid_side]
+			var found_open := false
+			for deg_a in angles:
+				var cand_dir := desired_dir.rotated(Vector3.UP, deg_to_rad(float(deg_a)))
+				var qc := PhysicsRayQueryParameters3D.create(origin, origin + cand_dir * 1.75)
+				qc.collision_mask = 1
+				var hc := space.intersect_ray(qc)
+				if hc.is_empty() or (hc["collider"] is Node and (hc["collider"] as Node).has_meta("door")):
+					steer = cand_dir
+					found_open = true
+					break
+			if not found_open:
+				var nrm := hit_mid["normal"] as Vector3
+				nrm.y = 0.0
+				var slide := (desired_dir - nrm * desired_dir.dot(nrm))
+				if slide.length_squared() > 0.04:
+					steer = slide.normalized()
+				else:
+					steer = desired_dir.rotated(Vector3.UP, deg_to_rad(115.0 * _avoid_side))
 
 	# Strong separation + right-hand passing rule so Bots never bunch up shoulder-to-shoulder
 	for a in RoundManager.actors:
@@ -715,3 +777,51 @@ func _on_radio_order(sender: Node3D, steam: String, action: String, pos: Vector3
 		"go", "storm_front":
 			_follow_target = null
 			_hold_pos_timer = 0.0
+
+
+func _on_taken_damage_from(attacker: Node3D, hit_pos: Vector3) -> void:
+	if not is_alive:
+		return
+	_knife_rush_timer = 0.0
+	_hold_pos_timer = 0.0
+	_stealth_walk_timer = 0.0
+	_strafe_dir = -_strafe_dir
+	_strafe_timer = randf_range(0.35, 0.70)
+
+	if attacker is CSActor:
+		var enemy := attacker as CSActor
+		if is_instance_valid(enemy) and enemy != self and enemy.team != team and enemy.is_alive:
+			_last_enemy_pos = enemy.global_position
+			_last_enemy_seen_age = 0.0
+			_sound_investigate_pos = enemy.global_position
+			_sound_investigate_timer = 3.5
+			if target_enemy == null:
+				if _can_see_actor(enemy):
+					target_enemy = enemy
+					var fast_react: float = float([0.24, 0.16, 0.10, 0.05][clampi(skill_level, 0, 3)])
+					_reaction_timer = fast_react
+				else:
+					# Snap gaze immediately toward unseen shooter & alert nearby squadmates!
+					_look_smoothly_toward(enemy.global_position + Vector3(0.0, 1.35, 0.0), 0.55)
+			# Alert nearby friendly Bots within 16m so squads react cohesively under fire!
+			for mate in RoundManager.actors:
+				if mate is CSBot and mate != self and is_instance_valid(mate):
+					var m_bot := mate as CSBot
+					if m_bot.is_alive and m_bot.team == team and m_bot.target_enemy == null:
+						if m_bot.global_position.distance_to(global_position) < 16.0:
+							m_bot.notify_squad_contact(enemy.global_position)
+			return
+
+	_sound_investigate_pos = hit_pos
+	_sound_investigate_timer = 2.5
+
+
+func notify_squad_contact(threat_pos: Vector3) -> void:
+	if not is_alive or target_enemy != null:
+		return
+	_knife_rush_timer = 0.0
+	_sound_investigate_pos = threat_pos
+	_sound_investigate_timer = maxf(_sound_investigate_timer, 2.8)
+	_last_enemy_pos = threat_pos
+	_last_enemy_seen_age = minf(_last_enemy_seen_age, 1.5)
+
