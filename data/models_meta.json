@@ -263,8 +263,7 @@
       "run2",
       "180_Left",
       "180_Right",
-      "flinch",
-      "flinch1",
+      "idle1",
       "crouch_idle",
       "gutshot"
     ],
@@ -1111,8 +1110,7 @@
       "run2",
       "180_Left",
       "180_Right",
-      "flinch",
-      "flinch1",
+      "idle1",
       "crouch_idle",
       "gutshot"
     ],
@@ -1749,7 +1747,33 @@
         ]
       }
     ],
-    "bones": 42
+    "bones": 42,
+    "seq_events": {
+      "reload": [
+        {
+          "t": 0.351,
+          "wav": "weapons/ak47_clipout.wav"
+        },
+        {
+          "t": 1.541,
+          "wav": "weapons/ak47_clipin.wav"
+        }
+      ],
+      "draw": [
+        {
+          "t": 0.367,
+          "wav": "weapons/ak47_boltpull.wav"
+        }
+      ]
+    },
+    "seq_durations": {
+      "idle1": 0.533,
+      "reload": 2.432,
+      "draw": 1.0,
+      "shoot1": 0.75,
+      "shoot2": 0.75,
+      "shoot3": 0.75
+    }
   },
   "weapons/v_aug": {
     "sequences": [
@@ -1832,7 +1856,41 @@
         ]
       }
     ],
-    "bones": 42
+    "bones": 42,
+    "seq_events": {
+      "reload": [
+        {
+          "t": 0.25,
+          "wav": "weapons/aug_boltpull.wav"
+        },
+        {
+          "t": 1.25,
+          "wav": "weapons/aug_clipout.wav"
+        },
+        {
+          "t": 2.2,
+          "wav": "weapons/aug_clipin.wav"
+        },
+        {
+          "t": 2.8,
+          "wav": "weapons/aug_boltslap.wav"
+        }
+      ],
+      "draw": [
+        {
+          "t": 0.257,
+          "wav": "weapons/aug_forearm.wav"
+        }
+      ]
+    },
+    "seq_durations": {
+      "idle": 0.267,
+      "reload": 3.3,
+      "draw": 0.857,
+      "shoot1": 0.857,
+      "shoot2": 0.857,
+      "shoot3": 0.857
+    }
   },
   "weapons/v_awp": {
     "sequences": [
@@ -1929,7 +1987,69 @@
         ]
       }
     ],
-    "bones": 42
+    "bones": 42,
+    "seq_events": {
+      "shoot1": [
+        {
+          "t": 0.429,
+          "wav": "weapons/boltup.wav"
+        },
+        {
+          "t": 0.543,
+          "wav": "weapons/boltpull1.wav"
+        },
+        {
+          "t": 0.914,
+          "wav": "weapons/boltdown.wav"
+        }
+      ],
+      "shoot2": [
+        {
+          "t": 0.429,
+          "wav": "weapons/boltup.wav"
+        },
+        {
+          "t": 0.543,
+          "wav": "weapons/boltpull1.wav"
+        },
+        {
+          "t": 0.914,
+          "wav": "weapons/boltdown.wav"
+        }
+      ],
+      "shoot3": [
+        {
+          "t": 0.429,
+          "wav": "weapons/boltup.wav"
+        },
+        {
+          "t": 0.543,
+          "wav": "weapons/boltpull1.wav"
+        },
+        {
+          "t": 0.914,
+          "wav": "weapons/boltdown.wav"
+        }
+      ],
+      "reload": [
+        {
+          "t": 0.867,
+          "wav": "weapons/awp_clipout.wav"
+        },
+        {
+          "t": 1.767,
+          "wav": "weapons/awp_clipin.wav"
+        }
+      ]
+    },
+    "seq_durations": {
+      "idle1": 0.5,
+      "shoot1": 1.171,
+      "shoot2": 1.171,
+      "shoot3": 1.171,
+      "reload": 2.9,
+      "draw": 1.0
+    }
   },
   "weapons/v_c4": {
     "sequences": [
@@ -2010,7 +2130,45 @@
         ]
       }
     ],
-    "bones": 37
+    "bones": 37,
+    "seq_events": {
+      "pressbutton": [
+        {
+          "t": 1.182,
+          "wav": "weapons/c4_click.wav"
+        },
+        {
+          "t": 1.424,
+          "wav": "weapons/c4_click.wav"
+        },
+        {
+          "t": 1.636,
+          "wav": "weapons/c4_click.wav"
+        },
+        {
+          "t": 1.879,
+          "wav": "weapons/c4_click.wav"
+        },
+        {
+          "t": 2.121,
+          "wav": "weapons/c4_click.wav"
+        },
+        {
+          "t": 2.364,
+          "wav": "weapons/c4_click.wav"
+        },
+        {
+          "t": 2.545,
+          "wav": "weapons/c4_click.wav"
+        }
+      ]
+    },
+    "seq_durations": {
+      "idle1": 2.5,
+      "draw": 1.0,
+      "drop": 1.0,
+      "pressbutton": 3.03
+    }
   },
   "weapons/v_deagle": {
     "sequences": [
@@ -2093,7 +2251,33 @@
         ]
       }
     ],
-    "bones": 43
+    "bones": 43,
+    "seq_events": {
+      "reload": [
+        {
+          "t": 0.467,
+          "wav": "weapons/de_clipout.wav"
+        },
+        {
+          "t": 1.133,
+          "wav": "weapons/de_clipin.wav"
+        }
+      ],
+      "draw": [
+        {
+          "t": 0.033,
+          "wav": "weapons/de_deploy.wav"
+        }
+      ]
+    },
+    "seq_durations": {
+      "idle1": 0.5,
+      "shoot1": 0.7,
+      "shoot2": 0.7,
+      "shoot_empty": 0.55,
+      "reload": 2.167,
+      "draw": 1.0
+    }
   },
   "weapons/v_elite": {
     "sequences": [
@@ -2172,7 +2356,59 @@
         ]
       }
     ],
-    "bones": 48
+    "bones": 48,
+    "seq_events": {
+      "reload": [
+        {
+          "t": 0.2,
+          "wav": "weapons/elite_reloadstart.wav"
+        },
+        {
+          "t": 1.467,
+          "wav": "weapons/elite_leftclipin.wav"
+        },
+        {
+          "t": 2.433,
+          "wav": "weapons/elite_clipout.wav"
+        },
+        {
+          "t": 2.733,
+          "wav": "weapons/elite_sliderelease.wav"
+        },
+        {
+          "t": 3.733,
+          "wav": "weapons/elite_rightclipin.wav"
+        },
+        {
+          "t": 4.167,
+          "wav": "weapons/elite_sliderelease.wav"
+        }
+      ],
+      "draw": [
+        {
+          "t": 0.033,
+          "wav": "weapons/elite_deploy.wav"
+        }
+      ]
+    },
+    "seq_durations": {
+      "idle": 0.5,
+      "idle_leftempty": 0.062,
+      "shoot_left1": 1.0,
+      "shoot_left2": 1.0,
+      "shoot_left3": 1.0,
+      "shoot_left4": 1.0,
+      "shoot_left5": 1.0,
+      "shoot_leftlast": 1.0,
+      "shoot_right1": 1.0,
+      "shoot_right2": 1.0,
+      "shoot_right3": 1.0,
+      "shoot_right4": 1.0,
+      "shoot_right5": 1.0,
+      "shoot_rightlast": 1.0,
+      "reload": 4.567,
+      "draw": 1.067
+    }
   },
   "weapons/v_fiveseven": {
     "sequences": [
@@ -2241,7 +2477,37 @@
         ]
       }
     ],
-    "bones": 42
+    "bones": 42,
+    "seq_events": {
+      "reload": [
+        {
+          "t": 0.5,
+          "wav": "weapons/fiveseven_clipout.wav"
+        },
+        {
+          "t": 1.367,
+          "wav": "weapons/fiveseven_clipin.wav"
+        },
+        {
+          "t": 2.5,
+          "wav": "weapons/fiveseven_sliderelease.wav"
+        }
+      ],
+      "draw": [
+        {
+          "t": 0.433,
+          "wav": "weapons/fiveseven_slidepull.wav"
+        }
+      ]
+    },
+    "seq_durations": {
+      "idle1": 0.125,
+      "shoot1": 0.639,
+      "shoot2": 0.639,
+      "shoot_empty": 0.639,
+      "reload": 3.2,
+      "draw": 1.0
+    }
   },
   "weapons/v_flashbang": {
     "sequences": [
@@ -2322,7 +2588,21 @@
         ]
       }
     ],
-    "bones": 37
+    "bones": 37,
+    "seq_events": {
+      "pullpin": [
+        {
+          "t": 0.659,
+          "wav": "weapons/pinpull.wav"
+        }
+      ]
+    },
+    "seq_durations": {
+      "idle": 0.267,
+      "pullpin": 0.976,
+      "throw": 0.533,
+      "deploy": 0.667
+    }
   },
   "weapons/v_g3sg1": {
     "sequences": [
@@ -2404,7 +2684,34 @@
         ]
       }
     ],
-    "bones": 43
+    "bones": 43,
+    "seq_events": {
+      "reload": [
+        {
+          "t": 0.533,
+          "wav": "weapons/g3sg1_slide.wav"
+        },
+        {
+          "t": 1.8,
+          "wav": "weapons/g3sg1_clipout.wav"
+        },
+        {
+          "t": 2.833,
+          "wav": "weapons/g3sg1_clipin.wav"
+        },
+        {
+          "t": 3.867,
+          "wav": "weapons/g3sg1_slide.wav"
+        }
+      ]
+    },
+    "seq_durations": {
+      "idle1": 0.5,
+      "shoot": 0.5,
+      "shoot2": 0.5,
+      "reload": 4.667,
+      "draw": 1.0
+    }
   },
   "weapons/v_glock18": {
     "sequences": [
@@ -2970,7 +3277,64 @@
         ]
       }
     ],
-    "bones": 41
+    "bones": 41,
+    "seq_events": {
+      "reload": [
+        {
+          "t": 0.457,
+          "wav": "weapons/clipout1.wav"
+        },
+        {
+          "t": 1.371,
+          "wav": "weapons/clipin1.wav"
+        },
+        {
+          "t": 1.771,
+          "wav": "weapons/sliderelease1.wav"
+        }
+      ],
+      "draw": [
+        {
+          "t": 0.378,
+          "wav": "weapons/slideback1.wav"
+        }
+      ],
+      "draw2": [
+        {
+          "t": 0.489,
+          "wav": "weapons/slideback1.wav"
+        }
+      ],
+      "reload2": [
+        {
+          "t": 0.367,
+          "wav": "weapons/clipout1.wav"
+        },
+        {
+          "t": 1.067,
+          "wav": "weapons/clipin1.wav"
+        },
+        {
+          "t": 1.433,
+          "wav": "weapons/sliderelease1.wav"
+        }
+      ]
+    },
+    "seq_durations": {
+      "idle1": 2.812,
+      "idle2": 2.25,
+      "idle3": 2.5,
+      "shoot": 0.75,
+      "shoot2": 0.75,
+      "shoot3": 0.5,
+      "shoot_empty": 0.286,
+      "reload": 2.143,
+      "draw": 1.089,
+      "holster": 0.8,
+      "add_silencer": 1.5,
+      "draw2": 1.0,
+      "reload2": 2.0
+    }
   },
   "weapons/v_hegrenade": {
     "sequences": [
@@ -3051,7 +3415,21 @@
         ]
       }
     ],
-    "bones": 37
+    "bones": 37,
+    "seq_events": {
+      "pullpin": [
+        {
+          "t": 0.659,
+          "wav": "weapons/pinpull.wav"
+        }
+      ]
+    },
+    "seq_durations": {
+      "idle": 0.267,
+      "pullpin": 0.976,
+      "throw": 0.533,
+      "deploy": 0.667
+    }
   },
   "weapons/v_knife": {
     "sequences": [
@@ -3094,7 +3472,17 @@
         ]
       }
     ],
-    "bones": 6
+    "bones": 6,
+    "seq_durations": {
+      "idle3": 4.0,
+      "slash1": 0.811,
+      "slash2": 0.811,
+      "draw": 1.0,
+      "stab": 1.189,
+      "stab_miss": 0.811,
+      "midslash1": 0.676,
+      "midslash2": 0.676
+    }
   },
   "weapons/v_m249": {
     "sequences": [
@@ -3190,7 +3578,44 @@
         ]
       }
     ],
-    "bones": 50
+    "bones": 50,
+    "seq_events": {
+      "reload": [
+        {
+          "t": 0.833,
+          "wav": "weapons/m249_coverup.wav"
+        },
+        {
+          "t": 1.533,
+          "wav": "weapons/m249_boxout.wav"
+        },
+        {
+          "t": 2.233,
+          "wav": "weapons/m249_boxin.wav"
+        },
+        {
+          "t": 2.9,
+          "wav": "weapons/m249_chain.wav"
+        },
+        {
+          "t": 3.567,
+          "wav": "weapons/m249_coverdown.wav"
+        }
+      ],
+      "draw": [
+        {
+          "t": 0.7,
+          "wav": "weapons/slideback1.wav"
+        }
+      ]
+    },
+    "seq_durations": {
+      "idle1": 0.625,
+      "shoot1": 0.5,
+      "shoot2": 0.5,
+      "reload": 4.667,
+      "draw": 1.0
+    }
   },
   "weapons/v_m3": {
     "sequences": [
@@ -3288,7 +3713,36 @@
         ]
       }
     ],
-    "bones": 43
+    "bones": 43,
+    "seq_events": {
+      "insert": [
+        {
+          "t": 0.0,
+          "wav": "weapons/m3_insertshell.wav"
+        }
+      ],
+      "after_reload": [
+        {
+          "t": 0.316,
+          "wav": "weapons/m3_pump.wav"
+        }
+      ],
+      "draw": [
+        {
+          "t": 0.367,
+          "wav": "weapons/m3_pump.wav"
+        }
+      ]
+    },
+    "seq_durations": {
+      "idle": 0.667,
+      "shoot1": 1.156,
+      "shoot2": 1.0,
+      "insert": 0.415,
+      "after_reload": 0.842,
+      "start_reload": 0.5,
+      "draw": 1.0
+    }
   },
   "weapons/v_m4a1": {
     "sequences": [
@@ -3379,7 +3833,85 @@
         ]
       }
     ],
-    "bones": 44
+    "bones": 44,
+    "seq_events": {
+      "reload": [
+        {
+          "t": 0.676,
+          "wav": "weapons/m4a1_clipout.wav"
+        },
+        {
+          "t": 1.432,
+          "wav": "weapons/m4a1_clipin.wav"
+        },
+        {
+          "t": 2.378,
+          "wav": "weapons/m4a1_boltpull.wav"
+        }
+      ],
+      "draw": [
+        {
+          "t": 0.025,
+          "wav": "weapons/m4a1_deploy.wav"
+        },
+        {
+          "t": 0.425,
+          "wav": "weapons/m4a1_boltpull.wav"
+        }
+      ],
+      "add_silencer": [
+        {
+          "t": 0.933,
+          "wav": "weapons/m4a1_silencer_on.wav"
+        }
+      ],
+      "reload_unsil": [
+        {
+          "t": 0.676,
+          "wav": "weapons/m4a1_clipout.wav"
+        },
+        {
+          "t": 1.432,
+          "wav": "weapons/m4a1_clipin.wav"
+        },
+        {
+          "t": 2.378,
+          "wav": "weapons/m4a1_boltpull.wav"
+        }
+      ],
+      "draw_unsil": [
+        {
+          "t": 0.025,
+          "wav": "weapons/m4a1_deploy.wav"
+        },
+        {
+          "t": 0.425,
+          "wav": "weapons/m4a1_boltpull.wav"
+        }
+      ],
+      "detach_silencer": [
+        {
+          "t": 0.7,
+          "wav": "weapons/m4a1_silencer_off.wav"
+        }
+      ]
+    },
+    "seq_durations": {
+      "idle": 0.5,
+      "shoot1": 1.45,
+      "shoot2": 1.45,
+      "shoot3": 1.45,
+      "reload": 3.054,
+      "draw": 1.0,
+      "add_silencer": 2.0,
+      "idle_unsil": 0.5,
+      "shoot1_unsil": 1.45,
+      "shoot2_unsil": 1.45,
+      "shoot3_unsil": 1.45,
+      "reload_unsil": 3.054,
+      "draw_unsil": 1.0,
+      "detach_silencer": 2.0
+    }
   },
   "weapons/v_mac10": {
     "sequences": [
@@ -3462,7 +3994,37 @@
         ]
       }
     ],
-    "bones": 46
+    "bones": 46,
+    "seq_events": {
+      "reload": [
+        {
+          "t": 0.629,
+          "wav": "weapons/mac10_clipout.wav"
+        },
+        {
+          "t": 1.571,
+          "wav": "weapons/mac10_clipin.wav"
+        },
+        {
+          "t": 2.486,
+          "wav": "weapons/mac10_boltpull.wav"
+        }
+      ],
+      "draw": [
+        {
+          "t": 0.667,
+          "wav": "weapons/p90_cliprelease.wav"
+        }
+      ]
+    },
+    "seq_durations": {
+      "idle1": 0.667,
+      "reload": 3.143,
+      "draw": 0.909,
+      "shoot1": 0.926,
+      "shoot2": 0.926,
+      "shoot3": 0.926
+    }
   },
   "weapons/v_mp5": {
     "sequences": [
@@ -3545,7 +4107,37 @@
         ]
       }
     ],
-    "bones": 43
+    "bones": 43,
+    "seq_events": {
+      "reload": [
+        {
+          "t": 0.395,
+          "wav": "weapons/mp5_clipout.wav"
+        },
+        {
+          "t": 1.211,
+          "wav": "weapons/mp5_clipin.wav"
+        },
+        {
+          "t": 2.026,
+          "wav": "weapons/mp5_slideback.wav"
+        }
+      ],
+      "draw": [
+        {
+          "t": 0.371,
+          "wav": "weapons/mp5_slideback.wav"
+        }
+      ]
+    },
+    "seq_durations": {
+      "idle1": 0.667,
+      "reload": 2.632,
+      "draw": 0.857,
+      "shoot1": 0.667,
+      "shoot2": 0.667,
+      "shoot3": 0.667
+    }
   },
   "weapons/v_p228": {
     "sequences": [
@@ -3615,7 +4207,42 @@
         ]
       }
     ],
-    "bones": 43
+    "bones": 43,
+    "seq_events": {
+      "reload": [
+        {
+          "t": 0.686,
+          "wav": "weapons/p228_clipout.wav"
+        },
+        {
+          "t": 1.4,
+          "wav": "weapons/p228_clipin.wav"
+        },
+        {
+          "t": 2.314,
+          "wav": "weapons/p228_sliderelease.wav"
+        }
+      ],
+      "draw": [
+        {
+          "t": 0.033,
+          "wav": "weapons/de_deploy.wav"
+        },
+        {
+          "t": 0.5,
+          "wav": "weapons/p228_slidepull.wav"
+        }
+      ]
+    },
+    "seq_durations": {
+      "idle1": 1.875,
+      "shoot1": 0.735,
+      "shoot2": 0.735,
+      "shoot3": 0.735,
+      "shoot_empty": 0.735,
+      "reload": 2.714,
+      "draw": 1.0
+    }
   },
   "weapons/v_p90": {
     "sequences": [
@@ -3698,7 +4325,41 @@
         ]
       }
     ],
-    "bones": 41
+    "bones": 41,
+    "seq_events": {
+      "reload": [
+        {
+          "t": 0.425,
+          "wav": "weapons/p90_cliprelease.wav"
+        },
+        {
+          "t": 0.875,
+          "wav": "weapons/p90_clipout.wav"
+        },
+        {
+          "t": 1.875,
+          "wav": "weapons/p90_clipin.wav"
+        },
+        {
+          "t": 2.7,
+          "wav": "weapons/p90_boltpull.wav"
+        }
+      ],
+      "draw": [
+        {
+          "t": 0.3,
+          "wav": "weapons/p90_boltpull.wav"
+        }
+      ]
+    },
+    "seq_durations": {
+      "idle": 0.267,
+      "reload": 3.375,
+      "draw": 1.0,
+      "shoot1": 0.467,
+      "shoot2": 0.467,
+      "shoot3": 0.467
+    }
   },
   "weapons/v_scout": {
     "sequences": [
@@ -3780,7 +4441,38 @@
         ]
       }
     ],
-    "bones": 42
+    "bones": 42,
+    "seq_events": {
+      "shoot": [
+        {
+          "t": 0.371,
+          "wav": "weapons/scout_bolt.wav"
+        }
+      ],
+      "shoot_2": [
+        {
+          "t": 0.371,
+          "wav": "weapons/scout_bolt.wav"
+        }
+      ],
+      "reload": [
+        {
+          "t": 0.433,
+          "wav": "weapons/scout_clipout.wav"
+        },
+        {
+          "t": 1.233,
+          "wav": "weapons/scout_clipin.wav"
+        }
+      ]
+    },
+    "seq_durations": {
+      "idle1": 0.5,
+      "shoot": 1.286,
+      "shoot_2": 1.286,
+      "reload": 2.0,
+      "draw": 1.0
+    }
   },
   "weapons/v_sg550": {
     "sequences": [
@@ -3876,7 +4568,30 @@
         ]
       }
     ],
-    "bones": 42
+    "bones": 42,
+    "seq_events": {
+      "reload": [
+        {
+          "t": 0.786,
+          "wav": "weapons/sg550_clipout.wav"
+        },
+        {
+          "t": 1.643,
+          "wav": "weapons/sg550_clipin.wav"
+        },
+        {
+          "t": 2.929,
+          "wav": "weapons/sg550_boltpull.wav"
+        }
+      ]
+    },
+    "seq_durations": {
+      "idle1": 0.125,
+      "shoot": 1.0,
+      "shoot2": 1.0,
+      "reload": 3.786,
+      "draw": 1.0
+    }
   },
   "weapons/v_sg552": {
     "sequences": [
@@ -3959,7 +4674,37 @@
         ]
       }
     ],
-    "bones": 43
+    "bones": 43,
+    "seq_events": {
+      "reload": [
+        {
+          "t": 0.432,
+          "wav": "weapons/sg552_clipout.wav"
+        },
+        {
+          "t": 1.649,
+          "wav": "weapons/sg552_clipin.wav"
+        },
+        {
+          "t": 2.432,
+          "wav": "weapons/sg552_boltpull.wav"
+        }
+      ],
+      "draw": [
+        {
+          "t": 0.324,
+          "wav": "weapons/sg552_boltpull.wav"
+        }
+      ]
+    },
+    "seq_durations": {
+      "idle": 0.267,
+      "reload": 3.189,
+      "draw": 1.0,
+      "shoot1": 0.829,
+      "shoot2": 0.829,
+      "shoot3": 0.829
+    }
   },
   "weapons/v_smokegrenade": {
     "sequences": [
@@ -4040,7 +4785,21 @@
         ]
       }
     ],
-    "bones": 37
+    "bones": 37,
+    "seq_events": {
+      "pullpin": [
+        {
+          "t": 0.659,
+          "wav": "weapons/pinpull.wav"
+        }
+      ]
+    },
+    "seq_durations": {
+      "idle": 0.267,
+      "pullpin": 0.976,
+      "throw": 0.533,
+      "deploy": 0.667
+    }
   },
   "weapons/v_tmp": {
     "sequences": [
@@ -4123,7 +4882,33 @@
         ]
       }
     ],
-    "bones": 41
+    "bones": 41,
+    "seq_events": {
+      "reload": [
+        {
+          "t": 0.48,
+          "wav": "weapons/clipout1.wav"
+        },
+        {
+          "t": 1.28,
+          "wav": "weapons/clipin1.wav"
+        }
+      ],
+      "draw": [
+        {
+          "t": 0.889,
+          "wav": "weapons/p90_cliprelease.wav"
+        }
+      ]
+    },
+    "seq_durations": {
+      "idle1": 5.0,
+      "reload": 2.12,
+      "draw": 0.889,
+      "shoot": 0.8,
+      "shoot_4": 0.8,
+      "shoot_5": 0.8
+    }
   },
   "weapons/v_ump45": {
     "sequences": [
@@ -4206,7 +4991,31 @@
         ]
       }
     ],
-    "bones": 43
+    "bones": 43,
+    "seq_events": {
+      "reload": [
+        {
+          "t": 0.697,
+          "wav": "weapons/ump45_clipout.wav"
+        },
+        {
+          "t": 1.788,
+          "wav": "weapons/ump45_clipin.wav"
+        },
+        {
+          "t": 2.606,
+          "wav": "weapons/ump45_boltslap.wav"
+        }
+      ]
+    },
+    "seq_durations": {
+      "idle1": 0.167,
+      "reload": 3.485,
+      "draw": 1.0,
+      "shoot1": 0.406,
+      "shoot2": 0.406,
+      "shoot3": 0.406
+    }
   },
   "weapons/v_usp": {
     "sequences": [
@@ -4285,7 +5094,87 @@
         ]
       }
     ],
-    "bones": 45
+    "bones": 45,
+    "seq_events": {
+      "reload": [
+        {
+          "t": 0.459,
+          "wav": "weapons/usp_clipout.wav"
+        },
+        {
+          "t": 1.081,
+          "wav": "weapons/usp_clipin.wav"
+        },
+        {
+          "t": 2.216,
+          "wav": "weapons/usp_sliderelease.wav"
+        }
+      ],
+      "draw": [
+        {
+          "t": 0.021,
+          "wav": "weapons/de_deploy.wav"
+        },
+        {
+          "t": 0.542,
+          "wav": "weapons/usp_slideback.wav"
+        }
+      ],
+      "add_silencer": [
+        {
+          "t": 1.027,
+          "wav": "weapons/usp_silencer_on.wav"
+        }
+      ],
+      "reload_unsil": [
+        {
+          "t": 0.459,
+          "wav": "weapons/usp_clipout.wav"
+        },
+        {
+          "t": 1.081,
+          "wav": "weapons/usp_clipin.wav"
+        },
+        {
+          "t": 2.216,
+          "wav": "weapons/usp_sliderelease.wav"
+        }
+      ],
+      "draw_unsil": [
+        {
+          "t": 0.021,
+          "wav": "weapons/de_deploy.wav"
+        },
+        {
+          "t": 0.542,
+          "wav": "weapons/usp_slideback.wav"
+        }
+      ],
+      "detach_silencer": [
+        {
+          "t": 0.784,
+          "wav": "weapons/usp_silencer_off.wav"
+        }
+      ]
+    },
+    "seq_durations": {
+      "idle": 1.875,
+      "shoot1": 0.967,
+      "shoot2": 0.967,
+      "shoot3": 0.967,
+      "shootlast": 0.938,
+      "reload": 2.703,
+      "draw": 1.0,
+      "add_silencer": 3.108,
+      "idle_unsil": 1.875,
+      "shoot1_unsil": 0.967,
+      "shoot2_unsil": 0.967,
+      "shoot3_unsil": 0.967,
+      "shootlast_unsil": 0.938,
+      "reload_unsil": 2.703,
+      "draw_unsil": 1.0,
+      "detach_silencer": 3.108
+    }
   },
   "weapons/v_xm1014": {
     "sequences": [
@@ -4369,7 +5258,30 @@
         ]
       }
     ],
-    "bones": 42
+    "bones": 42,
+    "seq_events": {
+      "start_reload": [
+        {
+          "t": 0.667,
+          "wav": "weapons/p90_cliprelease.wav"
+        }
+      ],
+      "draw": [
+        {
+          "t": 0.033,
+          "wav": "weapons/de_deploy.wav"
+        }
+      ]
+    },
+    "seq_durations": {
+      "idle": 0.667,
+      "shoot1": 0.5,
+      "shoot2": 0.5,
+      "insert": 0.389,
+      "after_reload": 0.4,
+      "start_reload": 0.667,
+      "draw": 1.0
+    }
   },
   "weapons/w_ak47": {
     "sequences": [
@@ -5105,40 +6017,86 @@
   },
   "players/arctic": {
     "sequences": [
-      "dummy",
       "idle1",
-      "idle1_1h",
       "crouch_idle",
-      "crouch_idle_1h",
       "walk",
-      "walk_1h",
       "run",
-      "run_1h",
       "crouchrun",
-      "crouchrun_1h",
       "jump",
-      "jump_1h",
-      "longjump",
-      "swim",
       "crouch_aim_carbine",
       "crouch_shoot_carbine",
+      "crouch_reload_carbine",
       "ref_aim_carbine",
       "ref_shoot_carbine",
+      "ref_reload_carbine",
+      "crouch_aim_onehanded",
+      "crouch_shoot_onehanded",
+      "crouch_reload_onehanded",
       "ref_aim_onehanded",
       "ref_shoot_onehanded",
+      "ref_reload_onehanded",
+      "crouch_aim_dualpistols",
+      "crouch_shoot_dualpistols",
+      "crouch_shoot2_dualpistols",
+      "crouch_reload_dualpistols",
+      "ref_aim_dualpistols",
+      "ref_shoot_dualpistols",
+      "ref_shoot2_dualpistols",
+      "ref_reload_dualpistols",
+      "crouch_aim_rifle",
+      "crouch_shoot_rifle",
+      "crouch_reload_rifle",
+      "ref_aim_rifle",
+      "ref_shoot_rifle",
+      "ref_reload_rifle",
+      "crouch_aim_mp5",
+      "crouch_shoot_mp5",
+      "crouch_reload_mp5",
+      "ref_aim_mp5",
+      "ref_shoot_mp5",
+      "ref_reload_mp5",
+      "crouch_aim_shotgun",
+      "crouch_shoot_shotgun",
+      "crouch_reload_shotgun",
+      "ref_aim_shotgun",
+      "ref_shoot_shotgun",
+      "ref_reload_shotgun",
+      "crouch_aim_m249",
+      "crouch_shoot_m249",
+      "crouch_reload_m249",
+      "ref_aim_m249",
+      "ref_shoot_m249",
+      "ref_reload_m249",
+      "ref_aim_grenade",
+      "ref_shoot_grenade",
+      "crouch_aim_grenade",
+      "crouch_shoot_grenade",
+      "crouch_aim_c4",
+      "crouch_shoot_c4",
       "ref_aim_c4",
+      "ref_shoot_c4",
+      "ref_reload_c4",
+      "crouch_aim_knife",
+      "crouch_shoot_knife",
       "ref_aim_knife",
       "ref_shoot_knife",
       "crouch_aim_ak47",
       "crouch_shoot_ak47",
+      "crouch_reload_ak47",
       "ref_aim_ak47",
       "ref_shoot_ak47",
       "ref_reload_ak47",
+      "gut_flinch",
+      "head_flinch",
       "death1",
       "death2",
       "death3",
       "head",
       "gutshot",
+      "left",
+      "back",
+      "right",
+      "forward",
       "crouch_die"
     ],
     "hitboxes": [
@@ -5427,40 +6385,86 @@
   },
   "players/gign": {
     "sequences": [
-      "dummy",
       "idle1",
-      "idle1_1h",
       "crouch_idle",
-      "crouch_idle_1h",
       "walk",
-      "walk_1h",
       "run",
-      "run_1h",
       "crouchrun",
-      "crouchrun_1h",
       "jump",
-      "jump_1h",
-      "longjump",
-      "swim",
       "crouch_aim_carbine",
       "crouch_shoot_carbine",
+      "crouch_reload_carbine",
       "ref_aim_carbine",
       "ref_shoot_carbine",
+      "ref_reload_carbine",
+      "crouch_aim_onehanded",
+      "crouch_shoot_onehanded",
+      "crouch_reload_onehanded",
       "ref_aim_onehanded",
       "ref_shoot_onehanded",
+      "ref_reload_onehanded",
+      "crouch_aim_dualpistols",
+      "crouch_shoot_dualpistols",
+      "crouch_shoot2_dualpistols",
+      "crouch_reload_dualpistols",
+      "ref_aim_dualpistols",
+      "ref_shoot_dualpistols",
+      "ref_shoot2_dualpistols",
+      "ref_reload_dualpistols",
+      "crouch_aim_rifle",
+      "crouch_shoot_rifle",
+      "crouch_reload_rifle",
+      "ref_aim_rifle",
+      "ref_shoot_rifle",
+      "ref_reload_rifle",
+      "crouch_aim_mp5",
+      "crouch_shoot_mp5",
+      "crouch_reload_mp5",
+      "ref_aim_mp5",
+      "ref_shoot_mp5",
+      "ref_reload_mp5",
+      "crouch_aim_shotgun",
+      "crouch_shoot_shotgun",
+      "crouch_reload_shotgun",
+      "ref_aim_shotgun",
+      "ref_shoot_shotgun",
+      "ref_reload_shotgun",
+      "crouch_aim_m249",
+      "crouch_shoot_m249",
+      "crouch_reload_m249",
+      "ref_aim_m249",
+      "ref_shoot_m249",
+      "ref_reload_m249",
+      "ref_aim_grenade",
+      "ref_shoot_grenade",
+      "crouch_aim_grenade",
+      "crouch_shoot_grenade",
+      "crouch_aim_c4",
+      "crouch_shoot_c4",
       "ref_aim_c4",
+      "ref_shoot_c4",
+      "ref_reload_c4",
+      "crouch_aim_knife",
+      "crouch_shoot_knife",
       "ref_aim_knife",
       "ref_shoot_knife",
       "crouch_aim_ak47",
       "crouch_shoot_ak47",
+      "crouch_reload_ak47",
       "ref_aim_ak47",
       "ref_shoot_ak47",
       "ref_reload_ak47",
+      "gut_flinch",
+      "head_flinch",
       "death1",
       "death2",
       "death3",
       "head",
       "gutshot",
+      "left",
+      "back",
+      "right",
+      "forward",
       "crouch_die"
     ],
     "hitboxes": [
@@ -5749,40 +6753,86 @@
   },
   "players/gsg9": {
     "sequences": [
-      "dummy",
       "idle1",
-      "idle1_1h",
       "crouch_idle",
-      "crouch_idle_1h",
       "walk",
-      "walk_1h",
       "run",
-      "run_1h",
       "crouchrun",
-      "crouchrun_1h",
       "jump",
-      "jump_1h",
-      "longjump",
-      "swim",
       "crouch_aim_carbine",
       "crouch_shoot_carbine",
+      "crouch_reload_carbine",
       "ref_aim_carbine",
       "ref_shoot_carbine",
+      "ref_reload_carbine",
+      "crouch_aim_onehanded",
+      "crouch_shoot_onehanded",
+      "crouch_reload_onehanded",
       "ref_aim_onehanded",
       "ref_shoot_onehanded",
+      "ref_reload_onehanded",
+      "crouch_aim_dualpistols",
+      "crouch_shoot_dualpistols",
+      "crouch_shoot2_dualpistols",
+      "crouch_reload_dualpistols",
+      "ref_aim_dualpistols",
+      "ref_shoot_dualpistols",
+      "ref_shoot2_dualpistols",
+      "ref_reload_dualpistols",
+      "crouch_aim_rifle",
+      "crouch_shoot_rifle",
+      "crouch_reload_rifle",
+      "ref_aim_rifle",
+      "ref_shoot_rifle",
+      "ref_reload_rifle",
+      "crouch_aim_mp5",
+      "crouch_shoot_mp5",
+      "crouch_reload_mp5",
+      "ref_aim_mp5",
+      "ref_shoot_mp5",
+      "ref_reload_mp5",
+      "crouch_aim_shotgun",
+      "crouch_shoot_shotgun",
+      "crouch_reload_shotgun",
+      "ref_aim_shotgun",
+      "ref_shoot_shotgun",
+      "ref_reload_shotgun",
+      "crouch_aim_m249",
+      "crouch_shoot_m249",
+      "crouch_reload_m249",
+      "ref_aim_m249",
+      "ref_shoot_m249",
+      "ref_reload_m249",
+      "ref_aim_grenade",
+      "ref_shoot_grenade",
+      "crouch_aim_grenade",
+      "crouch_shoot_grenade",
+      "crouch_aim_c4",
+      "crouch_shoot_c4",
       "ref_aim_c4",
+      "ref_shoot_c4",
+      "ref_reload_c4",
+      "crouch_aim_knife",
+      "crouch_shoot_knife",
       "ref_aim_knife",
       "ref_shoot_knife",
       "crouch_aim_ak47",
       "crouch_shoot_ak47",
+      "crouch_reload_ak47",
       "ref_aim_ak47",
       "ref_shoot_ak47",
       "ref_reload_ak47",
+      "gut_flinch",
+      "head_flinch",
       "death1",
       "death2",
       "death3",
       "head",
       "gutshot",
+      "left",
+      "back",
+      "right",
+      "forward",
       "crouch_die"
     ],
     "hitboxes": [
@@ -6071,40 +7121,86 @@
   },
   "players/guerilla": {
     "sequences": [
-      "dummy",
       "idle1",
-      "idle1_1h",
       "crouch_idle",
-      "crouch_idle_1h",
       "walk",
-      "walk_1h",
       "run",
-      "run_1h",
       "crouchrun",
-      "crouchrun_1h",
       "jump",
-      "jump_1h",
-      "longjump",
-      "swim",
       "crouch_aim_carbine",
       "crouch_shoot_carbine",
+      "crouch_reload_carbine",
       "ref_aim_carbine",
       "ref_shoot_carbine",
+      "ref_reload_carbine",
+      "crouch_aim_onehanded",
+      "crouch_shoot_onehanded",
+      "crouch_reload_onehanded",
       "ref_aim_onehanded",
       "ref_shoot_onehanded",
+      "ref_reload_onehanded",
+      "crouch_aim_dualpistols",
+      "crouch_shoot_dualpistols",
+      "crouch_shoot2_dualpistols",
+      "crouch_reload_dualpistols",
+      "ref_aim_dualpistols",
+      "ref_shoot_dualpistols",
+      "ref_shoot2_dualpistols",
+      "ref_reload_dualpistols",
+      "crouch_aim_rifle",
+      "crouch_shoot_rifle",
+      "crouch_reload_rifle",
+      "ref_aim_rifle",
+      "ref_shoot_rifle",
+      "ref_reload_rifle",
+      "crouch_aim_mp5",
+      "crouch_shoot_mp5",
+      "crouch_reload_mp5",
+      "ref_aim_mp5",
+      "ref_shoot_mp5",
+      "ref_reload_mp5",
+      "crouch_aim_shotgun",
+      "crouch_shoot_shotgun",
+      "crouch_reload_shotgun",
+      "ref_aim_shotgun",
+      "ref_shoot_shotgun",
+      "ref_reload_shotgun",
+      "crouch_aim_m249",
+      "crouch_shoot_m249",
+      "crouch_reload_m249",
+      "ref_aim_m249",
+      "ref_shoot_m249",
+      "ref_reload_m249",
+      "ref_aim_grenade",
+      "ref_shoot_grenade",
+      "crouch_aim_grenade",
+      "crouch_shoot_grenade",
+      "crouch_aim_c4",
+      "crouch_shoot_c4",
       "ref_aim_c4",
+      "ref_shoot_c4",
+      "ref_reload_c4",
+      "crouch_aim_knife",
+      "crouch_shoot_knife",
       "ref_aim_knife",
       "ref_shoot_knife",
       "crouch_aim_ak47",
       "crouch_shoot_ak47",
+      "crouch_reload_ak47",
       "ref_aim_ak47",
       "ref_shoot_ak47",
       "ref_reload_ak47",
+      "gut_flinch",
+      "head_flinch",
       "death1",
       "death2",
       "death3",
       "head",
       "gutshot",
+      "left",
+      "back",
+      "right",
+      "forward",
       "crouch_die"
     ],
     "hitboxes": [
@@ -6393,40 +7489,86 @@
   },
   "players/leet": {
     "sequences": [
-      "dummy",
       "idle1",
-      "idle1_1h",
       "crouch_idle",
-      "crouch_idle_1h",
       "walk",
-      "walk_1h",
       "run",
-      "run_1h",
       "crouchrun",
-      "crouchrun_1h",
       "jump",
-      "jump_1h",
-      "longjump",
-      "swim",
       "crouch_aim_carbine",
       "crouch_shoot_carbine",
+      "crouch_reload_carbine",
       "ref_aim_carbine",
       "ref_shoot_carbine",
+      "ref_reload_carbine",
+      "crouch_aim_onehanded",
+      "crouch_shoot_onehanded",
+      "crouch_reload_onehanded",
       "ref_aim_onehanded",
       "ref_shoot_onehanded",
+      "ref_reload_onehanded",
+      "crouch_aim_dualpistols",
+      "crouch_shoot_dualpistols",
+      "crouch_shoot2_dualpistols",
+      "crouch_reload_dualpistols",
+      "ref_aim_dualpistols",
+      "ref_shoot_dualpistols",
+      "ref_shoot2_dualpistols",
+      "ref_reload_dualpistols",
+      "crouch_aim_rifle",
+      "crouch_shoot_rifle",
+      "crouch_reload_rifle",
+      "ref_aim_rifle",
+      "ref_shoot_rifle",
+      "ref_reload_rifle",
+      "crouch_aim_mp5",
+      "crouch_shoot_mp5",
+      "crouch_reload_mp5",
+      "ref_aim_mp5",
+      "ref_shoot_mp5",
+      "ref_reload_mp5",
+      "crouch_aim_shotgun",
+      "crouch_shoot_shotgun",
+      "crouch_reload_shotgun",
+      "ref_aim_shotgun",
+      "ref_shoot_shotgun",
+      "ref_reload_shotgun",
+      "crouch_aim_m249",
+      "crouch_shoot_m249",
+      "crouch_reload_m249",
+      "ref_aim_m249",
+      "ref_shoot_m249",
+      "ref_reload_m249",
+      "ref_aim_grenade",
+      "ref_shoot_grenade",
+      "crouch_aim_grenade",
+      "crouch_shoot_grenade",
+      "crouch_aim_c4",
+      "crouch_shoot_c4",
       "ref_aim_c4",
+      "ref_shoot_c4",
+      "ref_reload_c4",
+      "crouch_aim_knife",
+      "crouch_shoot_knife",
       "ref_aim_knife",
       "ref_shoot_knife",
       "crouch_aim_ak47",
       "crouch_shoot_ak47",
+      "crouch_reload_ak47",
       "ref_aim_ak47",
       "ref_shoot_ak47",
       "ref_reload_ak47",
+      "gut_flinch",
+      "head_flinch",
       "death1",
       "death2",
       "death3",
       "head",
       "gutshot",
+      "left",
+      "back",
+      "right",
+      "forward",
       "crouch_die"
     ],
     "hitboxes": [
@@ -6715,40 +7857,86 @@
   },
   "players/sas": {
     "sequences": [
-      "dummy",
       "idle1",
-      "idle1_1h",
       "crouch_idle",
-      "crouch_idle_1h",
       "walk",
-      "walk_1h",
       "run",
-      "run_1h",
       "crouchrun",
-      "crouchrun_1h",
       "jump",
-      "jump_1h",
-      "longjump",
-      "swim",
       "crouch_aim_carbine",
       "crouch_shoot_carbine",
+      "crouch_reload_carbine",
       "ref_aim_carbine",
       "ref_shoot_carbine",
+      "ref_reload_carbine",
+      "crouch_aim_onehanded",
+      "crouch_shoot_onehanded",
+      "crouch_reload_onehanded",
       "ref_aim_onehanded",
       "ref_shoot_onehanded",
+      "ref_reload_onehanded",
+      "crouch_aim_dualpistols",
+      "crouch_shoot_dualpistols",
+      "crouch_shoot2_dualpistols",
+      "crouch_reload_dualpistols",
+      "ref_aim_dualpistols",
+      "ref_shoot_dualpistols",
+      "ref_shoot2_dualpistols",
+      "ref_reload_dualpistols",
+      "crouch_aim_rifle",
+      "crouch_shoot_rifle",
+      "crouch_reload_rifle",
+      "ref_aim_rifle",
+      "ref_shoot_rifle",
+      "ref_reload_rifle",
+      "crouch_aim_mp5",
+      "crouch_shoot_mp5",
+      "crouch_reload_mp5",
+      "ref_aim_mp5",
+      "ref_shoot_mp5",
+      "ref_reload_mp5",
+      "crouch_aim_shotgun",
+      "crouch_shoot_shotgun",
+      "crouch_reload_shotgun",
+      "ref_aim_shotgun",
+      "ref_shoot_shotgun",
+      "ref_reload_shotgun",
+      "crouch_aim_m249",
+      "crouch_shoot_m249",
+      "crouch_reload_m249",
+      "ref_aim_m249",
+      "ref_shoot_m249",
+      "ref_reload_m249",
+      "ref_aim_grenade",
+      "ref_shoot_grenade",
+      "crouch_aim_grenade",
+      "crouch_shoot_grenade",
+      "crouch_aim_c4",
+      "crouch_shoot_c4",
       "ref_aim_c4",
+      "ref_shoot_c4",
+      "ref_reload_c4",
+      "crouch_aim_knife",
+      "crouch_shoot_knife",
       "ref_aim_knife",
       "ref_shoot_knife",
       "crouch_aim_ak47",
       "crouch_shoot_ak47",
+      "crouch_reload_ak47",
       "ref_aim_ak47",
       "ref_shoot_ak47",
       "ref_reload_ak47",
+      "gut_flinch",
+      "head_flinch",
       "death1",
       "death2",
       "death3",
       "head",
       "gutshot",
+      "left",
+      "back",
+      "right",
+      "forward",
       "crouch_die"
     ],
     "hitboxes": [
@@ -7037,40 +8225,86 @@
   },
   "players/terror": {
     "sequences": [
-      "dummy",
       "idle1",
-      "idle1_1h",
       "crouch_idle",
-      "crouch_idle_1h",
       "walk",
-      "walk_1h",
       "run",
-      "run_1h",
       "crouchrun",
-      "crouchrun_1h",
       "jump",
-      "jump_1h",
-      "longjump",
-      "swim",
       "crouch_aim_carbine",
       "crouch_shoot_carbine",
+      "crouch_reload_carbine",
       "ref_aim_carbine",
       "ref_shoot_carbine",
+      "ref_reload_carbine",
+      "crouch_aim_onehanded",
+      "crouch_shoot_onehanded",
+      "crouch_reload_onehanded",
       "ref_aim_onehanded",
       "ref_shoot_onehanded",
+      "ref_reload_onehanded",
+      "crouch_aim_dualpistols",
+      "crouch_shoot_dualpistols",
+      "crouch_shoot2_dualpistols",
+      "crouch_reload_dualpistols",
+      "ref_aim_dualpistols",
+      "ref_shoot_dualpistols",
+      "ref_shoot2_dualpistols",
+      "ref_reload_dualpistols",
+      "crouch_aim_rifle",
+      "crouch_shoot_rifle",
+      "crouch_reload_rifle",
+      "ref_aim_rifle",
+      "ref_shoot_rifle",
+      "ref_reload_rifle",
+      "crouch_aim_mp5",
+      "crouch_shoot_mp5",
+      "crouch_reload_mp5",
+      "ref_aim_mp5",
+      "ref_shoot_mp5",
+      "ref_reload_mp5",
+      "crouch_aim_shotgun",
+      "crouch_shoot_shotgun",
+      "crouch_reload_shotgun",
+      "ref_aim_shotgun",
+      "ref_shoot_shotgun",
+      "ref_reload_shotgun",
+      "crouch_aim_m249",
+      "crouch_shoot_m249",
+      "crouch_reload_m249",
+      "ref_aim_m249",
+      "ref_shoot_m249",
+      "ref_reload_m249",
+      "ref_aim_grenade",
+      "ref_shoot_grenade",
+      "crouch_aim_grenade",
+      "crouch_shoot_grenade",
+      "crouch_aim_c4",
+      "crouch_shoot_c4",
       "ref_aim_c4",
+      "ref_shoot_c4",
+      "ref_reload_c4",
+      "crouch_aim_knife",
+      "crouch_shoot_knife",
       "ref_aim_knife",
       "ref_shoot_knife",
       "crouch_aim_ak47",
       "crouch_shoot_ak47",
+      "crouch_reload_ak47",
       "ref_aim_ak47",
       "ref_shoot_ak47",
       "ref_reload_ak47",
+      "gut_flinch",
+      "head_flinch",
       "death1",
       "death2",
       "death3",
       "head",
       "gutshot",
+      "left",
+      "back",
+      "right",
+      "forward",
       "crouch_die"
     ],
     "hitboxes": [
@@ -7359,40 +8593,86 @@
   },
   "players/urban": {
     "sequences": [
-      "dummy",
       "idle1",
-      "idle1_1h",
       "crouch_idle",
-      "crouch_idle_1h",
       "walk",
-      "walk_1h",
       "run",
-      "run_1h",
       "crouchrun",
-      "crouchrun_1h",
       "jump",
-      "jump_1h",
-      "longjump",
-      "swim",
       "crouch_aim_carbine",
       "crouch_shoot_carbine",
+      "crouch_reload_carbine",
       "ref_aim_carbine",
       "ref_shoot_carbine",
+      "ref_reload_carbine",
+      "crouch_aim_onehanded",
+      "crouch_shoot_onehanded",
+      "crouch_reload_onehanded",
       "ref_aim_onehanded",
       "ref_shoot_onehanded",
+      "ref_reload_onehanded",
+      "crouch_aim_dualpistols",
+      "crouch_shoot_dualpistols",
+      "crouch_shoot2_dualpistols",
+      "crouch_reload_dualpistols",
+      "ref_aim_dualpistols",
+      "ref_shoot_dualpistols",
+      "ref_shoot2_dualpistols",
+      "ref_reload_dualpistols",
+      "crouch_aim_rifle",
+      "crouch_shoot_rifle",
+      "crouch_reload_rifle",
+      "ref_aim_rifle",
+      "ref_shoot_rifle",
+      "ref_reload_rifle",
+      "crouch_aim_mp5",
+      "crouch_shoot_mp5",
+      "crouch_reload_mp5",
+      "ref_aim_mp5",
+      "ref_shoot_mp5",
+      "ref_reload_mp5",
+      "crouch_aim_shotgun",
+      "crouch_shoot_shotgun",
+      "crouch_reload_shotgun",
+      "ref_aim_shotgun",
+      "ref_shoot_shotgun",
+      "ref_reload_shotgun",
+      "crouch_aim_m249",
+      "crouch_shoot_m249",
+      "crouch_reload_m249",
+      "ref_aim_m249",
+      "ref_shoot_m249",
+      "ref_reload_m249",
+      "ref_aim_grenade",
+      "ref_shoot_grenade",
+      "crouch_aim_grenade",
+      "crouch_shoot_grenade",
+      "crouch_aim_c4",
+      "crouch_shoot_c4",
       "ref_aim_c4",
+      "ref_shoot_c4",
+      "ref_reload_c4",
+      "crouch_aim_knife",
+      "crouch_shoot_knife",
       "ref_aim_knife",
       "ref_shoot_knife",
       "crouch_aim_ak47",
       "crouch_shoot_ak47",
+      "crouch_reload_ak47",
       "ref_aim_ak47",
       "ref_shoot_ak47",
       "ref_reload_ak47",
+      "gut_flinch",
+      "head_flinch",
       "death1",
       "death2",
       "death3",
       "head",
       "gutshot",
+      "left",
+      "back",
+      "right",
+      "forward",
       "crouch_die"
     ],
     "hitboxes": [
@@ -7681,40 +8961,86 @@
   },
   "players/vip": {
     "sequences": [
-      "dummy",
       "idle1",
-      "idle1_1h",
       "crouch_idle",
-      "crouch_idle_1h",
       "walk",
-      "walk_1h",
       "run",
-      "run_1h",
       "crouchrun",
-      "crouchrun_1h",
       "jump",
-      "jump_1h",
-      "longjump",
-      "swim",
       "crouch_aim_carbine",
       "crouch_shoot_carbine",
+      "crouch_reload_carbine",
       "ref_aim_carbine",
       "ref_shoot_carbine",
+      "ref_reload_carbine",
+      "crouch_aim_onehanded",
+      "crouch_shoot_onehanded",
+      "crouch_reload_onehanded",
       "ref_aim_onehanded",
       "ref_shoot_onehanded",
+      "ref_reload_onehanded",
+      "crouch_aim_dualpistols",
+      "crouch_shoot_dualpistols",
+      "crouch_shoot2_dualpistols",
+      "crouch_reload_dualpistols",
+      "ref_aim_dualpistols",
+      "ref_shoot_dualpistols",
+      "ref_shoot2_dualpistols",
+      "ref_reload_dualpistols",
+      "crouch_aim_rifle",
+      "crouch_shoot_rifle",
+      "crouch_reload_rifle",
+      "ref_aim_rifle",
+      "ref_shoot_rifle",
+      "ref_reload_rifle",
+      "crouch_aim_mp5",
+      "crouch_shoot_mp5",
+      "crouch_reload_mp5",
+      "ref_aim_mp5",
+      "ref_shoot_mp5",
+      "ref_reload_mp5",
+      "crouch_aim_shotgun",
+      "crouch_shoot_shotgun",
+      "crouch_reload_shotgun",
+      "ref_aim_shotgun",
+      "ref_shoot_shotgun",
+      "ref_reload_shotgun",
+      "crouch_aim_m249",
+      "crouch_shoot_m249",
+      "crouch_reload_m249",
+      "ref_aim_m249",
+      "ref_shoot_m249",
+      "ref_reload_m249",
+      "ref_aim_grenade",
+      "ref_shoot_grenade",
+      "crouch_aim_grenade",
+      "crouch_shoot_grenade",
+      "crouch_aim_c4",
+      "crouch_shoot_c4",
       "ref_aim_c4",
+      "ref_shoot_c4",
+      "ref_reload_c4",
+      "crouch_aim_knife",
+      "crouch_shoot_knife",
       "ref_aim_knife",
       "ref_shoot_knife",
       "crouch_aim_ak47",
       "crouch_shoot_ak47",
+      "crouch_reload_ak47",
       "ref_aim_ak47",
       "ref_shoot_ak47",
       "ref_reload_ak47",
+      "gut_flinch",
+      "head_flinch",
       "death1",
       "death2",
       "death3",
       "head",
       "gutshot",
+      "left",
+      "back",
+      "right",
+      "forward",
       "crouch_die"
     ],
     "hitboxes": [

@@ -26,6 +26,13 @@ var _muzzle_light: OmniLight3D = null
 var _muzzle_timer: float = 0.0
 var _bob_phase: float = 0.0
 var _sway_offset: Vector2 = Vector2.ZERO
+var _vm_kick_z: float = 0.0
+var _vm_kick_pitch: float = 0.0
+var _land_dip: float = 0.0
+var _was_on_floor: bool = true
+var _cur_vm_model_name: String = ""
+var _pending_vm_events: Array = []
+var _vm_anim_elapsed: float = 0.0
 var _shake_trauma: float = 0.0
 var _shake_time: float = 0.0
 var _elite_muzzle_left: bool = false
@@ -225,6 +232,19 @@ func _physics_process(delta: float) -> void:
 			_muzzle_sprite.visible = false
 			_muzzle_light.visible = false
 
+	# Tick frame-exact StudioMDL 5004 weapon foley sound events synced to viewmodel animation!
+	if is_alive and not _pending_vm_events.is_empty() and _vm_anim and _vm_anim.is_playing():
+		_vm_anim_elapsed += delta
+		while not _pending_vm_events.is_empty():
+			var ev: Dictionary = _pending_vm_events[0]
+			if float(ev.get("t", 0.0)) <= _vm_anim_elapsed + 0.004:
+				var wav := String(ev.get("wav", ""))
+				if not wav.is_empty():
+					AudioManager.play_2d(wav, -2.2, randf_range(0.985, 1.015))
+				_pending_vm_events.remove_at(0)
+			else:
+				break
+
 	if not is_alive:
 		_update_spectator_camera(delta)
 		return
@@ -242,10 +262,15 @@ func _physics_process(delta: float) -> void:
 	var want_crouch := (not ui_blocking_input) and Input.is_action_pressed("crouch")
 	var want_walk := (not ui_blocking_input) and Input.is_action_pressed("walk")
 
+	var prev_vy := velocity.y
 	apply_goldsrc_movement(wish_dir, want_jump, want_crouch, want_walk, delta)
+	if is_on_floor() and not _was_on_floor and prev_vy < -3.0:
+		_land_dip = clampf(-prev_vy * 0.0042, 0.008, 0.038)
+	_was_on_floor = is_on_floor()
+	_land_dip = lerpf(_land_dip, 0.0, minf(1.0, 12.0 * delta))
 
 	# Smooth camera eye height & recoil punch angles + explosion camera shake
-	var target_eye_y := 0.96 if is_crouching else 1.66
+	var target_eye_y := (0.96 if is_crouching else 1.66) - _land_dip * 1.4
 	camera.position.y = lerpf(camera.position.y, target_eye_y, minf(1.0, 14.0 * delta))
 	var shake_rot := Vector3.ZERO
 	if _shake_trauma > 0.001:
@@ -268,15 +293,22 @@ func _physics_process(delta: float) -> void:
 	if _vm_viewport and _vm_viewport.world_3d != get_world_3d():
 		_vm_viewport.world_3d = get_world_3d()
 
-	# Viewmodel bobbing & mouse sway (classic GoldSrc cl_bob)
+	# Viewmodel bobbing, mouse sway, strafe tilt & recoil spring kickback (classic GoldSrc cl_bob + kick)
 	_sway_offset = _sway_offset.lerp(Vector2.ZERO, minf(1.0, 10.0 * delta))
+	_vm_kick_z = lerpf(_vm_kick_z, 0.0, minf(1.0, 18.0 * delta))
+	_vm_kick_pitch = lerpf(_vm_kick_pitch, 0.0, minf(1.0, 16.0 * delta))
 	var hspd := Vector2(velocity.x, velocity.z).length()
 	if is_on_floor() and hspd > 0.4:
 		_bob_phase += delta * hspd * 1.65
-	var bob_x := sin(_bob_phase) * 0.008 * clampf(hspd / 7.0, 0.0, 1.0)
-	var bob_y := absf(cos(_bob_phase)) * -0.010 * clampf(hspd / 7.0, 0.0, 1.0)
+	else:
+		_bob_phase += delta * 1.35
+	var move_fac := clampf(hspd / 7.0, 0.0, 1.0)
+	var bob_x := sin(_bob_phase) * (0.0085 * move_fac + 0.0008)
+	var bob_y := absf(cos(_bob_phase)) * (-0.0105 * move_fac) + sin(_bob_phase * 0.5) * 0.0009 - _land_dip * 0.65
+	var strafe_roll := -in_vec.x * deg_to_rad(1.15) * move_fac
 	viewmodel_holder.scale = Vector3.ONE
-	viewmodel_holder.position = Vector3(bob_x + _sway_offset.x, bob_y + _sway_offset.y, 0.0)
+	viewmodel_holder.position = Vector3(bob_x + _sway_offset.x, bob_y + _sway_offset.y, _vm_kick_z)
+	viewmodel_holder.rotation = Vector3(_vm_kick_pitch, -_sway_offset.x * 1.6, strafe_roll)
 	if _vm_container:
 		# cs15_retail v_*.mdl models are authored right-handed at scale (1,1,1);
 		# flip 2D SubViewportContainer when left-handed (cl_righthand 0) so 3D Skeleton3D never gets negative scale!
@@ -347,9 +379,12 @@ func _rebuild_viewmodel(wid: String) -> void:
 		viewmodel_holder.remove_child(c)
 		c.queue_free()
 	_vm_anim = null
+	_pending_vm_events.clear()
+	_vm_anim_elapsed = 0.0
 	_elite_muzzle_left = false
 	var spec: Dictionary = GameData.weapons.get(wid, {})
 	var v_name := String(spec.get("v_model", "v_knife"))
+	_cur_vm_model_name = v_name
 	var sc := GameData.get_model_scene("weapons/" + v_name)
 	if not sc:
 		return
@@ -392,6 +427,28 @@ func _prepare_viewmodel_materials(n: Node) -> void:
 		_prepare_viewmodel_materials(c)
 
 
+func _start_vm_clip(anim_name: String) -> void:
+	_vm_anim.stop()
+	_vm_anim.play(anim_name)
+	_vm_anim.advance(0.0)
+	_pending_vm_events.clear()
+	_vm_anim_elapsed = 0.0
+	if not _cur_vm_model_name.is_empty():
+		var mmeta: Dictionary = GameData.models_meta.get("weapons/" + _cur_vm_model_name, {})
+		var ev_map: Dictionary = mmeta.get("seq_events", {})
+		if ev_map.has(anim_name):
+			var raw_evs: Array = ev_map[anim_name]
+			for item in raw_evs:
+				if item is Dictionary:
+					var d_ev := item as Dictionary
+					if float(d_ev.get("t", 0.0)) <= 0.01:
+						var w0 := String(d_ev.get("wav", ""))
+						if not w0.is_empty():
+							AudioManager.play_2d(w0, -2.2)
+					else:
+						_pending_vm_events.append(d_ev)
+
+
 func play_viewmodel_sequence(candidates: Array) -> void:
 	if not _vm_anim:
 		return
@@ -400,30 +457,22 @@ func play_viewmodel_sequence(candidates: Array) -> void:
 	for c in candidates:
 		var cname := String(c)
 		if anims.has(cname):
-			_vm_anim.stop()
-			_vm_anim.play(cname)
-			_vm_anim.advance(0.0)
+			_start_vm_clip(cname)
 			return
 		for a in anims:
 			if a.to_lower() == cname.to_lower():
-				_vm_anim.stop()
-				_vm_anim.play(a)
-				_vm_anim.advance(0.0)
+				_start_vm_clip(a)
 				return
 	# 2. Prefix / substring fallback
 	for c in candidates:
 		var clow := String(c).to_lower()
 		for a in anims:
 			if a.to_lower().begins_with(clow):
-				_vm_anim.stop()
-				_vm_anim.play(a)
-				_vm_anim.advance(0.0)
+				_start_vm_clip(a)
 				return
 		for a in anims:
 			if a.to_lower().find(clow) >= 0:
-				_vm_anim.stop()
-				_vm_anim.play(a)
-				_vm_anim.advance(0.0)
+				_start_vm_clip(a)
 				return
 
 
@@ -461,21 +510,38 @@ func _play_idle_viewmodel() -> void:
 
 func _on_fired_shot(wid: String, silenced: bool) -> void:
 	var spec: Dictionary = GameData.weapons.get(wid, {})
+	var rem_clip := int(weapon_ctrl.clips.get(wid, 1))
+	var kick_scale := clampf(float(spec.get("recoil_up", 1.5)) / 3.5, 0.35, 1.35)
+	_vm_kick_z = clampf(_vm_kick_z + 0.016 * kick_scale, 0.0, 0.038)
+	_vm_kick_pitch = clampf(_vm_kick_pitch + deg_to_rad(1.8 * kick_scale), 0.0, deg_to_rad(4.8))
+
 	if wid == "elite":
 		_elite_muzzle_left = not _elite_muzzle_left
 		if _elite_muzzle_left:
 			var r_idx := randi_range(1, 5)
-			play_viewmodel_sequence(["shoot_left%d" % r_idx, "shoot_left1", "shoot_leftlast"])
+			if rem_clip <= 1:
+				play_viewmodel_sequence(["shoot_leftlast", "shoot_left%d" % r_idx, "shoot_left1"])
+			else:
+				play_viewmodel_sequence(["shoot_left%d" % r_idx, "shoot_left1"])
 		else:
 			var l_idx := randi_range(1, 5)
-			play_viewmodel_sequence(["shoot_right%d" % l_idx, "shoot_right1", "shoot_rightlast"])
+			if rem_clip == 0:
+				play_viewmodel_sequence(["shoot_rightlast", "shoot_right%d" % l_idx, "shoot_right1"])
+			else:
+				play_viewmodel_sequence(["shoot_right%d" % l_idx, "shoot_right1"])
 	elif bool(spec.get("silencer", false)) and not silenced:
 		var u_idx := randi_range(1, 3)
-		play_viewmodel_sequence(["shoot%d_unsil" % u_idx, "shoot1_unsil", "shoot_unsil", "shoot1"])
+		if rem_clip == 0:
+			play_viewmodel_sequence(["shootlast_unsil", "shoot%d_unsil" % u_idx, "shoot1_unsil", "shoot1"])
+		else:
+			play_viewmodel_sequence(["shoot%d_unsil" % u_idx, "shoot1_unsil", "shoot_unsil", "shoot1"])
 	else:
 		_elite_muzzle_left = false
 		var s_idx := randi_range(1, 3)
-		play_viewmodel_sequence(["shoot%d" % s_idx, "shoot1", "shoot", "shoot_2"])
+		if rem_clip == 0:
+			play_viewmodel_sequence(["shootlast", "shoot%d" % s_idx, "shoot1", "shoot", "shoot_2"])
+		else:
+			play_viewmodel_sequence(["shoot%d" % s_idx, "shoot1", "shoot", "shoot_2"])
 
 	if wid != "knife" and not bool(spec.get("grenade", false)) and wid != "c4" and not silenced:
 		_muzzle_sprite.visible = true

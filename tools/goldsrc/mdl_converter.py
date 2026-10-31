@@ -101,25 +101,77 @@ def eval_rle_anim_value(buf: bytes, rle_pos: int, frame: int) -> int:
 
 PLAYER_ANIM_KEYWORDS = (
     "idle",
+    "idle1",
     "crouch_idle",
     "walk",
     "run",
     "crouchrun",
     "jump",
+    "crouch_aim_carbine",
+    "crouch_shoot_carbine",
+    "crouch_reload_carbine",
+    "ref_aim_carbine",
+    "ref_shoot_carbine",
+    "ref_reload_carbine",
+    "crouch_aim_onehanded",
+    "crouch_shoot_onehanded",
+    "crouch_reload_onehanded",
+    "ref_aim_onehanded",
+    "ref_shoot_onehanded",
+    "ref_reload_onehanded",
+    "crouch_aim_dualpistols",
+    "crouch_shoot_dualpistols",
+    "crouch_shoot2_dualpistols",
+    "crouch_reload_dualpistols",
+    "ref_aim_dualpistols",
+    "ref_shoot_dualpistols",
+    "ref_shoot2_dualpistols",
+    "ref_reload_dualpistols",
+    "crouch_aim_rifle",
+    "crouch_shoot_rifle",
+    "crouch_reload_rifle",
+    "ref_aim_rifle",
+    "ref_shoot_rifle",
+    "ref_reload_rifle",
+    "crouch_aim_mp5",
+    "crouch_shoot_mp5",
+    "crouch_reload_mp5",
+    "ref_aim_mp5",
+    "ref_shoot_mp5",
+    "ref_reload_mp5",
+    "crouch_aim_shotgun",
+    "crouch_shoot_shotgun",
+    "crouch_reload_shotgun",
+    "ref_aim_shotgun",
+    "ref_shoot_shotgun",
+    "ref_reload_shotgun",
+    "crouch_aim_m249",
+    "crouch_shoot_m249",
+    "crouch_reload_m249",
+    "ref_aim_m249",
+    "ref_shoot_m249",
+    "ref_reload_m249",
+    "ref_aim_grenade",
+    "ref_shoot_grenade",
+    "crouch_aim_grenade",
+    "crouch_shoot_grenade",
+    "crouch_aim_c4",
+    "crouch_shoot_c4",
+    "ref_aim_c4",
+    "ref_shoot_c4",
+    "ref_reload_c4",
+    "crouch_aim_knife",
+    "crouch_shoot_knife",
+    "ref_aim_knife",
+    "ref_shoot_knife",
+    "crouch_aim_ak47",
+    "crouch_shoot_ak47",
+    "crouch_reload_ak47",
     "ref_aim_ak47",
     "ref_shoot_ak47",
     "ref_reload_ak47",
-    "ref_aim_carbine",
-    "ref_shoot_carbine",
-    "ref_aim_onehanded",
-    "ref_shoot_onehanded",
-    "ref_aim_knife",
-    "ref_shoot_knife",
-    "ref_aim_c4",
-    "crouch_aim_ak47",
-    "crouch_shoot_ak47",
-    "crouch_aim_carbine",
-    "crouch_shoot_carbine",
+    "gut_flinch",
+    "head_flinch",
     "die_simple",
     "die_backwards",
     "die_forwards",
@@ -129,6 +181,10 @@ PLAYER_ANIM_KEYWORDS = (
     "crouch_die",
     "head",
     "gutshot",
+    "left",
+    "back",
+    "right",
+    "forward",
 )
 
 
@@ -138,10 +194,11 @@ def should_include_seq(model_kind: str, seq_name: str, seq_idx: int) -> bool:
         return True
     if model_kind == "prop":
         return seq_idx == 0
-    # Player / hostage: keep essential gameplay animations compact
-    if seq_idx <= 8:
+    if lname == "dummy":
+        return False
+    if lname in PLAYER_ANIM_KEYWORDS:
         return True
-    return lname in PLAYER_ANIM_KEYWORDS
+    return seq_idx <= 6
 
 
 def find_companion_texture_mdl(mdl_path: str) -> Optional[bytes]:
@@ -409,15 +466,22 @@ def convert_mdl_to_glb(mdl_path: str, out_glb_path: str, model_kind: str = "prop
         anim_table_ofs: int,
         sample_frames: List[int],
         upper_override: Optional[Tuple[bytes, int]] = None,
+        force_upper_tracks: bool = False,
+        lower_only: bool = False,
     ) -> List[Tuple[int, np.ndarray, np.ndarray]]:
         tracks = []
         for bi, b in enumerate(bones):
+            if force_upper_tracks and upper_bone_set and (bi not in upper_bone_set):
+                continue
+            if lower_only and upper_bone_set and (bi in upper_bone_set):
+                continue
             use_upper = (upper_override is not None) and (bi in upper_bone_set)
+            emit_upper = use_upper or (force_upper_tracks and (bi in upper_bone_set))
             src_buf = upper_override[0] if use_upper else abuf
             b_anim_ofs = (upper_override[1] if use_upper else anim_table_ofs) + bi * 12
             offsets = struct.unpack_from("<6H", src_buf, b_anim_ofs)
             is_animated = any(o != 0 for o in offsets)
-            if not is_animated and not use_upper and bi > 0 and len(sample_frames) > 1:
+            if not is_animated and not emit_upper and bi > 0 and len(sample_frames) > 1:
                 continue
 
             ts = np.zeros((len(sample_frames), 3), dtype=np.float32)
@@ -445,63 +509,78 @@ def convert_mdl_to_glb(mdl_path: str, out_glb_path: str, model_kind: str = "prop
 
     animations_data = []
     exported_seq_names = []
+    seq_events_meta: Dict[str, List[dict]] = {}
+    seq_durations_meta: Dict[str, float] = {}
     seen_names = set()
     gait_names = {"idle1", "walk", "run", "jump", "crouch_idle", "crouchrun"}
 
     for si in range(numseq):
         sofs = seqindex + si * 176
-        sname = d[sofs : sofs + 32].split(b"\x00")[0].decode("latin1", errors="ignore").strip() or f"seq_{si}"
-        if not should_include_seq(model_kind, sname, si):
+        raw_sname = d[sofs : sofs + 32].split(b"\x00")[0].decode("latin1", errors="ignore").strip() or f"seq_{si}"
+        if not should_include_seq(model_kind, raw_sname, si):
             continue
-        if sname in seen_names:
-            sname = f"{sname}_{si}"
+        # Skip duplicate dualpistols block in player MDLs (seqs 65..72 duplicate 22..29)
+        if model_kind == "player" and raw_sname in seen_names:
+            continue
+        sname = f"{raw_sname}_{si}" if raw_sname in seen_names else raw_sname
         seen_names.add(sname)
 
         fps = struct.unpack_from("<f", d, sofs + 32)[0]
         if fps <= 0.1:
             fps = 24.0
-        numframes = max(1, struct.unpack_from("<i", d, sofs + 56)[0])
+        nevents, eventindex, numframes = struct.unpack_from("<iii", d, sofs + 48)
+        numframes = max(1, numframes)
+        nblends = max(1, struct.unpack_from("<i", d, sofs + 120)[0])
         animindex = struct.unpack_from("<i", d, sofs + 124)[0]
         seqgroup = struct.unpack_from("<i", d, sofs + 168)[0]
         if seqgroup not in seqgroup_buffers:
             continue
         abuf, abase = seqgroup_buffers[seqgroup]
-        anim_table_ofs = abase + animindex
+        # Use center blend (nblends // 2) so 9-way aim/shoot blends point straight ahead (0 deg pitch/yaw)!
+        blend_idx = (nblends // 2) if nblends > 1 else 0
+        anim_table_ofs = abase + animindex + blend_idx * numbones * 12
         if anim_table_ofs + numbones * 12 > len(abuf):
             continue
 
-        # Subsample long sequences gently to keep GLBs lightweight
+        # Extract StudioMDL QC events (5004 = frame-exact weapon foley .wav!)
+        if model_kind == "viewmodel" and nevents > 0 and 0 <= eventindex and eventindex + nevents * 76 <= len(d):
+            ev_list = []
+            for ei in range(nevents):
+                eofs = eventindex + ei * 76
+                eframe, ecode, _ = struct.unpack_from("<iii", d, eofs)
+                eparam = d[eofs + 12 : eofs + 76].split(b"\x00")[0].decode("latin1", errors="ignore").strip().replace("\\", "/").lower()
+                if ecode == 5004 and eparam:
+                    if eparam == "items/cliprelease1.wav":
+                        eparam = "weapons/p90_cliprelease.wav"
+                    ev_list.append({"t": round(float(eframe) / fps, 3), "wav": eparam})
+            if ev_list:
+                seq_events_meta[sname] = ev_list
+
+        # Full native framerate (step=1) for ALL first-person viewmodels for crisp animations & sound sync!
         step = 1
-        if model_kind == "viewmodel" and numframes > 28:
-            step = 2
-        elif model_kind != "viewmodel" and numframes > 20:
-            step = max(2, numframes // 16)
+        if model_kind != "viewmodel" and numframes > 22:
+            step = max(2, numframes // 14)
         sample_frames = list(range(0, numframes, step))
         if sample_frames[-1] != numframes - 1:
             sample_frames.append(numframes - 1)
         times = np.array([f / fps for f in sample_frames], dtype=np.float32)
+        seq_durations_meta[sname] = round(float(times[-1]), 3)
 
         lname = sname.lower()
-        upper_2h = None
-        upper_1h = None
-        if model_kind == "player" and lname in gait_names and upper_bone_set:
-            is_crouch_gait = lname.startswith("crouch")
-            upper_2h = aim_tables.get("crouch_aim_ak47" if is_crouch_gait else "ref_aim_ak47")
-            upper_1h = aim_tables.get("crouch_aim_onehanded" if is_crouch_gait else "ref_aim_onehanded")
+        is_upper_clip = lname.startswith("ref_") or lname.startswith("crouch_aim_") or lname.startswith("crouch_shoot") or lname.startswith("crouch_reload_") or lname.endswith("_flinch")
+        is_lower_gait = (model_kind == "player") and bool(aim_tables) and (lname in gait_names) and bool(upper_bone_set)
 
-        bone_tracks = sample_sequence_tracks(abuf, anim_table_ofs, sample_frames, upper_2h)
+        bone_tracks = sample_sequence_tracks(
+            abuf,
+            anim_table_ofs,
+            sample_frames,
+            None,
+            force_upper_tracks=is_upper_clip,
+            lower_only=is_lower_gait,
+        )
         if bone_tracks:
             animations_data.append((sname, times, bone_tracks))
             exported_seq_names.append(sname)
-
-        if upper_1h is not None:
-            sname_1h = f"{sname}_1h"
-            if sname_1h not in seen_names:
-                seen_names.add(sname_1h)
-                tracks_1h = sample_sequence_tracks(abuf, anim_table_ofs, sample_frames, upper_1h)
-                if tracks_1h:
-                    animations_data.append((sname_1h, times, tracks_1h))
-                    exported_seq_names.append(sname_1h)
 
     # Assemble binary glTF 2.0 (.glb)
     bin_chunks = bytearray()
@@ -643,26 +722,44 @@ def convert_mdl_to_glb(mdl_path: str, out_glb_path: str, model_kind: str = "prop
     acc_ibm = add_accessor(append_bytes(ibm_col_major.tobytes()), 5126, len(bones), "MAT4")
     gltf_skins = [{"inverseBindMatrices": acc_ibm, "joints": [1 + i for i in range(len(bones))], "skeleton": 0}]
 
-    # Animations
+    # Animations (with lossless 2-keyframe compression for constant tracks!)
     gltf_animations = []
     for sname, times, bone_tracks in animations_data:
-        acc_time = add_accessor(append_bytes(times.astype("<f4").tobytes()), 5126, len(times), "SCALAR", times[:, None])
-        # Fix SCALAR min/max to 1D list per glTF 2.0 spec
-        accessors[acc_time]["min"] = [float(times[0])]
-        accessors[acc_time]["max"] = [float(times[-1])]
+        acc_time_full = add_accessor(append_bytes(times.astype("<f4").tobytes()), 5126, len(times), "SCALAR", times[:, None])
+        accessors[acc_time_full]["min"] = [float(times[0])]
+        accessors[acc_time_full]["max"] = [float(times[-1])]
+
+        acc_time_const = acc_time_full
+        if len(times) > 2:
+            t2 = np.array([times[0], times[-1]], dtype="<f4")
+            acc_time_const = add_accessor(append_bytes(t2.tobytes()), 5126, 2, "SCALAR", t2[:, None])
+            accessors[acc_time_const]["min"] = [float(t2[0])]
+            accessors[acc_time_const]["max"] = [float(t2[-1])]
 
         samplers = []
         channels = []
         for bi, ts, qs in bone_tracks:
             node_idx = 1 + bi
-            acc_t = add_accessor(append_bytes(ts.astype("<f4").tobytes()), 5126, len(times), "VEC3")
+            if len(times) > 2 and float(np.max(np.abs(ts - ts[0]))) < 1e-5:
+                ts_c = np.array([ts[0], ts[-1]], dtype="<f4")
+                acc_t = add_accessor(append_bytes(ts_c.tobytes()), 5126, 2, "VEC3")
+                in_t = acc_time_const
+            else:
+                acc_t = add_accessor(append_bytes(ts.astype("<f4").tobytes()), 5126, len(times), "VEC3")
+                in_t = acc_time_full
             s_t = len(samplers)
-            samplers.append({"input": acc_time, "interpolation": "LINEAR", "output": acc_t})
+            samplers.append({"input": in_t, "interpolation": "LINEAR", "output": acc_t})
             channels.append({"sampler": s_t, "target": {"node": node_idx, "path": "translation"}})
 
-            acc_q = add_accessor(append_bytes(qs.astype("<f4").tobytes()), 5126, len(times), "VEC4")
+            if len(times) > 2 and float(np.max(np.abs(qs - qs[0]))) < 1e-4:
+                qs_c = np.array([qs[0], qs[-1]], dtype="<f4")
+                acc_q = add_accessor(append_bytes(qs_c.tobytes()), 5126, 2, "VEC4")
+                in_q = acc_time_const
+            else:
+                acc_q = add_accessor(append_bytes(qs.astype("<f4").tobytes()), 5126, len(times), "VEC4")
+                in_q = acc_time_full
             s_q = len(samplers)
-            samplers.append({"input": acc_time, "interpolation": "LINEAR", "output": acc_q})
+            samplers.append({"input": in_q, "interpolation": "LINEAR", "output": acc_q})
             channels.append({"sampler": s_q, "target": {"node": node_idx, "path": "rotation"}})
 
         gltf_animations.append({"name": sname, "samplers": samplers, "channels": channels})
@@ -701,7 +798,12 @@ def convert_mdl_to_glb(mdl_path: str, out_glb_path: str, model_kind: str = "prop
         out.write(struct.pack("<II", len(bin_chunks), 0x004E4942))
         out.write(bin_chunks)
 
-    return {"sequences": exported_seq_names, "hitboxes": hitboxes, "bones": len(bones)}
+    res_meta = {"sequences": exported_seq_names, "hitboxes": hitboxes, "bones": len(bones)}
+    if seq_events_meta:
+        res_meta["seq_events"] = seq_events_meta
+    if seq_durations_meta and model_kind == "viewmodel":
+        res_meta["seq_durations"] = seq_durations_meta
+    return res_meta
 
 
 def convert_p_weapon_to_hand_glb(mdl_path: str, out_glb_path: str) -> Optional[dict]:

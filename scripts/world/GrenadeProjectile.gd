@@ -209,7 +209,15 @@ static func spawn_explosion_fx(parent_node: Node, world_pos: Vector3, scale_mult
 		ptw.parallel().tween_property(sp, "scale", Vector3.ONE * 1.85, 2.15)
 		ptw.parallel().tween_property(sp, "modulate:a", 0.0, 2.15).set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_IN)
 
-	# 7. Distance-Attenuated Concussive Camera Shake for Human Player
+	# 7. Physical Shockwave Impulse on Dropped Weapons & Volumetric Smoke Clouds!
+	RoundManager.apply_world_explosion_physics(
+		world_pos,
+		13.5 * scale_mult,
+		17.5 * scale_mult,
+		1.15 * scale_mult
+	)
+
+	# 8. Distance-Attenuated Concussive Camera Shake for Human Player
 	for a in RoundManager.actors:
 		if is_instance_valid(a) and bool(a.get("is_human")) and bool(a.get("is_alive")) and a.has_method("apply_camera_shake"):
 			var dist := (a as Node3D).global_position.distance_to(world_pos)
@@ -348,132 +356,10 @@ func _detonate_flash() -> void:
 
 func _detonate_smoke() -> void:
 	AudioManager.play_3d("weapons/sg_explode.wav", global_position, 2.5, 48.0)
-	var cloud_center := global_position + Vector3(0.0, 1.45, 0.0)
-	RoundManager.add_smoke_cloud(cloud_center, 4.75, 18.5)
-
 	var parent_node := get_parent()
 	if not is_instance_valid(parent_node):
 		return
-
-	var smoke_root := Node3D.new()
-	smoke_root.name = "VolumetricSmokeCloud"
-	parent_node.add_child(smoke_root)
-	smoke_root.global_position = global_position
-
-	# Leave resting smoke canister model on the ground during cloud lifetime
-	var can_sc := GameData.get_model_scene("weapons/w_smokegrenade")
-	if can_sc:
-		var can_inst := can_sc.instantiate()
-		for c in can_inst.find_children("*", "MeshInstance3D", true, false):
-			(c as MeshInstance3D).layers = 2
-		can_inst.position = Vector3(0.0, 0.04, 0.0)
-		smoke_root.add_child(can_inst)
-
-	var cloud_tex := GameData.get_smoke_cloud_texture()
-	var space: PhysicsDirectSpaceState3D = get_world_3d().direct_space_state if get_world_3d() else null
-
-	# 1. Dense 3D Opaque-Feeling Volumetric Core Lobes (guarantees 0% sightline leakage through center!)
-	if not GameData._styled_mat_cache.has("__smoke_core_sphere"):
-		var core_mat := StandardMaterial3D.new()
-		core_mat.shading_mode = BaseMaterial3D.SHADING_MODE_UNSHADED
-		core_mat.transparency = BaseMaterial3D.TRANSPARENCY_ALPHA
-		core_mat.depth_draw_mode = BaseMaterial3D.DEPTH_DRAW_DISABLED
-		core_mat.cull_mode = BaseMaterial3D.CULL_DISABLED
-		core_mat.albedo_color = Color(0.75, 0.77, 0.79, 0.94)
-		GameData._styled_mat_cache["__smoke_core_sphere"] = core_mat
-
-	var core_offsets := [
-		Vector3(0.0, 1.55, 0.0),
-		Vector3(1.15, 1.35, 0.45),
-		Vector3(-1.10, 1.40, -0.50),
-		Vector3(0.35, 1.45, -1.15),
-		Vector3(-0.40, 1.50, 1.10),
-	]
-	for co in core_offsets:
-		var target_c := co as Vector3
-		if space != null:
-			var q_c := PhysicsRayQueryParameters3D.create(
-				global_position + Vector3(0.0, 0.6, 0.0),
-				global_position + target_c
-			)
-			q_c.collision_mask = 1
-			var hc := space.intersect_ray(q_c)
-			if not hc.is_empty():
-				target_c = ((hc["position"] as Vector3) - global_position) * 0.65
-		var lobe := MeshInstance3D.new()
-		var sm := SphereMesh.new()
-		sm.radius = 2.05
-		sm.height = 3.35
-		sm.radial_segments = 16
-		sm.rings = 10
-		lobe.mesh = sm
-		lobe.layers = 2
-		lobe.material_override = GameData._styled_mat_cache["__smoke_core_sphere"] as Material
-		lobe.position = Vector3(0.0, 0.35, 0.0)
-		lobe.scale = Vector3.ONE * 0.12
-		smoke_root.add_child(lobe)
-		var l_tw := lobe.create_tween()
-		l_tw.tween_property(lobe, "position", target_c, 0.78).set_trans(Tween.TRANS_CUBIC).set_ease(Tween.EASE_OUT)
-		l_tw.parallel().tween_property(lobe, "scale", Vector3(1.18, 0.92, 1.18), 0.85).set_trans(Tween.TRANS_CUBIC).set_ease(Tween.EASE_OUT)
-		l_tw.tween_interval(14.8)
-		l_tw.tween_property(lobe, "scale", Vector3.ONE * 0.05, 2.8).set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_IN)
-
-	# 2. 52 Large Overlapping Billowing 3D Cloud Puffs (4.2m - 5.2m wide each!)
-	#    Arranged across 3 vertical tiers with wall-clamping raycasts so smoke hugs corridors cleanly!
-	var total_puffs := 52
-	var golden_angle := 2.39996323
-	for i in range(total_puffs):
-		var frac := float(i) / float(total_puffs)
-		var tier := i % 3  # 0 = ground blanket, 1 = eye-level wall, 2 = upper dome canopy
-		var max_rad := 3.55 if tier != 2 else 2.75
-		var r := sqrt(frac) * max_rad
-		var theta := float(i) * golden_angle + randf_range(-0.18, 0.18)
-		var y_h := 0.95
-		if tier == 1:
-			y_h = randf_range(1.55, 2.25)
-		elif tier == 2:
-			y_h = randf_range(2.35, 3.25)
-		else:
-			y_h = randf_range(0.75, 1.35)
-
-		var local_target := Vector3(cos(theta) * r, y_h, sin(theta) * r)
-		if space != null:
-			var from_w := global_position + Vector3(0.0, clampf(y_h, 0.5, 1.8), 0.0)
-			var to_w := global_position + local_target
-			var q_w := PhysicsRayQueryParameters3D.create(from_w, to_w)
-			q_w.collision_mask = 1
-			var hw := space.intersect_ray(q_w)
-			if not hw.is_empty():
-				var hit_local := (hw["position"] as Vector3) - global_position + (hw["normal"] as Vector3) * 0.45
-				local_target = Vector3(hit_local.x, maxf(0.75, hit_local.y), hit_local.z)
-
-		var sp := Sprite3D.new()
-		sp.layers = 2
-		sp.texture = cloud_tex
-		sp.billboard = BaseMaterial3D.BILLBOARD_ENABLED
-		# 128px * 0.036 = 4.61m wide per puff!
-		sp.pixel_size = randf_range(0.033, 0.041)
-		sp.flip_h = (i % 2 == 0)
-		sp.flip_v = (i % 4 < 2)
-		# Self-shadowed 3D volumetric shading: cooler slate at base, dense neutral grey mid, brighter crown!
-		var lum := lerpf(0.66, 0.88, clampf((y_h - 0.7) / 2.5, 0.0, 1.0)) + randf_range(-0.04, 0.04)
-		sp.modulate = Color(lum * 0.98, lum, lum * 1.02, 0.0)
-		sp.position = Vector3(randf_range(-0.2, 0.2), 0.25, randf_range(-0.2, 0.2))
-		sp.scale = Vector3.ONE * 0.28
-		smoke_root.add_child(sp)
-
-		var bloom_t := randf_range(0.45, 1.05)
-		var peak_alpha := 0.96 if r < 2.5 else 0.90
-		var drift_vec := Vector3(randf_range(-0.42, 0.42), randf_range(0.15, 0.55), randf_range(-0.42, 0.42))
-
-		var tw := sp.create_tween()
-		tw.tween_property(sp, "position", local_target, bloom_t).set_trans(Tween.TRANS_CUBIC).set_ease(Tween.EASE_OUT)
-		tw.parallel().tween_property(sp, "scale", Vector3.ONE * randf_range(0.95, 1.22), bloom_t).set_trans(Tween.TRANS_CUBIC).set_ease(Tween.EASE_OUT)
-		tw.parallel().tween_property(sp, "modulate:a", peak_alpha, bloom_t * 0.85)
-		tw.tween_property(sp, "position", local_target + drift_vec, 14.8).set_trans(Tween.TRANS_SINE)
-		tw.parallel().tween_property(sp, "scale", Vector3.ONE * randf_range(1.12, 1.36), 14.8)
-		tw.tween_property(sp, "modulate:a", 0.0, 2.8).set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_IN)
-
-	var kill_tw := smoke_root.create_tween()
-	kill_tw.tween_interval(19.0)
-	kill_tw.tween_callback(func() -> void: _safe_free_node(smoke_root))
+	var cloud := SmokeCloudVolume.new()
+	cloud.name = "VolumetricSmokeCloud"
+	parent_node.add_child(cloud)
+	cloud.setup_cloud(global_position)

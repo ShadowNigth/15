@@ -165,13 +165,35 @@ func equip_weapon_by_id(wid: String) -> bool:
 	fire_cooldown = 0.65  # CS 1.5 deploy delay
 
 	var spec := get_current_spec()
+	var v_name := String(spec.get("v_model", "v_" + current_weapon_id))
+	var has_draw_ev := _viewmodel_has_events(v_name, "draw") or _viewmodel_has_events(v_name, "deploy")
 	var dep := String(spec.get("deploy_sound", ""))
-	if not dep.is_empty() and is_instance_valid(actor):
+	if not dep.is_empty() and is_instance_valid(actor) and (not bool(actor.get("is_human")) or not has_draw_ev):
 		AudioManager.play_3d(dep, actor.global_position, -5.0, 16.0)
 
 	weapon_switched.emit(current_weapon_id, spec)
 	_emit_ammo()
 	return true
+
+
+func _viewmodel_has_events(v_name: String, seq_prefix: String) -> bool:
+	var mmeta: Dictionary = GameData.models_meta.get("weapons/" + v_name, {})
+	var evs: Dictionary = mmeta.get("seq_events", {})
+	for k in evs.keys():
+		if String(k).to_lower().begins_with(seq_prefix.to_lower()):
+			return true
+	return false
+
+
+func _get_viewmodel_seq_duration(v_name: String, seq_name: String, fallback: float) -> float:
+	var mmeta: Dictionary = GameData.models_meta.get("weapons/" + v_name, {})
+	var durs: Dictionary = mmeta.get("seq_durations", {})
+	if durs.has(seq_name):
+		return maxf(0.35, float(durs[seq_name]))
+	for k in durs.keys():
+		if String(k).to_lower().begins_with(seq_name.to_lower()):
+			return maxf(0.35, float(durs[k]))
+	return fallback
 
 
 func quick_switch_last() -> void:
@@ -375,16 +397,19 @@ func trigger_secondary() -> void:
 	# Detachable silencer (M4A1, USP)
 	if bool(spec.get("silencer", false)):
 		is_attaching_silencer = true
-		reload_timer = 2.8
 		var cur_sil := bool(silenced_state.get(current_weapon_id, false))
-		var swav := ""
-		if current_weapon_id == "m4a1":
-			swav = "weapons/m4a1_silencer_off.wav" if cur_sil else "weapons/m4a1_silencer_on.wav"
-		else:
-			swav = "weapons/usp_silencer_off.wav" if cur_sil else "weapons/usp_silencer_on.wav"
-		AudioManager.play_3d(swav, actor.global_position, -3.0, 16.0)
-		if actor.has_method("play_viewmodel_anim"):
-			actor.play_viewmodel_anim("detach_silencer" if cur_sil else "add_silencer")
+		var target_anim := "detach_silencer" if cur_sil else "add_silencer"
+		var v_name := String(spec.get("v_model", "v_" + current_weapon_id))
+		reload_timer = _get_viewmodel_seq_duration(v_name, target_anim, 2.4)
+		if not bool(actor.get("is_human")) or not _viewmodel_has_events(v_name, target_anim):
+			var swav := ""
+			if current_weapon_id == "m4a1":
+				swav = "weapons/m4a1_silencer_off.wav" if cur_sil else "weapons/m4a1_silencer_on.wav"
+			else:
+				swav = "weapons/usp_silencer_off.wav" if cur_sil else "weapons/usp_silencer_on.wav"
+			AudioManager.play_3d(swav, actor.global_position, -3.0, 16.0)
+		if actor.has_method("play_viewmodel_sequence"):
+			actor.call("play_viewmodel_sequence", [target_anim])
 		return
 
 	# Glock18 burst fire toggle
@@ -426,19 +451,29 @@ func start_reload() -> void:
 
 	_clear_zoom()
 	is_reloading = true
+	var v_name := String(spec.get("v_model", "v_" + current_weapon_id))
+	var sil := bool(silenced_state.get(current_weapon_id, false))
+	var rel_anim := "reload" if (sil or not bool(spec.get("silencer", false))) else "reload_unsil"
 	if bool(spec.get("shotgun_reload", false)):
 		reload_timer = 0.52
 	else:
-		reload_timer = float(spec.get("reload_time", 2.5))
+		reload_timer = _get_viewmodel_seq_duration(v_name, rel_anim, float(spec.get("reload_time", 2.5)))
 
 	var rwav := String(spec.get("reload_sound", ""))
-	if not rwav.is_empty() and is_instance_valid(actor):
+	var human_has_ev := bool(actor.get("is_human")) and _viewmodel_has_events(v_name, rel_anim)
+	if not rwav.is_empty() and is_instance_valid(actor) and not human_has_ev:
 		AudioManager.play_3d(rwav, actor.global_position, -3.5, 18.0, 1.0, 12.0, String(actor.get("team")))
+	elif human_has_ev and is_instance_valid(actor):
+		# Emit audible world cue so nearby enemy Bots can still hear human reloads!
+		AudioManager.world_sound_emitted.emit(actor.global_position, 12.0, String(actor.get("team")))
+
+	if is_instance_valid(actor) and actor.has_method("trigger_upper_body_action"):
+		actor.call("trigger_upper_body_action", "reload")
+
 	if actor.has_method("play_viewmodel_sequence"):
 		if bool(spec.get("shotgun_reload", false)):
 			actor.call("play_viewmodel_sequence", ["start_reload", "reload"])
 		else:
-			var sil := bool(silenced_state.get(current_weapon_id, false))
 			if bool(spec.get("silencer", false)) and not sil:
 				actor.call("play_viewmodel_sequence", ["reload_unsil", "reload"])
 			else:
@@ -501,6 +536,9 @@ func _execute_bullet_shot(spec: Dictionary, is_burst_subshot: bool) -> void:
 		AudioManager.play_3d(wpath, actor.global_position, vol, 70.0, randf_range(0.98, 1.02), hear_r, String(actor.get("team")))
 
 	fired_shot.emit(current_weapon_id, is_sil)
+	if is_instance_valid(actor) and actor.has_method("trigger_upper_body_action"):
+		actor.call("trigger_upper_body_action", "shoot")
+	_spawn_brass_casing(spec)
 	_emit_ammo()
 
 	# Calculate authentic CS 1.5 spread
@@ -564,18 +602,30 @@ func _fire_penetrating_ray(
 	for _hop in range(pen_left + 1):
 		if rem_dist <= 0.1 or cur_dmg <= 1.0:
 			break
-		var q := PhysicsRayQueryParameters3D.create(cur_from, cur_from + dir * rem_dist)
-		q.collision_mask = 1 | 2  # World (1) + Actors/Hostages (2)
+		var ray_end: Vector3 = cur_from + dir * rem_dist
+		var q := PhysicsRayQueryParameters3D.create(cur_from, ray_end)
+		q.collision_mask = 1 | 2 | 4  # World (1) + Actors/Hostages (2) + Physical Dropped Weapons (4)!
 		q.exclude = exclude_rids
 		var hit: Dictionary = space.intersect_ray(q)
 		if hit.is_empty():
+			RoundManager.apply_world_bullet_wake(cur_from, ray_end, clampf(base_dmg / 30.0, 0.5, 2.0))
 			break
 
 		var hit_pos: Vector3 = hit["position"]
 		var hit_nrm: Vector3 = hit["normal"]
+		RoundManager.apply_world_bullet_wake(cur_from, hit_pos, clampf(base_dmg / 30.0, 0.5, 2.0))
 		var traveled_gs := origin.distance_to(hit_pos) / GameData.SCALE
 		var dmg_at_dist := cur_dmg * pow(range_mod, traveled_gs / 500.0)
 		var col = hit["collider"]
+
+		if col is DroppedWeapon:
+			(col as DroppedWeapon).apply_bullet_impulse(hit_pos, dir, dmg_at_dist)
+			exclude_rids.append((col as CollisionObject3D).get_rid())
+			cur_dmg *= 0.82
+			var step_dw := origin.distance_to(hit_pos)
+			rem_dist = max_dist - step_dw
+			cur_from = hit_pos + dir * 0.08
+			continue
 
 		if col is Node3D and col.has_method("take_bullet_damage"):
 			var hgroup := _determine_hitgroup(col, hit_pos)
@@ -655,10 +705,13 @@ func _swing_knife(heavy_stab: bool) -> void:
 	var dir: Vector3 = -aim_b.z
 	var space: PhysicsDirectSpaceState3D = (actor as Node3D).get_world_3d().direct_space_state
 	var q := PhysicsRayQueryParameters3D.create(eye, eye + dir * reach)
-	q.collision_mask = 1 | 2
+	q.collision_mask = 1 | 2 | 4
 	q.exclude = [(actor as CollisionObject3D).get_rid()]
 	var hit: Dictionary = space.intersect_ray(q)
 	var did_hit := not hit.is_empty()
+
+	if is_instance_valid(actor) and actor.has_method("trigger_upper_body_action"):
+		actor.call("trigger_upper_body_action", "shoot")
 
 	if actor.has_method("play_viewmodel_sequence"):
 		if heavy_stab:
@@ -675,6 +728,9 @@ func _swing_knife(heavy_stab: bool) -> void:
 
 	var col = hit["collider"]
 	var hpos: Vector3 = hit["position"]
+	if col is DroppedWeapon:
+		(col as DroppedWeapon).apply_bullet_impulse(hpos, dir, 55.0 if heavy_stab else 28.0)
+		return
 	if col is Node3D and col.has_method("take_bullet_damage"):
 		var dmg := 65.0 if heavy_stab else 20.0
 		if heavy_stab:
@@ -709,6 +765,8 @@ func _launch_grenade_now(gid: String) -> void:
 
 	if actor.has_method("play_viewmodel_sequence"):
 		actor.call("play_viewmodel_sequence", ["throw"])
+	if is_instance_valid(actor) and actor.has_method("trigger_upper_body_action"):
+		actor.call("trigger_upper_body_action", "shoot")
 
 	AudioManager.play_radio("radio/ct_fireinhole.wav")
 	RoundManager.chat_radio_message.emit(String(actor.get("actor_name")), String(actor.get("team")), "(RADIO): Fire in the hole!")
@@ -729,6 +787,73 @@ func _launch_grenade_now(gid: String) -> void:
 		if not equip_slot(1):
 			if not equip_slot(2):
 				equip_slot(3)
+
+
+func _spawn_brass_casing(spec: Dictionary) -> void:
+	if not is_instance_valid(RoundManager.game_world) or not is_instance_valid(actor):
+		return
+	var sl := int(spec.get("slot", 1))
+	if sl not in [1, 2]:
+		return
+	var shell_mdl := "rshell"
+	if bool(spec.get("shotgun_reload", false)):
+		shell_mdl = "rshell_big"
+	elif sl == 2 or float(spec.get("max_speed", 220.0)) >= 245.0:
+		shell_mdl = "pshell"
+
+	var sc := GameData.get_model_scene("weapons/" + shell_mdl)
+	if not sc:
+		return
+
+	var act_node := actor as Node3D
+	var eye_p: Vector3 = actor.call("get_eye_position")
+	var aim_b: Basis = actor.call("get_aim_basis", Vector2.ZERO)
+	var side_sign := 1.0 if (not bool(actor.get("is_human")) or GameData.right_hand) else -1.0
+	var start_pos := eye_p + (-aim_b.z * 0.36) + (aim_b.x * 0.22 * side_sign) - (aim_b.y * 0.12)
+	var eject_vel := aim_b.x * randf_range(2.2, 3.6) * side_sign + Vector3(0.0, randf_range(1.4, 2.5), 0.0) - aim_b.z * randf_range(-0.6, 0.8)
+
+	# Find floor height beneath actor so shell bounces & clinks on actual ground!
+	var floor_y := act_node.global_position.y + 0.03
+	if act_node.get_world_3d():
+		var sp := act_node.get_world_3d().direct_space_state
+		var qf := PhysicsRayQueryParameters3D.create(start_pos, start_pos - Vector3(0.0, 4.0, 0.0))
+		qf.collision_mask = 1
+		var hf := sp.intersect_ray(qf)
+		if not hf.is_empty():
+			floor_y = (hf["position"] as Vector3).y + 0.02
+
+	var shell := sc.instantiate() as Node3D
+	for c in shell.find_children("*", "MeshInstance3D", true, false):
+		(c as MeshInstance3D).layers = 2
+	RoundManager.game_world.add_child(shell)
+	shell.global_position = start_pos
+	shell.rotation = Vector3(randf() * TAU, randf() * TAU, randf() * TAU)
+
+	var delay_s := 0.45 if current_weapon_id in ["awp", "scout", "m3"] else 0.0
+	var fall_h := maxf(0.25, start_pos.y - floor_y)
+	var drop_t := clampf(sqrt(2.0 * fall_h / 18.0), 0.24, 0.55)
+	var land_pos := Vector3(start_pos.x + eject_vel.x * drop_t, floor_y, start_pos.z + eject_vel.z * drop_t)
+	var bounce_pos := land_pos + Vector3(eject_vel.x * 0.18, 0.0, eject_vel.z * 0.18)
+
+	if delay_s > 0.0:
+		shell.visible = false
+	var tw := shell.create_tween()
+	if delay_s > 0.0:
+		tw.tween_interval(delay_s)
+		tw.tween_callback(func() -> void: shell.visible = true)
+	tw.tween_property(shell, "global_position", land_pos, drop_t).set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_IN)
+	tw.parallel().tween_property(shell, "rotation", shell.rotation + Vector3(9.0, 12.0, 7.0), drop_t)
+	tw.tween_callback(func() -> void:
+		AudioManager.play_3d("player/pl_shell%d.wav" % randi_range(1, 3), land_pos, -8.5, 14.0, randf_range(0.94, 1.08))
+	)
+	tw.tween_property(shell, "global_position", bounce_pos + Vector3(0.0, 0.14, 0.0), 0.11).set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_OUT)
+	tw.tween_property(shell, "global_position", bounce_pos, 0.11).set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_IN)
+	tw.tween_interval(1.15)
+	tw.tween_callback(func() -> void:
+		if shell.get_parent():
+			shell.get_parent().remove_child(shell)
+		shell.queue_free()
+	)
 
 
 func _complete_c4_plant() -> void:

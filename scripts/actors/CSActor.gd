@@ -51,8 +51,27 @@ var _col_shape: CollisionShape3D = null
 var _capsule: CapsuleShape3D = null
 var _body_root: Node3D = null
 var _body_anim: AnimationPlayer = null
+var _skel: Skeleton3D = null
 var _hand_attachment: BoneAttachment3D = null
+var _tp_muzzle_sprite: Sprite3D = null
+var _tp_muzzle_timer: float = 0.0
 var _step_accum: float = 0.0
+
+# GoldSrc StudioSetupBones / StudioEstimateGait runtime blending state
+var _pelvis_bone_idx: int = -1
+var _spine_bone_idx: int = -1
+var _is_upper_bone: PackedByteArray = PackedByteArray()
+var _anim_tracks_cache: Dictionary = {}  # anim_name -> Array of [track_idx, bone_idx, is_pos]
+var _anim_res_map: Dictionary = {}  # lower_name -> Animation
+var _gait_yaw: float = 0.0
+var _gait_time: float = 0.0
+var _cur_gait_key: String = "idle1"
+var _upper_action_key: String = ""
+var _upper_action_time: float = 0.0
+var _upper_aim_time: float = 0.0
+var _death_anim_key: String = ""
+var _death_anim_time: float = 0.0
+var _last_hitgroup: int = 2
 
 
 func _ready() -> void:
@@ -100,7 +119,20 @@ func _rebuild_character_model() -> void:
 		_body_root.remove_child(c)
 		c.queue_free()
 	_body_anim = null
+	_skel = null
 	_hand_attachment = null
+	_tp_muzzle_sprite = null
+	_pelvis_bone_idx = -1
+	_spine_bone_idx = -1
+	_is_upper_bone = PackedByteArray()
+	_anim_tracks_cache.clear()
+	_anim_res_map.clear()
+	_upper_action_key = ""
+	_upper_action_time = 0.0
+	_death_anim_key = ""
+	_death_anim_time = 0.0
+	_gait_yaw = look_yaw
+
 	var mdl_id := "vip" if is_vip else class_id
 	var sc := GameData.get_model_scene("players/" + mdl_id)
 	if sc:
@@ -108,21 +140,263 @@ func _rebuild_character_model() -> void:
 		_configure_character_meshes(inst)
 		_body_root.add_child(inst)
 		_body_anim = _find_anim(inst)
-		GameData.ensure_looping_animations(_body_anim)
-		var skel := _find_skeleton(inst)
-		if skel:
-			var rhand_idx := skel.find_bone("Bip01 R Hand")
+		_skel = _find_skeleton(inst)
+		if _body_anim and _skel:
+			_body_anim.active = false  # Driven directly by GoldSrc 2-layer Gait + Upper-Body blender!
+			_build_skeleton_blend_tables()
+			var rhand_idx := _skel.find_bone("Bip01 R Hand")
 			if rhand_idx >= 0:
 				_hand_attachment = BoneAttachment3D.new()
 				_hand_attachment.name = "RightHandAttachment"
 				_hand_attachment.bone_name = "Bip01 R Hand"
-				skel.add_child(_hand_attachment)
+				_skel.add_child(_hand_attachment)
+
+				_tp_muzzle_sprite = Sprite3D.new()
+				_tp_muzzle_sprite.layers = 2
+				_tp_muzzle_sprite.texture = GameData.get_texture("res://assets/sprites/muzzleflash1.png")
+				_tp_muzzle_sprite.billboard = BaseMaterial3D.BILLBOARD_ENABLED
+				_tp_muzzle_sprite.pixel_size = 0.0042
+				_tp_muzzle_sprite.modulate = Color(1.0, 0.86, 0.48, 0.92)
+				_tp_muzzle_sprite.position = Vector3(-0.04, 0.06, -0.58)
+				_tp_muzzle_sprite.visible = false
+				_hand_attachment.add_child(_tp_muzzle_sprite)
 		if weapon_ctrl:
 			_update_held_weapon_model(weapon_ctrl.current_weapon_id)
-		var use_1h := weapon_ctrl != null and int(weapon_ctrl.get_current_spec().get("slot", 1)) != 1
-		_play_body_anim("idle1_1h" if use_1h else "idle1", true)
+		_evaluate_character_pose(0.0)
 	_body_root.position.y = MODEL_CROUCH_OFFSET_Y if is_crouching else MODEL_STAND_OFFSET_Y
 	_body_root.visible = not is_human
+
+
+func _build_skeleton_blend_tables() -> void:
+	if _skel == null or _body_anim == null:
+		return
+	var nb := _skel.get_bone_count()
+	_is_upper_bone.resize(nb)
+	_is_upper_bone.fill(0)
+	_pelvis_bone_idx = _skel.find_bone("Bip01 Pelvis")
+	_spine_bone_idx = _skel.find_bone("Bip01 Spine")
+	if _spine_bone_idx >= 0:
+		_is_upper_bone[_spine_bone_idx] = 1
+		for bi in range(nb):
+			var cur := _skel.get_bone_parent(bi)
+			var guard := 0
+			while cur >= 0 and cur < nb and guard < 96:
+				guard += 1
+				if _is_upper_bone[cur] == 1:
+					_is_upper_bone[bi] = 1
+					break
+				cur = _skel.get_bone_parent(cur)
+
+	for aname in _body_anim.get_animation_list():
+		var anim_res := _body_anim.get_animation(aname)
+		if anim_res == null:
+			continue
+		var low := aname.to_lower()
+		_anim_res_map[low] = anim_res
+		var entries: Array = []
+		var tc := anim_res.get_track_count()
+		for ti in range(tc):
+			var ttype := anim_res.track_get_type(ti)
+			if ttype != Animation.TYPE_POSITION_3D and ttype != Animation.TYPE_ROTATION_3D:
+				continue
+			var bname := String(anim_res.track_get_path(ti).get_concatenated_subnames())
+			var bidx := _skel.find_bone(bname)
+			if bidx >= 0:
+				entries.append([ti, bidx, ttype == Animation.TYPE_POSITION_3D])
+		_anim_tracks_cache[low] = entries
+
+
+func _get_weapon_anim_ext(wid: String) -> String:
+	match wid:
+		"ak47":
+			return "ak47"
+		"m4a1", "aug", "sg552", "ump45", "tmp":
+			return "carbine"
+		"mp5navy", "mac10", "p90":
+			return "mp5"
+		"awp", "scout", "g3sg1", "sg550":
+			return "rifle"
+		"m3", "xm1014":
+			return "shotgun"
+		"m249":
+			return "m249"
+		"elite":
+			return "dualpistols"
+		"usp", "glock18", "deagle", "p228", "fiveseven":
+			return "onehanded"
+		"knife":
+			return "knife"
+		"hegrenade", "flashbang", "smokegrenade":
+			return "grenade"
+		"c4":
+			return "c4"
+	return "carbine"
+
+
+func trigger_upper_body_action(action_kind: String) -> void:
+	if not is_alive or _anim_res_map.is_empty():
+		return
+	var wid := weapon_ctrl.current_weapon_id if weapon_ctrl else "usp"
+	var ext := _get_weapon_anim_ext(wid)
+	var pref := "crouch_" if is_crouching else "ref_"
+
+	match action_kind:
+		"shoot":
+			var key := pref + "shoot_" + ext
+			if ext == "dualpistols" and randf() < 0.5 and _anim_res_map.has(pref + "shoot2_dualpistols"):
+				key = pref + "shoot2_dualpistols"
+			if _anim_res_map.has(key):
+				_upper_action_key = key
+				_upper_action_time = 0.0
+			if _tp_muzzle_sprite and wid not in ["knife", "hegrenade", "flashbang", "smokegrenade", "c4"]:
+				var is_sil := weapon_ctrl != null and bool(weapon_ctrl.silenced_state.get(wid, false))
+				if not is_sil:
+					_tp_muzzle_sprite.visible = true
+					_tp_muzzle_timer = 0.045
+		"reload":
+			var rkey := pref + "reload_" + ext
+			if not _anim_res_map.has(rkey):
+				rkey = "ref_reload_" + ext
+			if _anim_res_map.has(rkey):
+				_upper_action_key = rkey
+				_upper_action_time = 0.0
+		"flinch_head":
+			if _upper_action_key.is_empty() and _anim_res_map.has("head_flinch"):
+				_upper_action_key = "head_flinch"
+				_upper_action_time = 0.0
+		"flinch_gut":
+			if _upper_action_key.is_empty() and _anim_res_map.has("gut_flinch"):
+				_upper_action_key = "gut_flinch"
+				_upper_action_time = 0.0
+
+
+func _apply_anim_layer(anim_key: String, sample_t: float, mode: int) -> void:
+	# mode: 0 = lower-body bones only, 1 = upper-body bones only, 2 = full skeleton (deaths)
+	if not _anim_res_map.has(anim_key) or _skel == null:
+		return
+	var anim_res: Animation = _anim_res_map[anim_key]
+	var tracks: Array = _anim_tracks_cache.get(anim_key, [])
+	var dur := maxf(0.001, anim_res.length)
+	var t_clamped := clampf(sample_t, 0.0, dur)
+	for entry in tracks:
+		var e := entry as Array
+		var ti := int(e[0])
+		var bi := int(e[1])
+		if mode == 0 and _is_upper_bone[bi] == 1:
+			continue
+		if mode == 1 and _is_upper_bone[bi] == 0:
+			continue
+		if bool(e[2]):
+			_skel.set_bone_pose_position(bi, anim_res.position_track_interpolate(ti, t_clamped))
+		else:
+			_skel.set_bone_pose_rotation(bi, anim_res.rotation_track_interpolate(ti, t_clamped))
+
+
+func _process(delta: float) -> void:
+	if _tp_muzzle_timer > 0.0:
+		_tp_muzzle_timer -= delta
+		if _tp_muzzle_timer <= 0.0 and _tp_muzzle_sprite:
+			_tp_muzzle_sprite.visible = false
+	if _body_root and _body_root.visible:
+		_evaluate_character_pose(delta)
+
+
+func _evaluate_character_pose(delta: float) -> void:
+	if _skel == null or _anim_res_map.is_empty():
+		return
+
+	if not is_alive:
+		if not _death_anim_key.is_empty() and _anim_res_map.has(_death_anim_key):
+			var d_anim: Animation = _anim_res_map[_death_anim_key]
+			_death_anim_time = minf(d_anim.length, _death_anim_time + delta)
+			_apply_anim_layer(_death_anim_key, _death_anim_time, 2)
+		return
+
+	_body_root.position.y = MODEL_CROUCH_OFFSET_Y if is_crouching else MODEL_STAND_OFFSET_Y
+
+	# 1. GoldSrc StudioEstimateGait: orient legs/pelvis into strafe/walk direction & reverse on backpedal!
+	var hvel := Vector2(velocity.x, velocity.z)
+	var hspd := hvel.length()
+	var gait_dir_sign := 1.0
+	if hspd > 0.35:
+		var move_yaw := atan2(-velocity.x, -velocity.z)
+		var rel := wrapf(move_yaw - look_yaw, -PI, PI)
+		if absf(rel) > deg_to_rad(106.0):
+			move_yaw = wrapf(move_yaw + PI, -PI, PI)
+			gait_dir_sign = -1.0
+		var clamped_rel := clampf(wrapf(move_yaw - look_yaw, -PI, PI), deg_to_rad(-56.0), deg_to_rad(56.0))
+		_gait_yaw = lerp_angle(_gait_yaw, look_yaw + clamped_rel, minf(1.0, 12.0 * delta))
+	else:
+		_gait_yaw = lerp_angle(_gait_yaw, look_yaw, minf(1.0, 10.0 * delta))
+
+	_body_root.rotation.y = _gait_yaw
+
+	# 2. Select & advance lower-body gait sequence with speed-proportional stride rate!
+	var want_gait := "idle1"
+	var rate := 1.0
+	if is_crouching:
+		if hspd > 0.65:
+			want_gait = "crouchrun"
+			rate = clampf(hspd / 2.6, 0.55, 1.45) * gait_dir_sign
+		else:
+			want_gait = "crouch_idle"
+	elif not is_on_floor():
+		want_gait = "jump"
+		rate = 1.0
+	elif hspd > 4.05:
+		want_gait = "run"
+		rate = clampf(hspd / 6.7, 0.65, 1.35) * gait_dir_sign
+	elif hspd > 0.45:
+		want_gait = "walk"
+		rate = clampf(hspd / 3.4, 0.60, 1.35) * gait_dir_sign
+
+	if not _anim_res_map.has(want_gait):
+		want_gait = "idle1"
+	if want_gait != _cur_gait_key:
+		_cur_gait_key = want_gait
+		_gait_time = 0.0
+	var g_anim: Animation = _anim_res_map.get(_cur_gait_key, null)
+	if g_anim != null:
+		var g_len := maxf(0.05, g_anim.length)
+		if _cur_gait_key == "jump":
+			_gait_time = minf(g_len, _gait_time + delta * 1.15)
+		else:
+			_gait_time = fposmod(_gait_time + delta * rate, g_len)
+		_apply_anim_layer(_cur_gait_key, _gait_time, 0)
+
+	# 3. Select & advance upper-body weapon posture (ref_aim_* / crouch_aim_* or shoot/reload/flinch action!)
+	var wid := weapon_ctrl.current_weapon_id if weapon_ctrl else "usp"
+	var ext := _get_weapon_anim_ext(wid)
+	var aim_key := ("crouch_aim_" if is_crouching else "ref_aim_") + ext
+	if not _anim_res_map.has(aim_key):
+		aim_key = "crouch_aim_carbine" if is_crouching else "ref_aim_carbine"
+
+	# Cancel upper reload clip immediately if WeaponController finished/interrupted reload
+	if "reload" in _upper_action_key and weapon_ctrl != null and not weapon_ctrl.is_reloading:
+		_upper_action_key = ""
+
+	if not _upper_action_key.is_empty() and _anim_res_map.has(_upper_action_key):
+		var act_anim: Animation = _anim_res_map[_upper_action_key]
+		_upper_action_time += delta
+		if _upper_action_time >= act_anim.length:
+			_upper_action_key = ""
+		else:
+			_apply_anim_layer(_upper_action_key, _upper_action_time, 1)
+
+	if _upper_action_key.is_empty() and _anim_res_map.has(aim_key):
+		var a_anim: Animation = _anim_res_map[aim_key]
+		_upper_aim_time = fposmod(_upper_aim_time + delta, maxf(0.05, a_anim.length))
+		_apply_anim_layer(aim_key, _upper_aim_time, 1)
+
+	# 4. Counter-twist Bip01 Spine back to exact look_yaw & pitch torso/arms cleanly toward look_pitch!
+	if _pelvis_bone_idx >= 0 and _spine_bone_idx >= 0:
+		var yaw_diff := clampf(wrapf(look_yaw - _gait_yaw, -PI, PI), deg_to_rad(-62.0), deg_to_rad(62.0))
+		var pitch_aim := clampf(look_pitch * 0.68, deg_to_rad(-46.0), deg_to_rad(46.0))
+		var b_pelvis := _skel.get_bone_global_pose(_pelvis_bone_idx).basis
+		var r_twist := Basis.from_euler(Vector3(pitch_aim, yaw_diff, 0.0), EULER_ORDER_YXZ)
+		var q_spine := _skel.get_bone_pose_rotation(_spine_bone_idx)
+		var b_new := (b_pelvis.inverse() * r_twist * b_pelvis * Basis(q_spine)).orthonormalized()
+		_skel.set_bone_pose_rotation(_spine_bone_idx, b_new.get_rotation_quaternion())
 
 
 func _find_skeleton(n: Node) -> Skeleton3D:
@@ -136,6 +410,7 @@ func _find_skeleton(n: Node) -> Skeleton3D:
 
 
 func _on_actor_weapon_switched(wid: String, _spec: Dictionary) -> void:
+	_upper_action_key = ""
 	_update_held_weapon_model(wid)
 
 
@@ -144,6 +419,8 @@ func _update_held_weapon_model(wid: String) -> void:
 		return
 	var old_w := _hand_attachment.get_children()
 	for c in old_w:
+		if c == _tp_muzzle_sprite:
+			continue
 		_hand_attachment.remove_child(c)
 		c.queue_free()
 	if not is_alive or wid.is_empty() or not GameData.weapons.has(wid):
@@ -496,23 +773,7 @@ func _sample_floor_material() -> String:
 
 
 func _update_third_person_anim() -> void:
-	if not _body_root.visible:
-		return
-	_body_root.rotation.y = look_yaw
-	_body_root.position.y = MODEL_CROUCH_OFFSET_Y if is_crouching else MODEL_STAND_OFFSET_Y
-	var use_1h := weapon_ctrl != null and int(weapon_ctrl.get_current_spec().get("slot", 1)) != 1
-	var sfx := "_1h" if use_1h else ""
-	var hspd := Vector2(velocity.x, velocity.z).length()
-	if is_crouching:
-		_play_body_anim(("crouchrun" if hspd > 0.8 else "crouch_idle") + sfx)
-	elif not is_on_floor():
-		_play_body_anim("jump" + sfx)
-	elif hspd > 4.0:
-		_play_body_anim("run" + sfx)
-	elif hspd > 0.55:
-		_play_body_anim("walk" + sfx)
-	else:
-		_play_body_anim("idle1" + sfx)
+	pass
 
 
 func take_bullet_damage(
@@ -556,8 +817,10 @@ func take_bullet_damage(
 		var fwav := ("player/headshot%d.wav" % randi_range(1, 3)) if hitgroup == 1 else ("player/bhit_flesh-%d.wav" % randi_range(1, 3))
 		AudioManager.play_3d(fwav, hit_pos, 0.0, 26.0)
 
-	# CS 1.5 bullet tagging slowdown
+	# CS 1.5 bullet tagging slowdown & hit flinch
 	stamina_factor = clampf(stamina_factor - 0.28, 0.42, 1.0)
+	_last_hitgroup = hitgroup
+	trigger_upper_body_action("flinch_head" if hitgroup == 1 else "flinch_gut")
 	_apply_raw_hp_loss(attacker, maxi(1, int(dmg)), weapon_id, hitgroup == 1)
 
 
@@ -600,16 +863,39 @@ func _die(killer: Node3D, weapon_id: String, headshot: bool) -> void:
 	if _hand_attachment != null:
 		var held_kids := _hand_attachment.get_children()
 		for c in held_kids:
+			if c == _tp_muzzle_sprite:
+				_tp_muzzle_sprite.visible = false
+				continue
 			_hand_attachment.remove_child(c)
 			c.queue_free()
 
 	_body_root.visible = true
-	if is_crouching:
-		_play_body_anim("crouch_die", true)
-	elif headshot:
-		_play_body_anim("head", true)
-	else:
-		_play_body_anim("death%d" % randi_range(1, 3), true)
+	_body_root.rotation.y = look_yaw
+	_body_root.position.y = MODEL_STAND_OFFSET_Y
+	_death_anim_time = 0.0
+
+	if is_crouching and _anim_res_map.has("crouch_die"):
+		_death_anim_key = "crouch_die"
+	elif headshot and _anim_res_map.has("head"):
+		_death_anim_key = "head"
+	elif _last_hitgroup == 3 and randf() < 0.45 and _anim_res_map.has("gutshot"):
+		_death_anim_key = "gutshot"
+	elif is_instance_valid(killer) and killer != self and randf() < 0.55:
+		var to_killer := (killer.global_position - global_position)
+		to_killer.y = 0.0
+		if to_killer.length_squared() > 0.01:
+			to_killer = to_killer.normalized()
+			var fwd := Basis(Vector3.UP, look_yaw) * Vector3.FORWARD
+			var right := Basis(Vector3.UP, look_yaw).x
+			var df := fwd.dot(to_killer)
+			var dr := right.dot(to_killer)
+			if absf(df) >= absf(dr):
+				_death_anim_key = "back" if df > 0.0 else "forward"
+			else:
+				_death_anim_key = "left" if dr > 0.0 else "right"
+	if _death_anim_key.is_empty() or not _anim_res_map.has(_death_anim_key):
+		_death_anim_key = "death%d" % randi_range(1, 3)
+	_evaluate_character_pose(0.0)
 
 	RoundManager.notify_actor_killed(self, killer, weapon_id, headshot)
 	actor_died.emit(self, killer)

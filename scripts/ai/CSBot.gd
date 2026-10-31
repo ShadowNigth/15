@@ -29,6 +29,16 @@ var _avoid_side: float = 1.0
 var _last_pos: Vector3 = Vector3.ZERO
 var _strafe_dir: float = 1.0
 var _strafe_timer: float = 0.0
+var _burst_stop_timer: float = 0.0
+var _burst_pause_timer: float = 0.0
+var _knife_rush_timer: float = 0.0
+var _stealth_walk_timer: float = 0.0
+var _corner_check_timer: float = 0.0
+var _corner_yaw_offset: float = 0.0
+var _sound_investigate_pos: Vector3 = Vector3.ZERO
+var _sound_investigate_timer: float = 0.0
+var _last_enemy_pos: Vector3 = Vector3.ZERO
+var _last_enemy_seen_age: float = 99.0
 var _follow_target: Node3D = null
 var _hold_pos_timer: float = 0.0
 var _defusing_ref: PlantedC4 = null
@@ -41,6 +51,15 @@ func _ready() -> void:
 	_avoid_side = 1.0 if randf() < 0.5 else -1.0
 	AudioManager.world_sound_emitted.connect(_on_world_sound)
 	RoundManager.radio_order_issued.connect(_on_radio_order)
+	RoundManager.freeze_ended.connect(_on_bot_freeze_ended)
+
+
+func _on_bot_freeze_ended() -> void:
+	if not is_alive or is_vip:
+		return
+	# Classic CS 1.5 / PodBot opening rush: pull out Knife (250 u/s) for first 3-5 seconds out of spawn!
+	if randf() < 0.78:
+		_knife_rush_timer = randf_range(2.6, 4.6)
 
 
 func spawn_for_round(pos: Vector3, yaw_rad: float, reset_weapons: bool) -> void:
@@ -55,6 +74,14 @@ func spawn_for_round(pos: Vector3, yaw_rad: float, reset_weapons: bool) -> void:
 	_stuck_timer = 0.0
 	_jump_cooldown = 0.0
 	_crouch_burst_timer = 0.0
+	_burst_stop_timer = 0.0
+	_burst_pause_timer = 0.0
+	_knife_rush_timer = 0.0
+	_stealth_walk_timer = 0.0
+	_corner_check_timer = randf_range(0.8, 2.2)
+	_corner_yaw_offset = 0.0
+	_sound_investigate_timer = 0.0
+	_last_enemy_seen_age = 99.0
 	_escape_timer = 0.0
 	_escape_dir = Vector3.ZERO
 	_grenade_cooldown = randf_range(3.0, 9.0)
@@ -136,15 +163,28 @@ func _physics_process(delta: float) -> void:
 
 	if _hold_pos_timer > 0.0:
 		_hold_pos_timer -= delta
+	if _knife_rush_timer > 0.0:
+		_knife_rush_timer = maxf(0.0, _knife_rush_timer - delta)
+	if _stealth_walk_timer > 0.0:
+		_stealth_walk_timer = maxf(0.0, _stealth_walk_timer - delta)
+	if _sound_investigate_timer > 0.0:
+		_sound_investigate_timer = maxf(0.0, _sound_investigate_timer - delta)
+	if _grenade_cooldown > 0.0:
+		_grenade_cooldown = maxf(0.0, _grenade_cooldown - delta)
+	_last_enemy_seen_age += delta
 
 	# Reload safely when out of combat
 	var cr := weapon_ctrl.get_clip_and_reserve()
-	if cr.x == 0 and cr.y > 0 and not weapon_ctrl.is_reloading:
-		weapon_ctrl.start_reload()
-	elif target_enemy == null and cr.x > 0 and cr.y > 0:
-		var csize := int(weapon_ctrl.get_current_spec().get("clip_size", 30))
-		if cr.x < int(float(csize) * 0.34) and not weapon_ctrl.is_reloading:
+	if target_enemy == null:
+		if cr.x == 0 and cr.y > 0 and not weapon_ctrl.is_reloading:
 			weapon_ctrl.start_reload()
+		elif cr.x > 0 and cr.y > 0:
+			var csize := int(weapon_ctrl.get_current_spec().get("clip_size", 30))
+			if cr.x < int(float(csize) * 0.34) and not weapon_ctrl.is_reloading:
+				weapon_ctrl.start_reload()
+		# Clear sniper scope when navigating out of combat
+		if weapon_ctrl.zoom_stage > 0:
+			weapon_ctrl._clear_zoom()
 
 	# Priority 1: CT Defusing Planted C4 when clear!
 	if team == "CT" and target_enemy == null and is_instance_valid(RoundManager.planted_c4):
@@ -174,8 +214,32 @@ func _physics_process(delta: float) -> void:
 
 	# Priority 3: Engage Visible Enemy!
 	if is_instance_valid(target_enemy) and target_enemy.is_alive:
+		_knife_rush_timer = 0.0
+		_stealth_walk_timer = 0.0
+		_last_enemy_pos = target_enemy.global_position
+		_last_enemy_seen_age = 0.0
 		_engage_enemy(delta)
 		return
+
+	# Priority 3.5: Flush out an enemy that just ducked behind cover with an HE grenade!
+	if _last_enemy_seen_age > 0.25 and _last_enemy_seen_age < 1.85 and _grenade_cooldown <= 0.0 and health > 40:
+		var d_last := global_position.distance_to(_last_enemy_pos)
+		if d_last > 8.5 and d_last < 23.0 and int(weapon_ctrl.grenades.get("hegrenade", 0)) > 0 and randf() < 0.08:
+			_grenade_cooldown = 14.0
+			if weapon_ctrl.equip_weapon_by_id("hegrenade"):
+				weapon_ctrl.fire_cooldown = 0.0
+				_look_smoothly_toward(_last_enemy_pos + Vector3(0.0, 2.1, 0.0), 1.0)
+				weapon_ctrl.trigger_primary(false, delta)
+				return
+
+	# Weapon discipline during navigation: Knife rush out of spawn, then draw Primary Rifle before contact!
+	if not weapon_ctrl.is_reloading:
+		if _knife_rush_timer > 0.0 and _sound_investigate_timer <= 0.0 and not is_vip:
+			if weapon_ctrl.current_weapon_id != "knife":
+				weapon_ctrl.equip_slot(3)
+		elif weapon_ctrl.current_weapon_id in ["knife", "c4", "hegrenade", "flashbang", "smokegrenade"]:
+			if not weapon_ctrl.equip_slot(1):
+				weapon_ctrl.equip_slot(2)
 
 	# Priority 4: Navigate toward tactical goal!
 	_follow_navigation_path(delta)
@@ -224,48 +288,95 @@ func _can_see_actor(other: Node3D) -> bool:
 
 
 func _engage_enemy(delta: float) -> void:
-	if _grenade_cooldown > 0.0:
-		_grenade_cooldown = maxf(0.0, _grenade_cooldown - delta)
-
 	var dist := global_position.distance_to(target_enemy.global_position)
 
-	# Occasional tactical HE grenade toss at medium range before switching back to rifle
-	if _grenade_cooldown <= 0.0 and dist > 11.0 and dist < 24.0 and health > 45 and int(weapon_ctrl.grenades.get("hegrenade", 0)) > 0 and randf() < 0.03:
-		_grenade_cooldown = 12.0
-		if weapon_ctrl.equip_weapon_by_id("hegrenade"):
-			weapon_ctrl.fire_cooldown = 0.0
-			var lob_pt := target_enemy.global_position + Vector3(0.0, 2.2, 0.0)
-			_look_smoothly_toward(lob_pt, 1.0)
-			weapon_ctrl.trigger_primary(false, delta)
-			return
+	# Occasional tactical Smoke / HE grenade toss at medium-long range
+	if _grenade_cooldown <= 0.0 and dist > 12.0 and dist < 25.0 and health > 50 and randf() < 0.025:
+		if int(weapon_ctrl.grenades.get("hegrenade", 0)) > 0:
+			_grenade_cooldown = 13.0
+			if weapon_ctrl.equip_weapon_by_id("hegrenade"):
+				weapon_ctrl.fire_cooldown = 0.0
+				_look_smoothly_toward(target_enemy.global_position + Vector3(0.0, 2.2, 0.0), 1.0)
+				weapon_ctrl.trigger_primary(false, delta)
+				return
+		elif dist > 16.0 and int(weapon_ctrl.grenades.get("smokegrenade", 0)) > 0 and randf() < 0.35:
+			_grenade_cooldown = 16.0
+			if weapon_ctrl.equip_weapon_by_id("smokegrenade"):
+				weapon_ctrl.fire_cooldown = 0.0
+				var mid_pt := global_position.lerp(target_enemy.global_position, 0.55) + Vector3(0.0, 1.8, 0.0)
+				_look_smoothly_toward(mid_pt, 1.0)
+				weapon_ctrl.trigger_primary(false, delta)
+				return
 
-	# Ensure gun equipped (not knife/C4/grenade unless out of ammo)
+	# Ensure combat gun equipped; quick-switch to sidearm if primary runs dry in close quarters!
 	if weapon_ctrl.current_weapon_id in ["c4", "knife", "hegrenade", "flashbang", "smokegrenade"]:
 		if not weapon_ctrl.equip_slot(1):
 			weapon_ctrl.equip_slot(2)
+	else:
+		var cr := weapon_ctrl.get_clip_and_reserve()
+		if cr.x == 0:
+			var cur_slot := int(weapon_ctrl.get_current_spec().get("slot", 1))
+			var sec_id := String(weapon_ctrl.slots.get(2, ""))
+			if cur_slot == 1 and dist < 13.5 and not sec_id.is_empty() and int(weapon_ctrl.clips.get(sec_id, 0)) > 0:
+				# Classic CS 1.5 pro reflex: whip out USP/Glock/Deagle instead of reloading in enemy's face!
+				weapon_ctrl.equip_slot(2)
+			elif cr.y > 0 and not weapon_ctrl.is_reloading:
+				weapon_ctrl.start_reload()
 
-	var aim_height := 1.48 if skill_level >= 2 else 1.22
+	var wid := weapon_ctrl.current_weapon_id
+	var is_sniper := wid in ["awp", "scout", "g3sg1", "sg550"]
+
+	# Sniper Bot scopes in at medium/long range before taking the shot!
+	if is_sniper and dist > 11.0 and weapon_ctrl.zoom_stage == 0 and not weapon_ctrl.is_reloading and weapon_ctrl.fire_cooldown <= 0.15:
+		weapon_ctrl.trigger_secondary()
+
+	var aim_height := 1.48 if skill_level >= 2 else 1.24
 	if target_enemy.is_crouching:
 		aim_height *= 0.65
-	var aim_pt := target_enemy.global_position + Vector3(0.0, aim_height, 0.0)
-	var track_spd: float = float([5.0, 7.5, 11.0, 16.0][clampi(skill_level, 0, 3)])
+	# Subtle velocity lead & organic micro-imperfection scaled inversely by bot skill
+	var spread_err := float([0.22, 0.13, 0.06, 0.02][clampi(skill_level, 0, 3)])
+	var lead := target_enemy.velocity * 0.045 + Vector3(sin(Time.get_ticks_msec() * 0.007) * spread_err, 0.0, cos(Time.get_ticks_msec() * 0.006) * spread_err)
+	var aim_pt := target_enemy.global_position + Vector3(0.0, aim_height, 0.0) + lead
+	var track_spd: float = float([5.5, 8.2, 12.0, 17.0][clampi(skill_level, 0, 3)])
 	_look_smoothly_toward(aim_pt, delta * track_spd)
 
-	_strafe_timer -= delta
-	if _strafe_timer <= 0.0:
-		_strafe_timer = randf_range(0.55, 1.25)
-		_strafe_dir = -_strafe_dir
-		if skill_level >= 2 and dist > 18.0 and randf() < 0.22:
-			_crouch_burst_timer = randf_range(0.35, 0.75)
+	# PodBot / CSBot 3-phase combat footwork:
+	#   1) Evasive lateral strafe (_strafe_timer)
+	#   2) Counter-strafe plant / crouch-peek (_burst_stop_timer) for dead-accurate rifle bursts!
+	if _burst_pause_timer > 0.0:
+		_burst_pause_timer = maxf(0.0, _burst_pause_timer - delta)
 
 	if _crouch_burst_timer > 0.0:
 		_crouch_burst_timer = maxf(0.0, _crouch_burst_timer - delta)
 
+	if _burst_stop_timer > 0.0:
+		_burst_stop_timer = maxf(0.0, _burst_stop_timer - delta)
+	else:
+		_strafe_timer -= delta
+		if _strafe_timer <= 0.0:
+			_strafe_dir = -_strafe_dir
+			_strafe_timer = randf_range(0.42, 0.86)
+			if dist > 7.5 and not weapon_ctrl.is_reloading:
+				# Plant feet for counter-strafed burst!
+				_burst_stop_timer = randf_range(0.26, 0.48) if not is_sniper else randf_range(0.38, 0.62)
+				if skill_level >= 2 and dist > 16.0 and randf() < 0.28:
+					_crouch_burst_timer = _burst_stop_timer + 0.18
+
 	var crouch_shoot := _crouch_burst_timer > 0.0
 	var strafe_vec := Vector3.ZERO
-	if not crouch_shoot:
+	if weapon_ctrl.is_reloading:
+		# Dodge aggressively sideways/backwards toward cover while reloading!
+		var right_rel := Basis(Vector3.UP, look_yaw).x
+		var back_rel := Basis(Vector3.UP, look_yaw).z * (0.55 if dist < 12.0 else 0.0)
+		strafe_vec = _steer_around_obstacles((right_rel * _strafe_dir + back_rel).normalized())
+	elif not crouch_shoot and (_burst_stop_timer <= 0.0 or dist < 6.5):
 		var right := Basis(Vector3.UP, look_yaw).x
-		strafe_vec = _steer_around_obstacles(right * _strafe_dir)
+		var fwd_adjust := Vector3.ZERO
+		if wid == "knife":
+			fwd_adjust = -Basis(Vector3.UP, look_yaw).z * 0.95
+		elif dist < 3.6:
+			fwd_adjust = Basis(Vector3.UP, look_yaw).z * 0.45
+		strafe_vec = _steer_around_obstacles((right * _strafe_dir + fwd_adjust).normalized())
 
 	apply_goldsrc_movement(strafe_vec, false, crouch_shoot, false, delta)
 
@@ -273,10 +384,20 @@ func _engage_enemy(delta: float) -> void:
 		_reaction_timer -= delta
 		return
 
+	if _burst_pause_timer > 0.0:
+		return
+
 	var to_tgt := (aim_pt - get_eye_position()).normalized()
-	if get_look_forward().dot(to_tgt) > 0.94:
-		# Tap / burst control at medium-long range
-		if dist > 20.0 and weapon_ctrl.shots_fired > 4:
+	var align_req := 0.965 if (dist > 20.0 or is_sniper) else 0.925
+	if get_look_forward().dot(to_tgt) > align_req:
+		# Authentic CS 1.5 burst discipline: pause briefly to reset recoil after 3-5 shots at range!
+		var max_burst := 100
+		if dist > 23.0:
+			max_burst = 3
+		elif dist > 11.5:
+			max_burst = 5
+		if weapon_ctrl.shots_fired >= max_burst:
+			_burst_pause_timer = randf_range(0.18, 0.30)
 			return
 		weapon_ctrl.trigger_primary(false, delta)
 
@@ -413,8 +534,29 @@ func _follow_navigation_path(delta: float) -> void:
 		raw_dir = raw_dir.normalized()
 
 	var move_dir := _steer_around_obstacles(raw_dir)
-	var look_pt := global_position + move_dir * 3.5 + Vector3(0.0, 1.45, 0.0)
-	_look_smoothly_toward(look_pt, delta * 7.0)
+
+	# PodBot scripted pre-aiming: aim at chest/head height along upcoming corridor or toward heard enemy sound!
+	_corner_check_timer -= delta
+	if _corner_check_timer <= 0.0:
+		_corner_check_timer = randf_range(1.1, 2.4)
+		if randf() < 0.36 and _knife_rush_timer <= 0.0:
+			_corner_yaw_offset = deg_to_rad(randf_range(-24.0, 24.0))
+		else:
+			_corner_yaw_offset = 0.0
+
+	var look_pt: Vector3
+	if _sound_investigate_timer > 0.0:
+		look_pt = _sound_investigate_pos + Vector3(0.0, 1.42, 0.0)
+	else:
+		var ahead_wp := _nav_path[mini(1, _nav_path.size() - 1)]
+		var look_dir := Vector3(ahead_wp.x - global_position.x, 0.0, ahead_wp.z - global_position.z)
+		if look_dir.length_squared() < 0.04:
+			look_dir = move_dir
+		else:
+			look_dir = look_dir.normalized()
+		look_dir = look_dir.rotated(Vector3.UP, _corner_yaw_offset)
+		look_pt = global_position + look_dir * 4.5 + Vector3(0.0, 1.48, 0.0)
+	_look_smoothly_toward(look_pt, delta * 8.5)
 
 	var want_jump := false
 	if not RoundManager.is_movement_frozen():
@@ -439,7 +581,8 @@ func _follow_navigation_path(delta: float) -> void:
 			_stuck_timer = maxf(0.0, _stuck_timer - delta * 2.2)
 		_last_pos = global_position
 
-	apply_goldsrc_movement(move_dir, want_jump, false, false, delta)
+	var want_silent_walk := _stealth_walk_timer > 0.0 and _knife_rush_timer <= 0.0 and not want_jump
+	apply_goldsrc_movement(move_dir, want_jump, false, want_silent_walk, delta)
 
 
 func _pick_open_escape_direction(blocked_dir: Vector3) -> Vector3:
@@ -546,8 +689,15 @@ func _look_smoothly_toward(world_pt: Vector3, weight: float) -> void:
 func _on_world_sound(spos: Vector3, radius: float, steam: String) -> void:
 	if not is_alive or steam == team or target_enemy != null:
 		return
-	if global_position.distance_to(spos) <= radius and randf() < 0.45:
-		_look_smoothly_toward(spos + Vector3(0, 1.2, 0), 0.35)
+	var d := global_position.distance_to(spos)
+	if d <= radius:
+		_knife_rush_timer = 0.0
+		if randf() < 0.65:
+			_sound_investigate_pos = spos
+			_sound_investigate_timer = randf_range(1.4, 2.6)
+		# Skilled CS 1.5 Bots shift-walk silently when creeping up on nearby footsteps/reloads!
+		if skill_level >= 1 and d < 15.5 and d > 4.0 and not is_instance_valid(RoundManager.planted_c4) and randf() < 0.55:
+			_stealth_walk_timer = randf_range(1.3, 2.5)
 
 
 func _on_radio_order(sender: Node3D, steam: String, action: String, pos: Vector3) -> void:

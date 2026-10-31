@@ -31,6 +31,7 @@ var actors: Array = []  # Array of CSActor
 var hostages: Array = []  # Array of HostageNPC
 var dropped_items: Array = []
 var smoke_clouds: Array = []  # Array of {pos: Vector3, radius: float, expire: float}
+var smoke_volumes: Array = []  # Array of SmokeCloudVolume
 var planted_c4: Node3D = null
 var hostages_rescued_this_round: int = 0
 var total_hostages_in_round: int = 0
@@ -49,6 +50,7 @@ func reset_match(map_data: Dictionary, world_node: Node3D) -> void:
 	hostages.clear()
 	dropped_items.clear()
 	smoke_clouds.clear()
+	smoke_volumes.clear()
 	planted_c4 = null
 	state = State.WAITING
 
@@ -68,6 +70,13 @@ func start_new_round() -> void:
 	round_number += 1
 	hostages_rescued_this_round = 0
 	smoke_clouds.clear()
+	for sv in smoke_volumes.duplicate():
+		if is_instance_valid(sv):
+			var sv_node := sv as Node
+			if sv_node.get_parent():
+				sv_node.get_parent().remove_child(sv_node)
+			sv_node.queue_free()
+	smoke_volumes.clear()
 	planted_c4 = null
 	bomb_state_changed.emit(false, Vector3.ZERO)
 
@@ -120,31 +129,61 @@ func can_buy_now() -> bool:
 	return (state == State.FREEZE or state == State.LIVE) and buy_time_left > 0.0
 
 
+func register_smoke_volume(vol: Node3D) -> void:
+	if not smoke_volumes.has(vol):
+		smoke_volumes.append(vol)
+
+
+func unregister_smoke_volume(vol: Node3D) -> void:
+	smoke_volumes.erase(vol)
+
+
+func apply_world_explosion_physics(blast_pos: Vector3, blast_radius: float, weapon_peak_speed: float = 16.5, smoke_strength: float = 1.0) -> void:
+	for item in dropped_items:
+		if is_instance_valid(item) and item.has_method("apply_explosion_impulse"):
+			item.call("apply_explosion_impulse", blast_pos, blast_radius, weapon_peak_speed)
+	for sv in smoke_volumes:
+		if is_instance_valid(sv) and sv.has_method("apply_explosion_impulse"):
+			sv.call("apply_explosion_impulse", blast_pos, blast_radius, smoke_strength)
+
+
+func apply_world_bullet_wake(seg_a: Vector3, seg_b: Vector3, strength: float = 1.0) -> void:
+	for sv in smoke_volumes:
+		if is_instance_valid(sv) and sv.has_method("apply_bullet_wake"):
+			sv.call("apply_bullet_wake", seg_a, seg_b, strength)
+
+
 func add_smoke_cloud(pos: Vector3, radius: float = 4.6, duration: float = 18.0) -> void:
 	var now := Time.get_ticks_msec() * 0.001
 	smoke_clouds.append({"pos": pos, "radius": radius, "start": now, "expire": now + duration})
 
 
 func get_smoke_density_at(pt: Vector3) -> float:
-	if smoke_clouds.is_empty():
-		return 0.0
-	var now := Time.get_ticks_msec() * 0.001
 	var best := 0.0
-	for sc in smoke_clouds:
-		var c: Vector3 = sc["pos"]
-		var r: float = float(sc["radius"])
-		var d := pt.distance_to(c)
-		if d > r * 1.15:
-			continue
-		var age := now - float(sc.get("start", now - 1.0))
-		var rem := float(sc["expire"]) - now
-		var time_fac := clampf(age / 0.85, 0.0, 1.0) * clampf(rem / 2.8, 0.0, 1.0)
-		var radial := 1.0 - smoothstep(r * 0.42, r * 1.12, d)
-		best = maxf(best, radial * time_fac)
+	for sv in smoke_volumes:
+		if is_instance_valid(sv) and sv.has_method("get_density_at"):
+			best = maxf(best, float(sv.call("get_density_at", pt)))
+	if not smoke_clouds.is_empty():
+		var now := Time.get_ticks_msec() * 0.001
+		for sc in smoke_clouds:
+			var c: Vector3 = sc["pos"]
+			var r: float = float(sc["radius"])
+			var d := pt.distance_to(c)
+			if d > r * 1.15:
+				continue
+			var age := now - float(sc.get("start", now - 1.0))
+			var rem := float(sc["expire"]) - now
+			var time_fac := clampf(age / 0.85, 0.0, 1.0) * clampf(rem / 2.8, 0.0, 1.0)
+			var radial := 1.0 - smoothstep(r * 0.42, r * 1.12, d)
+			best = maxf(best, radial * time_fac)
 	return clampf(best, 0.0, 1.0)
 
 
 func is_line_blocked_by_smoke(a: Vector3, b: Vector3) -> bool:
+	for sv in smoke_volumes:
+		if is_instance_valid(sv) and sv.has_method("blocks_segment"):
+			if bool(sv.call("blocks_segment", a, b)):
+				return true
 	if smoke_clouds.is_empty():
 		return false
 	var now := Time.get_ticks_msec() * 0.001
