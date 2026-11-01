@@ -771,6 +771,8 @@ func _determine_hitgroup(target: Node3D, hit_pos: Vector3) -> int:
 
 
 func _get_tracer_origin(eye_pos: Vector3, shot_dir: Vector3) -> Vector3:
+	if actor.has_method("get_vm_muzzle_world"):
+		return actor.call("get_vm_muzzle_world")
 	var aim_b: Basis = actor.call("get_aim_basis", punch_angles)
 	var hand_sign: float = 1.0 if GameData.right_hand else -1.0
 	if not bool(actor.get("is_human")):
@@ -979,6 +981,10 @@ func _spawn_brass_casing(spec: Dictionary) -> void:
 	var aim_b: Basis = actor.call("get_aim_basis", Vector2.ZERO)
 	var side_sign := 1.0 if (not bool(actor.get("is_human")) or GameData.right_hand) else -1.0
 	var start_pos := eye_p + (-aim_b.z * 0.36) + (aim_b.x * 0.22 * side_sign) - (aim_b.y * 0.12)
+	if actor.has_method("get_vm_eject_world"):
+		# Eject from the viewmodel's real port so casings visibly leave the
+		# weapon instead of spawning in thin air next to the camera.
+		start_pos = actor.call("get_vm_eject_world")
 	var act_vel: Vector3 = (actor as CharacterBody3D).velocity
 	var eject_vel: Vector3 = (
 		aim_b.x * randf_range(2.3, 3.7) * side_sign

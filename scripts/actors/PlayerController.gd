@@ -26,10 +26,16 @@ var _vm_anim: AnimationPlayer = null
 var _muzzle_sprite: Sprite3D = null
 var _muzzle_light: OmniLight3D = null
 var _muzzle_timer: float = 0.0
-## Barrel tip in viewmodel space — recomputed per weapon from the loaded mesh
-## (CS:GO models differ from the old CS1.5 framing, so one hardcoded offset
-## made flash/smoke float away from the barrel)
+## Barrel tip in viewmodel space — baked per weapon in models_meta.json from
+## the REAL idle pose (bind-pose estimates sit far away: the idle animation
+## moves the gun, so measuring raw mesh vertices put the flash in the wrong
+## side of the screen)
 var _vm_muzzle_offset: Vector3 = Vector3(0.18, -0.11, -0.68)
+## Ejection port in viewmodel space (baked per weapon) — world shells spawn here
+var _vm_eject_offset: Vector3 = Vector3(0.18, -0.14, -0.23)
+## Secondary muzzle for dual elites (the left gun), baked as muzzle_alt
+var _vm_muzzle_alt: Vector3 = Vector3.ZERO
+var _vm_has_muzzle_alt: bool = false
 var _bob_phase: float = 0.0
 var _sway_offset: Vector2 = Vector2.ZERO
 var _vm_kick_z: float = 0.0
@@ -355,8 +361,11 @@ func _process(delta: float) -> void:
 	)
 	if _vm_container:
 		_vm_container.pivot_offset = _vm_container.size * 0.5
-		_vm_container.scale = Vector2(1.0 if GameData.right_hand else -1.0, 1.0)
-	_muzzle_sprite.position.x = _vm_muzzle_offset.x - 0.34 if _elite_muzzle_left else _vm_muzzle_offset.x
+		# cl_righthand=1 must RENDER right-handed: the CS:GO-mod models are
+		# authored/animate left-handed (idle muzzle at x<0), so the mirrored
+		# scale is what places the weapon on the right side of the screen.
+		_vm_container.scale = Vector2(-1.0 if GameData.right_hand else 1.0, 1.0)
+	_muzzle_sprite.position = _current_vm_muzzle()
 
 
 func _physics_process(delta: float) -> void:
@@ -510,8 +519,8 @@ func _rebuild_viewmodel(wid: String) -> void:
 	inst.position = Vector3(0.0, -0.015, -0.03)
 	_prepare_viewmodel_materials(inst)
 	viewmodel_holder.add_child(inst)
-	_vm_muzzle_offset = _compute_vm_muzzle_offset(inst)
-	_muzzle_sprite.position = _vm_muzzle_offset
+	var is_sil := bool(weapon_ctrl.silenced_state.get(wid, false)) and bool(spec.get("silencer", false))
+	_apply_vm_muzzle_meta(v_name, is_sil, inst)
 	_vm_anim = _find_anim(inst)
 	if _vm_anim:
 		for aname in _vm_anim.get_animation_list():
@@ -522,13 +531,65 @@ func _rebuild_viewmodel(wid: String) -> void:
 		if not _vm_anim.animation_finished.is_connected(_on_vm_anim_finished):
 			_vm_anim.animation_finished.connect(_on_vm_anim_finished)
 
-	var is_sil := bool(weapon_ctrl.silenced_state.get(wid, false)) and bool(spec.get("silencer", false))
 	if bool(spec.get("grenade", false)):
 		play_viewmodel_sequence(["deploy", "draw", "idle"])
 	elif bool(spec.get("silencer", false)) and not is_sil:
 		play_viewmodel_sequence(["draw_unsil", "draw", "idle_unsil"])
 	else:
 		play_viewmodel_sequence(["draw", "deploy", "idle", "idle1", "idle3"])
+
+
+## Baked idle-pose muzzle/eject data from models_meta.json. Falls back to the
+## bind-pose estimate when a model has no baked entry.
+func _apply_vm_muzzle_meta(v_name: String, is_sil: bool, inst: Node) -> void:
+	var mmeta: Dictionary = GameData.models_meta.get("weapons/" + v_name, {})
+	_vm_has_muzzle_alt = false
+	_vm_muzzle_alt = Vector3.ZERO
+	var mz: Variant = mmeta.get("muzzle")
+	if not is_sil and mmeta.has("muzzle_unsil"):
+		mz = mmeta.get("muzzle_unsil")
+	if mz is Array and (mz as Array).size() >= 3:
+		_vm_muzzle_offset = Vector3(float(mz[0]), float(mz[1]), float(mz[2]))
+	else:
+		_vm_muzzle_offset = _compute_vm_muzzle_offset(inst)
+	var alt: Variant = mmeta.get("muzzle_alt")
+	if alt is Array and (alt as Array).size() >= 3:
+		_vm_muzzle_alt = Vector3(float(alt[0]), float(alt[1]), float(alt[2]))
+		_vm_has_muzzle_alt = true
+	var ej: Variant = mmeta.get("eject")
+	if ej is Array and (ej as Array).size() >= 3:
+		_vm_eject_offset = Vector3(float(ej[0]), float(ej[1]), float(ej[2]))
+	else:
+		_vm_eject_offset = _vm_muzzle_offset + Vector3(0.0, -0.03, 0.45)
+	_muzzle_sprite.position = _current_vm_muzzle()
+
+
+## Active muzzle point (dual elites alternate between both guns).
+func _current_vm_muzzle() -> Vector3:
+	if _vm_has_muzzle_alt and _elite_muzzle_left:
+		return _vm_muzzle_alt
+	return _vm_muzzle_offset
+
+
+## World-space position of a viewmodel-local point. With cl_righthand=1 the
+##2D container mirrors the rendered viewmodel, so world-space consumers
+## (shells, tracers, muzzle light) must negate X to land where the mirrored
+## gun appears on screen.
+func get_vm_world_point(local_p: Vector3) -> Vector3:
+	var p := local_p
+	if GameData.right_hand:
+		p.x = -p.x
+	if _vm_camera != null:
+		return _vm_camera.global_transform * p
+	return camera.global_transform * p
+
+
+func get_vm_eject_world() -> Vector3:
+	return get_vm_world_point(_vm_eject_offset)
+
+
+func get_vm_muzzle_world() -> Vector3:
+	return get_vm_world_point(_current_vm_muzzle())
 
 
 ## Collects every vertex of the loaded viewmodel (bind pose, pivot space).
@@ -754,7 +815,7 @@ func _on_fired_shot(wid: String, silenced: bool) -> void:
 			play_viewmodel_sequence(["shoot%d" % s_idx, "shoot1", "shoot", "shoot_2"])
 
 	if wid != "knife" and not bool(spec.get("grenade", false)) and wid != "c4":
-		var muz_ofs: Vector3 = _vm_muzzle_offset + (Vector3(-0.34, 0.0, 0.0) if _elite_muzzle_left else Vector3.ZERO)
+		var muz_ofs: Vector3 = _current_vm_muzzle()
 		var is_rifle_w: bool = int(spec.get("slot", 1)) == 1
 		if viewmodel_pivot != null:
 			ImpactEffects.spawn_barrel_smoke(viewmodel_pivot, muz_ofs + Vector3(0.0, 0.0, 0.02), is_rifle_w, 4, false)
@@ -764,6 +825,10 @@ func _on_fired_shot(wid: String, silenced: bool) -> void:
 			var mscale: float = clampf(0.86 + kick_scale * 0.28, 0.85, 1.38) * randf_range(0.92, 1.08)
 			_muzzle_sprite.scale = Vector3.ONE * mscale
 			_muzzle_sprite.visible = true
+			var mlp := _current_vm_muzzle()
+			if GameData.right_hand:
+				mlp.x = -mlp.x
+			_muzzle_light.position = mlp
 			_muzzle_light.light_energy = 2.2 + kick_scale * 1.15
 			_muzzle_light.visible = true
 			_muzzle_timer = 0.045
