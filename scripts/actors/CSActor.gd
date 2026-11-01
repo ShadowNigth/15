@@ -389,7 +389,17 @@ func _collect_local_aabb(n: Node, base: Transform3D, acc: AABB) -> AABB:
 	if n is MeshInstance3D:
 		var mi := n as MeshInstance3D
 		if mi.mesh != null:
-			var wa: AABB = mi.get_aabb().transformed(t)
+			# Godot 4 AABB has no transformed() — transform all 8 corners via
+			# Transform3D * Vector3 and grow the box with expand()
+			var la: AABB = mi.get_aabb()
+			var wa := AABB(t * la.position, Vector3.ZERO)
+			wa = wa.expand(t * (la.position + Vector3(la.size.x, 0.0, 0.0)))
+			wa = wa.expand(t * (la.position + Vector3(0.0, la.size.y, 0.0)))
+			wa = wa.expand(t * (la.position + Vector3(0.0, 0.0, la.size.z)))
+			wa = wa.expand(t * (la.position + Vector3(la.size.x, la.size.y, 0.0)))
+			wa = wa.expand(t * (la.position + Vector3(la.size.x, 0.0, la.size.z)))
+			wa = wa.expand(t * (la.position + Vector3(0.0, la.size.y, la.size.z)))
+			wa = wa.expand(t * (la.position + la.size))
 			if acc.size.length_squared() < 0.0001:
 				acc = wa
 			else:
