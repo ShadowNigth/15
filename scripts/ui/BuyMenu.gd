@@ -226,7 +226,7 @@ func _show_category(cat: int) -> void:
 		_team_lbl.add_theme_color_override("font_color", CT_TINT if player.team == "CT" else T_TINT)
 	var bt: float = RoundManager.buy_time_left
 	if bt > 0.0:
-		_status_lbl.text = "BUY TIME REMAINING   %d:%02d" % [int(bt) / 60, int(bt) % 60]
+		_status_lbl.text = "BUY TIME REMAINING   %d:%02d" % [int(bt / 60.0), int(bt) % 60]
 		_status_lbl.add_theme_color_override("font_color", TEXT_DIM)
 	else:
 		_status_lbl.text = "BUY TIME EXPIRED"
@@ -340,7 +340,7 @@ func _category_specs(cat: int) -> Array:
 				var eteam := String(eq.get("team", "ANY"))
 				if eteam != "ANY" and eteam != player.team:
 					continue
-				var eqid := eid
+				var eqid := String(eid)
 				out.append({
 					"id": eqid,
 					"name": String(eq.get("name", eid)),
@@ -406,7 +406,7 @@ func _tile_button(cid: int, title: String, sub: String) -> Button:
 	return btn
 
 
-func _card_from_spec(cat: int, e: Dictionary, num: int, money: int) -> Button:
+func _card_from_spec(_cat: int, e: Dictionary, num: int, money: int) -> Button:
 	var price := int(e["price"])
 	var affordable: bool = price < 0 or money >= price
 	var btn := Button.new()
