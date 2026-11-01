@@ -11503,21 +11503,21 @@
    "draw": [
     {
      "t": 0.0,
-     "wav": "weapons/m4a1_deploy.wav"
+     "wav": "weapons/m4a1_draw.wav"
     },
     {
      "t": 0.44,
-     "wav": "weapons/m4a1_boltpull.wav"
+     "wav": "weapons/m4a1_silencer_boltback.wav"
     }
    ],
    "draw_unsil": [
     {
      "t": 0.0,
-     "wav": "weapons/m4a1_deploy.wav"
+     "wav": "weapons/m4a1_draw.wav"
     },
     {
      "t": 0.44,
-     "wav": "weapons/m4a1_boltpull.wav"
+     "wav": "weapons/m4a1_boltback.wav"
     }
    ],
    "reload": [
@@ -11531,7 +11531,7 @@
     },
     {
      "t": 1.88,
-     "wav": "weapons/m4a1_boltpull.wav"
+     "wav": "weapons/m4a1_silencer_boltback.wav"
     }
    ],
    "reload_unsil": [
@@ -11545,7 +11545,7 @@
     },
     {
      "t": 1.88,
-     "wav": "weapons/m4a1_boltpull.wav"
+     "wav": "weapons/m4a1_boltback.wav"
     }
    ]
   },

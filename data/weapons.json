@@ -2175,19 +2175,16 @@
       "p_model": "p_m4a1",
       "vgui": "640_m4a1",
       "fire_sounds": [
-        "weapons/m4a1_unsil_01.wav",
-        "weapons/m4a1_unsil_02.wav",
-        "weapons/m4a1_unsil_03.wav",
-        "weapons/m4a1_unsil_04.wav"
+        "weapons/m4a1_us_01.wav",
+        "weapons/m4a1_us_02.wav",
+        "weapons/m4a1_us_03.wav",
+        "weapons/m4a1_us_04.wav"
       ],
       "silenced_sounds": [
-        "weapons/m4a1_01.wav",
-        "weapons/m4a1_02.wav",
-        "weapons/m4a1_03.wav",
-        "weapons/m4a1_04.wav"
+        "weapons/m4a1-1.wav"
       ],
       "reload_sound": "weapons/m4a1_clipin.wav",
-      "deploy_sound": "weapons/m4a1_deploy.wav",
+      "deploy_sound": "weapons/m4a1_draw.wav",
       "max_speed": 230.0,
       "zoomed_speed": 230.0,
       "description": "Price\t\t\t: $3100\nCountry of Origin\t: United States of America\nCalibre\t\t: 5.56mm NATO\nClip Capacity(CS)\t: 30 rounds\nRate of Fire(CS)\t: 685 rpm\nWeight(EMPTY)\t: 3.22 kg\nProjectile Weight\t: 4 grams\nMuzzle Velocity\t: 2900 feet/second\nMuzzle Energy\t: 1570 joules",
