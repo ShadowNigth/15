@@ -651,12 +651,13 @@ func _on_fired_shot(wid: String, silenced: bool) -> void:
 				var b_pick: String = ["shoot", "shoot2", "shoot3"][clampi(weapon_ctrl.glock_burst_frame - 1, 0, 2)]
 				play_viewmodel_sequence([b_pick, "shoot"])
 		else:
-			# Semi-auto uses the single-shot frame only — the generic random
-			# picker wrongly threw shoot2/shoot3 (the burst frames) on normal fire
+			# Semi-auto plays the clean single-kick frame — in this model 'shoot'
+			# is the big multi-motion clip that reads as burst; shoot2/shoot3 are
+			# the crisp one-shot kicks
 			if rem_clip == 0:
-				play_viewmodel_sequence(["shoot_empty", "shoot"])
+				play_viewmodel_sequence(["shoot_empty", "shoot2"])
 			else:
-				play_viewmodel_sequence(["shoot", "shoot2"])
+				play_viewmodel_sequence(["shoot2", "shoot3"])
 	elif bool(spec.get("silencer", false)) and not silenced:
 		var u_idx := randi_range(1, 3)
 		if rem_clip == 0:

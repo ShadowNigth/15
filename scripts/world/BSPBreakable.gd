@@ -7,12 +7,18 @@ var max_health: float = 40.0
 var health: float = 40.0
 var material_type: int = 0  # 0=Glass, 1=Wood, 2=Metal, 4=Concrete, 5=Tile, 6=Computer, 8=Rock
 var broken: bool = false
+## Bomb-site style crates: gunfire cannot destroy them, only grenades/C4
+var bulletproof: bool = false
 var world_aabb: AABB = AABB()
 var _col_shapes: Array[CollisionShape3D] = []
 
 
-func setup_breakable(hp: float, mat_id: int) -> void:
+func setup_breakable(hp: float, mat_id: int, can_shatter_with_bullets: bool = true) -> void:
 	max_health = maxf(10.0, hp)
+	if not can_shatter_with_bullets:
+		# Bomb-site crates soak several grenades before going down
+		max_health = maxf(max_health, 250.0)
+		bulletproof = true
 	health = max_health
 	material_type = mat_id
 	_collect_shapes(self)
@@ -40,8 +46,12 @@ func _compute_world_aabb(n: Node) -> void:
 		_compute_world_aabb(c)
 
 
-func apply_damage(amount: float, hit_pos: Vector3) -> void:
+func apply_damage(amount: float, hit_pos: Vector3, by_explosion: bool = false) -> void:
 	if broken or material_type == 7:
+		return
+	if bulletproof and not by_explosion:
+		# Gunfire only chips the paint — feedback sound, no structural damage
+		AudioManager.play_3d("weapons/ric_conc-%d.wav" % randi_range(1, 2), hit_pos, -6.0, 18.0, randf_range(0.95, 1.12))
 		return
 	health -= amount
 	if health <= 0.0:
@@ -65,7 +75,7 @@ func apply_explosion_impulse(blast_pos: Vector3, blast_radius: float, peak_dmg: 
 	var falloff: float = clampf(1.0 - d / maxf(0.5, blast_radius), 0.0, 1.0)
 	var dmg: float = peak_dmg * falloff
 	if dmg > 4.0:
-		apply_damage(dmg, center)
+		apply_damage(dmg, center, true)
 
 
 func _shatter(hit_pos: Vector3) -> void:

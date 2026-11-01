@@ -88,6 +88,7 @@ static func build_map(parent: Node3D, map_data: Dictionary) -> Dictionary:
 
 		var has_ladder_tex := false
 		var has_grate_tex := false
+		var has_crate_tex := false
 
 		# Apply GoldSrc baked lightmap shader (opaque vs alpha-scissor vs translucent)
 		mi.layers = 1
@@ -108,6 +109,8 @@ static func build_map(parent: Node3D, map_data: Dictionary) -> Dictionary:
 					has_ladder_tex = true
 				elif tlow.begins_with("mask_"):
 					has_grate_tex = true
+				if "crate" in tlow:
+					has_crate_tex = true
 				var tmeta: Dictionary = GameData.world_textures_meta.get(tex_safe, {})
 				var is_masked := bool(tmeta.get("masked", tex_safe.begins_with("mask_")))
 				var surf_water := is_water or tex_safe.begins_with("water_")
@@ -162,7 +165,7 @@ static func build_map(parent: Node3D, map_data: Dictionary) -> Dictionary:
 			brk.name = "Breakable_%d" % sub_idx
 			map_root.add_child(brk)
 			mi.reparent(brk, true)
-			brk.setup_breakable(float(bmeta.get("health", 35.0)), int(bmeta.get("material", 0)))
+			brk.setup_breakable(float(bmeta.get("health", 35.0)), int(bmeta.get("material", 0)), not has_crate_tex)
 			for sc in mi.get_children():
 				if sc is StaticBody3D:
 					sc.set_meta("breakable", brk)

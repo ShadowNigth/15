@@ -1109,23 +1109,74 @@ static func _build_bullet_hole_tex(kind: int) -> ImageTexture:
 	return ImageTexture.create_from_image(img)
 
 
+## Realistic blood splatter: irregular central mass (overlapping blobs), a ring
+## of satellite droplets and a few directional spray streaks — replaces the old
+##4-lobe starfish shape.
 static func _build_blood_splatter_tex() -> ImageTexture:
-	var sz: int = 32
+	var sz: int = 128
 	var img := Image.create(sz, sz, false, Image.FORMAT_RGBA8)
-	var c: float = (sz - 1) * 0.5
+	img.fill(Color(0, 0, 0, 0))
+	var rng := RandomNumberGenerator.new()
+	rng.seed = 0xB10D5EED
+	var c: float = sz * 0.5
+	var blobs: Array[Vector2] = []
+	var blob_r: Array[float] = []
+	for i in range(7):
+		var ang: float = rng.randf_range(0.0, TAU)
+		var dist: float = rng.randf_range(0.0, sz * 0.13)
+		blobs.append(Vector2(cos(ang), sin(ang)) * dist + Vector2(c, c))
+		blob_r.append(rng.randf_range(sz * 0.10, sz * 0.19))
 	for y in range(sz):
 		for x in range(sz):
-			var dx: float = x - c
-			var dy: float = y - c
-			var ang: float = atan2(dy, dx)
-			var lobes: float = sin(ang * 4.0 + 0.7) * 0.16 + cos(ang * 7.0 - 1.2) * 0.12 + sin(ang * 11.0) * 0.07
-			var d: float = sqrt(dx * dx + dy * dy) / c - lobes
-			if d < 0.68:
-				var shade: float = lerpf(0.30, 0.56, clampf(d / 0.68, 0.0, 1.0))
-				var alpha: float = clampf((0.68 - d) * 2.6, 0.0, 0.90)
-				img.set_pixel(x, y, Color(shade, 0.02, 0.02, alpha))
-			else:
-				img.set_pixel(x, y, Color(0, 0, 0, 0))
+			var px: float = float(x)
+			var py: float = float(y)
+			var field: float = 0.0
+			for i in range(blobs.size()):
+				var dxb: float = px - blobs[i].x
+				var dyb: float = py - blobs[i].y
+				var dv: float = sqrt(dxb * dxb + dyb * dyb) / maxf(1.0, blob_r[i])
+				field += maxf(0.0, 1.0 - dv)
+			if field >= 1.0:
+				var thick: float = clampf(field - 1.0, 0.0, 1.0)
+				var shade: float = lerpf(0.44, 0.15, thick)
+				var alpha: float = lerpf(0.70, 0.97, thick)
+				img.set_pixel(x, y, Color(shade, 0.012, 0.012, alpha))
+	# Satellite droplets + fine spray dots around the main mass
+	for i in range(30):
+		var ang2: float = rng.randf_range(0.0, TAU)
+		var dist2: float = rng.randf_range(sz * 0.24, sz * 0.47)
+		var dcx: float = c + cos(ang2) * dist2
+		var dcy: float = c + sin(ang2) * dist2
+		var rr: float = rng.randf_range(1.1, 4.0)
+		for y in range(maxi(0, int(dcy - rr - 1)), mini(sz, int(dcy + rr + 2))):
+			for x in range(maxi(0, int(dcx - rr - 1)), mini(sz, int(dcx + rr + 2))):
+				var ddx: float = float(x) - dcx
+				var ddy: float = float(y) - dcy
+				var d: float = sqrt(ddx * ddx + ddy * ddy)
+				if d <= rr:
+					var t2: float = 1.0 - d / maxf(0.5, rr)
+					img.set_pixel(x, y, Color(lerpf(0.50, 0.20, t2), 0.010, 0.010, t2 * 0.95))
+	# Directional spray streaks
+	for i in range(4):
+		var sang: float = rng.randf_range(0.0, TAU)
+		var sdir_x: float = cos(sang)
+		var sdir_y: float = sin(sang)
+		var slen: float = rng.randf_range(sz * 0.12, sz * 0.28)
+		var sstart_d: float = rng.randf_range(sz * 0.10, sz * 0.15)
+		var steps: int = int(slen)
+		for si in range(steps):
+			var ft: float = float(si) / float(maxi(1, steps))
+			var sx: float = c + sdir_x * (sstart_d + float(si))
+			var sy: float = c + sdir_y * (sstart_d + float(si))
+			var sr: float = lerpf(2.8, 0.5, ft)
+			for y in range(maxi(0, int(sy - sr - 1)), mini(sz, int(sy + sr + 2))):
+				for x in range(maxi(0, int(sx - sr - 1)), mini(sz, int(sx + sr + 2))):
+					var ssx: float = float(x) - sx
+					var ssy: float = float(y) - sy
+					var sd: float = sqrt(ssx * ssx + ssy * ssy)
+					if sd <= sr:
+						var st: float = 1.0 - sd / maxf(0.4, sr)
+						img.set_pixel(x, y, Color(lerpf(0.46, 0.22, st), 0.010, 0.010, st * 0.9))
 	return ImageTexture.create_from_image(img)
 
 

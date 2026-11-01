@@ -55,7 +55,6 @@ var _body_root: Node3D = null
 var _body_anim: AnimationPlayer = null
 var _skel: Skeleton3D = null
 var _hand_attachment: BoneAttachment3D = null
-var _c4_pack_attachment: BoneAttachment3D = null
 var _c4_pack_node: Node3D = null
 var _c4_pack_state: bool = false
 var _c4_pack_poll: float = 0.0
@@ -145,7 +144,6 @@ func _rebuild_character_model() -> void:
 	_body_anim = null
 	_skel = null
 	_hand_attachment = null
-	_c4_pack_attachment = null
 	_c4_pack_node = null
 	_c4_pack_state = false
 	_tp_muzzle_sprite = null
@@ -200,13 +198,11 @@ func _rebuild_character_model() -> void:
 					_tp_muzzle_light.visible = false
 					_hand_attachment.add_child(_tp_muzzle_light)
 
-			# C4 backpack worn on the back by whoever carries the bomb (CS classic)
-			var spine_idx := _skel.find_bone("Bip01 Spine1")
-			if spine_idx >= 0:
-				_c4_pack_attachment = BoneAttachment3D.new()
-				_c4_pack_attachment.name = "C4BackpackAttachment"
-				_c4_pack_attachment.bone_name = "Bip01 Spine1"
-				_skel.add_child(_c4_pack_attachment)
+			# C4 backpack worn on the back by whoever carries the bomb (CS classic).
+			# Attached to the body root (crouch-aware) and placed from the composed
+			# character AABB so it hugs the upper back and never sinks into the waist.
+			var body_box := _collect_local_aabb(inst, Transform3D(), AABB())
+			if body_box.size.y > 0.3:
 				_c4_pack_node = Node3D.new()
 				var psc := GameData.get_model_scene("weapons/w_backpack")
 				if psc != null:
@@ -214,11 +210,15 @@ func _rebuild_character_model() -> void:
 					if pinst != null:
 						_style_backpack_recursive(pinst)
 						pinst.rotation_degrees = Vector3(-90.0, 0.0, 0.0)
-						pinst.scale = Vector3.ONE * 0.92
 						_c4_pack_node.add_child(pinst)
-				_c4_pack_node.position = Vector3(0.0, 0.03, 0.095)
+				var pack_y: float = body_box.position.y + body_box.size.y * 0.66
+				var body_z_max: float = body_box.position.z + body_box.size.z
+				if body_box.size.z > 0.9:
+					# Bind-pose AABB too deep (spread limbs) — use torso depth
+					body_z_max = body_box.get_center().z + 0.17
+				_c4_pack_node.position = Vector3(body_box.get_center().x, pack_y, body_z_max + 0.055)
 				_c4_pack_node.visible = false
-				_c4_pack_attachment.add_child(_c4_pack_node)
+				_body_root.add_child(_c4_pack_node)
 		if weapon_ctrl:
 			_update_held_weapon_model(weapon_ctrl.current_weapon_id)
 		_evaluate_character_pose(0.0)
@@ -381,6 +381,24 @@ func get_visual_world_pos() -> Vector3:
 	return p
 
 
+## Composes a Node's full local-space AABB (all mesh instances, base transform).
+func _collect_local_aabb(n: Node, base: Transform3D, acc: AABB) -> AABB:
+	var t: Transform3D = base
+	if n is Node3D:
+		t = base * (n as Node3D).transform
+	if n is MeshInstance3D:
+		var mi := n as MeshInstance3D
+		if mi.mesh != null:
+			var wa: AABB = mi.get_aabb().transformed(t)
+			if acc.size.length_squared() < 0.0001:
+				acc = wa
+			else:
+				acc = acc.merge(wa)
+	for c in n.get_children():
+		acc = _collect_local_aabb(c, t, acc)
+	return acc
+
+
 ## Bomb-carrier backpack styling — same w_drop treatment as dropped weapons.
 func _style_backpack_recursive(n: Node) -> void:
 	if n is MeshInstance3D:
@@ -397,7 +415,7 @@ func _style_backpack_recursive(n: Node) -> void:
 
 ## Shows the C4 backpack on the back of whoever carries the bomb (CS classic).
 func _update_c4_backpack_visual() -> void:
-	if not is_instance_valid(_c4_pack_attachment) or not is_instance_valid(_c4_pack_node):
+	if not is_instance_valid(_c4_pack_node):
 		return
 	var show_pack: bool = is_alive and is_instance_valid(weapon_ctrl) and String(weapon_ctrl.slots.get(5, "")) == "c4"
 	if show_pack == _c4_pack_state:
