@@ -5,6 +5,10 @@ extends CanvasLayer
 ##   - Top-left square rounded radar with the real map overview & player arrow
 ##   - Top-right KILL FEED CARDS (dark rounded cards: killer / weapon icon / headshot / victim)
 ##   - Bottom-left HP & Armor plates, bottom-right money / weapon / ammo (CS2 layout)
+##   - Bottom-center team emblem on a divider line with ANIMATED KILL CARDS:
+##     each enemy kill pops a numbered card above the emblem (1-5 fan out with
+##     weapon pips, ace on the fifth, from 6 a counter card) plus a light beam
+##     and glow-ring flash — the CS2 kill card effect
 ##   - CS2 white typography with team-blue CT and team-gold T accents
 
 const HUD_WHITE := Color(0.94, 0.95, 0.97, 0.97)
@@ -74,11 +78,181 @@ var _shown_hp: int = -1
 var _shown_ap: int = -1
 var _shown_helmet: bool = false
 
+var _killcards: KillCardDisplay = null
+
 # Cached map overview for the CS2 square radar
 var _ov_tex: Texture2D = null
 var _ov_affine: Array = []
 var _ov_rot: int = 0
 var _ov_fit_off: Vector2 = Vector2.ZERO
+
+
+## Bottom-center CS2 kill-card display: divider line + team emblem on the bottom
+## HUD. Every enemy eliminated this round pops an animated numbered card above
+## the emblem (kills 1-5 fan out with weapon pips and an ace-styled fifth; from
+## kill 6 a single counter card), with a vertical light beam, rising sparks and
+## an expanding glow-ring flash — CS2's animated kill cards.
+class KillCardDisplay extends Control:
+	const EMBLEM_R: float = 17.0
+	const CARD_W: float = 18.0
+	const CARD_H: float = 30.0
+	const FAN_DX: float = 14.0
+	const FLASH_DUR: float = 0.7
+
+	var team: String = ""
+	var kills: int = 0
+	var cards: Array[Dictionary] = []
+	var flash_age: float = FLASH_DUR
+
+
+	func reset_round() -> void:
+		kills = 0
+		cards.clear()
+		flash_age = FLASH_DUR
+		queue_redraw()
+
+
+	## Counts one enemy kill for the local player this round and fires the flash.
+	func register_kill(icon: Texture2D) -> void:
+		kills += 1
+		var new_card: Dictionary = {
+			"num": kills, "icon": icon, "pop": 0.0,
+			"pos": Vector2(0.0, 8.0), "rot": 0.0,
+		}
+		if kills > 5:
+			# Past the ace, CS2 collapses the fan into one counter card
+			cards.clear()
+			new_card["counter"] = true
+		cards.append(new_card)
+		flash_age = 0.0
+		queue_redraw()
+
+
+	func _process(delta: float) -> void:
+		var dirty := false
+		if flash_age < FLASH_DUR + 0.05:
+			flash_age += delta
+			dirty = true
+		if cards.is_empty():
+			if dirty:
+				queue_redraw()
+			return
+		var n := cards.size()
+		var counter: bool = cards[0].get("counter", false) == true
+		for i in n:
+			var card: Dictionary = cards[i]
+			var tgt := Vector2.ZERO
+			var tgt_rot := 0.0
+			if not counter:
+				var off := float(i) - (float(n) - 1.0) * 0.5
+				tgt = Vector2(off * FAN_DX, absf(off) * 1.5)
+				tgt_rot = deg_to_rad(off * 7.0)
+			var pv: Vector2 = card["pos"]
+			var rv: float = card["rot"]
+			pv = pv.lerp(tgt, minf(1.0, delta * 11.0))
+			rv = lerpf(rv, tgt_rot, minf(1.0, delta * 11.0))
+			if (pv - tgt).length_squared() > 0.04 or absf(rv - tgt_rot) > 0.004:
+				dirty = true
+			else:
+				pv = tgt
+				rv = tgt_rot
+			card["pos"] = pv
+			card["rot"] = rv
+			var pop := float(card["pop"])
+			if pop < 1.0:
+				card["pop"] = minf(1.0, pop + delta * 4.5)
+				dirty = true
+		if dirty:
+			queue_redraw()
+
+
+	func _draw() -> void:
+		if team != "CT" and team != "T":
+			return
+		var ct := team == "CT"
+		var accent := Color(0.55, 0.76, 1.0, 0.85) if ct else Color(1.0, 0.77, 0.3, 0.85)
+		var hot := Color(0.85, 0.92, 1.0) if ct else Color(1.0, 0.87, 0.55)
+		var cx := size.x * 0.5
+		var cy := size.y - 41.0
+		var font := get_theme_default_font()
+
+		# Divider line running between the HP/Armor plates and the ammo block
+		var x0 := 276.0
+		var x1 := size.x - 250.0
+		if x1 - x0 > 60.0:
+			draw_rect(Rect2(x0, cy - 1.0, x1 - x0, 2.0), Color(1.0, 1.0, 1.0, 0.20))
+
+		# Kill flash: vertical light beam, sparks and expanding glow ring
+		var fp: float = clampf(flash_age / FLASH_DUR, 0.0, 1.0)
+		var flare := 0.0
+		if flash_age < FLASH_DUR:
+			var rise := minf(1.0, fp * 3.2)
+			var fade := 1.0 - fp
+			var bh := 78.0 * rise
+			draw_rect(Rect2(cx - 4.5, cy - bh, 9.0, bh + 12.0), Color(hot.r, hot.g, hot.b, 0.16 * fade))
+			draw_rect(Rect2(cx - 1.5, cy - bh, 3.0, bh + 12.0), Color(1.0, 1.0, 1.0, 0.85 * fade))
+			var sparks: Array[Vector2] = [
+				Vector2(-0.55, -1.0), Vector2(0.5, -0.95),
+				Vector2(-0.2, -1.2), Vector2(0.8, -0.75),
+			]
+			for i in sparks.size():
+				var dv: Vector2 = sparks[i]
+				var sp := dv.normalized() * (24.0 + 46.0 * rise) * (0.8 + 0.2 * float(i % 2))
+				var sq := 3.0 * (1.0 - fp * 0.55)
+				draw_rect(Rect2(cx + sp.x - sq * 0.5, cy + sp.y - sq * 0.5, sq, sq), Color(1.0, 1.0, 0.95, 0.9 * fade))
+			draw_arc(Vector2(cx, cy), EMBLEM_R + 15.0 * fp, 0.0, TAU, 44, Color(hot.r, hot.g, hot.b, 0.9 * fade), 2.5 * fade + 0.5, true)
+			flare = powf(1.0 - fp, 1.8) * 0.9
+
+		# Team emblem: dark disc, bright flare on kill, team ring, team letters
+		draw_circle(Vector2(cx, cy), EMBLEM_R, Color(0.04, 0.04, 0.055, 0.9))
+		if flare > 0.01:
+			draw_circle(Vector2(cx, cy), EMBLEM_R - 0.5, Color(1.0, 1.0, 1.0, flare))
+		var mark_a := clampf(1.0 - flare * 1.2, 0.0, 1.0)
+		draw_arc(Vector2(cx, cy), EMBLEM_R, 0.0, TAU, 44, Color(accent.r, accent.g, accent.b, accent.a * mark_a), 1.7, true)
+		var team_col := Color(1.0, 1.0, 1.0, 0.92 * mark_a)
+		draw_string(font, Vector2(cx - 24.0, cy + 7.0), team, HORIZONTAL_ALIGNMENT_CENTER, 48.0, 15, Color(0.0, 0.0, 0.0, 0.7 * mark_a))
+		draw_string(font, Vector2(cx - 24.0, cy + 6.0), team, HORIZONTAL_ALIGNMENT_CENTER, 48.0, 15, team_col)
+
+		# Numbered kill cards fanning out above the emblem
+		var n := cards.size()
+		for i in n:
+			var card: Dictionary = cards[i]
+			var pop := float(card["pop"])
+			var back := pop - 1.0
+			var eb := 1.0 + 2.70158 * back * back * back + 1.70158 * back * back
+			var scl: float = 0.45 + 0.55 * maxf(0.0, eb)
+			var counter: bool = card.get("counter", false) == true
+			var cw: float = 26.0 if counter else CARD_W
+			var off_pos: Vector2 = card["pos"]
+			var pivot := Vector2(cx, cy - EMBLEM_R - 6.0) + off_pos
+			var rot: float = card["rot"]
+			draw_set_transform(pivot, rot, Vector2(scl, scl))
+			var card_rect := Rect2(-cw * 0.5, -CARD_H, cw, CARD_H)
+			var is_ace := (not counter) and n == 5 and i == 4
+			var csb := StyleBoxFlat.new()
+			csb.set_corner_radius_all(3)
+			csb.set_border_width_all(1)
+			if is_ace:
+				csb.bg_color = Color(0.13, 0.10, 0.03, 0.94)
+				csb.border_color = Color(1.0, 0.82, 0.3, 0.95)
+			else:
+				csb.bg_color = Color(0.03, 0.03, 0.045, 0.92)
+				csb.border_color = Color(accent.r, accent.g, accent.b, 0.55)
+			draw_style_box(csb, card_rect)
+			var icon: Variant = card.get("icon")
+			if icon is Texture2D:
+				var tex := icon as Texture2D
+				var ts := tex.get_size()
+				var isc := minf(14.0 / maxf(ts.x, 1.0), 9.0 / maxf(ts.y, 1.0))
+				var iw := ts.x * isc
+				var ih := ts.y * isc
+				draw_texture_rect(tex, Rect2(-7.0 + (14.0 - iw) * 0.5, -CARD_H + 4.0 + (9.0 - ih) * 0.5, iw, ih), false, Color(1.0, 1.0, 1.0, 0.95))
+			var num := str(card["num"])
+			var num_col := Color(1.0, 0.86, 0.45) if is_ace else Color(0.95, 0.96, 0.99)
+			var tw := cw - 4.0
+			var num_size := 14 if counter else 13
+			draw_string(font, Vector2(-tw * 0.5, -5.0), num, HORIZONTAL_ALIGNMENT_CENTER, tw, num_size, Color(0.0, 0.0, 0.0, 0.8))
+			draw_string(font, Vector2(-tw * 0.5, -6.0), num, HORIZONTAL_ALIGNMENT_CENTER, tw, num_size, num_col)
 
 
 func _ready() -> void:
@@ -90,6 +264,7 @@ func _ready() -> void:
 	RoundManager.kill_logged.connect(_on_kill_logged)
 	RoundManager.chat_radio_message.connect(_on_radio_chat)
 	RoundManager.bomb_state_changed.connect(_on_bomb_state_changed)
+	RoundManager.round_started.connect(_on_round_started)
 
 
 func bind_player(p: PlayerController) -> void:
@@ -450,6 +625,12 @@ func _build_hud_tree() -> void:
 		inv_col.add_child(inv_ic)
 		_inv_icons.append(inv_ic)
 
+	# 11b. Bottom-center CS2 kill cards: divider line + team emblem + fan cards
+	_killcards = KillCardDisplay.new()
+	_killcards.set_anchors_preset(Control.PRESET_FULL_RECT)
+	_killcards.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	root.add_child(_killcards)
+
 	# 12. Inside-Smoke Volumetric Immersion Overlay + Flashbang Fullscreen Whiteout
 	_smoke_rect = ColorRect.new()
 	_smoke_rect.set_anchors_preset(Control.PRESET_FULL_RECT)
@@ -466,6 +647,12 @@ func _build_hud_tree() -> void:
 
 func _process(delta: float) -> void:
 	_c4_blink_phase += delta * 6.0
+
+	if _killcards != null:
+		var pteam := String(player.team) if is_instance_valid(player) else ""
+		if _killcards.team != pteam:
+			_killcards.team = pteam
+			_killcards.queue_redraw()
 
 	if _center_timer > 0.0:
 		_center_timer -= delta
@@ -840,6 +1027,12 @@ func _on_player_damaged(source_pos: Vector3, dmg_amount: int, directional: bool)
 	})
 
 
+## Fresh round: the bottom-center CS2 kill-card counter starts over.
+func _on_round_started(_round_num: int) -> void:
+	if _killcards != null:
+		_killcards.reset_round()
+
+
 ## CS2 huddeathnotice-style kill feed:
 ##   plain kill  -> black plate @0.55, no border
 ##   YOUR kill   -> black plate @0.72 + red #e10000 ring, lingers 7.5s
@@ -918,6 +1111,10 @@ func _on_kill_logged(kname: String, kteam: String, vname: String, vteam: String,
 	row.add_child(vl)
 
 	_killfeed_vbox.add_child(card)
+
+	# Bottom-center kill card: only real enemy kills count (no suicides/TKs)
+	if _killcards != null and is_my_kill and kname != vname and vteam != kteam:
+		_killcards.register_kill(_killfeed_weapon_icon(wid))
 
 	# Appear at once (CS2), linger 5s (7.5s for your own rows), fade over 1s
 	var hold: float = 7.5 if (is_my_kill or is_my_death) else 5.0
