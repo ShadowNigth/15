@@ -26,6 +26,10 @@ var _vm_anim: AnimationPlayer = null
 var _muzzle_sprite: Sprite3D = null
 var _muzzle_light: OmniLight3D = null
 var _muzzle_timer: float = 0.0
+## Barrel tip in viewmodel space — recomputed per weapon from the loaded mesh
+## (CS:GO models differ from the old CS1.5 framing, so one hardcoded offset
+## made flash/smoke float away from the barrel)
+var _vm_muzzle_offset: Vector3 = Vector3(0.18, -0.11, -0.68)
 var _bob_phase: float = 0.0
 var _sway_offset: Vector2 = Vector2.ZERO
 var _vm_kick_z: float = 0.0
@@ -250,6 +254,8 @@ func _unhandled_input(event: InputEvent) -> void:
 		nvg_light.visible = nvg_active
 		AudioManager.play_2d("items/nvg_on.wav" if nvg_active else "items/nvg_off.wav", -3.0)
 		nvg_toggled.emit(nvg_active)
+	elif event.is_action_pressed("inspect"):
+		_try_inspect_viewmodel()
 
 
 func _cycle_weapon_slot(step: int) -> void:
@@ -350,7 +356,7 @@ func _process(delta: float) -> void:
 	if _vm_container:
 		_vm_container.pivot_offset = _vm_container.size * 0.5
 		_vm_container.scale = Vector2(1.0 if GameData.right_hand else -1.0, 1.0)
-	_muzzle_sprite.position.x = -0.16 if _elite_muzzle_left else 0.18
+	_muzzle_sprite.position.x = _vm_muzzle_offset.x - 0.34 if _elite_muzzle_left else _vm_muzzle_offset.x
 
 
 func _physics_process(delta: float) -> void:
@@ -504,6 +510,8 @@ func _rebuild_viewmodel(wid: String) -> void:
 	inst.position = Vector3(0.0, -0.015, -0.03)
 	_prepare_viewmodel_materials(inst)
 	viewmodel_holder.add_child(inst)
+	_vm_muzzle_offset = _compute_vm_muzzle_offset(inst)
+	_muzzle_sprite.position = _vm_muzzle_offset
 	_vm_anim = _find_anim(inst)
 	if _vm_anim:
 		for aname in _vm_anim.get_animation_list():
@@ -521,6 +529,68 @@ func _rebuild_viewmodel(wid: String) -> void:
 		play_viewmodel_sequence(["draw_unsil", "draw", "idle_unsil"])
 	else:
 		play_viewmodel_sequence(["draw", "deploy", "idle", "idle1", "idle3"])
+
+
+## Collects every vertex of the loaded viewmodel (bind pose, pivot space).
+func _collect_vm_vertices(n: Node, base: Transform3D, out: PackedVector3Array) -> void:
+	var t: Transform3D = base
+	if n is Node3D:
+		t = base * (n as Node3D).transform
+	if n is MeshInstance3D:
+		var mi := n as MeshInstance3D
+		if mi.mesh != null:
+			for s in range(mi.mesh.get_surface_count()):
+				var arrs := mi.mesh.surface_get_arrays(s)
+				if arrs.size() > Mesh.ARRAY_VERTEX:
+					var vs: PackedVector3Array = arrs[Mesh.ARRAY_VERTEX]
+					for v in vs:
+						out.append(t * v)
+	for c in n.get_children():
+		_collect_vm_vertices(c, t, out)
+
+
+## Barrel tip of the CURRENT viewmodel: robust front-cluster estimate that
+## ignores stray bind-pose geometry (CS:GO-mod models contain junk vertices).
+func _compute_vm_muzzle_offset(root: Node) -> Vector3:
+	var pts := PackedVector3Array()
+	_collect_vm_vertices(root, Transform3D(), pts)
+	if pts.size() < 64:
+		return Vector3(0.18, -0.11, -0.68)
+	var fpts := PackedVector3Array()
+	for p in pts:
+		if p.y < 1.0 and absf(p.z) < 1.6:
+			fpts.append(p)
+	if fpts.size() < 64:
+		fpts = pts
+	var min_y := 1e9
+	var max_y := -1e9
+	var min_z := 1e9
+	for p in fpts:
+		min_y = minf(min_y, p.y)
+		max_y = maxf(max_y, p.y)
+		min_z = minf(min_z, p.z)
+	var h: float = maxf(0.05, max_y - min_y)
+	var band_lo: float = min_y + 0.45 * h
+	var band_hi: float = min_y + 0.90 * h
+	var front_z := 1e9
+	for p in fpts:
+		if p.y >= band_lo and p.y <= band_hi:
+			front_z = minf(front_z, p.z)
+	if front_z > 1e8:
+		front_z = min_z
+	var xs := PackedFloat32Array()
+	var ys := PackedFloat32Array()
+	for p in fpts:
+		if p.y >= band_lo and p.y <= band_hi and p.z <= front_z + 0.14:
+			xs.append(p.x)
+			ys.append(p.y)
+	if xs.is_empty():
+		return Vector3(0.18, -0.11, -0.68)
+	xs.sort()
+	ys.sort()
+	var mx: float = xs[xs.size() / 2]
+	var my: float = ys[ys.size() / 2]
+	return Vector3(mx, my, front_z + 0.05)
 
 
 func _prepare_viewmodel_materials(n: Node) -> void:
@@ -607,6 +677,17 @@ func _on_vm_anim_finished(anim_name: String) -> void:
 	_play_idle_viewmodel()
 
 
+## CS-style weapon inspect (T): plays the model's inspect clip when available.
+func _try_inspect_viewmodel() -> void:
+	if not is_alive or weapon_ctrl == null:
+		return
+	if weapon_ctrl.is_reloading or weapon_ctrl.plant_progress > 0.0:
+		return
+	if weapon_ctrl.current_weapon_id == "c4":
+		return
+	play_viewmodel_sequence(["inspect", "inspect_unsil", "inspect_1"])
+
+
 func _play_idle_viewmodel() -> void:
 	if not _vm_anim:
 		return
@@ -673,10 +754,10 @@ func _on_fired_shot(wid: String, silenced: bool) -> void:
 			play_viewmodel_sequence(["shoot%d" % s_idx, "shoot1", "shoot", "shoot_2"])
 
 	if wid != "knife" and not bool(spec.get("grenade", false)) and wid != "c4":
-		var muz_x: float = -0.16 if _elite_muzzle_left else 0.18
+		var muz_ofs: Vector3 = _vm_muzzle_offset + (Vector3(-0.34, 0.0, 0.0) if _elite_muzzle_left else Vector3.ZERO)
 		var is_rifle_w: bool = int(spec.get("slot", 1)) == 1
 		if viewmodel_pivot != null:
-			ImpactEffects.spawn_barrel_smoke(viewmodel_pivot, Vector3(muz_x, -0.10, -0.66), is_rifle_w, 4, false)
+			ImpactEffects.spawn_barrel_smoke(viewmodel_pivot, muz_ofs + Vector3(0.0, 0.0, 0.02), is_rifle_w, 4, false)
 		if not silenced:
 			_muzzle_sprite.texture = GameData.get_texture("res://assets/sprites/muzzleflash%d.png" % randi_range(1, 4))
 			_muzzle_sprite.rotation.z = randf() * TAU

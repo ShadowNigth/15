@@ -465,6 +465,7 @@ func _ensure_input_map() -> void:
 		"last_weapon": [KEY_Q],
 		"flashlight": [KEY_F],
 		"nightvision": [KEY_N],
+		"inspect": [KEY_T],
 		"scoreboard": [KEY_TAB],
 		"slot_1": [KEY_1],
 		"slot_2": [KEY_2],
