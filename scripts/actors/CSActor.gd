@@ -55,11 +55,6 @@ var _body_root: Node3D = null
 var _body_anim: AnimationPlayer = null
 var _skel: Skeleton3D = null
 var _hand_attachment: BoneAttachment3D = null
-var _c4_pack_attachment: BoneAttachment3D = null
-var _c4_pack_node: Node3D = null
-var _c4_pack_state: bool = false
-var _c4_pack_placed: bool = false
-var _c4_pack_poll: float = 0.0
 var _tp_muzzle_sprite: Sprite3D = null
 var _tp_muzzle_light: OmniLight3D = null
 var _tp_muzzle_timer: float = 0.0
@@ -146,10 +141,6 @@ func _rebuild_character_model() -> void:
 	_body_anim = null
 	_skel = null
 	_hand_attachment = null
-	_c4_pack_attachment = null
-	_c4_pack_node = null
-	_c4_pack_state = false
-	_c4_pack_placed = false
 	_tp_muzzle_sprite = null
 	_tp_muzzle_light = null
 	_pelvis_bone_idx = -1
@@ -201,27 +192,6 @@ func _rebuild_character_model() -> void:
 					_tp_muzzle_light.position = Vector3(-0.04, 0.08, -0.62)
 					_tp_muzzle_light.visible = false
 					_hand_attachment.add_child(_tp_muzzle_light)
-
-			# C4 backpack on the carrier's back — anchored to the upper-chest bone.
-			# The exact offset/orientation is resolved from the bone poses on the
-			# first update (_place_c4_backpack) so it hugs the back regardless of
-			# the model's bind axes.
-			var spine2_idx := _skel.find_bone("Bip01 Spine2")
-			if spine2_idx >= 0:
-				_c4_pack_attachment = BoneAttachment3D.new()
-				_c4_pack_attachment.name = "C4BackpackAttachment"
-				_c4_pack_attachment.bone_name = "Bip01 Spine2"
-				_skel.add_child(_c4_pack_attachment)
-				_c4_pack_node = Node3D.new()
-				var psc := GameData.get_model_scene("weapons/w_backpack")
-				if psc != null:
-					var pinst := psc.instantiate() as Node3D
-					if pinst != null:
-						_style_backpack_recursive(pinst)
-						pinst.rotation_degrees = Vector3(-90.0, 0.0, 0.0)
-						_c4_pack_node.add_child(pinst)
-				_c4_pack_node.visible = false
-				_c4_pack_attachment.add_child(_c4_pack_node)
 		if weapon_ctrl:
 			_update_held_weapon_model(weapon_ctrl.current_weapon_id)
 		_evaluate_character_pose(0.0)
@@ -384,76 +354,9 @@ func get_visual_world_pos() -> Vector3:
 	return p
 
 
-## Bomb-carrier backpack styling — same w_drop treatment as dropped weapons.
-func _style_backpack_recursive(n: Node) -> void:
-	if n is MeshInstance3D:
-		var mi := n as MeshInstance3D
-		mi.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
-		if mi.mesh != null:
-			for s in range(mi.mesh.get_surface_count()):
-				var styled := GameData.get_styled_model_material(mi.mesh.surface_get_material(s), "w_drop")
-				if styled != null:
-					mi.set_surface_override_material(s, styled)
-	for c in n.get_children():
-		_style_backpack_recursive(c)
-
-
-## One-shot placement: derive the pack's bone-local transform from the live bone
-## poses — Spine2 is the chest anchor, the R-hand direction gives the model's
-## forward (so "back" = opposite), the head gives up. Robust to any bind axes.
-func _place_c4_backpack() -> void:
-	if not is_instance_valid(_c4_pack_attachment) or not is_instance_valid(_c4_pack_node):
-		return
-	if _skel == null or not is_instance_valid(_skel):
-		return
-	var bi := _skel.find_bone("Bip01 Spine2")
-	var hi := _skel.find_bone("Bip01 R Hand")
-	var ni := _skel.find_bone("Bip01 Head")
-	if bi < 0 or hi < 0 or ni < 0:
-		return
-	var gp: Transform3D = _skel.get_bone_global_pose(bi)
-	var hp: Transform3D = _skel.get_bone_global_pose(hi)
-	var np: Transform3D = _skel.get_bone_global_pose(ni)
-	var fwd: Vector3 = hp.origin - gp.origin
-	var up: Vector3 = np.origin - gp.origin
-	if fwd.length_squared() < 0.0004 or up.length_squared() < 0.0004:
-		return
-	fwd = fwd.normalized()
-	up = up.normalized()
-	var back: Vector3 = -fwd
-	var y_ax: Vector3 = (up - back * up.dot(back)).normalized()
-	if y_ax.length_squared() < 0.0004:
-		return
-	var x_ax: Vector3 = y_ax.cross(back)
-	# Pack sits on the shoulder blades: slightly outside the torso, slight lift
-	var pos_local: Vector3 = gp.basis.inverse() * (back * 0.25 + y_ax * 0.04)
-	var rot_local: Basis = gp.basis.inverse() * Basis(x_ax, y_ax, back)
-	_c4_pack_node.transform = Transform3D(rot_local, pos_local)
-	_c4_pack_placed = true
-
-
-## Shows the C4 backpack on the back of whoever carries the bomb (CS classic).
-func _update_c4_backpack_visual() -> void:
-	if not is_instance_valid(_c4_pack_attachment) or not is_instance_valid(_c4_pack_node):
-		return
-	if not _c4_pack_placed:
-		_place_c4_backpack()
-		if not _c4_pack_placed:
-			return
-	var show_pack: bool = is_alive and is_instance_valid(weapon_ctrl) and String(weapon_ctrl.slots.get(5, "")) == "c4"
-	if show_pack == _c4_pack_state:
-		return
-	_c4_pack_state = show_pack
-	_c4_pack_node.visible = show_pack
-
-
 func _process(delta: float) -> void:
 	if _pain_sound_cd > 0.0:
 		_pain_sound_cd = maxf(0.0, _pain_sound_cd - delta)
-	_c4_pack_poll -= delta
-	if _c4_pack_poll <= 0.0:
-		_c4_pack_poll = 0.25
-		_update_c4_backpack_visual()
 	_step_smooth_y = lerpf(_step_smooth_y, 0.0, minf(1.0, 22.0 * delta))
 	_visual_crouch_t = lerpf(_visual_crouch_t, 1.0 if is_crouching else 0.0, minf(1.0, 16.0 * delta))
 	_tp_recoil_pitch = lerpf(_tp_recoil_pitch, 0.0, minf(1.0, 18.0 * delta))

@@ -827,18 +827,41 @@ func _draw_crosshair() -> void:
 
 
 func _draw_sniper_scope() -> void:
+	# CS2-style sniper scope: pure-black surround, circle ~75% of screen height,
+	# thin white cross lines with a small centre gap, no red dot.
 	var sz := _scope_root.size
 	var c := sz * 0.5
-	var r := minf(sz.x, sz.y) * 0.43
-	var blk := Color(0, 0, 0, 0.96)
+	var r := sz.y * 0.375
+	var blk := Color(0, 0, 0, 1.0)
 	_scope_root.draw_rect(Rect2(0, 0, c.x - r, sz.y), blk)
 	_scope_root.draw_rect(Rect2(c.x + r, 0, sz.x - (c.x + r), sz.y), blk)
 	_scope_root.draw_rect(Rect2(c.x - r, 0, r * 2.0, maxf(0.0, c.y - r)), blk)
 	_scope_root.draw_rect(Rect2(c.x - r, c.y + r, r * 2.0, maxf(0.0, sz.y - (c.y + r))), blk)
-	_scope_root.draw_arc(c, r, 0.0, TAU, 96, Color(0, 0, 0, 1.0), 6.0)
-	_scope_root.draw_line(Vector2(c.x - r, c.y), Vector2(c.x + r, c.y), Color(0, 0, 0, 0.9), 1.5)
-	_scope_root.draw_line(Vector2(c.x, c.y - r), Vector2(c.x, c.y + r), Color(0, 0, 0, 0.9), 1.5)
-	_scope_root.draw_circle(c, 2.5, Color(1.0, 0.15, 0.1, 0.9))
+	# Fill the four corner bulges between the circle and its bounding box
+	var corner_specs: Array = [
+		[Vector2(c.x - r, c.y - r), PI, PI * 1.5],
+		[Vector2(c.x - r, c.y + r), PI * 0.5, PI],
+		[Vector2(c.x + r, c.y + r), 0.0, PI * 0.5],
+		[Vector2(c.x + r, c.y - r), PI * 1.5, TAU],
+	]
+	for cs in corner_specs:
+		var poly := PackedVector2Array()
+		poly.append(cs[0])
+		var a0: float = cs[1]
+		var a1: float = cs[2]
+		for seg in range(13):
+			var ang: float = lerpf(a0, a1, float(seg) / 12.0)
+			poly.append(c + Vector2(cos(ang), sin(ang)) * r)
+		_scope_root.draw_colored_polygon(poly, blk)
+	_scope_root.draw_arc(c, r, 0.0, TAU, 96, Color(0, 0, 0, 1.0), 5.0)
+	# Thin white cross with centre gap (CS2 reticle)
+	var line_col := Color(1.0, 1.0, 1.0, 0.92)
+	var lw: float = maxf(1.6, sz.y * 0.0021)
+	var gap: float = r * 0.055
+	_scope_root.draw_line(Vector2(c.x - r, c.y), Vector2(c.x - gap, c.y), line_col, lw)
+	_scope_root.draw_line(Vector2(c.x + gap, c.y), Vector2(c.x + r, c.y), line_col, lw)
+	_scope_root.draw_line(Vector2(c.x, c.y - r), Vector2(c.x, c.y - gap), line_col, lw)
+	_scope_root.draw_line(Vector2(c.x, c.y + gap), Vector2(c.x, c.y + r), line_col, lw)
 
 
 ## World (GS plan units) -> radar-control pixels via the per-map fitted affine.
