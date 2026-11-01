@@ -19,6 +19,11 @@ static var _mat_decal_metal: StandardMaterial3D
 static var _mat_decal_wood: StandardMaterial3D
 static var _mat_decal_glass: StandardMaterial3D
 static var _mat_decal_blood: StandardMaterial3D
+static var _mat_slash_conc: StandardMaterial3D
+static var _mat_slash_metal: StandardMaterial3D
+static var _mat_slash_wood: StandardMaterial3D
+static var _mat_slash_dirt: StandardMaterial3D
+static var _tex_impact_flash: ImageTexture
 
 static var _mat_spark: StandardMaterial3D
 static var _mat_chip_conc: StandardMaterial3D
@@ -32,6 +37,7 @@ static var _mat_tracer: StandardMaterial3D
 
 static var _quad_decal: QuadMesh
 static var _quad_blood_decal: QuadMesh
+static var _quad_slash: QuadMesh
 static var _quad_spark: QuadMesh
 static var _quad_drop: QuadMesh
 static var _quad_shard_glass: QuadMesh
@@ -226,11 +232,23 @@ static func ensure_init() -> void:
 	_mat_decal_glass = _make_decal_mat(_build_bullet_hole_tex(3))
 	_mat_decal_dirt = _make_decal_mat(_build_bullet_hole_tex(4))
 	_mat_decal_blood = _make_decal_mat(_build_blood_splatter_tex())
+	var slash_tex := _build_slash_tex()
+	_mat_slash_conc = _make_decal_mat(slash_tex)
+	_mat_slash_conc.albedo_color = Color(0.88, 0.88, 0.90)
+	_mat_slash_metal = _make_decal_mat(slash_tex)
+	_mat_slash_metal.albedo_color = Color(1.0, 0.98, 0.90)
+	_mat_slash_wood = _make_decal_mat(slash_tex)
+	_mat_slash_wood.albedo_color = Color(0.95, 0.85, 0.66)
+	_mat_slash_dirt = _make_decal_mat(slash_tex)
+	_mat_slash_dirt.albedo_color = Color(0.90, 0.82, 0.62)
+	_tex_impact_flash = _build_soft_dot_tex(Color(1.0, 0.97, 0.86, 1.0), true)
 
 	_quad_decal = QuadMesh.new()
 	_quad_decal.size = Vector2(0.11, 0.11)
 	_quad_blood_decal = QuadMesh.new()
 	_quad_blood_decal.size = Vector2(0.46, 0.46)
+	_quad_slash = QuadMesh.new()
+	_quad_slash.size = Vector2(0.36, 0.11)
 
 	# Spark particle material (additive orange-white streak)
 	_mat_spark = StandardMaterial3D.new()
@@ -443,6 +461,22 @@ static func spawn_surface_impact(
 	ensure_init()
 	var nrm: Vector3 = hit_nrm.normalized() if hit_nrm.length_squared() > 0.001 else Vector3.UP
 
+	# 0. Hot impact flash — a quick white burst frame on EVERY surface so hits
+	#    read instantly, plus a soft radial glow scale-up that burns out fast
+	var flash := Sprite3D.new()
+	flash.texture = _tex_impact_flash
+	flash.billboard = BaseMaterial3D.BILLBOARD_ENABLED
+	flash.shaded = false
+	flash.pixel_size = 0.0060 * caliber_scale
+	flash.modulate = Color(1.0, 0.97, 0.88, 0.95)
+	world_root.add_child(flash)
+	flash.global_position = hit_pos + nrm * 0.045
+	var tw_f := world_root.create_tween()
+	tw_f.set_parallel(true)
+	tw_f.tween_property(flash, "pixel_size", 0.017 * caliber_scale, 0.10).set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_OUT)
+	tw_f.tween_property(flash, "modulate:a", 0.0, 0.10)
+	tw_f.chain().tween_callback(_safe_retire_node.bind(flash))
+
 	# 1. Persistent surface bullet-hole decal (attached to moving door/breakable if hit!)
 	var decal_mat: StandardMaterial3D = _mat_decal_conc
 	var hole_sz: float = 0.105 * caliber_scale
@@ -534,6 +568,32 @@ static func spawn_surface_impact(
 		tw_s.tween_callback(_safe_retire_node.bind(fl)).set_delay(0.05)
 		tw_s.tween_callback(_safe_retire_node.bind(sparks)).set_delay(0.30)
 	else:
+		# Short ricochet sparkle on stone/dirt/wood too — not just metal
+		var refl_s := bullet_dir.bounce(nrm).normalized()
+		var sp2 := CPUParticles3D.new()
+		sp2.emitting = false
+		sp2.one_shot = true
+		sp2.explosiveness = 0.95
+		sp2.amount = 6
+		sp2.lifetime = 0.17
+		sp2.mesh = _quad_spark
+		sp2.direction = (refl_s * 0.45 + nrm * 0.30 + Vector3.UP * 0.42).normalized()
+		sp2.spread = 44.0
+		sp2.initial_velocity_min = 2.8
+		sp2.initial_velocity_max = 6.6
+		sp2.gravity = Vector3(0.0, -15.5, 0.0)
+		sp2.scale_amount_min = 0.5
+		sp2.scale_amount_max = 1.1
+		var grad_s := Gradient.new()
+		grad_s.set_color(0, Color(1.0, 0.93, 0.62, 1.0))
+		grad_s.set_color(1, Color(1.0, 0.45, 0.08, 0.0))
+		sp2.color_ramp = grad_s
+		world_root.add_child(sp2)
+		sp2.global_position = hit_pos + nrm * 0.03
+		sp2.emitting = true
+		var tw_sp2 := world_root.create_tween()
+		tw_sp2.tween_callback(_safe_retire_node.bind(sp2)).set_delay(0.24)
+
 		var chips := CPUParticles3D.new()
 		chips.emitting = false
 		chips.one_shot = true
@@ -799,7 +859,9 @@ static func spawn_death_blood_pool(world_root: Node3D, floor_pos: Vector3, floor
 		tw.tween_property(d_node, "scale", Vector3.ONE * randf_range(1.45, 1.85), 1.35).set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_OUT)
 
 
-static func _place_decal(parent_node: Node3D, pos: Vector3, nrm: Vector3, qmesh: QuadMesh, mat: StandardMaterial3D, scl: float) -> MeshInstance3D:
+## Places a surface decal. fixed_roll overrides the random spin (used by the
+## knife slash to align cuts with the blade travel direction).
+static func _place_decal(parent_node: Node3D, pos: Vector3, nrm: Vector3, qmesh: QuadMesh, mat: StandardMaterial3D, scl: float, fixed_roll: float = NAN) -> MeshInstance3D:
 	if parent_node == null or not is_instance_valid(parent_node):
 		return null
 	for di in range(_decal_ring.size() - 1, -1, -1):
@@ -822,10 +884,97 @@ static func _place_decal(parent_node: Node3D, pos: Vector3, nrm: Vector3, qmesh:
 	mi.global_position = pos
 	var up_ref: Vector3 = Vector3.UP if absf(nrm.dot(Vector3.UP)) < 0.96 else Vector3.RIGHT
 	mi.look_at(pos - nrm, up_ref)
-	mi.rotate_object_local(Vector3.FORWARD, randf() * TAU)
+	mi.rotate_object_local(Vector3.FORWARD, randf() * TAU if is_nan(fixed_roll) else fixed_roll)
 	mi.scale = Vector3.ONE * scl
 	_decal_ring.append(mi)
 	return mi
+
+
+## Knife wall scrape: an elongated cut gouge oriented along the blade's travel
+## (with random jitter, length and spin) instead of a bullet hole + bullet FX.
+static func spawn_knife_slash(
+	world_root: Node3D,
+	hit_pos: Vector3,
+	hit_nrm: Vector3,
+	blade_dir: Vector3,
+	mat_char: String,
+	attach_parent: Node3D = null
+) -> void:
+	if world_root == null or not is_instance_valid(world_root):
+		return
+	ensure_init()
+	var nrm: Vector3 = hit_nrm.normalized() if hit_nrm.length_squared() > 0.001 else Vector3.UP
+	var slash_mat: StandardMaterial3D = _mat_slash_conc
+	match mat_char:
+		"M", "V", "L", "G", "Y":
+			slash_mat = _mat_slash_metal
+		"W":
+			slash_mat = _mat_slash_wood
+		"D":
+			slash_mat = _mat_slash_dirt
+	var d_parent: Node3D = attach_parent if (attach_parent != null and is_instance_valid(attach_parent)) else world_root
+	var mi := _place_decal(d_parent, hit_pos + nrm * 0.009, nrm, _quad_slash, slash_mat, randf_range(0.78, 1.35), 0.0)
+	if mi != null:
+		var roll := randf() * TAU
+		var tangent := blade_dir - nrm * blade_dir.dot(nrm)
+		if tangent.length_squared() > 0.004:
+			var local_t: Vector3 = mi.global_transform.basis.inverse() * tangent.normalized()
+			roll = atan2(local_t.y, local_t.x) + randf_range(-0.42, 0.42)
+		mi.rotate_object_local(Vector3.FORWARD, roll)
+
+	# Small dust puff — the cut lands with a bit of life, no bullet-hole sparks
+	var dust := CPUParticles3D.new()
+	dust.emitting = false
+	dust.one_shot = true
+	dust.explosiveness = 1.0
+	dust.amount = 5
+	dust.lifetime = 0.26
+	var dm := QuadMesh.new()
+	dm.size = Vector2(0.030, 0.030)
+	dm.material = _mat_chip_conc
+	dust.mesh = dm
+	dust.direction = (nrm + Vector3(0.0, 0.30, 0.0)).normalized()
+	dust.spread = 52.0
+	dust.initial_velocity_min = 1.2
+	dust.initial_velocity_max = 3.0
+	dust.gravity = Vector3(0.0, -14.0, 0.0)
+	world_root.add_child(dust)
+	dust.global_position = hit_pos + nrm * 0.03
+	dust.emitting = true
+	var tw_d := world_root.create_tween()
+	tw_d.tween_callback(_safe_retire_node.bind(dust)).set_delay(0.32)
+
+
+## Procedural slash gouge texture: one long tapered bright core with a darker
+## lip plus a short secondary nick — reads as a blade cut at any rotation.
+static func _build_slash_tex() -> ImageTexture:
+	var w: int = 160
+	var h: int = 48
+	var img := Image.create(w, h, false, Image.FORMAT_RGBA8)
+	img.fill(Color(0, 0, 0, 0))
+	for x in range(w):
+		var u := float(x) / float(w - 1)
+		var yc := float(h) * 0.5 + sin(u * PI) * 6.0 - 3.0
+		var taper := 1.0 - absf(u - 0.5) * 2.0
+		var th := 1.0 + 5.4 * pow(taper, 0.65)
+		for y in range(h):
+			var d := absf(float(y) - yc)
+			if d >= th:
+				continue
+			var t := 1.0 - d / th
+			var a := t * t
+			var core := clampf((t - 0.45) / 0.55, 0.0, 1.0)
+			img.set_pixel(x, y, Color(0.40, 0.40, 0.43, a).lerp(Color(1.0, 1.0, 1.0, a), core))
+	for x in range(30, 78):
+		var u2 := (float(x) - 30.0) / 47.0
+		var yc2 := 12.0 + u2 * 7.0
+		var th2 := 1.1 + 2.0 * maxf(0.0, 1.0 - absf(u2 - 0.5) * 2.0)
+		for y in range(h):
+			var d2 := absf(float(y) - yc2)
+			if d2 < th2:
+				var t2 := 1.0 - d2 / th2
+				img.set_pixel(x, y, Color(0.72, 0.72, 0.76, t2 * 0.8))
+	return ImageTexture.create_from_image(img)
 
 
 static func _set_sprite_tex(sp: Sprite3D, tex: Texture2D) -> void:

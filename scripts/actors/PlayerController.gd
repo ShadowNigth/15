@@ -641,6 +641,22 @@ func _on_fired_shot(wid: String, silenced: bool) -> void:
 				play_viewmodel_sequence(["shoot_rightlast", "shoot_right%d" % l_idx, "shoot_right1"])
 			else:
 				play_viewmodel_sequence(["shoot_right%d" % l_idx, "shoot_right1"])
+	elif wid == "glock18":
+		_elite_muzzle_left = false
+		if bool(weapon_ctrl.burst_state.get("glock18", false)):
+			# Burst mode owns the cyclic frames shoot2/shoot3
+			if rem_clip == 0:
+				play_viewmodel_sequence(["shoot_empty", "shoot2"])
+			else:
+				var b_idx := randi_range(2, 3)
+				play_viewmodel_sequence(["shoot%d" % b_idx, "shoot2", "shoot"])
+		else:
+			# Semi-auto uses the single-shot frame only — the generic random
+			# picker wrongly threw shoot2/shoot3 (the burst frames) on normal fire
+			if rem_clip == 0:
+				play_viewmodel_sequence(["shoot_empty", "shoot"])
+			else:
+				play_viewmodel_sequence(["shoot", "shoot2"])
 	elif bool(spec.get("silencer", false)) and not silenced:
 		var u_idx := randi_range(1, 3)
 		if rem_clip == 0:

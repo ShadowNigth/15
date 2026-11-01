@@ -64,6 +64,23 @@ func unregister_actor(actor: Node3D) -> void:
 	actors.erase(actor)
 
 
+## Kill a bomb still ticking when a round closes or restarts. Without this the
+## PlantedC4 node kept running with only its reference dropped, survived into
+## the next round and exploded seconds into it — an instant T win.
+func _clear_stale_planted_c4() -> void:
+	if planted_c4 == null:
+		return
+	var stale: Variant = planted_c4
+	planted_c4 = null
+	if is_instance_valid(stale):
+		var c4_node := stale as Node
+		if c4_node != null:
+			if c4_node.get_parent() != null:
+				c4_node.get_parent().remove_child(c4_node)
+			c4_node.queue_free()
+	bomb_state_changed.emit(false, Vector3.ZERO)
+
+
 func start_new_round() -> void:
 	if not is_instance_valid(game_world):
 		return
@@ -77,6 +94,7 @@ func start_new_round() -> void:
 				sv_node.get_parent().remove_child(sv_node)
 			sv_node.queue_free()
 	smoke_volumes.clear()
+	_clear_stale_planted_c4()
 	planted_c4 = null
 	bomb_state_changed.emit(false, Vector3.ZERO)
 
@@ -348,6 +366,9 @@ func end_round(winner: String, banner_text: String, radio_wav: String, win_money
 		return
 	state = State.ROUND_OVER
 	state_timer = 4.5
+	# Any bomb still planted dies with the round (defuse/explode paths already
+	# cleared it; elimination/draw wins must clear it too).
+	_clear_stale_planted_c4()
 
 	if winner == "CT":
 		ct_score += 1

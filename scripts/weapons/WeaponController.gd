@@ -884,7 +884,8 @@ func _swing_knife(heavy_stab: bool) -> void:
 
 	if is_instance_valid(RoundManager.game_world):
 		var k_surf := _sample_collider_material(col, k_override)
-		ImpactEffects.spawn_surface_impact(RoundManager.game_world, hpos, hit["normal"], dir, k_surf, 0.72, attach_k)
+		# Knives leave a random slash gouge, never a bullet hole
+		ImpactEffects.spawn_knife_slash(RoundManager.game_world, hpos, hit["normal"], dir, k_surf, attach_k)
 
 	AudioManager.play_3d("weapons/knife_hitwall1.wav", hpos, -3.0, 16.0)
 
