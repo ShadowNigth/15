@@ -37,9 +37,9 @@
         "weapons/knife_slash2.wav"
       ],
       "hit_sounds": [
-        "weapons/knife_hit1.wav",
-        "weapons/knife_hit2.wav",
-        "weapons/knife_hit3.wav"
+        "weapons/knife_hit_01.wav",
+        "weapons/knife_hit_02.wav",
+        "weapons/knife_hit_03.wav"
       ],
       "wall_sound": "weapons/knife_hitwall1.wav",
       "stab_sound": "weapons/knife_stab.wav",
@@ -171,11 +171,14 @@
       "p_model": "p_usp",
       "vgui": "640_usp",
       "fire_sounds": [
-        "weapons/usp_unsil-1.wav"
+        "weapons/usp_unsil_01.wav",
+        "weapons/usp_unsil_02.wav",
+        "weapons/usp_unsil_03.wav"
       ],
       "silenced_sounds": [
-        "weapons/usp1.wav",
-        "weapons/usp2.wav"
+        "weapons/usp_01.wav",
+        "weapons/usp_02.wav",
+        "weapons/usp_03.wav"
       ],
       "reload_sound": "weapons/usp_clipin.wav",
       "deploy_sound": "weapons/usp_sliderelease.wav",
@@ -305,9 +308,9 @@
       "p_model": "p_glock18",
       "vgui": "640_glock18",
       "fire_sounds": [
-        "weapons/glock18-2.wav"
+        "weapons/glock18_02.wav"
       ],
-      "burst_sound": "weapons/glock18-1.wav",
+      "burst_sound": "weapons/glock18_01.wav",
       "reload_sound": "weapons/clipin1.wav",
       "deploy_sound": "weapons/sliderelease1.wav",
       "max_speed": 250.0,
@@ -435,8 +438,8 @@
       "p_model": "p_deagle",
       "vgui": "640_deagle",
       "fire_sounds": [
-        "weapons/deagle-1.wav",
-        "weapons/deagle-2.wav"
+        "weapons/deagle_01.wav",
+        "weapons/deagle_02.wav"
       ],
       "reload_sound": "weapons/de_clipin.wav",
       "deploy_sound": "weapons/de_deploy.wav",
@@ -565,7 +568,7 @@
       "p_model": "p_p228",
       "vgui": "640_p228",
       "fire_sounds": [
-        "weapons/p228-1.wav"
+        "weapons/p228_01.wav"
       ],
       "reload_sound": "weapons/p228_clipin.wav",
       "deploy_sound": "weapons/p228_sliderelease.wav",
@@ -823,7 +826,7 @@
       "p_model": "p_fiveseven",
       "vgui": "640_fiveseven",
       "fire_sounds": [
-        "weapons/fiveseven-1.wav"
+        "weapons/fiveseven_01.wav"
       ],
       "reload_sound": "weapons/fiveseven_clipin.wav",
       "deploy_sound": "weapons/fiveseven_sliderelease.wav",
@@ -954,7 +957,7 @@
       "p_model": "p_m3",
       "vgui": "640_m3",
       "fire_sounds": [
-        "weapons/m3-1.wav"
+        "weapons/m3_01.wav"
       ],
       "reload_sound": "weapons/m3_insertshell.wav",
       "deploy_sound": "weapons/m3_pump.wav",
@@ -1085,7 +1088,7 @@
       "p_model": "p_xm1014",
       "vgui": "640_xm1014",
       "fire_sounds": [
-        "weapons/xm1014-1.wav"
+        "weapons/xm1014_01.wav"
       ],
       "reload_sound": "weapons/m3_insertshell.wav",
       "deploy_sound": "weapons/m3_pump.wav",
@@ -1250,8 +1253,7 @@
       "p_model": "p_mp5",
       "vgui": "640_mp5",
       "fire_sounds": [
-        "weapons/mp5-1.wav",
-        "weapons/mp5-2.wav"
+        "weapons/mp5_01.wav"
       ],
       "reload_sound": "weapons/mp5_clipin.wav",
       "deploy_sound": "weapons/mp5_slideback.wav",
@@ -1382,8 +1384,10 @@
       "p_model": "p_tmp",
       "vgui": "640_tmp",
       "fire_sounds": [
-        "weapons/tmp-1.wav",
-        "weapons/tmp-2.wav"
+        "weapons/tmp_01.wav",
+        "weapons/tmp_02.wav",
+        "weapons/tmp_03.wav",
+        "weapons/tmp_04.wav"
       ],
       "reload_sound": "weapons/clipin1.wav",
       "deploy_sound": "weapons/slideback1.wav",
@@ -1512,7 +1516,9 @@
       "p_model": "p_p90",
       "vgui": "640_p90",
       "fire_sounds": [
-        "weapons/p90-1.wav"
+        "weapons/p90_01.wav",
+        "weapons/p90_02.wav",
+        "weapons/p90_03.wav"
       ],
       "reload_sound": "weapons/p90_clipin.wav",
       "deploy_sound": "weapons/p90_boltpull.wav",
@@ -1641,7 +1647,9 @@
       "p_model": "p_mac10",
       "vgui": "640_mac10",
       "fire_sounds": [
-        "weapons/mac10-1.wav"
+        "weapons/mac10_01.wav",
+        "weapons/mac10_02.wav",
+        "weapons/mac10_03.wav"
       ],
       "reload_sound": "weapons/mac10_clipin.wav",
       "deploy_sound": "weapons/mac10_boltpull.wav",
@@ -1770,7 +1778,8 @@
       "p_model": "p_ump45",
       "vgui": "640_ump45",
       "fire_sounds": [
-        "weapons/ump45-1.wav"
+        "weapons/ump45_02.wav",
+        "weapons/ump45_04.wav"
       ],
       "reload_sound": "weapons/ump45_clipin.wav",
       "deploy_sound": "weapons/ump45_boltslap.wav",
@@ -1899,8 +1908,7 @@
       "p_model": "p_ak47",
       "vgui": "640_ak47",
       "fire_sounds": [
-        "weapons/ak47-1.wav",
-        "weapons/ak47-2.wav"
+        "weapons/ak47_01.wav"
       ],
       "reload_sound": "weapons/ak47_clipin.wav",
       "deploy_sound": "weapons/ak47_boltpull.wav",
@@ -2033,8 +2041,10 @@
       "p_model": "p_sg552",
       "vgui": "640_sg552",
       "fire_sounds": [
-        "weapons/sg552-1.wav",
-        "weapons/sg552-2.wav"
+        "weapons/sg552_01.wav",
+        "weapons/sg552_02.wav",
+        "weapons/sg552_03.wav",
+        "weapons/sg552_04.wav"
       ],
       "reload_sound": "weapons/sg552_clipin.wav",
       "deploy_sound": "weapons/sg552_boltpull.wav",
@@ -2165,11 +2175,16 @@
       "p_model": "p_m4a1",
       "vgui": "640_m4a1",
       "fire_sounds": [
-        "weapons/m4a1_unsil-1.wav",
-        "weapons/m4a1_unsil-2.wav"
+        "weapons/m4a1_unsil_01.wav",
+        "weapons/m4a1_unsil_02.wav",
+        "weapons/m4a1_unsil_03.wav",
+        "weapons/m4a1_unsil_04.wav"
       ],
       "silenced_sounds": [
-        "weapons/m4a1-1.wav"
+        "weapons/m4a1_01.wav",
+        "weapons/m4a1_02.wav",
+        "weapons/m4a1_03.wav",
+        "weapons/m4a1_04.wav"
       ],
       "reload_sound": "weapons/m4a1_clipin.wav",
       "deploy_sound": "weapons/m4a1_deploy.wav",
@@ -2302,7 +2317,10 @@
       "p_model": "p_aug",
       "vgui": "640_aug",
       "fire_sounds": [
-        "weapons/aug-1.wav"
+        "weapons/aug_01.wav",
+        "weapons/aug_02.wav",
+        "weapons/aug_03.wav",
+        "weapons/aug_04.wav"
       ],
       "reload_sound": "weapons/aug_clipin.wav",
       "deploy_sound": "weapons/aug_forearm.wav",
@@ -2437,7 +2455,7 @@
       "p_model": "p_scout",
       "vgui": "640_scout",
       "fire_sounds": [
-        "weapons/scout_fire-1.wav"
+        "weapons/scout_fire_01.wav"
       ],
       "reload_sound": "weapons/scout_clipin.wav",
       "deploy_sound": "weapons/scout_bolt.wav",
@@ -2608,7 +2626,8 @@
       "p_model": "p_awp",
       "vgui": "640_awp",
       "fire_sounds": [
-        "weapons/awp1.wav"
+        "weapons/awp_01.wav",
+        "weapons/awp_02.wav"
       ],
       "reload_sound": "weapons/awp_clipin.wav",
       "deploy_sound": "weapons/awp_deploy.wav",
@@ -2779,7 +2798,9 @@
       "p_model": "p_g3sg1",
       "vgui": "640_g3sg1",
       "fire_sounds": [
-        "weapons/g3sg1-1.wav"
+        "weapons/g3sg1_01.wav",
+        "weapons/g3sg1_02.wav",
+        "weapons/g3sg1_03.wav"
       ],
       "reload_sound": "weapons/g3sg1_clipin.wav",
       "deploy_sound": "weapons/g3sg1_slide.wav",
@@ -2950,7 +2971,9 @@
       "p_model": "p_sg550",
       "vgui": "640_sg550",
       "fire_sounds": [
-        "weapons/sg550-1.wav"
+        "weapons/sg550_01.wav",
+        "weapons/sg550_02.wav",
+        "weapons/sg550_03.wav"
       ],
       "reload_sound": "weapons/sg550_clipin.wav",
       "deploy_sound": "weapons/sg550_boltpull.wav",
@@ -3115,8 +3138,8 @@
       "p_model": "p_m249",
       "vgui": "640_m249",
       "fire_sounds": [
-        "weapons/m249-1.wav",
-        "weapons/m249-2.wav"
+        "weapons/m249_01.wav",
+        "weapons/m249_02.wav"
       ],
       "reload_sound": "weapons/m249_boxin.wav",
       "deploy_sound": "weapons/m249_chain.wav",

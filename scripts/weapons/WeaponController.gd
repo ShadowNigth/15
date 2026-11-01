@@ -875,7 +875,7 @@ func _swing_knife(heavy_stab: bool) -> void:
 		if (String(col.get("team")) != String(actor.get("team")) or GameData.friendly_fire) and is_instance_valid(RoundManager.game_world):
 			ImpactEffects.spawn_blood_impact(RoundManager.game_world, space, hpos, dir, 2, false, dmg)
 		col.call("take_bullet_damage", actor, dmg, 1.7, 2, "knife", hpos)
-		var kwav := "weapons/knife_stab.wav" if heavy_stab else ("weapons/knife_hit%d.wav" % randi_range(1, 4))
+		var kwav := "weapons/knife_stab.wav" if heavy_stab else ("weapons/knife_hit_0%d.wav" % randi_range(1, 4))
 		AudioManager.play_3d(kwav, hpos, 0.0, 20.0)
 		return
 
