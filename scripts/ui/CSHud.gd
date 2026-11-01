@@ -16,6 +16,9 @@ const T_COLOR := Color(0.95, 0.78, 0.38, 1.0)
 const GREEN_HUD := Color(0.45, 0.90, 0.50, 0.95)
 const PANEL_BG := Color(0.055, 0.06, 0.075, 0.72)
 const PANEL_BORDER := Color(1.0, 1.0, 1.0, 0.07)
+# CS2 huddeathnotice exact styles: red ring on your kills, dark red plate on your death
+const KILL_RING_RED := Color(0.88, 0.0, 0.0, 0.95)
+const KILL_PLATE_DARKRED := Color(0.36, 0.05, 0.04, 0.78)
 
 var player: PlayerController = null
 
@@ -65,6 +68,11 @@ var _score_refresh_timer: float = 0.0
 var _inv_refresh_timer: float = 0.0
 var _ct_alive: int = 5
 var _t_alive: int = 5
+
+# HP/Armor display dedupe (player signal + spectator-target polling share one path)
+var _shown_hp: int = -1
+var _shown_ap: int = -1
+var _shown_helmet: bool = false
 
 # Cached map overview for the CS2 square radar
 var _ov_tex: Texture2D = null
@@ -230,15 +238,15 @@ func _build_hud_tree() -> void:
 	_score_ctrl.draw.connect(_draw_scoreboard)
 	_score_panel.add_child(_score_ctrl)
 
-	# 7. Top-Right CS2 Kill Feed CARDS
+	# 7. Top-Right CS2 Kill Feed CARDS (first row below the scoreboard, CS2 y=75)
 	_killfeed_vbox = VBoxContainer.new()
 	_killfeed_vbox.anchor_left = 1.0
 	_killfeed_vbox.anchor_right = 1.0
 	_killfeed_vbox.offset_left = -470
-	_killfeed_vbox.offset_right = -14
-	_killfeed_vbox.offset_top = 14
-	_killfeed_vbox.offset_bottom = 260
-	_killfeed_vbox.add_theme_constant_override("separation", 5)
+	_killfeed_vbox.offset_right = -10
+	_killfeed_vbox.offset_top = 75
+	_killfeed_vbox.offset_bottom = 320
+	_killfeed_vbox.add_theme_constant_override("separation", 3)
 	_killfeed_vbox.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	root.add_child(_killfeed_vbox)
 
@@ -526,6 +534,13 @@ func _process(delta: float) -> void:
 		_inv_refresh_timer = 0.5
 		_refresh_inventory_icons()
 
+	# While dead, the HP/Armor plates must show the SPECTATED BOT's vitals (CS2 behaviour)!
+	if is_instance_valid(player):
+		var vst: Variant = player if player.is_alive else player.spectator_target
+		if is_instance_valid(vst):
+			var vit_src := vst as CSActor
+			_apply_vitals(vit_src.health, vit_src.armor, vit_src.has_helmet)
+
 	_crosshair_ctrl.queue_redraw()
 	_radar_ctrl.queue_redraw()
 
@@ -715,6 +730,16 @@ func _draw_radar() -> void:
 
 
 func _on_hp_armor(hp: int, ap: int, helmet: bool) -> void:
+	_apply_vitals(hp, ap, helmet)
+
+
+## Single dedupe'd writer for the HP/Armor plates (player signal + spectator polling).
+func _apply_vitals(hp: int, ap: int, helmet: bool) -> void:
+	if hp == _shown_hp and ap == _shown_ap and helmet == _shown_helmet:
+		return
+	_shown_hp = hp
+	_shown_ap = ap
+	_shown_helmet = helmet
 	_hp_label.text = str(hp)
 	_hp_label.add_theme_color_override("font_color", RED_WARN if hp <= 25 else HUD_WHITE)
 	_armor_label.text = str(ap)
@@ -815,11 +840,16 @@ func _on_player_damaged(source_pos: Vector3, dmg_amount: int, directional: bool)
 	})
 
 
-## CS2-style kill feed entry: dark rounded card [killer] [weapon icon] [HS icon] [victim].
-## Cards with the local player as killer get a white outline; as victim, a red outline.
+## CS2 huddeathnotice-style kill feed:
+##   plain kill  -> black plate @0.55, no border
+##   YOUR kill   -> black plate @0.72 + red #e10000 ring, lingers 7.5s
+##   YOUR death  -> dark red plate, lingers 7.5s
+##   rows are ~31px tall, first row right under the scoreboard, max 5, 1s fade
 func _on_kill_logged(kname: String, kteam: String, vname: String, vteam: String, wid: String, hs: bool) -> void:
-	while _killfeed_vbox.get_child_count() >= 6:
-		_killfeed_vbox.get_child(0).queue_free()
+	while _killfeed_vbox.get_child_count() >= 5:
+		var oldest := _killfeed_vbox.get_child(0)
+		_killfeed_vbox.remove_child(oldest)
+		oldest.queue_free()
 
 	var card := PanelContainer.new()
 	card.size_flags_horizontal = Control.SIZE_SHRINK_END
@@ -828,19 +858,20 @@ func _on_kill_logged(kname: String, kteam: String, vname: String, vteam: String,
 	var is_my_kill := is_instance_valid(player) and kname == String(player.actor_name)
 	var is_my_death := is_instance_valid(player) and vname == String(player.actor_name)
 	var sb := StyleBoxFlat.new()
-	sb.bg_color = Color(0.075, 0.085, 0.105, 0.88) if not is_my_kill else Color(0.13, 0.145, 0.175, 0.92)
-	if is_my_kill:
-		sb.border_color = Color(0.95, 0.96, 0.98, 0.9)
+	sb.set_corner_radius_all(3)
+	if is_my_death:
+		sb.bg_color = KILL_PLATE_DARKRED
+		sb.border_color = Color(0.52, 0.07, 0.05, 0.9)
 		sb.set_border_width_all(1)
-	elif is_my_death:
-		sb.border_color = Color(0.95, 0.32, 0.28, 0.9)
+	elif is_my_kill:
+		sb.bg_color = Color(0.02, 0.02, 0.03, 0.72)
+		sb.border_color = KILL_RING_RED
 		sb.set_border_width_all(1)
 	else:
-		sb.border_color = Color(1.0, 1.0, 1.0, 0.06)
-		sb.set_border_width_all(1)
-	sb.set_corner_radius_all(6)
-	sb.content_margin_left = 10.0
-	sb.content_margin_right = 10.0
+		sb.bg_color = Color(0.02, 0.02, 0.03, 0.55)
+		sb.set_border_width_all(0)
+	sb.content_margin_left = 9.0
+	sb.content_margin_right = 9.0
 	sb.content_margin_top = 4.0
 	sb.content_margin_bottom = 4.0
 	card.add_theme_stylebox_override("panel", sb)
@@ -852,7 +883,7 @@ func _on_kill_logged(kname: String, kteam: String, vname: String, vteam: String,
 	card.add_child(row)
 
 	var kcol := CT_COLOR if kteam == "CT" else T_COLOR
-	var kl := _make_label(kname, 15, kcol)
+	var kl := _make_label(kname, 16, kcol)
 	row.add_child(kl)
 
 	var w_icon := _killfeed_weapon_icon(wid)
@@ -862,11 +893,11 @@ func _on_kill_logged(kname: String, kteam: String, vname: String, vteam: String,
 		wtr.custom_minimum_size = Vector2(30, 15)
 		wtr.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
 		wtr.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
-		wtr.modulate = Color(0.93, 0.94, 0.96, 0.95)
+		wtr.modulate = Color(0.95, 0.96, 0.97, 0.98)
 		wtr.mouse_filter = Control.MOUSE_FILTER_IGNORE
 		row.add_child(wtr)
 	else:
-		row.add_child(_make_label(wid.to_upper(), 12, HUD_DIM))
+		row.add_child(_make_label(wid.to_upper(), 13, HUD_DIM))
 
 	if hs:
 		var hs_tex := GameData.get_hud_atlas("d_headshot", 320)
@@ -876,25 +907,32 @@ func _on_kill_logged(kname: String, kteam: String, vname: String, vteam: String,
 			htr.custom_minimum_size = Vector2(16, 16)
 			htr.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
 			htr.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
-			htr.modulate = Color(0.95, 0.95, 0.97, 0.95)
+			htr.modulate = Color(0.95, 0.95, 0.97, 0.98)
 			htr.mouse_filter = Control.MOUSE_FILTER_IGNORE
 			row.add_child(htr)
 		else:
-			row.add_child(_make_label("HS", 12, HUD_DIM))
+			row.add_child(_make_label("HS", 13, HUD_DIM))
 
 	var vcol := CT_COLOR if vteam == "CT" else T_COLOR
-	var vl := _make_label(vname, 15, vcol)
+	var vl := _make_label(vname, 16, vcol)
 	row.add_child(vl)
 
 	_killfeed_vbox.add_child(card)
 
-	# Pop-in then linger & fade (CS2 card cadence)
-	card.modulate.a = 0.0
+	# Appear at once (CS2), linger 5s (7.5s for your own rows), fade over 1s
+	var hold: float = 7.5 if (is_my_kill or is_my_death) else 5.0
 	var tw := card.create_tween()
-	tw.tween_property(card, "modulate:a", 1.0, 0.14)
-	tw.tween_interval(5.6)
-	tw.tween_property(card, "modulate:a", 0.0, 0.9)
-	tw.tween_callback(card.queue_free)
+	tw.tween_interval(hold)
+	tw.tween_property(card, "modulate:a", 0.0, 1.0)
+	tw.tween_callback(_forget_kill_card.bind(card))
+
+
+func _forget_kill_card(card: Node) -> void:
+	# Detach synchronously so the child-count cap can never spin forever,
+	# then let Godot free it safely outside the tree.
+	if is_instance_valid(card) and card.get_parent() == _killfeed_vbox:
+		_killfeed_vbox.remove_child(card)
+	card.queue_free()
 
 
 func _killfeed_weapon_icon(wid: String) -> Texture2D:
@@ -922,7 +960,9 @@ func _killfeed_weapon_icon(wid: String) -> Texture2D:
 
 func _on_radio_chat(sname: String, steam: String, txt: String) -> void:
 	while _radio_vbox.get_child_count() >= 5:
-		_radio_vbox.get_child(0).queue_free()
+		var oldest := _radio_vbox.get_child(0)
+		_radio_vbox.remove_child(oldest)
+		oldest.queue_free()
 	var col := CT_COLOR if steam == "CT" else T_COLOR
 
 	var card := PanelContainer.new()

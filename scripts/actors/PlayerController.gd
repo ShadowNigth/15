@@ -9,6 +9,8 @@ signal defuse_progress_changed(ratio: float)
 signal scoped_overlay_changed(active: bool)
 signal nvg_toggled(active: bool)
 signal spectator_target_changed(target_name: String)
+## Current chase-cam spectator actor (null while dead in deathcam / alive / no target).
+var spectator_target: CSActor = null
 
 var camera: Camera3D = null
 var viewmodel_pivot: Node3D = null
@@ -174,6 +176,7 @@ func spawn_for_round(pos: Vector3, yaw_rad: float, reset_weapons: bool) -> void:
 	flashlight_spot.visible = false
 	nvg_light.visible = nvg_active
 	nvg_toggled.emit(nvg_active)
+	spectator_target = null
 	spectator_target_changed.emit("")
 	_rebuild_viewmodel(weapon_ctrl.current_weapon_id)
 
@@ -682,6 +685,7 @@ func _die(killer: Node3D, weapon_id: String, headshot: bool) -> void:
 	camera.global_transform = eye_xf
 	_deathcam_timer = 2.85
 	_spec_free_orbit_timer = 0.0
+	spectator_target = null
 	if is_instance_valid(killer) and killer != self:
 		_deathcam_killer = killer
 		spectator_target_changed.emit("Killed by %s [%s]" % [String(killer.get("actor_name")), weapon_id.to_upper()])
@@ -697,6 +701,7 @@ func _finish_deathcam_to_spectator() -> void:
 		if is_instance_valid(a) and a != self and bool(a.get("is_alive")):
 			alive_list.append(a)
 	if alive_list.is_empty():
+		spectator_target = null
 		spectator_target_changed.emit("")
 		return
 	var found_idx: int = -1
@@ -707,6 +712,7 @@ func _finish_deathcam_to_spectator() -> void:
 	else:
 		_spec_index = clampi(_spec_index, 0, alive_list.size() - 1)
 	var tgt := alive_list[_spec_index] as CSActor
+	spectator_target = tgt
 	spectator_target_changed.emit("%s (%s - %d HP)" % [tgt.actor_name, tgt.team, tgt.health])
 
 
@@ -716,10 +722,12 @@ func _cycle_spectator(step: int) -> void:
 		if is_instance_valid(a) and a != self and bool(a.get("is_alive")):
 			alive_list.append(a)
 	if alive_list.is_empty():
+		spectator_target = null
 		spectator_target_changed.emit("")
 		return
 	_spec_index = (_spec_index + step + alive_list.size() * 4) % alive_list.size()
 	var tgt: CSActor = alive_list[_spec_index]
+	spectator_target = tgt
 	spectator_target_changed.emit("%s (%s - %d HP)" % [tgt.actor_name, tgt.team, tgt.health])
 
 
@@ -772,6 +780,7 @@ func _update_spectator_camera(delta: float) -> void:
 		return
 	_spec_index = clampi(_spec_index, 0, alive_list.size() - 1)
 	var tgt: CSActor = alive_list[_spec_index]
+	spectator_target = tgt
 	var tgt_vis: Vector3 = tgt.get_visual_world_pos()
 	var focus_pt: Vector3 = tgt_vis + Vector3(0.0, 1.42, 0.0)
 
