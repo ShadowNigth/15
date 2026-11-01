@@ -201,7 +201,7 @@ class KillCardDisplay extends Control:
 				var sq := 3.0 * (1.0 - fp * 0.55)
 				draw_rect(Rect2(cx + sp.x - sq * 0.5, cy + sp.y - sq * 0.5, sq, sq), Color(1.0, 1.0, 0.95, 0.9 * fade))
 			draw_arc(Vector2(cx, cy), EMBLEM_R + 15.0 * fp, 0.0, TAU, 44, Color(hot.r, hot.g, hot.b, 0.9 * fade), 2.5 * fade + 0.5, true)
-			flare = powf(1.0 - fp, 1.8) * 0.9
+			flare = pow(1.0 - fp, 1.8) * 0.9
 
 		# Team emblem: dark disc, bright flare on kill, team ring, team letters
 		draw_circle(Vector2(cx, cy), EMBLEM_R, Color(0.04, 0.04, 0.055, 0.9))
