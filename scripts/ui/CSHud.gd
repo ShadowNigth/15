@@ -1,12 +1,21 @@
 class_name CSHud
 extends CanvasLayer
-## Authentic Counter-Strike 1.5 HUD built programmatically with extracted GoldSrc sprites.
+## Counter-Strike 2 style HUD for the CS 1.5 remake:
+##   - Top-center scoreboard (CT score | round timer | T score + alive pips)
+##   - Top-left square rounded radar with the real map overview & player arrow
+##   - Top-right KILL FEED CARDS (dark rounded cards: killer / weapon icon / headshot / victim)
+##   - Bottom-left HP & Armor plates, bottom-right money / weapon / ammo (CS2 layout)
+##   - CS2 white typography with team-blue CT and team-gold T accents
 
-const AMBER := Color(1.0, 0.63, 0.0, 0.92)
-const RED_WARN := Color(1.0, 0.18, 0.12, 0.95)
-const GREEN_HUD := Color(0.18, 0.95, 0.25, 0.92)
-const CT_COLOR := Color(0.58, 0.80, 1.0, 1.0)
-const T_COLOR := Color(1.0, 0.32, 0.28, 1.0)
+const HUD_WHITE := Color(0.94, 0.95, 0.97, 0.97)
+const HUD_DIM := Color(0.72, 0.75, 0.80, 0.85)
+const RED_WARN := Color(0.95, 0.28, 0.24, 0.98)
+const GREEN_MONEY := Color(0.55, 0.86, 0.45, 0.98)
+const CT_COLOR := Color(0.47, 0.70, 0.98, 1.0)
+const T_COLOR := Color(0.95, 0.78, 0.38, 1.0)
+const GREEN_HUD := Color(0.45, 0.90, 0.50, 0.95)
+const PANEL_BG := Color(0.055, 0.06, 0.075, 0.72)
+const PANEL_BORDER := Color(1.0, 1.0, 1.0, 0.07)
 
 var player: PlayerController = null
 
@@ -15,15 +24,22 @@ var _scope_root: Control = null
 var _smoke_rect: ColorRect = null
 var _flash_rect: ColorRect = null
 var _crosshair_ctrl: Control = null
+var _radar_panel: Panel = null
 var _radar_ctrl: Control = null
+
+var _score_panel: Panel = null
+var _score_ctrl: Control = null
 
 var _hp_label: Label = null
 var _armor_label: Label = null
-var _timer_label: Label = null
+var _hp_icon: TextureRect = null
+var _ap_icon: TextureRect = null
 var _money_label: Label = null
 var _money_delta_label: Label = null
 var _ammo_label: Label = null
+var _ammo_reserve_label: Label = null
 var _weapon_name_label: Label = null
+var _weapon_icon: TextureRect = null
 var _center_label: Label = null
 var _spec_label: Label = null
 var _progress_bar: ProgressBar = null
@@ -32,25 +48,35 @@ var _progress_title: Label = null
 var _icon_buyzone: TextureRect = null
 var _icon_c4: TextureRect = null
 var _icon_defuser: TextureRect = null
-var _weapon_banner_icon: TextureRect = null
-var _weapon_banner_panel: PanelContainer = null
+
+var _inv_icons: Array[TextureRect] = []
 
 var _killfeed_vbox: VBoxContainer = null
 var _radio_vbox: VBoxContainer = null
 
 var _center_timer: float = 0.0
 var _money_delta_timer: float = 0.0
-var _banner_timer: float = 0.0
 var _c4_blink_phase: float = 0.0
 var _crosshair_gap_cur: float = 5.0
 var _damage_arcs: Array = []
 var _is_bomb_planted: bool = false
 var _bomb_pos: Vector3 = Vector3.ZERO
+var _score_refresh_timer: float = 0.0
+var _inv_refresh_timer: float = 0.0
+var _ct_alive: int = 5
+var _t_alive: int = 5
+
+# Cached map overview for the CS2 square radar
+var _ov_tex: Texture2D = null
+var _ov_affine: Array = []
+var _ov_rot: int = 0
+var _ov_fit_off: Vector2 = Vector2.ZERO
 
 
 func _ready() -> void:
 	layer = 5
 	_build_hud_tree()
+	_load_radar_overview()
 
 	RoundManager.center_message.connect(_on_center_message)
 	RoundManager.kill_logged.connect(_on_kill_logged)
@@ -75,6 +101,50 @@ func bind_player(p: PlayerController) -> void:
 	_on_money(player.money, 0)
 	var cr := player.weapon_ctrl.get_clip_and_reserve()
 	_on_ammo_updated(cr.x, cr.y)
+	_refresh_inventory_icons()
+
+
+func _cs2_panel_style(corner: int = 8, bg: Color = PANEL_BG, border_col: Color = PANEL_BORDER) -> StyleBoxFlat:
+	var sb := StyleBoxFlat.new()
+	sb.bg_color = bg
+	sb.border_color = border_col
+	sb.set_border_width_all(1)
+	sb.set_corner_radius_all(corner)
+	sb.content_margin_left = 10.0
+	sb.content_margin_right = 10.0
+	sb.content_margin_top = 5.0
+	sb.content_margin_bottom = 5.0
+	return sb
+
+
+func _make_label(txt: String, fsize: int, col: Color) -> Label:
+	var l := Label.new()
+	l.text = txt
+	l.add_theme_font_size_override("font_size", fsize)
+	l.add_theme_color_override("font_color", col)
+	l.add_theme_color_override("font_shadow_color", Color(0, 0, 0, 0.85))
+	l.add_theme_constant_override("shadow_offset_x", 1)
+	l.add_theme_constant_override("shadow_offset_y", 1)
+	l.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	return l
+
+
+func _make_hud_icon(entry: String, tint: Color, sz: Vector2 = Vector2(22, 22)) -> TextureRect:
+	var icon_rect := TextureRect.new()
+	icon_rect.texture = GameData.get_hud_atlas(entry, 320)
+	icon_rect.custom_minimum_size = sz
+	icon_rect.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
+	icon_rect.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
+	icon_rect.modulate = tint
+	icon_rect.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	return icon_rect
+
+
+func _load_radar_overview() -> void:
+	var ov: Dictionary = GameData.overviews.get(GameData.selected_map, {})
+	_ov_tex = GameData.get_texture(String(ov.get("image", "")))
+	_ov_affine = ov.get("affine", [])
+	_ov_rot = int(ov.get("rotated", 0))
 
 
 func _build_hud_tree() -> void:
@@ -92,7 +162,7 @@ func _build_hud_tree() -> void:
 		var sm := ShaderMaterial.new()
 		sm.shader = nvg_sh
 		_nvg_rect.material = sm
-	_nvg_rect.visible = false
+		_nvg_rect.visible = false
 	root.add_child(_nvg_rect)
 
 	# 2. Sniper Scope Overlay
@@ -110,87 +180,94 @@ func _build_hud_tree() -> void:
 	_crosshair_ctrl.draw.connect(_draw_crosshair)
 	root.add_child(_crosshair_ctrl)
 
-	# 4. Top-Left Circular Radar (with overview map + dots)
+	# 4. Top-Left CS2 Square Radar: rounded dark panel + real map overview + blips
+	_radar_panel = Panel.new()
+	_radar_panel.position = Vector2(14, 14)
+	_radar_panel.size = Vector2(186, 186)
+	_radar_panel.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	_radar_panel.add_theme_stylebox_override("panel", _cs2_panel_style(10))
+	root.add_child(_radar_panel)
+
 	_radar_ctrl = Control.new()
-	_radar_ctrl.position = Vector2(18, 18)
-	_radar_ctrl.size = Vector2(156, 156)
+	_radar_ctrl.set_anchors_preset(Control.PRESET_FULL_RECT)
+	_radar_ctrl.offset_left = 5.0
+	_radar_ctrl.offset_top = 5.0
+	_radar_ctrl.offset_right = -5.0
+	_radar_ctrl.offset_bottom = -5.0
 	_radar_ctrl.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	_radar_ctrl.draw.connect(_draw_radar)
-	root.add_child(_radar_ctrl)
+	_radar_panel.add_child(_radar_ctrl)
 
-	# 5. Left Status Icons (Buyzone, C4, Defuser)
+	# 5. Left Status Icons (Buyzone, C4, Defuser) under the radar
 	var left_icons := VBoxContainer.new()
-	left_icons.position = Vector2(22, 195)
-	left_icons.add_theme_constant_override("separation", 10)
+	left_icons.position = Vector2(20, 208)
+	left_icons.add_theme_constant_override("separation", 8)
 	left_icons.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	root.add_child(left_icons)
 
-	_icon_buyzone = _make_hud_icon("buyzone", GREEN_HUD)
-	_icon_c4 = _make_hud_icon("c4", GREEN_HUD)
-	_icon_defuser = _make_hud_icon("defuser", GREEN_HUD)
+	_icon_buyzone = _make_hud_icon("buyzone", GREEN_HUD, Vector2(18, 18))
+	_icon_c4 = _make_hud_icon("smallc4", GREEN_HUD, Vector2(18, 18))
+	_icon_defuser = _make_hud_icon("defuser", GREEN_HUD, Vector2(18, 18))
 	left_icons.add_child(_icon_buyzone)
 	left_icons.add_child(_icon_c4)
 	left_icons.add_child(_icon_defuser)
 
-	# 6. Top Weapon Switch Banner
-	_weapon_banner_panel = PanelContainer.new()
-	_weapon_banner_panel.anchor_left = 0.5
-	_weapon_banner_panel.anchor_right = 0.5
-	_weapon_banner_panel.offset_left = -105
-	_weapon_banner_panel.offset_right = 105
-	_weapon_banner_panel.offset_top = 18
-	_weapon_banner_panel.offset_bottom = 78
-	_weapon_banner_panel.mouse_filter = Control.MOUSE_FILTER_IGNORE
-	var sb := StyleBoxFlat.new()
-	sb.bg_color = Color(0.05, 0.05, 0.05, 0.65)
-	sb.border_color = AMBER
-	sb.set_border_width_all(1)
-	_weapon_banner_panel.add_theme_stylebox_override("panel", sb)
-	_weapon_banner_icon = TextureRect.new()
-	_weapon_banner_icon.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
-	_weapon_banner_icon.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
-	_weapon_banner_icon.modulate = AMBER
-	_weapon_banner_panel.add_child(_weapon_banner_icon)
-	_weapon_banner_panel.visible = false
-	root.add_child(_weapon_banner_panel)
+	# 6. Top-Center CS2 Scoreboard: CT score | timer | T score + alive pips
+	_score_panel = Panel.new()
+	_score_panel.anchor_left = 0.5
+	_score_panel.anchor_right = 0.5
+	_score_panel.offset_left = -150
+	_score_panel.offset_right = 150
+	_score_panel.offset_top = 10
+	_score_panel.offset_bottom = 56
+	_score_panel.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	_score_panel.add_theme_stylebox_override("panel", _cs2_panel_style(8))
+	root.add_child(_score_panel)
 
-	# 7. Top-Right Killfeed
+	_score_ctrl = Control.new()
+	_score_ctrl.set_anchors_preset(Control.PRESET_FULL_RECT)
+	_score_ctrl.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	_score_ctrl.draw.connect(_draw_scoreboard)
+	_score_panel.add_child(_score_ctrl)
+
+	# 7. Top-Right CS2 Kill Feed CARDS
 	_killfeed_vbox = VBoxContainer.new()
 	_killfeed_vbox.anchor_left = 1.0
 	_killfeed_vbox.anchor_right = 1.0
-	_killfeed_vbox.offset_left = -410
-	_killfeed_vbox.offset_right = -18
-	_killfeed_vbox.offset_top = 18
-	_killfeed_vbox.offset_bottom = 200
+	_killfeed_vbox.offset_left = -470
+	_killfeed_vbox.offset_right = -14
+	_killfeed_vbox.offset_top = 14
+	_killfeed_vbox.offset_bottom = 260
+	_killfeed_vbox.add_theme_constant_override("separation", 5)
 	_killfeed_vbox.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	root.add_child(_killfeed_vbox)
 
-	# 8. Center CS 1.5 Round / Bomb Announcement Label + Plant/Defuse Bar
-	_center_label = _make_label("", 24, AMBER)
+	# 8. Center Round / Bomb Announcement + Plant/Defuse Bar
+	_center_label = _make_label("", 26, HUD_WHITE)
 	_center_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	_center_label.anchor_left = 0.2
 	_center_label.anchor_right = 0.8
-	_center_label.anchor_top = 0.30
-	_center_label.anchor_bottom = 0.42
+	_center_label.anchor_top = 0.26
+	_center_label.anchor_bottom = 0.40
 	root.add_child(_center_label)
 
-	_spec_label = _make_label("", 18, Color(0.95, 0.9, 0.7))
+	_spec_label = _make_label("", 17, HUD_WHITE)
 	_spec_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	_spec_label.anchor_left = 0.25
 	_spec_label.anchor_right = 0.75
-	_spec_label.anchor_top = 0.80
-	_spec_label.anchor_bottom = 0.86
+	_spec_label.anchor_top = 0.86
+	_spec_label.anchor_bottom = 0.92
 	root.add_child(_spec_label)
 
 	var prog_box := VBoxContainer.new()
 	prog_box.anchor_left = 0.36
 	prog_box.anchor_right = 0.64
-	prog_box.anchor_top = 0.58
-	prog_box.anchor_bottom = 0.65
+	prog_box.anchor_top = 0.56
+	prog_box.anchor_bottom = 0.64
 	prog_box.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	root.add_child(prog_box)
 
-	_progress_title = _make_label("", 16, AMBER)
+	_progress_title = _make_label("", 16, HUD_WHITE)
 	_progress_title.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	prog_box.add_child(_progress_title)
 
@@ -198,97 +275,174 @@ func _build_hud_tree() -> void:
 	_progress_bar.min_value = 0.0
 	_progress_bar.max_value = 1.0
 	_progress_bar.show_percentage = false
-	_progress_bar.custom_minimum_size = Vector2(260, 16)
+	_progress_bar.custom_minimum_size = Vector2(280, 14)
+	var pb_sb := StyleBoxFlat.new()
+	pb_sb.bg_color = Color(0.05, 0.055, 0.07, 0.8)
+	pb_sb.set_corner_radius_all(4)
+	_progress_bar.add_theme_stylebox_override("background", pb_sb)
+	var pb_fill := StyleBoxFlat.new()
+	pb_fill.bg_color = Color(0.93, 0.94, 0.96, 0.95)
+	pb_fill.set_corner_radius_all(4)
+	_progress_bar.add_theme_stylebox_override("fill", pb_fill)
 	_progress_bar.visible = false
 	prog_box.add_child(_progress_bar)
 
-	# 9. Bottom-Left Radio / Chat Feed
+	# 9. Top-Left Radio / Chat Feed (CS2: under the radar & status icons)
 	_radio_vbox = VBoxContainer.new()
-	_radio_vbox.anchor_top = 1.0
-	_radio_vbox.anchor_bottom = 1.0
-	_radio_vbox.offset_left = 22
-	_radio_vbox.offset_right = 520
-	_radio_vbox.offset_top = -235
-	_radio_vbox.offset_bottom = -95
+	_radio_vbox.position = Vector2(16, 292)
+	_radio_vbox.custom_minimum_size = Vector2(430, 150)
+	_radio_vbox.add_theme_constant_override("separation", 4)
 	_radio_vbox.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	root.add_child(_radio_vbox)
 
-	# 10. Bottom GoldSrc Bar: HP + Armor | Round Timer | Money + Ammo
-	var bot_left := HBoxContainer.new()
-	bot_left.anchor_top = 1.0
-	bot_left.anchor_bottom = 1.0
-	bot_left.offset_left = 24
-	bot_left.offset_right = 360
-	bot_left.offset_top = -66
-	bot_left.offset_bottom = -16
-	bot_left.add_theme_constant_override("separation", 24)
-	bot_left.mouse_filter = Control.MOUSE_FILTER_IGNORE
-	root.add_child(bot_left)
+	# 10. Bottom-Left CS2 Health & Armor Plates
+	var bl_root := Control.new()
+	bl_root.anchor_top = 1.0
+	bl_root.anchor_bottom = 1.0
+	bl_root.offset_left = 18
+	bl_root.offset_top = -68
+	bl_root.offset_bottom = -14
+	bl_root.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	root.add_child(bl_root)
 
+	var hp_plate := Panel.new()
+	hp_plate.position = Vector2(0, 0)
+	hp_plate.size = Vector2(118, 54)
+	hp_plate.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	hp_plate.add_theme_stylebox_override("panel", _cs2_panel_style(8))
+	bl_root.add_child(hp_plate)
 	var hp_row := HBoxContainer.new()
-	var cross_ic := _make_hud_icon("cross", AMBER, Vector2(24, 24))
-	_hp_label = _make_label("100", 32, AMBER)
-	hp_row.add_child(cross_ic)
+	hp_row.set_anchors_preset(Control.PRESET_FULL_RECT)
+	hp_row.offset_left = 10.0
+	hp_row.offset_right = -8.0
+	hp_row.add_theme_constant_override("separation", 8)
+	hp_row.alignment = BoxContainer.ALIGNMENT_CENTER
+	hp_row.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	hp_plate.add_child(hp_row)
+	_hp_icon = _make_hud_icon("cross", HUD_WHITE, Vector2(24, 24))
+	_hp_label = _make_label("100", 32, HUD_WHITE)
+	hp_row.add_child(_hp_icon)
 	hp_row.add_child(_hp_label)
-	bot_left.add_child(hp_row)
 
+	var ap_plate := Panel.new()
+	ap_plate.position = Vector2(126, 0)
+	ap_plate.size = Vector2(126, 54)
+	ap_plate.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	ap_plate.add_theme_stylebox_override("panel", _cs2_panel_style(8))
+	bl_root.add_child(ap_plate)
 	var ap_row := HBoxContainer.new()
-	var shield_lbl := _make_label("AP ", 20, AMBER)
-	_armor_label = _make_label("0", 32, AMBER)
-	ap_row.add_child(shield_lbl)
+	ap_row.set_anchors_preset(Control.PRESET_FULL_RECT)
+	ap_row.offset_left = 10.0
+	ap_row.offset_right = -8.0
+	ap_row.add_theme_constant_override("separation", 8)
+	ap_row.alignment = BoxContainer.ALIGNMENT_CENTER
+	ap_row.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	ap_plate.add_child(ap_row)
+	_ap_icon = _make_hud_icon("suit_full", HUD_WHITE, Vector2(24, 24))
+	_armor_label = _make_label("0", 32, HUD_DIM)
+	ap_row.add_child(_ap_icon)
 	ap_row.add_child(_armor_label)
-	bot_left.add_child(ap_row)
 
-	# Center Timer
-	var timer_row := HBoxContainer.new()
-	timer_row.anchor_left = 0.5
-	timer_row.anchor_right = 0.5
-	timer_row.anchor_top = 1.0
-	timer_row.anchor_bottom = 1.0
-	timer_row.offset_left = -75
-	timer_row.offset_right = 75
-	timer_row.offset_top = -64
-	timer_row.offset_bottom = -16
-	timer_row.alignment = BoxContainer.ALIGNMENT_CENTER
-	timer_row.mouse_filter = Control.MOUSE_FILTER_IGNORE
-	var sw_ic := _make_hud_icon("stopwatch", AMBER, Vector2(24, 24))
-	_timer_label = _make_label("02:15", 30, AMBER)
-	timer_row.add_child(sw_ic)
-	timer_row.add_child(_timer_label)
-	root.add_child(timer_row)
+	# 11. Bottom-Right CS2 stack: money (green) -> weapon icon+name -> clip | reserve
+	var br_root := Control.new()
+	br_root.anchor_left = 1.0
+	br_root.anchor_right = 1.0
+	br_root.anchor_top = 1.0
+	br_root.anchor_bottom = 1.0
+	br_root.offset_left = -330
+	br_root.offset_right = -18
+	br_root.offset_top = -210
+	br_root.offset_bottom = -14
+	br_root.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	root.add_child(br_root)
 
-	# Bottom Right: Money above Ammo
-	var bot_right := VBoxContainer.new()
-	bot_right.anchor_left = 1.0
-	bot_right.anchor_right = 1.0
-	bot_right.anchor_top = 1.0
-	bot_right.anchor_bottom = 1.0
-	bot_right.offset_left = -320
-	bot_right.offset_right = -24
-	bot_right.offset_top = -196
-	bot_right.offset_bottom = -20
-	bot_right.grow_vertical = Control.GROW_DIRECTION_BEGIN
-	bot_right.alignment = BoxContainer.ALIGNMENT_END
-	bot_right.mouse_filter = Control.MOUSE_FILTER_IGNORE
-	root.add_child(bot_right)
-
-	_money_delta_label = _make_label("", 20, GREEN_HUD)
+	_money_delta_label = _make_label("", 18, GREEN_MONEY)
 	_money_delta_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_RIGHT
-	bot_right.add_child(_money_delta_label)
+	_money_delta_label.anchor_left = 1.0
+	_money_delta_label.anchor_right = 1.0
+	_money_delta_label.offset_left = -200
+	_money_delta_label.offset_right = 0
+	_money_delta_label.offset_top = 0
+	_money_delta_label.offset_bottom = 24
+	br_root.add_child(_money_delta_label)
 
-	_money_label = _make_label("$ 800", 28, AMBER)
+	_money_label = _make_label("$800", 26, GREEN_MONEY)
 	_money_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_RIGHT
-	bot_right.add_child(_money_label)
+	_money_label.anchor_left = 1.0
+	_money_label.anchor_right = 1.0
+	_money_label.offset_left = -220
+	_money_label.offset_right = 0
+	_money_label.offset_top = 22
+	_money_label.offset_bottom = 54
+	br_root.add_child(_money_label)
 
-	_weapon_name_label = _make_label("USP .45", 14, Color(1.0, 0.78, 0.35, 0.85))
+	_weapon_icon = TextureRect.new()
+	_weapon_icon.anchor_left = 1.0
+	_weapon_icon.anchor_right = 1.0
+	_weapon_icon.offset_left = -96
+	_weapon_icon.offset_right = -4
+	_weapon_icon.offset_top = 58
+	_weapon_icon.offset_bottom = 86
+	_weapon_icon.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
+	_weapon_icon.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
+	_weapon_icon.modulate = HUD_WHITE
+	_weapon_icon.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	br_root.add_child(_weapon_icon)
+
+	_weapon_name_label = _make_label("", 14, HUD_DIM)
 	_weapon_name_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_RIGHT
-	bot_right.add_child(_weapon_name_label)
+	_weapon_name_label.anchor_left = 1.0
+	_weapon_name_label.anchor_right = 1.0
+	_weapon_name_label.offset_left = -240
+	_weapon_name_label.offset_right = -102
+	_weapon_name_label.offset_top = 62
+	_weapon_name_label.offset_bottom = 84
+	br_root.add_child(_weapon_name_label)
 
-	_ammo_label = _make_label("12 | 24", 32, AMBER)
-	_ammo_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_RIGHT
-	bot_right.add_child(_ammo_label)
+	var ammo_row := HBoxContainer.new()
+	ammo_row.anchor_left = 1.0
+	ammo_row.anchor_right = 1.0
+	ammo_row.anchor_top = 1.0
+	ammo_row.anchor_bottom = 1.0
+	ammo_row.offset_left = -240
+	ammo_row.offset_right = 0
+	ammo_row.offset_top = -64
+	ammo_row.offset_bottom = -8
+	ammo_row.alignment = BoxContainer.ALIGNMENT_END
+	ammo_row.add_theme_constant_override("separation", 8)
+	ammo_row.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	br_root.add_child(ammo_row)
 
-	# 11. Inside-Smoke Volumetric Immersion Overlay + Flashbang Fullscreen Whiteout
+	_ammo_label = _make_label("12", 40, HUD_WHITE)
+	ammo_row.add_child(_ammo_label)
+	_ammo_reserve_label = _make_label("| 24", 22, HUD_DIM)
+	ammo_row.add_child(_ammo_reserve_label)
+
+	# Vertical inventory mini-strip (primary / secondary / knife) at the right edge
+	var inv_col := VBoxContainer.new()
+	inv_col.anchor_left = 1.0
+	inv_col.anchor_right = 1.0
+	inv_col.anchor_top = 1.0
+	inv_col.anchor_bottom = 1.0
+	inv_col.offset_left = -58
+	inv_col.offset_right = -16
+	inv_col.offset_top = -268
+	inv_col.offset_bottom = -218
+	inv_col.add_theme_constant_override("separation", 4)
+	inv_col.alignment = BoxContainer.ALIGNMENT_END
+	inv_col.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	br_root.add_child(inv_col)
+	for _si in range(3):
+		var inv_ic := TextureRect.new()
+		inv_ic.custom_minimum_size = Vector2(38, 14)
+		inv_ic.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
+		inv_ic.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
+		inv_ic.modulate = HUD_WHITE
+		inv_ic.mouse_filter = Control.MOUSE_FILTER_IGNORE
+		inv_col.add_child(inv_ic)
+		_inv_icons.append(inv_ic)
+
+	# 12. Inside-Smoke Volumetric Immersion Overlay + Flashbang Fullscreen Whiteout
 	_smoke_rect = ColorRect.new()
 	_smoke_rect.set_anchors_preset(Control.PRESET_FULL_RECT)
 	_smoke_rect.color = Color(0.73, 0.75, 0.77, 0.0)
@@ -300,29 +454,6 @@ func _build_hud_tree() -> void:
 	_flash_rect.color = Color(1.0, 1.0, 1.0, 0.0)
 	_flash_rect.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	root.add_child(_flash_rect)
-
-
-func _make_hud_icon(entry: String, tint: Color, sz: Vector2 = Vector2(32, 32)) -> TextureRect:
-	var icon_rect := TextureRect.new()
-	icon_rect.texture = GameData.get_hud_atlas(entry, 320)
-	icon_rect.custom_minimum_size = sz
-	icon_rect.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
-	icon_rect.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
-	icon_rect.modulate = tint
-	icon_rect.mouse_filter = Control.MOUSE_FILTER_IGNORE
-	return icon_rect
-
-
-func _make_label(txt: String, fsize: int, col: Color) -> Label:
-	var l := Label.new()
-	l.text = txt
-	l.add_theme_font_size_override("font_size", fsize)
-	l.add_theme_color_override("font_color", col)
-	l.add_theme_color_override("font_shadow_color", Color(0, 0, 0, 0.85))
-	l.add_theme_constant_override("shadow_offset_x", 1)
-	l.add_theme_constant_override("shadow_offset_y", 1)
-	l.mouse_filter = Control.MOUSE_FILTER_IGNORE
-	return l
 
 
 func _process(delta: float) -> void:
@@ -338,11 +469,6 @@ func _process(delta: float) -> void:
 		if _money_delta_timer <= 0.0:
 			_money_delta_label.text = ""
 
-	if _banner_timer > 0.0:
-		_banner_timer -= delta
-		if _banner_timer <= 0.0:
-			_weapon_banner_panel.visible = false
-
 	for di in range(_damage_arcs.size() - 1, -1, -1):
 		var arc_d := _damage_arcs[di] as Dictionary
 		var next_a: float = float(arc_d["alpha"]) - delta * 1.15
@@ -351,15 +477,8 @@ func _process(delta: float) -> void:
 		else:
 			arc_d["alpha"] = next_a
 
-	# Timer formatting
-	var secs := maxi(0, int(ceil(RoundManager.state_timer)))
-	if is_instance_valid(RoundManager.planted_c4):
-		secs = maxi(0, int(ceil((RoundManager.planted_c4 as PlantedC4).time_left)))
-		_timer_label.add_theme_color_override("font_color", RED_WARN if sin(_c4_blink_phase * 2.0) > 0.0 else AMBER)
-	else:
-		_timer_label.add_theme_color_override("font_color", RED_WARN if secs <= 10 else AMBER)
-	var mins := int(floor(float(secs) / 60.0))
-	_timer_label.text = "%02d:%02d" % [mins, secs % 60]
+	# Top-center round timer is drawn by _draw_scoreboard(); just wake it each frame
+	_score_ctrl.queue_redraw()
 
 	if is_instance_valid(player):
 		var smoke_d := RoundManager.get_smoke_density_at(player.get_eye_position()) if player.is_alive else 0.0
@@ -371,9 +490,9 @@ func _process(delta: float) -> void:
 		_icon_c4.visible = carries_c4
 		if carries_c4 and is_instance_valid(RoundManager.game_world) and RoundManager.game_world.has_method("is_in_bombsite"):
 			if bool(RoundManager.game_world.call("is_in_bombsite", player.global_position)):
-				_icon_c4.modulate = RED_WARN if sin(_c4_blink_phase * 2.5) > 0.0 else GREEN_HUD
+				_icon_c4.modulate = RED_WARN if sin(_c4_blink_phase * 2.5) > 0.0 else HUD_WHITE
 			else:
-				_icon_c4.modulate = GREEN_HUD
+				_icon_c4.modulate = HUD_WHITE
 		_icon_defuser.visible = player.has_defuser
 
 		var target_gap := 5.0
@@ -386,8 +505,84 @@ func _process(delta: float) -> void:
 				target_gap *= 0.72
 		_crosshair_gap_cur = lerpf(_crosshair_gap_cur, target_gap, minf(1.0, 22.0 * delta))
 
+	# Team alive pips + inventory refresh (cheap periodic)
+	_score_refresh_timer -= delta
+	if _score_refresh_timer <= 0.0:
+		_score_refresh_timer = 0.4
+		var ct_n := 0
+		var t_n := 0
+		for a in RoundManager.actors:
+			if not is_instance_valid(a) or not bool(a.get("is_alive")):
+				continue
+			if String(a.get("team")) == "CT":
+				ct_n += 1
+			else:
+				t_n += 1
+		_ct_alive = ct_n
+		_t_alive = t_n
+
+	_inv_refresh_timer -= delta
+	if _inv_refresh_timer <= 0.0:
+		_inv_refresh_timer = 0.5
+		_refresh_inventory_icons()
+
 	_crosshair_ctrl.queue_redraw()
 	_radar_ctrl.queue_redraw()
+
+
+func _refresh_inventory_icons() -> void:
+	if not is_instance_valid(player):
+		return
+	for i in range(3):
+		var wid := String(player.weapon_ctrl.slots.get(i + 1, ""))
+		var ic: TextureRect = _inv_icons[i]
+		if wid.is_empty():
+			ic.texture = null
+			ic.modulate = Color(1, 1, 1, 0.16)
+		else:
+			var wh := GameData.get_weapon_hud_atlas(wid, "weapon_s_640")
+			if not wh:
+				wh = GameData.get_weapon_hud_atlas(wid, "weapon_640")
+			ic.texture = wh
+			# Grey out the non-equipped slots, full white for the active weapon
+			var cur := String(player.weapon_ctrl.current_weapon_id)
+			ic.modulate = HUD_WHITE if wid == cur or wid == "knife" else Color(1, 1, 1, 0.45)
+
+
+func _draw_scoreboard() -> void:
+	var fnt := _score_ctrl.get_theme_default_font()
+	var sz := _score_ctrl.size
+
+	# --- CT block (left): number, caption, alive pips ---
+	_score_ctrl.draw_string(fnt, Vector2(18, 36), str(RoundManager.ct_score), HORIZONTAL_ALIGNMENT_LEFT, -1, 24, CT_COLOR)
+	_score_ctrl.draw_string(fnt, Vector2(18, 15), "CT", HORIZONTAL_ALIGNMENT_LEFT, -1, 11, Color(CT_COLOR.r, CT_COLOR.g, CT_COLOR.b, 0.8))
+	for i in range(5):
+		var pip_c := CT_COLOR if i < _ct_alive else Color(CT_COLOR.r, CT_COLOR.g, CT_COLOR.b, 0.16)
+		_score_ctrl.draw_circle(Vector2(58 + i * 12, 30), 3.8, pip_c)
+
+	# --- T block (right): number, caption, alive pips (mirrored) ---
+	_score_ctrl.draw_string(fnt, Vector2(sz.x - 64, 36), str(RoundManager.t_score), HORIZONTAL_ALIGNMENT_RIGHT, 46, 24, T_COLOR)
+	_score_ctrl.draw_string(fnt, Vector2(sz.x - 64, 15), "T", HORIZONTAL_ALIGNMENT_RIGHT, 46, 11, Color(T_COLOR.r, T_COLOR.g, T_COLOR.b, 0.8))
+	for i in range(5):
+		var pip_c2 := T_COLOR if i < _t_alive else Color(T_COLOR.r, T_COLOR.g, T_COLOR.b, 0.16)
+		_score_ctrl.draw_circle(Vector2(sz.x - 58 - i * 12, 30), 3.8, pip_c2)
+
+	# --- Center round timer: white normally, blinking red near blast / round end ---
+	var secs := maxi(0, int(ceil(RoundManager.state_timer)))
+	var bomb_mode := is_instance_valid(RoundManager.planted_c4)
+	if bomb_mode:
+		secs = maxi(0, int(ceil((RoundManager.planted_c4 as PlantedC4).time_left)))
+	var tcol := HUD_WHITE
+	if bomb_mode:
+		tcol = RED_WARN if sin(_c4_blink_phase * 2.0) > 0.0 else HUD_WHITE
+	elif secs <= 10 and RoundManager.state == RoundManager.State.LIVE:
+		tcol = RED_WARN
+	var mins := int(floor(float(secs) / 60.0))
+	var tstr := "%d:%02d" % [mins, secs % 60]
+	_score_ctrl.draw_string(fnt, Vector2(sz.x * 0.5 - 24, 34), tstr, HORIZONTAL_ALIGNMENT_LEFT, -1, 22, tcol)
+	# Vertical separator lines around the timer (CS2 scoreboard dividers)
+	_score_ctrl.draw_line(Vector2(sz.x * 0.5 - 44, 9), Vector2(sz.x * 0.5 - 44, sz.y - 9), Color(1, 1, 1, 0.10), 1.0)
+	_score_ctrl.draw_line(Vector2(sz.x * 0.5 + 44, 9), Vector2(sz.x * 0.5 + 44, sz.y - 9), Color(1, 1, 1, 0.10), 1.0)
 
 
 func _draw_crosshair() -> void:
@@ -396,7 +591,7 @@ func _draw_crosshair() -> void:
 	var sz := _crosshair_ctrl.size
 	var center := sz * 0.5
 
-	# Classic CS 1.5 Directional Damage Indicator Arcs around reticle (no screen-edge red box!)
+	# CS2-style directional damage indicators around the reticle
 	if player.is_alive and not _damage_arcs.is_empty():
 		var arc_r: float = minf(sz.x, sz.y) * 0.165
 		for item in _damage_arcs:
@@ -434,7 +629,6 @@ func _draw_sniper_scope() -> void:
 	var c := sz * 0.5
 	var r := minf(sz.x, sz.y) * 0.43
 	var blk := Color(0, 0, 0, 0.96)
-	# Outer dark letterboxes + crosshair lines
 	_scope_root.draw_rect(Rect2(0, 0, c.x - r, sz.y), blk)
 	_scope_root.draw_rect(Rect2(c.x + r, 0, sz.x - (c.x + r), sz.y), blk)
 	_scope_root.draw_rect(Rect2(c.x - r, 0, r * 2.0, maxf(0.0, c.y - r)), blk)
@@ -445,60 +639,98 @@ func _draw_sniper_scope() -> void:
 	_scope_root.draw_circle(c, 2.5, Color(1.0, 0.15, 0.1, 0.9))
 
 
+## World (GS plan units) -> radar-control pixels via the per-map fitted affine.
+func _ov_world_to_px(gx: float, gy: float) -> Vector2:
+	if _ov_affine.size() >= 4:
+		var b := float(_ov_affine[0])
+		var a := float(_ov_affine[1])
+		var d := float(_ov_affine[2])
+		var c := float(_ov_affine[3])
+		if _ov_rot == 1:
+			return Vector2(b * gy + a, d * gx + c)
+		return Vector2(b * gx + a, d * gy + c)
+	return Vector2.ZERO
+
+
 func _draw_radar() -> void:
-	var c := _radar_ctrl.size * 0.5
-	var r := c.x - 4.0
-	_radar_ctrl.draw_circle(c, r, Color(0.03, 0.16, 0.06, 0.62))
-	_radar_ctrl.draw_arc(c, r, 0.0, TAU, 48, Color(0.25, 0.85, 0.35, 0.72), 1.6)
-	_radar_ctrl.draw_line(Vector2(c.x, c.y - r), Vector2(c.x, c.y), Color(0.3, 0.9, 0.4, 0.45), 1.0)
-	_radar_ctrl.draw_line(Vector2(c.x - r, c.y), Vector2(c.x + r, c.y), Color(0.2, 0.6, 0.3, 0.25), 1.0)
+	var sz := _radar_ctrl.size
+	if _ov_tex == null:
+		return
+	var tw := float(_ov_tex.get_width())
+	var th := float(_ov_tex.get_height())
+	if tw < 1.0 or th < 1.0:
+		return
+	var fit := minf(sz.x / tw, sz.y / th)
+	_ov_fit_off = Vector2((sz.x - tw * fit) * 0.5, (sz.y - th * fit) * 0.5)
+	_radar_ctrl.draw_texture_rect(_ov_tex, Rect2(_ov_fit_off, Vector2(tw * fit, th * fit)), false)
 
 	if not is_instance_valid(player):
 		return
-
-	var scale_px_per_m := r / 38.0
 	var ppos := player.global_position
-	var pyaw := player.look_yaw
+	var pgs := Vector2(ppos.x / GameData.SCALE, ppos.z / GameData.SCALE)
+	var ppx := _ov_world_to_px(pgs.x, pgs.y) * fit + _ov_fit_off
 
+	# Teammate blips (team colored), VIP highlighted
 	for a in RoundManager.actors:
 		if not is_instance_valid(a) or a == player or not bool(a.get("is_alive")):
 			continue
 		if String(a.get("team")) != player.team:
 			continue
-		var pt := _world_to_radar(a.global_position, ppos, pyaw, scale_px_per_m, r - 4.0)
-		var dcol := Color(0.35, 0.95, 1.0) if bool(a.get("is_vip")) else Color(0.3, 1.0, 0.4)
-		_radar_ctrl.draw_circle(c + pt, 3.2, dcol)
+		var ap: Vector3 = a.global_position
+		var p := _ov_world_to_px(ap.x / GameData.SCALE, ap.z / GameData.SCALE) * fit + _ov_fit_off
+		if bool(a.get("is_vip")):
+			_radar_ctrl.draw_circle(p, 5.0, Color(0.45, 0.92, 1.0))
+			_radar_ctrl.draw_arc(p, 6.5, 0.0, TAU, 16, Color(0.45, 0.92, 1.0, 0.6), 1.4)
+		else:
+			var mate_col := CT_COLOR if player.team == "CT" else T_COLOR
+			_radar_ctrl.draw_circle(p, 3.6, Color(mate_col.r, mate_col.g, mate_col.b, 0.95))
 
+	# Hostages
 	for h in RoundManager.hostages:
 		if is_instance_valid(h) and h.is_alive and not h.is_rescued:
-			var hp := _world_to_radar(h.global_position, ppos, pyaw, scale_px_per_m, r - 4.0)
-			_radar_ctrl.draw_circle(c + hp, 3.0, Color(0.4, 0.8, 1.0))
+			var hp_pos: Vector3 = h.global_position
+			var ph := _ov_world_to_px(hp_pos.x / GameData.SCALE, hp_pos.z / GameData.SCALE) * fit + _ov_fit_off
+			_radar_ctrl.draw_circle(ph, 3.4, Color(0.4, 0.85, 1.0))
 
+	# Blinking planted bomb
 	if _is_bomb_planted and sin(_c4_blink_phase * 2.5) > -0.2:
-		var bp := _world_to_radar(_bomb_pos, ppos, pyaw, scale_px_per_m, r - 4.0)
-		_radar_ctrl.draw_circle(c + bp, 4.5, RED_WARN)
+		var pb := _ov_world_to_px(_bomb_pos.x / GameData.SCALE, _bomb_pos.z / GameData.SCALE) * fit + _ov_fit_off
+		_radar_ctrl.draw_circle(pb, 5.0, RED_WARN)
+		_radar_ctrl.draw_arc(pb, 7.0, 0.0, TAU, 20, Color(1.0, 0.3, 0.25, 0.55), 1.5)
 
-
-func _world_to_radar(target: Vector3, origin: Vector3, yaw: float, scale_f: float, max_r: float) -> Vector2:
-	var rel := target - origin
-	var local_v := Basis(Vector3.UP, -yaw) * rel
-	var v2 := Vector2(local_v.x, local_v.z) * scale_f
-	if v2.length() > max_r:
-		v2 = v2.normalized() * max_r
-	return v2
+	# Player arrow (CS2 style): white triangle pointing along view direction
+	var fwd := player.get_look_forward()
+	var b_coef := float(_ov_affine[0]) if _ov_affine.size() >= 4 else 1.0
+	var d_coef := float(_ov_affine[2]) if _ov_affine.size() >= 4 else -1.0
+	var dir_px := Vector2(b_coef * (fwd.z if _ov_rot == 1 else fwd.x), d_coef * (fwd.x if _ov_rot == 1 else fwd.z))
+	if dir_px.length_squared() < 0.0001:
+		dir_px = Vector2(0, -1)
+	dir_px = dir_px.normalized()
+	var perp := Vector2(-dir_px.y, dir_px.x)
+	var tip := ppx + dir_px * 7.5
+	var back := ppx - dir_px * 4.0
+	var tri := PackedVector2Array([tip, back + perp * 4.6, back - perp * 4.6])
+	_radar_ctrl.draw_colored_polygon(tri, Color(1.0, 1.0, 1.0, 0.96))
+	_radar_ctrl.draw_polyline(PackedVector2Array([tip, back + perp * 4.6, back - perp * 4.6, tip]), Color(0, 0, 0, 0.7), 1.2)
 
 
 func _on_hp_armor(hp: int, ap: int, helmet: bool) -> void:
 	_hp_label.text = str(hp)
-	_hp_label.add_theme_color_override("font_color", RED_WARN if hp <= 25 else AMBER)
-	_armor_label.text = ("%d [H]" % ap) if (helmet and ap > 0) else str(ap)
+	_hp_label.add_theme_color_override("font_color", RED_WARN if hp <= 25 else HUD_WHITE)
+	_armor_label.text = str(ap)
+	_armor_label.add_theme_color_override("font_color", HUD_WHITE if ap > 0 else HUD_DIM)
+	var ap_entry := "suithelmet_full" if helmet else "suit_full"
+	var ap_tex := GameData.get_hud_atlas(ap_entry, 320)
+	if ap_tex:
+		_ap_icon.texture = ap_tex
+	_ap_icon.modulate = HUD_WHITE if ap > 0 else Color(1, 1, 1, 0.35)
 
 
 func _on_money(amount: int, delta_amt: int) -> void:
-	_money_label.text = "$ %d" % amount
+	_money_label.text = "$%d" % amount
 	if delta_amt != 0:
 		_money_delta_label.text = ("+$%d" % delta_amt) if delta_amt > 0 else ("-$%d" % abs(delta_amt))
-		_money_delta_label.add_theme_color_override("font_color", GREEN_HUD if delta_amt > 0 else RED_WARN)
+		_money_delta_label.add_theme_color_override("font_color", GREEN_MONEY if delta_amt > 0 else RED_WARN)
 		_money_delta_timer = 2.4
 
 
@@ -506,23 +738,30 @@ func _on_weapon_switched(wid: String, spec: Dictionary) -> void:
 	var title := String(spec.get("name", wid.to_upper()))
 	if bool(spec.get("silencer", false)) and is_instance_valid(player):
 		if bool(player.weapon_ctrl.silenced_state.get(wid, false)):
-			title += " [SILENCED]"
+			title += " (S)"
 	_weapon_name_label.text = title
 
 	var whud := GameData.get_weapon_hud_atlas(wid, "weapon_s_640")
 	if not whud:
 		whud = GameData.get_weapon_hud_atlas(wid, "weapon_640")
 	if whud:
-		_weapon_banner_icon.texture = whud
-		_weapon_banner_panel.visible = true
-		_banner_timer = 1.6
+		_weapon_icon.texture = whud
+	_refresh_inventory_icons()
 
 
 func _on_ammo_updated(clip: int, reserve: int) -> void:
 	if clip < 0:
 		_ammo_label.text = "---"
+		_ammo_reserve_label.text = ""
 	else:
-		_ammo_label.text = "%d | %d" % [clip, reserve]
+		_ammo_label.text = str(clip)
+		_ammo_reserve_label.text = "| %d" % reserve
+		if clip == 0:
+			_ammo_label.add_theme_color_override("font_color", RED_WARN)
+		elif clip <= 5:
+			_ammo_label.add_theme_color_override("font_color", Color(0.98, 0.82, 0.35, 0.98))
+		else:
+			_ammo_label.add_theme_color_override("font_color", HUD_WHITE)
 
 
 func _on_center_message(msg: String, dur: float) -> void:
@@ -576,35 +815,131 @@ func _on_player_damaged(source_pos: Vector3, dmg_amount: int, directional: bool)
 	})
 
 
+## CS2-style kill feed entry: dark rounded card [killer] [weapon icon] [HS icon] [victim].
+## Cards with the local player as killer get a white outline; as victim, a red outline.
 func _on_kill_logged(kname: String, kteam: String, vname: String, vteam: String, wid: String, hs: bool) -> void:
-	while _killfeed_vbox.get_child_count() >= 5:
+	while _killfeed_vbox.get_child_count() >= 6:
 		_killfeed_vbox.get_child(0).queue_free()
 
+	var card := PanelContainer.new()
+	card.size_flags_horizontal = Control.SIZE_SHRINK_END
+	card.mouse_filter = Control.MOUSE_FILTER_IGNORE
+
+	var is_my_kill := is_instance_valid(player) and kname == String(player.actor_name)
+	var is_my_death := is_instance_valid(player) and vname == String(player.actor_name)
+	var sb := StyleBoxFlat.new()
+	sb.bg_color = Color(0.075, 0.085, 0.105, 0.88) if not is_my_kill else Color(0.13, 0.145, 0.175, 0.92)
+	if is_my_kill:
+		sb.border_color = Color(0.95, 0.96, 0.98, 0.9)
+		sb.set_border_width_all(1)
+	elif is_my_death:
+		sb.border_color = Color(0.95, 0.32, 0.28, 0.9)
+		sb.set_border_width_all(1)
+	else:
+		sb.border_color = Color(1.0, 1.0, 1.0, 0.06)
+		sb.set_border_width_all(1)
+	sb.set_corner_radius_all(6)
+	sb.content_margin_left = 10.0
+	sb.content_margin_right = 10.0
+	sb.content_margin_top = 4.0
+	sb.content_margin_bottom = 4.0
+	card.add_theme_stylebox_override("panel", sb)
+
 	var row := HBoxContainer.new()
-	row.alignment = BoxContainer.ALIGNMENT_END
-	row.add_theme_constant_override("separation", 6)
+	row.add_theme_constant_override("separation", 7)
+	row.alignment = BoxContainer.ALIGNMENT_CENTER
+	row.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	card.add_child(row)
 
-	var kl := _make_label(kname, 14, CT_COLOR if kteam == "CT" else T_COLOR)
-	var wl := _make_label("[%s%s]" % [wid.to_upper(), " HS" if hs else ""], 13, AMBER)
-	var vl := _make_label(vname, 14, CT_COLOR if vteam == "CT" else T_COLOR)
+	var kcol := CT_COLOR if kteam == "CT" else T_COLOR
+	var kl := _make_label(kname, 15, kcol)
 	row.add_child(kl)
-	row.add_child(wl)
-	row.add_child(vl)
-	_killfeed_vbox.add_child(row)
 
-	var tw := row.create_tween()
-	tw.tween_interval(6.0)
-	tw.tween_property(row, "modulate:a", 0.0, 1.0)
-	tw.tween_callback(row.queue_free)
+	var w_icon := _killfeed_weapon_icon(wid)
+	if w_icon:
+		var wtr := TextureRect.new()
+		wtr.texture = w_icon
+		wtr.custom_minimum_size = Vector2(30, 15)
+		wtr.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
+		wtr.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
+		wtr.modulate = Color(0.93, 0.94, 0.96, 0.95)
+		wtr.mouse_filter = Control.MOUSE_FILTER_IGNORE
+		row.add_child(wtr)
+	else:
+		row.add_child(_make_label(wid.to_upper(), 12, HUD_DIM))
+
+	if hs:
+		var hs_tex := GameData.get_hud_atlas("d_headshot", 320)
+		if hs_tex:
+			var htr := TextureRect.new()
+			htr.texture = hs_tex
+			htr.custom_minimum_size = Vector2(16, 16)
+			htr.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
+			htr.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
+			htr.modulate = Color(0.95, 0.95, 0.97, 0.95)
+			htr.mouse_filter = Control.MOUSE_FILTER_IGNORE
+			row.add_child(htr)
+		else:
+			row.add_child(_make_label("HS", 12, HUD_DIM))
+
+	var vcol := CT_COLOR if vteam == "CT" else T_COLOR
+	var vl := _make_label(vname, 15, vcol)
+	row.add_child(vl)
+
+	_killfeed_vbox.add_child(card)
+
+	# Pop-in then linger & fade (CS2 card cadence)
+	card.modulate.a = 0.0
+	var tw := card.create_tween()
+	tw.tween_property(card, "modulate:a", 1.0, 0.14)
+	tw.tween_interval(5.6)
+	tw.tween_property(card, "modulate:a", 0.0, 0.9)
+	tw.tween_callback(card.queue_free)
+
+
+func _killfeed_weapon_icon(wid: String) -> Texture2D:
+	var entry := ""
+	match wid:
+		"hegrenade":
+			entry = "d_grenade"
+		"smokegrenade":
+			entry = "d_grenade"
+		"flashbang":
+			entry = "d_flashbang"
+		"c4":
+			entry = "smallc4"
+		"defuser":
+			entry = "defuser"
+		"m3super90":
+			entry = "d_m3"
+		_:
+			entry = "d_" + wid
+	var tex := GameData.get_hud_atlas(entry, 320) as Texture2D
+	if tex == null and wid == "smokegrenade":
+		tex = GameData.get_hud_atlas("d_grenade", 320)
+	return tex
 
 
 func _on_radio_chat(sname: String, steam: String, txt: String) -> void:
 	while _radio_vbox.get_child_count() >= 5:
 		_radio_vbox.get_child(0).queue_free()
 	var col := CT_COLOR if steam == "CT" else T_COLOR
-	var lbl := _make_label("%s %s" % [sname, txt], 14, col)
-	_radio_vbox.add_child(lbl)
-	var tw := lbl.create_tween()
+
+	var card := PanelContainer.new()
+	card.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	var sb := StyleBoxFlat.new()
+	sb.bg_color = Color(0.055, 0.06, 0.075, 0.62)
+	sb.set_corner_radius_all(5)
+	sb.content_margin_left = 8.0
+	sb.content_margin_right = 8.0
+	sb.content_margin_top = 2.0
+	sb.content_margin_bottom = 2.0
+	card.add_theme_stylebox_override("panel", sb)
+
+	var lbl := _make_label("%s  %s" % [sname, txt], 13, col)
+	card.add_child(lbl)
+	_radio_vbox.add_child(card)
+	var tw := card.create_tween()
 	tw.tween_interval(6.5)
-	tw.tween_property(lbl, "modulate:a", 0.0, 1.0)
-	tw.tween_callback(lbl.queue_free)
+	tw.tween_property(card, "modulate:a", 0.0, 1.0)
+	tw.tween_callback(card.queue_free)
