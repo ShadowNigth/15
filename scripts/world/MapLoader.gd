@@ -109,7 +109,8 @@ static func build_map(parent: Node3D, map_data: Dictionary) -> Dictionary:
 					has_ladder_tex = true
 				elif tlow.begins_with("mask_"):
 					has_grate_tex = true
-				if "crate" in tlow:
+				# Site crates: mltrycrtetp / mltrycrtesd2 / sandcrtsmtp / xcrate…
+				if "crate" in tlow or "crt" in tlow:
 					has_crate_tex = true
 				var tmeta: Dictionary = GameData.world_textures_meta.get(tex_safe, {})
 				var is_masked := bool(tmeta.get("masked", tex_safe.begins_with("mask_")))
