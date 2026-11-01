@@ -1,152 +1,53 @@
 class_name BuyMenu
 extends CanvasLayer
-## CS:GO-style buy menu: fullscreen dark overlay, a row of category tiles
-## (PISTOLS / HEAVY / SMGS / RIFLES / GEAR / GRENADES) and item cards with
-## weapon previews, price tags and positional hotkey badges. Works with the
-## mouse and with number keys (B-4-1 style navigation still resolves through
-## positional numbering).
+## CS:GO-style RADIAL buy menu: a wheel of category/item sectors around a
+## dark centre disc (weapon icons on the ring, name + price under each slot).
+## Mouse (hover by angle, click to buy) or number keys 1-9; 0/ESC goes back,
+## B exits. Same purchase backends, buy-zone/time and economy rules as before.
 
 signal menu_closed()
 
-const BG := Color(0.028, 0.038, 0.052, 0.90)
-const CARD_BG := Color(0.10, 0.13, 0.17, 0.97)
-const CARD_HOVER := Color(0.17, 0.22, 0.29, 0.98)
-const CARD_PRESSED := Color(0.22, 0.28, 0.36, 0.98)
-const CARD_BORDER := Color(0.45, 0.52, 0.60, 0.35)
+const RING_BG := Color(0.05, 0.065, 0.09, 0.82)
+const RING_HOVER := Color(0.14, 0.19, 0.26, 0.92)
+const RING_BORDER := Color(0.55, 0.60, 0.68, 0.30)
+const HOVER_BORDER := Color(0.93, 0.64, 0.18, 0.95)
+const CENTER_BG := Color(0.03, 0.04, 0.055, 0.94)
 const ACCENT := Color(0.93, 0.64, 0.18, 1.0)
 const GREEN_MONEY := Color(0.42, 0.85, 0.40, 1.0)
 const RED_PRICE := Color(0.93, 0.32, 0.28, 1.0)
-const TEXT_WHITE := Color(0.93, 0.94, 0.96, 1.0)
-const TEXT_DIM := Color(0.62, 0.66, 0.72, 1.0)
+const TEXT_WHITE := Color(0.94, 0.95, 0.97, 1.0)
+const TEXT_DIM := Color(0.68, 0.72, 0.78, 0.95)
 const CT_TINT := Color(0.36, 0.58, 0.90, 1.0)
 const T_TINT := Color(0.88, 0.64, 0.24, 1.0)
 
+const CATEGORIES: Array = [
+	[1, "PISTOLS"],
+	[2, "HEAVY"],
+	[3, "SMGS"],
+	[4, "RIFLES"],
+	[5, "GEAR"],
+	[6, "GRENADES"],
+]
+
 var player: PlayerController = null
 var is_open: bool = false
-var current_category: int = 0  # 0 = category tiles, 1..6 = category contents
+var current_category: int = 0  # 0 = section wheel, 1..6 = items of a section
 
-var _title_lbl: Label = null
-var _money_lbl: Label = null
-var _team_lbl: Label = null
-var _status_lbl: Label = null
-var _hint_lbl: Label = null
-var _cards_slot: CenterContainer = null
-var _entries: Array = []  # [{num: int, action: Callable}] positional hotkeys
+var _wheel: Control = null
+var _entries: Array = []  # wheel sectors: {num, name, price, vgui, desc, action}
+var _hover: int = -1
+var _last_status_sec: int = -1
+var _hover_sound_cache: int = -1
 
 
 func _ready() -> void:
 	layer = 12
 	visible = false
-	_build_ui()
-
-
-func _build_ui() -> void:
-	var overlay := Control.new()
-	overlay.set_anchors_preset(Control.PRESET_FULL_RECT)
-	add_child(overlay)
-
-	var bg := ColorRect.new()
-	bg.set_anchors_preset(Control.PRESET_FULL_RECT)
-	bg.color = BG
-	bg.mouse_filter = Control.MOUSE_FILTER_STOP
-	overlay.add_child(bg)
-
-	var margin := MarginContainer.new()
-	margin.set_anchors_preset(Control.PRESET_FULL_RECT)
-	margin.add_theme_constant_override("margin_left", 52)
-	margin.add_theme_constant_override("margin_right", 52)
-	margin.add_theme_constant_override("margin_top", 30)
-	margin.add_theme_constant_override("margin_bottom", 24)
-	overlay.add_child(margin)
-
-	var main := VBoxContainer.new()
-	main.size_flags_vertical = Control.SIZE_EXPAND_FILL
-	margin.add_child(main)
-
-	# --- Header: title left, money right ---
-	var header := HBoxContainer.new()
-	_title_lbl = Label.new()
-	_title_lbl.text = "BUY MENU"
-	_title_lbl.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-	_title_lbl.add_theme_font_size_override("font_size", 26)
-	_title_lbl.add_theme_color_override("font_color", TEXT_WHITE)
-	header.add_child(_title_lbl)
-	_team_lbl = Label.new()
-	_team_lbl.add_theme_font_size_override("font_size", 15)
-	_team_lbl.add_theme_color_override("font_color", CT_TINT)
-	header.add_child(_team_lbl)
-	var spacer1 := Control.new()
-	spacer1.custom_minimum_size = Vector2(18, 0)
-	header.add_child(spacer1)
-	_money_lbl = Label.new()
-	_money_lbl.text = "$ 0"
-	_money_lbl.add_theme_font_size_override("font_size", 30)
-	_money_lbl.add_theme_color_override("font_color", GREEN_MONEY)
-	header.add_child(_money_lbl)
-	main.add_child(header)
-
-	var sub := HBoxContainer.new()
-	_status_lbl = Label.new()
-	_status_lbl.add_theme_font_size_override("font_size", 14)
-	_status_lbl.add_theme_color_override("font_color", TEXT_DIM)
-	sub.add_child(_status_lbl)
-	main.add_child(sub)
-
-	# --- Center: category tiles / item cards ---
-	var gap_top := Control.new()
-	gap_top.size_flags_vertical = Control.SIZE_EXPAND_FILL
-	main.add_child(gap_top)
-	_cards_slot = CenterContainer.new()
-	_cards_slot.size_flags_vertical = Control.SIZE_EXPAND_FILL
-	_cards_slot.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-	main.add_child(_cards_slot)
-	var gap_bottom := Control.new()
-	gap_bottom.size_flags_vertical = Control.SIZE_EXPAND_FILL
-	main.add_child(gap_bottom)
-
-	# --- Footer: hints + exit ---
-	var footer := HBoxContainer.new()
-	_hint_lbl = Label.new()
-	_hint_lbl.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-	_hint_lbl.add_theme_font_size_override("font_size", 14)
-	_hint_lbl.add_theme_color_override("font_color", TEXT_DIM)
-	footer.add_child(_hint_lbl)
-	var exit_btn := Button.new()
-	exit_btn.text = "  EXIT  [B]  "
-	exit_btn.pressed.connect(close_menu)
-	exit_btn.mouse_entered.connect(func(): AudioManager.play_ui("launch_glow1.wav"))
-	_style_button(exit_btn, Vector2(130, 34))
-	footer.add_child(exit_btn)
-	main.add_child(footer)
-
-
-func _style_button(btn: Button, min_size: Vector2, font_size: int = 16) -> void:
-	btn.custom_minimum_size = min_size
-	btn.clip_text = true
-	btn.add_theme_font_size_override("font_size", font_size)
-	btn.add_theme_stylebox_override("normal", _card_style(CARD_BG, CARD_BORDER, 1))
-	btn.add_theme_stylebox_override("hover", _card_style(CARD_HOVER, ACCENT, 2))
-	btn.add_theme_stylebox_override("pressed", _card_style(CARD_PRESSED, ACCENT, 2))
-	btn.add_theme_stylebox_override("focus", _card_style(CARD_HOVER, Color(1, 1, 1, 0.55), 1))
-	btn.add_theme_stylebox_override("disabled", _card_style(Color(0.07, 0.08, 0.10, 0.9), Color(0.3, 0.33, 0.37, 0.3), 1))
-	btn.add_theme_color_override("font_color", TEXT_WHITE)
-	btn.add_theme_color_override("font_hover_color", Color.WHITE)
-	btn.add_theme_color_override("font_pressed_color", Color.WHITE)
-	btn.add_theme_color_override("font_focus_color", Color.WHITE)
-	btn.add_theme_color_override("font_disabled_color", Color(0.5, 0.53, 0.57, 0.7))
-
-
-func _card_style(bg: Color, border: Color, bw: int) -> StyleBoxFlat:
-	var sb := StyleBoxFlat.new()
-	sb.bg_color = bg
-	sb.border_color = border
-	sb.set_border_width_all(bw)
-	sb.set_corner_radius_all(4)
-	sb.content_margin_left = 10.0
-	sb.content_margin_right = 10.0
-	sb.content_margin_top = 8.0
-	sb.content_margin_bottom = 8.0
-	return sb
+	_wheel = Control.new()
+	_wheel.set_anchors_preset(Control.PRESET_FULL_RECT)
+	_wheel.mouse_filter = Control.MOUSE_FILTER_STOP
+	_wheel.draw.connect(_draw_wheel)
+	add_child(_wheel)
 
 
 func open_menu(p: PlayerController) -> void:
@@ -174,8 +75,30 @@ func close_menu() -> void:
 	menu_closed.emit()
 
 
+func _process(_delta: float) -> void:
+	if not is_open:
+		return
+	var sec := int(ceilf(float(RoundManager.buy_time_left)))
+	if sec != _last_status_sec:
+		_last_status_sec = sec
+		_wheel.queue_redraw()
+
+
+func open_category(cat: int) -> void:
+	AudioManager.play_ui("launch_select1.wav")
+	_show_category(cat)
+
+
 func _unhandled_input(event: InputEvent) -> void:
 	if not is_open:
+		return
+	if event is InputEventMouseMotion:
+		_update_hover((event as InputEventMouseMotion).position)
+	elif event is InputEventMouseButton and event.pressed:
+		var mb := event as InputEventMouseButton
+		if mb.button_index == MOUSE_BUTTON_LEFT and _hover >= 0:
+			get_viewport().set_input_as_handled()
+			_activate(_hover)
 		return
 	if event is InputEventKey and event.pressed and not event.echo:
 		var kc: int = (event as InputEventKey).physical_keycode
@@ -188,105 +111,201 @@ func _unhandled_input(event: InputEvent) -> void:
 			return
 		if kc >= KEY_1 and kc <= KEY_9:
 			var num := kc - KEY_0
-			for entry in _entries:
-				if int(entry["num"]) == num:
-					get_viewport().set_input_as_handled()
-					(entry["action"] as Callable).call()
-					return
+			if num >= 1 and num <= _entries.size():
+				get_viewport().set_input_as_handled()
+				_activate(num - 1)
 
 
-func open_category(cat: int) -> void:
-	AudioManager.play_ui("launch_select1.wav")
-	_show_category(cat)
-
-
-# --- Menu contents ------------------------------------------------------------
-
-const CATEGORIES: Array = [
-	[1, "PISTOLS"],
-	[2, "HEAVY"],
-	[3, "SMGS"],
-	[4, "RIFLES"],
-	[5, "GEAR"],
-	[6, "GRENADES"],
-]
-
+# --- Wheel state --------------------------------------------------------------
 
 func _show_category(cat: int) -> void:
 	current_category = cat
 	_entries.clear()
-	for c in _cards_slot.get_children():
-		c.queue_free()
-
-	var money := int(player.money) if is_instance_valid(player) else 0
-	_money_lbl.text = "$ %d" % money
-	_title_lbl.text = "BUY MENU" if cat == 0 else String(_cat_title(cat))
-	if is_instance_valid(player):
-		_team_lbl.text = "COUNTER-TERRORISTS" if player.team == "CT" else "TERRORISTS"
-		_team_lbl.add_theme_color_override("font_color", CT_TINT if player.team == "CT" else T_TINT)
-	var bt: float = RoundManager.buy_time_left
-	if bt > 0.0:
-		_status_lbl.text = "BUY TIME REMAINING   %d:%02d" % [int(bt / 60.0), int(bt) % 60]
-		_status_lbl.add_theme_color_override("font_color", TEXT_DIM)
-	else:
-		_status_lbl.text = "BUY TIME EXPIRED"
-		_status_lbl.add_theme_color_override("font_color", RED_PRICE)
-	_hint_lbl.text = "1-9  Buy    ·    0 / ESC  Back    ·    Mouse to navigate" if cat > 0 \
-		else "1-6  Select category    ·    Mouse to navigate    ·    B / ESC  Exit"
-
+	_hover = -1
+	_hover_sound_cache = -1
 	if cat == 0:
-		var box := HBoxContainer.new()
-		box.add_theme_constant_override("separation", 14)
 		for rc in CATEGORIES:
 			var cid := int(rc[0])
-			var count := _category_count(cid)
-			box.add_child(_tile_button(cid, String(rc[1]), "%d ITEMS" % count))
-			_entries.append({"num": cid, "action": func(): open_category(cid)})
-		_cards_slot.add_child(box)
-		return
-
-	var specs := _category_specs(cat)
-	var n := specs.size()
-	if n == 0:
-		_hint_lbl.text = "Nothing to buy here.   ·   0 / ESC  Back"
-		return
-	if n <= 6:
-		var hbox := HBoxContainer.new()
-		hbox.add_theme_constant_override("separation", 12)
-		for i in range(n):
-			hbox.add_child(_card_from_spec(cat, specs[i], i + 1, money))
-			_entries.append({"num": i + 1, "action": (specs[i]["action"] as Callable)})
-		_cards_slot.add_child(hbox)
+			_entries.append({
+				"num": cid,
+				"name": String(rc[1]),
+				"price": -2,  # section marker
+				"vgui": "",
+				"desc": "%d ITEMS" % _category_count(cid),
+				"action": func(): open_category(cid),
+			})
 	else:
-		var grid := GridContainer.new()
-		grid.columns = 4
-		grid.add_theme_constant_override("h_separation", 12)
-		grid.add_theme_constant_override("v_separation", 12)
-		for i in range(n):
-			grid.add_child(_card_from_spec(cat, specs[i], i + 1, money))
-			_entries.append({"num": i + 1, "action": (specs[i]["action"] as Callable)})
-		_cards_slot.add_child(grid)
+		var specs := _category_specs(cat)
+		for i in range(specs.size()):
+			var e: Dictionary = specs[i]
+			_entries.append({
+				"num": i + 1,
+				"name": String(e["name"]),
+				"price": int(e["price"]),
+				"vgui": String(e["vgui"]),
+				"desc": String(e["desc"]),
+				"action": (e["action"] as Callable),
+			})
+	_wheel.queue_redraw()
 
 
-func _cat_title(cat: int) -> String:
-	for rc in CATEGORIES:
-		if int(rc[0]) == cat:
-			return String(rc[1])
-	return "BUY"
+func _update_hover(mouse_pos: Vector2) -> void:
+	var new_hover := -1
+	var n := _entries.size()
+	if n > 0 and _wheel != null:
+		var c := _wheel.size * 0.5
+		var r_out := minf(_wheel.size.x, _wheel.size.y) * 0.36
+		var r_in := r_out * 0.40
+		var rel := mouse_pos - c
+		var r := rel.length()
+		if r >= r_in and r <= r_out + 18.0:
+			var ang := atan2(rel.y, rel.x) + PI * 0.5
+			if ang < 0.0:
+				ang += TAU
+			new_hover = int(floor(ang / (TAU / float(n)))) % n
+	if new_hover != _hover:
+		_hover = new_hover
+		if _hover >= 0 and _hover_sound_cache != _hover:
+			_hover_sound_cache = _hover
+			AudioManager.play_ui("launch_glow1.wav")
+		_wheel.queue_redraw()
 
 
-## Turns the classic CS 1.5 info block ("Price\t: $650\nDescription\t: ...")
-## into a one-line card caption.
-func _short_desc(raw: String) -> String:
-	var flat := raw.replace("\t", " ").replace("\n", " ")
-	var di := flat.find("Description")
-	if di >= 0:
-		flat = flat.substr(di + 11).lstrip(": ").strip_edges()
-	flat = " ".join(flat.split(" ", false))
-	if flat.length() > 62:
-		flat = flat.substr(0, 62) + "…"
-	return flat
+func _activate(idx: int) -> void:
+	if idx < 0 or idx >= _entries.size():
+		return
+	(_entries[idx]["action"] as Callable).call()
 
+
+# --- Drawing ------------------------------------------------------------------
+
+func _draw_wheel() -> void:
+	var sz := _wheel.size
+	var c := sz * 0.5
+	var font := _wheel.get_theme_default_font()
+	# Dim the scene behind (gameplay stays faintly visible like CS:GO's wheel)
+	_wheel.draw_rect(Rect2(Vector2.ZERO, sz), Color(0.015, 0.02, 0.03, 0.55))
+
+	var money := int(player.money) if is_instance_valid(player) else 0
+	var team_col := CT_TINT
+	var team_txt := "COUNTER-TERRORISTS"
+	if is_instance_valid(player) and player.team != "CT":
+		team_col = T_TINT
+		team_txt = "TERRORISTS"
+	_wheel.draw_string(font, Vector2(sz.x - 250.0, 46.0), "$ %d" % money,
+		HORIZONTAL_ALIGNMENT_RIGHT, 230.0, 30, GREEN_MONEY)
+	_wheel.draw_string(font, Vector2(sz.x - 250.0, 70.0), team_txt,
+		HORIZONTAL_ALIGNMENT_RIGHT, 230.0, 14, team_col)
+	var bt := float(RoundManager.buy_time_left)
+	var status := "BUY TIME %d:%02d" % [int(bt / 60.0), int(bt) % 60]
+	var status_col := TEXT_DIM
+	if bt <= 0.0:
+		status = "BUY TIME EXPIRED"
+		status_col = RED_PRICE
+	_wheel.draw_string(font, Vector2(28.0, 46.0), status, HORIZONTAL_ALIGNMENT_LEFT, 260.0, 16, status_col)
+
+	var n := _entries.size()
+	var r_out := minf(sz.x, sz.y) * 0.36
+	var r_in := r_out * 0.40
+	if n == 0:
+		_wheel.draw_circle(c, r_in - 6.0, CENTER_BG)
+		_wheel.draw_arc(c, r_in - 6.0, 0.0, TAU, 96, RING_BORDER, 1.5)
+		_wheel.draw_string(font, c + Vector2(-90.0, 6.0), "Nothing to buy here",
+			HORIZONTAL_ALIGNMENT_CENTER, 180.0, 16, TEXT_DIM)
+		return
+
+	var step := TAU / float(n)
+	for i in range(n):
+		var e: Dictionary = _entries[i]
+		var a0 := -PI * 0.5 + float(i) * step
+		var a1 := a0 + step
+		var a_mid := (a0 + a1) * 0.5
+		# Ring sector
+		var poly := PackedVector2Array()
+		var segs := 14
+		for s2 in range(segs + 1):
+			var ang := lerpf(a0, a1, float(s2) / float(segs))
+			poly.append(c + Vector2(cos(ang), sin(ang)) * r_out)
+		for s2 in range(segs, -1, -1):
+			var ang := lerpf(a0, a1, float(s2) / float(segs))
+			poly.append(c + Vector2(cos(ang), sin(ang)) * r_in)
+		var hovered := i == _hover
+		_wheel.draw_colored_polygon(poly, RING_HOVER if hovered else RING_BG)
+		_wheel.draw_arc(c, r_out, a0, a1, 8, HOVER_BORDER if hovered else RING_BORDER, 2.0 if hovered else 1.0)
+		_wheel.draw_arc(c, r_in, a0, a1, 8, HOVER_BORDER if hovered else RING_BORDER, 2.0 if hovered else 1.0)
+		var radial := Vector2(cos(a0), sin(a0))
+		_wheel.draw_line(c + radial * r_in, c + radial * r_out, HOVER_BORDER if hovered else RING_BORDER, 2.0 if hovered else 1.0)
+
+		# Sector content
+		var dir := Vector2(cos(a_mid), sin(a_mid))
+		var mid := c + dir * ((r_in + r_out) * 0.5)
+		var price := int(e["price"])
+		var price_txt := ""
+		var price_col := GREEN_MONEY
+		if price >= 0:
+			price_txt = "$%d" % price
+			price_col = GREEN_MONEY if (is_instance_valid(player) and player.money >= price) else RED_PRICE
+		if price == -2:
+			# Root section tile: big name + item count
+			_wheel.draw_string(font, mid + Vector2(-70.0, -6.0), String(e["name"]),
+				HORIZONTAL_ALIGNMENT_CENTER, 140.0, 17, TEXT_WHITE)
+			_wheel.draw_string(font, mid + Vector2(-70.0, 16.0), String(e["desc"]),
+				HORIZONTAL_ALIGNMENT_CENTER, 140.0, 12, TEXT_DIM)
+		else:
+			# Item slot: weapon icon (or name for gear) + price
+			var img_path := String(e["vgui"])
+			var icon_rect := Rect2(mid + Vector2(-62.0, -34.0), Vector2(124.0, 46.0))
+			if not img_path.is_empty():
+				var tex := GameData.get_texture("res://assets/ui/vgui/%s.png" % img_path.to_lower())
+				if tex != null:
+					_wheel.draw_texture_rect(tex, icon_rect, false)
+				else:
+					_wheel.draw_string(font, mid + Vector2(-70.0, -8.0), String(e["name"]),
+						HORIZONTAL_ALIGNMENT_CENTER, 140.0, 13, TEXT_WHITE)
+			else:
+				_wheel.draw_string(font, mid + Vector2(-72.0, -6.0), String(e["name"]),
+					HORIZONTAL_ALIGNMENT_CENTER, 144.0, 13, TEXT_WHITE)
+			_wheel.draw_string(font, mid + Vector2(-70.0, 26.0), price_txt,
+				HORIZONTAL_ALIGNMENT_CENTER, 140.0, 14, price_col)
+		# Hotkey badge near the inner rim
+		var badge_pos := c + dir * (r_in + 22.0)
+		_wheel.draw_string(font, badge_pos + Vector2(-12.0, 5.0), str(int(e["num"])),
+			HORIZONTAL_ALIGNMENT_CENTER, 24.0, 14, ACCENT)
+
+	# Centre disc
+	_wheel.draw_circle(c, r_in - 8.0, CENTER_BG)
+	_wheel.draw_arc(c, r_in - 8.0, 0.0, TAU, 96, RING_BORDER, 1.5)
+	var title := "BUY MENU" if current_category == 0 else ""
+	if current_category > 0:
+		for rc in CATEGORIES:
+			if int(rc[0]) == current_category:
+				title = String(rc[1])
+	_wheel.draw_string(font, c + Vector2(-110.0, -14.0), title,
+		HORIZONTAL_ALIGNMENT_CENTER, 220.0, 20, ACCENT)
+	if _hover >= 0 and _hover < _entries.size():
+		var he: Dictionary = _entries[_hover]
+		_wheel.draw_string(font, c + Vector2(-110.0, 12.0), String(he["name"]),
+			HORIZONTAL_ALIGNMENT_CENTER, 220.0, 15, TEXT_WHITE)
+		var hprice := int(he["price"])
+		if hprice >= 0:
+			var ok := is_instance_valid(player) and player.money >= hprice
+			_wheel.draw_string(font, c + Vector2(-110.0, 34.0), ("$%d" % hprice) + ("" if ok else "  (NO FUNDS)"),
+				HORIZONTAL_ALIGNMENT_CENTER, 220.0, 13, GREEN_MONEY if ok else RED_PRICE)
+		elif String(he["desc"]) != "":
+			_wheel.draw_string(font, c + Vector2(-110.0, 34.0), String(he["desc"]),
+				HORIZONTAL_ALIGNMENT_CENTER, 220.0, 12, TEXT_DIM)
+	else:
+		_wheel.draw_string(font, c + Vector2(-110.0, 14.0), "Select an item",
+			HORIZONTAL_ALIGNMENT_CENTER, 220.0, 13, TEXT_DIM)
+
+	# Hints
+	var hints := "1-9  Select    ·    0 / ESC  Back    ·    B  Exit" if current_category > 0 \
+		else "1-6  Select section    ·    B / ESC  Exit"
+	_wheel.draw_string(font, Vector2(c.x - 260.0, sz.y - 22.0), hints,
+		HORIZONTAL_ALIGNMENT_CENTER, 520.0, 14, TEXT_DIM)
+
+
+# --- Catalogue ----------------------------------------------------------------
 
 func _category_count(cat: int) -> int:
 	return _category_specs(cat).size()
@@ -351,7 +370,7 @@ func _category_specs(cat: int) -> Array:
 				})
 			out.append({
 				"id": "ammo1",
-				"name": "Primary Ammo (Full)",
+				"name": "Primary Ammo",
 				"price": -1,
 				"vgui": "",
 				"desc": "Refills your primary weapon reserve.",
@@ -359,7 +378,7 @@ func _category_specs(cat: int) -> Array:
 			})
 			out.append({
 				"id": "ammo2",
-				"name": "Secondary Ammo (Full)",
+				"name": "Secondary Ammo",
 				"price": -1,
 				"vgui": "",
 				"desc": "Refills your secondary weapon reserve.",
@@ -368,123 +387,17 @@ func _category_specs(cat: int) -> Array:
 	return out
 
 
-func _tile_button(cid: int, title: String, sub: String) -> Button:
-	var btn := Button.new()
-	_style_button(btn, Vector2(178, 190), 16)
-	btn.mouse_entered.connect(func(): AudioManager.play_ui("launch_glow1.wav"))
-	btn.pressed.connect(func(): open_category(cid))
-	var vbox := VBoxContainer.new()
-	vbox.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
-	vbox.offset_left = 12.0
-	vbox.offset_right = -12.0
-	vbox.offset_top = 8.0
-	vbox.offset_bottom = -8.0
-	vbox.alignment = BoxContainer.ALIGNMENT_CENTER
-	vbox.mouse_filter = Control.MOUSE_FILTER_IGNORE
-	vbox.add_theme_constant_override("separation", 8)
-	var badge := Label.new()
-	badge.text = str(cid)
-	badge.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
-	badge.add_theme_font_size_override("font_size", 15)
-	badge.add_theme_color_override("font_color", ACCENT)
-	vbox.add_child(badge)
-	var tl := Label.new()
-	tl.text = title
-	tl.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
-	tl.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
-	tl.size_flags_vertical = Control.SIZE_EXPAND_FILL
-	tl.add_theme_font_size_override("font_size", 18)
-	tl.add_theme_color_override("font_color", TEXT_WHITE)
-	vbox.add_child(tl)
-	var sl := Label.new()
-	sl.text = sub
-	sl.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
-	sl.add_theme_font_size_override("font_size", 12)
-	sl.add_theme_color_override("font_color", TEXT_DIM)
-	vbox.add_child(sl)
-	btn.add_child(vbox)
-	return btn
-
-
-func _card_from_spec(_cat: int, e: Dictionary, num: int, money: int) -> Button:
-	var price := int(e["price"])
-	var affordable: bool = price < 0 or money >= price
-	var btn := Button.new()
-	_style_button(btn, Vector2(176, 216), 13)
-	btn.disabled = not affordable
-	btn.mouse_entered.connect(func():
-		AudioManager.play_ui("launch_glow1.wav")
-	)
-	btn.pressed.connect((e["action"] as Callable))
-
-	var badge := Label.new()
-	badge.text = str(num)
-	badge.offset_left = 9.0
-	badge.offset_top = 5.0
-	badge.offset_right = 60.0
-	badge.offset_bottom = 30.0
-	badge.add_theme_font_size_override("font_size", 15)
-	badge.add_theme_color_override("font_color", ACCENT if affordable else Color(0.55, 0.57, 0.6, 0.7))
-	badge.mouse_filter = Control.MOUSE_FILTER_IGNORE
-	btn.add_child(badge)
-
-	var vbox := VBoxContainer.new()
-	vbox.anchor_right = 1.0
-	vbox.anchor_bottom = 1.0
-	vbox.offset_left = 12.0
-	vbox.offset_right = -12.0
-	vbox.offset_top = 28.0
-	vbox.offset_bottom = -8.0
-	vbox.mouse_filter = Control.MOUSE_FILTER_IGNORE
-	vbox.add_theme_constant_override("separation", 6)
-	btn.add_child(vbox)
-
-	var img_path := String(e["vgui"])
-	if not img_path.is_empty():
-		var tex := GameData.get_texture("res://assets/ui/vgui/%s.png" % img_path.to_lower())
-		if tex != null:
-			var img := TextureRect.new()
-			img.texture = tex
-			img.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
-			img.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
-			img.size_flags_vertical = Control.SIZE_EXPAND_FILL
-			img.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-			img.mouse_filter = Control.MOUSE_FILTER_IGNORE
-			vbox.add_child(img)
-
-	var name_lbl := Label.new()
-	name_lbl.text = String(e["name"])
-	name_lbl.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
-	name_lbl.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
-	name_lbl.size_flags_vertical = Control.SIZE_EXPAND_FILL
-	name_lbl.add_theme_font_size_override("font_size", 13)
-	name_lbl.add_theme_color_override("font_color", TEXT_WHITE if affordable else Color(0.6, 0.62, 0.66, 0.8))
-	name_lbl.mouse_filter = Control.MOUSE_FILTER_IGNORE
-	vbox.add_child(name_lbl)
-
-	var desc := String(e["desc"])
-	if not desc.is_empty() and img_path.is_empty():
-		var desc_lbl := Label.new()
-		desc_lbl.text = desc
-		desc_lbl.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
-		desc_lbl.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
-		desc_lbl.add_theme_font_size_override("font_size", 11)
-		desc_lbl.add_theme_color_override("font_color", TEXT_DIM)
-		desc_lbl.mouse_filter = Control.MOUSE_FILTER_IGNORE
-		vbox.add_child(desc_lbl)
-
-	var price_lbl := Label.new()
-	if price >= 0:
-		price_lbl.text = "$%d" % price
-		price_lbl.add_theme_color_override("font_color", GREEN_MONEY if affordable else RED_PRICE)
-	else:
-		price_lbl.text = "REFILL"
-		price_lbl.add_theme_color_override("font_color", GREEN_MONEY)
-	price_lbl.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
-	price_lbl.add_theme_font_size_override("font_size", 17)
-	price_lbl.mouse_filter = Control.MOUSE_FILTER_IGNORE
-	vbox.add_child(price_lbl)
-	return btn
+## Turns the classic CS 1.5 info block ("Price\t: $650\nDescription\t: ...")
+## into a one-line caption.
+func _short_desc(raw: String) -> String:
+	var flat := raw.replace("\t", " ").replace("\n", " ")
+	var di := flat.find("Description")
+	if di >= 0:
+		flat = flat.substr(di + 11).lstrip(": ").strip_edges()
+	flat = " ".join(flat.split(" ", false))
+	if flat.length() > 62:
+		flat = flat.substr(0, 62) + "…"
+	return flat
 
 
 # --- Purchases -----------------------------------------------------------------
