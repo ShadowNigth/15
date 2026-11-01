@@ -28,6 +28,8 @@ var player: PlayerController = null
 
 var _nvg_rect: ColorRect = null
 var _scope_root: Control = null
+var _scope_blur_rect: ColorRect = null
+var _scope_blur_cur: float = 0.0
 var _smoke_rect: ColorRect = null
 var _flash_rect: ColorRect = null
 var _crosshair_ctrl: Control = null
@@ -348,6 +350,20 @@ func _build_hud_tree() -> void:
 		_nvg_rect.visible = false
 	root.add_child(_nvg_rect)
 
+	# 1b. Scope movement blur (CS:GO style: view turns slightly difuse when
+	# you move while scoped). Sits below the scope overlay so the reticle and
+	# tube stay sharp while the world behind them blurs.
+	_scope_blur_rect = ColorRect.new()
+	_scope_blur_rect.set_anchors_preset(Control.PRESET_FULL_RECT)
+	_scope_blur_rect.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	var scope_blur_sh := load("res://assets/shaders/scope_blur.gdshader") as Shader
+	if scope_blur_sh:
+		var scope_blur_mat := ShaderMaterial.new()
+		scope_blur_mat.shader = scope_blur_sh
+		_scope_blur_rect.material = scope_blur_mat
+	_scope_blur_rect.visible = false
+	root.add_child(_scope_blur_rect)
+
 	# 2. Sniper Scope Overlay
 	_scope_root = Control.new()
 	_scope_root.set_anchors_preset(Control.PRESET_FULL_RECT)
@@ -647,6 +663,7 @@ func _build_hud_tree() -> void:
 
 func _process(delta: float) -> void:
 	_c4_blink_phase += delta * 6.0
+	_update_scope_blur(delta)
 
 	if _killcards != null:
 		var pteam := String(player.team) if is_instance_valid(player) else ""
@@ -827,8 +844,8 @@ func _draw_crosshair() -> void:
 
 
 func _draw_sniper_scope() -> void:
-	# CS2-style sniper scope: pure-black surround, circle ~75% of screen height,
-	# thin white cross lines with a small centre gap, no red dot.
+	# CS:GO-style sniper scope: pure-black surround, circle ~75% of screen
+	# height, thin white cross with a small centre gap, tube vignette + ring.
 	var sz := _scope_root.size
 	var c := sz * 0.5
 	var r := sz.y * 0.375
@@ -853,7 +870,16 @@ func _draw_sniper_scope() -> void:
 			var ang: float = lerpf(a0, a1, float(seg) / 12.0)
 			poly.append(c + Vector2(cos(ang), sin(ang)) * r)
 		_scope_root.draw_colored_polygon(poly, blk)
-	_scope_root.draw_arc(c, r, 0.0, TAU, 96, Color(0, 0, 0, 1.0), 5.0)
+	# CS:GO tube: soft inner vignette fading into the view, dark scope wall
+	# around the circle and a thin outer edge highlight.
+	var vig_w := maxf(7.0, r * 0.05)
+	_scope_root.draw_arc(c, r - 1.5, 0.0, TAU, 128, Color(0, 0, 0, 0.17), vig_w)
+	_scope_root.draw_arc(c, r - vig_w, 0.0, TAU, 128, Color(0, 0, 0, 0.10), vig_w)
+	_scope_root.draw_arc(c, r - vig_w * 2.0, 0.0, TAU, 128, Color(0, 0, 0, 0.05), vig_w)
+	var ring_w := maxf(4.0, r * 0.042)
+	_scope_root.draw_arc(c, r + ring_w * 0.5 - 1.0, 0.0, TAU, 128, Color(0.07, 0.075, 0.09, 0.98), ring_w)
+	_scope_root.draw_arc(c, r + ring_w + 1.5, 0.0, TAU, 128, Color(0.60, 0.63, 0.68, 0.30), 1.6)
+	_scope_root.draw_arc(c, r - 0.5, 0.0, TAU, 128, Color(0, 0, 0, 0.9), 2.2)
 	# Thin white cross with centre gap (CS2 reticle)
 	var line_col := Color(1.0, 1.0, 1.0, 0.92)
 	var lw: float = maxf(1.6, sz.y * 0.0021)
@@ -1019,6 +1045,26 @@ func _on_defuse_progress(ratio: float) -> void:
 func _on_scope_changed(active: bool) -> void:
 	_scope_root.visible = active
 	_scope_root.queue_redraw()
+	if not active:
+		_scope_blur_cur = 0.0
+		if _scope_blur_rect != null:
+			_scope_blur_rect.visible = false
+
+
+## CS:GO movement blur: while the scope is up and the player moves, the world
+## behind the reticle gets slightly difuse (radius grows with speed, decays
+## back to zero when standing still or unscoping).
+func _update_scope_blur(delta: float) -> void:
+	if _scope_blur_rect == null or not (_scope_blur_rect.material is ShaderMaterial):
+		return
+	var target := 0.0
+	if _scope_root.visible and is_instance_valid(player) and player.is_alive:
+		var spd := Vector2(player.velocity.x, player.velocity.z).length()
+		target = clampf((spd - 0.4) / 5.6, 0.0, 1.0)
+	_scope_blur_cur = lerpf(_scope_blur_cur, target, clampf(9.0 * delta, 0.0, 1.0))
+	var mat := _scope_blur_rect.material as ShaderMaterial
+	mat.set_shader_parameter("u_strength", _scope_blur_cur * 3.4)
+	_scope_blur_rect.visible = _scope_blur_cur > 0.04
 
 
 func _on_nvg_toggled(active: bool) -> void:
