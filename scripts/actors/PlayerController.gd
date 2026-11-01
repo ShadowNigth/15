@@ -39,6 +39,9 @@ var _jump_buffer_timer: float = 0.0
 var _coyote_timer: float = 0.0
 var _was_on_floor: bool = true
 var _cur_vm_model_name: String = ""
+## wid the current viewmodel instance was built for (lets same-weapon refresh
+## events, like silencer toggle completion, skip the rebuild + draw replay)
+var _vm_built_for: String = ""
 var _pending_vm_events: Array = []
 var _vm_anim_elapsed: float = 0.0
 var _shake_trauma: float = 0.0
@@ -451,6 +454,11 @@ func _handle_use_interaction(delta: float) -> void:
 func _on_weapon_switched(wid: String, _spec: Dictionary) -> void:
 	scoped_overlay_changed.emit(false)
 	camera.fov = GameData.fov
+	# The silencer toggle completion also emits weapon_switched (HUD refresh).
+	# Same weapon, same viewmodel model: keep the add/detach silencer clip that
+	# just played instead of rebuilding the viewmodel and restarting with DRAW.
+	if wid == _vm_built_for and viewmodel_holder != null and viewmodel_holder.get_child_count() > 0:
+		return
 	_vm_draw_offset = 1.0
 	_rebuild_viewmodel(wid)
 
@@ -487,6 +495,7 @@ func _rebuild_viewmodel(wid: String) -> void:
 	var spec: Dictionary = GameData.weapons.get(wid, {})
 	var v_name := String(spec.get("v_model", "v_knife"))
 	_cur_vm_model_name = v_name
+	_vm_built_for = wid
 	var sc := GameData.get_model_scene("weapons/" + v_name)
 	if not sc:
 		return

@@ -345,18 +345,23 @@ func _physics_process(delta: float) -> void:
 	_last_enemy_seen_age += delta
 
 	# Priority 0.5: FLEE the C4 blast zone with the knife out — equipment preservation!
+	# Exception: an enemy that cuts across the escape path must be fought instead
+	# of ignored (both teams meet while running away from the blast).
 	if _bomb_escape_active:
-		if _defusing_ref != null:
-			if is_instance_valid(_defusing_ref):
-				_defusing_ref.cancel_defuse(self)
-			_defusing_ref = null
-		target_enemy = null
-		_knife_rush_timer = 0.0
-		_stealth_walk_timer = 0.0
-		if not weapon_ctrl.is_reloading and weapon_ctrl.current_weapon_id != "knife":
-			weapon_ctrl.equip_slot(3)
-		_follow_navigation_path(delta)
-		return
+		var path_blocker: bool = is_instance_valid(target_enemy) and target_enemy.is_alive
+		if not path_blocker:
+			target_enemy = null
+			if _defusing_ref != null:
+				if is_instance_valid(_defusing_ref):
+					_defusing_ref.cancel_defuse(self)
+				_defusing_ref = null
+			_knife_rush_timer = 0.0
+			_stealth_walk_timer = 0.0
+			if not weapon_ctrl.is_reloading and weapon_ctrl.current_weapon_id != "knife":
+				weapon_ctrl.equip_slot(3)
+			_follow_navigation_path(delta)
+			return
+		# Otherwise fall through: engage the blocker below (gun auto-equips there)
 
 	# Reload safely when out of combat
 	var cr := weapon_ctrl.get_clip_and_reserve()
@@ -491,14 +496,18 @@ func _execute_camp_behavior(delta: float) -> void:
 
 
 func _scan_for_enemies() -> void:
-	# While fleeing the blast or disengaging at critical HP, no new duel commitments!
-	if _bomb_escape_active or _disengage_timer > 0.0:
+	# While disengaging at critical HP, no new duel commitments!
+	if _disengage_timer > 0.0:
 		target_enemy = null
 		return
 	if is_instance_valid(target_enemy) and target_enemy.is_alive and _can_see_actor(target_enemy):
 		return
 	target_enemy = null
 
+	# Fleeing the blast: only enemies that cut across the escape path at close
+	# range get committed to — but they DO get committed (both teams must fight
+	# when they run into each other), instead of being ignored entirely.
+	var max_d: float = 24.0 if _bomb_escape_active else 105.0
 	var best_score := 1e9
 	var my_eye := get_eye_position()
 	var my_fwd := get_look_forward()
@@ -512,7 +521,7 @@ func _scan_for_enemies() -> void:
 		if a_actor == null:
 			continue
 		var d: float = my_eye.distance_to(a_actor.global_position)
-		if d > 105.0:
+		if d > max_d:
 			continue
 		var dir_to: Vector3 = (a_actor.global_position + Vector3(0.0, 1.2, 0.0) - my_eye).normalized()
 		var cos_ang: float = my_fwd.dot(dir_to)
@@ -698,6 +707,17 @@ func _pick_path_mode() -> int:
 	return BotNavigator.PATH_DIVERSITY if randf() < 0.65 else BotNavigator.PATH_OPTIMAL
 
 
+func _find_dropped_c4() -> DroppedWeapon:
+	for it in RoundManager.dropped_items:
+		var dw_v: Variant = it
+		if not is_instance_valid(dw_v):
+			continue
+		var dw := dw_v as DroppedWeapon
+		if dw != null and dw.item_id == "c4":
+			return dw
+	return null
+
+
 func _update_tactical_objective() -> void:
 	_update_bomb_escape_state()
 
@@ -745,6 +765,31 @@ func _update_tactical_objective() -> void:
 			return
 	elif _pending_share_drop != null:
 		_pending_share_drop = null
+
+	# Recover the dropped bomb (Terrorists): the round is lost unless someone
+	# fetches the C4 backpack — the closest free T commits to the pickup.
+	if team == "T" and String(weapon_ctrl.slots.get(5, "")).is_empty():
+		if not is_instance_valid(RoundManager.planted_c4):
+			var drop_c4 := _find_dropped_c4()
+			if drop_c4 != null:
+				var dc4_pos := drop_c4.global_position
+				var my_d := global_position.distance_to(dc4_pos)
+				var nearest := true
+				for m in RoundManager.actors:
+					var mate := m as CSActor
+					if mate == null or mate == self or not mate.is_alive:
+						continue
+					if mate.team != "T":
+						continue
+					if mate.global_position.distance_to(dc4_pos) < my_d - 0.35:
+						nearest = false
+						break
+				if nearest:
+					if my_d <= 1.6:
+						try_pickup_dropped(drop_c4)
+					elif _node_path.is_empty() or not _has_goal or _goal_pos.distance_to(dc4_pos) > 1.5:
+						_plan_to_world_pos(nav, dc4_pos, false, BotNavigator.PATH_FAST)
+					return
 
 	if _hold_pos_timer > 0.0 or _camp_timer > 0.0:
 		return

@@ -505,9 +505,14 @@ func _step_swept_physics(space: PhysicsDirectSpaceState3D, delta: float) -> void
 			shadow_y = yb
 			has_floor = true
 
-	if has_floor and cur_pos.y <= req_y + 0.035 and _vel.y <= 0.45:
-		if cur_pos.y < req_y:
-			cur_pos.y = req_y
+	# The swept sphere rests slightly ABOVE the mesh rest height (core radius >
+	# rest half-height), so a fixed 3.5cm window missed thin weapons and
+	# grenades: they hovered visibly and never received floor friction, which
+	# let them glide on their own forever. Size the window to the sphere gap
+	# and snap flush to the mesh rest height whenever grounded.
+	var y_tol: float = maxf(0.035, _core_radius - _rest_half_h + 0.030)
+	if has_floor and cur_pos.y <= req_y + y_tol and _vel.y <= 0.45:
+		cur_pos.y = req_y
 		if _vel.y < 0.0:
 			_vel.y = 0.0
 
