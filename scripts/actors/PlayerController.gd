@@ -198,8 +198,8 @@ func _unhandled_input(event: InputEvent) -> void:
 		look_pitch = clampf(look_pitch + mm.relative.y * sens * pitch_sign, deg_to_rad(-89.0), deg_to_rad(89.0))
 		if not is_alive:
 			_spec_free_orbit_timer = 2.5
-		_sway_offset.x = clampf(_sway_offset.x - mm.relative.x * 0.00025, -0.02, 0.02)
-		_sway_offset.y = clampf(_sway_offset.y + mm.relative.y * 0.00025, -0.02, 0.02)
+		_sway_offset.x = clampf(_sway_offset.x - mm.relative.x * 0.00017, -0.014, 0.014)
+		_sway_offset.y = clampf(_sway_offset.y + mm.relative.y * 0.00017, -0.014, 0.014)
 
 	if not is_alive:
 		if _deathcam_timer > 0.0:
@@ -318,7 +318,7 @@ func _process(delta: float) -> void:
 		_vm_viewport.world_3d = get_world_3d()
 
 	# Viewmodel bobbing, mouse sway, airborne inertia, crouch cant, draw spring & recoil kickback at full render FPS
-	_sway_offset = _sway_offset.lerp(Vector2.ZERO, minf(1.0, 11.5 * delta))
+	_sway_offset = _sway_offset.lerp(Vector2.ZERO, minf(1.0, 9.0 * delta))
 	_vm_kick_z = lerpf(_vm_kick_z, 0.0, minf(1.0, 18.0 * delta))
 	_vm_kick_pitch = lerpf(_vm_kick_pitch, 0.0, minf(1.0, 16.0 * delta))
 	_vm_kick_roll = lerpf(_vm_kick_roll, 0.0, minf(1.0, 15.0 * delta))
@@ -328,14 +328,14 @@ func _process(delta: float) -> void:
 
 	var hspd := Vector2(velocity.x, velocity.z).length()
 	if is_on_floor() and hspd > 0.4:
-		_bob_phase += delta * hspd * 1.68
+		_bob_phase += delta * hspd * 1.42
 	else:
 		_bob_phase += delta * 1.35
 	var move_fac := clampf(hspd / 7.0, 0.0, 1.0)
-	var bob_x := sin(_bob_phase) * (0.0084 * move_fac + 0.0007)
-	var bob_y := absf(cos(_bob_phase)) * (-0.0102 * move_fac) + sin(_bob_phase * 0.5) * 0.0008 - _land_dip * 0.68 + _vm_vert_lag
+	var bob_x := sin(_bob_phase) * (0.0060 * move_fac + 0.0007)
+	var bob_y := absf(cos(_bob_phase)) * (-0.0072 * move_fac) + sin(_bob_phase * 0.5) * 0.0008 - _land_dip * 0.68 + _vm_vert_lag
 	var crouch_ofs := Vector3(-0.005, -0.007, 0.005) * _visual_crouch_t
-	var strafe_roll := -_last_in_x * deg_to_rad(1.25) * move_fac - _sway_offset.x * 1.2 + deg_to_rad(1.2) * _visual_crouch_t + _vm_kick_roll
+	var strafe_roll := -_last_in_x * deg_to_rad(0.85) * move_fac - _sway_offset.x * 0.85 + deg_to_rad(1.2) * _visual_crouch_t + _vm_kick_roll
 	viewmodel_holder.scale = Vector3.ONE
 	viewmodel_holder.position = Vector3(
 		bob_x + _sway_offset.x + crouch_ofs.x,
@@ -343,8 +343,8 @@ func _process(delta: float) -> void:
 		_vm_kick_z + crouch_ofs.z + _vm_draw_offset * 0.025
 	)
 	viewmodel_holder.rotation = Vector3(
-		_vm_kick_pitch - _vm_draw_offset * 0.22 + _sway_offset.y * 0.9,
-		-_sway_offset.x * 1.65,
+		_vm_kick_pitch - _vm_draw_offset * 0.22 + _sway_offset.y * 0.6,
+		-_sway_offset.x * 1.05,
 		strafe_roll
 	)
 	if _vm_container:
@@ -644,12 +644,12 @@ func _on_fired_shot(wid: String, silenced: bool) -> void:
 	elif wid == "glock18":
 		_elite_muzzle_left = false
 		if bool(weapon_ctrl.burst_state.get("glock18", false)):
-			# Burst mode owns the cyclic frames shoot2/shoot3
+			# Burst cycles the three cyclic frames IN ORDER: shoot -> shoot2 -> shoot3
 			if rem_clip == 0:
-				play_viewmodel_sequence(["shoot_empty", "shoot2"])
+				play_viewmodel_sequence(["shoot_empty", "shoot"])
 			else:
-				var b_idx := randi_range(2, 3)
-				play_viewmodel_sequence(["shoot%d" % b_idx, "shoot2", "shoot"])
+				var b_pick: String = ["shoot", "shoot2", "shoot3"][clampi(weapon_ctrl.glock_burst_frame - 1, 0, 2)]
+				play_viewmodel_sequence([b_pick, "shoot"])
 		else:
 			# Semi-auto uses the single-shot frame only — the generic random
 			# picker wrongly threw shoot2/shoot3 (the burst frames) on normal fire

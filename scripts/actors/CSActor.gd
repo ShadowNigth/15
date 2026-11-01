@@ -55,6 +55,10 @@ var _body_root: Node3D = null
 var _body_anim: AnimationPlayer = null
 var _skel: Skeleton3D = null
 var _hand_attachment: BoneAttachment3D = null
+var _c4_pack_attachment: BoneAttachment3D = null
+var _c4_pack_node: Node3D = null
+var _c4_pack_state: bool = false
+var _c4_pack_poll: float = 0.0
 var _tp_muzzle_sprite: Sprite3D = null
 var _tp_muzzle_light: OmniLight3D = null
 var _tp_muzzle_timer: float = 0.0
@@ -141,6 +145,9 @@ func _rebuild_character_model() -> void:
 	_body_anim = null
 	_skel = null
 	_hand_attachment = null
+	_c4_pack_attachment = null
+	_c4_pack_node = null
+	_c4_pack_state = false
 	_tp_muzzle_sprite = null
 	_tp_muzzle_light = null
 	_pelvis_bone_idx = -1
@@ -192,6 +199,26 @@ func _rebuild_character_model() -> void:
 					_tp_muzzle_light.position = Vector3(-0.04, 0.08, -0.62)
 					_tp_muzzle_light.visible = false
 					_hand_attachment.add_child(_tp_muzzle_light)
+
+			# C4 backpack worn on the back by whoever carries the bomb (CS classic)
+			var spine_idx := _skel.find_bone("Bip01 Spine1")
+			if spine_idx >= 0:
+				_c4_pack_attachment = BoneAttachment3D.new()
+				_c4_pack_attachment.name = "C4BackpackAttachment"
+				_c4_pack_attachment.bone_name = "Bip01 Spine1"
+				_skel.add_child(_c4_pack_attachment)
+				_c4_pack_node = Node3D.new()
+				var psc := GameData.get_model_scene("weapons/w_backpack")
+				if psc != null:
+					var pinst := psc.instantiate() as Node3D
+					if pinst != null:
+						_style_backpack_recursive(pinst)
+						pinst.rotation_degrees = Vector3(-90.0, 0.0, 0.0)
+						pinst.scale = Vector3.ONE * 0.92
+						_c4_pack_node.add_child(pinst)
+				_c4_pack_node.position = Vector3(0.0, 0.03, 0.095)
+				_c4_pack_node.visible = false
+				_c4_pack_attachment.add_child(_c4_pack_node)
 		if weapon_ctrl:
 			_update_held_weapon_model(weapon_ctrl.current_weapon_id)
 		_evaluate_character_pose(0.0)
@@ -354,9 +381,38 @@ func get_visual_world_pos() -> Vector3:
 	return p
 
 
+## Bomb-carrier backpack styling — same w_drop treatment as dropped weapons.
+func _style_backpack_recursive(n: Node) -> void:
+	if n is MeshInstance3D:
+		var mi := n as MeshInstance3D
+		mi.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
+		if mi.mesh != null:
+			for s in range(mi.mesh.get_surface_count()):
+				var styled := GameData.get_styled_model_material(mi.mesh.surface_get_material(s), "w_drop")
+				if styled != null:
+					mi.set_surface_override_material(s, styled)
+	for c in n.get_children():
+		_style_backpack_recursive(c)
+
+
+## Shows the C4 backpack on the back of whoever carries the bomb (CS classic).
+func _update_c4_backpack_visual() -> void:
+	if not is_instance_valid(_c4_pack_attachment) or not is_instance_valid(_c4_pack_node):
+		return
+	var show_pack: bool = is_alive and is_instance_valid(weapon_ctrl) and String(weapon_ctrl.slots.get(5, "")) == "c4"
+	if show_pack == _c4_pack_state:
+		return
+	_c4_pack_state = show_pack
+	_c4_pack_node.visible = show_pack
+
+
 func _process(delta: float) -> void:
 	if _pain_sound_cd > 0.0:
 		_pain_sound_cd = maxf(0.0, _pain_sound_cd - delta)
+	_c4_pack_poll -= delta
+	if _c4_pack_poll <= 0.0:
+		_c4_pack_poll = 0.25
+		_update_c4_backpack_visual()
 	_step_smooth_y = lerpf(_step_smooth_y, 0.0, minf(1.0, 22.0 * delta))
 	_visual_crouch_t = lerpf(_visual_crouch_t, 1.0 if is_crouching else 0.0, minf(1.0, 16.0 * delta))
 	_tp_recoil_pitch = lerpf(_tp_recoil_pitch, 0.0, minf(1.0, 18.0 * delta))

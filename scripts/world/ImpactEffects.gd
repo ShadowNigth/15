@@ -477,6 +477,17 @@ static func spawn_surface_impact(
 	tw_f.tween_property(flash, "modulate:a", 0.0, 0.10)
 	tw_f.chain().tween_callback(_safe_retire_node.bind(flash))
 
+	# Rifle-class hits: a brief hot flash light for extra punch (pistols skip it)
+	if caliber_scale >= 1.12:
+		var fl2 := OmniLight3D.new()
+		fl2.light_color = Color(1.0, 0.82, 0.55)
+		fl2.light_energy = 1.15
+		fl2.omni_range = 2.4
+		world_root.add_child(fl2)
+		fl2.global_position = hit_pos + nrm * 0.10
+		var tw_fl2 := world_root.create_tween()
+		tw_fl2.tween_callback(_safe_retire_node.bind(fl2)).set_delay(0.075)
+
 	# 1. Persistent surface bullet-hole decal (attached to moving door/breakable if hit!)
 	var decal_mat: StandardMaterial3D = _mat_decal_conc
 	var hole_sz: float = 0.105 * caliber_scale
@@ -517,12 +528,12 @@ static func spawn_surface_impact(
 			puff.modulate = Color(0.88, 0.86, 0.82, 0.70)
 		world_root.add_child(puff)
 		puff.global_position = hit_pos + nrm * 0.06
-		var drift_end: Vector3 = puff.global_position + nrm * (0.62 if mat_char == "D" else 0.52) + Vector3(0.0, 0.36, 0.0)
-		var pdur: float = 0.32 if mat_char == "D" else 0.28
+		var drift_end: Vector3 = puff.global_position + nrm * (0.74 if mat_char == "D" else 0.62) + Vector3(0.0, 0.44, 0.0)
+		var pdur: float = 0.44 if mat_char == "D" else 0.36
 		var tw_p := world_root.create_tween()
 		tw_p.set_parallel(true)
 		tw_p.tween_property(puff, "global_position", drift_end, pdur).set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_OUT)
-		tw_p.tween_property(puff, "pixel_size", 0.0112 * caliber_scale * px_mult, pdur)
+		tw_p.tween_property(puff, "pixel_size", 0.0138 * caliber_scale * px_mult, pdur)
 		tw_p.tween_property(puff, "modulate:a", 0.0, pdur)
 		var fcnt: int = pframes.size()
 		for fi in range(1, fcnt):
@@ -598,7 +609,7 @@ static func spawn_surface_impact(
 		chips.emitting = false
 		chips.one_shot = true
 		chips.explosiveness = 0.95
-		chips.amount = 10 if mat_char in ["W", "D", "Y"] else 8
+		chips.amount = 14 if mat_char in ["W", "D", "Y"] else 11
 		chips.lifetime = 0.38
 		var c_mesh := QuadMesh.new()
 		c_mesh.size = Vector2(0.052, 0.028) if mat_char == "W" else Vector2(0.038, 0.038)
@@ -766,29 +777,58 @@ static func spawn_blood_impact(
 	var is_head: bool = (hitgroup == 1)
 	var b_scale: float = clampf(damage / 28.0, 0.85, 1.55) * (1.35 if is_head else 1.0)
 
-	# 1. Expanding GoldSrc crimson blood mist billboard at wound site
-	var mist := MeshInstance3D.new()
+	# 1. Volumetric crimson blood mist — three staggered expanding billboards
+	#    plus a dense fine-spray cone so the hit reads as 3D volume, not a PNG
 	var m_quad := QuadMesh.new()
 	m_quad.size = Vector2(0.26 * b_scale, 0.26 * b_scale)
-	mist.mesh = m_quad
-	mist.material_override = _mat_blood_mist
-	mist.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
-	world_root.add_child(mist)
-	mist.global_position = hit_pos
+	for mi_i in range(3):
+		var mist := MeshInstance3D.new()
+		mist.mesh = m_quad
+		mist.material_override = _mat_blood_mist
+		mist.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
+		world_root.add_child(mist)
+		mist.global_position = hit_pos + bullet_dir * (0.07 * float(mi_i))
+		var m_end: float = [1.9, 2.35, 2.8][mi_i]
+		var tw_m := world_root.create_tween()
+		tw_m.tween_interval(0.055 * float(mi_i))
+		tw_m.set_parallel(true)
+		tw_m.tween_property(mist, "scale", Vector3.ONE * m_end, 0.28).set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_OUT)
+		tw_m.tween_property(mist, "global_position", hit_pos + bullet_dir * (0.24 + 0.13 * float(mi_i)) + Vector3(0.0, -0.09, 0.0), 0.32)
+		tw_m.tween_property(mist, "transparency", 0.9, 0.32)
+		tw_m.chain().tween_callback(_safe_retire_node.bind(mist))
 
-	var tw_m := world_root.create_tween()
-	tw_m.set_parallel(true)
-	tw_m.tween_property(mist, "scale", Vector3.ONE * 2.30, 0.22).set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_OUT)
-	tw_m.tween_property(mist, "global_position", hit_pos + bullet_dir * 0.25 + Vector3(0.0, -0.08, 0.0), 0.22)
-	tw_m.chain().tween_callback(_safe_retire_node.bind(mist))
+	# 1b. Dense fine blood spray cone travelling along the bullet path
+	var fine := CPUParticles3D.new()
+	fine.emitting = false
+	fine.one_shot = true
+	fine.explosiveness = 1.0
+	fine.amount = 26 if is_head else 18
+	fine.lifetime = 0.24
+	fine.mesh = _quad_drop
+	fine.direction = bullet_dir.normalized()
+	fine.spread = 36.0
+	fine.initial_velocity_min = 3.4
+	fine.initial_velocity_max = 7.6 * b_scale
+	fine.gravity = Vector3(0.0, -11.0, 0.0)
+	fine.scale_amount_min = 0.32
+	fine.scale_amount_max = 0.85
+	var fine_grad := Gradient.new()
+	fine_grad.set_color(0, Color(0.78, 0.03, 0.03, 0.95))
+	fine_grad.set_color(1, Color(0.42, 0.02, 0.02, 0.0))
+	fine.color_ramp = fine_grad
+	world_root.add_child(fine)
+	fine.global_position = hit_pos + bullet_dir * 0.05
+	fine.emitting = true
+	var tw_fine := world_root.create_tween()
+	tw_fine.tween_callback(_safe_retire_node.bind(fine)).set_delay(0.32)
 
 	# 2. Gravity-arcing crimson blood droplets spray
 	var drops := CPUParticles3D.new()
 	drops.emitting = false
 	drops.one_shot = true
 	drops.explosiveness = 0.94
-	drops.amount = 18 if is_head else 11
-	drops.lifetime = 0.40
+	drops.amount = 26 if is_head else 16
+	drops.lifetime = 0.44
 	drops.mesh = _quad_drop
 	drops.direction = (bullet_dir * 0.55 + Vector3(0.0, 0.35, 0.0)).normalized()
 	drops.spread = 50.0 if is_head else 40.0

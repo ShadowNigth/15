@@ -36,6 +36,8 @@ var shots_fired: int = 0
 var decay_timer: float = 0.0
 var burst_remaining: int = 0
 var burst_tick: float = 0.0
+## Which shot of the current Glock burst (1..3) — cycles shoot/shoot2/shoot3
+var glock_burst_frame: int = 0
 var plant_progress: float = 0.0
 
 var _grenade_pin_pulled: bool = false
@@ -259,6 +261,7 @@ func _process(delta: float) -> void:
 		if burst_tick <= 0.0:
 			burst_remaining -= 1
 			burst_tick = 0.055
+			glock_burst_frame += 1
 			_execute_bullet_shot(get_current_spec(), true)
 
 	# Decay shots_fired when not shooting
@@ -361,6 +364,7 @@ func trigger_primary(holding: bool, delta: float) -> void:
 
 	# Glock18 3-round burst mode
 	if current_weapon_id == "glock18" and bool(burst_state.get("glock18", false)):
+		glock_burst_frame = 1
 		_execute_bullet_shot(spec, true)
 		burst_remaining = mini(2, int(clips.get("glock18", 0)))
 		burst_tick = 0.055
@@ -555,7 +559,14 @@ func _execute_bullet_shot(spec: Dictionary, is_burst_subshot: bool) -> void:
 		fire_cooldown = ctime
 
 	var is_sil := bool(silenced_state.get(current_weapon_id, false)) and bool(spec.get("silencer", false))
-	var wav_list: Array = spec.get("silenced_sounds", []) if is_sil else spec.get("fire_sounds", [])
+	var wav_list: Array = []
+	var burst_wav := String(spec.get("burst_sound", ""))
+	if is_burst_subshot and not burst_wav.is_empty():
+		wav_list = [burst_wav]
+	elif is_sil:
+		wav_list = spec.get("silenced_sounds", [])
+	else:
+		wav_list = spec.get("fire_sounds", [])
 	if wav_list.is_empty():
 		wav_list = spec.get("fire_sounds", [])
 	if not wav_list.is_empty():
