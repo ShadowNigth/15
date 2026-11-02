@@ -102,7 +102,7 @@ func _process(delta: float) -> void:
 	_time += delta
 	if _open_t < 1.0:
 		_open_t = minf(1.0, _open_t + delta * 6.0)
-		_wheel.modulate.a = powf(_open_t, 0.6)
+		_wheel.modulate.a = pow(_open_t, 0.6)
 	if _deny_t > 0.0:
 		_deny_t = maxf(0.0, _deny_t - delta)
 	var sec := int(ceilf(float(RoundManager.buy_time_left)))
@@ -293,7 +293,6 @@ func _sector_poly(a0: float, a1: float, r0: float, r1: float, c: Vector2) -> Pac
 func _draw_wheel() -> void:
 	var sz := _wheel.size
 	var c := sz * 0.5
-	var font := _wheel.get_theme_default_font()
 
 	# Dim + vignette (gameplay stays faintly visible like CS:GO's wheel)
 	_wheel.draw_rect(Rect2(Vector2.ZERO, sz), Color(0.012, 0.016, 0.026, 0.62))
