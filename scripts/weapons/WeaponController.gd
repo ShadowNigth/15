@@ -309,7 +309,11 @@ func trigger_primary(holding: bool, delta: float) -> void:
 			var act_body := actor as CharacterBody3D
 			if bool(RoundManager.game_world.call("is_in_bombsite", act_body.global_position)) and act_body.is_on_floor():
 				if plant_progress == 0.0:
-					AudioManager.play_3d("weapons/c4_click.wav", actor.global_position, -2.0, 18.0)
+					# the human viewmodel's pressbutton events already play the keypad clicks
+					if not _human_vm_has_events(get_current_spec(), "pressbutton"):
+						AudioManager.play_3d("weapons/c4_click.wav", actor.global_position, -2.0, 18.0)
+					else:
+						AudioManager.world_sound_emitted.emit(actor.global_position, 18.0, String(actor.get("team")))
 					if actor.has_method("play_viewmodel_sequence"):
 						actor.call("play_viewmodel_sequence", ["pressbutton"])
 				plant_progress += delta

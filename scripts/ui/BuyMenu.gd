@@ -56,8 +56,11 @@ var _pv_pivot: Node3D = null
 var _pv_camera: Camera3D = null
 var _pv_model: Node3D = null
 var _pv_anim: AnimationPlayer = null
-var _pv_upper: AnimationPlayer = null
+var _pv_skel: Skeleton3D = null
 var _pv_hand: BoneAttachment3D = null
+var _pv_upper_mask: PackedByteArray = PackedByteArray()
+var _pv_tracks: Dictionary = {}  # anim name -> [Animation, [[track, bone, is_pos], ...]]
+var _pv_anim_t: float = 0.0
 var _pv_class: String = ""
 var _pv_weapon: String = "?"
 var _pv_lower_name: String = ""
@@ -170,7 +173,7 @@ func _process(delta: float) -> void:
 		var target := 1.0 if i == _hover else 0.0
 		_hover_amt[i] = lerpf(_hover_amt[i], target, k)
 	_layout_preview()
-	_animate_preview()
+	_animate_preview(delta)
 	_bg.queue_redraw()
 	_wheel.queue_redraw()
 
@@ -370,15 +373,24 @@ func _silhouette(vgui: String) -> Texture2D:
 			if used.size.x > 2 and used.size.y > 2:
 				img = img.get_region(used)
 			var data := img.get_data()
-			var i := 0
 			var nbytes := data.size()
+			# brightest opaque pixel -> normalise so the icon keeps its engraved detail
+			var max_l := 1
+			var i := 0
 			while i + 3 < nbytes:
-				data[i] = 255
-				data[i + 1] = 255
-				data[i + 2] = 255
+				if data[i + 3] > 128:
+					max_l = maxi(max_l, int(float(data[i] * 3 + data[i + 1] * 6 + data[i + 2]) * 0.1))
+				i += 4
+			i = 0
+			while i + 3 < nbytes:
 				var a := data[i + 3]
-				if a > 5:
-					data[i + 3] = mini(255, int(float(a) * 1.6))
+				var lum := float(data[i] * 3 + data[i + 1] * 6 + data[i + 2]) / 10.0
+				var v := int(255.0 * (1.0 - (1.0 - clampf(lum / float(max_l), 0.0, 1.0)) * 0.42))
+				data[i] = v
+				data[i + 1] = v
+				data[i + 2] = v
+				if a < 40:
+					data[i + 3] = 0  # drop the faint grey matte around the CS 1.5 icons
 				i += 4
 			var white := Image.create_from_data(img.get_width(), img.get_height(), false, Image.FORMAT_RGBA8, data)
 			out = ImageTexture.create_from_image(white)
@@ -969,8 +981,11 @@ func _ensure_preview_model() -> void:
 		_pv_model.queue_free()
 	_pv_model = null
 	_pv_anim = null
-	_pv_upper = null
+	_pv_skel = null
 	_pv_hand = null
+	_pv_tracks.clear()
+	_pv_upper_name = ""
+	_pv_lower_name = ""
 	_pv_weapon = "?"
 	_pv_class = cid
 	var sc := GameData.get_model_scene("players/" + cid)
@@ -985,23 +1000,20 @@ func _ensure_preview_model() -> void:
 	_style_meshes(inst)
 	_pv_pivot.add_child(inst)
 	_pv_anim = _find_node_of(inst, "AnimationPlayer") as AnimationPlayer
-	var skel := _find_node_of(inst, "Skeleton3D") as Skeleton3D
+	_pv_skel = _find_node_of(inst, "Skeleton3D") as Skeleton3D
 	if _pv_anim != null:
-		_pv_anim.active = true
-		# second player on the same rig: lower body gait + upper body aim layer
-		_pv_upper = AnimationPlayer.new()
-		_pv_upper.name = "PreviewUpper"
-		_pv_anim.get_parent().add_child(_pv_upper)
-		_pv_upper.root_node = _pv_upper.get_path_to(_pv_anim.get_node(_pv_anim.root_node))
-		for lib_name in _pv_anim.get_animation_library_list():
-			_pv_upper.add_animation_library(lib_name, _pv_anim.get_animation_library(lib_name))
+		# Same approach as CSActor: the AnimationPlayer stays inactive and the
+		# GoldSrc gait (lower body) + aim (upper body) clips are sampled by hand.
+		_pv_anim.stop()
+		_pv_anim.active = false
+	if _pv_skel != null:
+		_build_preview_mask()
 		_pv_lower_name = _anim_named(_pv_anim, "idle1")
-		if not _pv_lower_name.is_empty():
-			_pv_anim.play(_pv_lower_name)
-	if skel != null and skel.find_bone("Bip01 R Hand") >= 0:
-		_pv_hand = BoneAttachment3D.new()
-		_pv_hand.bone_name = "Bip01 R Hand"
-		skel.add_child(_pv_hand)
+		if _pv_skel.find_bone("Bip01 R Hand") >= 0:
+			_pv_hand = BoneAttachment3D.new()
+			_pv_hand.bone_name = "Bip01 R Hand"
+			_pv_skel.add_child(_pv_hand)
+		_animate_preview(0.0)
 
 
 func _style_meshes(n: Node) -> void:
@@ -1068,25 +1080,84 @@ func _set_preview_weapon(wid: String) -> void:
 				var p_inst := p_sc.instantiate()
 				_style_meshes(p_inst)
 				_pv_hand.add_child(p_inst)
-	if _pv_upper != null and is_instance_valid(player):
+	if _pv_anim != null and is_instance_valid(player):
 		var ext := String(player.call("_get_weapon_anim_ext", wid)) if not wid.is_empty() else "carbine"
-		var an := _anim_named(_pv_upper, "ref_aim_" + ext)
+		var an := _anim_named(_pv_anim, "ref_aim_" + ext)
 		if an.is_empty():
-			an = _anim_named(_pv_upper, "ref_aim_carbine")
+			an = _anim_named(_pv_anim, "ref_aim_carbine")
 		_pv_upper_name = an
-		if not an.is_empty():
-			_pv_upper.play(an)
 
 
-func _animate_preview() -> void:
+func _animate_preview(delta: float) -> void:
 	if _pv_pivot == null:
 		return
 	# 3/4 turntable facing the camera with a slow idle sway (model faces -Z at yaw 0)
 	_pv_pivot.rotation.y = PI + 0.42 + sin(_time * 0.55) * 0.16
-	if _pv_anim != null and not _pv_lower_name.is_empty() and not _pv_anim.is_playing():
-		_pv_anim.play(_pv_lower_name)
-	if _pv_upper != null and not _pv_upper_name.is_empty() and not _pv_upper.is_playing():
-		_pv_upper.play(_pv_upper_name)
+	if _pv_skel == null or _pv_anim == null:
+		return
+	_pv_anim_t += delta
+	_apply_preview_clip(_pv_lower_name, 0)
+	_apply_preview_clip(_pv_upper_name, 1)
+
+
+## Upper body = Bip01 Spine and everything below it in the hierarchy.
+func _build_preview_mask() -> void:
+	var nb := _pv_skel.get_bone_count()
+	_pv_upper_mask.resize(nb)
+	_pv_upper_mask.fill(0)
+	var spine := _pv_skel.find_bone("Bip01 Spine")
+	if spine < 0:
+		return
+	_pv_upper_mask[spine] = 1
+	for bi in range(nb):
+		var cur := _pv_skel.get_bone_parent(bi)
+		var guard := 0
+		while cur >= 0 and guard < 96:
+			guard += 1
+			if _pv_upper_mask[cur] == 1:
+				_pv_upper_mask[bi] = 1
+				break
+			cur = _pv_skel.get_bone_parent(cur)
+
+
+## mode 0 = lower-body bones only, 1 = upper-body bones only.
+func _apply_preview_clip(anim_name: String, mode: int) -> void:
+	if anim_name.is_empty():
+		return
+	if not _pv_tracks.has(anim_name):
+		var res: Animation = null
+		if _pv_anim.has_animation(anim_name):
+			res = _pv_anim.get_animation(anim_name)
+		var entries: Array = []
+		if res != null:
+			for ti in range(res.get_track_count()):
+				var tt := res.track_get_type(ti)
+				if tt != Animation.TYPE_POSITION_3D and tt != Animation.TYPE_ROTATION_3D:
+					continue
+				var bname := String(res.track_get_path(ti).get_concatenated_subnames())
+				var bidx := _pv_skel.find_bone(bname)
+				if bidx >= 0:
+					entries.append([ti, bidx, tt == Animation.TYPE_POSITION_3D])
+		_pv_tracks[anim_name] = [res, entries]
+	var pack: Array = _pv_tracks[anim_name]
+	var anim_res := pack[0] as Animation
+	if anim_res == null:
+		return
+	var t := fposmod(_pv_anim_t, maxf(0.05, anim_res.length))
+	var has_mask := _pv_upper_mask.size() == _pv_skel.get_bone_count()
+	for entry in (pack[1] as Array):
+		var e := entry as Array
+		var ti2 := int(e[0])
+		var bi2 := int(e[1])
+		if has_mask:
+			if mode == 0 and _pv_upper_mask[bi2] == 1:
+				continue
+			if mode == 1 and _pv_upper_mask[bi2] == 0:
+				continue
+		if bool(e[2]):
+			_pv_skel.set_bone_pose_position(bi2, anim_res.position_track_interpolate(ti2, t))
+		else:
+			_pv_skel.set_bone_pose_rotation(bi2, anim_res.rotation_track_interpolate(ti2, t))
 
 
 # --- Catalogue -----------------------------------------------------------------------------

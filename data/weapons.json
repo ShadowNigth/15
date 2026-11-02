@@ -43,7 +43,7 @@
       ],
       "wall_sound": "weapons/knife_hitwall1.wav",
       "stab_sound": "weapons/knife_stab.wav",
-      "deploy_sound": "weapons/knife_deploy1.wav",
+      "deploy_sound": "weapons/csgo/knife/knife_deploy1.wav",
       "max_speed": 260.0,
       "zoomed_speed": 260.0,
       "description": "",
@@ -177,8 +177,8 @@
         "weapons/usp1.wav",
         "weapons/usp2.wav"
       ],
-      "reload_sound": "weapons/cs2_usps/clipout.wav",
-      "deploy_sound": "weapons/cs2_usps/sliderelease.wav",
+      "reload_sound": "weapons/csgo/hkp2000/hkp2000_clipout.wav",
+      "deploy_sound": "weapons/csgo/hkp2000/hkp2000_sliderelease.wav",
       "max_speed": 250.0,
       "zoomed_speed": 250.0,
       "description": "Price\t\t\t: $500\nCountry of Origin\t: Germany\nCalibre\t\t: .45 ACP\nClip Capacity\t: 12 rounds\nRate of Fire\t: N/A\nWeight(EMPTY)\t: 1 kg.\nProjectile Weight\t: 15.2 grams\nMuzzle Velocity\t: 886 feet/second\nMuzzle Energy\t: 553 joules",
@@ -309,8 +309,8 @@
         "weapons/glock18-2.wav"
       ],
       "burst_sound": "weapons/glock18-2.wav",
-      "reload_sound": "weapons/cs2_glock18/clipout.wav",
-      "deploy_sound": "weapons/cs2_glock18/sliderelease.wav",
+      "reload_sound": "weapons/csgo/glock18/glock_clipout.wav",
+      "deploy_sound": "weapons/csgo/glock18/glock_sliderelease.wav",
       "max_speed": 250.0,
       "zoomed_speed": 250.0,
       "description": "Price\t\t\t: $400\nCountry of Origin\t: Austria\nCalibre\t\t: 9mm Parabellum\nClip Capacity\t: 20 rounds\nRate of Fire\t: N/A\nWeight(LOADED)\t: 0.9 kg.\nProjectile Weight\t: 8 grams\nMuzzle Velocity\t: 1132 feet/second\nMuzzle Energy\t: 475 joules",
@@ -439,8 +439,8 @@
         "weapons/deagle-1.wav",
         "weapons/deagle-2.wav"
       ],
-      "reload_sound": "weapons/cs2_deagle/clipout.wav",
-      "deploy_sound": "weapons/cs2_deagle/draw.wav",
+      "reload_sound": "weapons/csgo/deagle/de_clipout.wav",
+      "deploy_sound": "weapons/csgo/deagle/de_draw.wav",
       "max_speed": 250.0,
       "zoomed_speed": 250.0,
       "description": "Price\t\t\t: $650\nCountry of Origin\t: Israel\nCalibre\t\t: .50 Action Express\nClip Capacity(CS)\t: 7\nRate of Fire\t: N/A\nWeight(EMPTY)\t: 1.8 kg\nProjectile Weight\t: 19.4 grams\nMuzzle Velocity\t: 1380 feet/second\nMuzzle Energy\t: 1650 joules",
@@ -568,8 +568,8 @@
       "fire_sounds": [
         "weapons/p228-1.wav"
       ],
-      "reload_sound": "weapons/cs2_p250/clipout.wav",
-      "deploy_sound": "weapons/cs2_p250/sliderelease.wav",
+      "reload_sound": "weapons/csgo/p250/p250_clipout.wav",
+      "deploy_sound": "weapons/csgo/p250/p250_sliderelease.wav",
       "max_speed": 250.0,
       "zoomed_speed": 250.0,
       "description": "Price\t\t\t: $600\nCountry of Origin\t: Switzerland/Germany\nCalibre\t\t: .357 SIG\nClip Capacity(CS)\t: 13 rounds\nRate of Fire\t: N/A\nWeight(EMPTY)\t: 1.03 kg.\nProjectile Weight\t: 8.1 grams\nMuzzle Velocity\t: 1400 feet/second\nMuzzle Energy\t: 600 joules",
@@ -697,8 +697,8 @@
       "fire_sounds": [
         "weapons/elite_fire.wav"
       ],
-      "reload_sound": "weapons/cs2_elites/clipout.wav",
-      "deploy_sound": "weapons/cs2_elites/sliderelease.wav",
+      "reload_sound": "weapons/csgo/elite/elite_clipout.wav",
+      "deploy_sound": "weapons/csgo/elite/elite_sliderelease.wav",
       "max_speed": 250.0,
       "zoomed_speed": 250.0,
       "description": "Price\t\t\t: $1000\nCountry of Origin\t: Italy\nCalibre\t\t: 9mm Parabellum\nClip Capacity\t: 15 rounds\nRate of Fire\t: N/A\nWeight(LOADED)\t: 1.15 kg.\nProjectile Weight\t: 8 grams\nMuzzle Velocity\t: 1280 feet/second\nMuzzle Energy\t: 606 joules",
@@ -826,8 +826,8 @@
       "fire_sounds": [
         "weapons/fiveseven-1.wav"
       ],
-      "reload_sound": "weapons/cs2_fiveseven/clipout.wav",
-      "deploy_sound": "weapons/cs2_fiveseven/sliderelease.wav",
+      "reload_sound": "weapons/csgo/fiveseven/fiveseven_clipout.wav",
+      "deploy_sound": "weapons/csgo/fiveseven/fiveseven_sliderelease.wav",
       "max_speed": 250.0,
       "zoomed_speed": 250.0,
       "description": "Price\t\t\t: $750\nCountry of Origin\t: Belgium\nCalibre\t\t: 5.7 x 28mm\nClip Capacity\t: 20 rounds\nRate of Fire\t: N/A\nWeight(LOADED)\t: 0.618 kg.\nProjectile Weight\t: 2 grams\nMuzzle Velocity\t: 2345 feet/second\nMuzzle Energy\t: 465 joules",
@@ -957,8 +957,8 @@
       "fire_sounds": [
         "weapons/m3-1.wav"
       ],
-      "reload_sound": "weapons/cs2_nova/insertshell_01.wav",
-      "deploy_sound": "weapons/cs2_nova/pump.wav",
+      "reload_sound": "weapons/csgo/nova/nova_insertshell.wav",
+      "deploy_sound": "weapons/csgo/nova/nova_pump.wav",
       "max_speed": 230.0,
       "zoomed_speed": 230.0,
       "description": "Price\t\t\t: $1700\nCountry of Origin\t: Italy\nCalibre\t\t: 12 gauge\nClip Capacity(CS)\t: 8 rounds\nRate of Fire\t: N/A\nWeight(EMPTY)\t: 3.5 kg\nProjectile Weight\t: 3.8 grams/pellet\nMuzzle Velocity\t: 1250 feet/second\nMuzzle Energy\t: 2429 joules",
@@ -1054,8 +1054,8 @@
           ]
         }
       },
-      "insert_sound": "weapons/cs2_nova/insertshell_01.wav",
-      "pump_sound": "weapons/cs2_nova/pump.wav"
+      "insert_sound": "weapons/csgo/nova/nova_insertshell.wav",
+      "pump_sound": "weapons/csgo/nova/nova_pump.wav"
     },
     "xm1014": {
       "id": "xm1014",
@@ -1090,8 +1090,8 @@
       "fire_sounds": [
         "weapons/xm1014-1.wav"
       ],
-      "reload_sound": "weapons/cs2_xm1014/insertshell_01.wav",
-      "deploy_sound": "weapons/cs2_xm1014/draw.wav",
+      "reload_sound": "weapons/csgo/xm1014/xm1014_insertshell.wav",
+      "deploy_sound": "weapons/csgo/xm1014/xm1014_draw.wav",
       "max_speed": 240.0,
       "zoomed_speed": 240.0,
       "description": "Price\t\t\t: $3000\nCountry of Origin\t: Italy\nCalibre\t\t: 12 gauge\nClip Capacity\t: 7 rounds\nRate of Fire(CS)\t: 400 rpm\nWeight(EMPTY)\t: 4 kg.\nProjectile Weight\t: 3.8 grams/pellet\nMuzzle Velocity\t: 1250 feet/second\nMuzzle Energy\t: 2429 joules",
@@ -1223,7 +1223,7 @@
           ]
         }
       },
-      "insert_sound": "weapons/cs2_xm1014/insertshell_01.wav"
+      "insert_sound": "weapons/csgo/xm1014/xm1014_insertshell.wav"
     },
     "mp5navy": {
       "id": "mp5navy",
@@ -1257,8 +1257,8 @@
         "weapons/mp5-1.wav",
         "weapons/mp5-2.wav"
       ],
-      "reload_sound": "weapons/cs2_mp5sd/slideback.wav",
-      "deploy_sound": "weapons/cs2_mp5sd/slideforward.wav",
+      "reload_sound": "weapons/csgo/mp7/mp7_clipout.wav",
+      "deploy_sound": "weapons/csgo/mp7/mp7_slideforward.wav",
       "class_key": "mp5",
       "max_speed": 250.0,
       "zoomed_speed": 250.0,
@@ -1389,8 +1389,8 @@
         "weapons/tmp-1.wav",
         "weapons/tmp-2.wav"
       ],
-      "reload_sound": "weapons/cs2_mp9/clipout.wav",
-      "deploy_sound": "weapons/cs2_mp9/boltforward.wav",
+      "reload_sound": "weapons/csgo/mp9/mp9_clipout.wav",
+      "deploy_sound": "weapons/csgo/mp9/mp9_boltforward.wav",
       "max_speed": 250.0,
       "zoomed_speed": 250.0,
       "description": "Price\t\t\t: $1250\nCountry of Origin\t: Austria\nCalibre\t\t: 9mm Parabellum\nClip Capacity\t: 30 rounds\nRate of Fire(CS)\t: 857 rpm\nWeight(EMPTY)\t: 1.3 kg.\nProjectile Weight\t: 8 grams\nMuzzle Velocity\t: 1280 feet/second\nMuzzle Energy\t: 606 joules",
@@ -1518,8 +1518,8 @@
       "fire_sounds": [
         "weapons/p90-1.wav"
       ],
-      "reload_sound": "weapons/cs2_p90/cliprelease.wav",
-      "deploy_sound": "weapons/cs2_p90/boltforward.wav",
+      "reload_sound": "weapons/csgo/p90/p90_cliprelease.wav",
+      "deploy_sound": "weapons/csgo/p90/p90_boltforward.wav",
       "max_speed": 245.0,
       "zoomed_speed": 245.0,
       "description": "Price\t\t\t: $2350\nCountry of Origin\t: Belgium\nCalibre\t\t: .338 Lapua Magnum\nClip Capacity\t: 50 rounds\nRate of Fire\t: 900\nWeight(LOADED)\t: 3 kg.\nProjectile Weight\t: 2 grams\nMuzzle Velocity\t: 2345 feet/second\nMuzzle Energy\t: 465 joules",
@@ -1647,8 +1647,8 @@
       "fire_sounds": [
         "weapons/mac10-1.wav"
       ],
-      "reload_sound": "weapons/cs2_mac10/clipout.wav",
-      "deploy_sound": "weapons/cs2_mac10/boltforward.wav",
+      "reload_sound": "weapons/csgo/mac10/mac10_clipout.wav",
+      "deploy_sound": "weapons/csgo/mac10/mac10_boltforward.wav",
       "max_speed": 250.0,
       "zoomed_speed": 250.0,
       "description": "Price\t\t\t: $1400\nCountry of Origin\t: United States of America\nCalibre\t\t: .45 ACP\nClip Capacity\t: 30 rounds\nRate of Fire(CS)\t: 857 rpm\nWeight(EMPTY)\t: 3.82 kg.\nProjectile Weight\t: 15.2 grams\nMuzzle Velocity\t: 919 feet/second\nMuzzle Energy\t: 584 joules",
@@ -1776,8 +1776,8 @@
       "fire_sounds": [
         "weapons/ump45-1.wav"
       ],
-      "reload_sound": "weapons/cs2_ump45/clipout.wav",
-      "deploy_sound": "weapons/cs2_ump45/boltforward.wav",
+      "reload_sound": "weapons/csgo/ump45/ump45_clipout.wav",
+      "deploy_sound": "weapons/csgo/ump45/ump45_boltforward.wav",
       "max_speed": 250.0,
       "zoomed_speed": 250.0,
       "description": "Price\t\t\t: $1700\nCountry of Origin\t: Germany\nCalibre\t\t: .45 ACP\nClip Capacity(CS)\t: 25 rounds\nRate of Fire\t: 600 rpm\nWeight(EMPTY)\t: 2.27 kg\nProjectile Weight\t: 15.2 grams\nMuzzle Velocity\t: 1005 feet/second\nMuzzle Energy\t: 625 joules",
@@ -1906,8 +1906,8 @@
         "weapons/ak47-1.wav",
         "weapons/ak47-2.wav"
       ],
-      "reload_sound": "weapons/cs2_ak47/clipout.wav",
-      "deploy_sound": "weapons/cs2_ak47/boltpull.wav",
+      "reload_sound": "weapons/csgo/ak47/ak47_clipout.wav",
+      "deploy_sound": "weapons/csgo/ak47/ak47_boltpull.wav",
       "max_speed": 221.0,
       "zoomed_speed": 221.0,
       "description": "Price\t\t\t: $2500\nCountry of Origin\t: Russia\nCalibre\t\t: 7.62mm NATO\nClip Capacity\t: 30 rounds\nRate of Fire\t: 600 rpm\nWeight(LOADED)\t: 4.79 kg.\nProjectile Weight\t: 7.9 grams\nMuzzle Velocity\t: 2329 feet/second\nMuzzle Energy\t: 1992 joules",
@@ -2040,8 +2040,8 @@
         "weapons/sg552-1.wav",
         "weapons/sg552-2.wav"
       ],
-      "reload_sound": "weapons/cs2_sg553/clipout.wav",
-      "deploy_sound": "weapons/cs2_sg553/boltforward.wav",
+      "reload_sound": "weapons/csgo/sg556/sg556_clipout.wav",
+      "deploy_sound": "weapons/csgo/sg556/sg556_boltforward.wav",
       "max_speed": 235.0,
       "zoomed_speed": 200.0,
       "description": "Price\t\t\t: $3500\nCountry of Origin\t: Switzerland\nCalibre\t\t: 5.56mm NATO\nClip Capacity\t: 30 rounds\nRate of Fire(CS)\t: 727 rpm\nWeight(EMPTY)\t: 3.1 kg.\nProjectile Weight\t: 4 grams\nMuzzle Velocity\t: 2900 feet/second\nMuzzle Energy\t: 1570 joules",
@@ -2175,8 +2175,8 @@
       "silenced_sounds": [
         "weapons/m4a1-1.wav"
       ],
-      "reload_sound": "weapons/cs2_m4a1s/clipout.wav",
-      "deploy_sound": "weapons/cs2_m4a1s/boltforward.wav",
+      "reload_sound": "weapons/csgo/m4a1/m4a1_clipout.wav",
+      "deploy_sound": "weapons/csgo/m4a1/m4a1_silencer_boltback.wav",
       "max_speed": 230.0,
       "zoomed_speed": 230.0,
       "description": "Price\t\t\t: $3100\nCountry of Origin\t: United States of America\nCalibre\t\t: 5.56mm NATO\nClip Capacity(CS)\t: 30 rounds\nRate of Fire(CS)\t: 685 rpm\nWeight(EMPTY)\t: 3.22 kg\nProjectile Weight\t: 4 grams\nMuzzle Velocity\t: 2900 feet/second\nMuzzle Energy\t: 1570 joules",
@@ -2308,8 +2308,8 @@
       "fire_sounds": [
         "weapons/aug-1.wav"
       ],
-      "reload_sound": "weapons/cs2_aug/clipout.wav",
-      "deploy_sound": "weapons/cs2_aug/boltrelease.wav",
+      "reload_sound": "weapons/csgo/aug/aug_clipout.wav",
+      "deploy_sound": "weapons/csgo/aug/aug_boltrelease.wav",
       "max_speed": 240.0,
       "zoomed_speed": 240.0,
       "description": "Price\t\t\t: $3500\nCountry of Origin\t: Austria\nCalibre\t\t: 5.56mm NATO\nClip Capacity\t: 30 rounds\nRate of Fire(CS)\t: 727 rpm\nWeight(LOADED)\t: 4.09 kg.\nProjectile Weight\t: 4 grams\nMuzzle Velocity\t: 2900 feet/second\nMuzzle Energy\t: 1570 joules",
@@ -2443,8 +2443,8 @@
       "fire_sounds": [
         "weapons/scout_fire-1.wav"
       ],
-      "reload_sound": "weapons/cs2_ssg08/clipout.wav",
-      "deploy_sound": "weapons/cs2_ssg08/boltforward.wav",
+      "reload_sound": "weapons/csgo/ssg08/ssg08_clipout.wav",
+      "deploy_sound": "weapons/csgo/ssg08/ssg08_boltforward.wav",
       "max_speed": 260.0,
       "zoomed_speed": 220.0,
       "description": "Price\t\t\t: $2750\nCountry of Origin\t: Austria\nCalibre\t\t: 7.62mm NATO\nClip Capacity\t: 10 rounds\nRate of Fire\t: N/A\nWeight(EMPTY)\t: 3.3 kg.\nProjectile Weight\t: 8 grams\nMuzzle Velocity\t: 2800 feet/second\nMuzzle Energy\t: 2200 joules",
@@ -2614,8 +2614,8 @@
       "fire_sounds": [
         "weapons/awp1.wav"
       ],
-      "reload_sound": "weapons/cs2_awp/clipout.wav",
-      "deploy_sound": "weapons/cs2_awp/boltforward.wav",
+      "reload_sound": "weapons/csgo/awp/awp_clipout.wav",
+      "deploy_sound": "weapons/csgo/awp/awp_boltforward.wav",
       "max_speed": 210.0,
       "zoomed_speed": 150.0,
       "description": "Price\t\t\t: $4750\nCountry of Origin\t: United Kingdom\nCalibre\t\t: .338 Lapua Magnum\nClip Capacity(CS)\t: 10 rounds\nRate of Fire\t: N/A\nWeight(EMPTY)\t: 6 kg.\nProjectile Weight\t: 16.2 grams\nMuzzle Velocity\t: 3000 feet/second\nMuzzle Energy\t: 7000 joules",
@@ -2785,8 +2785,8 @@
       "fire_sounds": [
         "weapons/g3sg1-1.wav"
       ],
-      "reload_sound": "weapons/cs2_g3sg1/clipout.wav",
-      "deploy_sound": "weapons/cs2_g3sg1/slideback.wav",
+      "reload_sound": "weapons/csgo/g3sg1/g3sg1_clipout.wav",
+      "deploy_sound": "weapons/csgo/g3sg1/g3sg1_slideforward.wav",
       "max_speed": 210.0,
       "zoomed_speed": 150.0,
       "description": "Price\t\t\t: $5000\nCountry of Origin\t: Germany\nCalibre\t\t: 7.62mm NATO\nClip Capacity(CS)\t: 20 rounds\nRate of Fire\t: N/A\nWeight(EMPTY)\t: 4.41 kg\nProjectile Weight\t: 8 grams\nMuzzle Velocity\t: 2800 feet/second\nMuzzle Energy\t: 2200 joules",
@@ -2956,8 +2956,8 @@
       "fire_sounds": [
         "weapons/sg550-1.wav"
       ],
-      "reload_sound": "weapons/cs2_scar20/clipout.wav",
-      "deploy_sound": "weapons/cs2_scar20/boltforward.wav",
+      "reload_sound": "weapons/csgo/scar20/scar20_clipout.wav",
+      "deploy_sound": "weapons/csgo/scar20/scar20_boltforward.wav",
       "max_speed": 210.0,
       "zoomed_speed": 150.0,
       "description": "Price\t\t\t: $4200\nCountry of Origin\t: Switzerland\nCalibre\t\t: 5.56mm NATO\nClip Capacity\t: 30 rounds\nRate of Fire(CS)\t: N/A\nWeight(EMPTY)\t: 7.02 kg.\nProjectile Weight\t: 4 grams\nMuzzle Velocity\t: 3100 feet/second\nMuzzle Energy\t: 1650 joules",
@@ -3122,8 +3122,8 @@
         "weapons/m249-1.wav",
         "weapons/m249-2.wav"
       ],
-      "reload_sound": "weapons/cs2_m249/coverup.wav",
-      "deploy_sound": "weapons/cs2_m249/pump.wav",
+      "reload_sound": "weapons/csgo/m249/m249_coverup.wav",
+      "deploy_sound": "weapons/csgo/m249/m249_pump.wav",
       "max_speed": 220.0,
       "zoomed_speed": 220.0,
       "description": "Price\t\t\t: $5750\nCountry of Origin\t: Belgium\nCalibre\t\t: 5.56mm Nato\nClip Capacity(CS)\t: 100 rounds\nRate of Fire\t: 600 rpm\nWeight(EMPTY)\t: 6 kg.\nProjectile Weight\t: 4 grams\nMuzzle Velocity\t: 3000 feet/second\nMuzzle Energy\t: 1600 joules",
@@ -3352,7 +3352,7 @@
           ]
         }
       },
-      "deploy_sound": "weapons/cs2_flashbang/draw.wav"
+      "deploy_sound": "weapons/csgo/flashbang/flashbang_draw.wav"
     },
     "hegrenade": {
       "id": "hegrenade",
@@ -3484,7 +3484,7 @@
           ]
         }
       },
-      "deploy_sound": "weapons/cs2_hegren/he_draw.wav"
+      "deploy_sound": "weapons/csgo/hegrenade/he_draw.wav"
     },
     "smokegrenade": {
       "id": "smokegrenade",
@@ -3615,7 +3615,7 @@
           ]
         }
       },
-      "deploy_sound": "weapons/cs2_smokegren/s_draw.wav"
+      "deploy_sound": "weapons/csgo/smokegrenade/smokegrenade_draw.wav"
     },
     "c4": {
       "id": "c4",
@@ -3715,7 +3715,7 @@
           ]
         }
       },
-      "deploy_sound": "weapons/cs2_c4/c4_draw.wav"
+      "deploy_sound": "weapons/csgo/c4/c4_draw.wav"
     }
   },
   "ammo": {
