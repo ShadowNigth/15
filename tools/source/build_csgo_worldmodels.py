@@ -227,7 +227,7 @@ def write_static_glb(out_path, node_name, groups, materials_for):
         f.write(w.bin)
 
 
-def build(weapon, src_root, ref_dir, out_dir, report):
+def build(weapon, src_root, ref_dir, out_dir, report, texture_override=None):
     folder = WEAPONS[weapon][0]
     wroot = os.path.join(src_root, folder, "Model", "model_source", "W_Models", "Decompile")
     dirs = sorted(d for d in glob.glob(os.path.join(wroot, "w_*")) if os.path.isdir(d))
@@ -235,6 +235,8 @@ def build(weapon, src_root, ref_dir, out_dir, report):
     dropped = next((d for d in dirs if d.endswith("_dropped")), None)
     tex_dir = os.path.join(src_root, folder, "Texture", "Default")
     vtf = [p for p in glob.glob(os.path.join(tex_dir, "*_Texture.vtf")) if "exponent" not in p.lower()]
+    if texture_override:
+        vtf = [texture_override]
     from srctools.vtf import VTF
     with open(vtf[0], "rb") as f:
         img = encode_texture(VTF.read(f).get().to_PIL(), 512, True)

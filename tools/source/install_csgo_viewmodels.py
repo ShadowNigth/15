@@ -39,7 +39,7 @@ def main():
                     entry[p] = info[p]
                 else:
                     entry.pop(p, None)
-        entry["source"] = "ilunp/CSGO-M.A.T"
+        entry["source"] = info.get("source", "ilunp/CSGO-M.A.T")
         print("installed", name, len(entry["sequences"]), "seqs")
     with open(meta_path, "w") as f:
         json.dump(meta, f, indent=1)

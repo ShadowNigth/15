@@ -200,7 +200,7 @@ def load_arms(port_glb):
     return out
 
 
-def build(weapon, src_root, arms_port, out_dir, report):
+def build(weapon, src_root, arms_port, out_dir, report, texture_override=None):
     folder, stem, _snd = WEAPONS[weapon]
     dec = os.path.join(src_root, folder, "Model", "model_source", "V_Models", "Decompile")
     qc_path = os.path.join(dec, stem, stem + ".qc")
@@ -249,6 +249,8 @@ def build(weapon, src_root, arms_port, out_dir, report):
     # textures
     tex_dir = os.path.join(src_root, folder, "Texture", "Default")
     vtf = [p for p in glob.glob(os.path.join(tex_dir, "*_Texture.vtf")) if "exponent" not in p.lower()]
+    if texture_override:
+        vtf = [texture_override]
     from srctools.vtf import VTF
     with open(vtf[0], "rb") as f:
         main_img = encode_texture(VTF.read(f).get().to_PIL(), 1024, True)
