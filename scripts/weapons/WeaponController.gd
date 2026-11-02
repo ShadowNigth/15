@@ -188,6 +188,12 @@ func _viewmodel_has_events(v_name: String, seq_prefix: String) -> bool:
 	return false
 
 
+func _human_vm_has_events(spec: Dictionary, seq_prefix: String) -> bool:
+	if not is_instance_valid(actor) or not bool(actor.get("is_human")):
+		return false
+	return _viewmodel_has_events(String(spec.get("v_model", "v_" + current_weapon_id)), seq_prefix)
+
+
 func _get_viewmodel_seq_duration(v_name: String, seq_name: String, fallback: float) -> float:
 	var mmeta: Dictionary = GameData.models_meta.get("weapons/" + v_name, {})
 	var durs: Dictionary = mmeta.get("seq_durations", {})
@@ -529,12 +535,17 @@ func _finish_reload_step() -> void:
 				actor.call("play_viewmodel_sequence", ["insert"])
 			if cur + 1 < csize and res - 1 > 0:
 				reload_timer = 0.48
-				AudioManager.play_3d("weapons/m3_insertshell.wav", actor.global_position, -4.0, 16.0)
+				# the viewmodel's own QC events already play the shell foley for the human
+				if not _human_vm_has_events(spec, "insert"):
+					AudioManager.play_3d(String(spec.get("insert_sound", "weapons/m3_insertshell.wav")),
+						actor.global_position, -4.0, 16.0)
 				return
 		is_reloading = false
 		if actor.has_method("play_viewmodel_sequence"):
 			actor.call("play_viewmodel_sequence", ["after_reload"])
-		AudioManager.play_3d("weapons/m3_pump.wav", actor.global_position, -4.0, 16.0)
+		var pump_wav := String(spec.get("pump_sound", ""))
+		if not pump_wav.is_empty() and not _human_vm_has_events(spec, "after_reload"):
+			AudioManager.play_3d(pump_wav, actor.global_position, -4.0, 16.0)
 		return
 
 	var needed := mini(csize - cur, res)

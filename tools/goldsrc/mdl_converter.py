@@ -534,6 +534,15 @@ def convert_mdl_to_glb(mdl_path: str, out_glb_path: str, model_kind: str = "prop
         animindex = struct.unpack_from("<i", d, sofs + 124)[0]
         seqgroup = struct.unpack_from("<i", d, sofs + 168)[0]
         if seqgroup not in seqgroup_buffers:
+            # tstudomdl-compiled MDLs (e.g. cs2wpnpack_cs16) store a different
+            # value in the seqgroup slot; with a single sequence group every
+            # sequence belongs to group 0 anyway, so fall back instead of
+            # silently dropping all animations.
+            if numseqgroups <= 1:
+                seqgroup = 0
+            else:
+                continue
+        if seqgroup not in seqgroup_buffers:
             continue
         abuf, abase = seqgroup_buffers[seqgroup]
         # Use center blend (nblends // 2) so 9-way aim/shoot blends point straight ahead (0 deg pitch/yaw)!
