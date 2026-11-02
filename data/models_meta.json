@@ -4841,17 +4841,20 @@
  "weapons/p_ak47": {
   "sequences": [],
   "hitboxes": [],
-  "bones": 0
+  "bones": 0,
+  "source": "ilunp/CSGO-M.A.T"
  },
  "weapons/p_aug": {
   "sequences": [],
   "hitboxes": [],
-  "bones": 0
+  "bones": 0,
+  "source": "ilunp/CSGO-M.A.T"
  },
  "weapons/p_awp": {
   "sequences": [],
   "hitboxes": [],
-  "bones": 0
+  "bones": 0,
+  "source": "ilunp/CSGO-M.A.T"
  },
  "weapons/p_c4": {
   "sequences": [],
@@ -4861,17 +4864,20 @@
  "weapons/p_deagle": {
   "sequences": [],
   "hitboxes": [],
-  "bones": 0
+  "bones": 0,
+  "source": "ilunp/CSGO-M.A.T"
  },
  "weapons/p_elite": {
   "sequences": [],
   "hitboxes": [],
-  "bones": 0
+  "bones": 0,
+  "source": "ilunp/CSGO-M.A.T"
  },
  "weapons/p_fiveseven": {
   "sequences": [],
   "hitboxes": [],
-  "bones": 0
+  "bones": 0,
+  "source": "ilunp/CSGO-M.A.T"
  },
  "weapons/p_flashbang": {
   "sequences": [],
@@ -4881,12 +4887,14 @@
  "weapons/p_g3sg1": {
   "sequences": [],
   "hitboxes": [],
-  "bones": 0
+  "bones": 0,
+  "source": "ilunp/CSGO-M.A.T"
  },
  "weapons/p_glock18": {
   "sequences": [],
   "hitboxes": [],
-  "bones": 0
+  "bones": 0,
+  "source": "ilunp/CSGO-M.A.T"
  },
  "weapons/p_hegrenade": {
   "sequences": [],
@@ -4896,17 +4904,20 @@
  "weapons/p_knife": {
   "sequences": [],
   "hitboxes": [],
-  "bones": 0
+  "bones": 0,
+  "source": "ilunp/CSGO-M.A.T"
  },
  "weapons/p_m249": {
   "sequences": [],
   "hitboxes": [],
-  "bones": 0
+  "bones": 0,
+  "source": "ilunp/CSGO-M.A.T"
  },
  "weapons/p_m3": {
   "sequences": [],
   "hitboxes": [],
-  "bones": 0
+  "bones": 0,
+  "source": "ilunp/CSGO-M.A.T"
  },
  "weapons/p_m3super90": {
   "bones": 0,
@@ -4916,42 +4927,50 @@
  "weapons/p_m4a1": {
   "sequences": [],
   "hitboxes": [],
-  "bones": 0
+  "bones": 0,
+  "source": "ilunp/CSGO-M.A.T"
  },
  "weapons/p_mac10": {
   "sequences": [],
   "hitboxes": [],
-  "bones": 0
+  "bones": 0,
+  "source": "ilunp/CSGO-M.A.T"
  },
  "weapons/p_mp5": {
   "sequences": [],
   "hitboxes": [],
-  "bones": 0
+  "bones": 0,
+  "source": "ilunp/CSGO-M.A.T"
  },
  "weapons/p_p228": {
   "sequences": [],
   "hitboxes": [],
-  "bones": 0
+  "bones": 0,
+  "source": "ilunp/CSGO-M.A.T"
  },
  "weapons/p_p90": {
   "sequences": [],
   "hitboxes": [],
-  "bones": 0
+  "bones": 0,
+  "source": "ilunp/CSGO-M.A.T"
  },
  "weapons/p_scout": {
   "sequences": [],
   "hitboxes": [],
-  "bones": 0
+  "bones": 0,
+  "source": "ilunp/CSGO-M.A.T"
  },
  "weapons/p_sg550": {
   "sequences": [],
   "hitboxes": [],
-  "bones": 0
+  "bones": 0,
+  "source": "ilunp/CSGO-M.A.T"
  },
  "weapons/p_sg552": {
   "sequences": [],
   "hitboxes": [],
-  "bones": 0
+  "bones": 0,
+  "source": "ilunp/CSGO-M.A.T"
  },
  "weapons/p_smokegrenade": {
   "sequences": [],
@@ -4961,22 +4980,26 @@
  "weapons/p_tmp": {
   "sequences": [],
   "hitboxes": [],
-  "bones": 0
+  "bones": 0,
+  "source": "ilunp/CSGO-M.A.T"
  },
  "weapons/p_ump45": {
   "sequences": [],
   "hitboxes": [],
-  "bones": 0
+  "bones": 0,
+  "source": "ilunp/CSGO-M.A.T"
  },
  "weapons/p_usp": {
   "sequences": [],
   "hitboxes": [],
-  "bones": 0
+  "bones": 0,
+  "source": "ilunp/CSGO-M.A.T"
  },
  "weapons/p_xm1014": {
   "sequences": [],
   "hitboxes": [],
-  "bones": 0
+  "bones": 0,
+  "source": "ilunp/CSGO-M.A.T"
  },
  "weapons/pshell": {
   "bones": 1,
@@ -5017,409 +5040,15 @@
  "weapons/v_ak47": {
   "sequences": [
    "idle",
-   "reload",
-   "draw",
    "shoot1",
    "shoot2",
    "shoot3",
+   "draw",
+   "reload",
    "inspect"
   ],
-  "hitboxes": [
-   {
-    "bone": 1,
-    "group": 0,
-    "min": [
-     -0.0503,
-     -0.0684,
-     -0.0172
-    ],
-    "max": [
-     0.06,
-     0.0744,
-     0.1394
-    ]
-   },
-   {
-    "bone": 2,
-    "group": 0,
-    "min": [
-     -0.0466,
-     -0.0309,
-     -0.0328
-    ],
-    "max": [
-     0.0269,
-     0.025,
-     0.0584
-    ]
-   },
-   {
-    "bone": 3,
-    "group": 0,
-    "min": [
-     -0.0178,
-     -0.0237,
-     -0.0
-    ],
-    "max": [
-     0.0244,
-     0.0197,
-     0.0469
-    ]
-   },
-   {
-    "bone": 4,
-    "group": 0,
-    "min": [
-     -0.0147,
-     -0.0203,
-     -0.0
-    ],
-    "max": [
-     0.0216,
-     0.0178,
-     0.0456
-    ]
-   },
-   {
-    "bone": 5,
-    "group": 0,
-    "min": [
-     -0.0188,
-     -0.0256,
-     -0.0
-    ],
-    "max": [
-     0.0275,
-     0.0159,
-     0.0494
-    ]
-   },
-   {
-    "bone": 6,
-    "group": 0,
-    "min": [
-     -0.0188,
-     -0.0197,
-     -0.0
-    ],
-    "max": [
-     0.0194,
-     0.0159,
-     0.0381
-    ]
-   },
-   {
-    "bone": 8,
-    "group": 0,
-    "min": [
-     -0.0178,
-     -0.02,
-     -0.0
-    ],
-    "max": [
-     0.0309,
-     0.0156,
-     0.0587
-    ]
-   },
-   {
-    "bone": 9,
-    "group": 0,
-    "min": [
-     -0.0162,
-     -0.0197,
-     -0.0
-    ],
-    "max": [
-     0.0219,
-     0.0153,
-     0.0315
-    ]
-   },
-   {
-    "bone": 11,
-    "group": 0,
-    "min": [
-     -0.0194,
-     -0.0141,
-     -0.0
-    ],
-    "max": [
-     0.0281,
-     0.0184,
-     0.0487
-    ]
-   },
-   {
-    "bone": 12,
-    "group": 0,
-    "min": [
-     -0.0175,
-     -0.0159,
-     -0.0028
-    ],
-    "max": [
-     0.0206,
-     0.0178,
-     0.0291
-    ]
-   },
-   {
-    "bone": 13,
-    "group": 0,
-    "min": [
-     -0.0169,
-     -0.0159,
-     -0.0006
-    ],
-    "max": [
-     0.0153,
-     0.0159,
-     0.0444
-    ]
-   },
-   {
-    "bone": 14,
-    "group": 0,
-    "min": [
-     -0.0194,
-     -0.01,
-     -0.0
-    ],
-    "max": [
-     0.0234,
-     0.0244,
-     0.0403
-    ]
-   },
-   {
-    "bone": 17,
-    "group": 0,
-    "min": [
-     -0.0913,
-     -0.0856,
-     -0.2494
-    ],
-    "max": [
-     0.105,
-     0.0988,
-     0.3275
-    ]
-   },
-   {
-    "bone": 19,
-    "group": 0,
-    "min": [
-     -0.2042,
-     -0.0744,
-     -0.1232
-    ],
-    "max": [
-     0.06,
-     0.3019,
-     0.1394
-    ]
-   },
-   {
-    "bone": 20,
-    "group": 0,
-    "min": [
-     -0.0466,
-     -0.025,
-     -0.0328
-    ],
-    "max": [
-     0.0269,
-     0.0309,
-     0.0584
-    ]
-   },
-   {
-    "bone": 21,
-    "group": 0,
-    "min": [
-     -0.0181,
-     -0.0197,
-     -0.0
-    ],
-    "max": [
-     0.0241,
-     0.0237,
-     0.0469
-    ]
-   },
-   {
-    "bone": 22,
-    "group": 0,
-    "min": [
-     -0.015,
-     -0.0178,
-     -0.0
-    ],
-    "max": [
-     0.0209,
-     0.0203,
-     0.0459
-    ]
-   },
-   {
-    "bone": 23,
-    "group": 0,
-    "min": [
-     -0.0188,
-     -0.0159,
-     -0.0
-    ],
-    "max": [
-     0.0275,
-     0.0256,
-     0.0494
-    ]
-   },
-   {
-    "bone": 24,
-    "group": 0,
-    "min": [
-     -0.0188,
-     -0.0159,
-     -0.0
-    ],
-    "max": [
-     0.0194,
-     0.0197,
-     0.0381
-    ]
-   },
-   {
-    "bone": 26,
-    "group": 0,
-    "min": [
-     -0.0178,
-     -0.0156,
-     -0.0
-    ],
-    "max": [
-     0.0309,
-     0.02,
-     0.0587
-    ]
-   },
-   {
-    "bone": 27,
-    "group": 0,
-    "min": [
-     -0.0162,
-     -0.0153,
-     -0.0
-    ],
-    "max": [
-     0.0219,
-     0.0197,
-     0.0315
-    ]
-   },
-   {
-    "bone": 29,
-    "group": 0,
-    "min": [
-     -0.0194,
-     -0.0184,
-     -0.0
-    ],
-    "max": [
-     0.0281,
-     0.0141,
-     0.0487
-    ]
-   },
-   {
-    "bone": 30,
-    "group": 0,
-    "min": [
-     -0.0175,
-     -0.0178,
-     -0.0028
-    ],
-    "max": [
-     0.0206,
-     0.0159,
-     0.0291
-    ]
-   },
-   {
-    "bone": 31,
-    "group": 0,
-    "min": [
-     -0.0169,
-     -0.0159,
-     -0.0006
-    ],
-    "max": [
-     0.0153,
-     0.0159,
-     0.0444
-    ]
-   },
-   {
-    "bone": 32,
-    "group": 0,
-    "min": [
-     -0.0194,
-     -0.0244,
-     -0.0
-    ],
-    "max": [
-     0.0234,
-     0.01,
-     0.0403
-    ]
-   },
-   {
-    "bone": 35,
-    "group": 0,
-    "min": [
-     -0.0913,
-     -0.0988,
-     -0.2494
-    ],
-    "max": [
-     0.105,
-     0.0856,
-     0.3275
-    ]
-   },
-   {
-    "bone": 36,
-    "group": 0,
-    "min": [
-     -0.1734,
-     -0.3688,
-     -0.0291
-    ],
-    "max": [
-     0.0744,
-     0.8106,
-     0.0312
-    ]
-   }
-  ],
-  "bones": 43,
+  "bones": 58,
   "seq_events": {
-   "reload": [
-    {
-     "t": 0.439,
-     "wav": "weapons/csgo/ak47/ak47_clipout.wav"
-    },
-    {
-     "t": 1.115,
-     "wav": "weapons/csgo/ak47/ak47_clipin.wav"
-    },
-    {
-     "t": 1.723,
-     "wav": "weapons/csgo/ak47/ak47_boltpull.wav"
-    }
-   ],
    "draw": [
     {
      "t": 0.0,
@@ -5430,469 +5059,66 @@
      "wav": "weapons/csgo/ak47/ak47_boltpull.wav"
     }
    ],
+   "reload": [
+    {
+     "t": 0.3,
+     "wav": "weapons/csgo/ak47/ak47_clipout.wav"
+    },
+    {
+     "t": 1.0,
+     "wav": "weapons/csgo/ak47/ak47_clipin.wav"
+    },
+    {
+     "t": 1.667,
+     "wav": "weapons/csgo/ak47/ak47_boltpull.wav"
+    }
+   ],
    "inspect": [
     {
-     "t": 0.0,
+     "t": 0.067,
+     "wav": "weapons/csgo/movement3.wav"
+    },
+    {
+     "t": 2.2,
      "wav": "weapons/csgo/movement1.wav"
     },
     {
-     "t": 2.333,
+     "t": 3.467,
      "wav": "weapons/csgo/movement2.wav"
-    },
-    {
-     "t": 3.5,
-     "wav": "weapons/csgo/movement3.wav"
     }
    ]
   },
   "seq_durations": {
    "idle": 0.033,
-   "reload": 2.466,
-   "draw": 1.0,
    "shoot1": 0.75,
    "shoot2": 0.75,
    "shoot3": 0.75,
+   "draw": 1.0,
+   "reload": 2.433,
    "inspect": 4.567
   },
   "muzzle": [
-   -0.1547,
-   -0.1077,
-   -1.1207
+   -0.155,
+   -0.1079,
+   -1.1209
   ],
   "eject": [
-   -0.1781,
-   -0.0886,
-   -0.5514
-  ]
+   -0.1784,
+   -0.0887,
+   -0.5515
+  ],
+  "source": "ilunp/CSGO-M.A.T"
  },
  "weapons/v_aug": {
   "sequences": [
    "idle",
-   "reload",
-   "draw",
    "shoot1",
-   "shoot2",
-   "shoot3",
+   "draw",
+   "reload",
    "inspect"
   ],
-  "hitboxes": [
-   {
-    "bone": 1,
-    "group": 0,
-    "min": [
-     -0.0503,
-     -0.0684,
-     -0.0172
-    ],
-    "max": [
-     0.06,
-     0.0744,
-     0.1394
-    ]
-   },
-   {
-    "bone": 2,
-    "group": 0,
-    "min": [
-     -0.0466,
-     -0.0309,
-     -0.0328
-    ],
-    "max": [
-     0.0269,
-     0.025,
-     0.0584
-    ]
-   },
-   {
-    "bone": 3,
-    "group": 0,
-    "min": [
-     -0.0178,
-     -0.0237,
-     -0.0
-    ],
-    "max": [
-     0.0244,
-     0.0197,
-     0.0469
-    ]
-   },
-   {
-    "bone": 4,
-    "group": 0,
-    "min": [
-     -0.0147,
-     -0.0203,
-     -0.0
-    ],
-    "max": [
-     0.0216,
-     0.0178,
-     0.0456
-    ]
-   },
-   {
-    "bone": 5,
-    "group": 0,
-    "min": [
-     -0.0188,
-     -0.0256,
-     -0.0
-    ],
-    "max": [
-     0.0275,
-     0.0159,
-     0.0494
-    ]
-   },
-   {
-    "bone": 6,
-    "group": 0,
-    "min": [
-     -0.0188,
-     -0.0197,
-     -0.0
-    ],
-    "max": [
-     0.0194,
-     0.0159,
-     0.0381
-    ]
-   },
-   {
-    "bone": 8,
-    "group": 0,
-    "min": [
-     -0.0178,
-     -0.02,
-     -0.0
-    ],
-    "max": [
-     0.0309,
-     0.0156,
-     0.0587
-    ]
-   },
-   {
-    "bone": 9,
-    "group": 0,
-    "min": [
-     -0.0162,
-     -0.0197,
-     -0.0
-    ],
-    "max": [
-     0.0219,
-     0.0153,
-     0.0315
-    ]
-   },
-   {
-    "bone": 11,
-    "group": 0,
-    "min": [
-     -0.0194,
-     -0.0141,
-     -0.0
-    ],
-    "max": [
-     0.0281,
-     0.0184,
-     0.0487
-    ]
-   },
-   {
-    "bone": 12,
-    "group": 0,
-    "min": [
-     -0.0175,
-     -0.0159,
-     -0.0028
-    ],
-    "max": [
-     0.0206,
-     0.0178,
-     0.0291
-    ]
-   },
-   {
-    "bone": 13,
-    "group": 0,
-    "min": [
-     -0.0169,
-     -0.0159,
-     -0.0006
-    ],
-    "max": [
-     0.0153,
-     0.0159,
-     0.0444
-    ]
-   },
-   {
-    "bone": 14,
-    "group": 0,
-    "min": [
-     -0.0194,
-     -0.01,
-     -0.0
-    ],
-    "max": [
-     0.0234,
-     0.0244,
-     0.0403
-    ]
-   },
-   {
-    "bone": 17,
-    "group": 0,
-    "min": [
-     -0.0913,
-     -0.0856,
-     -0.2494
-    ],
-    "max": [
-     0.105,
-     0.0988,
-     0.3275
-    ]
-   },
-   {
-    "bone": 19,
-    "group": 0,
-    "min": [
-     -0.1467,
-     -0.0744,
-     -0.0172
-    ],
-    "max": [
-     0.06,
-     0.2449,
-     0.1394
-    ]
-   },
-   {
-    "bone": 20,
-    "group": 0,
-    "min": [
-     -0.0466,
-     -0.025,
-     -0.0328
-    ],
-    "max": [
-     0.0269,
-     0.0309,
-     0.0584
-    ]
-   },
-   {
-    "bone": 21,
-    "group": 0,
-    "min": [
-     -0.0181,
-     -0.0197,
-     -0.0
-    ],
-    "max": [
-     0.0241,
-     0.0237,
-     0.0469
-    ]
-   },
-   {
-    "bone": 22,
-    "group": 0,
-    "min": [
-     -0.015,
-     -0.0178,
-     -0.0
-    ],
-    "max": [
-     0.0209,
-     0.0203,
-     0.0459
-    ]
-   },
-   {
-    "bone": 23,
-    "group": 0,
-    "min": [
-     -0.0188,
-     -0.0159,
-     -0.0
-    ],
-    "max": [
-     0.0275,
-     0.0256,
-     0.0494
-    ]
-   },
-   {
-    "bone": 24,
-    "group": 0,
-    "min": [
-     -0.0188,
-     -0.0159,
-     -0.0
-    ],
-    "max": [
-     0.0194,
-     0.0197,
-     0.0381
-    ]
-   },
-   {
-    "bone": 26,
-    "group": 0,
-    "min": [
-     -0.0178,
-     -0.0156,
-     -0.0
-    ],
-    "max": [
-     0.0309,
-     0.02,
-     0.0587
-    ]
-   },
-   {
-    "bone": 27,
-    "group": 0,
-    "min": [
-     -0.0162,
-     -0.0153,
-     -0.0
-    ],
-    "max": [
-     0.0219,
-     0.0197,
-     0.0315
-    ]
-   },
-   {
-    "bone": 29,
-    "group": 0,
-    "min": [
-     -0.0194,
-     -0.0184,
-     -0.0
-    ],
-    "max": [
-     0.0281,
-     0.0141,
-     0.0487
-    ]
-   },
-   {
-    "bone": 30,
-    "group": 0,
-    "min": [
-     -0.0175,
-     -0.0178,
-     -0.0028
-    ],
-    "max": [
-     0.0206,
-     0.0159,
-     0.0291
-    ]
-   },
-   {
-    "bone": 31,
-    "group": 0,
-    "min": [
-     -0.0169,
-     -0.0159,
-     -0.0006
-    ],
-    "max": [
-     0.0153,
-     0.0159,
-     0.0444
-    ]
-   },
-   {
-    "bone": 32,
-    "group": 0,
-    "min": [
-     -0.0194,
-     -0.0244,
-     -0.0
-    ],
-    "max": [
-     0.0234,
-     0.01,
-     0.0403
-    ]
-   },
-   {
-    "bone": 35,
-    "group": 0,
-    "min": [
-     -0.0913,
-     -0.0988,
-     -0.2494
-    ],
-    "max": [
-     0.105,
-     0.0856,
-     0.3275
-    ]
-   },
-   {
-    "bone": 36,
-    "group": 0,
-    "min": [
-     -0.2316,
-     -0.4013,
-     -0.0469
-    ],
-    "max": [
-     0.07,
-     0.5723,
-     0.0453
-    ]
-   },
-   {
-    "bone": 41,
-    "group": 0,
-    "min": [
-     -0.0369,
-     -0.0137,
-     -0.0025
-    ],
-    "max": [
-     0.0072,
-     0.0203,
-     0.0441
-    ]
-   }
-  ],
-  "bones": 42,
+  "bones": 46,
   "seq_events": {
-   "reload": [
-    {
-     "t": 0.434,
-     "wav": "weapons/csgo/aug/aug_clipout.wav"
-    },
-    {
-     "t": 1.274,
-     "wav": "weapons/csgo/aug/aug_clipin.wav"
-    },
-    {
-     "t": 1.737,
-     "wav": "weapons/csgo/aug/aug_cliphit.wav"
-    },
-    {
-     "t": 2.287,
-     "wav": "weapons/csgo/aug/aug_boltpull.wav"
-    },
-    {
-     "t": 2.432,
-     "wav": "weapons/csgo/aug/aug_boltrelease.wav"
-    }
-   ],
    "draw": [
     {
      "t": 0.0,
@@ -5907,460 +5133,71 @@
      "wav": "weapons/csgo/aug/aug_boltrelease.wav"
     }
    ],
+   "reload": [
+    {
+     "t": 0.438,
+     "wav": "weapons/csgo/aug/aug_clipout.wav"
+    },
+    {
+     "t": 1.285,
+     "wav": "weapons/csgo/aug/aug_clipin.wav"
+    },
+    {
+     "t": 1.752,
+     "wav": "weapons/csgo/aug/aug_cliphit.wav"
+    },
+    {
+     "t": 2.307,
+     "wav": "weapons/csgo/aug/aug_boltpull.wav"
+    },
+    {
+     "t": 2.453,
+     "wav": "weapons/csgo/aug/aug_boltrelease.wav"
+    }
+   ],
    "inspect": [
     {
      "t": 0.067,
      "wav": "weapons/csgo/movement1.wav"
     },
     {
-     "t": 2.733,
+     "t": 1.067,
      "wav": "weapons/csgo/movement2.wav"
     },
     {
-     "t": 3.767,
+     "t": 3.033,
      "wav": "weapons/csgo/movement3.wav"
     }
    ]
   },
   "seq_durations": {
    "idle": 0.033,
-   "reload": 3.271,
-   "draw": 1.167,
    "shoot1": 0.933,
-   "shoot2": 0.933,
-   "shoot3": 0.933,
+   "draw": 1.167,
+   "reload": 3.3,
    "inspect": 4.333
   },
   "muzzle": [
-   -0.112,
+   -0.1122,
    -0.0844,
-   -0.9051
+   -0.9053
   ],
   "eject": [
-   -0.1274,
+   -0.1275,
    -0.0836,
-   -0.1986
-  ]
+   -0.1988
+  ],
+  "source": "ilunp/CSGO-M.A.T"
  },
  "weapons/v_awp": {
   "sequences": [
    "idle",
    "shoot1",
-   "shoot2",
-   "shoot3",
-   "reload",
    "draw",
+   "reload",
    "inspect"
   ],
-  "hitboxes": [
-   {
-    "bone": 1,
-    "group": 0,
-    "min": [
-     -0.0503,
-     -0.0684,
-     -0.0172
-    ],
-    "max": [
-     0.06,
-     0.0744,
-     0.1394
-    ]
-   },
-   {
-    "bone": 2,
-    "group": 0,
-    "min": [
-     -0.0466,
-     -0.0309,
-     -0.0328
-    ],
-    "max": [
-     0.0269,
-     0.025,
-     0.0584
-    ]
-   },
-   {
-    "bone": 3,
-    "group": 0,
-    "min": [
-     -0.0178,
-     -0.0237,
-     -0.0
-    ],
-    "max": [
-     0.0244,
-     0.0197,
-     0.0469
-    ]
-   },
-   {
-    "bone": 4,
-    "group": 0,
-    "min": [
-     -0.0147,
-     -0.0203,
-     -0.0
-    ],
-    "max": [
-     0.0216,
-     0.0178,
-     0.0456
-    ]
-   },
-   {
-    "bone": 5,
-    "group": 0,
-    "min": [
-     -0.0188,
-     -0.0256,
-     -0.0
-    ],
-    "max": [
-     0.0275,
-     0.0159,
-     0.0494
-    ]
-   },
-   {
-    "bone": 6,
-    "group": 0,
-    "min": [
-     -0.0188,
-     -0.0197,
-     -0.0
-    ],
-    "max": [
-     0.0194,
-     0.0159,
-     0.0381
-    ]
-   },
-   {
-    "bone": 8,
-    "group": 0,
-    "min": [
-     -0.0178,
-     -0.02,
-     -0.0
-    ],
-    "max": [
-     0.0309,
-     0.0156,
-     0.0587
-    ]
-   },
-   {
-    "bone": 9,
-    "group": 0,
-    "min": [
-     -0.0162,
-     -0.0197,
-     -0.0
-    ],
-    "max": [
-     0.0219,
-     0.0153,
-     0.0315
-    ]
-   },
-   {
-    "bone": 11,
-    "group": 0,
-    "min": [
-     -0.0194,
-     -0.0141,
-     -0.0
-    ],
-    "max": [
-     0.0281,
-     0.0184,
-     0.0487
-    ]
-   },
-   {
-    "bone": 12,
-    "group": 0,
-    "min": [
-     -0.0175,
-     -0.0159,
-     -0.0028
-    ],
-    "max": [
-     0.0206,
-     0.0178,
-     0.0291
-    ]
-   },
-   {
-    "bone": 13,
-    "group": 0,
-    "min": [
-     -0.0169,
-     -0.0159,
-     -0.0006
-    ],
-    "max": [
-     0.0153,
-     0.0159,
-     0.0444
-    ]
-   },
-   {
-    "bone": 14,
-    "group": 0,
-    "min": [
-     -0.0194,
-     -0.01,
-     -0.0
-    ],
-    "max": [
-     0.0234,
-     0.0244,
-     0.0403
-    ]
-   },
-   {
-    "bone": 17,
-    "group": 0,
-    "min": [
-     -0.0913,
-     -0.0856,
-     -0.2494
-    ],
-    "max": [
-     0.105,
-     0.0988,
-     0.3275
-    ]
-   },
-   {
-    "bone": 19,
-    "group": 0,
-    "min": [
-     -0.2143,
-     -0.0744,
-     -0.0172
-    ],
-    "max": [
-     0.06,
-     0.4389,
-     0.1394
-    ]
-   },
-   {
-    "bone": 20,
-    "group": 0,
-    "min": [
-     -0.0466,
-     -0.025,
-     -0.0328
-    ],
-    "max": [
-     0.0269,
-     0.0309,
-     0.0584
-    ]
-   },
-   {
-    "bone": 21,
-    "group": 0,
-    "min": [
-     -0.0181,
-     -0.0197,
-     -0.0
-    ],
-    "max": [
-     0.0241,
-     0.0237,
-     0.0469
-    ]
-   },
-   {
-    "bone": 22,
-    "group": 0,
-    "min": [
-     -0.015,
-     -0.0178,
-     -0.0
-    ],
-    "max": [
-     0.0209,
-     0.0203,
-     0.0459
-    ]
-   },
-   {
-    "bone": 23,
-    "group": 0,
-    "min": [
-     -0.0188,
-     -0.0159,
-     -0.0
-    ],
-    "max": [
-     0.0275,
-     0.0256,
-     0.0494
-    ]
-   },
-   {
-    "bone": 24,
-    "group": 0,
-    "min": [
-     -0.0188,
-     -0.0159,
-     -0.0
-    ],
-    "max": [
-     0.0194,
-     0.0197,
-     0.0381
-    ]
-   },
-   {
-    "bone": 26,
-    "group": 0,
-    "min": [
-     -0.0178,
-     -0.0156,
-     -0.0
-    ],
-    "max": [
-     0.0309,
-     0.02,
-     0.0587
-    ]
-   },
-   {
-    "bone": 27,
-    "group": 0,
-    "min": [
-     -0.0162,
-     -0.0153,
-     -0.0
-    ],
-    "max": [
-     0.0219,
-     0.0197,
-     0.0315
-    ]
-   },
-   {
-    "bone": 29,
-    "group": 0,
-    "min": [
-     -0.0194,
-     -0.0184,
-     -0.0
-    ],
-    "max": [
-     0.0281,
-     0.0141,
-     0.0487
-    ]
-   },
-   {
-    "bone": 30,
-    "group": 0,
-    "min": [
-     -0.0175,
-     -0.0178,
-     -0.0028
-    ],
-    "max": [
-     0.0206,
-     0.0159,
-     0.0291
-    ]
-   },
-   {
-    "bone": 31,
-    "group": 0,
-    "min": [
-     -0.0169,
-     -0.0159,
-     -0.0006
-    ],
-    "max": [
-     0.0153,
-     0.0159,
-     0.0444
-    ]
-   },
-   {
-    "bone": 32,
-    "group": 0,
-    "min": [
-     -0.0194,
-     -0.0244,
-     -0.0
-    ],
-    "max": [
-     0.0234,
-     0.01,
-     0.0403
-    ]
-   },
-   {
-    "bone": 35,
-    "group": 0,
-    "min": [
-     -0.0913,
-     -0.0988,
-     -0.2494
-    ],
-    "max": [
-     0.105,
-     0.0856,
-     0.3275
-    ]
-   },
-   {
-    "bone": 36,
-    "group": 0,
-    "min": [
-     -0.2294,
-     -0.3941,
-     -0.0553
-    ],
-    "max": [
-     0.0859,
-     1.2869,
-     0.0534
-    ]
-   },
-   {
-    "bone": 38,
-    "group": 0,
-    "min": [
-     -0.0113,
-     -0.1647,
-     -0.0091
-    ],
-    "max": [
-     0.0431,
-     0.0372,
-     0.0897
-    ]
-   },
-   {
-    "bone": 41,
-    "group": 0,
-    "min": [
-     -0.0981,
-     -0.0531,
-     -0.0203
-    ],
-    "max": [
-     0.0262,
-     0.0512,
-     0.0178
-    ]
-   }
-  ],
-  "bones": 43,
+  "bones": 57,
   "seq_events": {
    "shoot1": [
     {
@@ -6372,59 +5209,39 @@
      "wav": "weapons/csgo/awp/awp_boltforward.wav"
     }
    ],
-   "shoot2": [
-    {
-     "t": 0.6,
-     "wav": "weapons/csgo/awp/awp_boltback.wav"
-    },
-    {
-     "t": 0.933,
-     "wav": "weapons/csgo/awp/awp_boltforward.wav"
-    }
-   ],
-   "shoot3": [
-    {
-     "t": 0.6,
-     "wav": "weapons/csgo/awp/awp_boltback.wav"
-    },
-    {
-     "t": 0.933,
-     "wav": "weapons/csgo/awp/awp_boltforward.wav"
-    }
-   ],
-   "reload": [
-    {
-     "t": 0.158,
-     "wav": "weapons/csgo/awp/awp_clipout.wav"
-    },
-    {
-     "t": 0.901,
-     "wav": "weapons/csgo/awp/awp_clipin.wav"
-    },
-    {
-     "t": 1.351,
-     "wav": "weapons/csgo/awp/awp_cliphit.wav"
-    },
-    {
-     "t": 1.734,
-     "wav": "weapons/csgo/awp/awp_boltback.wav"
-    },
-    {
-     "t": 2.005,
-     "wav": "weapons/csgo/awp/awp_boltforward.wav"
-    }
-   ],
    "draw": [
     {
      "t": 0.0,
      "wav": "weapons/csgo/awp/awp_draw.wav"
     },
     {
-     "t": 0.233,
+     "t": 0.292,
      "wav": "weapons/csgo/awp/awp_boltback.wav"
     },
     {
-     "t": 0.467,
+     "t": 0.583,
+     "wav": "weapons/csgo/awp/awp_boltforward.wav"
+    }
+   ],
+   "reload": [
+    {
+     "t": 0.184,
+     "wav": "weapons/csgo/awp/awp_clipout.wav"
+    },
+    {
+     "t": 1.054,
+     "wav": "weapons/csgo/awp/awp_clipin.wav"
+    },
+    {
+     "t": 1.582,
+     "wav": "weapons/csgo/awp/awp_cliphit.wav"
+    },
+    {
+     "t": 2.03,
+     "wav": "weapons/csgo/awp/awp_boltback.wav"
+    },
+    {
+     "t": 2.346,
      "wav": "weapons/csgo/awp/awp_boltforward.wav"
     }
    ],
@@ -6446,22 +5263,21 @@
   "seq_durations": {
    "idle": 0.033,
    "shoot1": 1.667,
-   "shoot2": 1.667,
-   "shoot3": 1.667,
-   "reload": 2.477,
-   "draw": 1.0,
+   "draw": 1.25,
+   "reload": 2.9,
    "inspect": 5.0
   },
   "muzzle": [
-   -0.1568,
-   -0.1062,
-   -1.6561
+   -0.157,
+   -0.1064,
+   -1.6559
   ],
   "eject": [
-   -0.1661,
-   -0.0999,
-   -0.5589
-  ]
+   -0.1665,
+   -0.1001,
+   -0.5587
+  ],
+  "source": "ilunp/CSGO-M.A.T"
  },
  "weapons/v_c4": {
   "sequences": [
@@ -6910,423 +5726,29 @@
    "idle",
    "shoot1",
    "shoot2",
-   "shoot_empty",
+   "shoot3",
+   "shootlast",
    "reload",
    "draw",
-   "inspect_1",
-   "inspect_2"
+   "inspect"
   ],
-  "hitboxes": [
-   {
-    "bone": 1,
-    "group": 0,
-    "min": [
-     -0.0503,
-     -0.0684,
-     -0.0172
-    ],
-    "max": [
-     0.06,
-     0.0744,
-     0.1394
-    ]
-   },
-   {
-    "bone": 2,
-    "group": 0,
-    "min": [
-     -0.0466,
-     -0.0309,
-     -0.0328
-    ],
-    "max": [
-     0.0269,
-     0.025,
-     0.0584
-    ]
-   },
-   {
-    "bone": 3,
-    "group": 0,
-    "min": [
-     -0.0178,
-     -0.0237,
-     -0.0
-    ],
-    "max": [
-     0.0244,
-     0.0197,
-     0.0469
-    ]
-   },
-   {
-    "bone": 4,
-    "group": 0,
-    "min": [
-     -0.0147,
-     -0.0203,
-     -0.0
-    ],
-    "max": [
-     0.0216,
-     0.0178,
-     0.0456
-    ]
-   },
-   {
-    "bone": 5,
-    "group": 0,
-    "min": [
-     -0.0188,
-     -0.0256,
-     -0.0
-    ],
-    "max": [
-     0.0275,
-     0.0159,
-     0.0494
-    ]
-   },
-   {
-    "bone": 6,
-    "group": 0,
-    "min": [
-     -0.0188,
-     -0.0197,
-     -0.0
-    ],
-    "max": [
-     0.0194,
-     0.0159,
-     0.0381
-    ]
-   },
-   {
-    "bone": 8,
-    "group": 0,
-    "min": [
-     -0.0178,
-     -0.02,
-     -0.0
-    ],
-    "max": [
-     0.0309,
-     0.0156,
-     0.0587
-    ]
-   },
-   {
-    "bone": 9,
-    "group": 0,
-    "min": [
-     -0.0162,
-     -0.0197,
-     -0.0
-    ],
-    "max": [
-     0.0219,
-     0.0153,
-     0.0315
-    ]
-   },
-   {
-    "bone": 11,
-    "group": 0,
-    "min": [
-     -0.0194,
-     -0.0141,
-     -0.0
-    ],
-    "max": [
-     0.0281,
-     0.0184,
-     0.0487
-    ]
-   },
-   {
-    "bone": 12,
-    "group": 0,
-    "min": [
-     -0.0175,
-     -0.0159,
-     -0.0028
-    ],
-    "max": [
-     0.0206,
-     0.0178,
-     0.0291
-    ]
-   },
-   {
-    "bone": 13,
-    "group": 0,
-    "min": [
-     -0.0169,
-     -0.0159,
-     -0.0006
-    ],
-    "max": [
-     0.0153,
-     0.0159,
-     0.0444
-    ]
-   },
-   {
-    "bone": 14,
-    "group": 0,
-    "min": [
-     -0.0194,
-     -0.01,
-     -0.0
-    ],
-    "max": [
-     0.0234,
-     0.0244,
-     0.0403
-    ]
-   },
-   {
-    "bone": 17,
-    "group": 0,
-    "min": [
-     -0.0913,
-     -0.0856,
-     -0.2494
-    ],
-    "max": [
-     0.105,
-     0.0988,
-     0.3275
-    ]
-   },
-   {
-    "bone": 19,
-    "group": 0,
-    "min": [
-     -0.0503,
-     -0.0744,
-     -0.172
-    ],
-    "max": [
-     0.06,
-     0.3021,
-     0.1394
-    ]
-   },
-   {
-    "bone": 20,
-    "group": 0,
-    "min": [
-     -0.0466,
-     -0.025,
-     -0.0328
-    ],
-    "max": [
-     0.0269,
-     0.0309,
-     0.0584
-    ]
-   },
-   {
-    "bone": 21,
-    "group": 0,
-    "min": [
-     -0.0181,
-     -0.0197,
-     -0.0
-    ],
-    "max": [
-     0.0241,
-     0.0237,
-     0.0469
-    ]
-   },
-   {
-    "bone": 22,
-    "group": 0,
-    "min": [
-     -0.015,
-     -0.0178,
-     -0.0
-    ],
-    "max": [
-     0.0209,
-     0.0203,
-     0.0459
-    ]
-   },
-   {
-    "bone": 23,
-    "group": 0,
-    "min": [
-     -0.0188,
-     -0.0159,
-     -0.0
-    ],
-    "max": [
-     0.0275,
-     0.0256,
-     0.0494
-    ]
-   },
-   {
-    "bone": 24,
-    "group": 0,
-    "min": [
-     -0.0188,
-     -0.0159,
-     -0.0
-    ],
-    "max": [
-     0.0194,
-     0.0197,
-     0.0381
-    ]
-   },
-   {
-    "bone": 26,
-    "group": 0,
-    "min": [
-     -0.0178,
-     -0.0156,
-     -0.0
-    ],
-    "max": [
-     0.0309,
-     0.02,
-     0.0587
-    ]
-   },
-   {
-    "bone": 27,
-    "group": 0,
-    "min": [
-     -0.0162,
-     -0.0153,
-     -0.0
-    ],
-    "max": [
-     0.0219,
-     0.0197,
-     0.0315
-    ]
-   },
-   {
-    "bone": 29,
-    "group": 0,
-    "min": [
-     -0.0194,
-     -0.0184,
-     -0.0
-    ],
-    "max": [
-     0.0281,
-     0.0141,
-     0.0487
-    ]
-   },
-   {
-    "bone": 30,
-    "group": 0,
-    "min": [
-     -0.0175,
-     -0.0178,
-     -0.0028
-    ],
-    "max": [
-     0.0206,
-     0.0159,
-     0.0291
-    ]
-   },
-   {
-    "bone": 31,
-    "group": 0,
-    "min": [
-     -0.0169,
-     -0.0159,
-     -0.0006
-    ],
-    "max": [
-     0.0153,
-     0.0159,
-     0.0444
-    ]
-   },
-   {
-    "bone": 32,
-    "group": 0,
-    "min": [
-     -0.0194,
-     -0.0244,
-     -0.0
-    ],
-    "max": [
-     0.0234,
-     0.01,
-     0.0403
-    ]
-   },
-   {
-    "bone": 35,
-    "group": 0,
-    "min": [
-     -0.0913,
-     -0.0988,
-     -0.2494
-    ],
-    "max": [
-     0.105,
-     0.0856,
-     0.3275
-    ]
-   },
-   {
-    "bone": 36,
-    "group": 0,
-    "min": [
-     -0.1203,
-     -0.0822,
-     -0.0188
-    ],
-    "max": [
-     0.0684,
-     0.2728,
-     0.0188
-    ]
-   },
-   {
-    "bone": 37,
-    "group": 0,
-    "min": [
-     -0.0403,
-     -0.0606,
-     -0.0209
-    ],
-    "max": [
-     0.0191,
-     0.2219,
-     0.0191
-    ]
-   }
-  ],
-  "bones": 43,
+  "bones": 57,
   "seq_events": {
    "reload": [
     {
-     "t": 0.263,
+     "t": 0.267,
      "wav": "weapons/csgo/deagle/de_clipout.wav"
     },
     {
-     "t": 0.624,
+     "t": 0.633,
      "wav": "weapons/csgo/deagle/de_clipin.wav"
     },
     {
-     "t": 1.346,
+     "t": 1.367,
      "wav": "weapons/csgo/deagle/de_slideback.wav"
     },
     {
-     "t": 1.543,
+     "t": 1.567,
      "wav": "weapons/csgo/deagle/de_slideforward.wav"
     }
    ],
@@ -7336,18 +5758,18 @@
      "wav": "weapons/csgo/deagle/de_draw.wav"
     }
    ],
-   "inspect_1": [
+   "inspect": [
     {
      "t": 0.067,
      "wav": "weapons/csgo/movement1.wav"
     },
     {
-     "t": 1.233,
+     "t": 1.267,
      "wav": "weapons/csgo/movement3.wav"
     },
     {
      "t": 1.433,
-     "wav": "weapons/csgo/deagle/de_draw.wav"
+     "wav": "weapons/csgo/movement1.wav"
     },
     {
      "t": 4.367,
@@ -7355,45 +5777,7 @@
     },
     {
      "t": 4.567,
-     "wav": "weapons/csgo/deagle/de_draw.wav"
-    }
-   ],
-   "inspect_2": [
-    {
-     "t": 0.3,
-     "wav": "weapons/csgo/deagle/deagle_special_lookat_f009.wav"
-    },
-    {
-     "t": 1.2,
-     "wav": "weapons/csgo/deagle/deagle_special_lookat_f036.wav"
-    },
-    {
-     "t": 1.9,
-     "wav": "weapons/csgo/deagle/deagle_special_lookat_f057.wav"
-    },
-    {
-     "t": 2.7,
-     "wav": "weapons/csgo/deagle/deagle_special_lookat_f081.wav"
-    },
-    {
-     "t": 3.7,
-     "wav": "weapons/csgo/deagle/deagle_special_lookat_f111.wav"
-    },
-    {
-     "t": 4.433,
-     "wav": "weapons/csgo/deagle/deagle_special_lookat_f133.wav"
-    },
-    {
-     "t": 5.533,
-     "wav": "weapons/csgo/deagle/deagle_special_lookat_f166.wav"
-    },
-    {
-     "t": 6.433,
-     "wav": "weapons/csgo/deagle/deagle_special_lookat_f193.wav"
-    },
-    {
-     "t": 7.6,
-     "wav": "weapons/csgo/deagle/deagle_special_lookat_f228.wav"
+     "wav": "weapons/csgo/movement1.wav"
     }
    ]
   },
@@ -7401,518 +5785,61 @@
    "idle": 0.033,
    "shoot1": 0.675,
    "shoot2": 0.675,
-   "shoot_empty": 0.675,
-   "reload": 2.167,
+   "shoot3": 0.675,
+   "shootlast": 0.675,
+   "reload": 2.2,
    "draw": 1.0,
-   "inspect_1": 5.667,
-   "inspect_2": 8.5
+   "inspect": 5.667
   },
   "muzzle": [
-   -0.1213,
-   -0.0421,
+   -0.1212,
+   -0.0422,
    -0.6936
   ],
   "eject": [
-   -0.1188,
-   -0.0399,
+   -0.1187,
+   -0.04,
    -0.4678
-  ]
+  ],
+  "source": "ilunp/CSGO-M.A.T"
  },
  "weapons/v_elite": {
   "sequences": [
    "idle",
    "idle_leftempty",
    "shoot_left1",
-   "shoot_left2",
-   "shoot_left3",
-   "shoot_left4",
-   "shoot_left5",
    "shoot_leftlast",
    "shoot_right1",
-   "shoot_right2",
-   "shoot_right3",
-   "shoot_right4",
-   "shoot_right5",
    "shoot_rightlast",
    "reload",
    "draw",
    "inspect"
   ],
-  "hitboxes": [
-   {
-    "bone": 1,
-    "group": 0,
-    "min": [
-     -0.0503,
-     -0.0935,
-     -0.0172
-    ],
-    "max": [
-     0.1854,
-     0.0744,
-     0.2045
-    ]
-   },
-   {
-    "bone": 2,
-    "group": 0,
-    "min": [
-     -0.0466,
-     -0.0309,
-     -0.0328
-    ],
-    "max": [
-     0.0269,
-     0.025,
-     0.0584
-    ]
-   },
-   {
-    "bone": 3,
-    "group": 0,
-    "min": [
-     -0.0178,
-     -0.0237,
-     -0.0
-    ],
-    "max": [
-     0.0244,
-     0.0197,
-     0.0469
-    ]
-   },
-   {
-    "bone": 4,
-    "group": 0,
-    "min": [
-     -0.0147,
-     -0.0203,
-     -0.0
-    ],
-    "max": [
-     0.0216,
-     0.0178,
-     0.0456
-    ]
-   },
-   {
-    "bone": 5,
-    "group": 0,
-    "min": [
-     -0.0188,
-     -0.0256,
-     -0.0
-    ],
-    "max": [
-     0.0275,
-     0.0159,
-     0.0494
-    ]
-   },
-   {
-    "bone": 6,
-    "group": 0,
-    "min": [
-     -0.0188,
-     -0.0197,
-     -0.0
-    ],
-    "max": [
-     0.0194,
-     0.0159,
-     0.0381
-    ]
-   },
-   {
-    "bone": 8,
-    "group": 0,
-    "min": [
-     -0.0178,
-     -0.02,
-     -0.0
-    ],
-    "max": [
-     0.0309,
-     0.0156,
-     0.0587
-    ]
-   },
-   {
-    "bone": 9,
-    "group": 0,
-    "min": [
-     -0.0162,
-     -0.0197,
-     -0.0
-    ],
-    "max": [
-     0.0219,
-     0.0153,
-     0.0315
-    ]
-   },
-   {
-    "bone": 11,
-    "group": 0,
-    "min": [
-     -0.0194,
-     -0.0141,
-     -0.0
-    ],
-    "max": [
-     0.0281,
-     0.0184,
-     0.0487
-    ]
-   },
-   {
-    "bone": 12,
-    "group": 0,
-    "min": [
-     -0.0175,
-     -0.0159,
-     -0.0028
-    ],
-    "max": [
-     0.0206,
-     0.0178,
-     0.0291
-    ]
-   },
-   {
-    "bone": 13,
-    "group": 0,
-    "min": [
-     -0.0169,
-     -0.0159,
-     -0.0006
-    ],
-    "max": [
-     0.0153,
-     0.0159,
-     0.0444
-    ]
-   },
-   {
-    "bone": 14,
-    "group": 0,
-    "min": [
-     -0.0194,
-     -0.01,
-     -0.0
-    ],
-    "max": [
-     0.0234,
-     0.0244,
-     0.0403
-    ]
-   },
-   {
-    "bone": 17,
-    "group": 0,
-    "min": [
-     -0.0913,
-     -0.0856,
-     -0.2494
-    ],
-    "max": [
-     0.105,
-     0.0988,
-     0.3275
-    ]
-   },
-   {
-    "bone": 19,
-    "group": 0,
-    "min": [
-     -0.0503,
-     -0.0744,
-     -0.0172
-    ],
-    "max": [
-     0.1667,
-     0.1144,
-     0.201
-    ]
-   },
-   {
-    "bone": 20,
-    "group": 0,
-    "min": [
-     -0.0466,
-     -0.025,
-     -0.0328
-    ],
-    "max": [
-     0.0269,
-     0.0309,
-     0.0584
-    ]
-   },
-   {
-    "bone": 21,
-    "group": 0,
-    "min": [
-     -0.0181,
-     -0.0197,
-     -0.0
-    ],
-    "max": [
-     0.0241,
-     0.0237,
-     0.0469
-    ]
-   },
-   {
-    "bone": 22,
-    "group": 0,
-    "min": [
-     -0.015,
-     -0.0178,
-     -0.0
-    ],
-    "max": [
-     0.0209,
-     0.0203,
-     0.0459
-    ]
-   },
-   {
-    "bone": 23,
-    "group": 0,
-    "min": [
-     -0.0188,
-     -0.0159,
-     -0.0
-    ],
-    "max": [
-     0.0275,
-     0.0256,
-     0.0494
-    ]
-   },
-   {
-    "bone": 24,
-    "group": 0,
-    "min": [
-     -0.0188,
-     -0.0159,
-     -0.0
-    ],
-    "max": [
-     0.0194,
-     0.0197,
-     0.0381
-    ]
-   },
-   {
-    "bone": 26,
-    "group": 0,
-    "min": [
-     -0.0178,
-     -0.0156,
-     -0.0
-    ],
-    "max": [
-     0.0309,
-     0.02,
-     0.0587
-    ]
-   },
-   {
-    "bone": 27,
-    "group": 0,
-    "min": [
-     -0.0162,
-     -0.0153,
-     -0.0
-    ],
-    "max": [
-     0.0219,
-     0.0197,
-     0.0315
-    ]
-   },
-   {
-    "bone": 29,
-    "group": 0,
-    "min": [
-     -0.0194,
-     -0.0184,
-     -0.0
-    ],
-    "max": [
-     0.0281,
-     0.0141,
-     0.0487
-    ]
-   },
-   {
-    "bone": 30,
-    "group": 0,
-    "min": [
-     -0.0175,
-     -0.0178,
-     -0.0028
-    ],
-    "max": [
-     0.0206,
-     0.0159,
-     0.0291
-    ]
-   },
-   {
-    "bone": 31,
-    "group": 0,
-    "min": [
-     -0.0169,
-     -0.0159,
-     -0.0006
-    ],
-    "max": [
-     0.0153,
-     0.0159,
-     0.0444
-    ]
-   },
-   {
-    "bone": 32,
-    "group": 0,
-    "min": [
-     -0.0194,
-     -0.0244,
-     -0.0
-    ],
-    "max": [
-     0.0234,
-     0.01,
-     0.0403
-    ]
-   },
-   {
-    "bone": 35,
-    "group": 0,
-    "min": [
-     -0.0913,
-     -0.0988,
-     -0.2494
-    ],
-    "max": [
-     0.105,
-     0.0856,
-     0.3275
-    ]
-   },
-   {
-    "bone": 36,
-    "group": 0,
-    "min": [
-     -0.116,
-     -0.0587,
-     -0.0209
-    ],
-    "max": [
-     0.0851,
-     0.2688,
-     0.0206
-    ]
-   },
-   {
-    "bone": 38,
-    "group": 0,
-    "min": [
-     -0.116,
-     -0.0587,
-     -0.0206
-    ],
-    "max": [
-     0.0851,
-     0.2688,
-     0.0209
-    ]
-   },
-   {
-    "bone": 41,
-    "group": 0,
-    "min": [
-     -0.0075,
-     -0.0206,
-     -0.0225
-    ],
-    "max": [
-     0.0531,
-     0.2681,
-     0.0213
-    ]
-   },
-   {
-    "bone": 43,
-    "group": 0,
-    "min": [
-     -0.0075,
-     -0.0206,
-     -0.0222
-    ],
-    "max": [
-     0.0531,
-     0.2681,
-     0.0216
-    ]
-   },
-   {
-    "bone": 45,
-    "group": 0,
-    "min": [
-     -0.1569,
-     -0.03,
-     -0.0172
-    ],
-    "max": [
-     0.0022,
-     0.0303,
-     0.0169
-    ]
-   },
-   {
-    "bone": 47,
-    "group": 0,
-    "min": [
-     -0.1569,
-     -0.03,
-     -0.0169
-    ],
-    "max": [
-     0.0022,
-     0.0303,
-     0.0172
-    ]
-   }
-  ],
-  "bones": 50,
+  "bones": 65,
   "seq_events": {
    "reload": [
     {
-     "t": 0.202,
+     "t": 0.199,
      "wav": "weapons/csgo/elite/elite_clipout.wav"
     },
     {
-     "t": 0.282,
+     "t": 0.278,
      "wav": "weapons/csgo/elite/elite_clipout.wav"
     },
     {
-     "t": 1.977,
+     "t": 1.951,
      "wav": "weapons/csgo/elite/elite_leftclipin.wav"
     },
     {
-     "t": 3.389,
+     "t": 3.345,
      "wav": "weapons/csgo/elite/elite_rightclipin.wav"
     },
     {
-     "t": 4.116,
+     "t": 4.062,
      "wav": "weapons/csgo/elite/elite_sliderelease.wav"
     },
     {
-     "t": 4.318,
+     "t": 4.261,
      "wav": "weapons/csgo/elite/elite_sliderelease.wav"
     }
    ],
@@ -7933,15 +5860,15 @@
    "inspect": [
     {
      "t": 0.067,
-     "wav": "weapons/csgo/elite/elite_draw.wav"
+     "wav": "weapons/csgo/movement2.wav"
     },
     {
      "t": 0.833,
-     "wav": "weapons/csgo/elite/elite_draw.wav"
+     "wav": "weapons/csgo/movement3.wav"
     },
     {
      "t": 2.733,
-     "wav": "weapons/csgo/elite/elite_draw.wav"
+     "wav": "weapons/csgo/elite/elite_taunt_tap.wav"
     },
     {
      "t": 2.933,
@@ -7953,7 +5880,7 @@
     },
     {
      "t": 3.767,
-     "wav": "weapons/csgo/elite/elite_draw.wav"
+     "wav": "weapons/csgo/movement1.wav"
     }
    ]
   },
@@ -7961,472 +5888,55 @@
    "idle": 0.033,
    "idle_leftempty": 0.033,
    "shoot_left1": 0.833,
-   "shoot_left2": 0.833,
-   "shoot_left3": 0.833,
-   "shoot_left4": 0.833,
-   "shoot_left5": 0.833,
    "shoot_leftlast": 0.833,
    "shoot_right1": 0.833,
-   "shoot_right2": 0.833,
-   "shoot_right3": 0.833,
-   "shoot_right4": 0.833,
-   "shoot_right5": 0.833,
    "shoot_rightlast": 0.833,
-   "reload": 4.56,
+   "reload": 4.5,
    "draw": 1.0,
    "inspect": 4.6
   },
   "muzzle": [
    -0.0956,
-   -0.0531,
-   -0.8067
+   -0.0533,
+   -0.6815
   ],
   "eject": [
-   -0.115,
-   -0.0632,
-   -0.5944
+   -0.1149,
+   -0.0633,
+   -0.4693
   ],
   "muzzle_alt": [
-   0.0969,
-   -0.0539,
-   -0.7982
-  ]
+   0.0968,
+   -0.054,
+   -0.6734
+  ],
+  "source": "ilunp/CSGO-M.A.T"
  },
  "weapons/v_fiveseven": {
   "sequences": [
    "idle",
    "shoot1",
-   "shoot2",
-   "shoot_empty",
    "reload",
    "draw",
    "inspect"
   ],
-  "hitboxes": [
-   {
-    "bone": 1,
-    "group": 0,
-    "min": [
-     -0.0503,
-     -0.0684,
-     -0.0172
-    ],
-    "max": [
-     0.06,
-     0.0744,
-     0.1394
-    ]
-   },
-   {
-    "bone": 2,
-    "group": 0,
-    "min": [
-     -0.0466,
-     -0.0309,
-     -0.0328
-    ],
-    "max": [
-     0.0269,
-     0.025,
-     0.0584
-    ]
-   },
-   {
-    "bone": 3,
-    "group": 0,
-    "min": [
-     -0.0178,
-     -0.0237,
-     -0.0
-    ],
-    "max": [
-     0.0244,
-     0.0197,
-     0.0469
-    ]
-   },
-   {
-    "bone": 4,
-    "group": 0,
-    "min": [
-     -0.0147,
-     -0.0203,
-     -0.0
-    ],
-    "max": [
-     0.0216,
-     0.0178,
-     0.0456
-    ]
-   },
-   {
-    "bone": 5,
-    "group": 0,
-    "min": [
-     -0.0188,
-     -0.0256,
-     -0.0
-    ],
-    "max": [
-     0.0275,
-     0.0159,
-     0.0494
-    ]
-   },
-   {
-    "bone": 6,
-    "group": 0,
-    "min": [
-     -0.0188,
-     -0.0197,
-     -0.0
-    ],
-    "max": [
-     0.0194,
-     0.0159,
-     0.0381
-    ]
-   },
-   {
-    "bone": 8,
-    "group": 0,
-    "min": [
-     -0.0178,
-     -0.02,
-     -0.0
-    ],
-    "max": [
-     0.0309,
-     0.0156,
-     0.0587
-    ]
-   },
-   {
-    "bone": 9,
-    "group": 0,
-    "min": [
-     -0.0162,
-     -0.0197,
-     -0.0
-    ],
-    "max": [
-     0.0219,
-     0.0153,
-     0.0315
-    ]
-   },
-   {
-    "bone": 11,
-    "group": 0,
-    "min": [
-     -0.0194,
-     -0.0141,
-     -0.0
-    ],
-    "max": [
-     0.0281,
-     0.0184,
-     0.0487
-    ]
-   },
-   {
-    "bone": 12,
-    "group": 0,
-    "min": [
-     -0.0175,
-     -0.0159,
-     -0.0028
-    ],
-    "max": [
-     0.0206,
-     0.0178,
-     0.0291
-    ]
-   },
-   {
-    "bone": 13,
-    "group": 0,
-    "min": [
-     -0.0169,
-     -0.0159,
-     -0.0006
-    ],
-    "max": [
-     0.0153,
-     0.0159,
-     0.0444
-    ]
-   },
-   {
-    "bone": 14,
-    "group": 0,
-    "min": [
-     -0.0194,
-     -0.01,
-     -0.0
-    ],
-    "max": [
-     0.0234,
-     0.0244,
-     0.0403
-    ]
-   },
-   {
-    "bone": 17,
-    "group": 0,
-    "min": [
-     -0.0913,
-     -0.0856,
-     -0.2494
-    ],
-    "max": [
-     0.105,
-     0.0988,
-     0.3275
-    ]
-   },
-   {
-    "bone": 19,
-    "group": 0,
-    "min": [
-     -0.0503,
-     -0.0744,
-     -0.1309
-    ],
-    "max": [
-     0.06,
-     0.4131,
-     0.1394
-    ]
-   },
-   {
-    "bone": 20,
-    "group": 0,
-    "min": [
-     -0.0466,
-     -0.025,
-     -0.0328
-    ],
-    "max": [
-     0.0269,
-     0.0309,
-     0.0584
-    ]
-   },
-   {
-    "bone": 21,
-    "group": 0,
-    "min": [
-     -0.0181,
-     -0.0197,
-     -0.0
-    ],
-    "max": [
-     0.0241,
-     0.0237,
-     0.0469
-    ]
-   },
-   {
-    "bone": 22,
-    "group": 0,
-    "min": [
-     -0.015,
-     -0.0178,
-     -0.0
-    ],
-    "max": [
-     0.0209,
-     0.0203,
-     0.0459
-    ]
-   },
-   {
-    "bone": 23,
-    "group": 0,
-    "min": [
-     -0.0188,
-     -0.0159,
-     -0.0
-    ],
-    "max": [
-     0.0275,
-     0.0256,
-     0.0494
-    ]
-   },
-   {
-    "bone": 24,
-    "group": 0,
-    "min": [
-     -0.0188,
-     -0.0159,
-     -0.0
-    ],
-    "max": [
-     0.0194,
-     0.0197,
-     0.0381
-    ]
-   },
-   {
-    "bone": 26,
-    "group": 0,
-    "min": [
-     -0.0178,
-     -0.0156,
-     -0.0
-    ],
-    "max": [
-     0.0309,
-     0.02,
-     0.0587
-    ]
-   },
-   {
-    "bone": 27,
-    "group": 0,
-    "min": [
-     -0.0162,
-     -0.0153,
-     -0.0
-    ],
-    "max": [
-     0.0219,
-     0.0197,
-     0.0315
-    ]
-   },
-   {
-    "bone": 29,
-    "group": 0,
-    "min": [
-     -0.0194,
-     -0.0184,
-     -0.0
-    ],
-    "max": [
-     0.0281,
-     0.0141,
-     0.0487
-    ]
-   },
-   {
-    "bone": 30,
-    "group": 0,
-    "min": [
-     -0.0175,
-     -0.0178,
-     -0.0028
-    ],
-    "max": [
-     0.0206,
-     0.0159,
-     0.0291
-    ]
-   },
-   {
-    "bone": 31,
-    "group": 0,
-    "min": [
-     -0.0169,
-     -0.0159,
-     -0.0006
-    ],
-    "max": [
-     0.0153,
-     0.0159,
-     0.0444
-    ]
-   },
-   {
-    "bone": 32,
-    "group": 0,
-    "min": [
-     -0.0194,
-     -0.0244,
-     -0.0
-    ],
-    "max": [
-     0.0234,
-     0.01,
-     0.0403
-    ]
-   },
-   {
-    "bone": 35,
-    "group": 0,
-    "min": [
-     -0.0913,
-     -0.0988,
-     -0.2494
-    ],
-    "max": [
-     0.105,
-     0.0856,
-     0.3275
-    ]
-   },
-   {
-    "bone": 36,
-    "group": 0,
-    "min": [
-     -0.0791,
-     -0.0584,
-     -0.0213
-    ],
-    "max": [
-     0.0821,
-     0.1926,
-     0.0213
-    ]
-   },
-   {
-    "bone": 37,
-    "group": 0,
-    "min": [
-     -0.1437,
-     -0.0325,
-     -0.0194
-    ],
-    "max": [
-     0.0041,
-     0.0372,
-     0.0194
-    ]
-   },
-   {
-    "bone": 41,
-    "group": 0,
-    "min": [
-     -0.0253,
-     0.0,
-     -0.0191
-    ],
-    "max": [
-     0.0153,
-     0.2475,
-     0.0191
-    ]
-   }
-  ],
-  "bones": 42,
+  "bones": 46,
   "seq_events": {
    "reload": [
     {
-     "t": 0.491,
+     "t": 0.476,
      "wav": "weapons/csgo/fiveseven/fiveseven_clipout.wav"
     },
     {
-     "t": 1.064,
+     "t": 1.033,
      "wav": "weapons/csgo/fiveseven/fiveseven_clipin.wav"
     },
     {
-     "t": 1.8,
+     "t": 1.747,
      "wav": "weapons/csgo/fiveseven/fiveseven_slideback.wav"
     },
     {
-     "t": 2.005,
+     "t": 1.945,
      "wav": "weapons/csgo/fiveseven/fiveseven_sliderelease.wav"
     }
    ],
@@ -8456,24 +5966,23 @@
    ]
   },
   "seq_durations": {
-   "idle": 0.0,
+   "idle": 0.033,
    "shoot1": 0.4,
-   "shoot2": 0.4,
-   "shoot_empty": 0.4,
-   "reload": 2.659,
+   "reload": 2.7,
    "draw": 1.0,
    "inspect": 6.433
   },
   "muzzle": [
-   -0.0885,
-   -0.0534,
+   -0.0884,
+   -0.0535,
    -0.6299
   ],
   "eject": [
-   -0.0975,
-   -0.0447,
-   -0.5035
-  ]
+   -0.0974,
+   -0.0448,
+   -0.5034
+  ],
+  "source": "ilunp/CSGO-M.A.T"
  },
  "weapons/v_flashbang": {
   "sequences": [
@@ -8899,422 +6408,27 @@
   "sequences": [
    "idle",
    "shoot1",
-   "shoot2",
    "reload",
    "draw",
    "inspect"
   ],
-  "hitboxes": [
-   {
-    "bone": 1,
-    "group": 0,
-    "min": [
-     -0.0503,
-     -0.0684,
-     -0.0172
-    ],
-    "max": [
-     0.06,
-     0.0744,
-     0.1394
-    ]
-   },
-   {
-    "bone": 2,
-    "group": 0,
-    "min": [
-     -0.0466,
-     -0.0309,
-     -0.0328
-    ],
-    "max": [
-     0.0269,
-     0.025,
-     0.0584
-    ]
-   },
-   {
-    "bone": 3,
-    "group": 0,
-    "min": [
-     -0.0178,
-     -0.0237,
-     -0.0
-    ],
-    "max": [
-     0.0244,
-     0.0197,
-     0.0469
-    ]
-   },
-   {
-    "bone": 4,
-    "group": 0,
-    "min": [
-     -0.0147,
-     -0.0203,
-     -0.0
-    ],
-    "max": [
-     0.0216,
-     0.0178,
-     0.0456
-    ]
-   },
-   {
-    "bone": 5,
-    "group": 0,
-    "min": [
-     -0.0188,
-     -0.0256,
-     -0.0
-    ],
-    "max": [
-     0.0275,
-     0.0159,
-     0.0494
-    ]
-   },
-   {
-    "bone": 6,
-    "group": 0,
-    "min": [
-     -0.0188,
-     -0.0197,
-     -0.0
-    ],
-    "max": [
-     0.0194,
-     0.0159,
-     0.0381
-    ]
-   },
-   {
-    "bone": 8,
-    "group": 0,
-    "min": [
-     -0.0178,
-     -0.02,
-     -0.0
-    ],
-    "max": [
-     0.0309,
-     0.0156,
-     0.0587
-    ]
-   },
-   {
-    "bone": 9,
-    "group": 0,
-    "min": [
-     -0.0162,
-     -0.0197,
-     -0.0
-    ],
-    "max": [
-     0.0219,
-     0.0153,
-     0.0315
-    ]
-   },
-   {
-    "bone": 11,
-    "group": 0,
-    "min": [
-     -0.0194,
-     -0.0141,
-     -0.0
-    ],
-    "max": [
-     0.0281,
-     0.0184,
-     0.0487
-    ]
-   },
-   {
-    "bone": 12,
-    "group": 0,
-    "min": [
-     -0.0175,
-     -0.0159,
-     -0.0028
-    ],
-    "max": [
-     0.0206,
-     0.0178,
-     0.0291
-    ]
-   },
-   {
-    "bone": 13,
-    "group": 0,
-    "min": [
-     -0.0169,
-     -0.0159,
-     -0.0006
-    ],
-    "max": [
-     0.0153,
-     0.0159,
-     0.0444
-    ]
-   },
-   {
-    "bone": 14,
-    "group": 0,
-    "min": [
-     -0.0194,
-     -0.01,
-     -0.0
-    ],
-    "max": [
-     0.0234,
-     0.0244,
-     0.0403
-    ]
-   },
-   {
-    "bone": 17,
-    "group": 0,
-    "min": [
-     -0.0913,
-     -0.0856,
-     -0.2494
-    ],
-    "max": [
-     0.105,
-     0.0988,
-     0.3275
-    ]
-   },
-   {
-    "bone": 19,
-    "group": 0,
-    "min": [
-     -0.1648,
-     -0.0744,
-     -0.0172
-    ],
-    "max": [
-     0.06,
-     0.2899,
-     0.2357
-    ]
-   },
-   {
-    "bone": 20,
-    "group": 0,
-    "min": [
-     -0.0466,
-     -0.025,
-     -0.0328
-    ],
-    "max": [
-     0.0269,
-     0.0309,
-     0.0584
-    ]
-   },
-   {
-    "bone": 21,
-    "group": 0,
-    "min": [
-     -0.0181,
-     -0.0197,
-     -0.0
-    ],
-    "max": [
-     0.0241,
-     0.0237,
-     0.0469
-    ]
-   },
-   {
-    "bone": 22,
-    "group": 0,
-    "min": [
-     -0.015,
-     -0.0178,
-     -0.0
-    ],
-    "max": [
-     0.0209,
-     0.0203,
-     0.0459
-    ]
-   },
-   {
-    "bone": 23,
-    "group": 0,
-    "min": [
-     -0.0188,
-     -0.0159,
-     -0.0
-    ],
-    "max": [
-     0.0275,
-     0.0256,
-     0.0494
-    ]
-   },
-   {
-    "bone": 24,
-    "group": 0,
-    "min": [
-     -0.0188,
-     -0.0159,
-     -0.0
-    ],
-    "max": [
-     0.0194,
-     0.0197,
-     0.0381
-    ]
-   },
-   {
-    "bone": 26,
-    "group": 0,
-    "min": [
-     -0.0178,
-     -0.0156,
-     -0.0
-    ],
-    "max": [
-     0.0309,
-     0.02,
-     0.0587
-    ]
-   },
-   {
-    "bone": 27,
-    "group": 0,
-    "min": [
-     -0.0162,
-     -0.0153,
-     -0.0
-    ],
-    "max": [
-     0.0219,
-     0.0197,
-     0.0315
-    ]
-   },
-   {
-    "bone": 29,
-    "group": 0,
-    "min": [
-     -0.0194,
-     -0.0184,
-     -0.0
-    ],
-    "max": [
-     0.0281,
-     0.0141,
-     0.0487
-    ]
-   },
-   {
-    "bone": 30,
-    "group": 0,
-    "min": [
-     -0.0175,
-     -0.0178,
-     -0.0028
-    ],
-    "max": [
-     0.0206,
-     0.0159,
-     0.0291
-    ]
-   },
-   {
-    "bone": 31,
-    "group": 0,
-    "min": [
-     -0.0169,
-     -0.0159,
-     -0.0006
-    ],
-    "max": [
-     0.0153,
-     0.0159,
-     0.0444
-    ]
-   },
-   {
-    "bone": 32,
-    "group": 0,
-    "min": [
-     -0.0194,
-     -0.0244,
-     -0.0
-    ],
-    "max": [
-     0.0234,
-     0.01,
-     0.0403
-    ]
-   },
-   {
-    "bone": 35,
-    "group": 0,
-    "min": [
-     -0.0913,
-     -0.0988,
-     -0.2494
-    ],
-    "max": [
-     0.105,
-     0.0856,
-     0.3275
-    ]
-   },
-   {
-    "bone": 36,
-    "group": 0,
-    "min": [
-     -0.245,
-     -0.42,
-     -0.0338
-    ],
-    "max": [
-     0.0838,
-     0.8918,
-     0.0428
-    ]
-   },
-   {
-    "bone": 37,
-    "group": 0,
-    "min": [
-     -0.0906,
-     -0.0519,
-     -0.0166
-    ],
-    "max": [
-     0.0906,
-     0.0494,
-     0.0209
-    ]
-   }
-  ],
-  "bones": 43,
+  "bones": 58,
   "seq_events": {
    "reload": [
     {
-     "t": 0.397,
+     "t": 0.4,
      "wav": "weapons/csgo/g3sg1/g3sg1_clipout.wav"
     },
     {
-     "t": 1.812,
+     "t": 1.825,
      "wav": "weapons/csgo/g3sg1/g3sg1_clipin.wav"
     },
     {
-     "t": 2.408,
+     "t": 2.425,
      "wav": "weapons/csgo/g3sg1/g3sg1_slideback.wav"
     },
     {
-     "t": 2.582,
+     "t": 2.6,
      "wav": "weapons/csgo/g3sg1/g3sg1_slideforward.wav"
     }
    ],
@@ -9350,453 +6464,35 @@
   "seq_durations": {
    "idle": 0.062,
    "shoot1": 0.733,
-   "shoot2": 0.733,
-   "reload": 3.475,
+   "reload": 3.5,
    "draw": 1.0,
    "inspect": 4.4
   },
   "muzzle": [
-   -0.1483,
+   -0.1485,
    -0.1319,
-   -1.3435
+   -1.3432
   ],
   "eject": [
-   -0.169,
+   -0.1692,
    -0.1138,
-   -0.6432
-  ]
+   -0.643
+  ],
+  "source": "ilunp/CSGO-M.A.T"
  },
  "weapons/v_glock18": {
   "sequences": [
-   "idle1",
-   "idle2",
-   "idle3",
+   "idle",
    "shoot",
    "shoot2",
    "shoot3",
    "shoot_empty",
-   "reload",
    "draw",
-   "holster",
-   "add_silencer",
-   "draw2",
-   "reload2",
+   "reload",
    "inspect"
   ],
-  "hitboxes": [
-   {
-    "bone": 1,
-    "group": 0,
-    "min": [
-     -0.0503,
-     -0.0684,
-     -0.0172
-    ],
-    "max": [
-     0.06,
-     0.0744,
-     0.1394
-    ]
-   },
-   {
-    "bone": 2,
-    "group": 0,
-    "min": [
-     -0.0466,
-     -0.0309,
-     -0.0328
-    ],
-    "max": [
-     0.0269,
-     0.025,
-     0.0584
-    ]
-   },
-   {
-    "bone": 3,
-    "group": 0,
-    "min": [
-     -0.0178,
-     -0.0237,
-     -0.0
-    ],
-    "max": [
-     0.0244,
-     0.0197,
-     0.0469
-    ]
-   },
-   {
-    "bone": 4,
-    "group": 0,
-    "min": [
-     -0.0147,
-     -0.0203,
-     -0.0
-    ],
-    "max": [
-     0.0216,
-     0.0178,
-     0.0456
-    ]
-   },
-   {
-    "bone": 5,
-    "group": 0,
-    "min": [
-     -0.0188,
-     -0.0256,
-     -0.0
-    ],
-    "max": [
-     0.0275,
-     0.0159,
-     0.0494
-    ]
-   },
-   {
-    "bone": 6,
-    "group": 0,
-    "min": [
-     -0.0188,
-     -0.0197,
-     -0.0
-    ],
-    "max": [
-     0.0194,
-     0.0159,
-     0.0381
-    ]
-   },
-   {
-    "bone": 8,
-    "group": 0,
-    "min": [
-     -0.0178,
-     -0.02,
-     -0.0
-    ],
-    "max": [
-     0.0309,
-     0.0156,
-     0.0587
-    ]
-   },
-   {
-    "bone": 9,
-    "group": 0,
-    "min": [
-     -0.0162,
-     -0.0197,
-     -0.0
-    ],
-    "max": [
-     0.0219,
-     0.0153,
-     0.0315
-    ]
-   },
-   {
-    "bone": 11,
-    "group": 0,
-    "min": [
-     -0.0194,
-     -0.0141,
-     -0.0
-    ],
-    "max": [
-     0.0281,
-     0.0184,
-     0.0487
-    ]
-   },
-   {
-    "bone": 12,
-    "group": 0,
-    "min": [
-     -0.0175,
-     -0.0159,
-     -0.0028
-    ],
-    "max": [
-     0.0206,
-     0.0178,
-     0.0291
-    ]
-   },
-   {
-    "bone": 13,
-    "group": 0,
-    "min": [
-     -0.0169,
-     -0.0159,
-     -0.0006
-    ],
-    "max": [
-     0.0153,
-     0.0159,
-     0.0444
-    ]
-   },
-   {
-    "bone": 14,
-    "group": 0,
-    "min": [
-     -0.0194,
-     -0.01,
-     -0.0
-    ],
-    "max": [
-     0.0234,
-     0.0244,
-     0.0403
-    ]
-   },
-   {
-    "bone": 17,
-    "group": 0,
-    "min": [
-     -0.0913,
-     -0.0856,
-     -0.2494
-    ],
-    "max": [
-     0.105,
-     0.0988,
-     0.3275
-    ]
-   },
-   {
-    "bone": 19,
-    "group": 0,
-    "min": [
-     -0.0503,
-     -0.0744,
-     -0.1762
-    ],
-    "max": [
-     0.06,
-     0.2889,
-     0.1394
-    ]
-   },
-   {
-    "bone": 20,
-    "group": 0,
-    "min": [
-     -0.0466,
-     -0.025,
-     -0.0328
-    ],
-    "max": [
-     0.0269,
-     0.0309,
-     0.0584
-    ]
-   },
-   {
-    "bone": 21,
-    "group": 0,
-    "min": [
-     -0.0181,
-     -0.0197,
-     -0.0
-    ],
-    "max": [
-     0.0241,
-     0.0237,
-     0.0469
-    ]
-   },
-   {
-    "bone": 22,
-    "group": 0,
-    "min": [
-     -0.015,
-     -0.0178,
-     -0.0
-    ],
-    "max": [
-     0.0209,
-     0.0203,
-     0.0459
-    ]
-   },
-   {
-    "bone": 23,
-    "group": 0,
-    "min": [
-     -0.0188,
-     -0.0159,
-     -0.0
-    ],
-    "max": [
-     0.0275,
-     0.0256,
-     0.0494
-    ]
-   },
-   {
-    "bone": 24,
-    "group": 0,
-    "min": [
-     -0.0188,
-     -0.0159,
-     -0.0
-    ],
-    "max": [
-     0.0194,
-     0.0197,
-     0.0381
-    ]
-   },
-   {
-    "bone": 26,
-    "group": 0,
-    "min": [
-     -0.0178,
-     -0.0156,
-     -0.0
-    ],
-    "max": [
-     0.0309,
-     0.02,
-     0.0587
-    ]
-   },
-   {
-    "bone": 27,
-    "group": 0,
-    "min": [
-     -0.0162,
-     -0.0153,
-     -0.0
-    ],
-    "max": [
-     0.0219,
-     0.0197,
-     0.0315
-    ]
-   },
-   {
-    "bone": 29,
-    "group": 0,
-    "min": [
-     -0.0194,
-     -0.0184,
-     -0.0
-    ],
-    "max": [
-     0.0281,
-     0.0141,
-     0.0487
-    ]
-   },
-   {
-    "bone": 30,
-    "group": 0,
-    "min": [
-     -0.0175,
-     -0.0178,
-     -0.0028
-    ],
-    "max": [
-     0.0206,
-     0.0159,
-     0.0291
-    ]
-   },
-   {
-    "bone": 31,
-    "group": 0,
-    "min": [
-     -0.0169,
-     -0.0159,
-     -0.0006
-    ],
-    "max": [
-     0.0153,
-     0.0159,
-     0.0444
-    ]
-   },
-   {
-    "bone": 32,
-    "group": 0,
-    "min": [
-     -0.0194,
-     -0.0244,
-     -0.0
-    ],
-    "max": [
-     0.0234,
-     0.01,
-     0.0403
-    ]
-   },
-   {
-    "bone": 35,
-    "group": 0,
-    "min": [
-     -0.0913,
-     -0.0988,
-     -0.2494
-    ],
-    "max": [
-     0.105,
-     0.0856,
-     0.3275
-    ]
-   },
-   {
-    "bone": 36,
-    "group": 0,
-    "min": [
-     -0.0842,
-     -0.0569,
-     -0.0203
-    ],
-    "max": [
-     0.0547,
-     0.1925,
-     0.0194
-    ]
-   },
-   {
-    "bone": 39,
-    "group": 0,
-    "min": [
-     -0.1344,
-     -0.0284,
-     -0.0162
-    ],
-    "max": [
-     -0.0,
-     0.0338,
-     0.0166
-    ]
-   }
-  ],
-  "bones": 42,
+  "bones": 57,
   "seq_events": {
-   "reload": [
-    {
-     "t": 0.413,
-     "wav": "weapons/csgo/glock18/glock_clipout.wav"
-    },
-    {
-     "t": 0.86,
-     "wav": "weapons/csgo/glock18/glock_clipin.wav"
-    },
-    {
-     "t": 1.513,
-     "wav": "weapons/csgo/glock18/glock_slideback.wav"
-    },
-    {
-     "t": 1.72,
-     "wav": "weapons/csgo/glock18/glock_sliderelease.wav"
-    }
-   ],
    "draw": [
     {
      "t": 0.0,
@@ -9811,35 +6507,21 @@
      "wav": "weapons/csgo/glock18/glock_sliderelease.wav"
     }
    ],
-   "draw2": [
-    {
-     "t": 0.0,
-     "wav": "weapons/csgo/glock18/glock_draw.wav"
-    },
+   "reload": [
     {
      "t": 0.4,
-     "wav": "weapons/csgo/glock18/glock_slideback.wav"
-    },
-    {
-     "t": 0.567,
-     "wav": "weapons/csgo/glock18/glock_sliderelease.wav"
-    }
-   ],
-   "reload2": [
-    {
-     "t": 0.413,
      "wav": "weapons/csgo/glock18/glock_clipout.wav"
     },
     {
-     "t": 0.86,
+     "t": 0.833,
      "wav": "weapons/csgo/glock18/glock_clipin.wav"
     },
     {
-     "t": 1.513,
+     "t": 1.467,
      "wav": "weapons/csgo/glock18/glock_slideback.wav"
     },
     {
-     "t": 1.72,
+     "t": 1.667,
      "wav": "weapons/csgo/glock18/glock_sliderelease.wav"
     }
    ],
@@ -9855,31 +6537,26 @@
    ]
   },
   "seq_durations": {
-   "idle1": 0.033,
-   "idle2": 0.033,
-   "idle3": 0.033,
+   "idle": 0.033,
    "shoot": 0.4,
    "shoot2": 0.4,
    "shoot3": 0.4,
    "shoot_empty": 0.4,
-   "reload": 2.236,
-   "draw": 1.0,
-   "holster": 0.033,
-   "add_silencer": 0.033,
-   "draw2": 1.0,
-   "reload2": 2.236,
+   "draw": 1.1,
+   "reload": 2.267,
    "inspect": 6.433
   },
   "muzzle": [
-   -0.088,
-   -0.0625,
+   -0.0878,
+   -0.0626,
    -0.6171
   ],
   "eject": [
-   -0.0878,
-   -0.0501,
+   -0.0877,
+   -0.0502,
    -0.4497
-  ]
+  ],
+  "source": "ilunp/CSGO-M.A.T"
  },
  "weapons/v_hegrenade": {
   "sequences": [
@@ -10303,233 +6980,42 @@
  },
  "weapons/v_knife": {
   "sequences": [
+   "draw",
    "idle",
    "slash1",
    "slash2",
-   "draw",
-   "stab",
-   "stab_miss",
    "midslash1",
    "midslash2",
-   "inspect_1",
-   "inspect_2"
+   "stab_miss",
+   "stab",
+   "inspect"
   ],
-  "hitboxes": [
-   {
-    "bone": 35,
-    "group": 0,
-    "min": [
-     -0.08,
-     -0.0669,
-     -0.2972
-    ],
-    "max": [
-     0.1041,
-     0.0703,
-     0.3272
-    ]
-   },
-   {
-    "bone": 19,
-    "group": 0,
-    "min": [
-     -0.0328,
-     -0.0691,
-     -0.1187
-    ],
-    "max": [
-     0.4291,
-     0.0509,
-     0.0166
-    ]
-   },
-   {
-    "bone": 20,
-    "group": 0,
-    "min": [
-     -0.0191,
-     -0.0194,
-     -0.0395
-    ],
-    "max": [
-     0.0225,
-     0.0253,
-     -0.0
-    ]
-   },
-   {
-    "bone": 21,
-    "group": 0,
-    "min": [
-     -0.0097,
-     -0.0166,
-     -0.0541
-    ],
-    "max": [
-     0.0241,
-     0.0162,
-     -0.0
-    ]
-   },
-   {
-    "bone": 23,
-    "group": 0,
-    "min": [
-     -0.0109,
-     -0.0188,
-     -0.0448
-    ],
-    "max": [
-     0.0225,
-     0.0141,
-     0.0075
-    ]
-   },
-   {
-    "bone": 32,
-    "group": 0,
-    "min": [
-     -0.0128,
-     -0.0266,
-     -0.0303
-    ],
-    "max": [
-     0.0191,
-     0.0072,
-     0.0091
-    ]
-   },
-   {
-    "bone": 17,
-    "group": 0,
-    "min": [
-     -0.08,
-     -0.0703,
-     -0.2972
-    ],
-    "max": [
-     0.1041,
-     0.0669,
-     0.3272
-    ]
-   },
-   {
-    "bone": 1,
-    "group": 0,
-    "min": [
-     -0.0328,
-     -0.0509,
-     -0.1187
-    ],
-    "max": [
-     0.0478,
-     0.0691,
-     0.0166
-    ]
-   },
-   {
-    "bone": 2,
-    "group": 0,
-    "min": [
-     -0.0191,
-     -0.0253,
-     -0.0395
-    ],
-    "max": [
-     0.0225,
-     0.0194,
-     -0.0
-    ]
-   },
-   {
-    "bone": 3,
-    "group": 0,
-    "min": [
-     -0.0097,
-     -0.0162,
-     -0.0541
-    ],
-    "max": [
-     0.0241,
-     0.0166,
-     -0.0
-    ]
-   },
-   {
-    "bone": 5,
-    "group": 0,
-    "min": [
-     -0.0109,
-     -0.0141,
-     -0.0448
-    ],
-    "max": [
-     0.0225,
-     0.0188,
-     0.0075
-    ]
-   },
-   {
-    "bone": 14,
-    "group": 0,
-    "min": [
-     -0.0128,
-     -0.0072,
-     -0.0303
-    ],
-    "max": [
-     0.0191,
-     0.0266,
-     0.0091
-    ]
-   }
-  ],
-  "bones": 37,
+  "bones": 40,
   "seq_events": {
    "draw": [
     {
-     "t": 0.033,
+     "t": 0.0,
      "wav": "weapons/csgo/knife/knife_deploy1.wav"
-    }
-   ],
-   "inspect_1": [
-    {
-     "t": 0.067,
-     "wav": "weapons/csgo/movement1.wav"
-    },
-    {
-     "t": 7.733,
-     "wav": "weapons/csgo/movement3.wav"
-    }
-   ],
-   "inspect_2": [
-    {
-     "t": 0.067,
-     "wav": "weapons/csgo/movement1.wav"
-    },
-    {
-     "t": 5.167,
-     "wav": "weapons/csgo/movement3.wav"
     }
    ]
   },
   "seq_durations": {
+   "draw": 1.0,
    "idle": 2.0,
    "slash1": 1.167,
    "slash2": 1.167,
-   "draw": 1.0,
-   "stab": 1.167,
-   "stab_miss": 1.167,
    "midslash1": 1.167,
    "midslash2": 1.167,
-   "inspect_1": 8.3,
-   "inspect_2": 6.2
+   "stab_miss": 1.167,
+   "stab": 1.167,
+   "inspect": 6.2
   },
   "muzzle": [
    -0.0252,
    -0.0482,
    -0.6137
-  ]
+  ],
+  "source": "ilunp/CSGO-M.A.T"
  },
  "weapons/v_m249": {
   "sequences": [
@@ -10540,467 +7026,31 @@
    "draw",
    "inspect"
   ],
-  "hitboxes": [
-   {
-    "bone": 1,
-    "group": 0,
-    "min": [
-     -0.0503,
-     -0.0684,
-     -0.0172
-    ],
-    "max": [
-     0.06,
-     0.0744,
-     0.1394
-    ]
-   },
-   {
-    "bone": 2,
-    "group": 0,
-    "min": [
-     -0.0466,
-     -0.0309,
-     -0.0328
-    ],
-    "max": [
-     0.0269,
-     0.025,
-     0.0584
-    ]
-   },
-   {
-    "bone": 3,
-    "group": 0,
-    "min": [
-     -0.0178,
-     -0.0237,
-     -0.0
-    ],
-    "max": [
-     0.0244,
-     0.0197,
-     0.0469
-    ]
-   },
-   {
-    "bone": 4,
-    "group": 0,
-    "min": [
-     -0.0147,
-     -0.0203,
-     -0.0
-    ],
-    "max": [
-     0.0216,
-     0.0178,
-     0.0456
-    ]
-   },
-   {
-    "bone": 5,
-    "group": 0,
-    "min": [
-     -0.0188,
-     -0.0256,
-     -0.0
-    ],
-    "max": [
-     0.0275,
-     0.0159,
-     0.0494
-    ]
-   },
-   {
-    "bone": 6,
-    "group": 0,
-    "min": [
-     -0.0188,
-     -0.0197,
-     -0.0
-    ],
-    "max": [
-     0.0194,
-     0.0159,
-     0.0381
-    ]
-   },
-   {
-    "bone": 8,
-    "group": 0,
-    "min": [
-     -0.0178,
-     -0.02,
-     -0.0
-    ],
-    "max": [
-     0.0309,
-     0.0156,
-     0.0587
-    ]
-   },
-   {
-    "bone": 9,
-    "group": 0,
-    "min": [
-     -0.0162,
-     -0.0197,
-     -0.0
-    ],
-    "max": [
-     0.0219,
-     0.0153,
-     0.0315
-    ]
-   },
-   {
-    "bone": 11,
-    "group": 0,
-    "min": [
-     -0.0194,
-     -0.0141,
-     -0.0
-    ],
-    "max": [
-     0.0281,
-     0.0184,
-     0.0487
-    ]
-   },
-   {
-    "bone": 12,
-    "group": 0,
-    "min": [
-     -0.0175,
-     -0.0159,
-     -0.0028
-    ],
-    "max": [
-     0.0206,
-     0.0178,
-     0.0291
-    ]
-   },
-   {
-    "bone": 13,
-    "group": 0,
-    "min": [
-     -0.0169,
-     -0.0159,
-     -0.0006
-    ],
-    "max": [
-     0.0153,
-     0.0159,
-     0.0444
-    ]
-   },
-   {
-    "bone": 14,
-    "group": 0,
-    "min": [
-     -0.0194,
-     -0.01,
-     -0.0
-    ],
-    "max": [
-     0.0234,
-     0.0244,
-     0.0403
-    ]
-   },
-   {
-    "bone": 17,
-    "group": 0,
-    "min": [
-     -0.0913,
-     -0.0856,
-     -0.2494
-    ],
-    "max": [
-     0.105,
-     0.0988,
-     0.3275
-    ]
-   },
-   {
-    "bone": 19,
-    "group": 0,
-    "min": [
-     -0.1435,
-     -0.0744,
-     -0.0558
-    ],
-    "max": [
-     0.06,
-     0.3965,
-     0.1394
-    ]
-   },
-   {
-    "bone": 20,
-    "group": 0,
-    "min": [
-     -0.0466,
-     -0.025,
-     -0.0328
-    ],
-    "max": [
-     0.0269,
-     0.0309,
-     0.0584
-    ]
-   },
-   {
-    "bone": 21,
-    "group": 0,
-    "min": [
-     -0.0181,
-     -0.0197,
-     -0.0
-    ],
-    "max": [
-     0.0241,
-     0.0237,
-     0.0469
-    ]
-   },
-   {
-    "bone": 22,
-    "group": 0,
-    "min": [
-     -0.015,
-     -0.0178,
-     -0.0
-    ],
-    "max": [
-     0.0209,
-     0.0203,
-     0.0459
-    ]
-   },
-   {
-    "bone": 23,
-    "group": 0,
-    "min": [
-     -0.0188,
-     -0.0159,
-     -0.0
-    ],
-    "max": [
-     0.0275,
-     0.0256,
-     0.0494
-    ]
-   },
-   {
-    "bone": 24,
-    "group": 0,
-    "min": [
-     -0.0188,
-     -0.0159,
-     -0.0
-    ],
-    "max": [
-     0.0194,
-     0.0197,
-     0.0381
-    ]
-   },
-   {
-    "bone": 26,
-    "group": 0,
-    "min": [
-     -0.0178,
-     -0.0156,
-     -0.0
-    ],
-    "max": [
-     0.0309,
-     0.02,
-     0.0587
-    ]
-   },
-   {
-    "bone": 27,
-    "group": 0,
-    "min": [
-     -0.0162,
-     -0.0153,
-     -0.0
-    ],
-    "max": [
-     0.0219,
-     0.0197,
-     0.0315
-    ]
-   },
-   {
-    "bone": 29,
-    "group": 0,
-    "min": [
-     -0.0194,
-     -0.0184,
-     -0.0
-    ],
-    "max": [
-     0.0281,
-     0.0141,
-     0.0487
-    ]
-   },
-   {
-    "bone": 30,
-    "group": 0,
-    "min": [
-     -0.0175,
-     -0.0178,
-     -0.0028
-    ],
-    "max": [
-     0.0206,
-     0.0159,
-     0.0291
-    ]
-   },
-   {
-    "bone": 31,
-    "group": 0,
-    "min": [
-     -0.0169,
-     -0.0159,
-     -0.0006
-    ],
-    "max": [
-     0.0153,
-     0.0159,
-     0.0444
-    ]
-   },
-   {
-    "bone": 32,
-    "group": 0,
-    "min": [
-     -0.0194,
-     -0.0244,
-     -0.0
-    ],
-    "max": [
-     0.0234,
-     0.01,
-     0.0403
-    ]
-   },
-   {
-    "bone": 35,
-    "group": 0,
-    "min": [
-     -0.0913,
-     -0.0988,
-     -0.2494
-    ],
-    "max": [
-     0.105,
-     0.0856,
-     0.3275
-    ]
-   },
-   {
-    "bone": 36,
-    "group": 0,
-    "min": [
-     -0.2234,
-     -0.4869,
-     -0.0684
-    ],
-    "max": [
-     0.0838,
-     1.0073,
-     0.1179
-    ]
-   },
-   {
-    "bone": 37,
-    "group": 0,
-    "min": [
-     -0.0481,
-     -0.3756,
-     -0.0369
-    ],
-    "max": [
-     0.0291,
-     0.0053,
-     0.0528
-    ]
-   },
-   {
-    "bone": 52,
-    "group": 0,
-    "min": [
-     -0.1072,
-     -0.0256,
-     -0.0303
-    ],
-    "max": [
-     0.0244,
-     0.01,
-     0.0425
-    ]
-   },
-   {
-    "bone": 53,
-    "group": 0,
-    "min": [
-     -0.1187,
-     -0.0097,
-     -0.0153
-    ],
-    "max": [
-     0.0237,
-     0.1284,
-     0.0184
-    ]
-   },
-   {
-    "bone": 55,
-    "group": 0,
-    "min": [
-     -0.0791,
-     -0.0487,
-     -0.2322
-    ],
-    "max": [
-     0.1097,
-     0.0516,
-     0.0178
-    ]
-   }
-  ],
-  "bones": 56,
+  "bones": 71,
   "seq_events": {
    "reload": [
     {
-     "t": 0.437,
+     "t": 0.439,
      "wav": "weapons/csgo/m249/m249_coverup.wav"
     },
     {
-     "t": 1.093,
+     "t": 1.099,
      "wav": "weapons/csgo/m249/m249_boxout.wav"
     },
     {
-     "t": 2.049,
+     "t": 2.061,
      "wav": "weapons/csgo/m249/m249_boxin.wav"
     },
     {
-     "t": 2.323,
+     "t": 2.336,
      "wav": "weapons/csgo/m249/m249_chain.wav"
     },
     {
-     "t": 3.033,
+     "t": 3.051,
      "wav": "weapons/csgo/m249/m249_coverdown.wav"
     },
     {
-     "t": 3.634,
+     "t": 3.655,
      "wav": "weapons/csgo/m249/m249_pump.wav"
     }
    ],
@@ -11013,447 +7063,39 @@
      "t": 0.233,
      "wav": "weapons/csgo/m249/m249_pump.wav"
     }
-   ],
-   "inspect": [
-    {
-     "t": 0.0,
-     "wav": "weapons/csgo/movement1.wav"
-    },
-    {
-     "t": 4.233,
-     "wav": "weapons/csgo/movement2.wav"
-    },
-    {
-     "t": 5.933,
-     "wav": "weapons/csgo/movement3.wav"
-    }
    ]
   },
   "seq_durations": {
    "idle": 0.033,
    "shoot1": 0.867,
    "shoot2": 0.867,
-   "reload": 4.673,
-   "draw": 1.0,
+   "reload": 4.7,
+   "draw": 1.1,
    "inspect": 6.867
   },
   "muzzle": [
-   -0.2334,
+   -0.2335,
    -0.1226,
-   -1.5952
+   -1.5953
   ],
   "eject": [
-   -0.2643,
+   -0.2644,
    -0.0989,
-   -0.8007
-  ]
+   -0.8008
+  ],
+  "source": "ilunp/CSGO-M.A.T"
  },
  "weapons/v_m3": {
   "sequences": [
    "idle",
    "shoot1",
-   "shoot2",
+   "start_reload",
    "insert",
    "after_reload",
-   "start_reload",
    "draw",
    "inspect"
   ],
-  "hitboxes": [
-   {
-    "bone": 1,
-    "group": 0,
-    "min": [
-     -0.0503,
-     -0.0684,
-     -0.0172
-    ],
-    "max": [
-     0.06,
-     0.0744,
-     0.1394
-    ]
-   },
-   {
-    "bone": 2,
-    "group": 0,
-    "min": [
-     -0.0466,
-     -0.0309,
-     -0.0328
-    ],
-    "max": [
-     0.0269,
-     0.025,
-     0.0584
-    ]
-   },
-   {
-    "bone": 3,
-    "group": 0,
-    "min": [
-     -0.0178,
-     -0.0237,
-     -0.0
-    ],
-    "max": [
-     0.0244,
-     0.0197,
-     0.0469
-    ]
-   },
-   {
-    "bone": 4,
-    "group": 0,
-    "min": [
-     -0.0147,
-     -0.0203,
-     -0.0
-    ],
-    "max": [
-     0.0216,
-     0.0178,
-     0.0456
-    ]
-   },
-   {
-    "bone": 5,
-    "group": 0,
-    "min": [
-     -0.0188,
-     -0.0256,
-     -0.0
-    ],
-    "max": [
-     0.0275,
-     0.0159,
-     0.0494
-    ]
-   },
-   {
-    "bone": 6,
-    "group": 0,
-    "min": [
-     -0.0188,
-     -0.0197,
-     -0.0
-    ],
-    "max": [
-     0.0194,
-     0.0159,
-     0.0381
-    ]
-   },
-   {
-    "bone": 8,
-    "group": 0,
-    "min": [
-     -0.0178,
-     -0.02,
-     -0.0
-    ],
-    "max": [
-     0.0309,
-     0.0156,
-     0.0587
-    ]
-   },
-   {
-    "bone": 9,
-    "group": 0,
-    "min": [
-     -0.0162,
-     -0.0197,
-     -0.0
-    ],
-    "max": [
-     0.0219,
-     0.0153,
-     0.0315
-    ]
-   },
-   {
-    "bone": 11,
-    "group": 0,
-    "min": [
-     -0.0194,
-     -0.0141,
-     -0.0
-    ],
-    "max": [
-     0.0281,
-     0.0184,
-     0.0487
-    ]
-   },
-   {
-    "bone": 12,
-    "group": 0,
-    "min": [
-     -0.0175,
-     -0.0159,
-     -0.0028
-    ],
-    "max": [
-     0.0206,
-     0.0178,
-     0.0291
-    ]
-   },
-   {
-    "bone": 13,
-    "group": 0,
-    "min": [
-     -0.0169,
-     -0.0159,
-     -0.0006
-    ],
-    "max": [
-     0.0153,
-     0.0159,
-     0.0444
-    ]
-   },
-   {
-    "bone": 14,
-    "group": 0,
-    "min": [
-     -0.0194,
-     -0.01,
-     -0.0
-    ],
-    "max": [
-     0.0234,
-     0.0244,
-     0.0403
-    ]
-   },
-   {
-    "bone": 17,
-    "group": 0,
-    "min": [
-     -0.0913,
-     -0.0856,
-     -0.2494
-    ],
-    "max": [
-     0.105,
-     0.0988,
-     0.3275
-    ]
-   },
-   {
-    "bone": 19,
-    "group": 0,
-    "min": [
-     -0.1905,
-     -0.0744,
-     -0.1503
-    ],
-    "max": [
-     0.06,
-     0.2634,
-     0.1394
-    ]
-   },
-   {
-    "bone": 20,
-    "group": 0,
-    "min": [
-     -0.0466,
-     -0.025,
-     -0.0328
-    ],
-    "max": [
-     0.0269,
-     0.0309,
-     0.0584
-    ]
-   },
-   {
-    "bone": 21,
-    "group": 0,
-    "min": [
-     -0.0181,
-     -0.0197,
-     -0.0
-    ],
-    "max": [
-     0.0241,
-     0.0237,
-     0.0469
-    ]
-   },
-   {
-    "bone": 22,
-    "group": 0,
-    "min": [
-     -0.015,
-     -0.0178,
-     -0.0
-    ],
-    "max": [
-     0.0209,
-     0.0203,
-     0.0459
-    ]
-   },
-   {
-    "bone": 23,
-    "group": 0,
-    "min": [
-     -0.0188,
-     -0.0159,
-     -0.0
-    ],
-    "max": [
-     0.0275,
-     0.0256,
-     0.0494
-    ]
-   },
-   {
-    "bone": 24,
-    "group": 0,
-    "min": [
-     -0.0188,
-     -0.0159,
-     -0.0
-    ],
-    "max": [
-     0.0194,
-     0.0197,
-     0.0381
-    ]
-   },
-   {
-    "bone": 26,
-    "group": 0,
-    "min": [
-     -0.0178,
-     -0.0156,
-     -0.0
-    ],
-    "max": [
-     0.0309,
-     0.02,
-     0.0587
-    ]
-   },
-   {
-    "bone": 27,
-    "group": 0,
-    "min": [
-     -0.0162,
-     -0.0153,
-     -0.0
-    ],
-    "max": [
-     0.0219,
-     0.0197,
-     0.0315
-    ]
-   },
-   {
-    "bone": 29,
-    "group": 0,
-    "min": [
-     -0.0194,
-     -0.0184,
-     -0.0
-    ],
-    "max": [
-     0.0281,
-     0.0141,
-     0.0487
-    ]
-   },
-   {
-    "bone": 30,
-    "group": 0,
-    "min": [
-     -0.0175,
-     -0.0178,
-     -0.0028
-    ],
-    "max": [
-     0.0206,
-     0.0159,
-     0.0291
-    ]
-   },
-   {
-    "bone": 31,
-    "group": 0,
-    "min": [
-     -0.0169,
-     -0.0159,
-     -0.0006
-    ],
-    "max": [
-     0.0153,
-     0.0159,
-     0.0444
-    ]
-   },
-   {
-    "bone": 32,
-    "group": 0,
-    "min": [
-     -0.0194,
-     -0.0244,
-     -0.0
-    ],
-    "max": [
-     0.0234,
-     0.01,
-     0.0403
-    ]
-   },
-   {
-    "bone": 35,
-    "group": 0,
-    "min": [
-     -0.0913,
-     -0.0988,
-     -0.2494
-    ],
-    "max": [
-     0.105,
-     0.0856,
-     0.3275
-    ]
-   },
-   {
-    "bone": 36,
-    "group": 0,
-    "min": [
-     -0.0966,
-     -0.3544,
-     -0.0312
-    ],
-    "max": [
-     0.16,
-     0.886,
-     0.0316
-    ]
-   },
-   {
-    "bone": 39,
-    "group": 0,
-    "min": [
-     -0.0353,
-     -0.0131,
-     -0.0294
-    ],
-    "max": [
-     0.0406,
-     0.3509,
-     0.0297
-    ]
-   }
-  ],
-  "bones": 43,
+  "bones": 47,
   "seq_events": {
    "shoot1": [
     {
@@ -11461,15 +7103,9 @@
      "wav": "weapons/csgo/nova/nova_pump.wav"
     }
    ],
-   "shoot2": [
-    {
-     "t": 0.333,
-     "wav": "weapons/csgo/nova/nova_pump.wav"
-    }
-   ],
    "insert": [
     {
-     "t": 0.0,
+     "t": 0.167,
      "wav": "weapons/csgo/nova/nova_insertshell.wav"
     }
    ],
@@ -11499,7 +7135,7 @@
      "wav": "weapons/csgo/movement2.wav"
     },
     {
-     "t": 4.9,
+     "t": 3.9,
      "wav": "weapons/csgo/movement3.wav"
     }
    ]
@@ -11507,464 +7143,142 @@
   "seq_durations": {
    "idle": 0.033,
    "shoot1": 0.8,
-   "shoot2": 0.8,
+   "start_reload": 0.367,
    "insert": 0.433,
    "after_reload": 0.8,
-   "start_reload": 0.367,
    "draw": 1.0,
    "inspect": 5.6
   },
   "muzzle": [
-   -0.1334,
-   -0.113,
-   -1.2388
+   -0.1336,
+   -0.1132,
+   -1.2387
   ],
   "eject": [
-   -0.1335,
-   -0.1143,
-   -0.6207
-  ]
+   -0.1338,
+   -0.1145,
+   -0.6206
+  ],
+  "source": "ilunp/CSGO-M.A.T"
  },
  "weapons/v_m4a1": {
   "sequences": [
    "idle",
-   "shoot1",
-   "shoot2",
-   "shoot3",
-   "reload",
-   "draw",
-   "add_silencer",
    "idle_unsil",
-   "shoot1_unsil",
-   "shoot2_unsil",
-   "shoot3_unsil",
-   "reload_unsil",
-   "draw_unsil",
+   "add_silencer",
    "detach_silencer",
+   "shoot1",
+   "shoot1_unsil",
+   "shoot2",
+   "shoot2_unsil",
+   "shoot3",
+   "shoot3_unsil",
+   "reload",
+   "reload_unsil",
+   "draw",
+   "draw_unsil",
    "inspect",
    "inspect_unsil"
   ],
-  "hitboxes": [
-   {
-    "bone": 1,
-    "group": 0,
-    "min": [
-     -0.0503,
-     -0.0684,
-     -0.0172
-    ],
-    "max": [
-     0.06,
-     0.0744,
-     0.1394
-    ]
-   },
-   {
-    "bone": 2,
-    "group": 0,
-    "min": [
-     -0.0466,
-     -0.0309,
-     -0.0328
-    ],
-    "max": [
-     0.0269,
-     0.025,
-     0.0584
-    ]
-   },
-   {
-    "bone": 3,
-    "group": 0,
-    "min": [
-     -0.0178,
-     -0.0237,
-     -0.0
-    ],
-    "max": [
-     0.0244,
-     0.0197,
-     0.0469
-    ]
-   },
-   {
-    "bone": 4,
-    "group": 0,
-    "min": [
-     -0.0147,
-     -0.0203,
-     -0.0
-    ],
-    "max": [
-     0.0216,
-     0.0178,
-     0.0456
-    ]
-   },
-   {
-    "bone": 5,
-    "group": 0,
-    "min": [
-     -0.0188,
-     -0.0256,
-     -0.0
-    ],
-    "max": [
-     0.0275,
-     0.0159,
-     0.0494
-    ]
-   },
-   {
-    "bone": 6,
-    "group": 0,
-    "min": [
-     -0.0188,
-     -0.0197,
-     -0.0
-    ],
-    "max": [
-     0.0194,
-     0.0159,
-     0.0381
-    ]
-   },
-   {
-    "bone": 8,
-    "group": 0,
-    "min": [
-     -0.0178,
-     -0.02,
-     -0.0
-    ],
-    "max": [
-     0.0309,
-     0.0156,
-     0.0587
-    ]
-   },
-   {
-    "bone": 9,
-    "group": 0,
-    "min": [
-     -0.0162,
-     -0.0197,
-     -0.0
-    ],
-    "max": [
-     0.0219,
-     0.0153,
-     0.0315
-    ]
-   },
-   {
-    "bone": 11,
-    "group": 0,
-    "min": [
-     -0.0194,
-     -0.0141,
-     -0.0
-    ],
-    "max": [
-     0.0281,
-     0.0184,
-     0.0487
-    ]
-   },
-   {
-    "bone": 12,
-    "group": 0,
-    "min": [
-     -0.0175,
-     -0.0159,
-     -0.0028
-    ],
-    "max": [
-     0.0206,
-     0.0178,
-     0.0291
-    ]
-   },
-   {
-    "bone": 13,
-    "group": 0,
-    "min": [
-     -0.0169,
-     -0.0159,
-     -0.0006
-    ],
-    "max": [
-     0.0153,
-     0.0159,
-     0.0444
-    ]
-   },
-   {
-    "bone": 14,
-    "group": 0,
-    "min": [
-     -0.0194,
-     -0.01,
-     -0.0
-    ],
-    "max": [
-     0.0234,
-     0.0244,
-     0.0403
-    ]
-   },
-   {
-    "bone": 17,
-    "group": 0,
-    "min": [
-     -0.0913,
-     -0.0856,
-     -0.2494
-    ],
-    "max": [
-     0.105,
-     0.0988,
-     0.3275
-    ]
-   },
-   {
-    "bone": 19,
-    "group": 0,
-    "min": [
-     -0.0503,
-     -0.0744,
-     -0.0172
-    ],
-    "max": [
-     0.06,
-     0.0684,
-     0.1401
-    ]
-   },
-   {
-    "bone": 20,
-    "group": 0,
-    "min": [
-     -0.0466,
-     -0.025,
-     -0.0328
-    ],
-    "max": [
-     0.0269,
-     0.0309,
-     0.0584
-    ]
-   },
-   {
-    "bone": 21,
-    "group": 0,
-    "min": [
-     -0.0181,
-     -0.0197,
-     -0.0
-    ],
-    "max": [
-     0.0241,
-     0.0237,
-     0.0469
-    ]
-   },
-   {
-    "bone": 22,
-    "group": 0,
-    "min": [
-     -0.015,
-     -0.0178,
-     -0.0
-    ],
-    "max": [
-     0.0209,
-     0.0203,
-     0.0459
-    ]
-   },
-   {
-    "bone": 23,
-    "group": 0,
-    "min": [
-     -0.0188,
-     -0.0159,
-     -0.0
-    ],
-    "max": [
-     0.0275,
-     0.0256,
-     0.0494
-    ]
-   },
-   {
-    "bone": 24,
-    "group": 0,
-    "min": [
-     -0.0188,
-     -0.0159,
-     -0.0
-    ],
-    "max": [
-     0.0194,
-     0.0197,
-     0.0381
-    ]
-   },
-   {
-    "bone": 26,
-    "group": 0,
-    "min": [
-     -0.0178,
-     -0.0156,
-     -0.0
-    ],
-    "max": [
-     0.0309,
-     0.02,
-     0.0587
-    ]
-   },
-   {
-    "bone": 27,
-    "group": 0,
-    "min": [
-     -0.0162,
-     -0.0153,
-     -0.0
-    ],
-    "max": [
-     0.0219,
-     0.0197,
-     0.0315
-    ]
-   },
-   {
-    "bone": 29,
-    "group": 0,
-    "min": [
-     -0.0194,
-     -0.0184,
-     -0.0
-    ],
-    "max": [
-     0.0281,
-     0.0141,
-     0.0487
-    ]
-   },
-   {
-    "bone": 30,
-    "group": 0,
-    "min": [
-     -0.0175,
-     -0.0178,
-     -0.0028
-    ],
-    "max": [
-     0.0206,
-     0.0159,
-     0.0291
-    ]
-   },
-   {
-    "bone": 31,
-    "group": 0,
-    "min": [
-     -0.0169,
-     -0.0159,
-     -0.0006
-    ],
-    "max": [
-     0.0153,
-     0.0159,
-     0.0444
-    ]
-   },
-   {
-    "bone": 32,
-    "group": 0,
-    "min": [
-     -0.0194,
-     -0.0244,
-     -0.0
-    ],
-    "max": [
-     0.0234,
-     0.01,
-     0.0403
-    ]
-   },
-   {
-    "bone": 35,
-    "group": 0,
-    "min": [
-     -0.0913,
-     -0.0988,
-     -0.2494
-    ],
-    "max": [
-     0.105,
-     0.0856,
-     0.3275
-    ]
-   },
-   {
-    "bone": 36,
-    "group": 0,
-    "min": [
-     -0.2659,
-     -0.4734,
-     -0.07
-    ],
-    "max": [
-     0.0772,
-     0.75,
-     0.04
-    ]
-   },
-   {
-    "bone": 37,
-    "group": 0,
-    "min": [
-     -0.0394,
-     -0.1556,
-     -0.0278
-    ],
-    "max": [
-     0.0819,
-     0.0944,
-     0.0141
-    ]
-   },
-   {
-    "bone": 40,
-    "group": 0,
-    "min": [
-     -0.0241,
-     -0.0281,
-     -0.0316
-    ],
-    "max": [
-     0.2697,
-     0.0334,
-     0.0303
-    ]
-   }
-  ],
-  "bones": 43,
+  "bones": 58,
   "seq_events": {
+   "add_silencer": [
+    {
+     "t": 0.1,
+     "wav": "weapons/csgo/movement1.wav"
+    },
+    {
+     "t": 1.1,
+     "wav": "weapons/csgo/m4a1/m4a1_silencer_screw_on_start.wav"
+    },
+    {
+     "t": 1.567,
+     "wav": "weapons/csgo/m4a1/m4a1_silencer_screw_1.wav"
+    },
+    {
+     "t": 2.167,
+     "wav": "weapons/csgo/m4a1/m4a1_silencer_screw_2.wav"
+    },
+    {
+     "t": 2.567,
+     "wav": "weapons/csgo/m4a1/m4a1_silencer_screw_3.wav"
+    },
+    {
+     "t": 2.967,
+     "wav": "weapons/csgo/m4a1/m4a1_silencer_screw_4.wav"
+    },
+    {
+     "t": 3.267,
+     "wav": "weapons/csgo/m4a1/m4a1_silencer_screw_5.wav"
+    },
+    {
+     "t": 4.0,
+     "wav": "weapons/csgo/movement3.wav"
+    }
+   ],
+   "detach_silencer": [
+    {
+     "t": 0.1,
+     "wav": "weapons/csgo/movement1.wav"
+    },
+    {
+     "t": 0.8,
+     "wav": "weapons/csgo/m4a1/m4a1_silencer_screw_1.wav"
+    },
+    {
+     "t": 1.433,
+     "wav": "weapons/csgo/m4a1/m4a1_silencer_screw_2.wav"
+    },
+    {
+     "t": 1.8,
+     "wav": "weapons/csgo/m4a1/m4a1_silencer_screw_3.wav"
+    },
+    {
+     "t": 2.2,
+     "wav": "weapons/csgo/m4a1/m4a1_silencer_screw_4.wav"
+    },
+    {
+     "t": 2.533,
+     "wav": "weapons/csgo/m4a1/m4a1_silencer_screw_5.wav"
+    },
+    {
+     "t": 2.933,
+     "wav": "weapons/csgo/m4a1/m4a1_silencer_screw_1.wav"
+    },
+    {
+     "t": 3.033,
+     "wav": "weapons/csgo/m4a1/m4a1_silencer_screw_off_end.wav"
+    },
+    {
+     "t": 3.5,
+     "wav": "weapons/csgo/movement3.wav"
+    }
+   ],
    "reload": [
     {
-     "t": 0.363,
+     "t": 0.367,
      "wav": "weapons/csgo/m4a1/m4a1_clipout.wav"
     },
     {
-     "t": 1.155,
+     "t": 1.167,
      "wav": "weapons/csgo/m4a1/m4a1_clipin.wav"
     },
     {
-     "t": 1.882,
+     "t": 1.9,
+     "wav": "weapons/csgo/m4a1/m4a1_cliphit.wav"
+    }
+   ],
+   "reload_unsil": [
+    {
+     "t": 0.367,
+     "wav": "weapons/csgo/m4a1/m4a1_clipout.wav"
+    },
+    {
+     "t": 1.167,
+     "wav": "weapons/csgo/m4a1/m4a1_clipin.wav"
+    },
+    {
+     "t": 1.9,
      "wav": "weapons/csgo/m4a1/m4a1_cliphit.wav"
     }
    ],
@@ -11982,54 +7296,6 @@
      "wav": "weapons/csgo/m4a1/m4a1_silencer_boltback.wav"
     }
    ],
-   "add_silencer": [
-    {
-     "t": 0.042,
-     "wav": "weapons/csgo/movement1.wav"
-    },
-    {
-     "t": 0.46,
-     "wav": "weapons/csgo/m4a1/m4a1_silencer_screw_on_start.wav"
-    },
-    {
-     "t": 0.655,
-     "wav": "weapons/csgo/m4a1/m4a1_silencer_screw_1.wav"
-    },
-    {
-     "t": 0.905,
-     "wav": "weapons/csgo/m4a1/m4a1_silencer_screw_2.wav"
-    },
-    {
-     "t": 1.072,
-     "wav": "weapons/csgo/m4a1/m4a1_silencer_screw_3.wav"
-    },
-    {
-     "t": 1.239,
-     "wav": "weapons/csgo/m4a1/m4a1_silencer_screw_4.wav"
-    },
-    {
-     "t": 1.365,
-     "wav": "weapons/csgo/m4a1/m4a1_silencer_screw_5.wav"
-    },
-    {
-     "t": 1.671,
-     "wav": "weapons/csgo/movement3.wav"
-    }
-   ],
-   "reload_unsil": [
-    {
-     "t": 0.363,
-     "wav": "weapons/csgo/m4a1/m4a1_clipout.wav"
-    },
-    {
-     "t": 1.155,
-     "wav": "weapons/csgo/m4a1/m4a1_clipin.wav"
-    },
-    {
-     "t": 1.882,
-     "wav": "weapons/csgo/m4a1/m4a1_cliphit.wav"
-    }
-   ],
    "draw_unsil": [
     {
      "t": 0.0,
@@ -12042,44 +7308,6 @@
     {
      "t": 0.567,
      "wav": "weapons/csgo/m4a1/m4a1_silencer_boltback.wav"
-    }
-   ],
-   "detach_silencer": [
-    {
-     "t": 0.042,
-     "wav": "weapons/csgo/movement1.wav"
-    },
-    {
-     "t": 0.334,
-     "wav": "weapons/csgo/m4a1/m4a1_silencer_screw_1.wav"
-    },
-    {
-     "t": 0.599,
-     "wav": "weapons/csgo/m4a1/m4a1_silencer_screw_2.wav"
-    },
-    {
-     "t": 0.752,
-     "wav": "weapons/csgo/m4a1/m4a1_silencer_screw_3.wav"
-    },
-    {
-     "t": 0.919,
-     "wav": "weapons/csgo/m4a1/m4a1_silencer_screw_4.wav"
-    },
-    {
-     "t": 1.058,
-     "wav": "weapons/csgo/m4a1/m4a1_silencer_screw_5.wav"
-    },
-    {
-     "t": 1.226,
-     "wav": "weapons/csgo/m4a1/m4a1_silencer_screw_1.wav"
-    },
-    {
-     "t": 1.267,
-     "wav": "weapons/csgo/m4a1/m4a1_silencer_screw_off_end.wav"
-    },
-    {
-     "t": 1.462,
-     "wav": "weapons/csgo/movement3.wav"
     }
    ],
    "inspect": [
@@ -12112,488 +7340,67 @@
    ]
   },
   "seq_durations": {
-   "idle": 0.033,
+   "idle": 0.017,
+   "idle_unsil": 0.017,
+   "add_silencer": 4.833,
+   "detach_silencer": 4.833,
    "shoot1": 0.4,
-   "shoot2": 0.4,
-   "shoot3": 0.4,
-   "reload": 3.037,
-   "draw": 1.0,
-   "add_silencer": 2.019,
-   "idle_unsil": 0.033,
    "shoot1_unsil": 0.4,
+   "shoot2": 0.4,
    "shoot2_unsil": 0.4,
+   "shoot3": 0.4,
    "shoot3_unsil": 0.4,
-   "reload_unsil": 3.037,
-   "draw_unsil": 1.0,
-   "detach_silencer": 2.019,
+   "reload": 3.067,
+   "reload_unsil": 3.067,
+   "draw": 1.133,
+   "draw_unsil": 1.133,
    "inspect": 5.3,
    "inspect_unsil": 5.3
   },
   "muzzle": [
-   -0.1615,
-   -0.1059,
-   -1.4197
+   -0.1644,
+   -0.1074,
+   -1.4281
   ],
   "eject": [
-   -0.1811,
-   -0.1033,
-   -0.5312
+   -0.1809,
+   -0.1035,
+   -0.5311
   ],
   "muzzle_unsil": [
-   -0.166,
-   -0.1063,
+   -0.1659,
+   -0.1065,
    -1.1312
-  ]
+  ],
+  "source": "ilunp/CSGO-M.A.T"
  },
  "weapons/v_mac10": {
   "sequences": [
    "idle",
    "reload",
-   "draw",
    "shoot1",
    "shoot2",
    "shoot3",
+   "draw",
    "inspect"
   ],
-  "hitboxes": [
-   {
-    "bone": 1,
-    "group": 0,
-    "min": [
-     -0.0503,
-     -0.0684,
-     -0.0172
-    ],
-    "max": [
-     0.06,
-     0.0744,
-     0.1394
-    ]
-   },
-   {
-    "bone": 2,
-    "group": 0,
-    "min": [
-     -0.0466,
-     -0.0309,
-     -0.0328
-    ],
-    "max": [
-     0.0269,
-     0.025,
-     0.0584
-    ]
-   },
-   {
-    "bone": 3,
-    "group": 0,
-    "min": [
-     -0.0178,
-     -0.0237,
-     -0.0
-    ],
-    "max": [
-     0.0244,
-     0.0197,
-     0.0469
-    ]
-   },
-   {
-    "bone": 4,
-    "group": 0,
-    "min": [
-     -0.0147,
-     -0.0203,
-     -0.0
-    ],
-    "max": [
-     0.0216,
-     0.0178,
-     0.0456
-    ]
-   },
-   {
-    "bone": 5,
-    "group": 0,
-    "min": [
-     -0.0188,
-     -0.0256,
-     -0.0
-    ],
-    "max": [
-     0.0275,
-     0.0159,
-     0.0494
-    ]
-   },
-   {
-    "bone": 6,
-    "group": 0,
-    "min": [
-     -0.0188,
-     -0.0197,
-     -0.0
-    ],
-    "max": [
-     0.0194,
-     0.0159,
-     0.0381
-    ]
-   },
-   {
-    "bone": 8,
-    "group": 0,
-    "min": [
-     -0.0178,
-     -0.02,
-     -0.0
-    ],
-    "max": [
-     0.0309,
-     0.0156,
-     0.0587
-    ]
-   },
-   {
-    "bone": 9,
-    "group": 0,
-    "min": [
-     -0.0162,
-     -0.0197,
-     -0.0
-    ],
-    "max": [
-     0.0219,
-     0.0153,
-     0.0315
-    ]
-   },
-   {
-    "bone": 11,
-    "group": 0,
-    "min": [
-     -0.0194,
-     -0.0141,
-     -0.0
-    ],
-    "max": [
-     0.0281,
-     0.0184,
-     0.0487
-    ]
-   },
-   {
-    "bone": 12,
-    "group": 0,
-    "min": [
-     -0.0175,
-     -0.0159,
-     -0.0028
-    ],
-    "max": [
-     0.0206,
-     0.0178,
-     0.0291
-    ]
-   },
-   {
-    "bone": 13,
-    "group": 0,
-    "min": [
-     -0.0169,
-     -0.0159,
-     -0.0006
-    ],
-    "max": [
-     0.0153,
-     0.0159,
-     0.0444
-    ]
-   },
-   {
-    "bone": 14,
-    "group": 0,
-    "min": [
-     -0.0194,
-     -0.01,
-     -0.0
-    ],
-    "max": [
-     0.0234,
-     0.0244,
-     0.0403
-    ]
-   },
-   {
-    "bone": 17,
-    "group": 0,
-    "min": [
-     -0.0913,
-     -0.0856,
-     -0.2494
-    ],
-    "max": [
-     0.105,
-     0.0988,
-     0.3275
-    ]
-   },
-   {
-    "bone": 19,
-    "group": 0,
-    "min": [
-     -0.1812,
-     -0.0744,
-     -0.0751
-    ],
-    "max": [
-     0.06,
-     0.219,
-     0.1394
-    ]
-   },
-   {
-    "bone": 20,
-    "group": 0,
-    "min": [
-     -0.0466,
-     -0.025,
-     -0.0328
-    ],
-    "max": [
-     0.0269,
-     0.0309,
-     0.0584
-    ]
-   },
-   {
-    "bone": 21,
-    "group": 0,
-    "min": [
-     -0.0181,
-     -0.0197,
-     -0.0
-    ],
-    "max": [
-     0.0241,
-     0.0237,
-     0.0469
-    ]
-   },
-   {
-    "bone": 22,
-    "group": 0,
-    "min": [
-     -0.015,
-     -0.0178,
-     -0.0
-    ],
-    "max": [
-     0.0209,
-     0.0203,
-     0.0459
-    ]
-   },
-   {
-    "bone": 23,
-    "group": 0,
-    "min": [
-     -0.0188,
-     -0.0159,
-     -0.0
-    ],
-    "max": [
-     0.0275,
-     0.0256,
-     0.0494
-    ]
-   },
-   {
-    "bone": 24,
-    "group": 0,
-    "min": [
-     -0.0188,
-     -0.0159,
-     -0.0
-    ],
-    "max": [
-     0.0194,
-     0.0197,
-     0.0381
-    ]
-   },
-   {
-    "bone": 26,
-    "group": 0,
-    "min": [
-     -0.0178,
-     -0.0156,
-     -0.0
-    ],
-    "max": [
-     0.0309,
-     0.02,
-     0.0587
-    ]
-   },
-   {
-    "bone": 27,
-    "group": 0,
-    "min": [
-     -0.0162,
-     -0.0153,
-     -0.0
-    ],
-    "max": [
-     0.0219,
-     0.0197,
-     0.0315
-    ]
-   },
-   {
-    "bone": 29,
-    "group": 0,
-    "min": [
-     -0.0194,
-     -0.0184,
-     -0.0
-    ],
-    "max": [
-     0.0281,
-     0.0141,
-     0.0487
-    ]
-   },
-   {
-    "bone": 30,
-    "group": 0,
-    "min": [
-     -0.0175,
-     -0.0178,
-     -0.0028
-    ],
-    "max": [
-     0.0206,
-     0.0159,
-     0.0291
-    ]
-   },
-   {
-    "bone": 31,
-    "group": 0,
-    "min": [
-     -0.0169,
-     -0.0159,
-     -0.0006
-    ],
-    "max": [
-     0.0153,
-     0.0159,
-     0.0444
-    ]
-   },
-   {
-    "bone": 32,
-    "group": 0,
-    "min": [
-     -0.0194,
-     -0.0244,
-     -0.0
-    ],
-    "max": [
-     0.0234,
-     0.01,
-     0.0403
-    ]
-   },
-   {
-    "bone": 35,
-    "group": 0,
-    "min": [
-     -0.0913,
-     -0.0988,
-     -0.2494
-    ],
-    "max": [
-     0.105,
-     0.0856,
-     0.3275
-    ]
-   },
-   {
-    "bone": 36,
-    "group": 0,
-    "min": [
-     -0.1497,
-     -0.1488,
-     -0.0275
-    ],
-    "max": [
-     0.0606,
-     0.2522,
-     0.0347
-    ]
-   },
-   {
-    "bone": 37,
-    "group": 0,
-    "min": [
-     -0.1538,
-     -0.0234,
-     -0.0169
-    ],
-    "max": [
-     0.1325,
-     0.0228,
-     0.0175
-    ]
-   },
-   {
-    "bone": 48,
-    "group": 0,
-    "min": [
-     -0.0137,
-     -0.1291,
-     -0.0206
-    ],
-    "max": [
-     0.0444,
-     0.0172,
-     0.0131
-    ]
-   },
-   {
-    "bone": 49,
-    "group": 0,
-    "min": [
-     -0.0,
-     0.0,
-     -0.0347
-    ],
-    "max": [
-     0.1419,
-     0.0775,
-     -0.0
-    ]
-   }
-  ],
-  "bones": 51,
+  "bones": 66,
   "seq_events": {
    "reload": [
     {
-     "t": 0.369,
+     "t": 0.368,
      "wav": "weapons/csgo/mac10/mac10_clipout.wav"
     },
     {
-     "t": 1.231,
+     "t": 1.227,
      "wav": "weapons/csgo/mac10/mac10_clipin.wav"
     },
     {
-     "t": 2.051,
+     "t": 2.046,
      "wav": "weapons/csgo/mac10/mac10_boltback.wav"
     },
     {
-     "t": 2.462,
+     "t": 2.454,
      "wav": "weapons/csgo/mac10/mac10_boltforward.wav"
     }
    ],
@@ -12628,23 +7435,24 @@
   },
   "seq_durations": {
    "idle": 0.033,
-   "reload": 3.159,
-   "draw": 1.0,
+   "reload": 3.15,
    "shoot1": 0.833,
    "shoot2": 0.833,
    "shoot3": 0.833,
+   "draw": 1.0,
    "inspect": 5.267
   },
   "muzzle": [
-   -0.1913,
+   -0.1918,
    -0.1163,
-   -0.8313
+   -0.8314
   ],
   "eject": [
-   -0.2153,
+   -0.2157,
    -0.1086,
-   -0.5794
-  ]
+   -0.5795
+  ],
+  "source": "ilunp/CSGO-M.A.T"
  },
  "weapons/v_mp5": {
   "sequences": [
@@ -12652,407 +7460,25 @@
    "reload",
    "draw",
    "shoot1",
-   "shoot2",
-   "shoot3",
    "inspect"
   ],
-  "hitboxes": [
-   {
-    "bone": 1,
-    "group": 0,
-    "min": [
-     -0.0503,
-     -0.0684,
-     -0.0172
-    ],
-    "max": [
-     0.06,
-     0.0744,
-     0.1394
-    ]
-   },
-   {
-    "bone": 2,
-    "group": 0,
-    "min": [
-     -0.0466,
-     -0.0309,
-     -0.0328
-    ],
-    "max": [
-     0.0269,
-     0.025,
-     0.0584
-    ]
-   },
-   {
-    "bone": 3,
-    "group": 0,
-    "min": [
-     -0.0178,
-     -0.0237,
-     -0.0
-    ],
-    "max": [
-     0.0244,
-     0.0197,
-     0.0469
-    ]
-   },
-   {
-    "bone": 4,
-    "group": 0,
-    "min": [
-     -0.0147,
-     -0.0203,
-     -0.0
-    ],
-    "max": [
-     0.0216,
-     0.0178,
-     0.0456
-    ]
-   },
-   {
-    "bone": 5,
-    "group": 0,
-    "min": [
-     -0.0188,
-     -0.0256,
-     -0.0
-    ],
-    "max": [
-     0.0275,
-     0.0159,
-     0.0494
-    ]
-   },
-   {
-    "bone": 6,
-    "group": 0,
-    "min": [
-     -0.0188,
-     -0.0197,
-     -0.0
-    ],
-    "max": [
-     0.0194,
-     0.0159,
-     0.0381
-    ]
-   },
-   {
-    "bone": 8,
-    "group": 0,
-    "min": [
-     -0.0178,
-     -0.02,
-     -0.0
-    ],
-    "max": [
-     0.0309,
-     0.0156,
-     0.0587
-    ]
-   },
-   {
-    "bone": 9,
-    "group": 0,
-    "min": [
-     -0.0162,
-     -0.0197,
-     -0.0
-    ],
-    "max": [
-     0.0219,
-     0.0153,
-     0.0315
-    ]
-   },
-   {
-    "bone": 11,
-    "group": 0,
-    "min": [
-     -0.0194,
-     -0.0141,
-     -0.0
-    ],
-    "max": [
-     0.0281,
-     0.0184,
-     0.0487
-    ]
-   },
-   {
-    "bone": 12,
-    "group": 0,
-    "min": [
-     -0.0175,
-     -0.0159,
-     -0.0028
-    ],
-    "max": [
-     0.0206,
-     0.0178,
-     0.0291
-    ]
-   },
-   {
-    "bone": 13,
-    "group": 0,
-    "min": [
-     -0.0169,
-     -0.0159,
-     -0.0006
-    ],
-    "max": [
-     0.0153,
-     0.0159,
-     0.0444
-    ]
-   },
-   {
-    "bone": 14,
-    "group": 0,
-    "min": [
-     -0.0194,
-     -0.01,
-     -0.0
-    ],
-    "max": [
-     0.0234,
-     0.0244,
-     0.0403
-    ]
-   },
-   {
-    "bone": 17,
-    "group": 0,
-    "min": [
-     -0.0913,
-     -0.0856,
-     -0.2494
-    ],
-    "max": [
-     0.105,
-     0.0988,
-     0.3275
-    ]
-   },
-   {
-    "bone": 19,
-    "group": 0,
-    "min": [
-     -0.1357,
-     -0.0744,
-     -0.3502
-    ],
-    "max": [
-     0.06,
-     0.2137,
-     0.1394
-    ]
-   },
-   {
-    "bone": 20,
-    "group": 0,
-    "min": [
-     -0.0466,
-     -0.025,
-     -0.0328
-    ],
-    "max": [
-     0.0269,
-     0.0309,
-     0.0584
-    ]
-   },
-   {
-    "bone": 21,
-    "group": 0,
-    "min": [
-     -0.0181,
-     -0.0197,
-     -0.0
-    ],
-    "max": [
-     0.0241,
-     0.0237,
-     0.0469
-    ]
-   },
-   {
-    "bone": 22,
-    "group": 0,
-    "min": [
-     -0.015,
-     -0.0178,
-     -0.0
-    ],
-    "max": [
-     0.0209,
-     0.0203,
-     0.0459
-    ]
-   },
-   {
-    "bone": 23,
-    "group": 0,
-    "min": [
-     -0.0188,
-     -0.0159,
-     -0.0
-    ],
-    "max": [
-     0.0275,
-     0.0256,
-     0.0494
-    ]
-   },
-   {
-    "bone": 24,
-    "group": 0,
-    "min": [
-     -0.0188,
-     -0.0159,
-     -0.0
-    ],
-    "max": [
-     0.0194,
-     0.0197,
-     0.0381
-    ]
-   },
-   {
-    "bone": 26,
-    "group": 0,
-    "min": [
-     -0.0178,
-     -0.0156,
-     -0.0
-    ],
-    "max": [
-     0.0309,
-     0.02,
-     0.0587
-    ]
-   },
-   {
-    "bone": 27,
-    "group": 0,
-    "min": [
-     -0.0162,
-     -0.0153,
-     -0.0
-    ],
-    "max": [
-     0.0219,
-     0.0197,
-     0.0315
-    ]
-   },
-   {
-    "bone": 29,
-    "group": 0,
-    "min": [
-     -0.0194,
-     -0.0184,
-     -0.0
-    ],
-    "max": [
-     0.0281,
-     0.0141,
-     0.0487
-    ]
-   },
-   {
-    "bone": 30,
-    "group": 0,
-    "min": [
-     -0.0175,
-     -0.0178,
-     -0.0028
-    ],
-    "max": [
-     0.0206,
-     0.0159,
-     0.0291
-    ]
-   },
-   {
-    "bone": 31,
-    "group": 0,
-    "min": [
-     -0.0169,
-     -0.0159,
-     -0.0006
-    ],
-    "max": [
-     0.0153,
-     0.0159,
-     0.0444
-    ]
-   },
-   {
-    "bone": 32,
-    "group": 0,
-    "min": [
-     -0.0194,
-     -0.0244,
-     -0.0
-    ],
-    "max": [
-     0.0234,
-     0.01,
-     0.0403
-    ]
-   },
-   {
-    "bone": 35,
-    "group": 0,
-    "min": [
-     -0.0913,
-     -0.0988,
-     -0.2494
-    ],
-    "max": [
-     0.105,
-     0.0856,
-     0.3275
-    ]
-   },
-   {
-    "bone": 36,
-    "group": 0,
-    "min": [
-     -0.1669,
-     -0.1853,
-     -0.0269
-    ],
-    "max": [
-     0.0828,
-     0.3046,
-     0.0269
-    ]
-   }
-  ],
-  "bones": 42,
+  "bones": 46,
   "seq_events": {
    "reload": [
     {
-     "t": 0.246,
+     "t": 0.252,
      "wav": "weapons/csgo/mp7/mp7_clipout.wav"
     },
     {
-     "t": 1.122,
+     "t": 1.148,
      "wav": "weapons/csgo/mp7/mp7_clipin.wav"
     },
     {
-     "t": 1.724,
+     "t": 1.763,
      "wav": "weapons/csgo/mp7/mp7_slideback.wav"
     },
     {
-     "t": 1.916,
+     "t": 1.958,
      "wav": "weapons/csgo/mp7/mp7_slideforward.wav"
     }
    ],
@@ -13091,23 +7517,22 @@
   },
   "seq_durations": {
    "idle": 0.033,
-   "reload": 2.573,
+   "reload": 2.63,
    "draw": 1.0,
    "shoot1": 0.833,
-   "shoot2": 0.833,
-   "shoot3": 0.833,
    "inspect": 6.667
   },
   "muzzle": [
-   -0.1635,
+   -0.164,
    -0.1222,
    -0.7772
   ],
   "eject": [
-   -0.1793,
-   -0.1207,
+   -0.1797,
+   -0.1208,
    -0.452
-  ]
+  ],
+  "source": "ilunp/CSGO-M.A.T"
  },
  "weapons/v_p228": {
   "sequences": [
@@ -13115,422 +7540,28 @@
    "shoot1",
    "shoot2",
    "shoot3",
-   "shoot_empty",
+   "shootlast",
    "reload",
    "draw",
    "inspect"
   ],
-  "hitboxes": [
-   {
-    "bone": 1,
-    "group": 0,
-    "min": [
-     -0.0503,
-     -0.0684,
-     -0.0172
-    ],
-    "max": [
-     0.06,
-     0.0744,
-     0.1394
-    ]
-   },
-   {
-    "bone": 2,
-    "group": 0,
-    "min": [
-     -0.0466,
-     -0.0309,
-     -0.0328
-    ],
-    "max": [
-     0.0269,
-     0.025,
-     0.0584
-    ]
-   },
-   {
-    "bone": 3,
-    "group": 0,
-    "min": [
-     -0.0178,
-     -0.0237,
-     -0.0
-    ],
-    "max": [
-     0.0244,
-     0.0197,
-     0.0469
-    ]
-   },
-   {
-    "bone": 4,
-    "group": 0,
-    "min": [
-     -0.0147,
-     -0.0203,
-     -0.0
-    ],
-    "max": [
-     0.0216,
-     0.0178,
-     0.0456
-    ]
-   },
-   {
-    "bone": 5,
-    "group": 0,
-    "min": [
-     -0.0188,
-     -0.0256,
-     -0.0
-    ],
-    "max": [
-     0.0275,
-     0.0159,
-     0.0494
-    ]
-   },
-   {
-    "bone": 6,
-    "group": 0,
-    "min": [
-     -0.0188,
-     -0.0197,
-     -0.0
-    ],
-    "max": [
-     0.0194,
-     0.0159,
-     0.0381
-    ]
-   },
-   {
-    "bone": 8,
-    "group": 0,
-    "min": [
-     -0.0178,
-     -0.02,
-     -0.0
-    ],
-    "max": [
-     0.0309,
-     0.0156,
-     0.0587
-    ]
-   },
-   {
-    "bone": 9,
-    "group": 0,
-    "min": [
-     -0.0162,
-     -0.0197,
-     -0.0
-    ],
-    "max": [
-     0.0219,
-     0.0153,
-     0.0315
-    ]
-   },
-   {
-    "bone": 11,
-    "group": 0,
-    "min": [
-     -0.0194,
-     -0.0141,
-     -0.0
-    ],
-    "max": [
-     0.0281,
-     0.0184,
-     0.0487
-    ]
-   },
-   {
-    "bone": 12,
-    "group": 0,
-    "min": [
-     -0.0175,
-     -0.0159,
-     -0.0028
-    ],
-    "max": [
-     0.0206,
-     0.0178,
-     0.0291
-    ]
-   },
-   {
-    "bone": 13,
-    "group": 0,
-    "min": [
-     -0.0169,
-     -0.0159,
-     -0.0006
-    ],
-    "max": [
-     0.0153,
-     0.0159,
-     0.0444
-    ]
-   },
-   {
-    "bone": 14,
-    "group": 0,
-    "min": [
-     -0.0194,
-     -0.01,
-     -0.0
-    ],
-    "max": [
-     0.0234,
-     0.0244,
-     0.0403
-    ]
-   },
-   {
-    "bone": 17,
-    "group": 0,
-    "min": [
-     -0.0913,
-     -0.0856,
-     -0.2494
-    ],
-    "max": [
-     0.105,
-     0.0988,
-     0.3275
-    ]
-   },
-   {
-    "bone": 19,
-    "group": 0,
-    "min": [
-     -0.0503,
-     -0.0744,
-     -0.0969
-    ],
-    "max": [
-     0.06,
-     0.3434,
-     0.1394
-    ]
-   },
-   {
-    "bone": 20,
-    "group": 0,
-    "min": [
-     -0.0466,
-     -0.025,
-     -0.0328
-    ],
-    "max": [
-     0.0269,
-     0.0309,
-     0.0584
-    ]
-   },
-   {
-    "bone": 21,
-    "group": 0,
-    "min": [
-     -0.0181,
-     -0.0197,
-     -0.0
-    ],
-    "max": [
-     0.0241,
-     0.0237,
-     0.0469
-    ]
-   },
-   {
-    "bone": 22,
-    "group": 0,
-    "min": [
-     -0.015,
-     -0.0178,
-     -0.0
-    ],
-    "max": [
-     0.0209,
-     0.0203,
-     0.0459
-    ]
-   },
-   {
-    "bone": 23,
-    "group": 0,
-    "min": [
-     -0.0188,
-     -0.0159,
-     -0.0
-    ],
-    "max": [
-     0.0275,
-     0.0256,
-     0.0494
-    ]
-   },
-   {
-    "bone": 24,
-    "group": 0,
-    "min": [
-     -0.0188,
-     -0.0159,
-     -0.0
-    ],
-    "max": [
-     0.0194,
-     0.0197,
-     0.0381
-    ]
-   },
-   {
-    "bone": 26,
-    "group": 0,
-    "min": [
-     -0.0178,
-     -0.0156,
-     -0.0
-    ],
-    "max": [
-     0.0309,
-     0.02,
-     0.0587
-    ]
-   },
-   {
-    "bone": 27,
-    "group": 0,
-    "min": [
-     -0.0162,
-     -0.0153,
-     -0.0
-    ],
-    "max": [
-     0.0219,
-     0.0197,
-     0.0315
-    ]
-   },
-   {
-    "bone": 29,
-    "group": 0,
-    "min": [
-     -0.0194,
-     -0.0184,
-     -0.0
-    ],
-    "max": [
-     0.0281,
-     0.0141,
-     0.0487
-    ]
-   },
-   {
-    "bone": 30,
-    "group": 0,
-    "min": [
-     -0.0175,
-     -0.0178,
-     -0.0028
-    ],
-    "max": [
-     0.0206,
-     0.0159,
-     0.0291
-    ]
-   },
-   {
-    "bone": 31,
-    "group": 0,
-    "min": [
-     -0.0169,
-     -0.0159,
-     -0.0006
-    ],
-    "max": [
-     0.0153,
-     0.0159,
-     0.0444
-    ]
-   },
-   {
-    "bone": 32,
-    "group": 0,
-    "min": [
-     -0.0194,
-     -0.0244,
-     -0.0
-    ],
-    "max": [
-     0.0234,
-     0.01,
-     0.0403
-    ]
-   },
-   {
-    "bone": 35,
-    "group": 0,
-    "min": [
-     -0.0913,
-     -0.0988,
-     -0.2494
-    ],
-    "max": [
-     0.105,
-     0.0856,
-     0.3275
-    ]
-   },
-   {
-    "bone": 36,
-    "group": 0,
-    "min": [
-     -0.0971,
-     -0.0544,
-     -0.0194
-    ],
-    "max": [
-     0.0719,
-     0.1949,
-     0.0194
-    ]
-   },
-   {
-    "bone": 37,
-    "group": 0,
-    "min": [
-     -0.1328,
-     -0.0269,
-     -0.0159
-    ],
-    "max": [
-     0.0053,
-     0.0291,
-     0.0159
-    ]
-   }
-  ],
-  "bones": 43,
+  "bones": 57,
   "seq_events": {
    "reload": [
     {
-     "t": 0.45,
+     "t": 0.437,
      "wav": "weapons/csgo/p250/p250_clipout.wav"
     },
     {
-     "t": 0.982,
+     "t": 0.953,
      "wav": "weapons/csgo/p250/p250_clipin.wav"
     },
     {
-     "t": 1.8,
+     "t": 1.747,
      "wav": "weapons/csgo/p250/p250_slideback.wav"
     },
     {
-     "t": 2.045,
+     "t": 1.985,
      "wav": "weapons/csgo/p250/p250_sliderelease.wav"
     }
    ],
@@ -13547,38 +7578,29 @@
      "t": 0.467,
      "wav": "weapons/csgo/p250/p250_sliderelease.wav"
     }
-   ],
-   "inspect": [
-    {
-     "t": 0.067,
-     "wav": "weapons/csgo/movement1.wav"
-    },
-    {
-     "t": 5.933,
-     "wav": "weapons/csgo/movement3.wav"
-    }
    ]
   },
   "seq_durations": {
    "idle": 0.033,
-   "shoot1": 0.4,
-   "shoot2": 0.4,
-   "shoot3": 0.4,
-   "shoot_empty": 0.4,
-   "reload": 2.659,
+   "shoot1": 0.8,
+   "shoot2": 0.8,
+   "shoot3": 0.8,
+   "shootlast": 0.033,
+   "reload": 2.7,
    "draw": 1.0,
    "inspect": 6.433
   },
   "muzzle": [
-   -0.0881,
-   -0.0476,
+   -0.0882,
+   -0.0477,
    -0.6156
   ],
   "eject": [
-   -0.0875,
-   -0.0319,
+   -0.0876,
+   -0.032,
    -0.509
-  ]
+  ],
+  "source": "ilunp/CSGO-M.A.T"
  },
  "weapons/v_p90": {
   "sequences": [
@@ -13586,429 +7608,33 @@
    "reload",
    "draw",
    "shoot1",
-   "shoot2",
-   "shoot3",
    "inspect"
   ],
-  "hitboxes": [
-   {
-    "bone": 1,
-    "group": 0,
-    "min": [
-     -0.0503,
-     -0.0684,
-     -0.0172
-    ],
-    "max": [
-     0.06,
-     0.0744,
-     0.1394
-    ]
-   },
-   {
-    "bone": 2,
-    "group": 0,
-    "min": [
-     -0.0466,
-     -0.0309,
-     -0.0328
-    ],
-    "max": [
-     0.0269,
-     0.025,
-     0.0584
-    ]
-   },
-   {
-    "bone": 3,
-    "group": 0,
-    "min": [
-     -0.0178,
-     -0.0237,
-     -0.0
-    ],
-    "max": [
-     0.0244,
-     0.0197,
-     0.0469
-    ]
-   },
-   {
-    "bone": 4,
-    "group": 0,
-    "min": [
-     -0.0147,
-     -0.0203,
-     -0.0
-    ],
-    "max": [
-     0.0216,
-     0.0178,
-     0.0456
-    ]
-   },
-   {
-    "bone": 5,
-    "group": 0,
-    "min": [
-     -0.0188,
-     -0.0256,
-     -0.0
-    ],
-    "max": [
-     0.0275,
-     0.0159,
-     0.0494
-    ]
-   },
-   {
-    "bone": 6,
-    "group": 0,
-    "min": [
-     -0.0188,
-     -0.0197,
-     -0.0
-    ],
-    "max": [
-     0.0194,
-     0.0159,
-     0.0381
-    ]
-   },
-   {
-    "bone": 8,
-    "group": 0,
-    "min": [
-     -0.0178,
-     -0.02,
-     -0.0
-    ],
-    "max": [
-     0.0309,
-     0.0156,
-     0.0587
-    ]
-   },
-   {
-    "bone": 9,
-    "group": 0,
-    "min": [
-     -0.0162,
-     -0.0197,
-     -0.0
-    ],
-    "max": [
-     0.0219,
-     0.0153,
-     0.0315
-    ]
-   },
-   {
-    "bone": 11,
-    "group": 0,
-    "min": [
-     -0.0194,
-     -0.0141,
-     -0.0
-    ],
-    "max": [
-     0.0281,
-     0.0184,
-     0.0487
-    ]
-   },
-   {
-    "bone": 12,
-    "group": 0,
-    "min": [
-     -0.0175,
-     -0.0159,
-     -0.0028
-    ],
-    "max": [
-     0.0206,
-     0.0178,
-     0.0291
-    ]
-   },
-   {
-    "bone": 13,
-    "group": 0,
-    "min": [
-     -0.0169,
-     -0.0159,
-     -0.0006
-    ],
-    "max": [
-     0.0153,
-     0.0159,
-     0.0444
-    ]
-   },
-   {
-    "bone": 14,
-    "group": 0,
-    "min": [
-     -0.0194,
-     -0.01,
-     -0.0
-    ],
-    "max": [
-     0.0234,
-     0.0244,
-     0.0403
-    ]
-   },
-   {
-    "bone": 17,
-    "group": 0,
-    "min": [
-     -0.0913,
-     -0.0856,
-     -0.2494
-    ],
-    "max": [
-     0.105,
-     0.0988,
-     0.3275
-    ]
-   },
-   {
-    "bone": 19,
-    "group": 0,
-    "min": [
-     -0.2724,
-     -0.0744,
-     -0.0172
-    ],
-    "max": [
-     0.06,
-     0.3106,
-     0.1394
-    ]
-   },
-   {
-    "bone": 20,
-    "group": 0,
-    "min": [
-     -0.0466,
-     -0.025,
-     -0.0328
-    ],
-    "max": [
-     0.0269,
-     0.0309,
-     0.0584
-    ]
-   },
-   {
-    "bone": 21,
-    "group": 0,
-    "min": [
-     -0.0181,
-     -0.0197,
-     -0.0
-    ],
-    "max": [
-     0.0241,
-     0.0237,
-     0.0469
-    ]
-   },
-   {
-    "bone": 22,
-    "group": 0,
-    "min": [
-     -0.015,
-     -0.0178,
-     -0.0
-    ],
-    "max": [
-     0.0209,
-     0.0203,
-     0.0459
-    ]
-   },
-   {
-    "bone": 23,
-    "group": 0,
-    "min": [
-     -0.0188,
-     -0.0159,
-     -0.0
-    ],
-    "max": [
-     0.0275,
-     0.0256,
-     0.0494
-    ]
-   },
-   {
-    "bone": 24,
-    "group": 0,
-    "min": [
-     -0.0188,
-     -0.0159,
-     -0.0
-    ],
-    "max": [
-     0.0194,
-     0.0197,
-     0.0381
-    ]
-   },
-   {
-    "bone": 26,
-    "group": 0,
-    "min": [
-     -0.0178,
-     -0.0156,
-     -0.0
-    ],
-    "max": [
-     0.0309,
-     0.02,
-     0.0587
-    ]
-   },
-   {
-    "bone": 27,
-    "group": 0,
-    "min": [
-     -0.0162,
-     -0.0153,
-     -0.0
-    ],
-    "max": [
-     0.0219,
-     0.0197,
-     0.0315
-    ]
-   },
-   {
-    "bone": 29,
-    "group": 0,
-    "min": [
-     -0.0194,
-     -0.0184,
-     -0.0
-    ],
-    "max": [
-     0.0281,
-     0.0141,
-     0.0487
-    ]
-   },
-   {
-    "bone": 30,
-    "group": 0,
-    "min": [
-     -0.0175,
-     -0.0178,
-     -0.0028
-    ],
-    "max": [
-     0.0206,
-     0.0159,
-     0.0291
-    ]
-   },
-   {
-    "bone": 31,
-    "group": 0,
-    "min": [
-     -0.0169,
-     -0.0159,
-     -0.0006
-    ],
-    "max": [
-     0.0153,
-     0.0159,
-     0.0444
-    ]
-   },
-   {
-    "bone": 32,
-    "group": 0,
-    "min": [
-     -0.0194,
-     -0.0244,
-     -0.0
-    ],
-    "max": [
-     0.0234,
-     0.01,
-     0.0403
-    ]
-   },
-   {
-    "bone": 35,
-    "group": 0,
-    "min": [
-     -0.0913,
-     -0.0988,
-     -0.2494
-    ],
-    "max": [
-     0.105,
-     0.0856,
-     0.3275
-    ]
-   },
-   {
-    "bone": 36,
-    "group": 0,
-    "min": [
-     -0.2163,
-     -0.3256,
-     -0.0325
-    ],
-    "max": [
-     0.0328,
-     0.2878,
-     0.0325
-    ]
-   },
-   {
-    "bone": 39,
-    "group": 0,
-    "min": [
-     -0.0156,
-     -0.0222,
-     -0.0291
-    ],
-    "max": [
-     0.0178,
-     0.2988,
-     0.0291
-    ]
-   }
-  ],
-  "bones": 41,
+  "bones": 56,
   "seq_events": {
    "reload": [
     {
-     "t": 0.324,
+     "t": 0.333,
      "wav": "weapons/csgo/p90/p90_cliprelease.wav"
     },
     {
-     "t": 0.388,
+     "t": 0.4,
      "wav": "weapons/csgo/p90/p90_clipout.wav"
     },
     {
-     "t": 1.326,
+     "t": 1.367,
      "wav": "weapons/csgo/p90/p90_clipin.wav"
     },
     {
-     "t": 1.876,
+     "t": 1.933,
      "wav": "weapons/csgo/p90/p90_cliphit.wav"
     },
     {
-     "t": 2.653,
+     "t": 2.733,
      "wav": "weapons/csgo/p90/p90_boltback.wav"
     },
     {
-     "t": 2.879,
+     "t": 2.967,
      "wav": "weapons/csgo/p90/p90_boltforward.wav"
     }
    ],
@@ -14047,456 +7673,32 @@
   },
   "seq_durations": {
    "idle": 0.033,
-   "reload": 3.268,
+   "reload": 3.367,
    "draw": 1.0,
    "shoot1": 0.833,
-   "shoot2": 0.833,
-   "shoot3": 0.833,
    "inspect": 5.333
   },
   "muzzle": [
-   -0.1634,
-   -0.1001,
-   -0.6757
+   -0.1636,
+   -0.1041,
+   -0.6729
   ],
   "eject": [
-   -0.1634,
-   -0.0063,
-   -0.434
-  ]
+   -0.1635,
+   -0.1734,
+   -0.2915
+  ],
+  "source": "ilunp/CSGO-M.A.T"
  },
  "weapons/v_scout": {
   "sequences": [
    "idle",
    "shoot1",
-   "shoot2",
    "reload",
    "draw",
    "inspect"
   ],
-  "hitboxes": [
-   {
-    "bone": 1,
-    "group": 0,
-    "min": [
-     -0.0503,
-     -0.0684,
-     -0.0172
-    ],
-    "max": [
-     0.06,
-     0.0744,
-     0.1394
-    ]
-   },
-   {
-    "bone": 2,
-    "group": 0,
-    "min": [
-     -0.0466,
-     -0.0309,
-     -0.0328
-    ],
-    "max": [
-     0.0269,
-     0.025,
-     0.0584
-    ]
-   },
-   {
-    "bone": 3,
-    "group": 0,
-    "min": [
-     -0.0178,
-     -0.0237,
-     -0.0
-    ],
-    "max": [
-     0.0244,
-     0.0197,
-     0.0469
-    ]
-   },
-   {
-    "bone": 4,
-    "group": 0,
-    "min": [
-     -0.0147,
-     -0.0203,
-     -0.0
-    ],
-    "max": [
-     0.0216,
-     0.0178,
-     0.0456
-    ]
-   },
-   {
-    "bone": 5,
-    "group": 0,
-    "min": [
-     -0.0188,
-     -0.0256,
-     -0.0
-    ],
-    "max": [
-     0.0275,
-     0.0159,
-     0.0494
-    ]
-   },
-   {
-    "bone": 6,
-    "group": 0,
-    "min": [
-     -0.0188,
-     -0.0197,
-     -0.0
-    ],
-    "max": [
-     0.0194,
-     0.0159,
-     0.0381
-    ]
-   },
-   {
-    "bone": 8,
-    "group": 0,
-    "min": [
-     -0.0178,
-     -0.02,
-     -0.0
-    ],
-    "max": [
-     0.0309,
-     0.0156,
-     0.0587
-    ]
-   },
-   {
-    "bone": 9,
-    "group": 0,
-    "min": [
-     -0.0162,
-     -0.0197,
-     -0.0
-    ],
-    "max": [
-     0.0219,
-     0.0153,
-     0.0315
-    ]
-   },
-   {
-    "bone": 11,
-    "group": 0,
-    "min": [
-     -0.0194,
-     -0.0141,
-     -0.0
-    ],
-    "max": [
-     0.0281,
-     0.0184,
-     0.0487
-    ]
-   },
-   {
-    "bone": 12,
-    "group": 0,
-    "min": [
-     -0.0175,
-     -0.0159,
-     -0.0028
-    ],
-    "max": [
-     0.0206,
-     0.0178,
-     0.0291
-    ]
-   },
-   {
-    "bone": 13,
-    "group": 0,
-    "min": [
-     -0.0169,
-     -0.0159,
-     -0.0006
-    ],
-    "max": [
-     0.0153,
-     0.0159,
-     0.0444
-    ]
-   },
-   {
-    "bone": 14,
-    "group": 0,
-    "min": [
-     -0.0194,
-     -0.01,
-     -0.0
-    ],
-    "max": [
-     0.0234,
-     0.0244,
-     0.0403
-    ]
-   },
-   {
-    "bone": 17,
-    "group": 0,
-    "min": [
-     -0.0913,
-     -0.0856,
-     -0.2494
-    ],
-    "max": [
-     0.105,
-     0.0988,
-     0.3275
-    ]
-   },
-   {
-    "bone": 19,
-    "group": 0,
-    "min": [
-     -0.21,
-     -0.0744,
-     -0.1656
-    ],
-    "max": [
-     0.06,
-     0.3562,
-     0.1394
-    ]
-   },
-   {
-    "bone": 20,
-    "group": 0,
-    "min": [
-     -0.0466,
-     -0.025,
-     -0.0328
-    ],
-    "max": [
-     0.0269,
-     0.0309,
-     0.0584
-    ]
-   },
-   {
-    "bone": 21,
-    "group": 0,
-    "min": [
-     -0.0181,
-     -0.0197,
-     -0.0
-    ],
-    "max": [
-     0.0241,
-     0.0237,
-     0.0469
-    ]
-   },
-   {
-    "bone": 22,
-    "group": 0,
-    "min": [
-     -0.015,
-     -0.0178,
-     -0.0
-    ],
-    "max": [
-     0.0209,
-     0.0203,
-     0.0459
-    ]
-   },
-   {
-    "bone": 23,
-    "group": 0,
-    "min": [
-     -0.0188,
-     -0.0159,
-     -0.0
-    ],
-    "max": [
-     0.0275,
-     0.0256,
-     0.0494
-    ]
-   },
-   {
-    "bone": 24,
-    "group": 0,
-    "min": [
-     -0.0188,
-     -0.0159,
-     -0.0
-    ],
-    "max": [
-     0.0194,
-     0.0197,
-     0.0381
-    ]
-   },
-   {
-    "bone": 26,
-    "group": 0,
-    "min": [
-     -0.0178,
-     -0.0156,
-     -0.0
-    ],
-    "max": [
-     0.0309,
-     0.02,
-     0.0587
-    ]
-   },
-   {
-    "bone": 27,
-    "group": 0,
-    "min": [
-     -0.0162,
-     -0.0153,
-     -0.0
-    ],
-    "max": [
-     0.0219,
-     0.0197,
-     0.0315
-    ]
-   },
-   {
-    "bone": 29,
-    "group": 0,
-    "min": [
-     -0.0194,
-     -0.0184,
-     -0.0
-    ],
-    "max": [
-     0.0281,
-     0.0141,
-     0.0487
-    ]
-   },
-   {
-    "bone": 30,
-    "group": 0,
-    "min": [
-     -0.0175,
-     -0.0178,
-     -0.0028
-    ],
-    "max": [
-     0.0206,
-     0.0159,
-     0.0291
-    ]
-   },
-   {
-    "bone": 31,
-    "group": 0,
-    "min": [
-     -0.0169,
-     -0.0159,
-     -0.0006
-    ],
-    "max": [
-     0.0153,
-     0.0159,
-     0.0444
-    ]
-   },
-   {
-    "bone": 32,
-    "group": 0,
-    "min": [
-     -0.0194,
-     -0.0244,
-     -0.0
-    ],
-    "max": [
-     0.0234,
-     0.01,
-     0.0403
-    ]
-   },
-   {
-    "bone": 35,
-    "group": 0,
-    "min": [
-     -0.0913,
-     -0.0988,
-     -0.2494
-    ],
-    "max": [
-     0.105,
-     0.0856,
-     0.3275
-    ]
-   },
-   {
-    "bone": 36,
-    "group": 0,
-    "min": [
-     -0.1925,
-     -0.43,
-     -0.0541
-    ],
-    "max": [
-     0.1766,
-     1.1066,
-     0.0519
-    ]
-   },
-   {
-    "bone": 37,
-    "group": 0,
-    "min": [
-     -0.1016,
-     -0.0672,
-     -0.02
-    ],
-    "max": [
-     0.0047,
-     0.0787,
-     0.0231
-    ]
-   },
-   {
-    "bone": 39,
-    "group": 0,
-    "min": [
-     -0.02,
-     -0.0137,
-     -0.0209
-    ],
-    "max": [
-     0.0188,
-     0.0891,
-     0.0213
-    ]
-   },
-   {
-    "bone": 40,
-    "group": 0,
-    "min": [
-     -0.0622,
-     -0.0678,
-     -0.0159
-    ],
-    "max": [
-     0.0153,
-     0.2028,
-     0.0734
-    ]
-   }
-  ],
-  "bones": 43,
+  "bones": 58,
   "seq_events": {
    "shoot1": [
     {
@@ -14508,35 +7710,25 @@
      "wav": "weapons/csgo/ssg08/ssg08_boltforward.wav"
     }
    ],
-   "shoot2": [
-    {
-     "t": 0.633,
-     "wav": "weapons/csgo/ssg08/ssg08_boltback.wav"
-    },
-    {
-     "t": 0.967,
-     "wav": "weapons/csgo/ssg08/ssg08_boltforward.wav"
-    }
-   ],
    "reload": [
     {
-     "t": 0.161,
+     "t": 0.162,
      "wav": "weapons/csgo/ssg08/ssg08_clipout.wav"
     },
     {
-     "t": 0.786,
+     "t": 0.793,
      "wav": "weapons/csgo/ssg08/ssg08_clipin.wav"
     },
     {
-     "t": 1.054,
+     "t": 1.063,
      "wav": "weapons/csgo/ssg08/ssg08_cliphit.wav"
     },
     {
-     "t": 1.393,
+     "t": 1.405,
      "wav": "weapons/csgo/ssg08/ssg08_boltback.wav"
     },
     {
-     "t": 1.607,
+     "t": 1.622,
      "wav": "weapons/csgo/ssg08/ssg08_boltforward.wav"
     }
    ],
@@ -14572,424 +7764,43 @@
   "seq_durations": {
    "idle": 0.033,
    "shoot1": 1.667,
-   "shoot2": 1.667,
-   "reload": 1.982,
+   "reload": 2.0,
    "draw": 1.0,
    "inspect": 5.3
   },
   "muzzle": [
-   -0.1473,
-   -0.1053,
-   -1.4317
+   -0.179,
+   -0.1055,
+   -1.4631
   ],
   "eject": [
-   -0.1593,
-   -0.1019,
-   -0.5964
-  ]
+   -0.1909,
+   -0.1023,
+   -0.6278
+  ],
+  "source": "ilunp/CSGO-M.A.T"
  },
  "weapons/v_sg550": {
   "sequences": [
    "idle",
    "shoot1",
-   "shoot2",
    "reload",
    "draw",
    "inspect"
   ],
-  "hitboxes": [
-   {
-    "bone": 1,
-    "group": 0,
-    "min": [
-     -0.0503,
-     -0.0684,
-     -0.0172
-    ],
-    "max": [
-     0.06,
-     0.0744,
-     0.1394
-    ]
-   },
-   {
-    "bone": 2,
-    "group": 0,
-    "min": [
-     -0.0466,
-     -0.0309,
-     -0.0328
-    ],
-    "max": [
-     0.0269,
-     0.025,
-     0.0584
-    ]
-   },
-   {
-    "bone": 3,
-    "group": 0,
-    "min": [
-     -0.0178,
-     -0.0237,
-     -0.0
-    ],
-    "max": [
-     0.0244,
-     0.0197,
-     0.0469
-    ]
-   },
-   {
-    "bone": 4,
-    "group": 0,
-    "min": [
-     -0.0147,
-     -0.0203,
-     -0.0
-    ],
-    "max": [
-     0.0216,
-     0.0178,
-     0.0456
-    ]
-   },
-   {
-    "bone": 5,
-    "group": 0,
-    "min": [
-     -0.0188,
-     -0.0256,
-     -0.0
-    ],
-    "max": [
-     0.0275,
-     0.0159,
-     0.0494
-    ]
-   },
-   {
-    "bone": 6,
-    "group": 0,
-    "min": [
-     -0.0188,
-     -0.0197,
-     -0.0
-    ],
-    "max": [
-     0.0194,
-     0.0159,
-     0.0381
-    ]
-   },
-   {
-    "bone": 8,
-    "group": 0,
-    "min": [
-     -0.0178,
-     -0.02,
-     -0.0
-    ],
-    "max": [
-     0.0309,
-     0.0156,
-     0.0587
-    ]
-   },
-   {
-    "bone": 9,
-    "group": 0,
-    "min": [
-     -0.0162,
-     -0.0197,
-     -0.0
-    ],
-    "max": [
-     0.0219,
-     0.0153,
-     0.0315
-    ]
-   },
-   {
-    "bone": 11,
-    "group": 0,
-    "min": [
-     -0.0194,
-     -0.0141,
-     -0.0
-    ],
-    "max": [
-     0.0281,
-     0.0184,
-     0.0487
-    ]
-   },
-   {
-    "bone": 12,
-    "group": 0,
-    "min": [
-     -0.0175,
-     -0.0159,
-     -0.0028
-    ],
-    "max": [
-     0.0206,
-     0.0178,
-     0.0291
-    ]
-   },
-   {
-    "bone": 13,
-    "group": 0,
-    "min": [
-     -0.0169,
-     -0.0159,
-     -0.0006
-    ],
-    "max": [
-     0.0153,
-     0.0159,
-     0.0444
-    ]
-   },
-   {
-    "bone": 14,
-    "group": 0,
-    "min": [
-     -0.0194,
-     -0.01,
-     -0.0
-    ],
-    "max": [
-     0.0234,
-     0.0244,
-     0.0403
-    ]
-   },
-   {
-    "bone": 17,
-    "group": 0,
-    "min": [
-     -0.0913,
-     -0.0856,
-     -0.2494
-    ],
-    "max": [
-     0.105,
-     0.0988,
-     0.3275
-    ]
-   },
-   {
-    "bone": 19,
-    "group": 0,
-    "min": [
-     -0.1352,
-     -0.0744,
-     -0.0172
-    ],
-    "max": [
-     0.06,
-     0.3745,
-     0.4369
-    ]
-   },
-   {
-    "bone": 20,
-    "group": 0,
-    "min": [
-     -0.0466,
-     -0.025,
-     -0.0328
-    ],
-    "max": [
-     0.0269,
-     0.0309,
-     0.0584
-    ]
-   },
-   {
-    "bone": 21,
-    "group": 0,
-    "min": [
-     -0.0181,
-     -0.0197,
-     -0.0
-    ],
-    "max": [
-     0.0241,
-     0.0237,
-     0.0469
-    ]
-   },
-   {
-    "bone": 22,
-    "group": 0,
-    "min": [
-     -0.015,
-     -0.0178,
-     -0.0
-    ],
-    "max": [
-     0.0209,
-     0.0203,
-     0.0459
-    ]
-   },
-   {
-    "bone": 23,
-    "group": 0,
-    "min": [
-     -0.0188,
-     -0.0159,
-     -0.0
-    ],
-    "max": [
-     0.0275,
-     0.0256,
-     0.0494
-    ]
-   },
-   {
-    "bone": 24,
-    "group": 0,
-    "min": [
-     -0.0188,
-     -0.0159,
-     -0.0
-    ],
-    "max": [
-     0.0194,
-     0.0197,
-     0.0381
-    ]
-   },
-   {
-    "bone": 26,
-    "group": 0,
-    "min": [
-     -0.0178,
-     -0.0156,
-     -0.0
-    ],
-    "max": [
-     0.0309,
-     0.02,
-     0.0587
-    ]
-   },
-   {
-    "bone": 27,
-    "group": 0,
-    "min": [
-     -0.0162,
-     -0.0153,
-     -0.0
-    ],
-    "max": [
-     0.0219,
-     0.0197,
-     0.0315
-    ]
-   },
-   {
-    "bone": 29,
-    "group": 0,
-    "min": [
-     -0.0194,
-     -0.0184,
-     -0.0
-    ],
-    "max": [
-     0.0281,
-     0.0141,
-     0.0487
-    ]
-   },
-   {
-    "bone": 30,
-    "group": 0,
-    "min": [
-     -0.0175,
-     -0.0178,
-     -0.0028
-    ],
-    "max": [
-     0.0206,
-     0.0159,
-     0.0291
-    ]
-   },
-   {
-    "bone": 31,
-    "group": 0,
-    "min": [
-     -0.0169,
-     -0.0159,
-     -0.0006
-    ],
-    "max": [
-     0.0153,
-     0.0159,
-     0.0444
-    ]
-   },
-   {
-    "bone": 32,
-    "group": 0,
-    "min": [
-     -0.0194,
-     -0.0244,
-     -0.0
-    ],
-    "max": [
-     0.0234,
-     0.01,
-     0.0403
-    ]
-   },
-   {
-    "bone": 35,
-    "group": 0,
-    "min": [
-     -0.0913,
-     -0.0988,
-     -0.2494
-    ],
-    "max": [
-     0.105,
-     0.0856,
-     0.3275
-    ]
-   },
-   {
-    "bone": 36,
-    "group": 0,
-    "min": [
-     -0.3025,
-     -0.4606,
-     -0.0403
-    ],
-    "max": [
-     0.0481,
-     0.9156,
-     0.0413
-    ]
-   }
-  ],
-  "bones": 42,
+  "bones": 57,
   "seq_events": {
    "reload": [
     {
-     "t": 0.531,
+     "t": 0.473,
      "wav": "weapons/csgo/scar20/scar20_clipout.wav"
     },
     {
-     "t": 1.553,
+     "t": 1.384,
      "wav": "weapons/csgo/scar20/scar20_clipin.wav"
     },
     {
-     "t": 2.37,
+     "t": 2.111,
      "wav": "weapons/csgo/scar20/scar20_boltforward.wav"
     }
    ],
@@ -15025,21 +7836,21 @@
   "seq_durations": {
    "idle": 0.083,
    "shoot1": 0.867,
-   "shoot2": 0.867,
-   "reload": 3.759,
+   "reload": 3.35,
    "draw": 1.0,
    "inspect": 5.3
   },
   "muzzle": [
-   -0.1711,
+   -0.1713,
    -0.1384,
    -1.31
   ],
   "eject": [
-   -0.1756,
+   -0.1757,
    -0.1413,
-   -0.5722
-  ]
+   -0.5721
+  ],
+  "source": "ilunp/CSGO-M.A.T"
  },
  "weapons/v_sg552": {
   "sequences": [
@@ -15047,407 +7858,25 @@
    "reload",
    "draw",
    "shoot1",
-   "shoot2",
-   "shoot3",
    "inspect"
   ],
-  "hitboxes": [
-   {
-    "bone": 1,
-    "group": 0,
-    "min": [
-     -0.0503,
-     -0.0684,
-     -0.0172
-    ],
-    "max": [
-     0.06,
-     0.0744,
-     0.1394
-    ]
-   },
-   {
-    "bone": 2,
-    "group": 0,
-    "min": [
-     -0.0466,
-     -0.0309,
-     -0.0328
-    ],
-    "max": [
-     0.0269,
-     0.025,
-     0.0584
-    ]
-   },
-   {
-    "bone": 3,
-    "group": 0,
-    "min": [
-     -0.0178,
-     -0.0237,
-     -0.0
-    ],
-    "max": [
-     0.0244,
-     0.0197,
-     0.0469
-    ]
-   },
-   {
-    "bone": 4,
-    "group": 0,
-    "min": [
-     -0.0147,
-     -0.0203,
-     -0.0
-    ],
-    "max": [
-     0.0216,
-     0.0178,
-     0.0456
-    ]
-   },
-   {
-    "bone": 5,
-    "group": 0,
-    "min": [
-     -0.0188,
-     -0.0256,
-     -0.0
-    ],
-    "max": [
-     0.0275,
-     0.0159,
-     0.0494
-    ]
-   },
-   {
-    "bone": 6,
-    "group": 0,
-    "min": [
-     -0.0188,
-     -0.0197,
-     -0.0
-    ],
-    "max": [
-     0.0194,
-     0.0159,
-     0.0381
-    ]
-   },
-   {
-    "bone": 8,
-    "group": 0,
-    "min": [
-     -0.0178,
-     -0.02,
-     -0.0
-    ],
-    "max": [
-     0.0309,
-     0.0156,
-     0.0587
-    ]
-   },
-   {
-    "bone": 9,
-    "group": 0,
-    "min": [
-     -0.0162,
-     -0.0197,
-     -0.0
-    ],
-    "max": [
-     0.0219,
-     0.0153,
-     0.0315
-    ]
-   },
-   {
-    "bone": 11,
-    "group": 0,
-    "min": [
-     -0.0194,
-     -0.0141,
-     -0.0
-    ],
-    "max": [
-     0.0281,
-     0.0184,
-     0.0487
-    ]
-   },
-   {
-    "bone": 12,
-    "group": 0,
-    "min": [
-     -0.0175,
-     -0.0159,
-     -0.0028
-    ],
-    "max": [
-     0.0206,
-     0.0178,
-     0.0291
-    ]
-   },
-   {
-    "bone": 13,
-    "group": 0,
-    "min": [
-     -0.0169,
-     -0.0159,
-     -0.0006
-    ],
-    "max": [
-     0.0153,
-     0.0159,
-     0.0444
-    ]
-   },
-   {
-    "bone": 14,
-    "group": 0,
-    "min": [
-     -0.0194,
-     -0.01,
-     -0.0
-    ],
-    "max": [
-     0.0234,
-     0.0244,
-     0.0403
-    ]
-   },
-   {
-    "bone": 17,
-    "group": 0,
-    "min": [
-     -0.0913,
-     -0.0856,
-     -0.2494
-    ],
-    "max": [
-     0.105,
-     0.0988,
-     0.3275
-    ]
-   },
-   {
-    "bone": 19,
-    "group": 0,
-    "min": [
-     -0.1979,
-     -0.0744,
-     -0.1006
-    ],
-    "max": [
-     0.06,
-     0.2781,
-     0.1394
-    ]
-   },
-   {
-    "bone": 20,
-    "group": 0,
-    "min": [
-     -0.0466,
-     -0.025,
-     -0.0328
-    ],
-    "max": [
-     0.0269,
-     0.0309,
-     0.0584
-    ]
-   },
-   {
-    "bone": 21,
-    "group": 0,
-    "min": [
-     -0.0181,
-     -0.0197,
-     -0.0
-    ],
-    "max": [
-     0.0241,
-     0.0237,
-     0.0469
-    ]
-   },
-   {
-    "bone": 22,
-    "group": 0,
-    "min": [
-     -0.015,
-     -0.0178,
-     -0.0
-    ],
-    "max": [
-     0.0209,
-     0.0203,
-     0.0459
-    ]
-   },
-   {
-    "bone": 23,
-    "group": 0,
-    "min": [
-     -0.0188,
-     -0.0159,
-     -0.0
-    ],
-    "max": [
-     0.0275,
-     0.0256,
-     0.0494
-    ]
-   },
-   {
-    "bone": 24,
-    "group": 0,
-    "min": [
-     -0.0188,
-     -0.0159,
-     -0.0
-    ],
-    "max": [
-     0.0194,
-     0.0197,
-     0.0381
-    ]
-   },
-   {
-    "bone": 26,
-    "group": 0,
-    "min": [
-     -0.0178,
-     -0.0156,
-     -0.0
-    ],
-    "max": [
-     0.0309,
-     0.02,
-     0.0587
-    ]
-   },
-   {
-    "bone": 27,
-    "group": 0,
-    "min": [
-     -0.0162,
-     -0.0153,
-     -0.0
-    ],
-    "max": [
-     0.0219,
-     0.0197,
-     0.0315
-    ]
-   },
-   {
-    "bone": 29,
-    "group": 0,
-    "min": [
-     -0.0194,
-     -0.0184,
-     -0.0
-    ],
-    "max": [
-     0.0281,
-     0.0141,
-     0.0487
-    ]
-   },
-   {
-    "bone": 30,
-    "group": 0,
-    "min": [
-     -0.0175,
-     -0.0178,
-     -0.0028
-    ],
-    "max": [
-     0.0206,
-     0.0159,
-     0.0291
-    ]
-   },
-   {
-    "bone": 31,
-    "group": 0,
-    "min": [
-     -0.0169,
-     -0.0159,
-     -0.0006
-    ],
-    "max": [
-     0.0153,
-     0.0159,
-     0.0444
-    ]
-   },
-   {
-    "bone": 32,
-    "group": 0,
-    "min": [
-     -0.0194,
-     -0.0244,
-     -0.0
-    ],
-    "max": [
-     0.0234,
-     0.01,
-     0.0403
-    ]
-   },
-   {
-    "bone": 35,
-    "group": 0,
-    "min": [
-     -0.0913,
-     -0.0988,
-     -0.2494
-    ],
-    "max": [
-     0.105,
-     0.0856,
-     0.3275
-    ]
-   },
-   {
-    "bone": 36,
-    "group": 0,
-    "min": [
-     -0.2394,
-     -0.3072,
-     -0.0344
-    ],
-    "max": [
-     0.0856,
-     0.8286,
-     0.0369
-    ]
-   }
-  ],
-  "bones": 42,
+  "bones": 57,
   "seq_events": {
    "reload": [
     {
-     "t": 0.311,
+     "t": 0.325,
      "wav": "weapons/csgo/sg556/sg556_clipout.wav"
     },
     {
-     "t": 1.001,
+     "t": 1.048,
      "wav": "weapons/csgo/sg556/sg556_clipin.wav"
     },
     {
-     "t": 2.002,
+     "t": 2.096,
      "wav": "weapons/csgo/sg556/sg556_boltback.wav"
     },
     {
-     "t": 2.279,
+     "t": 2.385,
      "wav": "weapons/csgo/sg556/sg556_boltforward.wav"
     }
    ],
@@ -15481,24 +7910,23 @@
    ]
   },
   "seq_durations": {
-   "idle": 0.0,
-   "reload": 2.865,
+   "idle": 0.033,
+   "reload": 3.0,
    "draw": 1.0,
    "shoot1": 0.7,
-   "shoot2": 0.7,
-   "shoot3": 0.7,
    "inspect": 4.333
   },
   "muzzle": [
-   -0.1623,
-   -0.121,
-   -1.2014
+   -0.1625,
+   -0.1209,
+   -1.2015
   ],
   "eject": [
-   -0.1598,
+   -0.16,
    -0.1116,
-   -0.5757
-  ]
+   -0.5758
+  ],
+  "source": "ilunp/CSGO-M.A.T"
  },
  "weapons/v_smokegrenade": {
   "sequences": [
@@ -15930,403 +8358,23 @@
    "shoot3",
    "inspect"
   ],
-  "hitboxes": [
-   {
-    "bone": 1,
-    "group": 0,
-    "min": [
-     -0.0503,
-     -0.0684,
-     -0.0172
-    ],
-    "max": [
-     0.06,
-     0.0744,
-     0.1394
-    ]
-   },
-   {
-    "bone": 2,
-    "group": 0,
-    "min": [
-     -0.0466,
-     -0.0309,
-     -0.0328
-    ],
-    "max": [
-     0.0269,
-     0.025,
-     0.0584
-    ]
-   },
-   {
-    "bone": 3,
-    "group": 0,
-    "min": [
-     -0.0178,
-     -0.0237,
-     -0.0
-    ],
-    "max": [
-     0.0244,
-     0.0197,
-     0.0469
-    ]
-   },
-   {
-    "bone": 4,
-    "group": 0,
-    "min": [
-     -0.0147,
-     -0.0203,
-     -0.0
-    ],
-    "max": [
-     0.0216,
-     0.0178,
-     0.0456
-    ]
-   },
-   {
-    "bone": 5,
-    "group": 0,
-    "min": [
-     -0.0188,
-     -0.0256,
-     -0.0
-    ],
-    "max": [
-     0.0275,
-     0.0159,
-     0.0494
-    ]
-   },
-   {
-    "bone": 6,
-    "group": 0,
-    "min": [
-     -0.0188,
-     -0.0197,
-     -0.0
-    ],
-    "max": [
-     0.0194,
-     0.0159,
-     0.0381
-    ]
-   },
-   {
-    "bone": 8,
-    "group": 0,
-    "min": [
-     -0.0178,
-     -0.02,
-     -0.0
-    ],
-    "max": [
-     0.0309,
-     0.0156,
-     0.0587
-    ]
-   },
-   {
-    "bone": 9,
-    "group": 0,
-    "min": [
-     -0.0162,
-     -0.0197,
-     -0.0
-    ],
-    "max": [
-     0.0219,
-     0.0153,
-     0.0315
-    ]
-   },
-   {
-    "bone": 11,
-    "group": 0,
-    "min": [
-     -0.0194,
-     -0.0141,
-     -0.0
-    ],
-    "max": [
-     0.0281,
-     0.0184,
-     0.0487
-    ]
-   },
-   {
-    "bone": 12,
-    "group": 0,
-    "min": [
-     -0.0175,
-     -0.0159,
-     -0.0028
-    ],
-    "max": [
-     0.0206,
-     0.0178,
-     0.0291
-    ]
-   },
-   {
-    "bone": 13,
-    "group": 0,
-    "min": [
-     -0.0169,
-     -0.0159,
-     -0.0006
-    ],
-    "max": [
-     0.0153,
-     0.0159,
-     0.0444
-    ]
-   },
-   {
-    "bone": 14,
-    "group": 0,
-    "min": [
-     -0.0194,
-     -0.01,
-     -0.0
-    ],
-    "max": [
-     0.0234,
-     0.0244,
-     0.0403
-    ]
-   },
-   {
-    "bone": 17,
-    "group": 0,
-    "min": [
-     -0.0913,
-     -0.0856,
-     -0.2494
-    ],
-    "max": [
-     0.105,
-     0.0988,
-     0.3275
-    ]
-   },
-   {
-    "bone": 19,
-    "group": 0,
-    "min": [
-     -0.0998,
-     -0.0744,
-     -0.084
-    ],
-    "max": [
-     0.06,
-     0.3367,
-     0.1394
-    ]
-   },
-   {
-    "bone": 20,
-    "group": 0,
-    "min": [
-     -0.0466,
-     -0.025,
-     -0.0328
-    ],
-    "max": [
-     0.0269,
-     0.0309,
-     0.0584
-    ]
-   },
-   {
-    "bone": 21,
-    "group": 0,
-    "min": [
-     -0.0181,
-     -0.0197,
-     -0.0
-    ],
-    "max": [
-     0.0241,
-     0.0237,
-     0.0469
-    ]
-   },
-   {
-    "bone": 22,
-    "group": 0,
-    "min": [
-     -0.015,
-     -0.0178,
-     -0.0
-    ],
-    "max": [
-     0.0209,
-     0.0203,
-     0.0459
-    ]
-   },
-   {
-    "bone": 23,
-    "group": 0,
-    "min": [
-     -0.0188,
-     -0.0159,
-     -0.0
-    ],
-    "max": [
-     0.0275,
-     0.0256,
-     0.0494
-    ]
-   },
-   {
-    "bone": 24,
-    "group": 0,
-    "min": [
-     -0.0188,
-     -0.0159,
-     -0.0
-    ],
-    "max": [
-     0.0194,
-     0.0197,
-     0.0381
-    ]
-   },
-   {
-    "bone": 26,
-    "group": 0,
-    "min": [
-     -0.0178,
-     -0.0156,
-     -0.0
-    ],
-    "max": [
-     0.0309,
-     0.02,
-     0.0587
-    ]
-   },
-   {
-    "bone": 27,
-    "group": 0,
-    "min": [
-     -0.0162,
-     -0.0153,
-     -0.0
-    ],
-    "max": [
-     0.0219,
-     0.0197,
-     0.0315
-    ]
-   },
-   {
-    "bone": 29,
-    "group": 0,
-    "min": [
-     -0.0194,
-     -0.0184,
-     -0.0
-    ],
-    "max": [
-     0.0281,
-     0.0141,
-     0.0487
-    ]
-   },
-   {
-    "bone": 30,
-    "group": 0,
-    "min": [
-     -0.0175,
-     -0.0178,
-     -0.0028
-    ],
-    "max": [
-     0.0206,
-     0.0159,
-     0.0291
-    ]
-   },
-   {
-    "bone": 31,
-    "group": 0,
-    "min": [
-     -0.0169,
-     -0.0159,
-     -0.0006
-    ],
-    "max": [
-     0.0153,
-     0.0159,
-     0.0444
-    ]
-   },
-   {
-    "bone": 32,
-    "group": 0,
-    "min": [
-     -0.0194,
-     -0.0244,
-     -0.0
-    ],
-    "max": [
-     0.0234,
-     0.01,
-     0.0403
-    ]
-   },
-   {
-    "bone": 35,
-    "group": 0,
-    "min": [
-     -0.0913,
-     -0.0988,
-     -0.2494
-    ],
-    "max": [
-     0.105,
-     0.0856,
-     0.3275
-    ]
-   },
-   {
-    "bone": 36,
-    "group": 0,
-    "min": [
-     -0.1478,
-     -0.4462,
-     -0.0316
-    ],
-    "max": [
-     0.0719,
-     0.2447,
-     0.0316
-    ]
-   }
-  ],
-  "bones": 42,
+  "bones": 45,
   "seq_events": {
    "reload": [
     {
-     "t": 0.226,
+     "t": 0.233,
      "wav": "weapons/csgo/mp9/mp9_clipout.wav"
     },
     {
-     "t": 0.775,
+     "t": 0.8,
      "wav": "weapons/csgo/mp9/mp9_clipin.wav"
     },
     {
-     "t": 1.292,
+     "t": 1.333,
      "wav": "weapons/csgo/mp9/mp9_boltback.wav"
     },
     {
-     "t": 1.486,
+     "t": 1.533,
      "wav": "weapons/csgo/mp9/mp9_boltforward.wav"
     }
    ],
@@ -16365,7 +8413,7 @@
   },
   "seq_durations": {
    "idle": 0.033,
-   "reload": 2.068,
+   "reload": 2.133,
    "draw": 1.2,
    "shoot1": 0.833,
    "shoot2": 0.833,
@@ -16373,15 +8421,16 @@
    "inspect": 7.333
   },
   "muzzle": [
-   -0.1479,
-   -0.0773,
-   -0.6467
+   -0.148,
+   -0.0772,
+   -0.6468
   ],
   "eject": [
    -0.1618,
-   -0.0602,
-   -0.3998
-  ]
+   -0.0601,
+   -0.3999
+  ],
+  "source": "ilunp/CSGO-M.A.T"
  },
  "weapons/v_ump45": {
   "sequences": [
@@ -16393,417 +8442,23 @@
    "shoot3",
    "inspect"
   ],
-  "hitboxes": [
-   {
-    "bone": 1,
-    "group": 0,
-    "min": [
-     -0.0503,
-     -0.0684,
-     -0.0172
-    ],
-    "max": [
-     0.06,
-     0.0744,
-     0.1394
-    ]
-   },
-   {
-    "bone": 2,
-    "group": 0,
-    "min": [
-     -0.0466,
-     -0.0309,
-     -0.0328
-    ],
-    "max": [
-     0.0269,
-     0.025,
-     0.0584
-    ]
-   },
-   {
-    "bone": 3,
-    "group": 0,
-    "min": [
-     -0.0178,
-     -0.0237,
-     -0.0
-    ],
-    "max": [
-     0.0244,
-     0.0197,
-     0.0469
-    ]
-   },
-   {
-    "bone": 4,
-    "group": 0,
-    "min": [
-     -0.0147,
-     -0.0203,
-     -0.0
-    ],
-    "max": [
-     0.0216,
-     0.0178,
-     0.0456
-    ]
-   },
-   {
-    "bone": 5,
-    "group": 0,
-    "min": [
-     -0.0188,
-     -0.0256,
-     -0.0
-    ],
-    "max": [
-     0.0275,
-     0.0159,
-     0.0494
-    ]
-   },
-   {
-    "bone": 6,
-    "group": 0,
-    "min": [
-     -0.0188,
-     -0.0197,
-     -0.0
-    ],
-    "max": [
-     0.0194,
-     0.0159,
-     0.0381
-    ]
-   },
-   {
-    "bone": 8,
-    "group": 0,
-    "min": [
-     -0.0178,
-     -0.02,
-     -0.0
-    ],
-    "max": [
-     0.0309,
-     0.0156,
-     0.0587
-    ]
-   },
-   {
-    "bone": 9,
-    "group": 0,
-    "min": [
-     -0.0162,
-     -0.0197,
-     -0.0
-    ],
-    "max": [
-     0.0219,
-     0.0153,
-     0.0315
-    ]
-   },
-   {
-    "bone": 11,
-    "group": 0,
-    "min": [
-     -0.0194,
-     -0.0141,
-     -0.0
-    ],
-    "max": [
-     0.0281,
-     0.0184,
-     0.0487
-    ]
-   },
-   {
-    "bone": 12,
-    "group": 0,
-    "min": [
-     -0.0175,
-     -0.0159,
-     -0.0028
-    ],
-    "max": [
-     0.0206,
-     0.0178,
-     0.0291
-    ]
-   },
-   {
-    "bone": 13,
-    "group": 0,
-    "min": [
-     -0.0169,
-     -0.0159,
-     -0.0006
-    ],
-    "max": [
-     0.0153,
-     0.0159,
-     0.0444
-    ]
-   },
-   {
-    "bone": 14,
-    "group": 0,
-    "min": [
-     -0.0194,
-     -0.01,
-     -0.0
-    ],
-    "max": [
-     0.0234,
-     0.0244,
-     0.0403
-    ]
-   },
-   {
-    "bone": 17,
-    "group": 0,
-    "min": [
-     -0.0913,
-     -0.0856,
-     -0.2494
-    ],
-    "max": [
-     0.105,
-     0.0988,
-     0.3275
-    ]
-   },
-   {
-    "bone": 19,
-    "group": 0,
-    "min": [
-     -0.1548,
-     -0.0744,
-     -0.134
-    ],
-    "max": [
-     0.06,
-     0.2715,
-     0.1394
-    ]
-   },
-   {
-    "bone": 20,
-    "group": 0,
-    "min": [
-     -0.0466,
-     -0.025,
-     -0.0328
-    ],
-    "max": [
-     0.0269,
-     0.0309,
-     0.0584
-    ]
-   },
-   {
-    "bone": 21,
-    "group": 0,
-    "min": [
-     -0.0181,
-     -0.0197,
-     -0.0
-    ],
-    "max": [
-     0.0241,
-     0.0237,
-     0.0469
-    ]
-   },
-   {
-    "bone": 22,
-    "group": 0,
-    "min": [
-     -0.015,
-     -0.0178,
-     -0.0
-    ],
-    "max": [
-     0.0209,
-     0.0203,
-     0.0459
-    ]
-   },
-   {
-    "bone": 23,
-    "group": 0,
-    "min": [
-     -0.0188,
-     -0.0159,
-     -0.0
-    ],
-    "max": [
-     0.0275,
-     0.0256,
-     0.0494
-    ]
-   },
-   {
-    "bone": 24,
-    "group": 0,
-    "min": [
-     -0.0188,
-     -0.0159,
-     -0.0
-    ],
-    "max": [
-     0.0194,
-     0.0197,
-     0.0381
-    ]
-   },
-   {
-    "bone": 26,
-    "group": 0,
-    "min": [
-     -0.0178,
-     -0.0156,
-     -0.0
-    ],
-    "max": [
-     0.0309,
-     0.02,
-     0.0587
-    ]
-   },
-   {
-    "bone": 27,
-    "group": 0,
-    "min": [
-     -0.0162,
-     -0.0153,
-     -0.0
-    ],
-    "max": [
-     0.0219,
-     0.0197,
-     0.0315
-    ]
-   },
-   {
-    "bone": 29,
-    "group": 0,
-    "min": [
-     -0.0194,
-     -0.0184,
-     -0.0
-    ],
-    "max": [
-     0.0281,
-     0.0141,
-     0.0487
-    ]
-   },
-   {
-    "bone": 30,
-    "group": 0,
-    "min": [
-     -0.0175,
-     -0.0178,
-     -0.0028
-    ],
-    "max": [
-     0.0206,
-     0.0159,
-     0.0291
-    ]
-   },
-   {
-    "bone": 31,
-    "group": 0,
-    "min": [
-     -0.0169,
-     -0.0159,
-     -0.0006
-    ],
-    "max": [
-     0.0153,
-     0.0159,
-     0.0444
-    ]
-   },
-   {
-    "bone": 32,
-    "group": 0,
-    "min": [
-     -0.0194,
-     -0.0244,
-     -0.0
-    ],
-    "max": [
-     0.0234,
-     0.01,
-     0.0403
-    ]
-   },
-   {
-    "bone": 35,
-    "group": 0,
-    "min": [
-     -0.0913,
-     -0.0988,
-     -0.2494
-    ],
-    "max": [
-     0.105,
-     0.0856,
-     0.3275
-    ]
-   },
-   {
-    "bone": 36,
-    "group": 0,
-    "min": [
-     -0.2228,
-     -0.4219,
-     -0.0391
-    ],
-    "max": [
-     0.075,
-     0.4928,
-     0.0469
-    ]
-   },
-   {
-    "bone": 41,
-    "group": 0,
-    "min": [
-     -0.1422,
-     -0.0262,
-     -0.0231
-    ],
-    "max": [
-     0.1816,
-     0.0328,
-     0.0244
-    ]
-   }
-  ],
-  "bones": 43,
+  "bones": 46,
   "seq_events": {
    "reload": [
     {
-     "t": 0.269,
+     "t": 0.267,
      "wav": "weapons/csgo/ump45/ump45_clipout.wav"
     },
     {
-     "t": 1.38,
+     "t": 1.367,
      "wav": "weapons/csgo/ump45/ump45_clipin.wav"
     },
     {
-     "t": 2.154,
+     "t": 2.133,
      "wav": "weapons/csgo/ump45/ump45_boltback.wav"
     },
     {
-     "t": 2.457,
+     "t": 2.433,
      "wav": "weapons/csgo/ump45/ump45_boltforward.wav"
     }
    ],
@@ -16841,8 +8496,8 @@
    ]
   },
   "seq_durations": {
-   "idle": 0.033,
-   "reload": 3.466,
+   "idle": 0.083,
+   "reload": 3.433,
    "draw": 1.0,
    "shoot1": 1.0,
    "shoot2": 1.0,
@@ -16850,476 +8505,141 @@
    "inspect": 6.833
   },
   "muzzle": [
-   -0.1578,
-   -0.1322,
-   -1.0142
+   -0.158,
+   -0.1323,
+   -1.0141
   ],
   "eject": [
-   -0.1827,
-   -0.1243,
+   -0.1829,
+   -0.1244,
    -0.705
-  ]
+  ],
+  "source": "ilunp/CSGO-M.A.T"
  },
  "weapons/v_usp": {
   "sequences": [
    "idle",
-   "shoot1",
-   "shoot2",
-   "shoot3",
-   "shootlast",
-   "reload",
-   "draw",
-   "add_silencer",
    "idle_unsil",
-   "shoot1_unsil",
-   "shoot2_unsil",
-   "shoot3_unsil",
-   "shootlast_unsil",
-   "reload_unsil",
-   "draw_unsil",
+   "add_silencer",
    "detach_silencer",
+   "shoot1",
+   "shoot1_unsil",
+   "shoot2",
+   "shoot2_unsil",
+   "shoot3",
+   "shoot3_unsil",
+   "shootlast",
+   "shootlast_unsil",
+   "reload",
+   "reload_unsil",
+   "draw",
+   "draw_unsil",
    "inspect",
    "inspect_unsil"
   ],
-  "hitboxes": [
-   {
-    "bone": 1,
-    "group": 0,
-    "min": [
-     -0.0503,
-     -0.0684,
-     -0.0172
-    ],
-    "max": [
-     0.06,
-     0.0744,
-     0.1394
-    ]
-   },
-   {
-    "bone": 2,
-    "group": 0,
-    "min": [
-     -0.0466,
-     -0.0309,
-     -0.0328
-    ],
-    "max": [
-     0.0269,
-     0.025,
-     0.0584
-    ]
-   },
-   {
-    "bone": 3,
-    "group": 0,
-    "min": [
-     -0.0178,
-     -0.0237,
-     -0.0
-    ],
-    "max": [
-     0.0244,
-     0.0197,
-     0.0469
-    ]
-   },
-   {
-    "bone": 4,
-    "group": 0,
-    "min": [
-     -0.0147,
-     -0.0203,
-     -0.0
-    ],
-    "max": [
-     0.0216,
-     0.0178,
-     0.0456
-    ]
-   },
-   {
-    "bone": 5,
-    "group": 0,
-    "min": [
-     -0.0188,
-     -0.0256,
-     -0.0
-    ],
-    "max": [
-     0.0275,
-     0.0159,
-     0.0494
-    ]
-   },
-   {
-    "bone": 6,
-    "group": 0,
-    "min": [
-     -0.0188,
-     -0.0197,
-     -0.0
-    ],
-    "max": [
-     0.0194,
-     0.0159,
-     0.0381
-    ]
-   },
-   {
-    "bone": 8,
-    "group": 0,
-    "min": [
-     -0.0178,
-     -0.02,
-     -0.0
-    ],
-    "max": [
-     0.0309,
-     0.0156,
-     0.0587
-    ]
-   },
-   {
-    "bone": 9,
-    "group": 0,
-    "min": [
-     -0.0162,
-     -0.0197,
-     -0.0
-    ],
-    "max": [
-     0.0219,
-     0.0153,
-     0.0315
-    ]
-   },
-   {
-    "bone": 11,
-    "group": 0,
-    "min": [
-     -0.0194,
-     -0.0141,
-     -0.0
-    ],
-    "max": [
-     0.0281,
-     0.0184,
-     0.0487
-    ]
-   },
-   {
-    "bone": 12,
-    "group": 0,
-    "min": [
-     -0.0175,
-     -0.0159,
-     -0.0028
-    ],
-    "max": [
-     0.0206,
-     0.0178,
-     0.0291
-    ]
-   },
-   {
-    "bone": 13,
-    "group": 0,
-    "min": [
-     -0.0169,
-     -0.0159,
-     -0.0006
-    ],
-    "max": [
-     0.0153,
-     0.0159,
-     0.0444
-    ]
-   },
-   {
-    "bone": 14,
-    "group": 0,
-    "min": [
-     -0.0194,
-     -0.01,
-     -0.0
-    ],
-    "max": [
-     0.0234,
-     0.0244,
-     0.0403
-    ]
-   },
-   {
-    "bone": 17,
-    "group": 0,
-    "min": [
-     -0.0913,
-     -0.0856,
-     -0.2494
-    ],
-    "max": [
-     0.105,
-     0.0988,
-     0.3275
-    ]
-   },
-   {
-    "bone": 19,
-    "group": 0,
-    "min": [
-     -0.0503,
-     -0.0744,
-     -0.0809
-    ],
-    "max": [
-     0.06,
-     0.2886,
-     0.1394
-    ]
-   },
-   {
-    "bone": 20,
-    "group": 0,
-    "min": [
-     -0.0466,
-     -0.025,
-     -0.0328
-    ],
-    "max": [
-     0.0269,
-     0.0309,
-     0.0584
-    ]
-   },
-   {
-    "bone": 21,
-    "group": 0,
-    "min": [
-     -0.0181,
-     -0.0197,
-     -0.0
-    ],
-    "max": [
-     0.0241,
-     0.0237,
-     0.0469
-    ]
-   },
-   {
-    "bone": 22,
-    "group": 0,
-    "min": [
-     -0.015,
-     -0.0178,
-     -0.0
-    ],
-    "max": [
-     0.0209,
-     0.0203,
-     0.0459
-    ]
-   },
-   {
-    "bone": 23,
-    "group": 0,
-    "min": [
-     -0.0188,
-     -0.0159,
-     -0.0
-    ],
-    "max": [
-     0.0275,
-     0.0256,
-     0.0494
-    ]
-   },
-   {
-    "bone": 24,
-    "group": 0,
-    "min": [
-     -0.0188,
-     -0.0159,
-     -0.0
-    ],
-    "max": [
-     0.0194,
-     0.0197,
-     0.0381
-    ]
-   },
-   {
-    "bone": 26,
-    "group": 0,
-    "min": [
-     -0.0178,
-     -0.0156,
-     -0.0
-    ],
-    "max": [
-     0.0309,
-     0.02,
-     0.0587
-    ]
-   },
-   {
-    "bone": 27,
-    "group": 0,
-    "min": [
-     -0.0162,
-     -0.0153,
-     -0.0
-    ],
-    "max": [
-     0.0219,
-     0.0197,
-     0.0315
-    ]
-   },
-   {
-    "bone": 29,
-    "group": 0,
-    "min": [
-     -0.0194,
-     -0.0184,
-     -0.0
-    ],
-    "max": [
-     0.0281,
-     0.0141,
-     0.0487
-    ]
-   },
-   {
-    "bone": 30,
-    "group": 0,
-    "min": [
-     -0.0175,
-     -0.0178,
-     -0.0028
-    ],
-    "max": [
-     0.0206,
-     0.0159,
-     0.0291
-    ]
-   },
-   {
-    "bone": 31,
-    "group": 0,
-    "min": [
-     -0.0169,
-     -0.0159,
-     -0.0006
-    ],
-    "max": [
-     0.0153,
-     0.0159,
-     0.0444
-    ]
-   },
-   {
-    "bone": 32,
-    "group": 0,
-    "min": [
-     -0.0194,
-     -0.0244,
-     -0.0
-    ],
-    "max": [
-     0.0234,
-     0.01,
-     0.0403
-    ]
-   },
-   {
-    "bone": 35,
-    "group": 0,
-    "min": [
-     -0.0913,
-     -0.0988,
-     -0.2494
-    ],
-    "max": [
-     0.105,
-     0.0856,
-     0.3275
-    ]
-   },
-   {
-    "bone": 36,
-    "group": 0,
-    "min": [
-     -0.1106,
-     -0.0566,
-     -0.0234
-    ],
-    "max": [
-     0.0903,
-     0.2574,
-     0.0225
-    ]
-   },
-   {
-    "bone": 38,
-    "group": 0,
-    "min": [
-     -0.04,
-     -0.0391,
-     -0.0197
-    ],
-    "max": [
-     0.0281,
-     0.2372,
-     0.0178
-    ]
-   },
-   {
-    "bone": 42,
-    "group": 0,
-    "min": [
-     -0.1375,
-     -0.0247,
-     -0.0194
-    ],
-    "max": [
-     0.0294,
-     0.0478,
-     0.0181
-    ]
-   },
-   {
-    "bone": 43,
-    "group": 0,
-    "min": [
-     -0.025,
-     -0.0266,
-     -0.0266
-    ],
-    "max": [
-     0.2428,
-     0.0266,
-     0.0266
-    ]
-   }
-  ],
-  "bones": 44,
+  "bones": 48,
   "seq_events": {
+   "add_silencer": [
+    {
+     "t": 0.067,
+     "wav": "weapons/csgo/movement1.wav"
+    },
+    {
+     "t": 1.067,
+     "wav": "weapons/csgo/usp/usp_silencer_screw_on_start.wav"
+    },
+    {
+     "t": 1.833,
+     "wav": "weapons/csgo/usp/usp_silencer_screw1.wav"
+    },
+    {
+     "t": 2.3,
+     "wav": "weapons/csgo/usp/usp_silencer_screw2.wav"
+    },
+    {
+     "t": 2.667,
+     "wav": "weapons/csgo/usp/usp_silencer_screw3.wav"
+    },
+    {
+     "t": 3.033,
+     "wav": "weapons/csgo/usp/usp_silencer_screw4.wav"
+    },
+    {
+     "t": 3.3,
+     "wav": "weapons/csgo/usp/usp_silencer_screw5.wav"
+    },
+    {
+     "t": 3.733,
+     "wav": "weapons/csgo/movement3.wav"
+    }
+   ],
+   "detach_silencer": [
+    {
+     "t": 0.3,
+     "wav": "weapons/csgo/movement1.wav"
+    },
+    {
+     "t": 0.933,
+     "wav": "weapons/csgo/usp/usp_silencer_screw1.wav"
+    },
+    {
+     "t": 1.6,
+     "wav": "weapons/csgo/usp/usp_silencer_screw2.wav"
+    },
+    {
+     "t": 2.0,
+     "wav": "weapons/csgo/usp/usp_silencer_screw3.wav"
+    },
+    {
+     "t": 2.333,
+     "wav": "weapons/csgo/usp/usp_silencer_screw4.wav"
+    },
+    {
+     "t": 2.667,
+     "wav": "weapons/csgo/usp/usp_silencer_screw5.wav"
+    },
+    {
+     "t": 3.1,
+     "wav": "weapons/csgo/usp/usp_silencer_screw1.wav"
+    },
+    {
+     "t": 3.8,
+     "wav": "weapons/csgo/movement3.wav"
+    }
+   ],
    "reload": [
     {
-     "t": 0.491,
+     "t": 0.498,
      "wav": "weapons/csgo/hkp2000/hkp2000_clipout.wav"
     },
     {
-     "t": 1.023,
+     "t": 1.038,
      "wav": "weapons/csgo/hkp2000/hkp2000_clipin.wav"
     },
     {
-     "t": 1.8,
+     "t": 1.828,
      "wav": "weapons/csgo/hkp2000/hkp2000_slideback.wav"
     },
     {
-     "t": 2.045,
+     "t": 2.077,
+     "wav": "weapons/csgo/hkp2000/hkp2000_sliderelease.wav"
+    }
+   ],
+   "reload_unsil": [
+    {
+     "t": 0.498,
+     "wav": "weapons/csgo/hkp2000/hkp2000_clipout.wav"
+    },
+    {
+     "t": 1.038,
+     "wav": "weapons/csgo/hkp2000/hkp2000_clipin.wav"
+    },
+    {
+     "t": 1.828,
+     "wav": "weapons/csgo/hkp2000/hkp2000_slideback.wav"
+    },
+    {
+     "t": 2.077,
      "wav": "weapons/csgo/hkp2000/hkp2000_sliderelease.wav"
     }
    ],
@@ -17337,58 +8657,6 @@
      "wav": "weapons/csgo/hkp2000/hkp2000_sliderelease.wav"
     }
    ],
-   "add_silencer": [
-    {
-     "t": 0.043,
-     "wav": "weapons/csgo/movement1.wav"
-    },
-    {
-     "t": 0.686,
-     "wav": "weapons/csgo/usp/usp_silencer_screw_on_start.wav"
-    },
-    {
-     "t": 1.179,
-     "wav": "weapons/csgo/usp/usp_silencer_screw1.wav"
-    },
-    {
-     "t": 1.479,
-     "wav": "weapons/csgo/usp/usp_silencer_screw2.wav"
-    },
-    {
-     "t": 1.715,
-     "wav": "weapons/csgo/usp/usp_silencer_screw3.wav"
-    },
-    {
-     "t": 1.951,
-     "wav": "weapons/csgo/usp/usp_silencer_screw4.wav"
-    },
-    {
-     "t": 2.122,
-     "wav": "weapons/csgo/usp/usp_silencer_screw5.wav"
-    },
-    {
-     "t": 2.401,
-     "wav": "weapons/csgo/movement3.wav"
-    }
-   ],
-   "reload_unsil": [
-    {
-     "t": 0.491,
-     "wav": "weapons/csgo/hkp2000/hkp2000_clipout.wav"
-    },
-    {
-     "t": 1.023,
-     "wav": "weapons/csgo/hkp2000/hkp2000_clipin.wav"
-    },
-    {
-     "t": 1.8,
-     "wav": "weapons/csgo/hkp2000/hkp2000_slideback.wav"
-    },
-    {
-     "t": 2.045,
-     "wav": "weapons/csgo/hkp2000/hkp2000_sliderelease.wav"
-    }
-   ],
    "draw_unsil": [
     {
      "t": 0.0,
@@ -17401,40 +8669,6 @@
     {
      "t": 0.467,
      "wav": "weapons/csgo/hkp2000/hkp2000_sliderelease.wav"
-    }
-   ],
-   "detach_silencer": [
-    {
-     "t": 0.193,
-     "wav": "weapons/csgo/movement1.wav"
-    },
-    {
-     "t": 0.6,
-     "wav": "weapons/csgo/usp/usp_silencer_screw1.wav"
-    },
-    {
-     "t": 1.029,
-     "wav": "weapons/csgo/usp/usp_silencer_screw2.wav"
-    },
-    {
-     "t": 1.286,
-     "wav": "weapons/csgo/usp/usp_silencer_screw3.wav"
-    },
-    {
-     "t": 1.501,
-     "wav": "weapons/csgo/usp/usp_silencer_screw4.wav"
-    },
-    {
-     "t": 1.715,
-     "wav": "weapons/csgo/usp/usp_silencer_screw5.wav"
-    },
-    {
-     "t": 1.994,
-     "wav": "weapons/csgo/usp/usp_silencer_screw1.wav"
-    },
-    {
-     "t": 2.444,
-     "wav": "weapons/csgo/movement3.wav"
     }
    ],
    "inspect": [
@@ -17459,447 +8693,53 @@
    ]
   },
   "seq_durations": {
-   "idle": 0.0,
+   "idle": 1.633,
+   "idle_unsil": 1.633,
+   "add_silencer": 4.833,
+   "detach_silencer": 4.833,
    "shoot1": 0.4,
-   "shoot2": 0.4,
-   "shoot3": 0.4,
-   "shootlast": 0.4,
-   "reload": 2.659,
-   "draw": 1.0,
-   "add_silencer": 3.109,
-   "idle_unsil": 0.0,
    "shoot1_unsil": 0.4,
+   "shoot2": 0.4,
    "shoot2_unsil": 0.4,
+   "shoot3": 0.4,
    "shoot3_unsil": 0.4,
+   "shootlast": 0.4,
    "shootlast_unsil": 0.4,
-   "reload_unsil": 2.659,
+   "reload": 2.7,
+   "reload_unsil": 2.7,
+   "draw": 1.0,
    "draw_unsil": 1.0,
-   "detach_silencer": 3.109,
    "inspect": 6.433,
    "inspect_unsil": 6.433
   },
   "muzzle": [
-   -0.0884,
-   -0.0718,
-   -0.9175
+   -0.0877,
+   -0.073,
+   -0.9294
   ],
   "eject": [
    -0.0946,
    -0.0583,
-   -0.5217
+   -0.5219
   ],
   "muzzle_unsil": [
    -0.0877,
    -0.07,
-   -0.6574
-  ]
+   -0.6576
+  ],
+  "source": "ilunp/CSGO-M.A.T"
  },
  "weapons/v_xm1014": {
   "sequences": [
    "idle",
    "shoot1",
-   "shoot2",
+   "start_reload",
    "insert",
    "after_reload",
-   "start_reload",
    "draw",
    "inspect"
   ],
-  "hitboxes": [
-   {
-    "bone": 1,
-    "group": 0,
-    "min": [
-     -0.0503,
-     -0.0684,
-     -0.0172
-    ],
-    "max": [
-     0.06,
-     0.0744,
-     0.1394
-    ]
-   },
-   {
-    "bone": 2,
-    "group": 0,
-    "min": [
-     -0.0466,
-     -0.0309,
-     -0.0328
-    ],
-    "max": [
-     0.0269,
-     0.025,
-     0.0584
-    ]
-   },
-   {
-    "bone": 3,
-    "group": 0,
-    "min": [
-     -0.0178,
-     -0.0237,
-     -0.0
-    ],
-    "max": [
-     0.0244,
-     0.0197,
-     0.0469
-    ]
-   },
-   {
-    "bone": 4,
-    "group": 0,
-    "min": [
-     -0.0147,
-     -0.0203,
-     -0.0
-    ],
-    "max": [
-     0.0216,
-     0.0178,
-     0.0456
-    ]
-   },
-   {
-    "bone": 5,
-    "group": 0,
-    "min": [
-     -0.0188,
-     -0.0256,
-     -0.0
-    ],
-    "max": [
-     0.0275,
-     0.0159,
-     0.0494
-    ]
-   },
-   {
-    "bone": 6,
-    "group": 0,
-    "min": [
-     -0.0188,
-     -0.0197,
-     -0.0
-    ],
-    "max": [
-     0.0194,
-     0.0159,
-     0.0381
-    ]
-   },
-   {
-    "bone": 8,
-    "group": 0,
-    "min": [
-     -0.0178,
-     -0.02,
-     -0.0
-    ],
-    "max": [
-     0.0309,
-     0.0156,
-     0.0587
-    ]
-   },
-   {
-    "bone": 9,
-    "group": 0,
-    "min": [
-     -0.0162,
-     -0.0197,
-     -0.0
-    ],
-    "max": [
-     0.0219,
-     0.0153,
-     0.0315
-    ]
-   },
-   {
-    "bone": 11,
-    "group": 0,
-    "min": [
-     -0.0194,
-     -0.0141,
-     -0.0
-    ],
-    "max": [
-     0.0281,
-     0.0184,
-     0.0487
-    ]
-   },
-   {
-    "bone": 12,
-    "group": 0,
-    "min": [
-     -0.0175,
-     -0.0159,
-     -0.0028
-    ],
-    "max": [
-     0.0206,
-     0.0178,
-     0.0291
-    ]
-   },
-   {
-    "bone": 13,
-    "group": 0,
-    "min": [
-     -0.0169,
-     -0.0159,
-     -0.0006
-    ],
-    "max": [
-     0.0153,
-     0.0159,
-     0.0444
-    ]
-   },
-   {
-    "bone": 14,
-    "group": 0,
-    "min": [
-     -0.0194,
-     -0.01,
-     -0.0
-    ],
-    "max": [
-     0.0234,
-     0.0244,
-     0.0403
-    ]
-   },
-   {
-    "bone": 17,
-    "group": 0,
-    "min": [
-     -0.0913,
-     -0.0856,
-     -0.2494
-    ],
-    "max": [
-     0.105,
-     0.0988,
-     0.3275
-    ]
-   },
-   {
-    "bone": 19,
-    "group": 0,
-    "min": [
-     -0.1811,
-     -0.0744,
-     -0.1482
-    ],
-    "max": [
-     0.06,
-     0.3715,
-     0.1394
-    ]
-   },
-   {
-    "bone": 20,
-    "group": 0,
-    "min": [
-     -0.0466,
-     -0.025,
-     -0.0328
-    ],
-    "max": [
-     0.0269,
-     0.0309,
-     0.0584
-    ]
-   },
-   {
-    "bone": 21,
-    "group": 0,
-    "min": [
-     -0.0181,
-     -0.0197,
-     -0.0
-    ],
-    "max": [
-     0.0241,
-     0.0237,
-     0.0469
-    ]
-   },
-   {
-    "bone": 22,
-    "group": 0,
-    "min": [
-     -0.015,
-     -0.0178,
-     -0.0
-    ],
-    "max": [
-     0.0209,
-     0.0203,
-     0.0459
-    ]
-   },
-   {
-    "bone": 23,
-    "group": 0,
-    "min": [
-     -0.0188,
-     -0.0159,
-     -0.0
-    ],
-    "max": [
-     0.0275,
-     0.0256,
-     0.0494
-    ]
-   },
-   {
-    "bone": 24,
-    "group": 0,
-    "min": [
-     -0.0188,
-     -0.0159,
-     -0.0
-    ],
-    "max": [
-     0.0194,
-     0.0197,
-     0.0381
-    ]
-   },
-   {
-    "bone": 26,
-    "group": 0,
-    "min": [
-     -0.0178,
-     -0.0156,
-     -0.0
-    ],
-    "max": [
-     0.0309,
-     0.02,
-     0.0587
-    ]
-   },
-   {
-    "bone": 27,
-    "group": 0,
-    "min": [
-     -0.0162,
-     -0.0153,
-     -0.0
-    ],
-    "max": [
-     0.0219,
-     0.0197,
-     0.0315
-    ]
-   },
-   {
-    "bone": 29,
-    "group": 0,
-    "min": [
-     -0.0194,
-     -0.0184,
-     -0.0
-    ],
-    "max": [
-     0.0281,
-     0.0141,
-     0.0487
-    ]
-   },
-   {
-    "bone": 30,
-    "group": 0,
-    "min": [
-     -0.0175,
-     -0.0178,
-     -0.0028
-    ],
-    "max": [
-     0.0206,
-     0.0159,
-     0.0291
-    ]
-   },
-   {
-    "bone": 31,
-    "group": 0,
-    "min": [
-     -0.0169,
-     -0.0159,
-     -0.0006
-    ],
-    "max": [
-     0.0153,
-     0.0159,
-     0.0444
-    ]
-   },
-   {
-    "bone": 32,
-    "group": 0,
-    "min": [
-     -0.0194,
-     -0.0244,
-     -0.0
-    ],
-    "max": [
-     0.0234,
-     0.01,
-     0.0403
-    ]
-   },
-   {
-    "bone": 35,
-    "group": 0,
-    "min": [
-     -0.0913,
-     -0.0988,
-     -0.2494
-    ],
-    "max": [
-     0.105,
-     0.0856,
-     0.3275
-    ]
-   },
-   {
-    "bone": 36,
-    "group": 0,
-    "min": [
-     -0.1581,
-     -0.3478,
-     -0.0334
-    ],
-    "max": [
-     0.1632,
-     0.8134,
-     0.143
-    ]
-   },
-   {
-    "bone": 39,
-    "group": 0,
-    "min": [
-     -0.0266,
-     -0.0694,
-     -0.0531
-    ],
-    "max": [
-     0.0128,
-     0.0188,
-     0.0184
-    ]
-   }
-  ],
-  "bones": 46,
+  "bones": 49,
   "seq_events": {
    "insert": [
     {
@@ -17909,7 +8749,7 @@
    ],
    "draw": [
     {
-     "t": 0.033,
+     "t": 0.0,
      "wav": "weapons/csgo/xm1014/xm1014_draw.wav"
     }
    ],
@@ -17931,45 +8771,29 @@
   "seq_durations": {
    "idle": 0.033,
    "shoot1": 1.1,
-   "shoot2": 1.1,
+   "start_reload": 0.667,
    "insert": 0.6,
    "after_reload": 0.4,
-   "start_reload": 0.667,
    "draw": 1.0,
    "inspect": 4.567
   },
   "muzzle": [
-   -0.1344,
+   -0.1349,
    -0.129,
-   -1.2088
+   -1.209
   ],
   "eject": [
-   -0.1489,
-   -0.13,
-   -0.6248
-  ]
+   -0.1493,
+   -0.1299,
+   -0.625
+  ],
+  "source": "ilunp/CSGO-M.A.T"
  },
  "weapons/w_ak47": {
-  "sequences": [
-   "idle"
-  ],
-  "hitboxes": [
-   {
-    "bone": 0,
-    "group": 0,
-    "min": [
-     -0.3094,
-     -0.1791,
-     -0.0156
-    ],
-    "max": [
-     0.0291,
-     0.8963,
-     0.0697
-    ]
-   }
-  ],
-  "bones": 1
+  "sequences": [],
+  "hitboxes": [],
+  "bones": 0,
+  "source": "ilunp/CSGO-M.A.T"
  },
  "weapons/w_assault": {
   "bones": 1,
@@ -17994,48 +8818,16 @@
   ]
  },
  "weapons/w_aug": {
-  "sequences": [
-   "idle"
-  ],
-  "hitboxes": [
-   {
-    "bone": 0,
-    "group": 0,
-    "min": [
-     -0.2153,
-     -0.0331,
-     -0.6091
-    ],
-    "max": [
-     0.2219,
-     0.0953,
-     0.4434
-    ]
-   }
-  ],
-  "bones": 1
+  "sequences": [],
+  "hitboxes": [],
+  "bones": 0,
+  "source": "ilunp/CSGO-M.A.T"
  },
  "weapons/w_awp": {
-  "sequences": [
-   "idle"
-  ],
-  "hitboxes": [
-   {
-    "bone": 0,
-    "group": 0,
-    "min": [
-     -0.1266,
-     -0.6341,
-     -0.0356
-    ],
-    "max": [
-     0.1109,
-     0.6197,
-     0.0719
-    ]
-   }
-  ],
-  "bones": 1
+  "sequences": [],
+  "hitboxes": [],
+  "bones": 0,
+  "source": "ilunp/CSGO-M.A.T"
  },
  "weapons/w_backpack": {
   "bones": 1,
@@ -18082,55 +8874,22 @@
   "bones": 1
  },
  "weapons/w_deagle": {
-  "sequences": [
-   "idle"
-  ],
-  "hitboxes": [
-   {
-    "bone": 0,
-    "group": 0,
-    "min": [
-     -0.1187,
-     -0.1278,
-     -0.0378
-    ],
-    "max": [
-     0.1128,
-     0.1394,
-     0.0734
-    ]
-   }
-  ],
-  "bones": 1
+  "sequences": [],
+  "hitboxes": [],
+  "bones": 0,
+  "source": "ilunp/CSGO-M.A.T"
  },
  "weapons/w_elite": {
-  "sequences": [
-   "idle"
-  ],
-  "hitboxes": [
-   {
-    "bone": 0,
-    "group": 0,
-    "min": [
-     -0.14,
-     -0.0338,
-     -0.2103
-    ],
-    "max": [
-     0.2397,
-     0.0734,
-     0.1031
-    ]
-   }
-  ],
-  "bones": 1
+  "sequences": [],
+  "hitboxes": [],
+  "bones": 0,
+  "source": "ilunp/CSGO-M.A.T"
  },
  "weapons/w_fiveseven": {
-  "sequences": [
-   "idle"
-  ],
+  "sequences": [],
   "hitboxes": [],
-  "bones": 1
+  "bones": 0,
+  "source": "ilunp/CSGO-M.A.T"
  },
  "weapons/w_flashbang": {
   "sequences": [
@@ -18155,48 +8914,16 @@
   "bones": 1
  },
  "weapons/w_g3sg1": {
-  "sequences": [
-   "idle"
-  ],
-  "hitboxes": [
-   {
-    "bone": 0,
-    "group": 0,
-    "min": [
-     -0.1722,
-     -0.655,
-     -0.0341
-    ],
-    "max": [
-     0.1684,
-     0.6509,
-     0.0425
-    ]
-   }
-  ],
-  "bones": 1
+  "sequences": [],
+  "hitboxes": [],
+  "bones": 0,
+  "source": "ilunp/CSGO-M.A.T"
  },
  "weapons/w_glock18": {
-  "sequences": [
-   "idle"
-  ],
-  "hitboxes": [
-   {
-    "bone": 0,
-    "group": 0,
-    "min": [
-     -0.1147,
-     -0.1059,
-     -0.0472
-    ],
-    "max": [
-     0.0759,
-     0.1031,
-     0.0481
-    ]
-   }
-  ],
-  "bones": 1
+  "sequences": [],
+  "hitboxes": [],
+  "bones": 0,
+  "source": "ilunp/CSGO-M.A.T"
  },
  "weapons/w_hegrenade": {
   "sequences": [
@@ -18243,246 +8970,70 @@
   ]
  },
  "weapons/w_knife": {
-  "sequences": [
-   "idle"
-  ],
-  "hitboxes": [
-   {
-    "bone": 6,
-    "group": 0,
-    "min": [
-     -0.0569,
-     -0.1682,
-     -0.0
-    ],
-    "max": [
-     -0.0,
-     0.0,
-     0.1166
-    ]
-   }
-  ],
-  "bones": 12
+  "sequences": [],
+  "hitboxes": [],
+  "bones": 0,
+  "source": "ilunp/CSGO-M.A.T"
  },
  "weapons/w_m249": {
-  "sequences": [
-   "idle"
-  ],
-  "hitboxes": [
-   {
-    "bone": 0,
-    "group": 0,
-    "min": [
-     -0.195,
-     -0.1134,
-     -1.0822
-    ],
-    "max": [
-     0.1397,
-     0.1447,
-     0.4003
-    ]
-   }
-  ],
-  "bones": 1
+  "sequences": [],
+  "hitboxes": [],
+  "bones": 0,
+  "source": "ilunp/CSGO-M.A.T"
  },
  "weapons/w_m3": {
-  "sequences": [
-   "idle"
-  ],
-  "hitboxes": [
-   {
-    "bone": 0,
-    "group": 0,
-    "min": [
-     -0.7025,
-     -0.1612,
-     -0.0106
-    ],
-    "max": [
-     0.3922,
-     0.0828,
-     0.0528
-    ]
-   }
-  ],
-  "bones": 1
+  "sequences": [],
+  "hitboxes": [],
+  "bones": 0,
+  "source": "ilunp/CSGO-M.A.T"
  },
  "weapons/w_m4a1": {
-  "sequences": [
-   "idle"
-  ],
-  "hitboxes": [
-   {
-    "bone": 0,
-    "group": 0,
-    "min": [
-     -0.0953,
-     -0.4231,
-     -0.025
-    ],
-    "max": [
-     0.2141,
-     0.6759,
-     0.0584
-    ]
-   }
-  ],
-  "bones": 1
+  "sequences": [],
+  "hitboxes": [],
+  "bones": 0,
+  "source": "ilunp/CSGO-M.A.T"
  },
  "weapons/w_mac10": {
-  "sequences": [
-   "idle"
-  ],
-  "hitboxes": [
-   {
-    "bone": 0,
-    "group": 0,
-    "min": [
-     -0.065,
-     -0.4031,
-     -0.0316
-    ],
-    "max": [
-     0.2384,
-     0.0,
-     0.0272
-    ]
-   }
-  ],
-  "bones": 1
+  "sequences": [],
+  "hitboxes": [],
+  "bones": 0,
+  "source": "ilunp/CSGO-M.A.T"
  },
  "weapons/w_mp5": {
-  "sequences": [
-   "idle"
-  ],
-  "hitboxes": [
-   {
-    "bone": 0,
-    "group": 0,
-    "min": [
-     -0.1225,
-     -0.0144,
-     -0.7303
-    ],
-    "max": [
-     0.3156,
-     0.0512,
-     -0.0
-    ]
-   }
-  ],
-  "bones": 1
+  "sequences": [],
+  "hitboxes": [],
+  "bones": 0,
+  "source": "ilunp/CSGO-M.A.T"
  },
  "weapons/w_p228": {
-  "sequences": [
-   "idle"
-  ],
-  "hitboxes": [
-   {
-    "bone": 0,
-    "group": 0,
-    "min": [
-     -0.1166,
-     -0.1116,
-     -0.0525
-    ],
-    "max": [
-     0.1166,
-     0.1116,
-     0.0525
-    ]
-   }
-  ],
-  "bones": 1
+  "sequences": [],
+  "hitboxes": [],
+  "bones": 0,
+  "source": "ilunp/CSGO-M.A.T"
  },
  "weapons/w_p90": {
-  "sequences": [
-   "idle"
-  ],
-  "hitboxes": [
-   {
-    "bone": 0,
-    "group": 0,
-    "min": [
-     -0.1506,
-     -0.2972,
-     -0.0394
-    ],
-    "max": [
-     0.1509,
-     0.3419,
-     0.0447
-    ]
-   }
-  ],
-  "bones": 1
+  "sequences": [],
+  "hitboxes": [],
+  "bones": 0,
+  "source": "ilunp/CSGO-M.A.T"
  },
  "weapons/w_scout": {
-  "sequences": [
-   "idle"
-  ],
-  "hitboxes": [
-   {
-    "bone": 0,
-    "group": 0,
-    "min": [
-     -0.1453,
-     -0.6234,
-     -0.0394
-    ],
-    "max": [
-     0.1688,
-     0.6237,
-     0.0834
-    ]
-   }
-  ],
-  "bones": 1
+  "sequences": [],
+  "hitboxes": [],
+  "bones": 0,
+  "source": "ilunp/CSGO-M.A.T"
  },
  "weapons/w_sg550": {
-  "sequences": [
-   "idle"
-  ],
-  "hitboxes": [
-   {
-    "bone": 0,
-    "group": 0,
-    "min": [
-     -0.2831,
-     -0.3438,
-     -0.0225
-    ],
-    "max": [
-     0.0522,
-     0.9866,
-     0.0594
-    ]
-   }
-  ],
-  "bones": 1
+  "sequences": [],
+  "hitboxes": [],
+  "bones": 0,
+  "source": "ilunp/CSGO-M.A.T"
  },
  "weapons/w_sg552": {
-  "sequences": [
-   "idle"
-  ],
-  "hitboxes": [
-   {
-    "bone": 0,
-    "group": 0,
-    "min": [
-     -0.2434,
-     -0.2866,
-     -0.0384
-    ],
-    "max": [
-     0.0737,
-     0.6269,
-     0.0712
-    ]
-   }
-  ],
-  "bones": 1
+  "sequences": [],
+  "hitboxes": [],
+  "bones": 0,
+  "source": "ilunp/CSGO-M.A.T"
  },
  "weapons/w_smokegrenade": {
   "sequences": [
@@ -18529,91 +9080,27 @@
   ]
  },
  "weapons/w_tmp": {
-  "sequences": [
-   "idle"
-  ],
-  "hitboxes": [
-   {
-    "bone": 0,
-    "group": 0,
-    "min": [
-     -0.1566,
-     -0.2597,
-     -0.0147
-    ],
-    "max": [
-     0.1603,
-     0.4038,
-     0.0491
-    ]
-   }
-  ],
-  "bones": 1
+  "sequences": [],
+  "hitboxes": [],
+  "bones": 0,
+  "source": "ilunp/CSGO-M.A.T"
  },
  "weapons/w_ump45": {
-  "sequences": [
-   "idle"
-  ],
-  "hitboxes": [
-   {
-    "bone": 0,
-    "group": 0,
-    "min": [
-     -0.2181,
-     -0.2616,
-     -0.0325
-    ],
-    "max": [
-     0.2006,
-     0.3891,
-     0.0525
-    ]
-   }
-  ],
-  "bones": 1
+  "sequences": [],
+  "hitboxes": [],
+  "bones": 0,
+  "source": "ilunp/CSGO-M.A.T"
  },
  "weapons/w_usp": {
-  "sequences": [
-   "idle"
-  ],
-  "hitboxes": [
-   {
-    "bone": 0,
-    "group": 0,
-    "min": [
-     -0.1528,
-     -0.1872,
-     -0.0753
-    ],
-    "max": [
-     0.1422,
-     0.195,
-     0.0819
-    ]
-   }
-  ],
-  "bones": 1
+  "sequences": [],
+  "hitboxes": [],
+  "bones": 0,
+  "source": "ilunp/CSGO-M.A.T"
  },
  "weapons/w_xm1014": {
-  "sequences": [
-   "idle"
-  ],
-  "hitboxes": [
-   {
-    "bone": 0,
-    "group": 0,
-    "min": [
-     -0.58,
-     -0.1956,
-     -0.0562
-    ],
-    "max": [
-     0.6803,
-     0.0641,
-     0.04
-    ]
-   }
-  ],
-  "bones": 1
+  "sequences": [],
+  "hitboxes": [],
+  "bones": 0,
+  "source": "ilunp/CSGO-M.A.T"
  }
 }
