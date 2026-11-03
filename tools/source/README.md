@@ -1,10 +1,46 @@
-# Classic-Offensive / CS:GO weapon models → Godot
+# Source weapon assets → Godot
 
-Current model source: <https://github.com/ixof/Classic-Offensive> (CSCO MDL/VVD/VTX + VTF).
-Animation/reference source: <https://github.com/ilunp/CSGO-M.A.T> (Crowbar SMD/QC + VTF).
-All shipped GLBs are self-contained; neither source repository nor SourceIO is needed by Godot.
+## Current archi build (43 slots)
 
-## CSCO build
+Current model, texture, inventory-icon and weapon-audio source:
+<https://github.com/ShadowNigth/archi> (extracted CS2GO Director's Cut MDL/VTF/WAV).
+The installed set replaces all 27 classic slots and adds P2000, CZ75, R8, Tec-9,
+FAMAS, Galil, M4A4, MAG-7, Sawed-Off, Negev, PP-Bizon, MP7, Zeus, Decoy, Molotov
+and Incendiary. All 129 shipped weapon GLBs are self-contained; neither archi nor
+SourceIO is needed by Godot.
+
+```bash
+# External source and build-time dependencies (numpy, pillow, scipy, SourceIO).
+git clone --filter=blob:none --no-checkout --depth 1 \
+    https://github.com/ShadowNigth/archi.git /tmp/archi
+git -C /tmp/archi sparse-checkout set '/*/EXTRAIDOS/' '/*/*/EXTRAIDOS/' '/*/*/*/EXTRAIDOS/' '/sound/'
+git -C /tmp/archi checkout
+
+# Keep the previous weapon directory as the rigid world-placement reference and
+# as the source of the existing CT arms. Build into a separate inspection directory.
+PYTHONPATH=/tmp/siopkg:. python -m tools.source.build_archi_weapons \
+    /tmp/archi /path/to/previous/weapons /path/to/previous/v_ak47.glb /tmp/archi_build
+
+# Validate finite geometry/animations and render every corrected idle pose.
+PYTHONPATH=/tmp/siopkg:. python -m tools.source.validate_archi_build \
+    /tmp/archi_build /tmp/archi_preview
+
+# Install only after inspecting the build. The installer also updates the two JSON
+# databases, adds the 16 slots and maps every weapon sound to archi audio.
+python -m tools.source.install_archi_weapons /tmp/archi_build /tmp/archi
+```
+
+`ArchiSounds` preserves the original PCM samples while normalizing malformed RIFF
+container sizes and word alignment. Animation events retain their source timing;
+C4 cycles through the seven real key-press takes. The elite P/W conversion filters
+out the intentionally distant left pistol from the source buy-menu pose.
+
+The older CSCO/M.A.T. pipeline below is retained only for historical builds.
+
+## Legacy CSCO build
+
+Legacy model source: <https://github.com/ixof/Classic-Offensive> (CSCO MDL/VVD/VTX + VTF).
+Legacy animation/reference source: <https://github.com/ilunp/CSGO-M.A.T> (Crowbar SMD/QC + VTF).
 
 `mdl_reader.py` uses SourceIO only as an external build-time MDL parser. It reads the MDL
 sequences/events directly and does not import SourceIO's Blender or native content-manager

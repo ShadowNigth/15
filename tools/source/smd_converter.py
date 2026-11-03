@@ -103,8 +103,17 @@ def to_godot_local(rig, pose, offset):
         if rig.parents[i] < 0:
             t = RA(t) + offset
             qq = quat_mul(QA, qq)
+        norm = np.linalg.norm(qq)
+        if norm < 1e-8:
+            # A few CS2 FRAMEANIM sections contain an all-zero quaternion for an
+            # untouched bone.  Fall back to its bind rotation rather than emitting
+            # NaNs into the GLB animation track.
+            qq = QL(rig.bind[i][1])
+            if rig.parents[i] < 0:
+                qq = quat_mul(QA, qq)
+            norm = np.linalg.norm(qq)
         ts[i] = t
-        qs[i] = qq / np.linalg.norm(qq)
+        qs[i] = qq / norm if norm > 1e-8 else np.array([0.0, 0.0, 0.0, 1.0])
     return ts, qs
 
 
@@ -192,11 +201,21 @@ def build_glb(out_path, rig, bind_t, bind_q, prims, materials, animations, extra
     images, textures, mats = [], [], []
     for m in materials:
         md = {"name": m["name"], "pbrMetallicRoughness": {"metallicFactor": 0.0, "roughnessFactor": 0.85}}
+        if m.get("alpha_mode"):
+            md["alphaMode"] = m["alpha_mode"]
+        if m.get("alpha_cutoff") is not None:
+            md["alphaCutoff"] = float(m["alpha_cutoff"])
+        if m.get("double_sided"):
+            md["doubleSided"] = True
+        if m.get("emissive") is not None:
+            md["emissiveFactor"] = m["emissive"]
         if m.get("image"):
             data, mime = m["image"]
             images.append({"bufferView": w.view(data), "mimeType": mime, "name": m["name"]})
             textures.append({"sampler": 0, "source": len(images) - 1})
             md["pbrMetallicRoughness"]["baseColorTexture"] = {"index": len(textures) - 1}
+            if m.get("color") is not None:
+                md["pbrMetallicRoughness"]["baseColorFactor"] = m["color"]
         else:
             md["pbrMetallicRoughness"]["baseColorFactor"] = m.get("color", [0.5, 0.5, 0.5, 1.0])
         mats.append(md)

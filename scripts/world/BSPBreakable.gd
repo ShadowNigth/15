@@ -95,7 +95,7 @@ func _shatter(hit_pos: Vector3) -> void:
 		AudioManager.play_3d("player/pl_duct%d.wav" % randi_range(1, 4), hit_pos, 1.0, 34.0, 0.86, 24.0)
 		AudioManager.play_3d("weapons/ric_metal-%d.wav" % randi_range(1, 2), hit_pos, -2.0, 32.0, 0.92)
 	else:
-		AudioManager.play_3d("weapons/grenade_hit%d.wav" % randi_range(1, 3), hit_pos, 0.5, 32.0, 0.72, 22.0)
+		AudioManager.play_3d("weapons/archi/cs2_flashbang/hit1.wav", hit_pos, 0.5, 32.0, 0.72, 22.0)
 		AudioManager.play_3d("weapons/ric_conc-%d.wav" % randi_range(1, 2), hit_pos, -2.5, 28.0, 0.82)
 
 

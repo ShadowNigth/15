@@ -815,11 +815,11 @@ func _draw_loadout(sz: Vector2) -> void:
 	if is_instance_valid(player) and player.weapon_ctrl != null:
 		var wc: WeaponController = player.weapon_ctrl
 		var items: Array = []
-		for sl in [1, 2]:
+		for sl in [1, 2, 4]:
 			var id := String(wc.slots.get(sl, ""))
 			if not id.is_empty() and GameData.weapons.has(id):
 				items.append([String((GameData.weapons[id] as Dictionary).get("vgui", "")), "", id])
-		for gid in ["hegrenade", "flashbang", "smokegrenade"]:
+		for gid in ["hegrenade", "flashbang", "smokegrenade", "decoy", "molotov", "incendiary"]:
 			var cnt := int(wc.grenades.get(gid, 0))
 			if cnt > 0 and GameData.weapons.has(gid):
 				items.append([String((GameData.weapons[gid] as Dictionary).get("vgui", "")),
@@ -1186,6 +1186,7 @@ func _cat_for_weapon(wid: String) -> int:
 		3: return 3
 		4: return 4
 		8: return 6
+		9: return 5
 	return 0
 
 
@@ -1230,6 +1231,20 @@ func _category_specs(cat: int) -> Array:
 					"action": func(): _purchase_weapon(wid2),
 				})
 		5:
+			for wid in GameData.weapons.keys():
+				var spec: Dictionary = GameData.weapons[wid]
+				if int(spec.get("buy_cat", 0)) != 9:
+					continue
+				var wteam := String(spec.get("team", "ANY"))
+				if wteam != "ANY" and wteam != player.team:
+					continue
+				var wid2 := String(wid)
+				out.append({
+					"id": wid2, "kind": "weapon", "name": String(spec.get("name", wid2)),
+					"price": int(spec.get("price", 0)), "vgui": String(spec.get("vgui", "")),
+					"desc": "Single-use short-range electroshock weapon.",
+					"owned": _owns_weapon(wid2, spec), "action": func(): _purchase_weapon(wid2),
+				})
 			var eq_order := ["kevlar", "kevlar_helmet", "defuser", "nightvision"]
 			for eid in eq_order:
 				if not GameData.equipment.has(eid):
@@ -1281,7 +1296,10 @@ func _owns_weapon(wid: String, spec: Dictionary) -> bool:
 	var wc: WeaponController = player.weapon_ctrl
 	if int(spec.get("buy_cat", 0)) == 8:
 		return int(wc.grenades.get(wid, 0)) >= int(spec.get("max_ammo", 1))
-	return String(wc.slots.get(int(spec.get("slot", 1)), "")) == wid
+	var slot_num := int(spec.get("slot", 1))
+	if String(wc.slots.get(slot_num, "")) != wid:
+		return false
+	return slot_num != 4 or int(wc.clips.get(wid, 0)) > 0
 
 
 func _owns_gear(eid: String) -> bool:

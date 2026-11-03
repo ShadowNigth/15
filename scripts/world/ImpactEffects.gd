@@ -447,6 +447,53 @@ static func spawn_bullet_tracer(world_root: Node3D, from_pos: Vector3, to_pos: V
 	tw.tween_callback(_safe_retire_node.bind(mi))
 
 
+static func spawn_taser_arc(world_root: Node3D, from_pos: Vector3, to_pos: Vector3) -> void:
+	if world_root == null or not is_instance_valid(world_root):
+		return
+	var span := to_pos - from_pos
+	if span.length() < 0.15:
+		return
+	var side := span.normalized().cross(Vector3.UP)
+	if side.length_squared() < 0.001:
+		side = Vector3.RIGHT
+	side = side.normalized()
+	var up := span.normalized().cross(side).normalized()
+	var points: Array[Vector3] = []
+	for i in range(10):
+		var ratio := float(i) / 9.0
+		var jitter := Vector3.ZERO if i == 0 or i == 9 else (side * randf_range(-0.09, 0.09) + up * randf_range(-0.07, 0.07)) * sin(ratio * PI)
+		points.append(from_pos.lerp(to_pos, ratio) + jitter)
+	var immediate := ImmediateMesh.new()
+	immediate.surface_begin(Mesh.PRIMITIVE_LINES)
+	for i in range(points.size() - 1):
+		immediate.surface_set_color(Color(0.32, 0.82, 1.0, 1.0))
+		immediate.surface_add_vertex(points[i])
+		immediate.surface_add_vertex(points[i + 1])
+	immediate.surface_end()
+	var material := StandardMaterial3D.new()
+	material.shading_mode = BaseMaterial3D.SHADING_MODE_UNSHADED
+	material.vertex_color_use_as_albedo = true
+	material.cull_mode = BaseMaterial3D.CULL_DISABLED
+	var arc := MeshInstance3D.new()
+	arc.mesh = immediate
+	arc.material_override = material
+	arc.layers = 2
+	arc.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
+	world_root.add_child(arc)
+	var light := OmniLight3D.new()
+	light.light_color = Color(0.20, 0.65, 1.0)
+	light.light_energy = 2.0
+	light.omni_range = 2.8
+	world_root.add_child(light)
+	light.global_position = from_pos.lerp(to_pos, 0.35)
+	var tween := world_root.create_tween()
+	tween.set_parallel(true)
+	tween.tween_property(light, "light_energy", 0.0, 0.13)
+	tween.tween_interval(0.13)
+	tween.chain().tween_callback(_safe_retire_node.bind(arc))
+	tween.chain().tween_callback(_safe_retire_node.bind(light))
+
+
 static func spawn_surface_impact(
 	world_root: Node3D,
 	hit_pos: Vector3,

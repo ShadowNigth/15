@@ -759,7 +759,9 @@ func _refresh_inventory_icons() -> void:
 			ic.texture = null
 			ic.modulate = Color(1, 1, 1, 0.16)
 		else:
-			var wh := GameData.get_weapon_hud_atlas(wid, "weapon_s_640")
+			var wh := _archi_weapon_texture(wid)
+			if not wh:
+				wh = GameData.get_weapon_hud_atlas(wid, "weapon_s_640")
 			if not wh:
 				wh = GameData.get_weapon_hud_atlas(wid, "weapon_640")
 			ic.texture = wh
@@ -995,6 +997,14 @@ func _on_money(amount: int, delta_amt: int) -> void:
 		_money_delta_timer = 2.4
 
 
+func _archi_weapon_texture(wid: String) -> Texture2D:
+	var spec: Dictionary = GameData.weapons.get(wid, {})
+	var vgui := String(spec.get("vgui", ""))
+	if vgui.is_empty():
+		return null
+	return GameData.get_texture("res://assets/ui/vgui/%s.png" % vgui.to_lower())
+
+
 func _on_weapon_switched(wid: String, spec: Dictionary) -> void:
 	var title := String(spec.get("name", wid.to_upper()))
 	if bool(spec.get("silencer", false)) and is_instance_valid(player):
@@ -1002,7 +1012,9 @@ func _on_weapon_switched(wid: String, spec: Dictionary) -> void:
 			title += " (S)"
 	_weapon_name_label.text = title
 
-	var whud := GameData.get_weapon_hud_atlas(wid, "weapon_s_640")
+	var whud := _archi_weapon_texture(wid)
+	if not whud:
+		whud = GameData.get_weapon_hud_atlas(wid, "weapon_s_640")
 	if not whud:
 		whud = GameData.get_weapon_hud_atlas(wid, "weapon_640")
 	if whud:
@@ -1202,6 +1214,9 @@ func _forget_kill_card(card: Node) -> void:
 
 
 func _killfeed_weapon_icon(wid: String) -> Texture2D:
+	var archi_icon := _archi_weapon_texture(wid)
+	if archi_icon != null:
+		return archi_icon
 	var entry := ""
 	match wid:
 		"hegrenade":

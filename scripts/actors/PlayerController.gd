@@ -800,6 +800,12 @@ func _on_fired_shot(wid: String, silenced: bool) -> void:
 				play_viewmodel_sequence(["shoot_empty", "shoot2"])
 			else:
 				play_viewmodel_sequence(["shoot2", "shoot3"])
+	elif wid == "revolver":
+		_elite_muzzle_left = false
+		if weapon_ctrl.revolver_alt_fire:
+			play_viewmodel_sequence(["alt%d" % randi_range(1, 3), "alt1", "fire"])
+		else:
+			play_viewmodel_sequence(["fire", "shoot1"])
 	elif bool(spec.get("silencer", false)) and not silenced:
 		var u_idx := randi_range(1, 3)
 		if rem_clip == 0:
@@ -814,7 +820,7 @@ func _on_fired_shot(wid: String, silenced: bool) -> void:
 		else:
 			play_viewmodel_sequence(["shoot%d" % s_idx, "shoot1", "shoot", "shoot_2"])
 
-	if wid != "knife" and not bool(spec.get("grenade", false)) and wid != "c4":
+	if wid != "knife" and wid != "taser" and not bool(spec.get("grenade", false)) and wid != "c4":
 		var muz_ofs: Vector3 = _current_vm_muzzle()
 		var is_rifle_w: bool = int(spec.get("slot", 1)) == 1
 		if viewmodel_pivot != null:

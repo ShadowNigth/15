@@ -11,6 +11,12 @@ var fuse_left: float = 1.65
 var _ang_vel: Vector3 = Vector3.ZERO
 var _detonated: bool = false
 var _bounces: int = 0
+var _decoy_active: bool = false
+var _decoy_life: float = 0.0
+var _decoy_tick: float = 0.0
+var _decoy_burst: int = 0
+var _decoy_sounds: Array = []
+var _decoy_light: OmniLight3D = null
 
 
 static func _get_cached_fx_mat(key: String, tex: Texture2D, additive: bool, billboard: bool, alpha_val: float = 1.0) -> StandardMaterial3D:
@@ -237,7 +243,11 @@ func setup_grenade(gtype: String, owner_actor: Node3D, start_vel: Vector3) -> vo
 	thrower = owner_actor
 	velocity = start_vel
 	_ang_vel = Vector3(randf_range(6.0, 11.0), randf_range(-5.5, 5.5), randf_range(-4.5, 4.5))
-	fuse_left = 1.65 if gtype != "smokegrenade" else 1.85
+	match gtype:
+		"smokegrenade": fuse_left = 1.85
+		"decoy": fuse_left = 0.85
+		"molotov": fuse_left = 3.0  # normally ignites on its first surface impact
+		_: fuse_left = 1.65
 
 	var sc := GameData.get_model_scene("weapons/w_" + gtype)
 	if sc:
@@ -257,13 +267,16 @@ func setup_grenade(gtype: String, owner_actor: Node3D, start_vel: Vector3) -> vo
 
 
 func _physics_process(delta: float) -> void:
+	if _decoy_active:
+		_process_decoy(delta)
+		return
 	if _detonated:
 		return
 
 	fuse_left -= delta
 	if fuse_left <= 0.0:
-		# Smoke grenade waits until slow/near ground like CS 1.5
-		if grenade_type != "smokegrenade" or velocity.length() < 3.5 or fuse_left < -1.2:
+		# Smoke and decoy wait until slow/near ground before activating.
+		if grenade_type not in ["smokegrenade", "decoy"] or velocity.length() < 3.5 or fuse_left < -1.2:
 			_detonate()
 			return
 
@@ -306,6 +319,9 @@ func _physics_process(delta: float) -> void:
 		var travel_frac: float = clampf(global_position.distance_to(hit_pos) / maxf(0.08, step.length()), 0.0, 1.0)
 		global_position = hit_pos + n * 0.075
 		rem_dt *= (1.0 - travel_frac) * 0.85
+		if grenade_type == "molotov":
+			_detonate()
+			return
 
 		var impact_n_spd: float = absf(velocity.dot(n))
 		if n.y > 0.65:
@@ -326,9 +342,9 @@ func _physics_process(delta: float) -> void:
 		if impact_n_spd > 1.35 and _bounces < 6:
 			_bounces += 1
 			var is_grate: bool = (col is StaticBody3D and (col as StaticBody3D).collision_layer == 8)
-			var bwav := "weapons/ric_metal-%d.wav" % randi_range(1, 2) if is_grate else (
-				"weapons/he_bounce-1.wav" if grenade_type == "hegrenade" else ("weapons/grenade_hit%d.wav" % randi_range(1, 3))
-			)
+			var grenade_spec: Dictionary = GameData.weapons.get(grenade_type, {})
+			var default_bounce := "weapons/archi/cs2_flashbang/hit1.wav" if is_grate else "weapons/archi/cs2_hegren/he_bounce-1.wav"
+			var bwav := String(grenade_spec.get("bounce_sound", default_bounce))
 			var vol_db: float = lerpf(-8.5, -2.5, clampf(impact_n_spd / 9.0, 0.0, 1.0))
 			AudioManager.play_3d(bwav, global_position, vol_db, 24.0, randf_range(0.95, 1.06), 14.0)
 
@@ -342,11 +358,16 @@ func _detonate() -> void:
 			_detonate_flash()
 		"smokegrenade":
 			_detonate_smoke()
+		"molotov", "incendiary":
+			_detonate_fire()
+		"decoy":
+			_activate_decoy()
+			return
 	_safe_free_node(self)
 
 
 func _detonate_he() -> void:
-	AudioManager.play_3d("weapons/hegrenade-%d.wav" % randi_range(1, 2), global_position, 4.0, 72.0, 1.0, 46.0)
+	AudioManager.play_3d("weapons/archi/core/hegrenade-%d.wav" % randi_range(1, 2), global_position, 4.0, 72.0, 1.0, 46.0)
 	spawn_explosion_fx(get_parent(), global_position, 1.0)
 
 	var space := get_world_3d().direct_space_state
@@ -370,7 +391,7 @@ func _detonate_he() -> void:
 
 
 func _detonate_flash() -> void:
-	AudioManager.play_3d("weapons/flashbang-%d.wav" % randi_range(1, 2), global_position, 3.0, 58.0, 1.0, 38.0)
+	AudioManager.play_3d("weapons/archi/core/flashbang-%d.wav" % randi_range(1, 2), global_position, 3.0, 58.0, 1.0, 38.0)
 
 	if is_instance_valid(get_parent()):
 		var flash_fx := Node3D.new()
@@ -428,7 +449,7 @@ func _detonate_flash() -> void:
 
 
 func _detonate_smoke() -> void:
-	AudioManager.play_3d("weapons/sg_explode.wav", global_position, 2.5, 48.0)
+	AudioManager.play_3d("weapons/archi/core/sg_explode.wav", global_position, 2.5, 48.0)
 	var parent_node := get_parent()
 	if not is_instance_valid(parent_node):
 		return
@@ -436,3 +457,86 @@ func _detonate_smoke() -> void:
 	cloud.name = "VolumetricSmokeCloud"
 	parent_node.add_child(cloud)
 	cloud.setup_cloud(global_position)
+
+
+func _detonate_fire() -> void:
+	AudioManager.play_3d("weapons/archi/core/hegrenade-1.wav", global_position, -8.0, 28.0, 1.12, 20.0)
+	var parent_node := get_parent()
+	if not is_instance_valid(parent_node):
+		return
+	var area := IncendiaryArea.new()
+	area.name = "MolotovFire" if grenade_type == "molotov" else "IncendiaryFire"
+	parent_node.add_child(area)
+	area.global_position = global_position
+	area.setup_fire(thrower, grenade_type)
+
+
+func _activate_decoy() -> void:
+	_detonated = false
+	_decoy_active = true
+	_decoy_life = 12.0
+	_decoy_tick = 0.12
+	_decoy_burst = 0
+	velocity = Vector3.ZERO
+	_ang_vel = Vector3.ZERO
+	_decoy_sounds = []
+	# A decoy imitates the thrower's primary (secondary as fallback), using only
+	# the archi firing samples installed with the weapon refresh.
+	if is_instance_valid(thrower):
+		var controller = thrower.get("weapon_ctrl")
+		if controller != null:
+			for slot_num in [1, 2]:
+				var wid := String(controller.slots.get(slot_num, ""))
+				var spec: Dictionary = GameData.weapons.get(wid, {})
+				var sounds: Array = spec.get("fire_sounds", [])
+				if not sounds.is_empty():
+					_decoy_sounds = sounds.duplicate()
+					break
+	if _decoy_sounds.is_empty():
+		_decoy_sounds = ["weapons/archi/core/ak47-1.wav", "weapons/archi/core/ak47-2.wav"]
+	_decoy_light = OmniLight3D.new()
+	_decoy_light.light_color = Color(1.0, 0.72, 0.32)
+	_decoy_light.light_energy = 0.0
+	_decoy_light.omni_range = 4.0
+	_decoy_light.position = Vector3(0.0, 0.22, 0.0)
+	add_child(_decoy_light)
+
+
+func _process_decoy(delta: float) -> void:
+	_decoy_life -= delta
+	if _decoy_life <= 0.0:
+		_detonate_decoy()
+		return
+	if is_instance_valid(_decoy_light):
+		_decoy_light.light_energy = move_toward(_decoy_light.light_energy, 0.0, delta * 18.0)
+	_decoy_tick -= delta
+	if _decoy_tick > 0.0:
+		return
+	var wav := String(_decoy_sounds[randi() % _decoy_sounds.size()])
+	AudioManager.play_3d(wav, global_position, -1.0, 48.0, randf_range(0.98, 1.02), 42.0)
+	var team := String(thrower.get("team")) if is_instance_valid(thrower) else ""
+	AudioManager.world_sound_emitted.emit(global_position, 42.0, team)
+	if is_instance_valid(_decoy_light):
+		_decoy_light.light_energy = 2.4
+	_decoy_burst += 1
+	if _decoy_burst >= 4:
+		_decoy_burst = 0
+		_decoy_tick = 0.72
+	else:
+		_decoy_tick = 0.095
+
+
+func _detonate_decoy() -> void:
+	_decoy_active = false
+	_detonated = true
+	AudioManager.play_3d("weapons/archi/core/sg_explode.wav", global_position, -1.0, 32.0)
+	spawn_explosion_fx(get_parent(), global_position, 0.28)
+	for actor in RoundManager.actors:
+		if not is_instance_valid(actor) or not bool(actor.get("is_alive")):
+			continue
+		if is_instance_valid(thrower) and actor != thrower and String(actor.get("team")) == String(thrower.get("team")) and not GameData.friendly_fire:
+			continue
+		var distance := global_position.distance_to(actor.global_position + Vector3(0.0, 0.8, 0.0))
+		if distance < 2.6 and actor.has_method("apply_explosion_damage"):
+			actor.call("apply_explosion_damage", thrower, 22.0 * (1.0 - distance / 2.6), "decoy", global_position)
+	_safe_free_node(self)

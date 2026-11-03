@@ -7,7 +7,7 @@ config_version=5
 [application]
 
 config/name="Counter-Strike 1.5 (Godot 4)"
-config/description="Remake de Counter-Strike 1.5 Retail en Godot 4 con los 26 mapas BSP, 27 armas con stats reales de cs_i386.so, modelos StudioMDL animados, 379 sonidos originales y Bots IA."
+config/description="Remake de Counter-Strike 1.5 en Godot 4 con 26 mapas BSP, 43 armas, modelos/sonidos archi y bots IA."
 run/main_scene="res://scenes/MainMenu.tscn"
 config/features=PackedStringArray("4.3", "GL Compatibility")
 config/icon="res://icon.png"

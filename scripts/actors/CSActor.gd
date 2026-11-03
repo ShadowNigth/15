@@ -1121,7 +1121,7 @@ func _die(killer: Node3D, weapon_id: String, headshot: bool) -> void:
 	_col_shape.set_deferred("disabled", true)
 	AudioManager.play_3d("player/die%d.wav" % randi_range(1, 3), global_position, 1.0, 32.0)
 
-	# Drop primary (or pistol if no primary), C4 backpack, CT Defuse Kit, and ALL carried grenades!
+	# Drop primary (or pistol), C4, CT Defuse Kit, Zeus and ALL carried grenades.
 	var drop_w := String(weapon_ctrl.slots.get(1, ""))
 	if drop_w.is_empty():
 		drop_w = String(weapon_ctrl.slots.get(2, ""))
@@ -1130,13 +1130,18 @@ func _die(killer: Node3D, weapon_id: String, headshot: bool) -> void:
 	if String(weapon_ctrl.slots.get(5, "")) == "c4":
 		_spawn_drop_entity("c4", 1)
 		weapon_ctrl.slots[5] = ""
+	var equipment_drop := String(weapon_ctrl.slots.get(4, ""))
+	if not equipment_drop.is_empty():
+		if int(weapon_ctrl.clips.get(equipment_drop, 0)) > 0:
+			_spawn_drop_entity(equipment_drop, 1)
+		weapon_ctrl.slots[4] = ""
 	if has_defuser:
 		has_defuser = false
 		_spawn_drop_entity("defuser", 2)
 
 	# If pin was already pulled, drop a live armed grenade; then drop all remaining carried grenades!
 	weapon_ctrl.drop_pulled_grenade_on_death()
-	var gren_order := ["hegrenade", "flashbang", "smokegrenade"]
+	var gren_order := ["hegrenade", "flashbang", "smokegrenade", "decoy", "molotov", "incendiary"]
 	var gren_spread_idx: int = 3
 	for gid_k in gren_order:
 		var gid_s := String(gid_k)
@@ -1322,7 +1327,9 @@ func try_pickup_dropped(drop: DroppedWeapon) -> bool:
 			return true
 		return false
 	var sl := int(spec_d.get("slot", 1))
-	if String(weapon_ctrl.slots.get(sl, "")).is_empty():
+	var held_id := String(weapon_ctrl.slots.get(sl, ""))
+	var replacing_spent_equipment := sl == 4 and held_id == id and int(weapon_ctrl.clips.get(id, 0)) <= 0
+	if held_id.is_empty() or replacing_spent_equipment:
 		weapon_ctrl.give_weapon(id, drop.clip_ammo, drop.reserve_ammo)
 		weapon_ctrl.silenced_state[id] = drop.silenced
 		AudioManager.play_3d("items/kevlar.wav", global_position, -3.0, 14.0)
@@ -1389,10 +1396,11 @@ func buy_weapon(wid: String) -> bool:
 		return true
 
 	var sl := int(spec.get("slot", 1))
-	if String(weapon_ctrl.slots.get(sl, "")) == wid:
+	var held_id := String(weapon_ctrl.slots.get(sl, ""))
+	if held_id == wid and (sl != 4 or int(weapon_ctrl.clips.get(wid, 0)) > 0):
 		return false
-	if not String(weapon_ctrl.slots.get(sl, "")).is_empty():
-		_spawn_drop_entity(String(weapon_ctrl.slots[sl]))
+	if not held_id.is_empty() and (sl != 4 or int(weapon_ctrl.clips.get(held_id, 0)) > 0):
+		_spawn_drop_entity(held_id)
 
 	add_money(-price)
 	var clip_sz := int(spec.get("clip_size", 30))
@@ -1471,6 +1479,6 @@ func buy_ammo_for_slot(slot_num: int, fill_all: bool = false) -> bool:
 			break
 
 	if bought:
-		AudioManager.play_3d("weapons/clipin1.wav", global_position, -3.0, 14.0)
+		AudioManager.play_3d("weapons/archi/cs2_ak47/clipin.wav", global_position, -3.0, 14.0)
 		weapon_ctrl._emit_ammo()
 	return bought

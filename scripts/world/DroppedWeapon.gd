@@ -80,7 +80,8 @@ func setup_drop(id: String, clip: int, reserve: int, throw_vel: Vector3, is_sile
 	if id == "defuser":
 		mdl_name = "w_thighpack"
 	elif id == "c4":
-		mdl_name = "w_backpack"
+		# The carrier backpack stays removed: a dropped bomb uses the real archi C4.
+		mdl_name = String(GameData.weapons.get("c4", {}).get("w_model", "w_c4"))
 	elif GameData.weapons.has(id):
 		mdl_name = String(GameData.weapons[id].get("w_model", "w_" + id))
 
@@ -265,7 +266,7 @@ func _play_bounce_clatter(pos_w: Vector3, impact_spd: float) -> void:
 	_clatter_cooldown = 0.13
 	var vol_db: float = clampf(-11.0 + impact_spd * 1.1, -10.5, -2.5)
 	if _is_grenade:
-		AudioManager.play_3d("weapons/grenade_hit%d.wav" % randi_range(1, 3), pos_w, vol_db, 18.0, randf_range(0.95, 1.08))
+		AudioManager.play_3d("weapons/archi/cs2_flashbang/hit1.wav", pos_w, vol_db, 18.0, randf_range(0.95, 1.08))
 	else:
 		AudioManager.play_3d("player/pl_shell%d.wav" % randi_range(1, 3), pos_w, vol_db, 18.0, randf_range(0.64, 0.80))
 

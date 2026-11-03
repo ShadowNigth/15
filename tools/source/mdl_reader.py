@@ -92,7 +92,7 @@ def _merge_strip_groups(vtx_mesh):
 def _read_anims(mdl, buf, path):
     ani = None
     ani_path = os.path.splitext(path)[0] + ".ani"
-    if os.path.exists(ani_path):
+    if os.path.exists(ani_path) and os.path.getsize(ani_path) > 0:
         ani = AniFile.from_buffer(FileBuffer(ani_path)).buffer
     table = read_anim_block_table(buf, getattr(mdl.header, "anim_block_offset", 0),
                                   getattr(mdl.header, "anim_block_count", 0))

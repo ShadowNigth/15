@@ -74,7 +74,7 @@ def game_names(weapon, raw):
         return [KNIFE_MAP[s]] if s in KNIFE_MAP else []
     if DROP.search(s):
         return []
-    for pfx in ("ak47_", "awp_", "glock_", "mac10_"):
+    for pfx in ("ak47_", "awp_", "glock_", "mac10_", "bizon_"):
         if s.startswith(pfx):
             s = s[len(pfx):]
     if s == "lookat01":

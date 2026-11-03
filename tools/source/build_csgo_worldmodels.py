@@ -173,7 +173,18 @@ def write_static_glb(out_path, node_name, groups, materials_for):
     mats, images, textures, prims, img_index = [], [], [], [], {}
     for mat, tlist in sorted(buckets.items()):
         md = {"name": mat, "pbrMetallicRoughness": {"metallicFactor": 0.0, "roughnessFactor": 0.85}}
-        img, color = materials_for(mat)
+        material_result = materials_for(mat)
+        img, color = material_result[:2]
+        if len(material_result) > 2:
+            options = material_result[2]
+            if options.get("alpha_mode"):
+                md["alphaMode"] = options["alpha_mode"]
+            if options.get("alpha_cutoff") is not None:
+                md["alphaCutoff"] = float(options["alpha_cutoff"])
+            if options.get("double_sided"):
+                md["doubleSided"] = True
+            if options.get("emissive") is not None:
+                md["emissiveFactor"] = options["emissive"]
         if img is not None:
             key = id(img)
             if key not in img_index:
@@ -181,6 +192,8 @@ def write_static_glb(out_path, node_name, groups, materials_for):
                 textures.append({"sampler": 0, "source": len(images) - 1})
                 img_index[key] = len(textures) - 1
             md["pbrMetallicRoughness"]["baseColorTexture"] = {"index": img_index[key]}
+            if color is not None:
+                md["pbrMetallicRoughness"]["baseColorFactor"] = color
         else:
             md["pbrMetallicRoughness"]["baseColorFactor"] = color
         mats.append(md)

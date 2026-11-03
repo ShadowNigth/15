@@ -20,12 +20,12 @@ var last_weapon_id: String = "knife"
 # Per-weapon state stored on the actor's inventory:
 # slots[1] = primary_id or "", slots[2] = secondary_id or "", slots[3] = "knife", slots[5] = "c4" or ""
 var slots: Dictionary = {1: "", 2: "", 3: "knife", 5: ""}
-var grenades: Dictionary = {"hegrenade": 0, "flashbang": 0, "smokegrenade": 0}
+var grenades: Dictionary = {"hegrenade": 0, "flashbang": 0, "smokegrenade": 0, "decoy": 0, "molotov": 0, "incendiary": 0}
 var current_grenade_id: String = ""
 var clips: Dictionary = {}
 var ammo_pool: Dictionary = {}
 var silenced_state: Dictionary = {"m4a1": false, "usp": false}
-var burst_state: Dictionary = {"glock18": false}
+var burst_state: Dictionary = {"glock18": false, "famas": false}
 
 var zoom_index: int = -1  # -1 = unzoomed (90 deg)
 var fire_cooldown: float = 0.0
@@ -38,6 +38,9 @@ var burst_remaining: int = 0
 var burst_tick: float = 0.0
 ## Which shot of the current Glock burst (1..3) — cycles shoot/shoot2/shoot3
 var glock_burst_frame: int = 0
+## R8 primary fire has a real hammer wind-up; secondary fire is fast and inaccurate.
+var revolver_alt_fire: bool = false
+var _revolver_windup: float = 0.0
 var plant_progress: float = 0.0
 
 var _grenade_pin_pulled: bool = false
@@ -57,7 +60,7 @@ func setup_for_actor(owner_actor: CharacterBody3D) -> void:
 
 func reset_loadout(team: String, is_vip: bool = false) -> void:
 	slots = {1: "", 2: "", 3: "knife", 5: ""}
-	grenades = {"hegrenade": 0, "flashbang": 0, "smokegrenade": 0}
+	grenades = {"hegrenade": 0, "flashbang": 0, "smokegrenade": 0, "decoy": 0, "molotov": 0, "incendiary": 0}
 	clips.clear()
 	ammo_pool.clear()
 	_reset_states()
@@ -74,7 +77,7 @@ func reset_loadout(team: String, is_vip: bool = false) -> void:
 
 func clear_all_weapons() -> void:
 	slots = {1: "", 2: "", 3: "knife", 5: ""}
-	grenades = {"hegrenade": 0, "flashbang": 0, "smokegrenade": 0}
+	grenades = {"hegrenade": 0, "flashbang": 0, "smokegrenade": 0, "decoy": 0, "molotov": 0, "incendiary": 0}
 	clips.clear()
 	ammo_pool.clear()
 	_reset_states()
@@ -88,6 +91,8 @@ func _reset_states() -> void:
 	fire_cooldown = 0.0
 	shots_fired = 0
 	burst_remaining = 0
+	_revolver_windup = 0.0
+	revolver_alt_fire = false
 	plant_progress = 0.0
 	_grenade_pin_pulled = false
 	_grenade_pin_timer = 0.0
@@ -142,13 +147,18 @@ func get_clip_and_reserve() -> Vector2i:
 
 func equip_slot(slot_num: int) -> bool:
 	if slot_num == 4:
-		var order := ["hegrenade", "flashbang", "smokegrenade"]
+		var order := ["hegrenade", "flashbang", "smokegrenade", "decoy", "molotov", "incendiary"]
+		var equipment_weapon := String(slots.get(4, ""))
+		if not equipment_weapon.is_empty():
+			order.append(equipment_weapon)
 		var start_i := 0
 		if current_weapon_id in order:
 			start_i = (order.find(current_weapon_id) + 1) % order.size()
 		for k in range(order.size()):
 			var gid: String = order[(start_i + k) % order.size()]
 			if int(grenades.get(gid, 0)) > 0:
+				return equip_weapon_by_id(gid)
+			if gid == equipment_weapon and int(clips.get(gid, 0)) > 0:
 				return equip_weapon_by_id(gid)
 		return false
 
@@ -261,14 +271,23 @@ func _process(delta: float) -> void:
 			_launch_grenade_now(current_weapon_id)
 			return
 
-	# Burst-fire follow-up shots (Glock18)
+	# R8 single-action hammer wind-up. The shot still lands if the trigger is
+	# released, but switching weapons/reloading cancels it through _reset_states().
+	if _revolver_windup > 0.0:
+		_revolver_windup -= delta
+		if _revolver_windup <= 0.0 and current_weapon_id == "revolver":
+			revolver_alt_fire = false
+			_execute_bullet_shot(get_current_spec(), false)
+
+	# Burst-fire follow-up shots (Glock18 and FAMAS)
 	if burst_remaining > 0:
 		burst_tick -= delta
 		if burst_tick <= 0.0:
 			burst_remaining -= 1
-			burst_tick = 0.055
+			var burst_spec := get_current_spec()
+			burst_tick = float(burst_spec.get("burst_interval", 0.055))
 			glock_burst_frame += 1
-			_execute_bullet_shot(get_current_spec(), true)
+			_execute_bullet_shot(burst_spec, true)
 
 	# Decay shots_fired when not shooting
 	if fire_cooldown <= 0.0 and shots_fired > 0:
@@ -311,7 +330,7 @@ func trigger_primary(holding: bool, delta: float) -> void:
 				if plant_progress == 0.0:
 					# the human viewmodel's pressbutton events already play the keypad clicks
 					if not _human_vm_has_events(get_current_spec(), "pressbutton"):
-						AudioManager.play_3d("weapons/c4_click.wav", actor.global_position, -2.0, 18.0)
+						AudioManager.play_3d("weapons/archi/cs2_c4/key_press1.wav", actor.global_position, -2.0, 18.0)
 					else:
 						AudioManager.world_sound_emitted.emit(actor.global_position, 18.0, String(actor.get("team")))
 					if actor.has_method("play_viewmodel_sequence"):
@@ -343,7 +362,7 @@ func trigger_primary(holding: bool, delta: float) -> void:
 			_grenade_pin_timer = 0.36
 			_grenade_want_release = false
 			_grenade_lob_mode = false
-			AudioManager.play_3d("weapons/pinpull.wav", actor.global_position, -3.0, 14.0)
+			AudioManager.play_3d(String(spec.get("pinpull_sound", "weapons/archi/cs2_hegren/pinpull.wav")), actor.global_position, -3.0, 14.0)
 			if actor.has_method("play_viewmodel_sequence"):
 				actor.call("play_viewmodel_sequence", ["pullpin"])
 		else:
@@ -366,21 +385,34 @@ func trigger_primary(holding: bool, delta: float) -> void:
 
 	var cur_clip := int(clips.get(current_weapon_id, 0))
 	if cur_clip <= 0:
-		var dry := "weapons/dryfire_pistol.wav" if int(spec.get("slot", 1)) == 2 else "weapons/dryfire_rifle.wav"
+		var dry_default := "weapons/archi/cs2_revolver/hammer.wav"
+		var dry := String(spec.get("dryfire_sound", dry_default))
 		AudioManager.play_3d(dry, actor.global_position, -4.0, 14.0)
 		fire_cooldown = 0.25
 		start_reload()
 		return
 
-	# Glock18 3-round burst mode
-	if current_weapon_id == "glock18" and bool(burst_state.get("glock18", false)):
-		glock_burst_frame = 1
-		_execute_bullet_shot(spec, true)
-		burst_remaining = mini(2, int(clips.get("glock18", 0)))
-		burst_tick = 0.055
-		fire_cooldown = 0.5
+	if current_weapon_id == "revolver":
+		revolver_alt_fire = false
+		_revolver_windup = float(spec.get("primary_delay", 0.20))
+		fire_cooldown = _revolver_windup
+		if actor.has_method("play_viewmodel_sequence"):
+			actor.call("play_viewmodel_sequence", ["prepare"])
+		if not _human_vm_has_events(spec, "prepare"):
+			AudioManager.play_3d(String(spec.get("prepare_sound", "weapons/archi/cs2_revolver/prepare.wav")), actor.global_position, -3.0, 16.0)
 		return
 
+	# Three-round burst mode (the Glock keeps its exact shoot/shoot2/shoot3 cycle).
+	if bool(spec.get("burst", false)) and bool(burst_state.get(current_weapon_id, false)):
+		glock_burst_frame = 1
+		_execute_bullet_shot(spec, true)
+		var burst_count := int(spec.get("burst_count", 3))
+		burst_remaining = mini(burst_count - 1, int(clips.get(current_weapon_id, 0)))
+		burst_tick = float(spec.get("burst_interval", 0.055))
+		fire_cooldown = float(spec.get("burst_cooldown", 0.5))
+		return
+
+	revolver_alt_fire = false
 	_execute_bullet_shot(spec, false)
 
 
@@ -423,7 +455,7 @@ func trigger_secondary() -> void:
 		_grenade_pin_timer = 0.32
 		_grenade_want_release = false
 		_grenade_lob_mode = true
-		AudioManager.play_3d("weapons/pinpull.wav", actor.global_position, -3.0, 14.0)
+		AudioManager.play_3d(String(spec.get("pinpull_sound", "weapons/archi/cs2_hegren/pinpull.wav")), actor.global_position, -3.0, 14.0)
 		if actor.has_method("play_viewmodel_sequence"):
 			actor.call("play_viewmodel_sequence", ["pullpin"])
 		return
@@ -431,6 +463,18 @@ func trigger_secondary() -> void:
 	if current_weapon_id == "knife":
 		if not RoundManager.is_movement_frozen():
 			_swing_knife(true)
+		return
+
+	if current_weapon_id == "revolver":
+		if RoundManager.is_movement_frozen():
+			return
+		if int(clips.get(current_weapon_id, 0)) <= 0:
+			AudioManager.play_3d(String(spec.get("dryfire_sound", "weapons/archi/cs2_revolver/hammer.wav")), actor.global_position, -4.0, 14.0)
+			fire_cooldown = 0.25
+			start_reload()
+			return
+		revolver_alt_fire = true
+		_execute_bullet_shot(spec, false)
 		return
 
 	# Detachable silencer (M4A1, USP)
@@ -441,11 +485,8 @@ func trigger_secondary() -> void:
 		var v_name := String(spec.get("v_model", "v_" + current_weapon_id))
 		reload_timer = _get_viewmodel_seq_duration(v_name, target_anim, 2.4)
 		if not bool(actor.get("is_human")) or not _viewmodel_has_events(v_name, target_anim):
-			var swav := ""
-			if current_weapon_id == "m4a1":
-				swav = "weapons/m4a1_silencer_off.wav" if cur_sil else "weapons/m4a1_silencer_on.wav"
-			else:
-				swav = "weapons/usp_silencer_off.wav" if cur_sil else "weapons/usp_silencer_on.wav"
+			var sound_key := "silencer_off_sound" if cur_sil else "silencer_on_sound"
+			var swav := String(spec.get(sound_key, "weapons/archi/cs2_usps/sil_off.wav" if cur_sil else "weapons/archi/cs2_usps/sil_on.wav"))
 			AudioManager.play_3d(swav, actor.global_position, -3.0, 16.0)
 		if actor.has_method("play_viewmodel_sequence"):
 			actor.call("play_viewmodel_sequence", [target_anim])
@@ -471,7 +512,7 @@ func trigger_secondary() -> void:
 		else:
 			var fdeg := float(zfovs[zoom_index])
 			zoom_changed.emit(fdeg, bool(spec.get("sniper_scope", false)))
-		AudioManager.play_3d("weapons/zoom.wav", actor.global_position, -4.0, 14.0)
+		AudioManager.play_3d(String(spec.get("zoom_sound", "weapons/archi/cs2_awp/zoom_in.wav")), actor.global_position, -4.0, 14.0)
 		fire_cooldown = 0.22
 
 
@@ -493,12 +534,15 @@ func start_reload() -> void:
 		return
 
 	_clear_zoom()
+	# A pending R8 hammer shot or burst must never fire into the reload animation.
+	_revolver_windup = 0.0
+	burst_remaining = 0
 	is_reloading = true
 	var v_name := String(spec.get("v_model", "v_" + current_weapon_id))
 	var sil := bool(silenced_state.get(current_weapon_id, false))
 	var rel_anim := "reload" if (sil or not bool(spec.get("silencer", false))) else "reload_unsil"
 	if bool(spec.get("shotgun_reload", false)):
-		reload_timer = 0.52
+		reload_timer = _get_viewmodel_seq_duration(v_name, "start_reload", 0.52)
 	else:
 		reload_timer = _get_viewmodel_seq_duration(v_name, rel_anim, float(spec.get("reload_time", 2.5)))
 
@@ -538,10 +582,10 @@ func _finish_reload_step() -> void:
 			if actor.has_method("play_viewmodel_sequence"):
 				actor.call("play_viewmodel_sequence", ["insert"])
 			if cur + 1 < csize and res - 1 > 0:
-				reload_timer = 0.48
+				reload_timer = _get_viewmodel_seq_duration(String(spec.get("v_model", "v_" + current_weapon_id)), "insert", 0.48)
 				# the viewmodel's own QC events already play the shell foley for the human
 				if not _human_vm_has_events(spec, "insert"):
-					AudioManager.play_3d(String(spec.get("insert_sound", "weapons/m3_insertshell.wav")),
+					AudioManager.play_3d(String(spec.get("insert_sound", "weapons/archi/cs2_nova/insertshell_01.wav")),
 						actor.global_position, -4.0, 16.0)
 				return
 		is_reloading = false
@@ -567,7 +611,8 @@ func _execute_bullet_shot(spec: Dictionary, is_burst_subshot: bool) -> void:
 	shots_fired += 1
 	decay_timer = 0.0
 
-	var ctime := float(spec.get("cycle_time", 0.1))
+	var is_revolver_alt := current_weapon_id == "revolver" and revolver_alt_fire
+	var ctime := float(spec.get("alt_cycle_time", spec.get("cycle_time", 0.1))) if is_revolver_alt else float(spec.get("cycle_time", 0.1))
 	if zoom_index >= 0 and spec.has("zoomed_cycle_time"):
 		ctime = float(spec["zoomed_cycle_time"])
 	if not is_burst_subshot:
@@ -597,7 +642,7 @@ func _execute_bullet_shot(spec: Dictionary, is_burst_subshot: bool) -> void:
 	_emit_ammo()
 
 	# Calculate authentic CS 1.5 spread
-	var spread := float(spec.get("spread_base", 0.01))
+	var spread := float(spec.get("alt_spread", spec.get("spread_base", 0.01))) if is_revolver_alt else float(spec.get("spread_base", 0.01))
 	if bool(spec.get("sniper_scope", false)) and zoom_index == -1:
 		spread = float(spec.get("spread_unscoped", 0.06))
 	var horiz_spd := Vector2(actor.velocity.x, actor.velocity.z).length() / GameData.SCALE
@@ -614,6 +659,8 @@ func _execute_bullet_shot(spec: Dictionary, is_burst_subshot: bool) -> void:
 
 	var pellets := int(spec.get("pellets", 1))
 	var base_dmg := float(spec.get("silenced_damage", spec.get("damage", 30))) if is_sil else float(spec.get("damage", 30))
+	if is_revolver_alt:
+		base_dmg = float(spec.get("alt_damage", base_dmg))
 	var armor_ratio := float(spec.get("armor_ratio", 1.2))
 	var max_range_m := float(spec.get("range", 4096.0)) * GameData.SCALE
 	var range_mod := float(spec.get("range_modifier", 0.95))
@@ -629,7 +676,7 @@ func _execute_bullet_shot(spec: Dictionary, is_burst_subshot: bool) -> void:
 		_fire_penetrating_ray(eye_pos, dir, max_range_m, base_dmg, armor_ratio, range_mod, pen)
 
 	# Apply KickBack view punch
-	var up_kick := float(spec.get("recoil_up", 1.8))
+	var up_kick := float(spec.get("alt_recoil", spec.get("recoil_up", 1.8))) if is_revolver_alt else float(spec.get("recoil_up", 1.8))
 	var lat_kick := float(spec.get("recoil_lat", 0.5))
 	punch_angles.x = clampf(punch_angles.x + up_kick, -14.0, 16.0)
 	punch_angles.y = clampf(punch_angles.y + randf_range(-lat_kick, lat_kick), -7.0, 7.0)
@@ -668,7 +715,7 @@ func _fire_penetrating_ray(
 		if hit.is_empty():
 			if not tracer_spawned and is_instance_valid(RoundManager.game_world):
 				tracer_spawned = true
-				ImpactEffects.spawn_bullet_tracer(RoundManager.game_world, _get_tracer_origin(origin, dir), origin + dir * minf(max_dist, 44.0), is_heavy_cal)
+				_spawn_weapon_tracer(origin, dir, origin + dir * minf(max_dist, 44.0), is_heavy_cal)
 			RoundManager.apply_world_bullet_wake(cur_from, ray_end, clampf(base_dmg / 30.0, 0.5, 2.0))
 			break
 
@@ -676,7 +723,7 @@ func _fire_penetrating_ray(
 		var hit_nrm: Vector3 = hit["normal"]
 		if not tracer_spawned and is_instance_valid(RoundManager.game_world):
 			tracer_spawned = true
-			ImpactEffects.spawn_bullet_tracer(RoundManager.game_world, _get_tracer_origin(origin, dir), hit_pos, is_heavy_cal)
+			_spawn_weapon_tracer(origin, dir, hit_pos, is_heavy_cal)
 
 		RoundManager.apply_world_bullet_wake(cur_from, hit_pos, clampf(base_dmg / 30.0, 0.5, 2.0))
 		var traveled_gs := origin.distance_to(hit_pos) / GameData.SCALE
@@ -701,6 +748,9 @@ func _fire_penetrating_ray(
 			if not is_friendly and is_instance_valid(RoundManager.game_world):
 				ImpactEffects.spawn_blood_impact(RoundManager.game_world, space, hit_pos, dir, hgroup, armored_hd, dmg_at_dist)
 			col.call("take_bullet_damage", actor, dmg_at_dist, armor_ratio, hgroup, current_weapon_id, hit_pos)
+			if current_weapon_id == "taser":
+				# Zeus is a single-target electroshock hit, never a penetrating bullet.
+				break
 			exclude_rids.append((col as CollisionObject3D).get_rid())
 			cur_dmg *= 0.65
 			var step := origin.distance_to(hit_pos)
@@ -783,6 +833,16 @@ func _determine_hitgroup(target: Node3D, hit_pos: Vector3) -> int:
 	elif ratio >= 0.34:
 		return 3  # Stomach
 	return 4  # Legs
+
+
+func _spawn_weapon_tracer(eye_pos: Vector3, shot_dir: Vector3, end_pos: Vector3, heavy: bool) -> void:
+	if not is_instance_valid(RoundManager.game_world):
+		return
+	var start := _get_tracer_origin(eye_pos, shot_dir)
+	if current_weapon_id == "taser":
+		ImpactEffects.spawn_taser_arc(RoundManager.game_world, start, end_pos)
+	else:
+		ImpactEffects.spawn_bullet_tracer(RoundManager.game_world, start, end_pos, heavy)
 
 
 func _get_tracer_origin(eye_pos: Vector3, shot_dir: Vector3) -> Vector3:
@@ -872,7 +932,9 @@ func _swing_knife(heavy_stab: bool) -> void:
 			actor.call("play_viewmodel_sequence", [pick, "slash1", "slash2"])
 
 	if not did_hit:
-		AudioManager.play_3d("weapons/knife_slash%d.wav" % randi_range(1, 2), actor.global_position, -3.0, 14.0)
+		var swing_sounds: Array = spec.get("fire_sounds", [])
+		if not swing_sounds.is_empty():
+			AudioManager.play_3d(String(swing_sounds[randi() % swing_sounds.size()]), actor.global_position, -3.0, 14.0)
 		return
 
 	var col = hit["collider"]
@@ -892,7 +954,11 @@ func _swing_knife(heavy_stab: bool) -> void:
 		if (String(col.get("team")) != String(actor.get("team")) or GameData.friendly_fire) and is_instance_valid(RoundManager.game_world):
 			ImpactEffects.spawn_blood_impact(RoundManager.game_world, space, hpos, dir, 2, false, dmg)
 		col.call("take_bullet_damage", actor, dmg, 1.7, 2, "knife", hpos)
-		var kwav := "weapons/knife_stab.wav" if heavy_stab else ("weapons/knife_hit_0%d.wav" % randi_range(1, 4))
+		var kwav := String(spec.get("stab_sound", "weapons/archi/cs2_flashbang/hit1.wav"))
+		if not heavy_stab:
+			var hit_sounds: Array = spec.get("hit_sounds", [])
+			if not hit_sounds.is_empty():
+				kwav = String(hit_sounds[randi() % hit_sounds.size()])
 		AudioManager.play_3d(kwav, hpos, 0.0, 20.0)
 		return
 
@@ -915,7 +981,7 @@ func _swing_knife(heavy_stab: bool) -> void:
 		# Knives leave a random slash gouge, never a bullet hole
 		ImpactEffects.spawn_knife_slash(RoundManager.game_world, hpos, hit["normal"], dir, k_surf, attach_k)
 
-	AudioManager.play_3d("weapons/knife_hitwall1.wav", hpos, -3.0, 16.0)
+	AudioManager.play_3d(String(spec.get("wall_sound", "weapons/archi/cs2_flashbang/hit1.wav")), hpos, -3.0, 16.0)
 
 
 func drop_pulled_grenade_on_death() -> void:
@@ -939,7 +1005,8 @@ func drop_pulled_grenade_on_death() -> void:
 
 
 func _throw_grenade(gid: String) -> void:
-	AudioManager.play_3d("weapons/pinpull.wav", actor.global_position, -3.0, 14.0)
+	var spec: Dictionary = GameData.weapons.get(gid, {})
+	AudioManager.play_3d(String(spec.get("pinpull_sound", "weapons/archi/cs2_hegren/pinpull.wav")), actor.global_position, -3.0, 14.0)
 	_launch_grenade_now(gid)
 
 
@@ -951,10 +1018,14 @@ func _launch_grenade_now(gid: String) -> void:
 	fire_cooldown = 0.75
 	_emit_ammo()
 
+	var throw_anim := "underhand" if _grenade_lob_mode else "throw"
 	if actor.has_method("play_viewmodel_sequence"):
-		actor.call("play_viewmodel_sequence", ["throw"])
+		actor.call("play_viewmodel_sequence", [throw_anim, "throw"])
 	if is_instance_valid(actor) and actor.has_method("trigger_upper_body_action"):
 		actor.call("trigger_upper_body_action", "shoot")
+	var grenade_spec: Dictionary = GameData.weapons.get(gid, {})
+	if not _human_vm_has_events(grenade_spec, throw_anim):
+		AudioManager.play_3d(String(grenade_spec.get("throw_sound", "weapons/archi/cs2_hegren/grenade_throw.wav")), actor.global_position, -4.0, 16.0)
 
 	AudioManager.play_radio("radio/ct_fireinhole.wav")
 	RoundManager.chat_radio_message.emit(String(actor.get("actor_name")), String(actor.get("team")), "(RADIO): Fire in the hole!")

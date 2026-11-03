@@ -255,20 +255,20 @@ func _perform_bot_buy() -> void:
 					choices.assign(["scout", "ak47"])
 				elif buy_budget >= 2600:
 					if personality == PERSONALITY_RUSHER:
-						choices.assign(["ak47", "ak47", "sg552"])
+						choices.assign(["ak47", "galil", "sg552"])
 					else:
-						choices.assign(["ak47", "sg552"])
+						choices.assign(["ak47", "sg552", "galil"])
 				elif buy_budget >= 1500:
-					choices.assign(["mp5navy", "mac10", "ump45", "m3"])
+					choices.assign(["mp5navy", "mac10", "ump45", "bizon", "sawedoff", "m3"])
 			else:
 				if buy_budget >= 4750 and want_sniper:
 					choices.assign(["awp"])
 				elif buy_budget >= 2750 and want_sniper and randf() < 0.40:
-					choices.assign(["scout", "m4a1"])
+					choices.assign(["scout", "m4a1", "m4a4"])
 				elif buy_budget >= 3150:
-					choices.assign(["m4a1", "aug"])
+					choices.assign(["m4a1", "m4a4", "aug", "famas"])
 				elif buy_budget >= 1500:
-					choices.assign(["mp5navy", "tmp", "ump45", "m3"])
+					choices.assign(["mp5navy", "tmp", "ump45", "mp7", "bizon", "mag7", "m3"])
 
 		for wid in choices:
 			if buy_weapon(wid):
@@ -285,7 +285,7 @@ func _perform_bot_buy() -> void:
 	# Sniper bots pair AWP/Scout with a Desert Eagle when rich!
 	var cur_p := String(weapon_ctrl.slots.get(1, ""))
 	if cur_p in ["awp", "scout"] and money >= 900 and randf() < 0.65:
-		buy_weapon("deagle")
+		buy_weapon("revolver" if randf() < 0.30 else "deagle")
 	elif cur_p == "m4a1" and randf() < 0.55:
 		weapon_ctrl.silenced_state["m4a1"] = true
 
@@ -300,6 +300,10 @@ func _perform_bot_buy() -> void:
 			buy_weapon("smokegrenade")
 		if money >= 350 and randf() < 0.40:
 			buy_weapon("flashbang")
+		if money >= 650 and randf() < 0.30:
+			buy_weapon("molotov" if team == "T" else "incendiary")
+		if money >= 250 and randf() < 0.16:
+			buy_weapon("decoy")
 
 
 func _physics_process(delta: float) -> void:
@@ -409,7 +413,7 @@ func _physics_process(delta: float) -> void:
 		var dis_dir := _blend_move_dir(_smoothed_move_dir, _disengage_dir, delta)
 		_smoothed_move_dir = dis_dir
 		_look_smoothly_toward(global_position + _disengage_dir * 9.0 + Vector3(0.0, 1.3, 0.0), delta * 5.5)
-		if weapon_ctrl.current_weapon_id in ["knife", "c4", "hegrenade", "flashbang", "smokegrenade"]:
+		if _is_utility_weapon(weapon_ctrl.current_weapon_id):
 			if not weapon_ctrl.equip_slot(1):
 				weapon_ctrl.equip_slot(2)
 		apply_goldsrc_movement(dis_dir, false, false, false, delta)
@@ -429,13 +433,17 @@ func _physics_process(delta: float) -> void:
 	# Priority 3.5: Flush out an enemy that just ducked behind cover with an HE grenade!
 	if _last_enemy_seen_age > 0.25 and _last_enemy_seen_age < 1.85 and _grenade_cooldown <= 0.0 and health > 40:
 		var d_last := global_position.distance_to(_last_enemy_pos)
-		if d_last > 8.5 and d_last < 23.0 and int(weapon_ctrl.grenades.get("hegrenade", 0)) > 0 and randf() < 0.09:
-			_grenade_cooldown = 14.0
-			if weapon_ctrl.equip_weapon_by_id("hegrenade"):
-				weapon_ctrl.fire_cooldown = 0.0
-				_look_smoothly_toward(_last_enemy_pos + Vector3(0.0, 2.1, 0.0), 1.0)
-				weapon_ctrl.trigger_primary(false, delta)
-				return
+		if d_last > 8.5 and d_last < 23.0 and randf() < 0.09:
+			var flush_grenades := ["hegrenade", "molotov" if team == "T" else "incendiary"]
+			for gid in flush_grenades:
+				if int(weapon_ctrl.grenades.get(gid, 0)) <= 0:
+					continue
+				_grenade_cooldown = 14.0
+				if weapon_ctrl.equip_weapon_by_id(gid):
+					weapon_ctrl.fire_cooldown = 0.0
+					_look_smoothly_toward(_last_enemy_pos + Vector3(0.0, 2.1, 0.0), 1.0)
+					weapon_ctrl.trigger_primary(false, delta)
+					return
 
 	# Priority 4: Active YaPB Camp / Sniper Sightline Holding (TaskId::Camp)!
 	if _camp_timer > 0.0 and _camping_node_idx >= 0:
@@ -447,7 +455,7 @@ func _physics_process(delta: float) -> void:
 		if _knife_rush_timer > 0.0 and _sound_investigate_timer <= 0.0 and not is_vip:
 			if weapon_ctrl.current_weapon_id != "knife":
 				weapon_ctrl.equip_slot(3)
-		elif weapon_ctrl.current_weapon_id in ["knife", "c4", "hegrenade", "flashbang", "smokegrenade"]:
+		elif _is_utility_weapon(weapon_ctrl.current_weapon_id):
 			if not weapon_ctrl.equip_slot(1):
 				weapon_ctrl.equip_slot(2)
 
@@ -462,7 +470,7 @@ func _execute_camp_behavior(delta: float) -> void:
 		_release_camp_spot()
 		return
 
-	if not weapon_ctrl.is_reloading and weapon_ctrl.current_weapon_id in ["knife", "c4", "hegrenade", "flashbang", "smokegrenade"]:
+	if not weapon_ctrl.is_reloading and _is_utility_weapon(weapon_ctrl.current_weapon_id):
 		if not weapon_ctrl.equip_slot(1):
 			weapon_ctrl.equip_slot(2)
 
@@ -539,6 +547,12 @@ func _scan_for_enemies() -> void:
 				_reaction_timer = base_react * randf_range(0.85, 1.20)
 
 
+func _is_utility_weapon(wid: String) -> bool:
+	if wid in ["knife", "c4", "taser"]:
+		return true
+	return bool((GameData.weapons.get(wid, {}) as Dictionary).get("grenade", false))
+
+
 func _can_see_actor(other: Node3D) -> bool:
 	var a := get_eye_position()
 	var b := other.global_position + Vector3(0.0, 1.35, 0.0)
@@ -574,16 +588,23 @@ func _engage_enemy(delta: float) -> void:
 			target_enemy = null
 			return
 
-	# Tactical Smoke / HE grenade toss at medium-long range
+	# Tactical Smoke / HE / incendiary / decoy toss at medium-long range
 	if _grenade_cooldown <= 0.0 and dist > 12.5 and dist < 25.0 and health > 50 and randf() < 0.025:
-		if int(weapon_ctrl.grenades.get("hegrenade", 0)) > 0:
+		var attack_grenades := ["hegrenade", "molotov" if team == "T" else "incendiary", "decoy"]
+		var threw_attack := false
+		for gid in attack_grenades:
+			if int(weapon_ctrl.grenades.get(gid, 0)) <= 0:
+				continue
 			_grenade_cooldown = 13.0
-			if weapon_ctrl.equip_weapon_by_id("hegrenade"):
+			if weapon_ctrl.equip_weapon_by_id(gid):
 				weapon_ctrl.fire_cooldown = 0.0
 				_look_smoothly_toward(target_enemy.global_position + Vector3(0.0, 2.2, 0.0), 1.0)
 				weapon_ctrl.trigger_primary(false, delta)
-				return
-		elif dist > 16.0 and int(weapon_ctrl.grenades.get("smokegrenade", 0)) > 0 and randf() < 0.35:
+				threw_attack = true
+				break
+		if threw_attack:
+			return
+		if dist > 16.0 and int(weapon_ctrl.grenades.get("smokegrenade", 0)) > 0 and randf() < 0.35:
 			_grenade_cooldown = 16.0
 			if weapon_ctrl.equip_weapon_by_id("smokegrenade"):
 				weapon_ctrl.fire_cooldown = 0.0
@@ -593,7 +614,7 @@ func _engage_enemy(delta: float) -> void:
 				return
 
 	# Ensure combat gun equipped; quick-switch to pistol if primary runs dry in close quarters!
-	if weapon_ctrl.current_weapon_id in ["c4", "knife", "hegrenade", "flashbang", "smokegrenade"]:
+	if _is_utility_weapon(weapon_ctrl.current_weapon_id):
 		if not weapon_ctrl.equip_slot(1):
 			weapon_ctrl.equip_slot(2)
 	else:

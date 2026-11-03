@@ -31,19 +31,16 @@
       "v_model": "v_knife",
       "w_model": "w_knife",
       "p_model": "p_knife",
-      "vgui": "",
+      "vgui": "640_knife",
       "fire_sounds": [
-        "weapons/knife_slash1.wav",
-        "weapons/knife_slash2.wav"
+        "weapons/archi/cs2_hegren/grenade_throw.wav"
       ],
       "hit_sounds": [
-        "weapons/knife_hit_01.wav",
-        "weapons/knife_hit_02.wav",
-        "weapons/knife_hit_03.wav"
+        "weapons/archi/cs2_flashbang/hit1.wav"
       ],
-      "wall_sound": "weapons/knife_hitwall1.wav",
-      "stab_sound": "weapons/knife_stab.wav",
-      "deploy_sound": "weapons/csgo/knife/knife_deploy1.wav",
+      "wall_sound": "weapons/archi/cs2_flashbang/hit1.wav",
+      "stab_sound": "weapons/archi/cs2_flashbang/hit1.wav",
+      "deploy_sound": "weapons/archi/cs2_hegren/grenade_throw.wav",
       "max_speed": 260.0,
       "zoomed_speed": 260.0,
       "description": "",
@@ -171,14 +168,14 @@
       "p_model": "p_usp",
       "vgui": "640_usp",
       "fire_sounds": [
-        "weapons/usp_unsil-1.wav"
+        "weapons/archi/core/usp_unsil-1.wav"
       ],
       "silenced_sounds": [
-        "weapons/usp1.wav",
-        "weapons/usp2.wav"
+        "weapons/archi/core/usp1.wav",
+        "weapons/archi/core/usp2.wav"
       ],
-      "reload_sound": "weapons/csgo/hkp2000/hkp2000_clipout.wav",
-      "deploy_sound": "weapons/csgo/hkp2000/hkp2000_sliderelease.wav",
+      "reload_sound": "weapons/archi/cs2_p2000/clipout.wav",
+      "deploy_sound": "weapons/archi/cs2_p2000/draw.wav",
       "max_speed": 250.0,
       "zoomed_speed": 250.0,
       "description": "Price\t\t\t: $500\nCountry of Origin\t: Germany\nCalibre\t\t: .45 ACP\nClip Capacity\t: 12 rounds\nRate of Fire\t: N/A\nWeight(EMPTY)\t: 1 kg.\nProjectile Weight\t: 15.2 grams\nMuzzle Velocity\t: 886 feet/second\nMuzzle Energy\t: 553 joules",
@@ -273,7 +270,10 @@
             24
           ]
         }
-      }
+      },
+      "dryfire_sound": "weapons/archi/cs2_revolver/hammer.wav",
+      "silencer_on_sound": "weapons/archi/cs2_usps/sil_on.wav",
+      "silencer_off_sound": "weapons/archi/cs2_usps/sil_off.wav"
     },
     "glock18": {
       "id": "glock18",
@@ -305,12 +305,12 @@
       "p_model": "p_glock18",
       "vgui": "640_glock18",
       "fire_sounds": [
-        "weapons/glock18-1.wav",
-        "weapons/glock18-2.wav"
+        "weapons/archi/core/glock18-1.wav",
+        "weapons/archi/core/glock18-2.wav"
       ],
-      "burst_sound": "weapons/glock18-2.wav",
-      "reload_sound": "weapons/csgo/glock18/glock_clipout.wav",
-      "deploy_sound": "weapons/csgo/glock18/glock_sliderelease.wav",
+      "burst_sound": "weapons/archi/core/glock18-2.wav",
+      "reload_sound": "weapons/archi/cs2_glock18/clipout.wav",
+      "deploy_sound": "weapons/archi/cs2_glock18/draw.wav",
       "max_speed": 250.0,
       "zoomed_speed": 250.0,
       "description": "Price\t\t\t: $400\nCountry of Origin\t: Austria\nCalibre\t\t: 9mm Parabellum\nClip Capacity\t: 20 rounds\nRate of Fire\t: N/A\nWeight(LOADED)\t: 0.9 kg.\nProjectile Weight\t: 8 grams\nMuzzle Velocity\t: 1132 feet/second\nMuzzle Energy\t: 475 joules",
@@ -405,7 +405,8 @@
             24
           ]
         }
-      }
+      },
+      "dryfire_sound": "weapons/archi/cs2_revolver/hammer.wav"
     },
     "deagle": {
       "id": "deagle",
@@ -436,11 +437,11 @@
       "p_model": "p_deagle",
       "vgui": "640_deagle",
       "fire_sounds": [
-        "weapons/deagle-1.wav",
-        "weapons/deagle-2.wav"
+        "weapons/archi/core/deagle-1.wav",
+        "weapons/archi/core/deagle-2.wav"
       ],
-      "reload_sound": "weapons/csgo/deagle/de_clipout.wav",
-      "deploy_sound": "weapons/csgo/deagle/de_draw.wav",
+      "reload_sound": "weapons/archi/cs2_deagle/clipout.wav",
+      "deploy_sound": "weapons/archi/cs2_deagle/draw.wav",
       "max_speed": 250.0,
       "zoomed_speed": 250.0,
       "description": "Price\t\t\t: $650\nCountry of Origin\t: Israel\nCalibre\t\t: .50 Action Express\nClip Capacity(CS)\t: 7\nRate of Fire\t: N/A\nWeight(EMPTY)\t: 1.8 kg\nProjectile Weight\t: 19.4 grams\nMuzzle Velocity\t: 1380 feet/second\nMuzzle Energy\t: 1650 joules",
@@ -535,7 +536,8 @@
             24
           ]
         }
-      }
+      },
+      "dryfire_sound": "weapons/archi/cs2_revolver/hammer.wav"
     },
     "p228": {
       "id": "p228",
@@ -566,10 +568,10 @@
       "p_model": "p_p228",
       "vgui": "640_p228",
       "fire_sounds": [
-        "weapons/p228-1.wav"
+        "weapons/archi/core/p228-1.wav"
       ],
-      "reload_sound": "weapons/csgo/p250/p250_clipout.wav",
-      "deploy_sound": "weapons/csgo/p250/p250_sliderelease.wav",
+      "reload_sound": "weapons/archi/cs2_p250/clipout.wav",
+      "deploy_sound": "weapons/archi/cs2_p250/draw.wav",
       "max_speed": 250.0,
       "zoomed_speed": 250.0,
       "description": "Price\t\t\t: $600\nCountry of Origin\t: Switzerland/Germany\nCalibre\t\t: .357 SIG\nClip Capacity(CS)\t: 13 rounds\nRate of Fire\t: N/A\nWeight(EMPTY)\t: 1.03 kg.\nProjectile Weight\t: 8.1 grams\nMuzzle Velocity\t: 1400 feet/second\nMuzzle Energy\t: 600 joules",
@@ -664,7 +666,8 @@
             24
           ]
         }
-      }
+      },
+      "dryfire_sound": "weapons/archi/cs2_revolver/hammer.wav"
     },
     "elite": {
       "id": "elite",
@@ -695,10 +698,10 @@
       "p_model": "p_elite",
       "vgui": "640_elite",
       "fire_sounds": [
-        "weapons/elite_fire.wav"
+        "weapons/archi/core/elite_fire.wav"
       ],
-      "reload_sound": "weapons/csgo/elite/elite_clipout.wav",
-      "deploy_sound": "weapons/csgo/elite/elite_sliderelease.wav",
+      "reload_sound": "weapons/archi/cs2_elites/clipout.wav",
+      "deploy_sound": "weapons/archi/cs2_elites/draw.wav",
       "max_speed": 250.0,
       "zoomed_speed": 250.0,
       "description": "Price\t\t\t: $1000\nCountry of Origin\t: Italy\nCalibre\t\t: 9mm Parabellum\nClip Capacity\t: 15 rounds\nRate of Fire\t: N/A\nWeight(LOADED)\t: 1.15 kg.\nProjectile Weight\t: 8 grams\nMuzzle Velocity\t: 1280 feet/second\nMuzzle Energy\t: 606 joules",
@@ -793,7 +796,8 @@
             24
           ]
         }
-      }
+      },
+      "dryfire_sound": "weapons/archi/cs2_revolver/hammer.wav"
     },
     "fiveseven": {
       "id": "fiveseven",
@@ -824,10 +828,10 @@
       "p_model": "p_fiveseven",
       "vgui": "640_fiveseven",
       "fire_sounds": [
-        "weapons/fiveseven-1.wav"
+        "weapons/archi/core/fiveseven-1.wav"
       ],
-      "reload_sound": "weapons/csgo/fiveseven/fiveseven_clipout.wav",
-      "deploy_sound": "weapons/csgo/fiveseven/fiveseven_sliderelease.wav",
+      "reload_sound": "weapons/archi/cs2_fiveseven/clipout.wav",
+      "deploy_sound": "weapons/archi/cs2_fiveseven/draw.wav",
       "max_speed": 250.0,
       "zoomed_speed": 250.0,
       "description": "Price\t\t\t: $750\nCountry of Origin\t: Belgium\nCalibre\t\t: 5.7 x 28mm\nClip Capacity\t: 20 rounds\nRate of Fire\t: N/A\nWeight(LOADED)\t: 0.618 kg.\nProjectile Weight\t: 2 grams\nMuzzle Velocity\t: 2345 feet/second\nMuzzle Energy\t: 465 joules",
@@ -922,7 +926,8 @@
             24
           ]
         }
-      }
+      },
+      "dryfire_sound": "weapons/archi/cs2_revolver/hammer.wav"
     },
     "m3": {
       "id": "m3",
@@ -955,10 +960,10 @@
       "p_model": "p_m3",
       "vgui": "640_m3",
       "fire_sounds": [
-        "weapons/m3-1.wav"
+        "weapons/archi/core/m3-1.wav"
       ],
-      "reload_sound": "weapons/csgo/nova/nova_insertshell.wav",
-      "deploy_sound": "weapons/csgo/nova/nova_pump.wav",
+      "reload_sound": "",
+      "deploy_sound": "weapons/archi/cs2_nova/draw.wav",
       "max_speed": 230.0,
       "zoomed_speed": 230.0,
       "description": "Price\t\t\t: $1700\nCountry of Origin\t: Italy\nCalibre\t\t: 12 gauge\nClip Capacity(CS)\t: 8 rounds\nRate of Fire\t: N/A\nWeight(EMPTY)\t: 3.5 kg\nProjectile Weight\t: 3.8 grams/pellet\nMuzzle Velocity\t: 1250 feet/second\nMuzzle Energy\t: 2429 joules",
@@ -1054,8 +1059,9 @@
           ]
         }
       },
-      "insert_sound": "weapons/csgo/nova/nova_insertshell.wav",
-      "pump_sound": "weapons/csgo/nova/nova_pump.wav"
+      "insert_sound": "weapons/archi/cs2_nova/insertshell_01.wav",
+      "pump_sound": "weapons/archi/cs2_nova/pump.wav",
+      "dryfire_sound": "weapons/archi/cs2_revolver/hammer.wav"
     },
     "xm1014": {
       "id": "xm1014",
@@ -1088,10 +1094,10 @@
       "p_model": "p_xm1014",
       "vgui": "640_xm1014",
       "fire_sounds": [
-        "weapons/xm1014-1.wav"
+        "weapons/archi/core/xm1014-1.wav"
       ],
-      "reload_sound": "weapons/csgo/xm1014/xm1014_insertshell.wav",
-      "deploy_sound": "weapons/csgo/xm1014/xm1014_draw.wav",
+      "reload_sound": "",
+      "deploy_sound": "weapons/archi/cs2_xm1014/draw.wav",
       "max_speed": 240.0,
       "zoomed_speed": 240.0,
       "description": "Price\t\t\t: $3000\nCountry of Origin\t: Italy\nCalibre\t\t: 12 gauge\nClip Capacity\t: 7 rounds\nRate of Fire(CS)\t: 400 rpm\nWeight(EMPTY)\t: 4 kg.\nProjectile Weight\t: 3.8 grams/pellet\nMuzzle Velocity\t: 1250 feet/second\nMuzzle Energy\t: 2429 joules",
@@ -1223,7 +1229,8 @@
           ]
         }
       },
-      "insert_sound": "weapons/csgo/xm1014/xm1014_insertshell.wav"
+      "insert_sound": "weapons/archi/cs2_xm1014/insertshell_01.wav",
+      "dryfire_sound": "weapons/archi/cs2_revolver/hammer.wav"
     },
     "mp5navy": {
       "id": "mp5navy",
@@ -1254,11 +1261,11 @@
       "p_model": "p_mp5",
       "vgui": "640_mp5",
       "fire_sounds": [
-        "weapons/mp5-1.wav",
-        "weapons/mp5-2.wav"
+        "weapons/archi/core/mp5-1.wav",
+        "weapons/archi/core/mp5-2.wav"
       ],
-      "reload_sound": "weapons/csgo/mp7/mp7_clipout.wav",
-      "deploy_sound": "weapons/csgo/mp7/mp7_slideforward.wav",
+      "reload_sound": "weapons/archi/cs2_mp5sd/slideback.wav",
+      "deploy_sound": "weapons/archi/cs2_mp5sd/draw.wav",
       "class_key": "mp5",
       "max_speed": 250.0,
       "zoomed_speed": 250.0,
@@ -1354,7 +1361,8 @@
             24
           ]
         }
-      }
+      },
+      "dryfire_sound": "weapons/archi/cs2_revolver/hammer.wav"
     },
     "tmp": {
       "id": "tmp",
@@ -1386,11 +1394,11 @@
       "p_model": "p_tmp",
       "vgui": "640_tmp",
       "fire_sounds": [
-        "weapons/tmp-1.wav",
-        "weapons/tmp-2.wav"
+        "weapons/archi/core/tmp-1.wav",
+        "weapons/archi/core/tmp-2.wav"
       ],
-      "reload_sound": "weapons/csgo/mp9/mp9_clipout.wav",
-      "deploy_sound": "weapons/csgo/mp9/mp9_boltforward.wav",
+      "reload_sound": "weapons/archi/cs2_mp9/clipout.wav",
+      "deploy_sound": "weapons/archi/cs2_mp9/draw.wav",
       "max_speed": 250.0,
       "zoomed_speed": 250.0,
       "description": "Price\t\t\t: $1250\nCountry of Origin\t: Austria\nCalibre\t\t: 9mm Parabellum\nClip Capacity\t: 30 rounds\nRate of Fire(CS)\t: 857 rpm\nWeight(EMPTY)\t: 1.3 kg.\nProjectile Weight\t: 8 grams\nMuzzle Velocity\t: 1280 feet/second\nMuzzle Energy\t: 606 joules",
@@ -1485,7 +1493,8 @@
             24
           ]
         }
-      }
+      },
+      "dryfire_sound": "weapons/archi/cs2_revolver/hammer.wav"
     },
     "p90": {
       "id": "p90",
@@ -1516,10 +1525,10 @@
       "p_model": "p_p90",
       "vgui": "640_p90",
       "fire_sounds": [
-        "weapons/p90-1.wav"
+        "weapons/archi/core/p90-1.wav"
       ],
-      "reload_sound": "weapons/csgo/p90/p90_cliprelease.wav",
-      "deploy_sound": "weapons/csgo/p90/p90_boltforward.wav",
+      "reload_sound": "weapons/archi/cs2_p90/cliprelease.wav",
+      "deploy_sound": "weapons/archi/cs2_p90/draw.wav",
       "max_speed": 245.0,
       "zoomed_speed": 245.0,
       "description": "Price\t\t\t: $2350\nCountry of Origin\t: Belgium\nCalibre\t\t: .338 Lapua Magnum\nClip Capacity\t: 50 rounds\nRate of Fire\t: 900\nWeight(LOADED)\t: 3 kg.\nProjectile Weight\t: 2 grams\nMuzzle Velocity\t: 2345 feet/second\nMuzzle Energy\t: 465 joules",
@@ -1614,7 +1623,8 @@
             24
           ]
         }
-      }
+      },
+      "dryfire_sound": "weapons/archi/cs2_revolver/hammer.wav"
     },
     "mac10": {
       "id": "mac10",
@@ -1645,10 +1655,10 @@
       "p_model": "p_mac10",
       "vgui": "640_mac10",
       "fire_sounds": [
-        "weapons/mac10-1.wav"
+        "weapons/archi/core/mac10-1.wav"
       ],
-      "reload_sound": "weapons/csgo/mac10/mac10_clipout.wav",
-      "deploy_sound": "weapons/csgo/mac10/mac10_boltforward.wav",
+      "reload_sound": "weapons/archi/cs2_mac10/clipout.wav",
+      "deploy_sound": "weapons/archi/cs2_mac10/draw.wav",
       "max_speed": 250.0,
       "zoomed_speed": 250.0,
       "description": "Price\t\t\t: $1400\nCountry of Origin\t: United States of America\nCalibre\t\t: .45 ACP\nClip Capacity\t: 30 rounds\nRate of Fire(CS)\t: 857 rpm\nWeight(EMPTY)\t: 3.82 kg.\nProjectile Weight\t: 15.2 grams\nMuzzle Velocity\t: 919 feet/second\nMuzzle Energy\t: 584 joules",
@@ -1743,7 +1753,8 @@
             24
           ]
         }
-      }
+      },
+      "dryfire_sound": "weapons/archi/cs2_revolver/hammer.wav"
     },
     "ump45": {
       "id": "ump45",
@@ -1774,10 +1785,10 @@
       "p_model": "p_ump45",
       "vgui": "640_ump45",
       "fire_sounds": [
-        "weapons/ump45-1.wav"
+        "weapons/archi/core/ump45-1.wav"
       ],
-      "reload_sound": "weapons/csgo/ump45/ump45_clipout.wav",
-      "deploy_sound": "weapons/csgo/ump45/ump45_boltforward.wav",
+      "reload_sound": "weapons/archi/cs2_ump45/clipout.wav",
+      "deploy_sound": "weapons/archi/cs2_ump45/draw.wav",
       "max_speed": 250.0,
       "zoomed_speed": 250.0,
       "description": "Price\t\t\t: $1700\nCountry of Origin\t: Germany\nCalibre\t\t: .45 ACP\nClip Capacity(CS)\t: 25 rounds\nRate of Fire\t: 600 rpm\nWeight(EMPTY)\t: 2.27 kg\nProjectile Weight\t: 15.2 grams\nMuzzle Velocity\t: 1005 feet/second\nMuzzle Energy\t: 625 joules",
@@ -1872,7 +1883,8 @@
             24
           ]
         }
-      }
+      },
+      "dryfire_sound": "weapons/archi/cs2_revolver/hammer.wav"
     },
     "ak47": {
       "id": "ak47",
@@ -1903,11 +1915,11 @@
       "p_model": "p_ak47",
       "vgui": "640_ak47",
       "fire_sounds": [
-        "weapons/ak47-1.wav",
-        "weapons/ak47-2.wav"
+        "weapons/archi/core/ak47-1.wav",
+        "weapons/archi/core/ak47-2.wav"
       ],
-      "reload_sound": "weapons/csgo/ak47/ak47_clipout.wav",
-      "deploy_sound": "weapons/csgo/ak47/ak47_boltpull.wav",
+      "reload_sound": "weapons/archi/cs2_ak47/clipout.wav",
+      "deploy_sound": "weapons/archi/cs2_ak47/draw.wav",
       "max_speed": 221.0,
       "zoomed_speed": 221.0,
       "description": "Price\t\t\t: $2500\nCountry of Origin\t: Russia\nCalibre\t\t: 7.62mm NATO\nClip Capacity\t: 30 rounds\nRate of Fire\t: 600 rpm\nWeight(LOADED)\t: 4.79 kg.\nProjectile Weight\t: 7.9 grams\nMuzzle Velocity\t: 2329 feet/second\nMuzzle Energy\t: 1992 joules",
@@ -2002,7 +2014,8 @@
             24
           ]
         }
-      }
+      },
+      "dryfire_sound": "weapons/archi/cs2_revolver/hammer.wav"
     },
     "sg552": {
       "id": "sg552",
@@ -2037,11 +2050,11 @@
       "p_model": "p_sg552",
       "vgui": "640_sg552",
       "fire_sounds": [
-        "weapons/sg552-1.wav",
-        "weapons/sg552-2.wav"
+        "weapons/archi/core/sg552-1.wav",
+        "weapons/archi/core/sg552-2.wav"
       ],
-      "reload_sound": "weapons/csgo/sg556/sg556_clipout.wav",
-      "deploy_sound": "weapons/csgo/sg556/sg556_boltforward.wav",
+      "reload_sound": "weapons/archi/cs2_sg553/clipout.wav",
+      "deploy_sound": "weapons/archi/cs2_sg553/draw.wav",
       "max_speed": 235.0,
       "zoomed_speed": 200.0,
       "description": "Price\t\t\t: $3500\nCountry of Origin\t: Switzerland\nCalibre\t\t: 5.56mm NATO\nClip Capacity\t: 30 rounds\nRate of Fire(CS)\t: 727 rpm\nWeight(EMPTY)\t: 3.1 kg.\nProjectile Weight\t: 4 grams\nMuzzle Velocity\t: 2900 feet/second\nMuzzle Energy\t: 1570 joules",
@@ -2136,7 +2149,9 @@
             24
           ]
         }
-      }
+      },
+      "dryfire_sound": "weapons/archi/cs2_revolver/hammer.wav",
+      "zoom_sound": "weapons/archi/cs2_sg553/zoom_in.wav"
     },
     "m4a1": {
       "id": "m4a1",
@@ -2169,14 +2184,14 @@
       "p_model": "p_m4a1",
       "vgui": "640_m4a1",
       "fire_sounds": [
-        "weapons/m4a1_unsil-1.wav",
-        "weapons/m4a1_unsil-2.wav"
+        "weapons/archi/core/m4a1_unsil-1.wav",
+        "weapons/archi/core/m4a1_unsil-2.wav"
       ],
       "silenced_sounds": [
-        "weapons/m4a1-1.wav"
+        "weapons/archi/core/m4a1-1.wav"
       ],
-      "reload_sound": "weapons/csgo/m4a1/m4a1_clipout.wav",
-      "deploy_sound": "weapons/csgo/m4a1/m4a1_silencer_boltback.wav",
+      "reload_sound": "weapons/archi/cs2_m4a1s/clipout.wav",
+      "deploy_sound": "weapons/archi/cs2_m4a1s/draw.wav",
       "max_speed": 230.0,
       "zoomed_speed": 230.0,
       "description": "Price\t\t\t: $3100\nCountry of Origin\t: United States of America\nCalibre\t\t: 5.56mm NATO\nClip Capacity(CS)\t: 30 rounds\nRate of Fire(CS)\t: 685 rpm\nWeight(EMPTY)\t: 3.22 kg\nProjectile Weight\t: 4 grams\nMuzzle Velocity\t: 2900 feet/second\nMuzzle Energy\t: 1570 joules",
@@ -2271,7 +2286,10 @@
             24
           ]
         }
-      }
+      },
+      "dryfire_sound": "weapons/archi/cs2_revolver/hammer.wav",
+      "silencer_on_sound": "weapons/archi/cs2_m4a1s/sil_on.wav",
+      "silencer_off_sound": "weapons/archi/cs2_m4a1s/sil_off.wav"
     },
     "aug": {
       "id": "aug",
@@ -2306,10 +2324,10 @@
       "p_model": "p_aug",
       "vgui": "640_aug",
       "fire_sounds": [
-        "weapons/aug-1.wav"
+        "weapons/archi/core/aug-1.wav"
       ],
-      "reload_sound": "weapons/csgo/aug/aug_clipout.wav",
-      "deploy_sound": "weapons/csgo/aug/aug_boltrelease.wav",
+      "reload_sound": "weapons/archi/cs2_aug/clipout.wav",
+      "deploy_sound": "weapons/archi/cs2_aug/draw.wav",
       "max_speed": 240.0,
       "zoomed_speed": 240.0,
       "description": "Price\t\t\t: $3500\nCountry of Origin\t: Austria\nCalibre\t\t: 5.56mm NATO\nClip Capacity\t: 30 rounds\nRate of Fire(CS)\t: 727 rpm\nWeight(LOADED)\t: 4.09 kg.\nProjectile Weight\t: 4 grams\nMuzzle Velocity\t: 2900 feet/second\nMuzzle Energy\t: 1570 joules",
@@ -2404,7 +2422,9 @@
             24
           ]
         }
-      }
+      },
+      "dryfire_sound": "weapons/archi/cs2_revolver/hammer.wav",
+      "zoom_sound": "weapons/archi/cs2_aug/zoom_in.wav"
     },
     "scout": {
       "id": "scout",
@@ -2441,10 +2461,10 @@
       "p_model": "p_scout",
       "vgui": "640_scout",
       "fire_sounds": [
-        "weapons/scout_fire-1.wav"
+        "weapons/archi/core/scout_fire-1.wav"
       ],
-      "reload_sound": "weapons/csgo/ssg08/ssg08_clipout.wav",
-      "deploy_sound": "weapons/csgo/ssg08/ssg08_boltforward.wav",
+      "reload_sound": "weapons/archi/cs2_ssg08/clipout.wav",
+      "deploy_sound": "weapons/archi/cs2_ssg08/draw.wav",
       "max_speed": 260.0,
       "zoomed_speed": 220.0,
       "description": "Price\t\t\t: $2750\nCountry of Origin\t: Austria\nCalibre\t\t: 7.62mm NATO\nClip Capacity\t: 10 rounds\nRate of Fire\t: N/A\nWeight(EMPTY)\t: 3.3 kg.\nProjectile Weight\t: 8 grams\nMuzzle Velocity\t: 2800 feet/second\nMuzzle Energy\t: 2200 joules",
@@ -2575,7 +2595,9 @@
             256
           ]
         }
-      }
+      },
+      "dryfire_sound": "weapons/archi/cs2_revolver/hammer.wav",
+      "zoom_sound": "weapons/archi/cs2_ssg08/zoom.wav"
     },
     "awp": {
       "id": "awp",
@@ -2612,10 +2634,10 @@
       "p_model": "p_awp",
       "vgui": "640_awp",
       "fire_sounds": [
-        "weapons/awp1.wav"
+        "weapons/archi/core/awp1.wav"
       ],
-      "reload_sound": "weapons/csgo/awp/awp_clipout.wav",
-      "deploy_sound": "weapons/csgo/awp/awp_boltforward.wav",
+      "reload_sound": "weapons/archi/cs2_awp/clipout.wav",
+      "deploy_sound": "weapons/archi/cs2_awp/draw.wav",
       "max_speed": 210.0,
       "zoomed_speed": 150.0,
       "description": "Price\t\t\t: $4750\nCountry of Origin\t: United Kingdom\nCalibre\t\t: .338 Lapua Magnum\nClip Capacity(CS)\t: 10 rounds\nRate of Fire\t: N/A\nWeight(EMPTY)\t: 6 kg.\nProjectile Weight\t: 16.2 grams\nMuzzle Velocity\t: 3000 feet/second\nMuzzle Energy\t: 7000 joules",
@@ -2746,7 +2768,9 @@
             256
           ]
         }
-      }
+      },
+      "dryfire_sound": "weapons/archi/cs2_revolver/hammer.wav",
+      "zoom_sound": "weapons/archi/cs2_awp/zoom_in.wav"
     },
     "g3sg1": {
       "id": "g3sg1",
@@ -2783,10 +2807,10 @@
       "p_model": "p_g3sg1",
       "vgui": "640_g3sg1",
       "fire_sounds": [
-        "weapons/g3sg1-1.wav"
+        "weapons/archi/core/g3sg1-1.wav"
       ],
-      "reload_sound": "weapons/csgo/g3sg1/g3sg1_clipout.wav",
-      "deploy_sound": "weapons/csgo/g3sg1/g3sg1_slideforward.wav",
+      "reload_sound": "weapons/archi/cs2_g3sg1/clipout.wav",
+      "deploy_sound": "weapons/archi/cs2_g3sg1/draw.wav",
       "max_speed": 210.0,
       "zoomed_speed": 150.0,
       "description": "Price\t\t\t: $5000\nCountry of Origin\t: Germany\nCalibre\t\t: 7.62mm NATO\nClip Capacity(CS)\t: 20 rounds\nRate of Fire\t: N/A\nWeight(EMPTY)\t: 4.41 kg\nProjectile Weight\t: 8 grams\nMuzzle Velocity\t: 2800 feet/second\nMuzzle Energy\t: 2200 joules",
@@ -2917,7 +2941,9 @@
             256
           ]
         }
-      }
+      },
+      "dryfire_sound": "weapons/archi/cs2_revolver/hammer.wav",
+      "zoom_sound": "weapons/archi/cs2_g3sg1/zoom_in.wav"
     },
     "sg550": {
       "id": "sg550",
@@ -2954,10 +2980,10 @@
       "p_model": "p_sg550",
       "vgui": "640_sg550",
       "fire_sounds": [
-        "weapons/sg550-1.wav"
+        "weapons/archi/core/sg550-1.wav"
       ],
-      "reload_sound": "weapons/csgo/scar20/scar20_clipout.wav",
-      "deploy_sound": "weapons/csgo/scar20/scar20_boltforward.wav",
+      "reload_sound": "weapons/archi/cs2_scar20/clipout.wav",
+      "deploy_sound": "weapons/archi/cs2_scar20/draw.wav",
       "max_speed": 210.0,
       "zoomed_speed": 150.0,
       "description": "Price\t\t\t: $4200\nCountry of Origin\t: Switzerland\nCalibre\t\t: 5.56mm NATO\nClip Capacity\t: 30 rounds\nRate of Fire(CS)\t: N/A\nWeight(EMPTY)\t: 7.02 kg.\nProjectile Weight\t: 4 grams\nMuzzle Velocity\t: 3100 feet/second\nMuzzle Energy\t: 1650 joules",
@@ -3088,7 +3114,9 @@
             256
           ]
         }
-      }
+      },
+      "dryfire_sound": "weapons/archi/cs2_revolver/hammer.wav",
+      "zoom_sound": "weapons/archi/cs2_scar20/zoom.wav"
     },
     "m249": {
       "id": "m249",
@@ -3119,11 +3147,11 @@
       "p_model": "p_m249",
       "vgui": "640_m249",
       "fire_sounds": [
-        "weapons/m249-1.wav",
-        "weapons/m249-2.wav"
+        "weapons/archi/core/m249-1.wav",
+        "weapons/archi/core/m249-2.wav"
       ],
-      "reload_sound": "weapons/csgo/m249/m249_coverup.wav",
-      "deploy_sound": "weapons/csgo/m249/m249_pump.wav",
+      "reload_sound": "weapons/archi/cs2_m249/coverup.wav",
+      "deploy_sound": "weapons/archi/cs2_m249/draw.wav",
       "max_speed": 220.0,
       "zoomed_speed": 220.0,
       "description": "Price\t\t\t: $5750\nCountry of Origin\t: Belgium\nCalibre\t\t: 5.56mm Nato\nClip Capacity(CS)\t: 100 rounds\nRate of Fire\t: 600 rpm\nWeight(EMPTY)\t: 6 kg.\nProjectile Weight\t: 4 grams\nMuzzle Velocity\t: 3000 feet/second\nMuzzle Energy\t: 1600 joules",
@@ -3218,7 +3246,8 @@
             24
           ]
         }
-      }
+      },
+      "dryfire_sound": "weapons/archi/cs2_revolver/hammer.wav"
     },
     "flashbang": {
       "id": "flashbang",
@@ -3245,17 +3274,13 @@
       "w_model": "w_flashbang",
       "p_model": "p_flashbang",
       "vgui": "640_flashbang",
-      "fire_sounds": [
-        "weapons/pinpull.wav"
-      ],
+      "fire_sounds": [],
       "explode_sounds": [
-        "weapons/flashbang-1.wav",
-        "weapons/flashbang-2.wav"
+        "weapons/archi/core/flashbang-1.wav",
+        "weapons/archi/core/flashbang-2.wav"
       ],
       "bounce_sounds": [
-        "weapons/grenade_hit1.wav",
-        "weapons/grenade_hit2.wav",
-        "weapons/grenade_hit3.wav"
+        "weapons/archi/cs2_flashbang/hit1.wav"
       ],
       "max_speed": 250.0,
       "zoomed_speed": 250.0,
@@ -3352,7 +3377,10 @@
           ]
         }
       },
-      "deploy_sound": "weapons/csgo/flashbang/flashbang_draw.wav"
+      "deploy_sound": "weapons/archi/cs2_flashbang/draw.wav",
+      "pinpull_sound": "weapons/archi/cs2_flashbang/pinpull_start.wav",
+      "throw_sound": "weapons/archi/cs2_hegren/grenade_throw.wav",
+      "bounce_sound": "weapons/archi/cs2_hegren/he_bounce-1.wav"
     },
     "hegrenade": {
       "id": "hegrenade",
@@ -3379,15 +3407,13 @@
       "w_model": "w_hegrenade",
       "p_model": "p_hegrenade",
       "vgui": "640_hegrenade",
-      "fire_sounds": [
-        "weapons/pinpull.wav"
-      ],
+      "fire_sounds": [],
       "explode_sounds": [
-        "weapons/hegrenade-1.wav",
-        "weapons/hegrenade-2.wav"
+        "weapons/archi/core/hegrenade-1.wav",
+        "weapons/archi/core/hegrenade-2.wav"
       ],
       "bounce_sounds": [
-        "weapons/he_bounce-1.wav"
+        "weapons/archi/cs2_hegren/he_bounce-1.wav"
       ],
       "max_speed": 260.0,
       "zoomed_speed": 260.0,
@@ -3484,7 +3510,10 @@
           ]
         }
       },
-      "deploy_sound": "weapons/csgo/hegrenade/he_draw.wav"
+      "deploy_sound": "weapons/archi/cs2_hegren/he_draw.wav",
+      "pinpull_sound": "weapons/archi/cs2_hegren/pinpull_start.wav",
+      "throw_sound": "weapons/archi/cs2_hegren/grenade_throw.wav",
+      "bounce_sound": "weapons/archi/cs2_hegren/he_bounce-1.wav"
     },
     "smokegrenade": {
       "id": "smokegrenade",
@@ -3511,14 +3540,12 @@
       "w_model": "w_smokegrenade",
       "p_model": "p_smokegrenade",
       "vgui": "640_smokegrenade",
-      "fire_sounds": [
-        "weapons/pinpull.wav"
-      ],
+      "fire_sounds": [],
       "explode_sounds": [
-        "weapons/sg_explode.wav"
+        "weapons/archi/core/sg_explode.wav"
       ],
       "bounce_sounds": [
-        "weapons/grenade_hit1.wav"
+        "weapons/archi/cs2_flashbang/hit1.wav"
       ],
       "max_speed": 250.0,
       "zoomed_speed": 250.0,
@@ -3615,7 +3642,10 @@
           ]
         }
       },
-      "deploy_sound": "weapons/csgo/smokegrenade/smokegrenade_draw.wav"
+      "deploy_sound": "weapons/archi/cs2_smokegren/s_draw.wav",
+      "pinpull_sound": "weapons/archi/cs2_smokegren/pinpull_start.wav",
+      "throw_sound": "weapons/archi/cs2_hegren/grenade_throw.wav",
+      "bounce_sound": "weapons/archi/cs2_hegren/he_bounce-1.wav"
     },
     "c4": {
       "id": "c4",
@@ -3638,23 +3668,21 @@
       "reload_time": 0.0,
       "automatic": false,
       "v_model": "v_c4",
-      "w_model": "w_backpack",
+      "w_model": "w_c4",
       "planted_model": "w_c4",
       "p_model": "p_c4",
-      "vgui": "",
-      "fire_sounds": [
-        "weapons/c4_click.wav"
-      ],
-      "plant_sound": "weapons/c4_plant.wav",
+      "vgui": "640_c4",
+      "fire_sounds": [],
+      "plant_sound": "weapons/archi/cs2_c4/c4_initiate.wav",
       "explode_sounds": [
-        "weapons/c4_explode1.wav"
+        "weapons/archi/core/hegrenade-1.wav"
       ],
       "beep_sounds": [
-        "weapons/c4_beep1.wav",
-        "weapons/c4_beep2.wav",
-        "weapons/c4_beep3.wav",
-        "weapons/c4_beep4.wav",
-        "weapons/c4_beep5.wav"
+        "weapons/archi/cs2_c4/key_press1.wav",
+        "weapons/archi/cs2_c4/key_press2.wav",
+        "weapons/archi/cs2_c4/key_press3.wav",
+        "weapons/archi/cs2_c4/key_press4.wav",
+        "weapons/archi/cs2_c4/key_press5.wav"
       ],
       "max_speed": 250.0,
       "zoomed_speed": 250.0,
@@ -3715,7 +3743,2153 @@
           ]
         }
       },
-      "deploy_sound": "weapons/csgo/c4/c4_draw.wav"
+      "deploy_sound": "weapons/archi/cs2_c4/c4_draw.wav"
+    },
+    "p2000": {
+      "id": "p2000",
+      "cls": "CP228",
+      "name": "P2000",
+      "slot": 2,
+      "buy_cat": 1,
+      "buy_num": 7,
+      "team": "CT",
+      "price": 200,
+      "clip_size": 13,
+      "max_ammo": 52,
+      "ammo_type": "9mm",
+      "damage": 30,
+      "armor_ratio": 1.05,
+      "cycle_time": 0.15,
+      "range": 4096.0,
+      "range_modifier": 0.79,
+      "penetration": 1,
+      "reload_time": 2.267,
+      "automatic": false,
+      "recoil_up": 1.8,
+      "recoil_lat": 0.35,
+      "spread_base": 0.009,
+      "spread_move": 0.075,
+      "v_model": "v_p2000",
+      "w_model": "w_p2000",
+      "p_model": "p_p2000",
+      "vgui": "640_p2000",
+      "fire_sounds": [
+        "weapons/archi/core/usp_unsil-1.wav"
+      ],
+      "reload_sound": "weapons/archi/cs2_p2000/clipout.wav",
+      "deploy_sound": "weapons/archi/cs2_p2000/draw.wav",
+      "max_speed": 250.0,
+      "zoomed_speed": 250.0,
+      "description": "P2000 from the ShadowNigth/archi CS2GO weapon set.",
+      "hud": {
+        "weapon_320": {
+          "sprite": "320hud2",
+          "rect": [
+            0,
+            208,
+            80,
+            20
+          ]
+        },
+        "weapon_s_320": {
+          "sprite": "320hud2",
+          "rect": [
+            0,
+            228,
+            80,
+            20
+          ]
+        },
+        "ammo_320": {
+          "sprite": "640hud7",
+          "rect": [
+            120,
+            72,
+            24,
+            24
+          ]
+        },
+        "crosshair_320": {
+          "sprite": "crosshairs",
+          "rect": [
+            24,
+            0,
+            24,
+            24
+          ]
+        },
+        "autoaim_320": {
+          "sprite": "crosshairs",
+          "rect": [
+            0,
+            72,
+            24,
+            24
+          ]
+        },
+        "weapon_640": {
+          "sprite": "640hud12",
+          "rect": [
+            0,
+            90,
+            170,
+            45
+          ]
+        },
+        "weapon_s_640": {
+          "sprite": "640hud13",
+          "rect": [
+            0,
+            90,
+            170,
+            45
+          ]
+        },
+        "ammo_640": {
+          "sprite": "640hud7",
+          "rect": [
+            120,
+            72,
+            24,
+            24
+          ]
+        },
+        "crosshair_640": {
+          "sprite": "crosshairs",
+          "rect": [
+            24,
+            0,
+            24,
+            24
+          ]
+        },
+        "autoaim_640": {
+          "sprite": "crosshairs",
+          "rect": [
+            0,
+            72,
+            24,
+            24
+          ]
+        }
+      },
+      "dryfire_sound": "weapons/archi/cs2_revolver/hammer.wav"
+    },
+    "cz75": {
+      "id": "cz75",
+      "cls": "CGLOCK18",
+      "name": "CZ75-Auto",
+      "slot": 2,
+      "buy_cat": 1,
+      "buy_num": 8,
+      "team": "ANY",
+      "price": 500,
+      "clip_size": 12,
+      "max_ammo": 12,
+      "ammo_type": "9mm",
+      "damage": 31,
+      "armor_ratio": 1.15,
+      "cycle_time": 0.085,
+      "range": 4096.0,
+      "range_modifier": 0.8,
+      "penetration": 1,
+      "reload_time": 2.767,
+      "automatic": true,
+      "recoil_up": 2.4,
+      "recoil_lat": 0.65,
+      "spread_base": 0.018,
+      "spread_move": 0.09,
+      "v_model": "v_cz75",
+      "w_model": "w_cz75",
+      "p_model": "p_cz75",
+      "vgui": "640_cz75",
+      "fire_sounds": [
+        "weapons/archi/core/glock18-1.wav",
+        "weapons/archi/core/glock18-2.wav"
+      ],
+      "reload_sound": "weapons/archi/cs2_p250/clipout.wav",
+      "deploy_sound": "weapons/archi/cs2_p250/draw.wav",
+      "max_speed": 250.0,
+      "zoomed_speed": 250.0,
+      "description": "CZ75-Auto from the ShadowNigth/archi CS2GO weapon set.",
+      "hud": {
+        "weapon_320": {
+          "sprite": "320hud2",
+          "rect": [
+            0,
+            168,
+            80,
+            20
+          ]
+        },
+        "weapon_s_320": {
+          "sprite": "320hud2",
+          "rect": [
+            0,
+            188,
+            80,
+            20
+          ]
+        },
+        "ammo_320": {
+          "sprite": "640hud7",
+          "rect": [
+            48,
+            72,
+            24,
+            24
+          ]
+        },
+        "crosshair_320": {
+          "sprite": "crosshairs",
+          "rect": [
+            24,
+            0,
+            24,
+            24
+          ]
+        },
+        "autoaim_320": {
+          "sprite": "crosshairs",
+          "rect": [
+            0,
+            72,
+            24,
+            24
+          ]
+        },
+        "weapon_640": {
+          "sprite": "640hud1",
+          "rect": [
+            0,
+            45,
+            170,
+            45
+          ]
+        },
+        "weapon_s_640": {
+          "sprite": "640hud4",
+          "rect": [
+            0,
+            45,
+            170,
+            45
+          ]
+        },
+        "ammo_640": {
+          "sprite": "640hud7",
+          "rect": [
+            48,
+            72,
+            24,
+            24
+          ]
+        },
+        "crosshair_640": {
+          "sprite": "crosshairs",
+          "rect": [
+            24,
+            0,
+            24,
+            24
+          ]
+        },
+        "autoaim_640": {
+          "sprite": "crosshairs",
+          "rect": [
+            0,
+            72,
+            24,
+            24
+          ]
+        }
+      },
+      "dryfire_sound": "weapons/archi/cs2_revolver/hammer.wav"
+    },
+    "revolver": {
+      "id": "revolver",
+      "cls": "CDEAGLE",
+      "name": "R8 Revolver",
+      "slot": 2,
+      "buy_cat": 1,
+      "buy_num": 9,
+      "team": "ANY",
+      "price": 600,
+      "clip_size": 8,
+      "max_ammo": 8,
+      "ammo_type": "50ae",
+      "damage": 86,
+      "armor_ratio": 1.65,
+      "cycle_time": 0.65,
+      "range": 4096.0,
+      "range_modifier": 0.92,
+      "penetration": 2,
+      "reload_time": 2.267,
+      "automatic": false,
+      "recoil_up": 4.6,
+      "recoil_lat": 0.9,
+      "spread_base": 0.006,
+      "spread_move": 0.12,
+      "v_model": "v_revolver",
+      "w_model": "w_revolver",
+      "p_model": "p_revolver",
+      "vgui": "640_revolver",
+      "fire_sounds": [
+        "weapons/archi/core/deagle-1.wav",
+        "weapons/archi/core/deagle-2.wav"
+      ],
+      "reload_sound": "weapons/archi/cs2_revolver/siderelease.wav",
+      "deploy_sound": "weapons/archi/cs2_revolver/draw.wav",
+      "max_speed": 240.0,
+      "zoomed_speed": 250.0,
+      "description": "R8 Revolver from the ShadowNigth/archi CS2GO weapon set.",
+      "hud": {
+        "weapon_320": {
+          "sprite": "320hud2",
+          "rect": [
+            0,
+            128,
+            80,
+            20
+          ]
+        },
+        "weapon_s_320": {
+          "sprite": "320hud2",
+          "rect": [
+            0,
+            148,
+            80,
+            20
+          ]
+        },
+        "ammo_320": {
+          "sprite": "640hud7",
+          "rect": [
+            24,
+            72,
+            24,
+            24
+          ]
+        },
+        "crosshair_320": {
+          "sprite": "crosshairs",
+          "rect": [
+            24,
+            0,
+            24,
+            24
+          ]
+        },
+        "autoaim_320": {
+          "sprite": "crosshairs",
+          "rect": [
+            0,
+            72,
+            24,
+            24
+          ]
+        },
+        "weapon_640": {
+          "sprite": "640hud10",
+          "rect": [
+            0,
+            90,
+            170,
+            45
+          ]
+        },
+        "weapon_s_640": {
+          "sprite": "640hud11",
+          "rect": [
+            0,
+            90,
+            170,
+            45
+          ]
+        },
+        "ammo_640": {
+          "sprite": "640hud7",
+          "rect": [
+            24,
+            72,
+            24,
+            24
+          ]
+        },
+        "crosshair_640": {
+          "sprite": "crosshairs",
+          "rect": [
+            24,
+            0,
+            24,
+            24
+          ]
+        },
+        "autoaim_640": {
+          "sprite": "crosshairs",
+          "rect": [
+            0,
+            72,
+            24,
+            24
+          ]
+        }
+      },
+      "dryfire_sound": "weapons/archi/cs2_revolver/hammer.wav",
+      "primary_delay": 0.2,
+      "alt_damage": 76,
+      "alt_cycle_time": 0.12,
+      "alt_spread": 0.065,
+      "alt_recoil": 5.2,
+      "prepare_sound": "weapons/archi/cs2_revolver/prepare.wav"
+    },
+    "tec9": {
+      "id": "tec9",
+      "cls": "CGLOCK18",
+      "name": "Tec-9",
+      "slot": 2,
+      "buy_cat": 1,
+      "buy_num": 10,
+      "team": "T",
+      "price": 500,
+      "clip_size": 18,
+      "max_ammo": 90,
+      "ammo_type": "9mm",
+      "damage": 33,
+      "armor_ratio": 1.15,
+      "cycle_time": 0.12,
+      "range": 4096.0,
+      "range_modifier": 0.79,
+      "penetration": 1,
+      "reload_time": 2.567,
+      "automatic": false,
+      "recoil_up": 2.2,
+      "recoil_lat": 0.55,
+      "spread_base": 0.012,
+      "spread_move": 0.085,
+      "v_model": "v_tec9",
+      "w_model": "w_tec9",
+      "p_model": "p_tec9",
+      "vgui": "640_tec9",
+      "fire_sounds": [
+        "weapons/archi/core/mac10-1.wav"
+      ],
+      "reload_sound": "weapons/archi/cs2_mac10/clipout.wav",
+      "deploy_sound": "weapons/archi/cs2_mac10/draw.wav",
+      "max_speed": 250.0,
+      "zoomed_speed": 250.0,
+      "description": "Tec-9 from the ShadowNigth/archi CS2GO weapon set.",
+      "hud": {
+        "weapon_320": {
+          "sprite": "320hud2",
+          "rect": [
+            0,
+            168,
+            80,
+            20
+          ]
+        },
+        "weapon_s_320": {
+          "sprite": "320hud2",
+          "rect": [
+            0,
+            188,
+            80,
+            20
+          ]
+        },
+        "ammo_320": {
+          "sprite": "640hud7",
+          "rect": [
+            48,
+            72,
+            24,
+            24
+          ]
+        },
+        "crosshair_320": {
+          "sprite": "crosshairs",
+          "rect": [
+            24,
+            0,
+            24,
+            24
+          ]
+        },
+        "autoaim_320": {
+          "sprite": "crosshairs",
+          "rect": [
+            0,
+            72,
+            24,
+            24
+          ]
+        },
+        "weapon_640": {
+          "sprite": "640hud1",
+          "rect": [
+            0,
+            45,
+            170,
+            45
+          ]
+        },
+        "weapon_s_640": {
+          "sprite": "640hud4",
+          "rect": [
+            0,
+            45,
+            170,
+            45
+          ]
+        },
+        "ammo_640": {
+          "sprite": "640hud7",
+          "rect": [
+            48,
+            72,
+            24,
+            24
+          ]
+        },
+        "crosshair_640": {
+          "sprite": "crosshairs",
+          "rect": [
+            24,
+            0,
+            24,
+            24
+          ]
+        },
+        "autoaim_640": {
+          "sprite": "crosshairs",
+          "rect": [
+            0,
+            72,
+            24,
+            24
+          ]
+        }
+      },
+      "dryfire_sound": "weapons/archi/cs2_revolver/hammer.wav"
+    },
+    "famas": {
+      "id": "famas",
+      "cls": "CM4A1",
+      "name": "FAMAS",
+      "slot": 1,
+      "buy_cat": 4,
+      "buy_num": 9,
+      "team": "CT",
+      "price": 2050,
+      "clip_size": 25,
+      "max_ammo": 90,
+      "ammo_type": "556nato",
+      "damage": 30,
+      "armor_ratio": 1.4,
+      "cycle_time": 0.09,
+      "range": 8192.0,
+      "range_modifier": 0.96,
+      "penetration": 2,
+      "reload_time": 3.3,
+      "automatic": true,
+      "recoil_up": 1.7,
+      "recoil_lat": 0.5,
+      "spread_base": 0.011,
+      "spread_move": 0.08,
+      "v_model": "v_famas",
+      "w_model": "w_famas",
+      "p_model": "p_famas",
+      "vgui": "640_famas",
+      "fire_sounds": [
+        "weapons/archi/core/famas-1.wav",
+        "weapons/archi/core/famas-2.wav"
+      ],
+      "reload_sound": "weapons/archi/cs2_famas/clipout.wav",
+      "deploy_sound": "weapons/archi/cs2_famas/draw.wav",
+      "max_speed": 230.0,
+      "zoomed_speed": 230.0,
+      "description": "FAMAS from the ShadowNigth/archi CS2GO weapon set.",
+      "hud": {
+        "weapon_320": {
+          "sprite": "320hud1",
+          "rect": [
+            80,
+            40,
+            80,
+            20
+          ]
+        },
+        "weapon_s_320": {
+          "sprite": "320hud1",
+          "rect": [
+            80,
+            60,
+            80,
+            20
+          ]
+        },
+        "ammo_320": {
+          "sprite": "640hud7",
+          "rect": [
+            0,
+            96,
+            24,
+            24
+          ]
+        },
+        "crosshair_320": {
+          "sprite": "crosshairs",
+          "rect": [
+            24,
+            0,
+            24,
+            24
+          ]
+        },
+        "autoaim_320": {
+          "sprite": "crosshairs",
+          "rect": [
+            0,
+            72,
+            24,
+            24
+          ]
+        },
+        "weapon_640": {
+          "sprite": "640hud2",
+          "rect": [
+            0,
+            45,
+            170,
+            45
+          ]
+        },
+        "weapon_s_640": {
+          "sprite": "640hud5",
+          "rect": [
+            0,
+            45,
+            170,
+            45
+          ]
+        },
+        "ammo_640": {
+          "sprite": "640hud7",
+          "rect": [
+            0,
+            96,
+            24,
+            24
+          ]
+        },
+        "crosshair_640": {
+          "sprite": "crosshairs",
+          "rect": [
+            24,
+            0,
+            24,
+            24
+          ]
+        },
+        "autoaim_640": {
+          "sprite": "crosshairs",
+          "rect": [
+            0,
+            72,
+            24,
+            24
+          ]
+        }
+      },
+      "dryfire_sound": "weapons/archi/cs2_revolver/hammer.wav",
+      "burst": true,
+      "burst_count": 3,
+      "burst_interval": 0.055,
+      "burst_cooldown": 0.42
+    },
+    "galil": {
+      "id": "galil",
+      "cls": "CAK47",
+      "name": "Galil AR",
+      "slot": 1,
+      "buy_cat": 4,
+      "buy_num": 10,
+      "team": "T",
+      "price": 1800,
+      "clip_size": 35,
+      "max_ammo": 90,
+      "ammo_type": "556nato",
+      "damage": 30,
+      "armor_ratio": 1.4,
+      "cycle_time": 0.09,
+      "range": 8192.0,
+      "range_modifier": 0.96,
+      "penetration": 2,
+      "reload_time": 3.033,
+      "automatic": true,
+      "recoil_up": 1.9,
+      "recoil_lat": 0.55,
+      "spread_base": 0.012,
+      "spread_move": 0.085,
+      "v_model": "v_galil",
+      "w_model": "w_galil",
+      "p_model": "p_galil",
+      "vgui": "640_galil",
+      "fire_sounds": [
+        "weapons/archi/core/galil-1.wav",
+        "weapons/archi/core/galil-2.wav"
+      ],
+      "reload_sound": "weapons/archi/cs2_galilar/clipout.wav",
+      "deploy_sound": "weapons/archi/cs2_galilar/draw.wav",
+      "max_speed": 225.0,
+      "zoomed_speed": 221.0,
+      "description": "Galil AR from the ShadowNigth/archi CS2GO weapon set.",
+      "hud": {
+        "weapon_320": {
+          "sprite": "320hud1",
+          "rect": [
+            160,
+            80,
+            80,
+            20
+          ]
+        },
+        "weapon_s_320": {
+          "sprite": "320hud1",
+          "rect": [
+            160,
+            100,
+            80,
+            20
+          ]
+        },
+        "ammo_320": {
+          "sprite": "640hud7",
+          "rect": [
+            72,
+            72,
+            24,
+            24
+          ]
+        },
+        "crosshair_320": {
+          "sprite": "crosshairs",
+          "rect": [
+            24,
+            0,
+            24,
+            24
+          ]
+        },
+        "autoaim_320": {
+          "sprite": "crosshairs",
+          "rect": [
+            0,
+            72,
+            24,
+            24
+          ]
+        },
+        "weapon_640": {
+          "sprite": "640hud10",
+          "rect": [
+            0,
+            0,
+            170,
+            45
+          ]
+        },
+        "weapon_s_640": {
+          "sprite": "640hud11",
+          "rect": [
+            0,
+            0,
+            170,
+            45
+          ]
+        },
+        "ammo_640": {
+          "sprite": "640hud7",
+          "rect": [
+            72,
+            72,
+            24,
+            24
+          ]
+        },
+        "crosshair_640": {
+          "sprite": "crosshairs",
+          "rect": [
+            24,
+            0,
+            24,
+            24
+          ]
+        },
+        "autoaim_640": {
+          "sprite": "crosshairs",
+          "rect": [
+            0,
+            72,
+            24,
+            24
+          ]
+        }
+      },
+      "dryfire_sound": "weapons/archi/cs2_revolver/hammer.wav"
+    },
+    "m4a4": {
+      "id": "m4a4",
+      "cls": "CM4A1",
+      "name": "M4A4",
+      "slot": 1,
+      "buy_cat": 4,
+      "buy_num": 11,
+      "team": "CT",
+      "price": 3100,
+      "clip_size": 30,
+      "max_ammo": 90,
+      "ammo_type": "556nato",
+      "damage": 33,
+      "armor_ratio": 1.4,
+      "cycle_time": 0.09,
+      "range": 8192.0,
+      "range_modifier": 0.97,
+      "penetration": 2,
+      "reload_time": 3.067,
+      "automatic": true,
+      "recoil_up": 1.8,
+      "recoil_lat": 0.5,
+      "spread_base": 0.01,
+      "spread_move": 0.075,
+      "v_model": "v_m4a4",
+      "w_model": "w_m4a4",
+      "p_model": "p_m4a4",
+      "vgui": "640_m4a4",
+      "fire_sounds": [
+        "weapons/archi/core/m4a1_unsil-1.wav",
+        "weapons/archi/core/m4a1_unsil-2.wav"
+      ],
+      "reload_sound": "weapons/archi/cs2_m4a1s/clipout.wav",
+      "deploy_sound": "weapons/archi/cs2_m4a1s/draw.wav",
+      "max_speed": 225.0,
+      "zoomed_speed": 230.0,
+      "description": "M4A4 from the ShadowNigth/archi CS2GO weapon set.",
+      "hud": {
+        "weapon_320": {
+          "sprite": "320hud1",
+          "rect": [
+            80,
+            40,
+            80,
+            20
+          ]
+        },
+        "weapon_s_320": {
+          "sprite": "320hud1",
+          "rect": [
+            80,
+            60,
+            80,
+            20
+          ]
+        },
+        "ammo_320": {
+          "sprite": "640hud7",
+          "rect": [
+            0,
+            96,
+            24,
+            24
+          ]
+        },
+        "crosshair_320": {
+          "sprite": "crosshairs",
+          "rect": [
+            24,
+            0,
+            24,
+            24
+          ]
+        },
+        "autoaim_320": {
+          "sprite": "crosshairs",
+          "rect": [
+            0,
+            72,
+            24,
+            24
+          ]
+        },
+        "weapon_640": {
+          "sprite": "640hud2",
+          "rect": [
+            0,
+            45,
+            170,
+            45
+          ]
+        },
+        "weapon_s_640": {
+          "sprite": "640hud5",
+          "rect": [
+            0,
+            45,
+            170,
+            45
+          ]
+        },
+        "ammo_640": {
+          "sprite": "640hud7",
+          "rect": [
+            0,
+            96,
+            24,
+            24
+          ]
+        },
+        "crosshair_640": {
+          "sprite": "crosshairs",
+          "rect": [
+            24,
+            0,
+            24,
+            24
+          ]
+        },
+        "autoaim_640": {
+          "sprite": "crosshairs",
+          "rect": [
+            0,
+            72,
+            24,
+            24
+          ]
+        }
+      },
+      "dryfire_sound": "weapons/archi/cs2_revolver/hammer.wav"
+    },
+    "mag7": {
+      "id": "mag7",
+      "cls": "CXM1014",
+      "name": "MAG-7",
+      "slot": 1,
+      "buy_cat": 2,
+      "buy_num": 3,
+      "team": "CT",
+      "price": 1300,
+      "clip_size": 5,
+      "max_ammo": 32,
+      "ammo_type": "buckshot",
+      "damage": 24,
+      "pellets": 9,
+      "armor_ratio": 1.0,
+      "cycle_time": 0.85,
+      "range": 3000.0,
+      "range_modifier": 0.72,
+      "penetration": 0,
+      "reload_time": 2.5,
+      "automatic": true,
+      "recoil_up": 4.7,
+      "recoil_lat": 1.1,
+      "spread_base": 0.052,
+      "spread_move": 0.075,
+      "v_model": "v_mag7",
+      "w_model": "w_mag7",
+      "p_model": "p_mag7",
+      "vgui": "640_mag7",
+      "fire_sounds": [
+        "weapons/archi/core/m3-1.wav"
+      ],
+      "reload_sound": "weapons/archi/cs2_ump45/clipout.wav",
+      "deploy_sound": "weapons/archi/cs2_ump45/draw.wav",
+      "max_speed": 225.0,
+      "zoomed_speed": 240.0,
+      "description": "MAG-7 from the ShadowNigth/archi CS2GO weapon set.",
+      "hud": {
+        "weapon_320": {
+          "sprite": "320hud1",
+          "rect": [
+            160,
+            160,
+            80,
+            20
+          ]
+        },
+        "weapon_s_320": {
+          "sprite": "320hud1",
+          "rect": [
+            160,
+            180,
+            80,
+            20
+          ]
+        },
+        "ammo_320": {
+          "sprite": "640hud7",
+          "rect": [
+            0,
+            72,
+            24,
+            24
+          ]
+        },
+        "crosshair_320": {
+          "sprite": "crosshairs",
+          "rect": [
+            24,
+            0,
+            24,
+            24
+          ]
+        },
+        "autoaim_320": {
+          "sprite": "crosshairs",
+          "rect": [
+            0,
+            72,
+            24,
+            24
+          ]
+        },
+        "zoom_320": {
+          "sprite": "ch_sniper",
+          "rect": [
+            0,
+            0,
+            256,
+            256
+          ]
+        },
+        "zoom_autoaim_320": {
+          "sprite": "ch_sniper",
+          "rect": [
+            0,
+            0,
+            256,
+            256
+          ]
+        },
+        "weapon_640": {
+          "sprite": "640hud12",
+          "rect": [
+            0,
+            135,
+            170,
+            45
+          ]
+        },
+        "weapon_s_640": {
+          "sprite": "640hud13",
+          "rect": [
+            0,
+            135,
+            170,
+            45
+          ]
+        },
+        "ammo_640": {
+          "sprite": "640hud7",
+          "rect": [
+            0,
+            72,
+            24,
+            24
+          ]
+        },
+        "crosshair_640": {
+          "sprite": "crosshairs",
+          "rect": [
+            24,
+            0,
+            24,
+            24
+          ]
+        },
+        "autoaim_640": {
+          "sprite": "crosshairs",
+          "rect": [
+            0,
+            72,
+            24,
+            24
+          ]
+        },
+        "zoom_640": {
+          "sprite": "ch_sniper",
+          "rect": [
+            0,
+            0,
+            256,
+            256
+          ]
+        },
+        "zoom_autoaim_640": {
+          "sprite": "ch_sniper",
+          "rect": [
+            0,
+            0,
+            256,
+            256
+          ]
+        }
+      },
+      "insert_sound": "weapons/archi/cs2_xm1014/insertshell_01.wav",
+      "dryfire_sound": "weapons/archi/cs2_revolver/hammer.wav"
+    },
+    "sawedoff": {
+      "id": "sawedoff",
+      "cls": "CM3",
+      "name": "Sawed-Off",
+      "slot": 1,
+      "buy_cat": 2,
+      "buy_num": 4,
+      "team": "T",
+      "price": 1100,
+      "clip_size": 7,
+      "max_ammo": 32,
+      "ammo_type": "buckshot",
+      "damage": 22,
+      "pellets": 8,
+      "armor_ratio": 1.0,
+      "cycle_time": 0.85,
+      "range": 3000.0,
+      "range_modifier": 0.68,
+      "penetration": 0,
+      "reload_time": 3.2,
+      "automatic": true,
+      "shotgun_reload": true,
+      "recoil_up": 5.2,
+      "recoil_lat": 1.3,
+      "spread_base": 0.085,
+      "spread_move": 0.09,
+      "v_model": "v_sawedoff",
+      "w_model": "w_sawedoff",
+      "p_model": "p_sawedoff",
+      "vgui": "640_sawedoff",
+      "fire_sounds": [
+        "weapons/archi/core/m3-1.wav"
+      ],
+      "reload_sound": "",
+      "deploy_sound": "weapons/archi/cs2_sawedoff/draw.wav",
+      "max_speed": 230.0,
+      "zoomed_speed": 230.0,
+      "description": "Sawed-Off from the ShadowNigth/archi CS2GO weapon set.",
+      "hud": {
+        "weapon_320": {
+          "sprite": "320hud1",
+          "rect": [
+            0,
+            120,
+            80,
+            20
+          ]
+        },
+        "weapon_s_320": {
+          "sprite": "320hud1",
+          "rect": [
+            0,
+            140,
+            80,
+            20
+          ]
+        },
+        "ammo_320": {
+          "sprite": "640hud7",
+          "rect": [
+            0,
+            72,
+            24,
+            24
+          ]
+        },
+        "crosshair_320": {
+          "sprite": "crosshairs",
+          "rect": [
+            24,
+            0,
+            24,
+            24
+          ]
+        },
+        "autoaim_320": {
+          "sprite": "crosshairs",
+          "rect": [
+            0,
+            72,
+            24,
+            24
+          ]
+        },
+        "weapon_640": {
+          "sprite": "640hud1",
+          "rect": [
+            0,
+            135,
+            170,
+            45
+          ]
+        },
+        "weapon_s_640": {
+          "sprite": "640hud4",
+          "rect": [
+            0,
+            135,
+            170,
+            45
+          ]
+        },
+        "ammo_640": {
+          "sprite": "640hud7",
+          "rect": [
+            0,
+            72,
+            24,
+            24
+          ]
+        },
+        "crosshair_640": {
+          "sprite": "crosshairs",
+          "rect": [
+            24,
+            0,
+            24,
+            24
+          ]
+        },
+        "autoaim_640": {
+          "sprite": "crosshairs",
+          "rect": [
+            0,
+            72,
+            24,
+            24
+          ]
+        }
+      },
+      "insert_sound": "weapons/archi/cs2_sawedoff/insertshell_01.wav",
+      "pump_sound": "weapons/archi/cs2_sawedoff/pump.wav",
+      "dryfire_sound": "weapons/archi/cs2_revolver/hammer.wav"
+    },
+    "negev": {
+      "id": "negev",
+      "cls": "CM249",
+      "name": "Negev",
+      "slot": 1,
+      "buy_cat": 5,
+      "buy_num": 2,
+      "team": "ANY",
+      "price": 1700,
+      "clip_size": 150,
+      "max_ammo": 200,
+      "ammo_type": "556natobox",
+      "damage": 30,
+      "armor_ratio": 1.5,
+      "cycle_time": 0.075,
+      "range": 8192.0,
+      "range_modifier": 0.97,
+      "penetration": 2,
+      "reload_time": 5.7,
+      "automatic": true,
+      "recoil_up": 2.5,
+      "recoil_lat": 0.9,
+      "spread_base": 0.02,
+      "spread_move": 0.11,
+      "v_model": "v_negev",
+      "w_model": "w_negev",
+      "p_model": "p_negev",
+      "vgui": "640_negev",
+      "fire_sounds": [
+        "weapons/archi/core/m249-1.wav",
+        "weapons/archi/core/m249-2.wav"
+      ],
+      "reload_sound": "weapons/archi/cs2_negev/coverup.wav",
+      "deploy_sound": "weapons/archi/cs2_negev/draw.wav",
+      "max_speed": 195.0,
+      "zoomed_speed": 220.0,
+      "description": "Negev from the ShadowNigth/archi CS2GO weapon set.",
+      "hud": {
+        "weapon_320": {
+          "sprite": "320hud1",
+          "rect": [
+            160,
+            0,
+            80,
+            20
+          ]
+        },
+        "weapon_s_320": {
+          "sprite": "320hud1",
+          "rect": [
+            160,
+            20,
+            80,
+            20
+          ]
+        },
+        "ammo_320": {
+          "sprite": "640hud7",
+          "rect": [
+            0,
+            96,
+            24,
+            24
+          ]
+        },
+        "crosshair_320": {
+          "sprite": "crosshairs",
+          "rect": [
+            24,
+            0,
+            24,
+            24
+          ]
+        },
+        "autoaim_320": {
+          "sprite": "crosshairs",
+          "rect": [
+            0,
+            72,
+            24,
+            24
+          ]
+        },
+        "weapon_640": {
+          "sprite": "640hud3",
+          "rect": [
+            0,
+            0,
+            170,
+            45
+          ]
+        },
+        "weapon_s_640": {
+          "sprite": "640hud6",
+          "rect": [
+            0,
+            0,
+            170,
+            45
+          ]
+        },
+        "ammo_640": {
+          "sprite": "640hud7",
+          "rect": [
+            0,
+            96,
+            24,
+            24
+          ]
+        },
+        "crosshair_640": {
+          "sprite": "crosshairs",
+          "rect": [
+            24,
+            0,
+            24,
+            24
+          ]
+        },
+        "autoaim_640": {
+          "sprite": "crosshairs",
+          "rect": [
+            0,
+            72,
+            24,
+            24
+          ]
+        }
+      },
+      "dryfire_sound": "weapons/archi/cs2_revolver/hammer.wav"
+    },
+    "bizon": {
+      "id": "bizon",
+      "cls": "CUMP45",
+      "name": "PP-Bizon",
+      "slot": 1,
+      "buy_cat": 3,
+      "buy_num": 6,
+      "team": "ANY",
+      "price": 1400,
+      "clip_size": 64,
+      "max_ammo": 120,
+      "ammo_type": "9mm",
+      "damage": 27,
+      "armor_ratio": 1.1,
+      "cycle_time": 0.08,
+      "range": 4096.0,
+      "range_modifier": 0.84,
+      "penetration": 1,
+      "reload_time": 2.467,
+      "automatic": true,
+      "recoil_up": 1.2,
+      "recoil_lat": 0.4,
+      "spread_base": 0.014,
+      "spread_move": 0.055,
+      "v_model": "v_bizon",
+      "w_model": "w_bizon",
+      "p_model": "p_bizon",
+      "vgui": "640_bizon",
+      "fire_sounds": [
+        "weapons/archi/core/ump45-1.wav"
+      ],
+      "reload_sound": "weapons/archi/cs2_ump45/clipout.wav",
+      "deploy_sound": "weapons/archi/cs2_ump45/draw.wav",
+      "max_speed": 250.0,
+      "zoomed_speed": 250.0,
+      "description": "PP-Bizon from the ShadowNigth/archi CS2GO weapon set.",
+      "hud": {
+        "weapon_320": {
+          "sprite": "320hud2",
+          "rect": [
+            160,
+            208,
+            80,
+            20
+          ]
+        },
+        "weapon_s_320": {
+          "sprite": "320hud2",
+          "rect": [
+            160,
+            228,
+            80,
+            20
+          ]
+        },
+        "ammo_320": {
+          "sprite": "640hud7",
+          "rect": [
+            96,
+            72,
+            24,
+            24
+          ]
+        },
+        "crosshair_320": {
+          "sprite": "crosshairs",
+          "rect": [
+            24,
+            0,
+            24,
+            24
+          ]
+        },
+        "autoaim_320": {
+          "sprite": "crosshairs",
+          "rect": [
+            0,
+            72,
+            24,
+            24
+          ]
+        },
+        "weapon_640": {
+          "sprite": "640hud16",
+          "rect": [
+            0,
+            0,
+            170,
+            45
+          ]
+        },
+        "weapon_s_640": {
+          "sprite": "640hud16",
+          "rect": [
+            0,
+            0,
+            170,
+            45
+          ]
+        },
+        "ammo_640": {
+          "sprite": "640hud7",
+          "rect": [
+            96,
+            72,
+            24,
+            24
+          ]
+        },
+        "crosshair_640": {
+          "sprite": "crosshairs",
+          "rect": [
+            24,
+            0,
+            24,
+            24
+          ]
+        },
+        "autoaim_640": {
+          "sprite": "crosshairs",
+          "rect": [
+            0,
+            72,
+            24,
+            24
+          ]
+        }
+      },
+      "dryfire_sound": "weapons/archi/cs2_revolver/hammer.wav"
+    },
+    "mp7": {
+      "id": "mp7",
+      "cls": "CMP5N",
+      "name": "MP7",
+      "slot": 1,
+      "buy_cat": 3,
+      "buy_num": 7,
+      "team": "ANY",
+      "price": 1500,
+      "clip_size": 30,
+      "max_ammo": 120,
+      "ammo_type": "9mm",
+      "damage": 25,
+      "armor_ratio": 1.15,
+      "cycle_time": 0.08,
+      "range": 4096.0,
+      "range_modifier": 0.84,
+      "penetration": 1,
+      "reload_time": 3.167,
+      "automatic": true,
+      "recoil_up": 1.25,
+      "recoil_lat": 0.42,
+      "spread_base": 0.011,
+      "spread_move": 0.05,
+      "v_model": "v_mp7",
+      "w_model": "w_mp7",
+      "p_model": "p_mp7",
+      "vgui": "640_mp7",
+      "fire_sounds": [
+        "weapons/archi/core/mp5-1.wav",
+        "weapons/archi/core/mp5-2.wav"
+      ],
+      "reload_sound": "weapons/archi/cs2_mp7/clipout.wav",
+      "deploy_sound": "weapons/archi/cs2_mp7/draw.wav",
+      "class_key": "mp5",
+      "max_speed": 250.0,
+      "zoomed_speed": 250.0,
+      "description": "MP7 from the ShadowNigth/archi CS2GO weapon set.",
+      "hud": {
+        "weapon_320": {
+          "sprite": "320hud1",
+          "rect": [
+            0,
+            160,
+            80,
+            20
+          ]
+        },
+        "weapon_s_320": {
+          "sprite": "320hud1",
+          "rect": [
+            0,
+            180,
+            80,
+            20
+          ]
+        },
+        "ammo_320": {
+          "sprite": "640hud7",
+          "rect": [
+            48,
+            72,
+            24,
+            24
+          ]
+        },
+        "crosshair_320": {
+          "sprite": "crosshairs",
+          "rect": [
+            24,
+            0,
+            24,
+            24
+          ]
+        },
+        "autoaim_320": {
+          "sprite": "crosshairs",
+          "rect": [
+            0,
+            72,
+            24,
+            24
+          ]
+        },
+        "weapon_640": {
+          "sprite": "640hud1",
+          "rect": [
+            0,
+            180,
+            170,
+            45
+          ]
+        },
+        "weapon_s_640": {
+          "sprite": "640hud4",
+          "rect": [
+            0,
+            180,
+            170,
+            45
+          ]
+        },
+        "ammo_640": {
+          "sprite": "640hud7",
+          "rect": [
+            48,
+            72,
+            24,
+            24
+          ]
+        },
+        "crosshair_640": {
+          "sprite": "crosshairs",
+          "rect": [
+            24,
+            0,
+            24,
+            24
+          ]
+        },
+        "autoaim_640": {
+          "sprite": "crosshairs",
+          "rect": [
+            0,
+            72,
+            24,
+            24
+          ]
+        }
+      },
+      "dryfire_sound": "weapons/archi/cs2_revolver/hammer.wav"
+    },
+    "taser": {
+      "id": "taser",
+      "cls": "CDEAGLE",
+      "name": "Zeus x27",
+      "slot": 4,
+      "buy_cat": 9,
+      "buy_num": 1,
+      "team": "ANY",
+      "price": 200,
+      "clip_size": 1,
+      "max_ammo": 0,
+      "ammo_type": "none",
+      "damage": 200,
+      "armor_ratio": 2.0,
+      "cycle_time": 1.0,
+      "range": 180.0,
+      "range_modifier": 1.0,
+      "penetration": 0,
+      "reload_time": 2.2,
+      "automatic": false,
+      "recoil_up": 0.4,
+      "recoil_lat": 0.1,
+      "spread_base": 0.0,
+      "spread_move": 0.0,
+      "v_model": "v_taser",
+      "w_model": "w_taser",
+      "p_model": "p_taser",
+      "vgui": "640_taser",
+      "fire_sounds": [
+        "weapons/archi/cs2_taser/taser_charging.wav"
+      ],
+      "reload_sound": "",
+      "deploy_sound": "weapons/archi/cs2_taser/taser_charging.wav",
+      "max_speed": 245.0,
+      "zoomed_speed": 250.0,
+      "description": "Zeus x27 from the ShadowNigth/archi CS2GO weapon set.",
+      "hud": {
+        "weapon_320": {
+          "sprite": "320hud2",
+          "rect": [
+            0,
+            128,
+            80,
+            20
+          ]
+        },
+        "weapon_s_320": {
+          "sprite": "320hud2",
+          "rect": [
+            0,
+            148,
+            80,
+            20
+          ]
+        },
+        "ammo_320": {
+          "sprite": "640hud7",
+          "rect": [
+            24,
+            72,
+            24,
+            24
+          ]
+        },
+        "crosshair_320": {
+          "sprite": "crosshairs",
+          "rect": [
+            24,
+            0,
+            24,
+            24
+          ]
+        },
+        "autoaim_320": {
+          "sprite": "crosshairs",
+          "rect": [
+            0,
+            72,
+            24,
+            24
+          ]
+        },
+        "weapon_640": {
+          "sprite": "640hud10",
+          "rect": [
+            0,
+            90,
+            170,
+            45
+          ]
+        },
+        "weapon_s_640": {
+          "sprite": "640hud11",
+          "rect": [
+            0,
+            90,
+            170,
+            45
+          ]
+        },
+        "ammo_640": {
+          "sprite": "640hud7",
+          "rect": [
+            24,
+            72,
+            24,
+            24
+          ]
+        },
+        "crosshair_640": {
+          "sprite": "crosshairs",
+          "rect": [
+            24,
+            0,
+            24,
+            24
+          ]
+        },
+        "autoaim_640": {
+          "sprite": "crosshairs",
+          "rect": [
+            0,
+            72,
+            24,
+            24
+          ]
+        }
+      },
+      "dryfire_sound": "weapons/archi/cs2_revolver/hammer.wav"
+    },
+    "decoy": {
+      "id": "decoy",
+      "cls": "CFlashbang",
+      "name": "Decoy Grenade",
+      "slot": 4,
+      "buy_cat": 8,
+      "buy_num": 6,
+      "team": "ANY",
+      "price": 50,
+      "clip_size": 1,
+      "max_ammo": 1,
+      "ammo_type": "decoy",
+      "damage": 0,
+      "armor_ratio": 1.0,
+      "cycle_time": 0.8,
+      "range": 1500.0,
+      "range_modifier": 1.0,
+      "penetration": 0,
+      "reload_time": 0.0,
+      "automatic": false,
+      "grenade": true,
+      "v_model": "v_decoy",
+      "w_model": "w_decoy",
+      "p_model": "p_decoy",
+      "vgui": "640_decoy",
+      "fire_sounds": [],
+      "explode_sounds": [
+        "weapons/archi/core/sg_explode.wav"
+      ],
+      "bounce_sounds": [
+        "weapons/archi/cs2_flashbang/hit1.wav"
+      ],
+      "max_speed": 245.0,
+      "zoomed_speed": 250.0,
+      "description": "Decoy Grenade from the ShadowNigth/archi CS2GO weapon set.",
+      "hud": {
+        "weapon_320": {
+          "sprite": "320hud1",
+          "rect": [
+            160,
+            40,
+            80,
+            20
+          ]
+        },
+        "weapon_s_320": {
+          "sprite": "320hud1",
+          "rect": [
+            160,
+            60,
+            80,
+            20
+          ]
+        },
+        "ammo_320": {
+          "sprite": "640hud7",
+          "rect": [
+            48,
+            96,
+            24,
+            24
+          ]
+        },
+        "crosshair_320": {
+          "sprite": "crosshairs",
+          "rect": [
+            24,
+            0,
+            24,
+            24
+          ]
+        },
+        "autoaim_320": {
+          "sprite": "crosshairs",
+          "rect": [
+            0,
+            72,
+            24,
+            24
+          ]
+        },
+        "weapon_640": {
+          "sprite": "640hud3",
+          "rect": [
+            0,
+            90,
+            170,
+            45
+          ]
+        },
+        "weapon_s_640": {
+          "sprite": "640hud6",
+          "rect": [
+            0,
+            90,
+            170,
+            45
+          ]
+        },
+        "ammo_640": {
+          "sprite": "640hud7",
+          "rect": [
+            48,
+            96,
+            24,
+            24
+          ]
+        },
+        "crosshair_640": {
+          "sprite": "crosshairs",
+          "rect": [
+            24,
+            0,
+            24,
+            24
+          ]
+        },
+        "autoaim_640": {
+          "sprite": "crosshairs",
+          "rect": [
+            0,
+            72,
+            24,
+            24
+          ]
+        }
+      },
+      "deploy_sound": "weapons/archi/cs2_hegren/he_draw.wav",
+      "pinpull_sound": "weapons/archi/cs2_hegren/pinpull_start.wav",
+      "throw_sound": "weapons/archi/cs2_hegren/grenade_throw.wav",
+      "bounce_sound": "weapons/archi/cs2_hegren/he_bounce-1.wav"
+    },
+    "molotov": {
+      "id": "molotov",
+      "cls": "CHEGrenade",
+      "name": "Molotov",
+      "slot": 4,
+      "buy_cat": 8,
+      "buy_num": 7,
+      "team": "T",
+      "price": 400,
+      "clip_size": 1,
+      "max_ammo": 1,
+      "ammo_type": "molotov",
+      "damage": 0,
+      "armor_ratio": 1.2,
+      "cycle_time": 0.8,
+      "range": 350.0,
+      "range_modifier": 1.0,
+      "penetration": 0,
+      "reload_time": 0.0,
+      "automatic": false,
+      "grenade": true,
+      "v_model": "v_molotov",
+      "w_model": "w_molotov",
+      "p_model": "p_molotov",
+      "vgui": "640_molotov",
+      "fire_sounds": [],
+      "explode_sounds": [
+        "weapons/archi/core/hegrenade-1.wav"
+      ],
+      "bounce_sounds": [
+        "weapons/archi/cs2_hegren/he_bounce-1.wav"
+      ],
+      "max_speed": 245.0,
+      "zoomed_speed": 260.0,
+      "description": "Molotov from the ShadowNigth/archi CS2GO weapon set.",
+      "hud": {
+        "weapon_320": {
+          "sprite": "320hud1",
+          "rect": [
+            80,
+            200,
+            80,
+            20
+          ]
+        },
+        "weapon_s_320": {
+          "sprite": "320hud1",
+          "rect": [
+            80,
+            220,
+            80,
+            20
+          ]
+        },
+        "ammo_320": {
+          "sprite": "640hud7",
+          "rect": [
+            72,
+            96,
+            24,
+            24
+          ]
+        },
+        "crosshair_320": {
+          "sprite": "crosshairs",
+          "rect": [
+            24,
+            0,
+            24,
+            24
+          ]
+        },
+        "autoaim_320": {
+          "sprite": "crosshairs",
+          "rect": [
+            0,
+            72,
+            24,
+            24
+          ]
+        },
+        "weapon_640": {
+          "sprite": "640hud3",
+          "rect": [
+            0,
+            45,
+            170,
+            45
+          ]
+        },
+        "weapon_s_640": {
+          "sprite": "640hud6",
+          "rect": [
+            0,
+            45,
+            170,
+            45
+          ]
+        },
+        "ammo_640": {
+          "sprite": "640hud7",
+          "rect": [
+            72,
+            96,
+            24,
+            24
+          ]
+        },
+        "crosshair_640": {
+          "sprite": "crosshairs",
+          "rect": [
+            24,
+            0,
+            24,
+            24
+          ]
+        },
+        "autoaim_640": {
+          "sprite": "crosshairs",
+          "rect": [
+            0,
+            72,
+            24,
+            24
+          ]
+        }
+      },
+      "deploy_sound": "weapons/archi/cs2_hegren/he_draw.wav",
+      "pinpull_sound": "weapons/archi/cs2_hegren/pinpull.wav",
+      "throw_sound": "weapons/archi/cs2_hegren/grenade_throw.wav",
+      "bounce_sound": "weapons/archi/cs2_hegren/he_bounce-1.wav"
+    },
+    "incendiary": {
+      "id": "incendiary",
+      "cls": "CHEGrenade",
+      "name": "Incendiary Grenade",
+      "slot": 4,
+      "buy_cat": 8,
+      "buy_num": 8,
+      "team": "CT",
+      "price": 600,
+      "clip_size": 1,
+      "max_ammo": 1,
+      "ammo_type": "incendiary",
+      "damage": 0,
+      "armor_ratio": 1.2,
+      "cycle_time": 0.8,
+      "range": 350.0,
+      "range_modifier": 1.0,
+      "penetration": 0,
+      "reload_time": 0.0,
+      "automatic": false,
+      "grenade": true,
+      "v_model": "v_incendiary",
+      "w_model": "w_incendiary",
+      "p_model": "p_incendiary",
+      "vgui": "640_incendiary",
+      "fire_sounds": [],
+      "explode_sounds": [
+        "weapons/archi/core/hegrenade-1.wav"
+      ],
+      "bounce_sounds": [
+        "weapons/archi/cs2_hegren/he_bounce-1.wav"
+      ],
+      "max_speed": 245.0,
+      "zoomed_speed": 260.0,
+      "description": "Incendiary Grenade from the ShadowNigth/archi CS2GO weapon set.",
+      "hud": {
+        "weapon_320": {
+          "sprite": "320hud1",
+          "rect": [
+            80,
+            200,
+            80,
+            20
+          ]
+        },
+        "weapon_s_320": {
+          "sprite": "320hud1",
+          "rect": [
+            80,
+            220,
+            80,
+            20
+          ]
+        },
+        "ammo_320": {
+          "sprite": "640hud7",
+          "rect": [
+            72,
+            96,
+            24,
+            24
+          ]
+        },
+        "crosshair_320": {
+          "sprite": "crosshairs",
+          "rect": [
+            24,
+            0,
+            24,
+            24
+          ]
+        },
+        "autoaim_320": {
+          "sprite": "crosshairs",
+          "rect": [
+            0,
+            72,
+            24,
+            24
+          ]
+        },
+        "weapon_640": {
+          "sprite": "640hud3",
+          "rect": [
+            0,
+            45,
+            170,
+            45
+          ]
+        },
+        "weapon_s_640": {
+          "sprite": "640hud6",
+          "rect": [
+            0,
+            45,
+            170,
+            45
+          ]
+        },
+        "ammo_640": {
+          "sprite": "640hud7",
+          "rect": [
+            72,
+            96,
+            24,
+            24
+          ]
+        },
+        "crosshair_640": {
+          "sprite": "crosshairs",
+          "rect": [
+            24,
+            0,
+            24,
+            24
+          ]
+        },
+        "autoaim_640": {
+          "sprite": "crosshairs",
+          "rect": [
+            0,
+            72,
+            24,
+            24
+          ]
+        }
+      },
+      "deploy_sound": "weapons/archi/cs2_hegren/he_draw.wav",
+      "pinpull_sound": "weapons/archi/cs2_hegren/pinpull_start.wav",
+      "throw_sound": "weapons/archi/cs2_hegren/grenade_throw.wav",
+      "bounce_sound": "weapons/archi/cs2_hegren/he_bounce-1.wav"
     }
   },
   "ammo": {

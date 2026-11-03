@@ -1,6 +1,6 @@
 # Counter-Strike 1.5 Retail — Remake en Godot 4 (GDScript)
 
-Remake jugable de **Counter-Strike 1.5 Retail** construido íntegramente en **Godot 4.x (GDScript)**, extrayendo y convirtiendo directamente todos los mapas, texturas, lightmaps, modelos animados, sprites, HUD, tarjetas VGUI, sonidos y constantes binarias desde [`Ch0wW/counterstrike-betas` (`cs15_retail`)](https://github.com/Ch0wW/counterstrike-betas/tree/cs15_retail).
+Remake jugable de **Counter-Strike 1.5 Retail** construido íntegramente en **Godot 4.x (GDScript)**. Los mapas, texturas de mundo, personajes, HUD, radio y constantes clásicas proceden de [`Ch0wW/counterstrike-betas` (`cs15_retail`)](https://github.com/Ch0wW/counterstrike-betas/tree/cs15_retail). Los **43 slots de armas** usan modelos, texturas, iconos y sonidos convertidos desde [`ShadowNigth/archi`](https://github.com/ShadowNigth/archi), con sus animaciones y eventos.
 
 ---
 
@@ -24,9 +24,9 @@ Todo el contenido de `cstrike/` fue procesado mediante la suite de ingeniería i
 | **Mapas 3D + Lightmaps** | `maps/*.bsp` (GoldSrc BSP v30 + 23 WAD3) | `assets/maps/*.glb` + `*_lm.png` + `data/maps/*.json` | **26 / 26 mapas** |
 | **Grafo de Navegación IA** | Hull 1 (`CLIPNODES`) de cada `.bsp` | `waypoints` A* en `data/maps/*.json` | **26 grafos** (230–340 nodos/mapa) |
 | **Texturas de Mundo + Cielos** | `*.wad` (`de_aztec`, `cs_dust`, `halflife`…) + `gfx/env/*.tga` | `assets/textures/world/*.png` (`{` alpha Fence) + `sky/*.png` | **2,346 texturas + 109 caras skybox** |
-| **Modelos 3D Animados** | `models/v_*.mdl`, `w_*.mdl`, `player/*/*.mdl` (StudioMDL v10) | `assets/models/**/*.glb` (esqueleto + animaciones + winding CCW) | **108 modelos `.glb`** |
-| **Estadísticas Binarias Armas** | desensamblado x86 de `dlls/cs_i386.so` (`GetMaxSpeed`, daño, ciclo) | `data/weapons.json` | **27 armas + equipamiento** |
-| **Audio Espacial & Radio** | `sound/weapons`, `player`, `radio`, `hostage`, `UI` | `assets/sounds/**/*.wav` (PCM 16-bit limpio) | **379 archivos `.wav`** |
+| **Modelos 3D Animados** | StudioMDL GoldSrc + MDL/VTF de `ShadowNigth/archi` | `assets/models/**/*.glb` (esqueleto + animaciones + winding CCW) | **184 modelos `.glb`** |
+| **Arsenal** | 27 slots clásicos reemplazados + 16 armas/utilidades de archi | `data/weapons.json` | **43 slots + equipamiento** |
+| **Audio Espacial & Radio** | `cs15_retail` + 299 WAV originales de archi | `assets/sounds/**/*.wav` (PCM 16-bit limpio) | **843 archivos `.wav`** |
 | **Sprites HUD & VGUI** | `sprites/*.spr`, `hud.txt`, `gfx/vgui/*.tga`, `overviews/*.bmp` | `assets/sprites/*.png`, `assets/ui/**`, `data/hud_sprites.json` | **88 sprites + 42 VGUI + 26 radares** |
 
 ### Los 26 Mapas Clásicos Incluidos
@@ -39,12 +39,14 @@ Todo el contenido de `cstrike/` fue procesado mediante la suite de ingeniería i
 ## Mecánicas de Juego Implementadas
 
 - **Física GoldSrc Auténtica (`CSActor.gd`)**: Aceleración terrestre y strafe aéreo estilo GoldSrc, velocidades máximas por arma extraídas de `cs_i386.so` (`260` Scout, `250` Cuchillo/Pistolas, `221` AK-47, `210` AWP), agachado (`Ctrl`), caminata silenciosa (`Shift`), escaleras (`func_ladder`) y sonidos de pisadas por tipo de superficie (`materials.txt`).
-- **Arsenal Completo de CS 1.5 (`WeaponController.gd`)**:
+- **Arsenal clásico reemplazado por archi + 16 adiciones (`WeaponController.gd`)**:
   - **Pistolas**: USP `.45` (con silenciador desmontable `Mouse2`), Glock 18 (modo ráfaga de 3 disparos `Mouse2`), Desert Eagle, P228, Dual Berettas, Five-Seven.
   - **Escopetas**: M3 Super 90 y XM1014 (recarga cartucho por cartucho interrumpible al disparar).
   - **SMGs**: MP5 Navy, TMP silenciada, P90, MAC-10, UMP-45.
   - **Rifles y Francotiradores**: AK-47, Colt M4A1 Carbine (con silenciador desmontable `Mouse2`), SG-552, Steyr AUG, Scout, **AWP Magnum** (mira telescópica doble zoom), G3SG1, SG-550.
   - **Pesadas / Tácticas**: M249 Para, Cuchillo (corte rápido y **puñalada por la espalda de 195 de daño**), C4 Plastic Explosive, HE Grenade, Flashbang (ceguera direccional en pantalla y a Bots), Smoke Grenade (bloquea visión de Bots IA) y Wallbanging en paredes delgadas.
+  - **Nuevas armas de archi**: P2000, CZ75-Auto, R8 Revolver (martillo y fuego alternativo), Tec-9, FAMAS (ráfaga), Galil AR, M4A4, MAG-7 (cargador), Sawed-Off (cartuchos), Negev, PP-Bizon y MP7.
+  - **Nuevas utilidades**: Zeus x27 de una carga, Decoy con señuelo sonoro y explosión final, Molotov e Incendiaria con fuego persistente. Todos los slots incluyen sus GLB V/P/W, iconos y animaciones/sonidos de archi.
 - **Economía, Rondas y Objetivos (`RoundManager.gd`, `BuyMenu.gd`)**:
   - Freeze time, Buy time en `func_buyzone`, menú VGUI clásico con previsualización de armas y **atajos rápidos clásicos** (ej. `B-4-1` AK-47, `B-4-3` M4A1, `B-4-6` AWP, `B-8-2` Kevlar+Casco, `,` y `.` para munición primaria/secundaria).
   - Plantado y desactivación del **C4** (`de_*`, 5s con Defuse Kit / 10s sin Kit), rescate de **Rehenes** (`cs_*` con `E`) y escolta de **VIP** (`as_*`).
@@ -101,4 +103,8 @@ Para volver a ejecutar la extracción desde un clon local de `cs15_retail` o val
 ```bash
 python3 tools/extract_cs15.py --src /ruta/a/counterstrike-betas/cstrike --out .
 python3 tools/verify_godot_project.py
+
+# Después de la primera importación, pruebas reales de recursos y mecánicas:
+godot --headless --path . res://tests/ArchiWeaponRuntimeTest.tscn
+godot --headless --path . --fixed-fps 60 res://tests/ArchiGameWorldSmokeTest.tscn
 ```

@@ -50,7 +50,7 @@ func _ready() -> void:
 	_led_light.visible = false
 	add_child(_led_light)
 
-	AudioManager.play_3d("weapons/c4_plant.wav", global_position, 2.0, 48.0, 1.0, 32.0, "T")
+	AudioManager.play_3d("weapons/archi/cs2_c4/c4_initiate.wav", global_position, 2.0, 48.0, 1.0, 32.0, "T")
 
 
 func begin_or_continue_defuse(actor: Node3D, delta: float) -> float:
@@ -60,12 +60,12 @@ func begin_or_continue_defuse(actor: Node3D, delta: float) -> float:
 		defuser_actor = actor
 		defuse_progress = 0.0
 		defuse_required = 5.0 if bool(actor.get("has_defuser")) else 10.0
-		AudioManager.play_3d("weapons/c4_disarm.wav", global_position, 0.0, 28.0, 1.0, 20.0, "CT")
+		AudioManager.play_3d("weapons/archi/cs2_c4/key_press1.wav", global_position, 0.0, 28.0, 1.0, 20.0, "CT")
 
 	defuse_progress += delta
 	if defuse_progress >= defuse_required:
 		_defused = true
-		AudioManager.play_3d("weapons/c4_disarmed.wav", global_position, 2.0, 40.0)
+		AudioManager.play_3d("weapons/archi/cs2_c4/c4_initiate.wav", global_position, 2.0, 40.0)
 		RoundManager.notify_bomb_defused(actor)
 		queue_free()
 		return 1.0
@@ -105,7 +105,7 @@ func _process(delta: float) -> void:
 	if _beep_timer <= 0.0:
 		var ratio := clampf(1.0 - (time_left / maxf(1.0, GameData.c4_timer)), 0.0, 1.0)
 		var beep_idx := clampi(1 + int(ratio * 4.99), 1, 5)
-		AudioManager.play_3d("weapons/c4_beep%d.wav" % beep_idx, global_position, 1.5, 65.0, 1.0, 45.0, "T")
+		AudioManager.play_3d("weapons/archi/cs2_c4/key_press%d.wav" % beep_idx, global_position, 1.5, 65.0, 1.0, 45.0, "T")
 		_beep_timer = lerpf(1.45, 0.16, ratio * ratio)
 		if _led_sprite:
 			_led_sprite.visible = true
@@ -117,7 +117,7 @@ func _process(delta: float) -> void:
 
 func _detonate() -> void:
 	_exploded = true
-	AudioManager.play_3d("weapons/c4_explode1.wav", global_position, 6.0, 150.0)
+	AudioManager.play_3d("weapons/archi/core/hegrenade-1.wav", global_position, 6.0, 150.0)
 	GrenadeProjectile.spawn_explosion_fx(get_parent(), global_position, 2.15)
 
 	# Radial blast damage (CS 1.5 C4 radius ~54m = 1750 GoldSrc units)
