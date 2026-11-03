@@ -80,9 +80,10 @@ func _run() -> void:
 		await get_tree().process_frame
 	_expect(RoundManager.state == RoundManager.State.LIVE, "Freeze time finishes and the bot round goes live")
 	_expect(RoundManager.actors.size() == 10 and is_instance_valid(_world.player), "The live scene retains its real actors")
+	await _test_live_incendiary_spread()
 
 	if _failures.is_empty():
-		print("[ARCHI GAMEWORLD TEST] PASS: %d checks; 16 purchases, animated buy preview, 9 bots and 600 live-round frames." % _checks)
+		print("[ARCHI GAMEWORLD TEST] PASS: %d checks; 16 purchases, animated buy preview, 9 bots, 600 live-round frames and physical incendiary spread." % _checks)
 	else:
 		print("[ARCHI GAMEWORLD TEST] FAIL: %d of %d checks failed." % [_failures.size(), _checks])
 	_stop_audio()
@@ -92,6 +93,32 @@ func _run() -> void:
 	await get_tree().process_frame
 	await get_tree().process_frame
 	get_tree().quit(0 if _failures.is_empty() else 1)
+
+
+func _test_live_incendiary_spread() -> void:
+	var player := _world.player
+	var space := player.get_world_3d().direct_space_state
+	var query := PhysicsRayQueryParameters3D.create(
+		player.global_position + Vector3.UP * 0.45,
+		player.global_position - Vector3.UP * 5.0
+	)
+	query.collision_mask = 1
+	var hit: Dictionary = space.intersect_ray(query)
+	_expect(not hit.is_empty(), "Incendiary live test finds real de_dust2 floor geometry")
+	if hit.is_empty():
+		return
+	var area := IncendiaryArea.new()
+	_world.add_child(area)
+	area.global_position = (hit["position"] as Vector3) + Vector3.UP * 0.025
+	area.setup_fire(player, "incendiary")
+	area._tick = 999.0 # This smoke check isolates propagation; the unit suite covers damage.
+	_expect(area._patches.size() == 1, "Live incendiary starts as a single ignition patch")
+	for _frame in range(75):
+		await get_tree().process_frame
+	_expect(is_instance_valid(area) and area._patches.size() > 3 and area._current_radius > 1.0,
+		"Incendiary expands across the real map with staggered physical patches")
+	if is_instance_valid(area):
+		area.queue_free()
 
 
 func _place_in_buyzone(team: String) -> void:

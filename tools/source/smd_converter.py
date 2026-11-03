@@ -180,10 +180,32 @@ class GlbWriter:
         return len(self.accessors) - 1
 
 
-def encode_texture(img: Image.Image, max_size=1024, jpeg=True):
-    img = img.convert("RGB") if jpeg else img.convert("RGBA")
+def encode_texture(img: Image.Image, max_size=1024, jpeg=True, masked_tint=None):
+    """Encode a base texture, optionally baking Source's alpha-masked $color2.
+
+    Source multiplies the linear base colour by ``lerp(1, color2, base_alpha)``
+    when $blendtintbybasealpha is enabled with the default tint-replacement 0.
+    glTF has no equivalent base-colour
+    operation, so bake that operation after resizing and before an opaque JPEG
+    discards the mask.  Perform the multiply in linear space, not on sRGB bytes.
+    """
+    img = img.convert("RGBA" if masked_tint is not None or not jpeg else "RGB")
     if max(img.size) > max_size:
         img = img.resize((max_size, max_size * img.size[1] // img.size[0]), Image.LANCZOS)
+    if masked_tint is not None:
+        pixels = np.asarray(img, dtype=np.float32) / 255.0
+        srgb = pixels[..., :3]
+        linear = np.where(srgb <= 0.04045, srgb / 12.92,
+                          ((srgb + 0.055) / 1.055) ** 2.4)
+        tint = np.asarray(masked_tint, dtype=np.float32).reshape(1, 1, 3)
+        linear *= 1.0 + (tint - 1.0) * pixels[..., 3:4]
+        srgb = np.where(linear <= 0.0031308, linear * 12.92,
+                        1.055 * np.maximum(linear, 0.0) ** (1.0 / 2.4) - 0.055)
+        if jpeg:
+            img = Image.fromarray(np.uint8(np.clip(srgb, 0.0, 1.0) * 255.0 + 0.5), "RGB")
+        else:
+            pixels[..., :3] = srgb
+            img = Image.fromarray(np.uint8(np.clip(pixels, 0.0, 1.0) * 255.0 + 0.5), "RGBA")
     buf = io.BytesIO()
     if jpeg:
         img.save(buf, "JPEG", quality=88, optimize=True)

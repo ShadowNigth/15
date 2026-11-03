@@ -255,11 +255,26 @@ class ArchiMaterials:
         additive = (self.values(vmt, "$additive") or "0").strip("\"'") not in ("0", "0.0", "")
         nocull = (self.values(vmt, "$nocull") or "0").strip("\"'") not in ("0", "0.0", "")
         alpha = self.values(vmt, "$alpha")
+        blend_tint = (self.values(vmt, "$blendtintbybasealpha") or "0").strip("\"'") not in ("0", "0.0", "")
         use_alpha = alphatest or translucent or additive
+        colour2 = re.search(r"(?im)^\s*[\"']?\$color2[\"']?\s+[\"']?\[([^]]+)\]", vmt)
+        tint_rgb = None
+        if colour2:
+            try:
+                values = [float(value) for value in colour2.group(1).replace(",", " ").split()[:3]]
+                if len(values) == 3:
+                    tint_rgb = [max(0.0, min(1.0, value)) for value in values]
+            except ValueError:
+                pass
         from srctools.vtf import VTF
         with open(path, "rb") as handle:
             pil = VTF.read(handle).get().to_PIL()
-        result = {"name": material, "image": encode_texture(pil, max_size, not use_alpha)}
+        # The alpha in most CS2 weapon _c textures is a tint mask, not opacity.
+        # Bake that mask before the opaque JPEG conversion; otherwise bright
+        # untinted islands look like a second camouflage texture on the weapon.
+        masked_tint = tint_rgb if tint_rgb is not None and blend_tint else None
+        result = {"name": material,
+                  "image": encode_texture(pil, max_size, not use_alpha, masked_tint)}
         if use_alpha:
             result["alpha_mode"] = "MASK" if alphatest and not (translucent or additive) else "BLEND"
             if result["alpha_mode"] == "MASK":
@@ -274,19 +289,11 @@ class ArchiMaterials:
                 result["color"] = [1.0, 1.0, 1.0, float(alpha)]
             except ValueError:
                 pass
-        # In this pack an unmasked $color2 is a genuine whole-surface tint
-        # (black scope lenses and the Molotov's green liquid).  When
-        # $blendtintbybasealpha is present it is instead an alpha-masked phong
-        # tint and must not darken the entire base-color texture in glTF.
-        colour2 = re.search(r"(?im)^\s*[\"']?\$color2[\"']?\s+[\"']?\[([^]]+)\]", vmt)
-        if colour2 and not self.values(vmt, "$blendtintbybasealpha"):
-            try:
-                rgb = [float(value) for value in colour2.group(1).replace(",", " ").split()[:3]]
-                if len(rgb) == 3:
-                    alpha_value = result.get("color", [1, 1, 1, 1])[3]
-                    result["color"] = [max(0.0, min(1.0, value)) for value in rgb] + [alpha_value]
-            except ValueError:
-                pass
+        # An unmasked $color2 is a genuine whole-surface glTF colour factor
+        # (black scope lenses and the Molotov's green liquid).
+        if tint_rgb is not None and not blend_tint:
+            alpha_value = result.get("color", [1, 1, 1, 1])[3]
+            result["color"] = tint_rgb + [alpha_value]
         self.cache[key] = result
         return result
 

@@ -47,6 +47,8 @@ Todo el contenido de `cstrike/` fue procesado mediante la suite de ingeniería i
   - **Pesadas / Tácticas**: M249 Para, Cuchillo (corte rápido y **puñalada por la espalda de 195 de daño**), C4 Plastic Explosive, HE Grenade, Flashbang (ceguera direccional en pantalla y a Bots), Smoke Grenade (bloquea visión de Bots IA) y Wallbanging en paredes delgadas.
   - **Nuevas armas de archi**: P2000, CZ75-Auto, R8 Revolver (martillo y fuego alternativo), Tec-9, FAMAS (ráfaga), Galil AR, M4A4, MAG-7 (cargador), Sawed-Off (cartuchos), Negev, PP-Bizon y MP7.
   - **Nuevas utilidades**: Zeus x27 de una carga, Decoy con señuelo sonoro y explosión final, Molotov e Incendiaria con fuego persistente. Todos los slots incluyen sus GLB V/P/W, iconos y animaciones/sonidos de archi.
+  - **Fuego con propagación física**: Molotov e Incendiaria encienden focos escalonados sobre el piso, se expanden alrededor de obstáculos y aplican daño sólo dentro de las llamas activas. Incluyen llamas por capas, brasas, humo, quemaduras y luz parpadeante.
+  - **Materiales y granadas corregidos**: las máscaras de tinte CS2 se conservan en los modelos V/P/W, las lentes mantienen su color negro también en los drops y todas las granadas lanzadas/soltadas usan una escala visual moderada y consistente (`0.90`).
 - **Economía, Rondas y Objetivos (`RoundManager.gd`, `BuyMenu.gd`)**:
   - Freeze time, Buy time en `func_buyzone`, menú VGUI clásico con previsualización de armas y **atajos rápidos clásicos** (ej. `B-4-1` AK-47, `B-4-3` M4A1, `B-4-6` AWP, `B-8-2` Kevlar+Casco, `,` y `.` para munición primaria/secundaria).
   - Plantado y desactivación del **C4** (`de_*`, 5s con Defuse Kit / 10s sin Kit), rescate de **Rehenes** (`cs_*` con `E`) y escolta de **VIP** (`as_*`).

@@ -3,6 +3,9 @@ extends Node
 ## Loads all extracted JSON metadata from res://data/ and caches textures, models, and HUD atlases.
 
 const SCALE: float = 1.0 / 32.0
+## Shared world-model scale for dropped and thrown grenades.  Keep both paths
+## identical so a grenade does not visibly shrink when it leaves the player's hand.
+const GRENADE_WORLD_SCALE: float = 0.90
 
 var weapons: Dictionary = {}
 var ammo_types: Dictionary = {}
@@ -127,22 +130,26 @@ func get_styled_model_material(orig: Material, mode: String) -> Material:
 	dup.diffuse_mode = BaseMaterial3D.DIFFUSE_LAMBERT_WRAP
 	dup.roughness = 0.92
 	dup.metallic = 0.0
+	# Multiply the imported colour instead of replacing it.  Several archi VMTs
+	# use baseColorFactor for essential detail (notably black scope lenses and
+	# Molotov liquid); overwriting it created bright white patches on V/P/W models.
+	var original := dup.albedo_color
 	if mode == "vm":
 		dup.cull_mode = BaseMaterial3D.CULL_BACK
-		dup.albedo_color = Color(1.38, 1.38, 1.38, 1.0)
+		dup.albedo_color = Color(original.r * 1.38, original.g * 1.38, original.b * 1.38, original.a)
 	elif mode == "vm_flip":
 		dup.cull_mode = BaseMaterial3D.CULL_FRONT
-		dup.albedo_color = Color(1.38, 1.38, 1.38, 1.0)
+		dup.albedo_color = Color(original.r * 1.38, original.g * 1.38, original.b * 1.38, original.a)
 	elif mode == "w_drop":
 		dup.cull_mode = BaseMaterial3D.CULL_BACK
 		dup.specular_mode = BaseMaterial3D.SPECULAR_SCHLICK_GGX
 		dup.roughness = 0.44
 		dup.metallic = 0.24
 		dup.metallic_specular = 0.64
-		dup.albedo_color = Color(1.25, 1.25, 1.27, 1.0)
+		dup.albedo_color = Color(original.r * 1.25, original.g * 1.25, original.b * 1.27, original.a)
 	else:
 		dup.cull_mode = BaseMaterial3D.CULL_BACK
-		dup.albedo_color = Color(1.36, 1.36, 1.38, 1.0)
+		dup.albedo_color = Color(original.r * 1.36, original.g * 1.36, original.b * 1.38, original.a)
 	_styled_mat_cache[key] = dup
 	return dup
 

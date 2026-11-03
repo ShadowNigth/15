@@ -10,30 +10,43 @@ and Incendiary. All 129 shipped weapon GLBs are self-contained; neither archi no
 SourceIO is needed by Godot.
 
 ```bash
-# External source and build-time dependencies (numpy, pillow, scipy, SourceIO).
+# External source and build-time dependencies (numpy, pillow, scipy, srctools, SourceIO).
 git clone --filter=blob:none --no-checkout --depth 1 \
     https://github.com/ShadowNigth/archi.git /tmp/archi
-git -C /tmp/archi sparse-checkout set '/*/EXTRAIDOS/' '/*/*/EXTRAIDOS/' '/*/*/*/EXTRAIDOS/' '/sound/'
+git -C /tmp/archi sparse-checkout set --no-cone \
+    '/*/EXTRAIDOS/' '/*/*/EXTRAIDOS/' '/*/*/*/EXTRAIDOS/' '/sound/'
 git -C /tmp/archi checkout
+git clone --depth 1 https://github.com/REDxEYE/SourceIO.git /tmp/SourceIO
 
 # Keep the previous weapon directory as the rigid world-placement reference and
 # as the source of the existing CT arms. Build into a separate inspection directory.
-PYTHONPATH=/tmp/siopkg:. python -m tools.source.build_archi_weapons \
+PYTHONPATH=/tmp:. python -m tools.source.build_archi_weapons \
     /tmp/archi /path/to/previous/weapons /path/to/previous/v_ak47.glb /tmp/archi_build
 
 # Validate finite geometry/animations and render every corrected idle pose.
-PYTHONPATH=/tmp/siopkg:. python -m tools.source.validate_archi_build \
+PYTHONPATH=/tmp:. python -m tools.source.validate_archi_build \
     /tmp/archi_build /tmp/archi_preview
 
-# Install only after inspecting the build. The installer also updates the two JSON
-# databases, adds the 16 slots and maps every weapon sound to archi audio.
+# Choose ONE installation route. Full roster installation (for new slots/audio):
 python -m tools.source.install_archi_weapons /tmp/archi_build /tmp/archi
+
+# OR material-only repair (run INSTEAD of the full installer above). This preserves
+# every non-image bufferView (geometry, skins and all animation clips) byte-for-byte.
+python -m tools.source.patch_archi_materials /tmp/archi_build/weapons
 ```
 
 `ArchiSounds` preserves the original PCM samples while normalizing malformed RIFF
 container sizes and word alignment. Animation events retain their source timing;
 C4 cycles through the seven real key-press takes. The elite P/W conversion filters
 out the intentionally distant left pistol from the source buy-menu pose.
+
+CS2 weapon VMTs commonly use `$blendtintbybasealpha` with `$color2`. The converter
+bakes Source's `base * lerp(1, color2, base_alpha)` operation in linear colour space
+(the pack uses the default `$blendtintcoloroverbase 0`) before opaque JPEG encoding
+discards the tint mask. Unmasked `$color2` values remain
+glTF base-colour factors; `GameData.get_styled_model_material()` multiplies those
+factors when adjusting brightness instead of replacing them, preserving black scope
+lenses and other material-specific colours on view, player and dropped world models.
 
 The older CSCO/M.A.T. pipeline below is retained only for historical builds.
 

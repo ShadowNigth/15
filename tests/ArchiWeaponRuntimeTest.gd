@@ -25,6 +25,7 @@ class FakeActor:
 	var team := "CT"
 	var actor_name := "WeaponTest"
 	var sequences: Array = []
+	var damage_received: float = 0.0
 
 	func get_eye_position() -> Vector3:
 		return global_position + Vector3(0.0, 1.6, 0.0)
@@ -40,6 +41,9 @@ class FakeActor:
 
 	func trigger_upper_body_action(_action: String) -> void:
 		pass
+
+	func apply_explosion_damage(_attacker: Node3D, amount: float, _kind: String, _origin: Vector3) -> void:
+		damage_received += amount
 
 
 func _ready() -> void:
@@ -73,8 +77,11 @@ func _run() -> void:
 	_controller.set_process(false)
 
 	_test_assets()
+	_test_scope_tint_preservation()
 	_test_mechanics()
+	_test_grenade_world_scale()
 	_test_crate_rule()
+	await _test_fire_spread()
 
 	if _failures.is_empty():
 		print("[ARCHI TEST] PASS: %d checks; 43 slots, 129 GLBs and 299 archi WAVs loaded by Godot." % _checks)
@@ -152,6 +159,36 @@ func _test_assets() -> void:
 	for path in wavs:
 		var stream := load(path) as AudioStream
 		_expect(stream != null, "Godot must decode " + path)
+
+
+func _test_scope_tint_preservation() -> void:
+	for wid in ["aug", "awp", "sg552", "scout", "g3sg1", "sg550"]:
+		var spec: Dictionary = GameData.weapons[wid]
+		var packed := GameData.get_model_scene("weapons/" + String(spec["v_model"]))
+		_expect(packed != null, "%s scope test model loads" % wid)
+		if packed == null:
+			continue
+		var instance := packed.instantiate() as Node3D
+		_world.add_child(instance)
+		var black_lenses := 0
+		for node in instance.find_children("*", "MeshInstance3D", true, false):
+			var mesh_instance := node as MeshInstance3D
+			if mesh_instance.mesh == null:
+				continue
+			for surface in range(mesh_instance.mesh.get_surface_count()):
+				var original := mesh_instance.mesh.surface_get_material(surface) as BaseMaterial3D
+				if original == null:
+					continue
+				var colour := original.albedo_color
+				if maxf(colour.r, maxf(colour.g, colour.b)) > 0.001:
+					continue
+				black_lenses += 1
+				for mode in ["vm", "vm_flip", "w", "w_drop"]:
+					var styled := GameData.get_styled_model_material(original, mode) as BaseMaterial3D
+					_expect(styled != null and maxf(styled.albedo_color.r, maxf(styled.albedo_color.g, styled.albedo_color.b)) <= 0.001,
+						"%s %s must preserve its black scope factor" % [wid, mode])
+		_expect(black_lenses > 0, "%s has a real black lens material to test" % wid)
+		instance.free()
 
 
 func _test_mechanics() -> void:
@@ -251,8 +288,89 @@ func _test_fire_projectile(kind: String) -> void:
 			area = child
 	_expect(area != null, "%s creates persistent fire" % kind)
 	if area != null:
-		_expect(not area._frames.is_empty() and area.life_left >= 7.0, "%s fire has animated frames and a real lifetime" % kind)
+		_expect(area._patches.size() == 1 and not area._flames.is_empty() and area.life_left >= 7.0,
+			"%s fire has an ignition patch, layered flames and a real lifetime" % kind)
 		area._damage_tick()
+		area.set_physics_process(false)
+		area.set_process(false)
+		area.queue_free()
+
+
+func _test_grenade_world_scale() -> void:
+	for wid in ["flashbang", "hegrenade", "smokegrenade", "decoy", "molotov", "incendiary"]:
+		var projectile := GrenadeProjectile.new()
+		_world.add_child(projectile)
+		projectile.set_physics_process(false)
+		projectile.setup_grenade(wid, _actor, Vector3.ZERO)
+		var thrown_model := projectile.get_child(0) as Node3D
+		_expect(thrown_model != null and thrown_model.scale.is_equal_approx(Vector3.ONE * GameData.GRENADE_WORLD_SCALE),
+			"%s thrown model uses the enlarged shared scale" % wid)
+		projectile.free()
+
+		var drop := DroppedWeapon.new()
+		_world.add_child(drop)
+		drop.set_physics_process(false)
+		drop.setup_drop(wid, 1, 0, Vector3.ZERO)
+		var dropped_model := drop._visual_root.get_child(0) as Node3D
+		_expect(dropped_model != null and dropped_model.scale.is_equal_approx(Vector3.ONE * GameData.GRENADE_WORLD_SCALE),
+			"%s dropped model uses the enlarged shared scale" % wid)
+		_expect(is_equal_approx(GameData.GRENADE_WORLD_SCALE, 0.90), "Grenade enlargement remains moderate")
+		drop.free()
+
+
+func _make_test_collision(size: Vector3, pos: Vector3) -> StaticBody3D:
+	var body := StaticBody3D.new()
+	body.collision_layer = 1
+	body.collision_mask = 0
+	var collision := CollisionShape3D.new()
+	var shape := BoxShape3D.new()
+	shape.size = size
+	collision.shape = shape
+	_world.add_child(body)
+	body.position = pos
+	body.add_child(collision)
+	return body
+
+
+func _test_fire_spread() -> void:
+	var floor_body := _make_test_collision(Vector3(12.0, 0.20, 12.0), Vector3(0.0, -0.10, 0.0))
+	var wall_body := _make_test_collision(Vector3(0.20, 2.0, 10.0), Vector3(0.65, 1.0, 0.0))
+	await get_tree().physics_frame
+	await get_tree().physics_frame
+
+	var area := IncendiaryArea.new()
+	_world.add_child(area)
+	area.global_position = Vector3(0.0, 0.03, 0.0)
+	area.setup_fire(null, "incendiary")
+	area.set_physics_process(false)
+	area.set_process(false)
+	_expect(area._patches.size() == 1 and not area._flames.is_empty(), "Fire begins with one visible ignition patch")
+	for _step in range(26):
+		area._physics_process(0.052)
+		area._process(0.052)
+	_expect(area._patches.size() > 6 and area._current_radius > 1.0, "Fire physically expands into staggered ground patches")
+	var crossed_wall := false
+	for patch in area._patches:
+		var pos: Vector3 = patch.get("pos", Vector3.ZERO)
+		# The near wall face is x=0.55; allow only a tiny contact epsilon.
+		if pos.x > 0.551:
+			crossed_wall = true
+	_expect(not crossed_wall, "Fire propagation cannot cross a solid wall")
+
+	var target := FakeActor.new()
+	_world.add_child(target)
+	target.position = Vector3(0.78, 0.0, 0.0)
+	RoundManager.actors.append(target)
+	area._damage_tick()
+	_expect(is_zero_approx(target.damage_received), "Fire damage is blocked by the same wall as its visuals")
+	target.position = Vector3(-0.25, 0.0, 0.0)
+	area._damage_tick()
+	_expect(target.damage_received > 0.0, "A target on a burning patch receives incendiary damage")
+	RoundManager.actors.erase(target)
+	target.free()
+	area.free()
+	floor_body.free()
+	wall_body.free()
 
 
 func _test_crate_rule() -> void:
