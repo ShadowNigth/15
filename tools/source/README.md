@@ -48,6 +48,15 @@ glTF base-colour factors; `GameData.get_styled_model_material()` multiplies thos
 factors when adjusting brightness instead of replacing them, preserving black scope
 lenses and other material-specific colours on view, player and dropped world models.
 
+Direct VVD texture coordinates and the decoded VTF pixels already use glTF's texture
+orientation; applying the old SMD/Blender V inversion to these meshes mixes adjacent
+atlas islands. The separate SMD arm conversion retains its own V transform. To compare
+all 43 V and 86 P/W installed models directly with the original VVD coordinates:
+
+```bash
+PYTHONPATH=/tmp:. python -m tools.source.verify_archi_uvs /tmp/archi /home/user/15
+```
+
 The older CSCO/M.A.T. pipeline below is retained only for historical builds.
 
 ## Legacy CSCO build
@@ -86,7 +95,8 @@ placeholder sounds are generated.
 ### Conversion notes
 
 * **Viewmodels**: Source→Godot transforms are in `smd_converter.py` (1/32 scale, Source
-  `(x,y,z)→(-y,z,x)`, +90° yaw on roots, UV vertical flip, and the ports' 2-unit pull-back).
+  `(x,y,z)→(-y,z,x)`, +90° yaw on roots, V inversion only on the SMD arm path, and the
+  ports' 2-unit pull-back). Direct VVD coordinates remain unflipped.
   CSCO meshes/materials are combined with the CT arms and validated stock animations. CSCO's
   custom per-bone animation staging is not compatible with those stock clips; include events
   are used only when they describe the same stock animation.

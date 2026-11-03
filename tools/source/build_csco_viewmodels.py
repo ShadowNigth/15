@@ -241,8 +241,11 @@ def mesh_primitives(model, rig, bind_g, mat_index):
         pos = RA(L(mesh["pos"]) * SCALE) + OFFSET
         nrm = RA(L(mesh["nrm"]))
         nrm /= np.maximum(np.linalg.norm(nrm, axis=1, keepdims=True), 1e-8)
+        # VVD texture coordinates and srctools' decoded VTF pixels already use
+        # glTF's top-left origin.  Flipping V here scattered neighbouring atlas
+        # islands over the weapon (most visibly on the Deagle and AWP).  The
+        # separate SMD arm path keeps its own conversion convention.
         uv = np.asarray(mesh["uv"], dtype=np.float64).copy()
-        uv[:, 1] = 1.0 - uv[:, 1]
         prims.append({"pos": pos, "nrm": nrm, "uv": uv, "joints": joints, "weights": weights,
                       "idx": np.asarray(mesh["idx"], dtype=np.int64).reshape(-1),
                       "material": mat_index(mesh["material"])})
@@ -667,8 +670,8 @@ def build_mp5_transplant(csco_root, mat_root, out_dir, fallback_dir, arms_parts,
         joints[:, 0] = target_joints
         weights = np.zeros((len(bind_pos), 4))
         weights[:, 0] = 1.0
+        # Direct VVD/VTF sampling uses the same top-left origin as glTF.
         uv = np.asarray(mesh["uv"], dtype=np.float64).copy()
-        uv[:, 1] = 1.0 - uv[:, 1]
         materials.append(library.entry(model, mesh["material"], 1024, weapon))
         prims.append({"pos": bind_pos, "nrm": bind_nrm, "uv": uv, "joints": joints, "weights": weights,
                       "idx": np.asarray(mesh["idx"]).reshape(-1), "material": len(materials) - 1})

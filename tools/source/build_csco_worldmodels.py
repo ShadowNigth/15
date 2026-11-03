@@ -32,8 +32,9 @@ def mdl_triangles(model):
         pos = RA(L(mesh["pos"]) * SCALE) + OFFSET
         nrm = RA(L(mesh["nrm"]))
         nrm /= np.maximum(np.linalg.norm(nrm, axis=1, keepdims=True), 1e-8)
+        # VVD/VTF coordinates already match glTF's top-left texture origin.
+        # Do not apply the SMD/Blender V inversion to direct Source meshes.
         uv = np.asarray(mesh["uv"], dtype=np.float64).copy()
-        uv[:, 1] = 1.0 - uv[:, 1]
         for tri in np.asarray(mesh["idx"], dtype=np.int64):
             triangles.append((mesh["material"], [(pos[i], nrm[i], uv[i]) for i in tri]))
     return triangles

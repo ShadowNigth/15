@@ -14,8 +14,8 @@ const SPREAD_STEP: float = 0.72
 const SPREAD_INTERVAL: float = 0.052
 const PATCHES_PER_STEP: int = 2
 const WORLD_COLLISION_MASK: int = 1
+const FLAME_SHADER: Shader = preload("res://assets/shaders/incendiary_flame.gdshader")
 
-static var _flame_textures: Array[Texture2D] = []
 static var _ember_texture: Texture2D = null
 
 var thrower: Node3D = null
@@ -74,39 +74,8 @@ func _snap_origin_to_floor() -> void:
 
 
 static func _ensure_textures() -> void:
-	if not _flame_textures.is_empty():
+	if _ember_texture != null:
 		return
-	# Three deterministic flame tongues. The irregular silhouette, coloured heat
-	# gradient and soft alpha avoid recycling the HE explosion as ground fire.
-	for variant in range(3):
-		var width := 96
-		var height := 160
-		var image := Image.create(width, height, false, Image.FORMAT_RGBA8)
-		var phase := float(variant) * 2.173
-		for y in range(height):
-			var t := 1.0 - float(y) / float(height - 1) # 0 at the fuel, 1 at the tip
-			var centre := 0.5 + sin(t * 7.0 + phase) * (0.035 + t * 0.065)
-			centre += sin(t * 19.0 + phase * 1.7) * t * 0.022
-			var tongue_width := 0.025 + 0.43 * pow(1.0 - t, 0.72)
-			for x in range(width):
-				var u := (float(x) + 0.5) / float(width)
-				var edge_noise := sin(u * 41.0 + t * 17.0 + phase) * 0.065
-				edge_noise += sin(u * 19.0 - t * 31.0 + phase * 2.0) * 0.045
-				var distance := absf(u - centre) / maxf(0.01, tongue_width)
-				var body := clampf(1.0 - distance + edge_noise, 0.0, 1.0)
-				var root_fade := smoothstep(0.0, 0.055, t)
-				var tip_fade := 1.0 - smoothstep(0.72, 1.0, t)
-				var turbulence := 0.82 + 0.18 * sin(u * 53.0 + t * 37.0 + phase)
-				var alpha := pow(body, 1.35) * root_fade * tip_fade * turbulence
-				# White-yellow at the hot core/root, orange outside and red at tips.
-				var heat := clampf((1.0 - t) * 0.62 + body * 0.58, 0.0, 1.0)
-				var red := 1.0
-				var green := lerpf(0.16, 0.93, heat)
-				var blue := lerpf(0.008, 0.46, heat * heat)
-				image.set_pixel(x, y, Color(red, green, blue, clampf(alpha * 0.94, 0.0, 1.0)))
-		image.generate_mipmaps()
-		_flame_textures.append(ImageTexture.create_from_image(image))
-
 	var ember_image := Image.create(16, 16, false, Image.FORMAT_RGBA8)
 	for y in range(16):
 		for x in range(16):
@@ -150,29 +119,37 @@ func _add_patch(local_pos: Vector3) -> void:
 	add_child(scorch)
 	patch["scorch"] = scorch
 
-	# A broad translucent envelope, a bright middle tongue and a compact hot core.
-	var pixel_sizes := [0.0072, 0.0054, 0.0037]
-	var base_heights := [0.57, 0.43, 0.29]
-	var base_alphas := [0.32, 0.68, 0.78]
-	for layer in range(3):
-		var flame := Sprite3D.new()
+	# Two animated shaders per fuel patch: a broad violet/orange envelope and a
+	# smaller white-hot core. Their low, irregular tongues merge into the broad
+	# CS2-style ground fire instead of forming repeated upright orange cones.
+	var quad_sizes := [Vector2(1.42, 0.82), Vector2(0.96, 0.68)]
+	var base_heights := [0.37, 0.31]
+	for layer in range(2):
+		var flame := MeshInstance3D.new()
 		flame.name = "Flame%02d_%d" % [patch_index, layer]
-		flame.texture = _flame_textures[(patch_index + layer) % _flame_textures.size()]
-		flame.billboard = BaseMaterial3D.BILLBOARD_ENABLED
-		flame.shaded = false
-		flame.pixel_size = float(pixel_sizes[layer])
+		var quad := QuadMesh.new()
+		var quad_size: Vector2 = quad_sizes[layer]
+		quad.size = quad_size
+		flame.mesh = quad
 		flame.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
-		var lateral := Vector3(_rng.randf_range(-0.16, 0.16), 0.0, _rng.randf_range(-0.16, 0.16))
+		var material := ShaderMaterial.new()
+		material.shader = FLAME_SHADER
+		material.set_shader_parameter("seed", _rng.randf_range(0.0, 80.0))
+		material.set_shader_parameter("layer", float(layer))
+		material.set_shader_parameter("ignition", 0.0)
+		flame.material_override = material
+		var lateral := Vector3(_rng.randf_range(-0.15, 0.15), 0.0, _rng.randf_range(-0.15, 0.15))
 		flame.position = local_pos + lateral + Vector3.UP * float(base_heights[layer])
 		flame.scale = Vector3.ONE * 0.01
 		add_child(flame)
 		_flames.append({
 			"node": flame,
+			"material": material,
 			"origin": flame.position,
-			"born": _age + float(layer) * 0.035,
+			"root_y": flame.position.y - quad_size.y * 0.5,
+			"born": _age + float(layer) * 0.045,
 			"phase": _rng.randf_range(0.0, TAU),
-			"scale": Vector2(_rng.randf_range(0.80, 1.20), _rng.randf_range(0.82, 1.22)),
-			"alpha": float(base_alphas[layer]),
+			"scale": Vector2(_rng.randf_range(0.82, 1.18), _rng.randf_range(0.80, 1.20)),
 			"layer": layer,
 		})
 
@@ -337,28 +314,34 @@ func _process(delta: float) -> void:
 	_visual_time += delta
 	var fade := clampf(life_left / 0.90, 0.0, 1.0)
 	for entry in _flames:
-		var flame := entry.get("node") as Sprite3D
+		var flame := entry.get("node") as MeshInstance3D
 		if not is_instance_valid(flame):
 			continue
+		var material := entry.get("material") as ShaderMaterial
 		var born := float(entry.get("born", 0.0))
-		var ignition := clampf((_age - born) / 0.20, 0.0, 1.0)
+		var ignition := clampf((_age - born) / 0.24, 0.0, 1.0)
 		flame.visible = ignition > 0.001 and fade > 0.001
 		if not flame.visible:
 			continue
 		var phase := float(entry.get("phase", 0.0))
 		var layer := int(entry.get("layer", 0))
-		var wave := sin(_visual_time * (11.0 + float(layer) * 1.7) + phase)
-		var sway := sin(_visual_time * 6.3 + phase * 1.3)
+		var wave := sin(_visual_time * (9.0 + float(layer) * 1.7) + phase)
+		var sway := sin(_visual_time * 5.3 + phase * 1.3)
 		var base_scale: Vector2 = entry.get("scale", Vector2.ONE)
-		flame.scale = Vector3(
-			base_scale.x * (0.93 + wave * 0.10) * ignition,
-			base_scale.y * (0.96 + wave * 0.14) * ignition,
-			1.0
-		)
+		var width_scale := base_scale.x * (0.94 + wave * 0.09) * ignition
+		var height_scale := base_scale.y * (0.95 + wave * 0.13) * ignition
+		flame.scale = Vector3(width_scale, height_scale, 1.0)
 		var origin: Vector3 = entry.get("origin", Vector3.ZERO)
-		flame.position = origin + Vector3(sway * 0.025, wave * 0.025, -sway * 0.018)
-		var alpha := float(entry.get("alpha", 0.7))
-		flame.modulate = Color(1.0, 0.97, 0.90, alpha * fade * ignition * (0.91 + wave * 0.09))
+		flame.position = origin + Vector3(sway * 0.028, 0.0, -sway * 0.020)
+		# QuadMesh scales around its centre. Reconstruct its centre from the
+		# ground root so ignition grows upward instead of floating in mid-air.
+		var quad := flame.mesh as QuadMesh
+		if quad != null:
+			var root_y := float(entry.get("root_y", origin.y - quad.size.y * 0.5))
+			flame.position.y = root_y + quad.size.y * height_scale * 0.5
+		if is_instance_valid(material):
+			material.set_shader_parameter("ignition", ignition)
+			material.set_shader_parameter("fade", fade * (0.94 + wave * 0.06))
 
 	for patch in _patches:
 		var scorch := patch.get("scorch") as Sprite3D

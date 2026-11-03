@@ -290,6 +290,21 @@ func _test_fire_projectile(kind: String) -> void:
 	if area != null:
 		_expect(area._patches.size() == 1 and not area._flames.is_empty() and area.life_left >= 7.0,
 			"%s fire has an ignition patch, layered flames and a real lifetime" % kind)
+		_expect(area._flames.size() == 2, "%s uses an outer flame and a white-hot core" % kind)
+		var visual_layers: Array[float] = []
+		var shaders_valid := true
+		for flame_entry in area._flames:
+			var flame := flame_entry.get("node") as MeshInstance3D
+			var material := flame_entry.get("material") as ShaderMaterial
+			if flame == null or material == null or material.shader != IncendiaryArea.FLAME_SHADER:
+				shaders_valid = false
+				continue
+			visual_layers.append(float(material.get_shader_parameter("layer")))
+			var quad := flame.mesh as QuadMesh
+			shaders_valid = shaders_valid and quad != null and quad.size.y <= 0.82
+		visual_layers.sort()
+		_expect(shaders_valid and visual_layers == [0.0, 1.0],
+			"%s flames use the animated low CS2-style shader" % kind)
 		area._damage_tick()
 		area.set_physics_process(false)
 		area.set_process(false)

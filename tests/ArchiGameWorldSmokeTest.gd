@@ -86,6 +86,16 @@ func _run() -> void:
 		print("[ARCHI GAMEWORLD TEST] PASS: %d checks; 16 purchases, animated buy preview, 9 bots, 600 live-round frames and physical incendiary spread." % _checks)
 	else:
 		print("[ARCHI GAMEWORLD TEST] FAIL: %d of %d checks failed." % [_failures.size(), _checks])
+	# Do not let actors start new footstep playbacks while the audio thread is
+	# draining its stop commands during test shutdown.
+	RoundManager.set_process(false)
+	if is_instance_valid(_world):
+		_world.set_process(false)
+		_world.set_physics_process(false)
+	for actor in RoundManager.actors:
+		if is_instance_valid(actor):
+			actor.set_process(false)
+			actor.set_physics_process(false)
 	_stop_audio()
 	# Fixed-FPS headless frames can outrun the real audio thread. Give its stop
 	# commands wall-clock time before ObjectDB shutdown.
