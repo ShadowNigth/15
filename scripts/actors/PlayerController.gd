@@ -536,7 +536,6 @@ func _rebuild_viewmodel(wid: String) -> void:
 	# Native GoldSrc camera-space framing (verified across rifles, pistols, knife, grenades & C4)
 	inst.position = Vector3(0.0, -0.015, -0.03)
 	viewmodel_holder.add_child(inst)
-	ViewmodelLoadout.apply(inst, team, v_name)
 	_prepare_viewmodel_materials(inst)
 	_vm_model_root = inst as Node3D
 	if _vm_model_root != null:
@@ -698,9 +697,11 @@ func _configure_vm_silencer(inst: Node, wid: String, visible: bool) -> void:
 func _apply_vm_silencer_visibility() -> void:
 	if not is_instance_valid(_vm_silencer_skeleton) or _vm_silencer_bone < 0:
 		return
-	# A near-zero pose collapses only the suppressor vertices. The weapon,
-	# original arms, glove/sleeve additions and animation tracks stay untouched.
-	var target_scale := Vector3.ONE if _vm_silencer_visible else Vector3.ONE * 0.0001
+	# Add/detach clips already move the suppressor between the hand and barrel.
+	# Keep it visible for the whole transition instead of collapsing its bone
+	# until the state flips at the end. Idle/draw still follow the actual state.
+	var transitioning := weapon_ctrl != null and weapon_ctrl.is_attaching_silencer
+	var target_scale := Vector3.ONE if _vm_silencer_visible or transitioning else Vector3.ONE * 0.0001
 	_vm_silencer_skeleton.set_bone_pose_scale(_vm_silencer_bone, target_scale)
 
 

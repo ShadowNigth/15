@@ -1,6 +1,6 @@
 # Counter-Strike 1.5 Retail — Remake en Godot 4 (GDScript)
 
-Remake jugable de **Counter-Strike 1.5 Retail** construido íntegramente en **Godot 4.x (GDScript)**. Los mapas, texturas de mundo, personajes, HUD, radio y constantes clásicas proceden de [`Ch0wW/counterstrike-betas` (`cs15_retail`)](https://github.com/Ch0wW/counterstrike-betas/tree/cs15_retail). Los **43 slots de armas** usan modelos, texturas, iconos, animaciones y eventos convertidos desde [`ShadowNigth/archi`](https://github.com/ShadowNigth/archi), con audio específico complementado por [`Source2Sounds/cs2`](https://github.com/Source2Sounds/cs2). Los brazos seleccionables proceden de [`goribby/CS2-MultiRig`](https://github.com/goribby/CS2-MultiRig); ese repositorio no declara una licencia de redistribución.
+Remake jugable de **Counter-Strike 1.5 Retail** construido íntegramente en **Godot 4.x (GDScript)**. Los mapas, texturas de mundo, personajes, HUD, radio y constantes clásicas proceden de [`Ch0wW/counterstrike-betas` (`cs15_retail`)](https://github.com/Ch0wW/counterstrike-betas/tree/cs15_retail). Los **43 slots de armas** usan modelos, texturas, iconos, animaciones y eventos convertidos desde [`ShadowNigth/archi`](https://github.com/ShadowNigth/archi), con audio específico complementado por [`Source2Sounds/cs2`](https://github.com/Source2Sounds/cs2).
 
 ---
 
@@ -11,7 +11,7 @@ Remake jugable de **Counter-Strike 1.5 Retail** construido íntegramente en **Go
 3. Pulsa **F5 (Run Project)**:
    - Se abrirá el **Menú Clásico WON de Counter-Strike 1.5** (`splash.png` original + sonidos `launch_glow1.wav` / `launch_select1.wav`).
    - Elige **Quick Launch: de_dust2** o **Play CS 1.5 (LAN / Bots)** para escoger cualquiera de los **26 mapas originales**, cantidad de **Bots IA**, nivel de habilidad y dinero inicial (`$800` / `$3500` / `$16000`).
-   - También puedes abrir el **3D Arsenal & Model Viewer** desde el menú principal para inspeccionar en 3D los modelos `.glb` de armas y personajes convertidos desde `.mdl` junto con sus estadísticas extraídas de `cs_i386.so`. Sus cuatro selectores permiten elegir guantes y mangas CT/T con vista previa animada; la selección se aplica según el equipo al comenzar la partida.
+   - También puedes abrir el **3D Arsenal & Model Viewer** desde el menú principal para inspeccionar en 3D los modelos `.glb` de armas y personajes convertidos desde `.mdl` junto con sus estadísticas extraídas de `cs_i386.so` y sus animaciones originales.
 
 ---
 
@@ -24,7 +24,7 @@ Todo el contenido de `cstrike/` fue procesado mediante la suite de ingeniería i
 | **Mapas 3D + Lightmaps** | `maps/*.bsp` (GoldSrc BSP v30 + 23 WAD3) | `assets/maps/*.glb` + `*_lm.png` + `data/maps/*.json` | **26 / 26 mapas** |
 | **Grafo de Navegación IA** | Hull 1 (`CLIPNODES`) de cada `.bsp` | `waypoints` A* en `data/maps/*.json` | **26 grafos** (230–340 nodos/mapa) |
 | **Texturas de Mundo + Cielos** | `*.wad` (`de_aztec`, `cs_dust`, `halflife`…) + `gfx/env/*.tga` | `assets/textures/world/*.png` (`{` alpha Fence) + `sky/*.png` | **2,346 texturas + 109 caras skybox** |
-| **Modelos 3D Animados** | StudioMDL GoldSrc + MDL/VTF de `ShadowNigth/archi` | `assets/models/**/*.glb` (esqueleto + animaciones + winding CCW) | **184 modelos `.glb`** |
+| **Modelos 3D Animados** | StudioMDL GoldSrc + MDL/VTF de `ShadowNigth/archi` | `assets/models/**/*.glb` (esqueleto + animaciones + winding CCW) | **176 modelos `.glb`** |
 | **Arsenal** | 27 slots clásicos reemplazados + 16 armas/utilidades de archi | `data/weapons.json` | **43 slots + equipamiento** |
 | **Audio Espacial & Radio** | `cs15_retail` + 299 WAV de archi + 130 WAV específicos de CS2 | `assets/sounds/**/*.wav` (PCM 16-bit limpio) | **973 archivos `.wav`** |
 | **Sprites HUD & VGUI** | `sprites/*.spr`, `hud.txt`, `gfx/vgui/*.tga`, `overviews/*.bmp` | `assets/sprites/*.png`, `assets/ui/**`, `data/hud_sprites.json` | **88 sprites + 42 VGUI + 26 radares** |
@@ -48,8 +48,8 @@ Todo el contenido de `cstrike/` fue procesado mediante la suite de ingeniería i
   - **Nuevas armas de archi**: P2000, CZ75-Auto, R8 Revolver (martillo y fuego alternativo), Tec-9, FAMAS (ráfaga), Galil AR, M4A4, MAG-7 (cargador), Sawed-Off (cartuchos), Negev, PP-Bizon y MP7.
   - **Nuevas utilidades**: Zeus x27 de una carga, Decoy con señuelo sonoro y explosión final, Molotov e Incendiaria con fuego persistente. Todos los slots incluyen sus GLB V/P/W, iconos, animaciones de archi y audio específico de archi/CS2.
   - **Fuego con propagación física**: Molotov e Incendiaria encienden focos escalonados sobre el piso, se expanden alrededor de obstáculos y aplican daño sólo dentro de las llamas activas. Incluyen llamas por capas, brasas, humo, quemaduras y luz parpadeante.
-  - **Presentación y materiales corregidos**: las armas conservan tamaño normal (`1.0`), las granadas en mano/proyectil usan `0.90` y las soltadas en el piso `1.0`. M4A1/USP mantienen el acople con las manos al inspeccionar, la corredera de Glock se mueve al disparar y el silenciador sólo es visible cuando está instalado. Las máscaras de tinte y lentes negras se conservan, el acabado de primera persona es más brillante/metálico y el Molotov combina vidrio verde y líquido translúcidos con etiqueta y trapo legibles.
-  - **Brazos por equipo seleccionables**: CT ofrece Hard Knuckle/Hard Knuckle Black con mangas SAS/FBI; T ofrece Fingerless/Fullfinger con mangas Professional/Balkan. Los ocho GLB llevan texturas PBR incrustadas; se conservan intactos los brazos originales de cada arma y se añaden únicamente los guantes y las mangas seleccionados, sin modificar los 43 slots ni sus clips.
+  - **Presentación y materiales corregidos**: las armas conservan tamaño normal (`1.0`), las granadas en mano/proyectil usan `0.90` y las soltadas en el piso `1.0`. M4A1/USP mantienen el acople con las manos al inspeccionar, la corredera de Glock se mueve al disparar y el silenciador permanece visible durante su animación de montaje/desmontaje, ocultándose únicamente en estado desmontado. Las máscaras de tinte y lentes negras se conservan, el acabado de primera persona es más brillante/metálico y el Molotov combina vidrio verde y líquido translúcidos con etiqueta y trapo legibles.
+  - **Brazos originales restaurados**: los 43 viewmodels usan únicamente sus superficies originales `ct_arms.bmp` y `ct_base_glove.bmp`. El sistema MultiRig, sus ocho GLB y los selectores de guantes/mangas fueron eliminados.
 - **Economía, Rondas y Objetivos (`RoundManager.gd`, `BuyMenu.gd`)**:
   - Freeze time, Buy time en `func_buyzone`, menú VGUI clásico con previsualización de armas y **atajos rápidos clásicos** (ej. `B-4-1` AK-47, `B-4-3` M4A1, `B-4-6` AWP, `B-8-2` Kevlar+Casco, `,` y `.` para munición primaria/secundaria).
   - Plantado y desactivación del **C4** (`de_*`, 5s con Defuse Kit / 10s sin Kit), rescate de **Rehenes** (`cs_*` con `E`) y escolta de **VIP** (`as_*`).

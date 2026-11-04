@@ -79,7 +79,7 @@ func _run() -> void:
 
 	_test_assets()
 	_test_animation_refinements()
-	await _test_team_loadouts()
+	await _test_original_viewmodel_arms()
 	_test_cs2_audio()
 	_test_world_calibration_and_molotov()
 	_test_scope_tint_preservation()
@@ -267,218 +267,53 @@ func _test_animation_refinements() -> void:
 		instance.free()
 
 
-func _loadout_meshes(root: Node) -> Array[MeshInstance3D]:
-	var result: Array[MeshInstance3D] = []
+func _original_arm_composition(root: Node) -> bool:
+	var original_arms := false
+	var original_gloves := false
 	for node in root.find_children("*", "MeshInstance3D", true, false):
 		var mesh := node as MeshInstance3D
-		if mesh.has_meta("loadout_kind"):
-			result.append(mesh)
-	return result
-
-
-func _material_arrays(root: Node, wanted_name: String) -> Array:
-	var result: Array = []
-	for node in root.find_children("*", "MeshInstance3D", true, false):
-		var mesh := node as MeshInstance3D
-		if mesh.mesh == null:
-			continue
+		if mesh.has_meta("loadout_kind") or mesh.mesh == null:
+			return false
 		for surface in range(mesh.mesh.get_surface_count()):
 			var material := mesh.mesh.surface_get_material(surface)
-			if material != null and material.resource_name.to_lower() == wanted_name:
-				result.append(mesh.mesh.surface_get_arrays(surface))
-	return result
-
-
-func _material_arrays_match(before: Array, after: Array) -> bool:
-	if before.size() != after.size():
-		return false
-	for surface in range(before.size()):
-		var a: Array = before[surface]
-		var b: Array = after[surface]
-		if a.size() != b.size():
-			return false
-		for channel in range(a.size()):
-			# ArrayMesh renormalizes normals/tangents on ingestion. Geometry, UVs
-			# and skinning/index data must remain bit-for-bit identical.
-			if channel in [Mesh.ARRAY_NORMAL, Mesh.ARRAY_TANGENT]:
-				continue
-			if a[channel] != b[channel]:
+			var material_name := material.resource_name.to_lower() if material != null else ""
+			if material_name == "ct_arms.bmp":
+				original_arms = true
+			elif material_name == "ct_base_glove.bmp":
+				original_gloves = true
+			elif material_name.begins_with("bare_arm") or material_name.begins_with("glove_") \
+				or material_name.begins_with("sleeve"):
 				return false
-	return true
+	return original_arms and original_gloves
 
 
-func _cpu_skin_bounds(mesh: MeshInstance3D, skeleton: Skeleton3D) -> Dictionary:
-	if mesh == null or skeleton == null or mesh.mesh == null or mesh.skin == null:
-		return {"valid": false}
-	var joint_transforms: Array[Transform3D] = []
-	var relative := mesh.global_transform.affine_inverse() * skeleton.global_transform
-	for bind in range(mesh.skin.get_bind_count()):
-		var bone := skeleton.find_bone(String(mesh.skin.get_bind_name(bind)))
-		if String(mesh.skin.get_bind_name(bind)).is_empty():
-			bone = mesh.skin.get_bind_bone(bind)
-		if bone < 0 or bone >= skeleton.get_bone_count():
-			return {"valid": false}
-		joint_transforms.append(relative * skeleton.get_bone_global_pose(bone) * mesh.skin.get_bind_pose(bind))
-	var minimum := Vector3.ZERO
-	var maximum := Vector3.ZERO
-	var count := 0
-	for surface in range(mesh.mesh.get_surface_count()):
-		var arrays := mesh.mesh.surface_get_arrays(surface)
-		var vertices: PackedVector3Array = arrays[Mesh.ARRAY_VERTEX]
-		var bones: PackedInt32Array = arrays[Mesh.ARRAY_BONES]
-		var weights: PackedFloat32Array = arrays[Mesh.ARRAY_WEIGHTS]
-		if bones.size() < vertices.size() * 4 or weights.size() < vertices.size() * 4:
-			return {"valid": false}
-		for index in range(vertices.size()):
-			var point := Vector3.ZERO
-			for influence in range(4):
-				var weight := weights[index * 4 + influence]
-				var joint := bones[index * 4 + influence]
-				if weight <= 0.0:
-					continue
-				if joint < 0 or joint >= joint_transforms.size():
-					return {"valid": false}
-				point += (joint_transforms[joint] * vertices[index]) * weight
-			if count == 0:
-				minimum = point
-				maximum = point
-			else:
-				minimum = Vector3(minf(minimum.x, point.x), minf(minimum.y, point.y), minf(minimum.z, point.z))
-				maximum = Vector3(maxf(maximum.x, point.x), maxf(maximum.y, point.y), maxf(maximum.z, point.z))
-			count += 1
-	return {"valid": count > 0, "box": AABB(minimum, maximum - minimum)}
-
-
-func _test_team_loadouts() -> void:
-	for team in ["CT", "T"]:
-		for kind in ["gloves", "sleeves"]:
-			_expect(GameData.get_loadout_options(team, kind).size() == 2,
-				"%s %s expose two genuine selectable finishes" % [team, kind])
-	_expect(GameData.get_selected_loadout("CT", "sleeves").get("id", "") != \
-		GameData.get_selected_loadout("T", "sleeves").get("id", ""),
-		"CT and T begin with different sleeve models")
-
-	var model_index := 0
+func _test_original_viewmodel_arms() -> void:
+	_expect(not DirAccess.dir_exists_absolute("res://assets/models/loadouts"),
+		"MultiRig glove/sleeve assets are removed from the project")
+	_expect(not FileAccess.file_exists("res://data/viewmodel_loadouts.json") \
+		and not FileAccess.file_exists("res://scripts/actors/ViewmodelLoadout.gd"),
+		"MultiRig runtime data and installer are removed from the project")
 	for wid in GameData.weapons:
 		var spec: Dictionary = GameData.weapons[wid]
 		var packed := GameData.get_model_scene("weapons/" + String(spec["v_model"]))
 		if packed == null:
-			_expect(false, "%s loadout rig model loads" % wid)
+			_expect(false, "%s original viewmodel loads" % wid)
 			continue
 		var instance := packed.instantiate() as Node3D
 		_world.add_child(instance)
-		var original_arm_arrays := _material_arrays(instance, "ct_arms.bmp")
-		var team := "CT" if model_index % 2 == 0 else "T"
-		_expect(ViewmodelLoadout.apply(instance, team, String(spec["v_model"])), "%s installs %s gloves/sleeves over the original arms" % [wid, team])
-		var skeleton := _find_skeleton(instance)
-		var installed := _loadout_meshes(instance)
-		var kinds: Dictionary = {}
-		var bindings_ok := skeleton != null and installed.size() >= 2
-		var loadout_surfaces_ok := not installed.is_empty()
-		for mesh in installed:
-			var kind := String(mesh.get_meta("loadout_kind", ""))
-			kinds[kind] = true
-			for surface in range(mesh.mesh.get_surface_count()):
-				var material := mesh.mesh.surface_get_material(surface)
-				var material_name := material.resource_name.to_lower() if material != null else ""
-				loadout_surfaces_ok = loadout_surfaces_ok and not material_name.begins_with("bare_arm") \
-					and ((kind == "gloves" and material_name.begins_with("glove_")) \
-					or (kind == "sleeves" and material_name.begins_with("sleeve")))
-			bindings_ok = bindings_ok and mesh.get_node_or_null(mesh.skeleton) == skeleton and mesh.skin != null
-			if mesh.skin == null or skeleton == null:
-				bindings_ok = false
-				continue
-			for bind in range(mesh.skin.get_bind_count()):
-				var native_bone := mesh.skin.get_bind_bone(bind)
-				var bind_scale := mesh.skin.get_bind_pose(bind).basis.get_scale()
-				bindings_ok = bindings_ok and String(mesh.skin.get_bind_name(bind)).is_empty() \
-					and native_bone >= 0 and native_bone < skeleton.get_bone_count() \
-					and bind_scale.is_equal_approx(Vector3.ONE)
-		bindings_ok = bindings_ok and kinds.has("gloves") and kinds.has("sleeves")
-		_expect(bindings_ok, "%s resolves every glove/sleeve Skin bind on its own animated skeleton" % wid)
-		_expect(loadout_surfaces_ok, "%s installs only repository glove/sleeve surfaces and no bare_arm geometry" % wid)
-		var legacy_arm_found := false
-		var legacy_glove_found := false
-		for node in instance.find_children("*", "MeshInstance3D", true, false):
-			var mesh := node as MeshInstance3D
-			if mesh.mesh == null:
-				continue
-			for surface in range(mesh.mesh.get_surface_count()):
-				var material := mesh.mesh.surface_get_material(surface)
-				if material == null:
-					continue
-				var material_name := material.resource_name.to_lower()
-				legacy_arm_found = legacy_arm_found or material_name == "ct_arms.bmp"
-				legacy_glove_found = legacy_glove_found or material_name == "ct_base_glove.bmp"
-		_expect(legacy_arm_found and not legacy_glove_found, "%s keeps the original arms and removes only the legacy gloves" % wid)
-		_expect(not original_arm_arrays.is_empty() and _material_arrays_match(original_arm_arrays, _material_arrays(instance, "ct_arms.bmp")),
-			"%s preserves every original arm vertex, UV, weight and index exactly" % wid)
-		await get_tree().process_frame
-		var animation := _find_animation_player(instance)
-		for pose in ["rest", "draw", "idle"]:
-			if animation != null and pose in ["draw", "idle"] and animation.has_animation(pose):
-				animation.play(pose)
-				var clip := animation.get_animation(pose)
-				animation.advance(minf(clip.length * 0.5, 0.55))
-			skeleton.force_update_all_bone_transforms()
-			var bounds_ok := not installed.is_empty()
-			for mesh in installed:
-				var evaluated := _cpu_skin_bounds(mesh, skeleton)
-				bounds_ok = bounds_ok and bool(evaluated.get("valid", false))
-				if bool(evaluated.get("valid", false)):
-					var box: AABB = evaluated["box"]
-					bounds_ok = bounds_ok and box.position.is_finite() and box.size.is_finite() \
-						and box.size.length() > 0.01 and box.size.length() < 2.5
-			_expect(bounds_ok, "%s gloves/sleeves CPU-skin to a finite human-sized %s pose" % [wid, pose])
+		_expect(_original_arm_composition(instance),
+			"%s uses only its original ct_arms and ct_base_glove surfaces" % wid)
 		instance.free()
-		model_index += 1
-
-	# Exercise every menu choice, not only the defaults used above.
-	for team in ["CT", "T"]:
-		for kind in ["gloves", "sleeves"]:
-			for raw in GameData.get_loadout_options(team, kind):
-				var option := raw as Dictionary
-				var option_id := String(option["id"])
-				_expect(GameData.select_viewmodel_loadout(team, kind, option_id), "Menu selection accepts " + option_id)
-				var instance := GameData.get_model_scene("weapons/v_m4a1").instantiate() as Node3D
-				_world.add_child(instance)
-				ViewmodelLoadout.apply(instance, team, "v_m4a1")
-				var found := false
-				var pbr_ok := true
-				for mesh in _loadout_meshes(instance):
-					if String(mesh.get_meta("loadout_kind", "")) == kind:
-						found = found or String(mesh.get_meta("loadout_source", "")) == String(option["model"])
-						for surface in range(mesh.mesh.get_surface_count()):
-							var original := mesh.mesh.surface_get_material(surface) as BaseMaterial3D
-							var styled := GameData.get_styled_model_material(original, "vm") as BaseMaterial3D
-							pbr_ok = pbr_ok and original != null and original.albedo_texture != null \
-								and not original.resource_name.to_lower().begins_with("bare_arm") \
-								and styled != null and is_zero_approx(styled.metallic) and styled.roughness >= 0.60
-				_expect(found, "%s applies the exact selected embedded PBR asset" % option_id)
-				_expect(pbr_ok, "%s keeps real colour textures and protected non-metallic skin/cloth" % option_id)
-				instance.free()
 
 	var menu := load("res://scenes/MainMenu.tscn").instantiate() as MainMenu
 	_world.add_child(menu)
 	await get_tree().process_frame
-	menu._load_viewer_weapon("ak47")
-	var buttons := menu.find_children("Loadout_*", "OptionButton", true, false)
-	_expect(buttons.size() == 4, "3D Arsenal contains CT/T glove and sleeve selectors")
-	for raw in buttons:
-		var button := raw as OptionButton
-		if button.item_count < 2:
-			_expect(false, button.name + " contains two options")
-			continue
-		button.item_selected.emit(1)
-		var selected_id := String(button.get_item_metadata(1))
-		var team := "CT" if String(button.name).contains("_CT_") else "T"
-		var kind := "gloves" if String(button.name).to_lower().contains("gloves") else "sleeves"
-		_expect(String(GameData.get_selected_loadout(team, kind).get("id", "")) == selected_id,
-			"%s stores its Arsenal selection" % button.name)
-		_expect(menu._viewer_team == team and _loadout_meshes(menu._viewer_pivot).size() >= 2,
-			"%s rebuilds the animated team-correct Arsenal preview" % button.name)
+	_expect(menu.find_children("Loadout_*", "OptionButton", true, false).is_empty(),
+		"3D Arsenal no longer exposes glove or sleeve selectors")
+	menu._load_viewer_weapon("m4a1")
+	_expect(_original_arm_composition(menu._viewer_pivot),
+		"3D Arsenal preview uses only the original first-person arms and gloves")
 	menu.free()
-	GameData.selected_loadouts.clear()
 
 
 func _test_cs2_audio() -> void:

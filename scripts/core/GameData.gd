@@ -24,8 +24,6 @@ var radio_menus: Dictionary = {}
 var titles: Dictionary = {}
 var world_textures_meta: Dictionary = {}
 var models_meta: Dictionary = {}
-var viewmodel_loadouts: Dictionary = {}
-var selected_loadouts: Dictionary = {}
 
 # Match / User settings
 var selected_map: String = "de_dust2"
@@ -91,48 +89,6 @@ func _load_all_databases() -> void:
 	titles = _load_json("res://data/titles.json")
 	world_textures_meta = _load_json("res://data/world_textures.json")
 	models_meta = _load_json("res://data/models_meta.json")
-	viewmodel_loadouts = _load_json("res://data/viewmodel_loadouts.json")
-
-
-func get_loadout_options(team: String, kind: String) -> Array:
-	var teams: Dictionary = viewmodel_loadouts.get("teams", {})
-	var team_data: Dictionary = teams.get(team.to_upper(), {})
-	return team_data.get(kind, []) as Array
-
-
-func get_selected_loadout(team: String, kind: String) -> Dictionary:
-	var normalized := team.to_upper()
-	var options := get_loadout_options(normalized, kind)
-	if options.is_empty():
-		return {}
-	var defaults: Dictionary = viewmodel_loadouts.get("defaults", {})
-	var default_team: Dictionary = defaults.get(normalized, {})
-	var selected_team: Dictionary = selected_loadouts.get(normalized, {})
-	var wanted := String(selected_team.get(kind, default_team.get(kind, "")))
-	for raw in options:
-		var option := raw as Dictionary
-		if String(option.get("id", "")) == wanted:
-			return option
-	return options[0] as Dictionary
-
-
-func select_viewmodel_loadout(team: String, kind: String, option_id: String) -> bool:
-	var normalized := team.to_upper()
-	for raw in get_loadout_options(normalized, kind):
-		var option := raw as Dictionary
-		if String(option.get("id", "")) == option_id:
-			if not selected_loadouts.has(normalized):
-				selected_loadouts[normalized] = {}
-			selected_loadouts[normalized][kind] = option_id
-			return true
-	return false
-
-
-func get_viewmodel_loadout(team: String) -> Dictionary:
-	return {
-		"gloves": get_selected_loadout(team, "gloves"),
-		"sleeves": get_selected_loadout(team, "sleeves"),
-	}
 
 
 func load_map_data(map_name: String) -> Dictionary:
