@@ -36,6 +36,7 @@ func _expect(condition: bool, description: String) -> void:
 
 
 func _run() -> void:
+	GameData.select_glove("classic")
 	GameData.selected_map = "de_dust2"
 	GameData.bot_count = 9
 	GameData.start_money = 800
@@ -164,6 +165,22 @@ func _run() -> void:
 		player._vm_anim.advance(0.55)
 	_expect(_player_original_arms_only(player), "T Glock retains the original arm composition at draw midpoint")
 
+	GameData.select_glove("arid_mw")
+	player.weapon_ctrl.give_weapon("ak47", 30, 90)
+	player.weapon_ctrl.equip_weapon_by_id("ak47")
+	await get_tree().process_frame
+	await get_tree().process_frame
+	_expect(_player_sport_gloves(player, "arid_mw"), "Real PlayerController installs the selected Sport gloves and original arms")
+	if player._vm_anim != null and player._vm_anim.has_animation("draw"):
+		player._vm_anim.play("draw")
+		player._vm_anim.advance(0.55)
+	_expect(_player_sport_gloves(player, "arid_mw"), "Sport glove composition remains valid through the real draw animation")
+	GameData.select_glove("classic")
+	player.weapon_ctrl.give_weapon("m4a1", 30, 90)
+	player.weapon_ctrl.equip_weapon_by_id("m4a1")
+	await get_tree().process_frame
+	_expect(_player_original_arms_only(player), "Switching back to Original restores the classic gloves without overlap")
+
 	if player._vm_model_root != null:
 		player._vm_model_root.position += Vector3.ONE * 0.25
 		await get_tree().process_frame
@@ -185,6 +202,7 @@ func _run() -> void:
 	_expect(RoundManager.state == RoundManager.State.LIVE, "Freeze time finishes and the bot round goes live")
 	_expect(RoundManager.actors.size() == 10 and is_instance_valid(_world.player), "The live scene retains its real actors")
 	await _test_live_incendiary_spread()
+	_test_single_c4_round_assignment()
 
 	if _failures.is_empty():
 		print("[ARCHI GAMEWORLD TEST] PASS: %d checks; 16 purchases, animated buy preview, 9 bots, 600 live-round frames and physical incendiary spread." % _checks)
@@ -273,6 +291,74 @@ func _player_original_arms_only(player: PlayerController) -> bool:
 				or material_name.begins_with("sleeve"):
 				return false
 	return original_arms and original_gloves
+
+
+func _player_sport_gloves(player: PlayerController, expected_id: String) -> bool:
+	if player == null or player._vm_model_root == null:
+		return false
+	var original_arms := false
+	var original_glove := false
+	var sport_surfaces := 0
+	var textured := true
+	for node in player._vm_model_root.find_children("*", "MeshInstance3D", true, false):
+		var mesh := node as MeshInstance3D
+		if mesh.mesh == null or mesh.has_meta("loadout_kind"):
+			return false
+		if mesh.has_meta("sport_gloves"):
+			if String(mesh.get_meta("sport_glove_id", "")) != expected_id or mesh.skin == null:
+				return false
+			sport_surfaces += mesh.mesh.get_surface_count()
+			for surface in range(mesh.mesh.get_surface_count()):
+				var material := mesh.get_active_material(surface) as BaseMaterial3D
+				textured = textured and material != null and material.albedo_texture != null
+			continue
+		for surface in range(mesh.mesh.get_surface_count()):
+			var material := mesh.mesh.surface_get_material(surface)
+			var material_name := material.resource_name.to_lower() if material != null else ""
+			if material_name == "ct_arms.bmp":
+				original_arms = true
+			elif material_name == "ct_base_glove.bmp":
+				original_glove = true
+	return textured and original_arms and not original_glove and sport_surfaces == 10
+
+
+func _test_single_c4_round_assignment() -> void:
+	var terrorists: Array[CSActor] = []
+	for raw in RoundManager.actors:
+		var actor := raw as CSActor
+		if actor != null and actor.team == "T":
+			terrorists.append(actor)
+	_expect(terrorists.size() >= 2, "Round reset test has at least two terrorist survivors")
+	if terrorists.size() < 2:
+		return
+	for index in range(2):
+		terrorists[index].is_alive = true
+		terrorists[index].health = 100
+		terrorists[index].weapon_ctrl.give_weapon("c4", 1, 0)
+		terrorists[index].weapon_ctrl.equip_weapon_by_id("c4")
+	var stale_c4_drop := DroppedWeapon.new()
+	_world.add_child(stale_c4_drop)
+	stale_c4_drop.setup_drop("c4", 0, 0, Vector3.ZERO)
+	RoundManager.dropped_items.append(stale_c4_drop)
+	_world.prepare_round_entities(false)
+	var carriers := 0
+	var stale_equipped := 0
+	for actor in terrorists:
+		if String(actor.weapon_ctrl.slots.get(5, "")) == "c4":
+			carriers += 1
+		if actor.weapon_ctrl.current_weapon_id == "c4":
+			stale_equipped += 1
+	_expect(carriers == 1, "Two surviving C4 carriers are reduced to exactly one bomb next round")
+	_expect(stale_equipped == 0, "Removed duplicate C4 inventories never leave a stale equipped bomb")
+	var dropped_bombs := 0
+	for raw in RoundManager.dropped_items:
+		if is_instance_valid(raw) and String((raw as DroppedWeapon).item_id) == "c4":
+			dropped_bombs += 1
+	_expect(dropped_bombs == 0, "Round preparation leaves no duplicate dropped C4 behind")
+	_expect(is_instance_valid(stale_c4_drop) and stale_c4_drop.is_queued_for_deletion(),
+		"Previous-round ground C4 is explicitly queued for removal")
+	_expect(carriers + dropped_bombs == 1,
+		"Exactly one legitimate C4 remains across surviving inventories and registered drops")
 
 
 func _test_live_incendiary_spread() -> void:

@@ -38,16 +38,16 @@ func _ready() -> void:
 	_led_sprite.texture = GameData.get_texture("res://assets/sprites/ledglow.png")
 	_led_sprite.billboard = BaseMaterial3D.BILLBOARD_ENABLED
 	_led_sprite.shaded = false
-	_led_sprite.modulate = Color(1.0, 0.14, 0.08, 0.96)
-	_led_sprite.pixel_size = 0.0062
+	_led_sprite.modulate = Color(1.0, 0.14, 0.08, 0.58)
+	_led_sprite.pixel_size = 0.0028
 	_led_sprite.position = Vector3(0.0, 0.14, 0.0)
 	_led_sprite.visible = false
 	add_child(_led_sprite)
 
 	_led_light = OmniLight3D.new()
 	_led_light.light_color = Color(1.0, 0.12, 0.08)
-	_led_light.light_energy = 2.2
-	_led_light.omni_range = 4.6
+	_led_light.light_energy = 0.65
+	_led_light.omni_range = 1.6
 	_led_light.position = Vector3(0.0, 0.22, 0.0)
 	_led_light.visible = false
 	add_child(_led_light)
@@ -112,9 +112,9 @@ func _process(delta: float) -> void:
 		if _led_sprite:
 			_led_sprite.visible = true
 		if _led_light:
-			_led_light.light_energy = lerpf(1.8, 3.4, ratio)
+			_led_light.light_energy = lerpf(0.45, 0.85, ratio)
 			_led_light.visible = true
-		_led_flash_timer = 0.10
+		_led_flash_timer = 0.075
 
 
 func _detonate() -> void:

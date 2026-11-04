@@ -259,8 +259,16 @@ func prepare_round_entities(reset_all_gear: bool) -> void:
 		t_idx += 1
 		ta.spawn_for_round(sp2["pos"], sp2["yaw"], reset_all_gear)
 
-	# 5. Assign C4 Plastic Explosive to 1 random Terrorist on de_* maps!
+	# 5. Assign exactly one C4 on de_* maps. Survivors retain their other
+	# equipment, so remove every carried bomb before the new random assignment.
+	# Otherwise a surviving carrier plus the new carrier creates two bombs.
 	if String(map_data.get("mode", "de")) == "de" and not t_actors.is_empty():
+		for raw in t_actors:
+			var t := raw as CSActor
+			t.weapon_ctrl.slots[5] = ""
+			if t.weapon_ctrl.current_weapon_id == "c4":
+				if not t.weapon_ctrl.equip_slot(2):
+					t.weapon_ctrl.equip_slot(3)
 		var carrier: CSActor = t_actors[randi() % t_actors.size()]
 		carrier.weapon_ctrl.give_weapon("c4", 1, 0)
 		if carrier.is_human:

@@ -65,10 +65,10 @@ Normal `world_scale` is `1.0` for the 37 firearms/tools and `0.90` for the six
 grenades, shared by hand, dropped, thrown and planted presentations. The default
 calibration command restores those accepted values. Its optional `--calibrate`
 mode retains the experimental length-fitting table, but that pass made weapons
-too small and is not the shipping configuration. View/world material styling is
-separate from matte character cloth. Weapons use a glossier metallic response;
-the Molotov treats both textured glass surfaces and its inner liquid as ordered
-translucent layers, while bright label/rag texels retain their opacity.
+too small and is not the shipping configuration. View/held material styling is
+separate from matte character cloth and low-specular dropped weapons. The Molotov
+uses ordered liquid-glass layers with screen-space refraction, Fresnel reflection,
+an animated inner liquid volume and opaque printed label/rag detail.
 
 #### Targeted animation repair
 
@@ -84,6 +84,33 @@ clips reuse the measured 47.6 mm rearward slide axis from `reload`; normal shots
 return to battery and `shoot_empty` stays locked open. Semi/burst clip routing is
 unchanged. Meshes, UVs, textures, materials, skins and unrelated animations are
 not rebuilt; never substitute the historical one-way UV migration for this tool.
+
+#### Sport Gloves native-bind build
+
+`Sport_gloves` from <https://github.com/ShadowNigth/archi> was reviewed at
+`43b46172606a31759637c90378782390f374c1ee`. The build uses only the Rootns Rig
+`g0...g4` hand meshes: 26 finishes, 130 deduplicated JPEGs and 43 per-viewmodel
+GLBs. Saseky duplicates, Knife Rig and every arm/sleeve SMD are excluded. A
+per-target proper rotation is recovered from 32 shared hand/finger directions;
+all 29,700 authored rigid triangle vertices retain their single bone. Meshes and
+inverse binds are baked offline, so runtime never retargets animation or vertices.
+Original `ct_arms.bmp`, weapon geometry, skeletons and clips remain unchanged.
+
+```bash
+git clone --filter=blob:none --no-checkout --depth 1 \
+    https://github.com/ShadowNigth/archi.git /tmp/archi-review
+git -C /tmp/archi-review sparse-checkout set Sport_gloves
+git -C /tmp/archi-review checkout
+PYTHONPATH=/tmp:. python -m tools.source.build_sport_gloves \
+    /tmp/archi-review/Sport_gloves /home/user/15
+PYTHONPATH=/tmp:. python -m tools.source.build_sport_gloves --check \
+    /tmp/archi-review/Sport_gloves /home/user/15
+```
+
+`GameData.selected_glove_id` stores the local player's choice for subsequent
+matches. Create Game and the 3D Arsenal expose Original plus all 26 Sport
+finishes. `SportGloves` validates every native Skin bind before removing only
+`ct_base_glove.bmp`; any failure leaves the original viewmodel untouched.
 
 #### CS2-MultiRig review
 

@@ -26,6 +26,9 @@ var world_textures_meta: Dictionary = {}
 var models_meta: Dictionary = {}
 ## Shared high-resolution archi weapon textures, keyed by Source material name.
 var archi_materials: Dictionary = {}
+## Sport_gloves catalog and the local player's choice for subsequent matches.
+var sport_gloves: Dictionary = {}
+var selected_glove_id: String = ""
 
 # Match / User settings
 var selected_map: String = "de_dust2"
@@ -93,6 +96,59 @@ func _load_all_databases() -> void:
 	models_meta = _load_json("res://data/models_meta.json")
 	var archi_db: Dictionary = _load_json("res://data/archi_materials.json")
 	archi_materials = archi_db.get("materials", {})
+	sport_gloves = _load_json("res://data/sport_gloves.json")
+	if selected_glove_id.is_empty():
+		selected_glove_id = String(sport_gloves.get("default", "classic"))
+
+
+func get_glove_options() -> Array:
+	return sport_gloves.get("options", []) as Array
+
+
+func get_selected_glove() -> Dictionary:
+	if selected_glove_id == String(sport_gloves.get("classic_id", "classic")):
+		return {}
+	for raw in get_glove_options():
+		var option := raw as Dictionary
+		if String(option.get("id", "")) == selected_glove_id:
+			return option
+	return {}
+
+
+func get_glove_display_name() -> String:
+	var selected := get_selected_glove()
+	return String(selected.get("name", "Original Counter-Strike Gloves"))
+
+
+func select_glove(option_id: String) -> bool:
+	if option_id == String(sport_gloves.get("classic_id", "classic")):
+		selected_glove_id = option_id
+		return true
+	for raw in get_glove_options():
+		if String((raw as Dictionary).get("id", "")) == option_id:
+			selected_glove_id = option_id
+			return true
+	return false
+
+
+func get_sport_glove_source_material(orig: Material, option: Dictionary) -> Material:
+	if orig == null or not (orig is BaseMaterial3D):
+		return orig
+	var source := orig as BaseMaterial3D
+	var material_name := source.resource_name.to_lower()
+	var key := "sport_%s_%s" % [String(option.get("id", "")), material_name]
+	if _styled_mat_cache.has(key):
+		return _styled_mat_cache[key] as Material
+	var textures: Dictionary = option.get("textures", {})
+	if not textures.has(material_name):
+		return null
+	var dup := source.duplicate() as BaseMaterial3D
+	dup.albedo_texture = get_texture(String(textures[material_name]))
+	if dup.albedo_texture == null:
+		return null
+	dup.albedo_color = Color.WHITE
+	_styled_mat_cache[key] = dup
+	return dup
 
 
 func load_map_data(map_name: String) -> Dictionary:
@@ -162,9 +218,10 @@ func get_styled_model_material(orig: Material, mode: String) -> Material:
 		glass.shader = MOLOTOV_GLASS_SHADER
 		glass.set_shader_parameter("bottle_texture", hd_albedo)
 		glass.set_shader_parameter("bottle_tint", source.albedo_color)
-		glass.set_shader_parameter("glass_tint", Vector3(0.50, 1.22, 0.58))
-		glass.set_shader_parameter("glass_opacity", 0.14 if material_name == "weapon_molotov" else 0.08)
-		glass.set_shader_parameter("brightness", 1.18 if mode in ["vm", "vm_flip"] else 1.10)
+		glass.set_shader_parameter("glass_tint", Vector3(0.82, 1.04, 0.88))
+		glass.set_shader_parameter("glass_opacity", 0.38 if material_name == "weapon_molotov" else 0.28)
+		glass.set_shader_parameter("refraction_strength", 0.018 if material_name == "weapon_molotov" else 0.012)
+		glass.set_shader_parameter("brightness", 1.12 if mode in ["vm", "vm_flip"] else 1.06)
 		# Draw the liquid first, then the intermediate green surface, then the
 		# outer glass/label. The source's second surface must not stay alpha-masked.
 		glass.render_priority = 2 if material_name == "weapon_molotov" else 1
@@ -174,10 +231,11 @@ func get_styled_model_material(orig: Material, mode: String) -> Material:
 		var liquid := ShaderMaterial.new()
 		liquid.shader = MOLOTOV_LIQUID_SHADER
 		liquid.set_shader_parameter("liquid_texture", hd_albedo)
-		liquid.set_shader_parameter("liquid_tint", source.albedo_color)
-		liquid.set_shader_parameter("brightness", 1.22 if mode in ["vm", "vm_flip"] else 1.12)
+		liquid.set_shader_parameter("liquid_tint", Color(source.albedo_color.r * 0.72, source.albedo_color.g * 0.94, source.albedo_color.b * 0.58, source.albedo_color.a))
+		liquid.set_shader_parameter("brightness", 1.16 if mode in ["vm", "vm_flip"] else 1.08)
 		liquid.set_shader_parameter("deformation", 1.0 if mode in ["vm", "vm_flip"] else 0.0)
-		liquid.set_shader_parameter("opacity", 0.32 if mode in ["vm", "vm_flip"] else 0.30)
+		liquid.set_shader_parameter("opacity", 0.58 if mode in ["vm", "vm_flip"] else 0.52)
+		liquid.set_shader_parameter("refraction_strength", 0.008)
 		liquid.render_priority = 0
 		_styled_mat_cache[key] = liquid
 		return liquid
@@ -213,15 +271,28 @@ func get_styled_model_material(orig: Material, mode: String) -> Material:
 		dup.albedo_color = Color(original.r * 1.32, original.g * 1.32, original.b * 1.34, original.a)
 	elif mode == "w_drop":
 		dup.cull_mode = BaseMaterial3D.CULL_BACK
-		dup.roughness = 0.34
-		dup.metallic = 0.36
-		dup.metallic_specular = 0.72
-		dup.albedo_color = Color(original.r * 1.28, original.g * 1.28, original.b * 1.30, original.a)
+		# Floor pickups must retain their texture colour under direct sunlight,
+		# not become the bright silver mirrors used by first-person metal.
+		dup.roughness = 0.70
+		dup.metallic = 0.06
+		dup.metallic_specular = 0.34
+		dup.albedo_color = Color(original.r * 1.10, original.g * 1.10, original.b * 1.12, original.a)
 	else:
 		# Character cloth and skin stay matte; only weapons receive the harder
 		# specular response above.
 		dup.cull_mode = BaseMaterial3D.CULL_BACK
 		dup.albedo_color = Color(original.r * 1.36, original.g * 1.36, original.b * 1.38, original.a)
+	if material_name == "c4_light":
+		# This rectangular mesh is the red control-panel insert, not a bloom
+		# sprite. Its imported full-strength emission otherwise becomes a red
+		# square on both dropped and planted models under gl_compatibility.
+		dup.albedo_color = Color(0.18, 0.004, 0.002, 1.0)
+		dup.emission_enabled = false
+		dup.emission = Color.BLACK
+		dup.emission_energy_multiplier = 0.0
+		dup.metallic = 0.0
+		dup.metallic_specular = 0.22
+		dup.roughness = 0.86
 	var character_surface := material_name.contains("glove") or material_name.contains("arms") \
 		or material_name.contains("bare_arm") or material_name.contains("sleeve") or material_name.contains("skin")
 	if character_surface:

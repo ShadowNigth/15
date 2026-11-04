@@ -22,6 +22,7 @@ var _map_briefing_lbl: Label = null
 var _bot_spin: SpinBox = null
 var _diff_opt: OptionButton = null
 var _money_opt: OptionButton = null
+var _glove_opt: OptionButton = null
 
 # 3D Arsenal Viewer widgets
 var _viewer_viewport: SubViewport = null
@@ -307,6 +308,15 @@ func _build_play_dialog() -> void:
 	_money_opt.selected = 0
 	settings_grid.add_child(_money_opt)
 
+	var gl := Label.new()
+	gl.text = "First-person Gloves:"
+	gl.add_theme_font_size_override("font_size", 13)
+	settings_grid.add_child(gl)
+	_glove_opt = OptionButton.new()
+	_glove_opt.custom_minimum_size.x = 260.0
+	_populate_glove_options(_glove_opt)
+	settings_grid.add_child(_glove_opt)
+
 	var start_btn := Button.new()
 	start_btn.text = "LAUNCH MATCH  >>"
 	start_btn.custom_minimum_size = Vector2(0, 38)
@@ -361,7 +371,32 @@ func _on_map_selected(idx: int) -> void:
 	_overview_tex_rect.texture = GameData.get_texture(String(ov.get("image", "")))
 
 
+func _populate_glove_options(button: OptionButton) -> void:
+	button.clear()
+	var classic_id := String(GameData.sport_gloves.get("classic_id", "classic"))
+	var classic_index := button.item_count
+	button.add_item("Original Counter-Strike Gloves")
+	button.set_item_metadata(classic_index, classic_id)
+	for raw in GameData.get_glove_options():
+		var option := raw as Dictionary
+		var index := button.item_count
+		button.add_item(String(option.get("name", "Sport Gloves")))
+		button.set_item_metadata(index, String(option.get("id", "")))
+	_sync_glove_option()
+
+
+func _sync_glove_option() -> void:
+	if _glove_opt == null:
+		return
+	for index in range(_glove_opt.item_count):
+		if String(_glove_opt.get_item_metadata(index)) == GameData.selected_glove_id:
+			_glove_opt.select(index)
+			return
+
+
 func _start_selected_game() -> void:
+	if _glove_opt and _glove_opt.selected >= 0:
+		GameData.select_glove(String(_glove_opt.get_item_metadata(_glove_opt.selected)))
 	if _bot_spin:
 		GameData.bot_count = int(_bot_spin.value)
 	if _diff_opt:
@@ -396,11 +431,19 @@ func _build_arsenal_dialog() -> void:
 		for cinfo in GameData.classes.get(tm, []):
 			var idx2 := wlist.add_item("[Player %s] %s" % [tm, String(cinfo["name"])])
 			wlist.set_item_metadata(idx2, "player:" + String(cinfo["id"]))
+	var glove_idx := wlist.add_item("[Gloves] Original Counter-Strike")
+	wlist.set_item_metadata(glove_idx, "glove:" + String(GameData.sport_gloves.get("classic_id", "classic")))
+	for raw in GameData.get_glove_options():
+		var option := raw as Dictionary
+		var idx3 := wlist.add_item("[Gloves] %s — %s" % [String(option.get("family", "Sport")), String(option.get("wear_code", ""))])
+		wlist.set_item_metadata(idx3, "glove:" + String(option.get("id", "")))
 
 	wlist.item_selected.connect(func(idx: int):
 		var meta := String(wlist.get_item_metadata(idx))
 		if meta.begins_with("player:"):
 			_load_viewer_player(meta.trim_prefix("player:"))
+		elif meta.begins_with("glove:"):
+			_select_glove_for_match(meta.trim_prefix("glove:"))
 		else:
 			_load_viewer_weapon(meta)
 	)
@@ -465,6 +508,14 @@ func _build_arsenal_dialog() -> void:
 	right.add_child(_viewer_stats_lbl)
 
 
+func _select_glove_for_match(option_id: String) -> void:
+	if not GameData.select_glove(option_id):
+		return
+	_sync_glove_option()
+	AudioManager.play_ui("launch_select1.wav")
+	_load_viewer_weapon("ak47")
+
+
 func _clear_viewer_pivot() -> void:
 	var old_c := _viewer_pivot.get_children()
 	for c in old_c:
@@ -478,7 +529,7 @@ func _style_viewer_meshes(n: Node, mode: String = "char") -> void:
 		var mi := n as MeshInstance3D
 		if mi.mesh:
 			for s in range(mi.mesh.get_surface_count()):
-				var styled := GameData.get_styled_model_material(mi.mesh.surface_get_material(s), mode)
+				var styled := GameData.get_styled_model_material(mi.get_active_material(s), mode)
 				if styled:
 					mi.set_surface_override_material(s, styled)
 	for c in n.get_children():
@@ -496,6 +547,7 @@ func _load_viewer_weapon(wid: String) -> void:
 		inst.position = Vector3(-0.08, 0.12, 0.65)
 		inst.rotation_degrees = Vector3(0.0, 25.0, 0.0)
 		_viewer_pivot.add_child(inst)
+		SportGloves.apply(inst, String(spec.get("v_model", "v_ak47")))
 		_style_viewer_meshes(inst, "vm")
 		_viewer_anim = _find_anim_recursive(inst)
 		if _viewer_anim and not _viewer_anim.get_animation_list().is_empty():
@@ -509,6 +561,7 @@ func _load_viewer_weapon(wid: String) -> void:
 		float(spec.get("cycle_time", 0.1)),
 		String(spec.get("description", "")),
 	]
+	_viewer_stats_lbl.text += "\nFirst-person gloves for the next match: " + GameData.get_glove_display_name()
 
 
 func _load_viewer_player(cid: String) -> void:

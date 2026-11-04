@@ -322,6 +322,8 @@ func trigger_primary(holding: bool, delta: float) -> void:
 
 	# C4 Planting on Bombsite during LIVE round
 	if current_weapon_id == "c4":
+		if is_instance_valid(RoundManager.planted_c4):
+			return
 		if RoundManager.state != RoundManager.State.LIVE:
 			return
 		if is_instance_valid(RoundManager.game_world) and RoundManager.game_world.has_method("is_in_bombsite"):
@@ -1083,7 +1085,11 @@ func _spawn_brass_casing(spec: Dictionary) -> void:
 
 
 func _complete_c4_plant() -> void:
-	if not is_instance_valid(RoundManager.game_world):
+	if not is_instance_valid(RoundManager.game_world) or is_instance_valid(RoundManager.planted_c4):
+		return
+	# Planting consumes the one legitimate inventory item. A stale/current C4
+	# without its slot must never create a second world bomb.
+	if String(slots.get(5, "")) != "c4":
 		return
 	slots[5] = ""
 	var c4 := PlantedC4.new()

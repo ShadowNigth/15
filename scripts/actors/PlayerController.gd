@@ -539,6 +539,7 @@ func _rebuild_viewmodel(wid: String) -> void:
 	# Native GoldSrc camera-space framing (verified across rifles, pistols, knife, grenades & C4)
 	inst.position = Vector3(0.0, -0.015, -0.03)
 	viewmodel_holder.add_child(inst)
+	SportGloves.apply(inst, v_name)
 	_prepare_viewmodel_materials(inst)
 	_vm_model_root = inst as Node3D
 	if _vm_model_root != null:
@@ -715,7 +716,7 @@ func _prepare_viewmodel_materials(n: Node) -> void:
 		mi.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
 		if mi.mesh:
 			for s in range(mi.mesh.get_surface_count()):
-				var mat := mi.mesh.surface_get_material(s)
+				var mat := mi.get_active_material(s)
 				var styled := GameData.get_styled_model_material(mat, "vm")
 				if styled:
 					mi.set_surface_override_material(s, styled)

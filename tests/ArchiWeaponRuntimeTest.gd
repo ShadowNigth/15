@@ -74,6 +74,7 @@ func _run() -> void:
 	RoundManager.actors.clear()
 	RoundManager.hostages.clear()
 	RoundManager.dropped_items.clear()
+	RoundManager.planted_c4 = null
 	RoundManager.smoke_clouds.clear()
 	RoundManager.smoke_volumes.clear()
 
@@ -92,10 +93,13 @@ func _run() -> void:
 	_test_alternate_inspections()
 	_test_hd_materials()
 	await _test_original_viewmodel_arms()
+	await _test_sport_gloves()
 	_test_cs2_audio()
 	_test_world_calibration_and_molotov()
+	_test_gameplay_material_fixes()
 	_test_scope_tint_preservation()
 	_test_mechanics()
+	_test_single_planted_c4_guard()
 	_test_grenade_world_scale()
 	_test_crate_rule()
 	await _test_fire_spread()
@@ -413,6 +417,8 @@ func _original_arm_composition(root: Node) -> bool:
 
 
 func _test_original_viewmodel_arms() -> void:
+	var previous_glove := GameData.selected_glove_id
+	GameData.select_glove("classic")
 	_expect(not DirAccess.dir_exists_absolute("res://assets/models/loadouts"),
 		"MultiRig glove/sleeve assets are removed from the project")
 	_expect(not FileAccess.file_exists("res://data/viewmodel_loadouts.json") \
@@ -434,11 +440,94 @@ func _test_original_viewmodel_arms() -> void:
 	_world.add_child(menu)
 	await get_tree().process_frame
 	_expect(menu.find_children("Loadout_*", "OptionButton", true, false).is_empty(),
-		"3D Arsenal no longer exposes glove or sleeve selectors")
+		"3D Arsenal exposes no rejected MultiRig Loadout controls")
 	menu._load_viewer_weapon("m4a1")
 	_expect(_original_arm_composition(menu._viewer_pivot),
 		"3D Arsenal preview uses only the original first-person arms and gloves")
 	menu.free()
+	GameData.selected_glove_id = previous_glove
+
+
+func _sport_composition(root: Node, expected_id: String) -> bool:
+	var original_arms := false
+	var original_glove := false
+	var sport_surfaces := 0
+	var valid := true
+	for node in root.find_children("*", "MeshInstance3D", true, false):
+		var mesh := node as MeshInstance3D
+		if mesh.mesh == null or mesh.has_meta("loadout_kind"):
+			valid = false
+			continue
+		if mesh.has_meta("sport_gloves"):
+			if String(mesh.get_meta("sport_glove_id", "")) != expected_id or mesh.skin == null:
+				valid = false
+			sport_surfaces += mesh.mesh.get_surface_count()
+			for surface in range(mesh.mesh.get_surface_count()):
+				var active := mesh.get_active_material(surface) as BaseMaterial3D
+				if active == null or active.albedo_texture == null or not active.resource_name.begins_with("sport_glove_"):
+					valid = false
+			continue
+		for surface in range(mesh.mesh.get_surface_count()):
+			var material := mesh.mesh.surface_get_material(surface)
+			var material_name := material.resource_name.to_lower() if material != null else ""
+			if material_name == "ct_arms.bmp":
+				original_arms = true
+			elif material_name == "ct_base_glove.bmp":
+				original_glove = true
+			elif material_name.begins_with("bare_arm") or material_name.begins_with("sleeve"):
+				valid = false
+	return valid and original_arms and not original_glove and sport_surfaces == 10
+
+
+func _test_sport_gloves() -> void:
+	var previous_glove := GameData.selected_glove_id
+	_expect(GameData.get_glove_options().size() == 26, "Sport Gloves catalog exposes all 26 authored finishes")
+	_expect(GameData.sport_gloves.get("models", []).size() == 43, "Sport Gloves catalog covers every distinct viewmodel")
+	var texture_paths: Dictionary = {}
+	for raw in GameData.get_glove_options():
+		var option := raw as Dictionary
+		var option_id := String(option.get("id", ""))
+		_expect(GameData.select_glove(option_id), "Sport finish is selectable: " + option_id)
+		for path in option.get("textures", {}).values():
+			texture_paths[path] = true
+	_expect(texture_paths.size() == 130, "Sport catalog references exactly 130 deduplicated texture files")
+	for path in texture_paths:
+		_expect(GameData.get_texture(String(path)) != null, "Sport texture imports: " + String(path))
+	_expect(GameData.select_glove("arid_mw"), "The default Arid Minimal Wear finish is selectable")
+	for wid in GameData.weapons:
+		var spec: Dictionary = GameData.weapons[wid]
+		var viewmodel_name := String(spec["v_model"])
+		var packed := GameData.get_model_scene("weapons/" + viewmodel_name)
+		if packed == null:
+			_expect(false, "%s Sport test viewmodel loads" % wid)
+			continue
+		var instance := packed.instantiate() as Node3D
+		_world.add_child(instance)
+		var animation := _find_animation_player(instance)
+		var applied := SportGloves.apply(instance, viewmodel_name)
+		_expect(applied, "%s installs Sport native binds" % wid)
+		_expect(_sport_composition(instance, "arid_mw"),
+			"%s keeps original arms, ten textured Sport surfaces and no original glove overlap" % wid)
+		_expect(_find_animation_player(instance) == animation, "%s retains its original AnimationPlayer" % wid)
+		instance.free()
+
+	GameData.select_glove("classic")
+	var classic := GameData.get_model_scene("weapons/v_ak47").instantiate() as Node3D
+	_world.add_child(classic)
+	_expect(not SportGloves.apply(classic, "v_ak47") and _original_arm_composition(classic),
+		"Original menu option leaves the accepted classic gloves untouched")
+	classic.free()
+
+	var menu := load("res://scenes/MainMenu.tscn").instantiate() as MainMenu
+	_world.add_child(menu)
+	await get_tree().process_frame
+	_expect(menu._glove_opt != null and menu._glove_opt.item_count == 27,
+		"Create Game exposes Original plus all 26 Sport finishes")
+	menu._select_glove_for_match("vice_ww")
+	_expect(GameData.selected_glove_id == "vice_ww" and _sport_composition(menu._viewer_pivot, "vice_ww"),
+		"3D Arsenal previews and stores the selected Vice finish for the match")
+	menu.free()
+	GameData.selected_glove_id = previous_glove
 
 
 func _test_cs2_audio() -> void:
@@ -540,8 +629,9 @@ func _test_world_calibration_and_molotov() -> void:
 				var valid: bool = glass != null and glass.shader == GameData.MOLOTOV_GLASS_SHADER \
 					and glass.get_shader_parameter("bottle_texture") != null \
 					and glass.get_shader_parameter("bottle_texture") == expected_bottle \
-					and float(glass.get_shader_parameter("glass_opacity")) <= 0.14 \
-					and tint.y > tint.x * 1.5 and tint.y > tint.z * 1.5
+					and float(glass.get_shader_parameter("glass_opacity")) >= 0.28 \
+					and float(glass.get_shader_parameter("refraction_strength")) >= 0.012 \
+					and tint.y >= tint.x and tint.y >= tint.z
 				if original.resource_name == "weapon_molotov":
 					outer_glass_ok = valid and glass.render_priority == 2
 				else:
@@ -550,15 +640,61 @@ func _test_world_calibration_and_molotov() -> void:
 				var liquid := GameData.get_styled_model_material(original, "vm") as ShaderMaterial
 				liquid_ok = liquid != null and liquid.shader == GameData.MOLOTOV_LIQUID_SHADER \
 					and float(liquid.get_shader_parameter("deformation")) > 0.5 \
-					and float(liquid.get_shader_parameter("opacity")) <= 0.32 and liquid.render_priority == 0
+					and float(liquid.get_shader_parameter("opacity")) >= 0.58 \
+					and float(liquid.get_shader_parameter("refraction_strength")) > 0.0 and liquid.render_priority == 0
 			elif original.resource_name == "weapon_molotov_lighter":
 				var finish := GameData.get_styled_model_material(original, "vm") as BaseMaterial3D
 				weapon_finish_ok = finish != null and finish.roughness <= 0.31 and finish.metallic >= 0.41 \
 					and finish.metallic_specular >= 0.77
-	_expect(outer_glass_ok and intermediate_glass_ok, "Both textured Molotov glass layers are transparent green and preserve printed detail")
-	_expect(liquid_ok, "Molotov liquid is animated, translucent and drawn behind the glass")
-	_expect(weapon_finish_ok, "Weapon materials use a glossier metallic response")
+	_expect(outer_glass_ok and intermediate_glass_ok, "Both Molotov glass layers refract the scene and preserve printed detail")
+	_expect(liquid_ok, "Molotov liquid is animated, refractive and drawn behind the glass")
+	_expect(GameData.MOLOTOV_GLASS_SHADER.code.contains("hint_screen_texture") \
+		and GameData.MOLOTOV_GLASS_SHADER.code.contains("SCREEN_UV") \
+		and GameData.MOLOTOV_LIQUID_SHADER.code.contains("hint_screen_texture"),
+		"Liquid-glass shaders use actual screen transmission rather than plain alpha")
+	_expect(weapon_finish_ok, "Weapon materials preserve their accepted first-person metallic response")
 	instance.free()
+
+
+func _test_gameplay_material_fixes() -> void:
+	var ak := GameData.get_model_scene("weapons/w_ak47").instantiate() as Node3D
+	_world.add_child(ak)
+	var original := _find_material(ak, "weapon_rif_ak47")
+	_expect(original != null, "Dropped AK material is available for finish comparison")
+	if original != null:
+		var dropped := GameData.get_styled_model_material(original, "w_drop") as BaseMaterial3D
+		var first_person := GameData.get_styled_model_material(original, "vm") as BaseMaterial3D
+		_expect(dropped != null and is_equal_approx(dropped.roughness, 0.70) \
+			and is_equal_approx(dropped.metallic, 0.06) and is_equal_approx(dropped.metallic_specular, 0.34),
+			"Dropped weapons use the matte low-specular floor finish")
+		_expect(first_person != null and is_equal_approx(first_person.roughness, 0.30) \
+			and is_equal_approx(first_person.metallic, 0.42) and is_equal_approx(first_person.metallic_specular, 0.78),
+			"First-person metallic brightness remains unchanged")
+	ak.free()
+
+	var c4 := GameData.get_model_scene("weapons/w_c4").instantiate() as Node3D
+	_world.add_child(c4)
+	var panel := _find_material(c4, "c4_light")
+	_expect(panel != null, "C4 red control-panel material exists")
+	if panel != null:
+		var styled := GameData.get_styled_model_material(panel, "w_drop") as BaseMaterial3D
+		_expect(styled != null and not styled.emission_enabled and styled.emission_energy_multiplier <= 0.0 \
+			and is_equal_approx(styled.albedo_color.r, 0.18) and styled.metallic <= 0.0,
+			"Dropped C4 red rectangle is a dark non-emissive panel, not a glowing square")
+	c4.free()
+
+	var planted := PlantedC4.new()
+	_world.add_child(planted)
+	_expect(planted._led_sprite != null and is_equal_approx(planted._led_sprite.pixel_size, 0.0028) \
+		and is_equal_approx(planted._led_sprite.modulate.a, 0.58), "Planted C4 uses a small restrained LED glow")
+	_expect(planted._led_light != null and is_equal_approx(planted._led_light.omni_range, 1.6) \
+		and is_equal_approx(planted._led_light.light_energy, 0.65), "Planted C4 local red light has bounded range and energy")
+	planted.time_left = 0.05
+	planted._beep_timer = 0.0
+	planted._process(0.001)
+	_expect(planted._led_light != null and is_equal_approx(planted._led_light.omni_range, 1.6) \
+		and planted._led_light.light_energy <= 0.8501, "The brightest C4 beep keeps the reduced local light bounds")
+	planted.free()
 
 
 func _test_scope_tint_preservation() -> void:
@@ -709,6 +845,42 @@ func _test_fire_projectile(kind: String) -> void:
 		area.set_physics_process(false)
 		area.set_process(false)
 		area.queue_free()
+
+
+func _test_single_planted_c4_guard() -> void:
+	_controller.reset_loadout("T")
+	_controller.current_weapon_id = "c4"
+	_controller.slots[5] = "c4"
+	var existing := Node3D.new()
+	_world.add_child(existing)
+	RoundManager.planted_c4 = existing
+	var before := _world.get_child_count()
+	_controller._complete_c4_plant()
+	_expect(_world.get_child_count() == before and String(_controller.slots[5]) == "c4",
+		"An existing planted bomb blocks every second planting attempt")
+	RoundManager.planted_c4 = null
+	existing.free()
+
+	_controller.slots[5] = ""
+	before = _world.get_child_count()
+	_controller._complete_c4_plant()
+	_expect(_world.get_child_count() == before, "A stale C4 viewmodel without inventory cannot plant")
+	_controller.slots[5] = "c4"
+	_controller._complete_c4_plant()
+	var planted := RoundManager.planted_c4 as PlantedC4
+	_expect(is_instance_valid(planted) and String(_controller.slots[5]).is_empty(),
+		"The one legitimate C4 creates exactly one planted object and is consumed")
+	if planted != null:
+		planted.set_process(false)
+		_controller.current_weapon_id = "c4"
+		_controller.slots[5] = "c4"
+		before = _world.get_child_count()
+		_controller._complete_c4_plant()
+		_expect(_world.get_child_count() == before and RoundManager.planted_c4 == planted,
+			"A second carrier cannot replace or duplicate the live planted C4")
+		RoundManager.planted_c4 = null
+		planted.free()
+	_controller.reset_loadout("T")
 
 
 func _test_grenade_world_scale() -> void:

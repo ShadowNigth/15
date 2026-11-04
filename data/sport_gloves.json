@@ -1,0 +1,549 @@
+{
+  "classic_id": "classic",
+  "conversion": "Offline rigid native binds; per-target GoldSrc-to-Source hand axes; original arms and animations unchanged",
+  "default": "arid_mw",
+  "models": [
+    "v_ak47",
+    "v_aug",
+    "v_awp",
+    "v_bizon",
+    "v_c4",
+    "v_cz75",
+    "v_deagle",
+    "v_decoy",
+    "v_elite",
+    "v_famas",
+    "v_fiveseven",
+    "v_flashbang",
+    "v_g3sg1",
+    "v_galil",
+    "v_glock18",
+    "v_hegrenade",
+    "v_incendiary",
+    "v_knife",
+    "v_m249",
+    "v_m3",
+    "v_m4a1",
+    "v_m4a4",
+    "v_mac10",
+    "v_mag7",
+    "v_molotov",
+    "v_mp5",
+    "v_mp7",
+    "v_negev",
+    "v_p2000",
+    "v_p228",
+    "v_p90",
+    "v_revolver",
+    "v_sawedoff",
+    "v_scout",
+    "v_sg550",
+    "v_sg552",
+    "v_smokegrenade",
+    "v_taser",
+    "v_tec9",
+    "v_tmp",
+    "v_ump45",
+    "v_usp",
+    "v_xm1014"
+  ],
+  "options": [
+    {
+      "family": "Amphibious",
+      "id": "amphibious_bs",
+      "name": "Sport Gloves | Amphibious — Battle-Scarred",
+      "textures": {
+        "sport_glove_l_0": "res://assets/textures/sport_gloves/amphibious_bs/l_0.jpg",
+        "sport_glove_l_1": "res://assets/textures/sport_gloves/amphibious_bs/l_1.jpg",
+        "sport_glove_l_2": "res://assets/textures/sport_gloves/amphibious_bs/l_2.jpg",
+        "sport_glove_l_3": "res://assets/textures/sport_gloves/amphibious_bs/l_3.jpg",
+        "sport_glove_l_4": "res://assets/textures/sport_gloves/amphibious_bs/l_4.jpg",
+        "sport_glove_r_0": "res://assets/textures/sport_gloves/amphibious_bs/l_0.jpg",
+        "sport_glove_r_1": "res://assets/textures/sport_gloves/amphibious_bs/l_1.jpg",
+        "sport_glove_r_2": "res://assets/textures/sport_gloves/amphibious_bs/l_2.jpg",
+        "sport_glove_r_3": "res://assets/textures/sport_gloves/amphibious_bs/l_3.jpg",
+        "sport_glove_r_4": "res://assets/textures/sport_gloves/amphibious_bs/l_4.jpg"
+      },
+      "wear": "Battle-Scarred",
+      "wear_code": "BS"
+    },
+    {
+      "family": "Amphibious",
+      "id": "amphibious_ft",
+      "name": "Sport Gloves | Amphibious — Field-Tested",
+      "textures": {
+        "sport_glove_l_0": "res://assets/textures/sport_gloves/amphibious_ft/l_0.jpg",
+        "sport_glove_l_1": "res://assets/textures/sport_gloves/amphibious_ft/l_1.jpg",
+        "sport_glove_l_2": "res://assets/textures/sport_gloves/amphibious_ft/l_2.jpg",
+        "sport_glove_l_3": "res://assets/textures/sport_gloves/amphibious_ft/l_3.jpg",
+        "sport_glove_l_4": "res://assets/textures/sport_gloves/amphibious_ft/l_4.jpg",
+        "sport_glove_r_0": "res://assets/textures/sport_gloves/amphibious_ft/l_0.jpg",
+        "sport_glove_r_1": "res://assets/textures/sport_gloves/amphibious_ft/l_1.jpg",
+        "sport_glove_r_2": "res://assets/textures/sport_gloves/amphibious_ft/l_2.jpg",
+        "sport_glove_r_3": "res://assets/textures/sport_gloves/amphibious_ft/l_3.jpg",
+        "sport_glove_r_4": "res://assets/textures/sport_gloves/amphibious_ft/l_4.jpg"
+      },
+      "wear": "Field-Tested",
+      "wear_code": "FT"
+    },
+    {
+      "family": "Amphibious",
+      "id": "amphibious_ww",
+      "name": "Sport Gloves | Amphibious — Well-Worn",
+      "textures": {
+        "sport_glove_l_0": "res://assets/textures/sport_gloves/amphibious_ww/l_0.jpg",
+        "sport_glove_l_1": "res://assets/textures/sport_gloves/amphibious_ww/l_1.jpg",
+        "sport_glove_l_2": "res://assets/textures/sport_gloves/amphibious_ww/l_2.jpg",
+        "sport_glove_l_3": "res://assets/textures/sport_gloves/amphibious_ww/l_3.jpg",
+        "sport_glove_l_4": "res://assets/textures/sport_gloves/amphibious_ww/l_4.jpg",
+        "sport_glove_r_0": "res://assets/textures/sport_gloves/amphibious_ww/l_0.jpg",
+        "sport_glove_r_1": "res://assets/textures/sport_gloves/amphibious_ww/l_1.jpg",
+        "sport_glove_r_2": "res://assets/textures/sport_gloves/amphibious_ww/l_2.jpg",
+        "sport_glove_r_3": "res://assets/textures/sport_gloves/amphibious_ww/l_3.jpg",
+        "sport_glove_r_4": "res://assets/textures/sport_gloves/amphibious_ww/l_4.jpg"
+      },
+      "wear": "Well-Worn",
+      "wear_code": "WW"
+    },
+    {
+      "family": "Arid",
+      "id": "arid_bs",
+      "name": "Sport Gloves | Arid — Battle-Scarred",
+      "textures": {
+        "sport_glove_l_0": "res://assets/textures/sport_gloves/arid_bs/l_0.jpg",
+        "sport_glove_l_1": "res://assets/textures/sport_gloves/arid_bs/l_1.jpg",
+        "sport_glove_l_2": "res://assets/textures/sport_gloves/arid_bs/l_2.jpg",
+        "sport_glove_l_3": "res://assets/textures/sport_gloves/arid_bs/l_3.jpg",
+        "sport_glove_l_4": "res://assets/textures/sport_gloves/arid_bs/l_4.jpg",
+        "sport_glove_r_0": "res://assets/textures/sport_gloves/arid_bs/l_0.jpg",
+        "sport_glove_r_1": "res://assets/textures/sport_gloves/arid_bs/l_1.jpg",
+        "sport_glove_r_2": "res://assets/textures/sport_gloves/arid_bs/l_2.jpg",
+        "sport_glove_r_3": "res://assets/textures/sport_gloves/arid_bs/l_3.jpg",
+        "sport_glove_r_4": "res://assets/textures/sport_gloves/arid_bs/l_4.jpg"
+      },
+      "wear": "Battle-Scarred",
+      "wear_code": "BS"
+    },
+    {
+      "family": "Arid",
+      "id": "arid_ft",
+      "name": "Sport Gloves | Arid — Field-Tested",
+      "textures": {
+        "sport_glove_l_0": "res://assets/textures/sport_gloves/arid_ft/l_0.jpg",
+        "sport_glove_l_1": "res://assets/textures/sport_gloves/arid_ft/l_1.jpg",
+        "sport_glove_l_2": "res://assets/textures/sport_gloves/arid_ft/l_2.jpg",
+        "sport_glove_l_3": "res://assets/textures/sport_gloves/arid_ft/l_3.jpg",
+        "sport_glove_l_4": "res://assets/textures/sport_gloves/arid_ft/l_4.jpg",
+        "sport_glove_r_0": "res://assets/textures/sport_gloves/arid_ft/l_0.jpg",
+        "sport_glove_r_1": "res://assets/textures/sport_gloves/arid_ft/l_1.jpg",
+        "sport_glove_r_2": "res://assets/textures/sport_gloves/arid_ft/l_2.jpg",
+        "sport_glove_r_3": "res://assets/textures/sport_gloves/arid_ft/l_3.jpg",
+        "sport_glove_r_4": "res://assets/textures/sport_gloves/arid_ft/l_4.jpg"
+      },
+      "wear": "Field-Tested",
+      "wear_code": "FT"
+    },
+    {
+      "family": "Arid",
+      "id": "arid_mw",
+      "name": "Sport Gloves | Arid — Minimal Wear",
+      "textures": {
+        "sport_glove_l_0": "res://assets/textures/sport_gloves/arid_mw/l_0.jpg",
+        "sport_glove_l_1": "res://assets/textures/sport_gloves/arid_mw/l_1.jpg",
+        "sport_glove_l_2": "res://assets/textures/sport_gloves/arid_mw/l_2.jpg",
+        "sport_glove_l_3": "res://assets/textures/sport_gloves/arid_mw/l_3.jpg",
+        "sport_glove_l_4": "res://assets/textures/sport_gloves/arid_mw/l_4.jpg",
+        "sport_glove_r_0": "res://assets/textures/sport_gloves/arid_mw/l_0.jpg",
+        "sport_glove_r_1": "res://assets/textures/sport_gloves/arid_mw/l_1.jpg",
+        "sport_glove_r_2": "res://assets/textures/sport_gloves/arid_mw/l_2.jpg",
+        "sport_glove_r_3": "res://assets/textures/sport_gloves/arid_mw/l_3.jpg",
+        "sport_glove_r_4": "res://assets/textures/sport_gloves/arid_mw/l_4.jpg"
+      },
+      "wear": "Minimal Wear",
+      "wear_code": "MW"
+    },
+    {
+      "family": "Arid",
+      "id": "arid_ww",
+      "name": "Sport Gloves | Arid — Well-Worn",
+      "textures": {
+        "sport_glove_l_0": "res://assets/textures/sport_gloves/arid_ww/l_0.jpg",
+        "sport_glove_l_1": "res://assets/textures/sport_gloves/arid_ww/l_1.jpg",
+        "sport_glove_l_2": "res://assets/textures/sport_gloves/arid_ww/l_2.jpg",
+        "sport_glove_l_3": "res://assets/textures/sport_gloves/arid_ww/l_3.jpg",
+        "sport_glove_l_4": "res://assets/textures/sport_gloves/arid_ww/l_4.jpg",
+        "sport_glove_r_0": "res://assets/textures/sport_gloves/arid_ww/l_0.jpg",
+        "sport_glove_r_1": "res://assets/textures/sport_gloves/arid_ww/l_1.jpg",
+        "sport_glove_r_2": "res://assets/textures/sport_gloves/arid_ww/l_2.jpg",
+        "sport_glove_r_3": "res://assets/textures/sport_gloves/arid_ww/l_3.jpg",
+        "sport_glove_r_4": "res://assets/textures/sport_gloves/arid_ww/l_4.jpg"
+      },
+      "wear": "Well-Worn",
+      "wear_code": "WW"
+    },
+    {
+      "family": "Bronze Morph",
+      "id": "bronze_morph_bs",
+      "name": "Sport Gloves | Bronze Morph — Battle-Scarred",
+      "textures": {
+        "sport_glove_l_0": "res://assets/textures/sport_gloves/bronze_morph_bs/l_0.jpg",
+        "sport_glove_l_1": "res://assets/textures/sport_gloves/bronze_morph_bs/l_1.jpg",
+        "sport_glove_l_2": "res://assets/textures/sport_gloves/bronze_morph_bs/l_2.jpg",
+        "sport_glove_l_3": "res://assets/textures/sport_gloves/bronze_morph_bs/l_3.jpg",
+        "sport_glove_l_4": "res://assets/textures/sport_gloves/bronze_morph_bs/l_4.jpg",
+        "sport_glove_r_0": "res://assets/textures/sport_gloves/bronze_morph_bs/l_0.jpg",
+        "sport_glove_r_1": "res://assets/textures/sport_gloves/bronze_morph_bs/l_1.jpg",
+        "sport_glove_r_2": "res://assets/textures/sport_gloves/bronze_morph_bs/l_2.jpg",
+        "sport_glove_r_3": "res://assets/textures/sport_gloves/bronze_morph_bs/l_3.jpg",
+        "sport_glove_r_4": "res://assets/textures/sport_gloves/bronze_morph_bs/l_4.jpg"
+      },
+      "wear": "Battle-Scarred",
+      "wear_code": "BS"
+    },
+    {
+      "family": "Bronze Morph",
+      "id": "bronze_morph_ft",
+      "name": "Sport Gloves | Bronze Morph — Field-Tested",
+      "textures": {
+        "sport_glove_l_0": "res://assets/textures/sport_gloves/bronze_morph_ft/l_0.jpg",
+        "sport_glove_l_1": "res://assets/textures/sport_gloves/bronze_morph_ft/l_1.jpg",
+        "sport_glove_l_2": "res://assets/textures/sport_gloves/bronze_morph_ft/l_2.jpg",
+        "sport_glove_l_3": "res://assets/textures/sport_gloves/bronze_morph_ft/l_3.jpg",
+        "sport_glove_l_4": "res://assets/textures/sport_gloves/bronze_morph_ft/l_4.jpg",
+        "sport_glove_r_0": "res://assets/textures/sport_gloves/bronze_morph_ft/l_0.jpg",
+        "sport_glove_r_1": "res://assets/textures/sport_gloves/bronze_morph_ft/l_1.jpg",
+        "sport_glove_r_2": "res://assets/textures/sport_gloves/bronze_morph_ft/l_2.jpg",
+        "sport_glove_r_3": "res://assets/textures/sport_gloves/bronze_morph_ft/l_3.jpg",
+        "sport_glove_r_4": "res://assets/textures/sport_gloves/bronze_morph_ft/l_4.jpg"
+      },
+      "wear": "Field-Tested",
+      "wear_code": "FT"
+    },
+    {
+      "family": "Bronze Morph",
+      "id": "bronze_morph_mw",
+      "name": "Sport Gloves | Bronze Morph — Minimal Wear",
+      "textures": {
+        "sport_glove_l_0": "res://assets/textures/sport_gloves/bronze_morph_mw/l_0.jpg",
+        "sport_glove_l_1": "res://assets/textures/sport_gloves/bronze_morph_mw/l_1.jpg",
+        "sport_glove_l_2": "res://assets/textures/sport_gloves/bronze_morph_mw/l_2.jpg",
+        "sport_glove_l_3": "res://assets/textures/sport_gloves/bronze_morph_mw/l_3.jpg",
+        "sport_glove_l_4": "res://assets/textures/sport_gloves/bronze_morph_mw/l_4.jpg",
+        "sport_glove_r_0": "res://assets/textures/sport_gloves/bronze_morph_mw/l_0.jpg",
+        "sport_glove_r_1": "res://assets/textures/sport_gloves/bronze_morph_mw/l_1.jpg",
+        "sport_glove_r_2": "res://assets/textures/sport_gloves/bronze_morph_mw/l_2.jpg",
+        "sport_glove_r_3": "res://assets/textures/sport_gloves/bronze_morph_mw/l_3.jpg",
+        "sport_glove_r_4": "res://assets/textures/sport_gloves/bronze_morph_mw/l_4.jpg"
+      },
+      "wear": "Minimal Wear",
+      "wear_code": "MW"
+    },
+    {
+      "family": "Bronze Morph",
+      "id": "bronze_morph_ww",
+      "name": "Sport Gloves | Bronze Morph — Well-Worn",
+      "textures": {
+        "sport_glove_l_0": "res://assets/textures/sport_gloves/bronze_morph_ww/l_0.jpg",
+        "sport_glove_l_1": "res://assets/textures/sport_gloves/bronze_morph_ww/l_1.jpg",
+        "sport_glove_l_2": "res://assets/textures/sport_gloves/bronze_morph_ww/l_2.jpg",
+        "sport_glove_l_3": "res://assets/textures/sport_gloves/bronze_morph_ww/l_3.jpg",
+        "sport_glove_l_4": "res://assets/textures/sport_gloves/bronze_morph_ww/l_4.jpg",
+        "sport_glove_r_0": "res://assets/textures/sport_gloves/bronze_morph_ww/l_0.jpg",
+        "sport_glove_r_1": "res://assets/textures/sport_gloves/bronze_morph_ww/l_1.jpg",
+        "sport_glove_r_2": "res://assets/textures/sport_gloves/bronze_morph_ww/l_2.jpg",
+        "sport_glove_r_3": "res://assets/textures/sport_gloves/bronze_morph_ww/l_3.jpg",
+        "sport_glove_r_4": "res://assets/textures/sport_gloves/bronze_morph_ww/l_4.jpg"
+      },
+      "wear": "Well-Worn",
+      "wear_code": "WW"
+    },
+    {
+      "family": "Hedge Maze",
+      "id": "hedge_maze_bs",
+      "name": "Sport Gloves | Hedge Maze — Battle-Scarred",
+      "textures": {
+        "sport_glove_l_0": "res://assets/textures/sport_gloves/hedge_maze_bs/l_0.jpg",
+        "sport_glove_l_1": "res://assets/textures/sport_gloves/hedge_maze_bs/l_1.jpg",
+        "sport_glove_l_2": "res://assets/textures/sport_gloves/hedge_maze_bs/l_2.jpg",
+        "sport_glove_l_3": "res://assets/textures/sport_gloves/hedge_maze_bs/l_3.jpg",
+        "sport_glove_l_4": "res://assets/textures/sport_gloves/hedge_maze_bs/l_4.jpg",
+        "sport_glove_r_0": "res://assets/textures/sport_gloves/hedge_maze_bs/l_0.jpg",
+        "sport_glove_r_1": "res://assets/textures/sport_gloves/hedge_maze_bs/l_1.jpg",
+        "sport_glove_r_2": "res://assets/textures/sport_gloves/hedge_maze_bs/l_2.jpg",
+        "sport_glove_r_3": "res://assets/textures/sport_gloves/hedge_maze_bs/l_3.jpg",
+        "sport_glove_r_4": "res://assets/textures/sport_gloves/hedge_maze_bs/l_4.jpg"
+      },
+      "wear": "Battle-Scarred",
+      "wear_code": "BS"
+    },
+    {
+      "family": "Hedge Maze",
+      "id": "hedge_maze_ft",
+      "name": "Sport Gloves | Hedge Maze — Field-Tested",
+      "textures": {
+        "sport_glove_l_0": "res://assets/textures/sport_gloves/hedge_maze_ft/l_0.jpg",
+        "sport_glove_l_1": "res://assets/textures/sport_gloves/hedge_maze_ft/l_1.jpg",
+        "sport_glove_l_2": "res://assets/textures/sport_gloves/hedge_maze_ft/l_2.jpg",
+        "sport_glove_l_3": "res://assets/textures/sport_gloves/hedge_maze_ft/l_3.jpg",
+        "sport_glove_l_4": "res://assets/textures/sport_gloves/hedge_maze_ft/l_4.jpg",
+        "sport_glove_r_0": "res://assets/textures/sport_gloves/hedge_maze_ft/l_0.jpg",
+        "sport_glove_r_1": "res://assets/textures/sport_gloves/hedge_maze_ft/l_1.jpg",
+        "sport_glove_r_2": "res://assets/textures/sport_gloves/hedge_maze_ft/l_2.jpg",
+        "sport_glove_r_3": "res://assets/textures/sport_gloves/hedge_maze_ft/l_3.jpg",
+        "sport_glove_r_4": "res://assets/textures/sport_gloves/hedge_maze_ft/l_4.jpg"
+      },
+      "wear": "Field-Tested",
+      "wear_code": "FT"
+    },
+    {
+      "family": "Hedge Maze",
+      "id": "hedge_maze_ww",
+      "name": "Sport Gloves | Hedge Maze — Well-Worn",
+      "textures": {
+        "sport_glove_l_0": "res://assets/textures/sport_gloves/hedge_maze_ww/l_0.jpg",
+        "sport_glove_l_1": "res://assets/textures/sport_gloves/hedge_maze_ww/l_1.jpg",
+        "sport_glove_l_2": "res://assets/textures/sport_gloves/hedge_maze_ww/l_2.jpg",
+        "sport_glove_l_3": "res://assets/textures/sport_gloves/hedge_maze_ww/l_3.jpg",
+        "sport_glove_l_4": "res://assets/textures/sport_gloves/hedge_maze_ww/l_4.jpg",
+        "sport_glove_r_0": "res://assets/textures/sport_gloves/hedge_maze_ww/l_0.jpg",
+        "sport_glove_r_1": "res://assets/textures/sport_gloves/hedge_maze_ww/l_1.jpg",
+        "sport_glove_r_2": "res://assets/textures/sport_gloves/hedge_maze_ww/l_2.jpg",
+        "sport_glove_r_3": "res://assets/textures/sport_gloves/hedge_maze_ww/l_3.jpg",
+        "sport_glove_r_4": "res://assets/textures/sport_gloves/hedge_maze_ww/l_4.jpg"
+      },
+      "wear": "Well-Worn",
+      "wear_code": "WW"
+    },
+    {
+      "family": "Omega",
+      "id": "omega_bs",
+      "name": "Sport Gloves | Omega — Battle-Scarred",
+      "textures": {
+        "sport_glove_l_0": "res://assets/textures/sport_gloves/omega_bs/l_0.jpg",
+        "sport_glove_l_1": "res://assets/textures/sport_gloves/omega_bs/l_1.jpg",
+        "sport_glove_l_2": "res://assets/textures/sport_gloves/omega_bs/l_2.jpg",
+        "sport_glove_l_3": "res://assets/textures/sport_gloves/omega_bs/l_3.jpg",
+        "sport_glove_l_4": "res://assets/textures/sport_gloves/omega_bs/l_4.jpg",
+        "sport_glove_r_0": "res://assets/textures/sport_gloves/omega_bs/l_0.jpg",
+        "sport_glove_r_1": "res://assets/textures/sport_gloves/omega_bs/l_1.jpg",
+        "sport_glove_r_2": "res://assets/textures/sport_gloves/omega_bs/l_2.jpg",
+        "sport_glove_r_3": "res://assets/textures/sport_gloves/omega_bs/l_3.jpg",
+        "sport_glove_r_4": "res://assets/textures/sport_gloves/omega_bs/l_4.jpg"
+      },
+      "wear": "Battle-Scarred",
+      "wear_code": "BS"
+    },
+    {
+      "family": "Omega",
+      "id": "omega_ft",
+      "name": "Sport Gloves | Omega — Field-Tested",
+      "textures": {
+        "sport_glove_l_0": "res://assets/textures/sport_gloves/omega_ft/l_0.jpg",
+        "sport_glove_l_1": "res://assets/textures/sport_gloves/omega_ft/l_1.jpg",
+        "sport_glove_l_2": "res://assets/textures/sport_gloves/omega_ft/l_2.jpg",
+        "sport_glove_l_3": "res://assets/textures/sport_gloves/omega_ft/l_3.jpg",
+        "sport_glove_l_4": "res://assets/textures/sport_gloves/omega_ft/l_4.jpg",
+        "sport_glove_r_0": "res://assets/textures/sport_gloves/omega_ft/l_0.jpg",
+        "sport_glove_r_1": "res://assets/textures/sport_gloves/omega_ft/l_1.jpg",
+        "sport_glove_r_2": "res://assets/textures/sport_gloves/omega_ft/l_2.jpg",
+        "sport_glove_r_3": "res://assets/textures/sport_gloves/omega_ft/l_3.jpg",
+        "sport_glove_r_4": "res://assets/textures/sport_gloves/omega_ft/l_4.jpg"
+      },
+      "wear": "Field-Tested",
+      "wear_code": "FT"
+    },
+    {
+      "family": "Omega",
+      "id": "omega_mw",
+      "name": "Sport Gloves | Omega — Minimal Wear",
+      "textures": {
+        "sport_glove_l_0": "res://assets/textures/sport_gloves/omega_mw/l_0.jpg",
+        "sport_glove_l_1": "res://assets/textures/sport_gloves/omega_mw/l_1.jpg",
+        "sport_glove_l_2": "res://assets/textures/sport_gloves/omega_mw/l_2.jpg",
+        "sport_glove_l_3": "res://assets/textures/sport_gloves/omega_mw/l_3.jpg",
+        "sport_glove_l_4": "res://assets/textures/sport_gloves/omega_mw/l_4.jpg",
+        "sport_glove_r_0": "res://assets/textures/sport_gloves/omega_mw/l_0.jpg",
+        "sport_glove_r_1": "res://assets/textures/sport_gloves/omega_mw/l_1.jpg",
+        "sport_glove_r_2": "res://assets/textures/sport_gloves/omega_mw/l_2.jpg",
+        "sport_glove_r_3": "res://assets/textures/sport_gloves/omega_mw/l_3.jpg",
+        "sport_glove_r_4": "res://assets/textures/sport_gloves/omega_mw/l_4.jpg"
+      },
+      "wear": "Minimal Wear",
+      "wear_code": "MW"
+    },
+    {
+      "family": "Omega",
+      "id": "omega_ww",
+      "name": "Sport Gloves | Omega — Well-Worn",
+      "textures": {
+        "sport_glove_l_0": "res://assets/textures/sport_gloves/omega_ww/l_0.jpg",
+        "sport_glove_l_1": "res://assets/textures/sport_gloves/omega_ww/l_1.jpg",
+        "sport_glove_l_2": "res://assets/textures/sport_gloves/omega_ww/l_2.jpg",
+        "sport_glove_l_3": "res://assets/textures/sport_gloves/omega_ww/l_3.jpg",
+        "sport_glove_l_4": "res://assets/textures/sport_gloves/omega_ww/l_4.jpg",
+        "sport_glove_r_0": "res://assets/textures/sport_gloves/omega_ww/l_0.jpg",
+        "sport_glove_r_1": "res://assets/textures/sport_gloves/omega_ww/l_1.jpg",
+        "sport_glove_r_2": "res://assets/textures/sport_gloves/omega_ww/l_2.jpg",
+        "sport_glove_r_3": "res://assets/textures/sport_gloves/omega_ww/l_3.jpg",
+        "sport_glove_r_4": "res://assets/textures/sport_gloves/omega_ww/l_4.jpg"
+      },
+      "wear": "Well-Worn",
+      "wear_code": "WW"
+    },
+    {
+      "family": "Pandora's Box",
+      "id": "pandora_s_box_bs",
+      "name": "Sport Gloves | Pandora's Box — Battle-Scarred",
+      "textures": {
+        "sport_glove_l_0": "res://assets/textures/sport_gloves/pandora_s_box_bs/l_0.jpg",
+        "sport_glove_l_1": "res://assets/textures/sport_gloves/pandora_s_box_bs/l_1.jpg",
+        "sport_glove_l_2": "res://assets/textures/sport_gloves/pandora_s_box_bs/l_2.jpg",
+        "sport_glove_l_3": "res://assets/textures/sport_gloves/pandora_s_box_bs/l_3.jpg",
+        "sport_glove_l_4": "res://assets/textures/sport_gloves/pandora_s_box_bs/l_4.jpg",
+        "sport_glove_r_0": "res://assets/textures/sport_gloves/pandora_s_box_bs/l_0.jpg",
+        "sport_glove_r_1": "res://assets/textures/sport_gloves/pandora_s_box_bs/l_1.jpg",
+        "sport_glove_r_2": "res://assets/textures/sport_gloves/pandora_s_box_bs/l_2.jpg",
+        "sport_glove_r_3": "res://assets/textures/sport_gloves/pandora_s_box_bs/l_3.jpg",
+        "sport_glove_r_4": "res://assets/textures/sport_gloves/pandora_s_box_bs/l_4.jpg"
+      },
+      "wear": "Battle-Scarred",
+      "wear_code": "BS"
+    },
+    {
+      "family": "Pandora's Box",
+      "id": "pandora_s_box_ft",
+      "name": "Sport Gloves | Pandora's Box — Field-Tested",
+      "textures": {
+        "sport_glove_l_0": "res://assets/textures/sport_gloves/pandora_s_box_ft/l_0.jpg",
+        "sport_glove_l_1": "res://assets/textures/sport_gloves/pandora_s_box_ft/l_1.jpg",
+        "sport_glove_l_2": "res://assets/textures/sport_gloves/pandora_s_box_ft/l_2.jpg",
+        "sport_glove_l_3": "res://assets/textures/sport_gloves/pandora_s_box_ft/l_3.jpg",
+        "sport_glove_l_4": "res://assets/textures/sport_gloves/pandora_s_box_ft/l_4.jpg",
+        "sport_glove_r_0": "res://assets/textures/sport_gloves/pandora_s_box_ft/l_0.jpg",
+        "sport_glove_r_1": "res://assets/textures/sport_gloves/pandora_s_box_ft/l_1.jpg",
+        "sport_glove_r_2": "res://assets/textures/sport_gloves/pandora_s_box_ft/l_2.jpg",
+        "sport_glove_r_3": "res://assets/textures/sport_gloves/pandora_s_box_ft/l_3.jpg",
+        "sport_glove_r_4": "res://assets/textures/sport_gloves/pandora_s_box_ft/l_4.jpg"
+      },
+      "wear": "Field-Tested",
+      "wear_code": "FT"
+    },
+    {
+      "family": "Superconductor",
+      "id": "superconductor_bs",
+      "name": "Sport Gloves | Superconductor — Battle-Scarred",
+      "textures": {
+        "sport_glove_l_0": "res://assets/textures/sport_gloves/superconductor_bs/l_0.jpg",
+        "sport_glove_l_1": "res://assets/textures/sport_gloves/superconductor_bs/l_1.jpg",
+        "sport_glove_l_2": "res://assets/textures/sport_gloves/superconductor_bs/l_2.jpg",
+        "sport_glove_l_3": "res://assets/textures/sport_gloves/superconductor_bs/l_3.jpg",
+        "sport_glove_l_4": "res://assets/textures/sport_gloves/superconductor_bs/l_4.jpg",
+        "sport_glove_r_0": "res://assets/textures/sport_gloves/superconductor_bs/l_0.jpg",
+        "sport_glove_r_1": "res://assets/textures/sport_gloves/superconductor_bs/l_1.jpg",
+        "sport_glove_r_2": "res://assets/textures/sport_gloves/superconductor_bs/l_2.jpg",
+        "sport_glove_r_3": "res://assets/textures/sport_gloves/superconductor_bs/l_3.jpg",
+        "sport_glove_r_4": "res://assets/textures/sport_gloves/superconductor_bs/l_4.jpg"
+      },
+      "wear": "Battle-Scarred",
+      "wear_code": "BS"
+    },
+    {
+      "family": "Superconductor",
+      "id": "superconductor_ft",
+      "name": "Sport Gloves | Superconductor — Field-Tested",
+      "textures": {
+        "sport_glove_l_0": "res://assets/textures/sport_gloves/superconductor_ft/l_0.jpg",
+        "sport_glove_l_1": "res://assets/textures/sport_gloves/superconductor_ft/l_1.jpg",
+        "sport_glove_l_2": "res://assets/textures/sport_gloves/superconductor_ft/l_2.jpg",
+        "sport_glove_l_3": "res://assets/textures/sport_gloves/superconductor_ft/l_3.jpg",
+        "sport_glove_l_4": "res://assets/textures/sport_gloves/superconductor_ft/l_4.jpg",
+        "sport_glove_r_0": "res://assets/textures/sport_gloves/superconductor_ft/l_0.jpg",
+        "sport_glove_r_1": "res://assets/textures/sport_gloves/superconductor_ft/l_1.jpg",
+        "sport_glove_r_2": "res://assets/textures/sport_gloves/superconductor_ft/l_2.jpg",
+        "sport_glove_r_3": "res://assets/textures/sport_gloves/superconductor_ft/l_3.jpg",
+        "sport_glove_r_4": "res://assets/textures/sport_gloves/superconductor_ft/l_4.jpg"
+      },
+      "wear": "Field-Tested",
+      "wear_code": "FT"
+    },
+    {
+      "family": "Superconductor",
+      "id": "superconductor_ww",
+      "name": "Sport Gloves | Superconductor — Well-Worn",
+      "textures": {
+        "sport_glove_l_0": "res://assets/textures/sport_gloves/superconductor_ww/l_0.jpg",
+        "sport_glove_l_1": "res://assets/textures/sport_gloves/superconductor_ww/l_1.jpg",
+        "sport_glove_l_2": "res://assets/textures/sport_gloves/superconductor_ww/l_2.jpg",
+        "sport_glove_l_3": "res://assets/textures/sport_gloves/superconductor_ww/l_3.jpg",
+        "sport_glove_l_4": "res://assets/textures/sport_gloves/superconductor_ww/l_4.jpg",
+        "sport_glove_r_0": "res://assets/textures/sport_gloves/superconductor_ww/l_0.jpg",
+        "sport_glove_r_1": "res://assets/textures/sport_gloves/superconductor_ww/l_1.jpg",
+        "sport_glove_r_2": "res://assets/textures/sport_gloves/superconductor_ww/l_2.jpg",
+        "sport_glove_r_3": "res://assets/textures/sport_gloves/superconductor_ww/l_3.jpg",
+        "sport_glove_r_4": "res://assets/textures/sport_gloves/superconductor_ww/l_4.jpg"
+      },
+      "wear": "Well-Worn",
+      "wear_code": "WW"
+    },
+    {
+      "family": "Vice",
+      "id": "vice_bs",
+      "name": "Sport Gloves | Vice — Battle-Scarred",
+      "textures": {
+        "sport_glove_l_0": "res://assets/textures/sport_gloves/vice_bs/l_0.jpg",
+        "sport_glove_l_1": "res://assets/textures/sport_gloves/vice_bs/l_1.jpg",
+        "sport_glove_l_2": "res://assets/textures/sport_gloves/vice_bs/l_2.jpg",
+        "sport_glove_l_3": "res://assets/textures/sport_gloves/vice_bs/l_3.jpg",
+        "sport_glove_l_4": "res://assets/textures/sport_gloves/vice_bs/l_4.jpg",
+        "sport_glove_r_0": "res://assets/textures/sport_gloves/vice_bs/l_0.jpg",
+        "sport_glove_r_1": "res://assets/textures/sport_gloves/vice_bs/l_1.jpg",
+        "sport_glove_r_2": "res://assets/textures/sport_gloves/vice_bs/l_2.jpg",
+        "sport_glove_r_3": "res://assets/textures/sport_gloves/vice_bs/l_3.jpg",
+        "sport_glove_r_4": "res://assets/textures/sport_gloves/vice_bs/l_4.jpg"
+      },
+      "wear": "Battle-Scarred",
+      "wear_code": "BS"
+    },
+    {
+      "family": "Vice",
+      "id": "vice_ft",
+      "name": "Sport Gloves | Vice — Field-Tested",
+      "textures": {
+        "sport_glove_l_0": "res://assets/textures/sport_gloves/vice_ft/l_0.jpg",
+        "sport_glove_l_1": "res://assets/textures/sport_gloves/vice_ft/l_1.jpg",
+        "sport_glove_l_2": "res://assets/textures/sport_gloves/vice_ft/l_2.jpg",
+        "sport_glove_l_3": "res://assets/textures/sport_gloves/vice_ft/l_3.jpg",
+        "sport_glove_l_4": "res://assets/textures/sport_gloves/vice_ft/l_4.jpg",
+        "sport_glove_r_0": "res://assets/textures/sport_gloves/vice_ft/l_0.jpg",
+        "sport_glove_r_1": "res://assets/textures/sport_gloves/vice_ft/l_1.jpg",
+        "sport_glove_r_2": "res://assets/textures/sport_gloves/vice_ft/l_2.jpg",
+        "sport_glove_r_3": "res://assets/textures/sport_gloves/vice_ft/l_3.jpg",
+        "sport_glove_r_4": "res://assets/textures/sport_gloves/vice_ft/l_4.jpg"
+      },
+      "wear": "Field-Tested",
+      "wear_code": "FT"
+    },
+    {
+      "family": "Vice",
+      "id": "vice_ww",
+      "name": "Sport Gloves | Vice — Well-Worn",
+      "textures": {
+        "sport_glove_l_0": "res://assets/textures/sport_gloves/vice_ww/l_0.jpg",
+        "sport_glove_l_1": "res://assets/textures/sport_gloves/vice_ww/l_1.jpg",
+        "sport_glove_l_2": "res://assets/textures/sport_gloves/vice_ww/l_2.jpg",
+        "sport_glove_l_3": "res://assets/textures/sport_gloves/vice_ww/l_3.jpg",
+        "sport_glove_l_4": "res://assets/textures/sport_gloves/vice_ww/l_4.jpg",
+        "sport_glove_r_0": "res://assets/textures/sport_gloves/vice_ww/l_0.jpg",
+        "sport_glove_r_1": "res://assets/textures/sport_gloves/vice_ww/l_1.jpg",
+        "sport_glove_r_2": "res://assets/textures/sport_gloves/vice_ww/l_2.jpg",
+        "sport_glove_r_3": "res://assets/textures/sport_gloves/vice_ww/l_3.jpg",
+        "sport_glove_r_4": "res://assets/textures/sport_gloves/vice_ww/l_4.jpg"
+      },
+      "wear": "Well-Worn",
+      "wear_code": "WW"
+    }
+  ],
+  "rig": "Rootns Rig",
+  "source": "ShadowNigth/archi/Sport_gloves",
+  "source_commit": "43b46172606a31759637c90378782390f374c1ee"
+}
