@@ -562,7 +562,7 @@ func _load_viewer_weapon(wid: String) -> void:
 	]
 	var glove := GameData.get_selected_loadout(_viewer_team, "gloves")
 	var sleeve := GameData.get_selected_loadout(_viewer_team, "sleeves")
-	_viewer_stats_lbl.text += "\n%s first-person arms: %s + %s" % [
+	_viewer_stats_lbl.text += "\n%s gloves/sleeves (original arms): %s + %s" % [
 		_viewer_team, String(glove.get("name", "Default")), String(sleeve.get("name", "Default"))]
 
 

@@ -19,20 +19,23 @@ so no external CS2 installation is needed at runtime.
 
 ## Runtime attachment
 
-`ViewmodelLoadout.gd` removes only the legacy `ct_arms.bmp` and
-`ct_base_glove.bmp` mesh surfaces. It does not hide the weapon mesh. Before that,
-it converts every selected glove and sleeve into the active weapon's own rest
-space. Vertices, normals and tangents are baked once per weapon/variant and
-cached; UVs, joint indices, weights and materials are preserved. Rigs without
-`UpperArm` use their corresponding `Forearm` during this mapping.
+`ViewmodelLoadout.gd` preserves the original `ct_arms.bmp` geometry and skinning,
+and removes only the legacy `ct_base_glove.bmp` surface. It does not hide the weapon
+mesh. MultiRig glove GLBs also contain a `bare_arm_133` surface; that surface is
+always discarded, so the repository contributes **only gloves and sleeves**.
+Before replacing the legacy glove, it converts those retained surfaces into the
+active weapon's own rest space. Vertices, normals and tangents are baked once per
+weapon/variant and cached; UVs, joint indices, weights and materials are
+preserved. Rigs without `UpperArm` use their corresponding `Forearm` during this
+mapping.
 
 The intermediate source meshes use Source-inch coordinates and inverse binds
 with `1/32` scale. They are not attached directly to the renderer. The baked
 mesh is in metres and receives a new Skin containing native target-bone indices
 and rigid target-rest inverse binds (`1.0` scale). Its transform is identical to
 the target `Skeleton3D`. Existing idle, fire, reload, draw and inspection clips
-then animate it exactly like the original arm surfaces. If conversion fails,
-the original arms remain untouched.
+then animate the additions alongside the untouched original arms. If conversion
+fails, both original arm/glove surfaces remain untouched.
 
 ## Source and rebuild
 
@@ -52,8 +55,9 @@ renames the 38 hand/arm joints to the installed Bip01 names, embeds and optimize
 PBR images, removes animation clips, and prunes unused accessors. Base colour is
 capped at 2048 px; normal and ORM images are capped at 1024 px.
 
-Engine tests cover all 43 viewmodel rigs, native rigid-bind resolution and finite
-CPU-skinned rest/draw/idle poses, all eight choices, the real Arsenal selectors,
-match-start team selection and an explicit T + Glock regression case. They also
+Engine tests cover all 43 viewmodel rigs, exact preservation of original arm
+vertex/UV/skinning/index arrays, exclusion of repository bare-arm surfaces, native glove/sleeve binds
+and finite CPU-skinned rest/draw/idle poses. They also cover all eight choices,
+the real Arsenal selectors, match-start team selection and T + Glock. They also
 cover M4A1 suppressor state, green Molotov glass and dropped-grenade scale. These
 checks do not replace rendered inspection in actual gameplay.

@@ -43,7 +43,7 @@ func _run() -> void:
 	_expect(_world.bots.size() == 9 and RoundManager.actors.size() == 10, "Team choice creates nine bots plus the player")
 	_expect(RoundManager.state == RoundManager.State.FREEZE, "The real round enters freeze time")
 	await get_tree().process_frame
-	_expect(_player_loadout_matches(player), "Match start applies the selected CT gloves and sleeves")
+	_expect(_player_loadout_matches(player), "Match start keeps the original arms and applies only the selected CT gloves/sleeves")
 
 	player.money = 16000
 	for wid in NEW_WEAPONS:
@@ -63,7 +63,7 @@ func _run() -> void:
 			player.weapon_ctrl.equip_weapon_by_id(wid)
 		_expect(player.weapon_ctrl.current_weapon_id == wid, "Real inventory equips " + wid)
 		_expect(player._cur_vm_model_name == String(spec["v_model"]) and player._vm_anim != null, "PlayerController builds the archi viewmodel and AnimationPlayer for " + wid)
-		_expect(_player_loadout_matches(player), "Equipping %s applies the current team's selected arms" % wid)
+		_expect(_player_loadout_matches(player), "Equipping %s preserves the original arms and applies only selected gloves/sleeves" % wid)
 
 	_expect(RoundManager.dropped_items.size() >= 8, "Replacing bought weapons creates real dropped-world models")
 	player.team = "CT"
@@ -113,12 +113,12 @@ func _run() -> void:
 	player.weapon_ctrl.equip_weapon_by_id("glock18")
 	await get_tree().process_frame
 	await get_tree().process_frame
-	_expect(_player_loadout_matches(player), "T Glock uses the selected Fingerless/Professional arms with native rigid binds")
-	_expect(_player_arm_bounds_valid(player), "T Glock replacement arms remain human-sized during the live draw/idle transition")
+	_expect(_player_loadout_matches(player), "T Glock keeps its original arms and adds only Fingerless/Professional gloves/sleeves")
+	_expect(_player_arm_bounds_valid(player), "T Glock gloves/sleeves remain human-sized during the live draw/idle transition")
 	if player._vm_anim != null and player._vm_anim.has_animation("draw"):
 		player._vm_anim.play("draw")
 		player._vm_anim.advance(0.55)
-	_expect(_player_arm_bounds_valid(player), "T Glock replacement arms remain human-sized at draw midpoint")
+	_expect(_player_arm_bounds_valid(player), "T Glock gloves/sleeves remain human-sized at draw midpoint")
 
 	if player._vm_model_root != null:
 		player._vm_model_root.position += Vector3.ONE * 0.25
@@ -173,8 +173,17 @@ func _player_loadout_matches(player: PlayerController) -> bool:
 	if skeleton == null:
 		return false
 	var found: Dictionary = {}
+	var original_arm_found := false
 	for node in player._vm_model_root.find_children("*", "MeshInstance3D", true, false):
 		var mesh := node as MeshInstance3D
+		if mesh.mesh == null:
+			continue
+		for surface in range(mesh.mesh.get_surface_count()):
+			var material := mesh.mesh.surface_get_material(surface)
+			var material_name := material.resource_name.to_lower() if material != null else ""
+			original_arm_found = original_arm_found or material_name == "ct_arms.bmp"
+			if material_name == "ct_base_glove.bmp" or material_name.begins_with("bare_arm"):
+				return false
 		if not mesh.has_meta("loadout_kind"):
 			continue
 		var kind := String(mesh.get_meta("loadout_kind", ""))
@@ -188,7 +197,7 @@ func _player_loadout_matches(player: PlayerController) -> bool:
 			if not String(mesh.skin.get_bind_name(bind)).is_empty() or bone < 0 or bone >= skeleton.get_bone_count() \
 				or not mesh.skin.get_bind_pose(bind).basis.get_scale().is_equal_approx(Vector3.ONE):
 				return false
-	return bool(found.get("gloves", false)) and bool(found.get("sleeves", false))
+	return original_arm_found and bool(found.get("gloves", false)) and bool(found.get("sleeves", false))
 
 
 func _player_arm_bounds_valid(player: PlayerController) -> bool:

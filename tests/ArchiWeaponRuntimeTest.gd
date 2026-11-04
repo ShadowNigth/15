@@ -276,6 +276,37 @@ func _loadout_meshes(root: Node) -> Array[MeshInstance3D]:
 	return result
 
 
+func _material_arrays(root: Node, wanted_name: String) -> Array:
+	var result: Array = []
+	for node in root.find_children("*", "MeshInstance3D", true, false):
+		var mesh := node as MeshInstance3D
+		if mesh.mesh == null:
+			continue
+		for surface in range(mesh.mesh.get_surface_count()):
+			var material := mesh.mesh.surface_get_material(surface)
+			if material != null and material.resource_name.to_lower() == wanted_name:
+				result.append(mesh.mesh.surface_get_arrays(surface))
+	return result
+
+
+func _material_arrays_match(before: Array, after: Array) -> bool:
+	if before.size() != after.size():
+		return false
+	for surface in range(before.size()):
+		var a: Array = before[surface]
+		var b: Array = after[surface]
+		if a.size() != b.size():
+			return false
+		for channel in range(a.size()):
+			# ArrayMesh renormalizes normals/tangents on ingestion. Geometry, UVs
+			# and skinning/index data must remain bit-for-bit identical.
+			if channel in [Mesh.ARRAY_NORMAL, Mesh.ARRAY_TANGENT]:
+				continue
+			if a[channel] != b[channel]:
+				return false
+	return true
+
+
 func _cpu_skin_bounds(mesh: MeshInstance3D, skeleton: Skeleton3D) -> Dictionary:
 	if mesh == null or skeleton == null or mesh.mesh == null or mesh.skin == null:
 		return {"valid": false}
@@ -336,14 +367,23 @@ func _test_team_loadouts() -> void:
 			continue
 		var instance := packed.instantiate() as Node3D
 		_world.add_child(instance)
+		var original_arm_arrays := _material_arrays(instance, "ct_arms.bmp")
 		var team := "CT" if model_index % 2 == 0 else "T"
-		_expect(ViewmodelLoadout.apply(instance, team, String(spec["v_model"])), "%s installs %s first-person arms" % [wid, team])
+		_expect(ViewmodelLoadout.apply(instance, team, String(spec["v_model"])), "%s installs %s gloves/sleeves over the original arms" % [wid, team])
 		var skeleton := _find_skeleton(instance)
 		var installed := _loadout_meshes(instance)
 		var kinds: Dictionary = {}
 		var bindings_ok := skeleton != null and installed.size() >= 2
+		var loadout_surfaces_ok := not installed.is_empty()
 		for mesh in installed:
-			kinds[String(mesh.get_meta("loadout_kind", ""))] = true
+			var kind := String(mesh.get_meta("loadout_kind", ""))
+			kinds[kind] = true
+			for surface in range(mesh.mesh.get_surface_count()):
+				var material := mesh.mesh.surface_get_material(surface)
+				var material_name := material.resource_name.to_lower() if material != null else ""
+				loadout_surfaces_ok = loadout_surfaces_ok and not material_name.begins_with("bare_arm") \
+					and ((kind == "gloves" and material_name.begins_with("glove_")) \
+					or (kind == "sleeves" and material_name.begins_with("sleeve")))
 			bindings_ok = bindings_ok and mesh.get_node_or_null(mesh.skeleton) == skeleton and mesh.skin != null
 			if mesh.skin == null or skeleton == null:
 				bindings_ok = false
@@ -355,17 +395,24 @@ func _test_team_loadouts() -> void:
 					and native_bone >= 0 and native_bone < skeleton.get_bone_count() \
 					and bind_scale.is_equal_approx(Vector3.ONE)
 		bindings_ok = bindings_ok and kinds.has("gloves") and kinds.has("sleeves")
-		_expect(bindings_ok, "%s resolves every replacement Skin bind on its own animated skeleton" % wid)
-		var legacy_found := false
+		_expect(bindings_ok, "%s resolves every glove/sleeve Skin bind on its own animated skeleton" % wid)
+		_expect(loadout_surfaces_ok, "%s installs only repository glove/sleeve surfaces and no bare_arm geometry" % wid)
+		var legacy_arm_found := false
+		var legacy_glove_found := false
 		for node in instance.find_children("*", "MeshInstance3D", true, false):
 			var mesh := node as MeshInstance3D
 			if mesh.mesh == null:
 				continue
 			for surface in range(mesh.mesh.get_surface_count()):
 				var material := mesh.mesh.surface_get_material(surface)
-				if material != null and material.resource_name.to_lower() in ["ct_arms.bmp", "ct_base_glove.bmp"]:
-					legacy_found = true
-		_expect(not legacy_found, "%s removes both legacy arm/glove surfaces without hiding the weapon" % wid)
+				if material == null:
+					continue
+				var material_name := material.resource_name.to_lower()
+				legacy_arm_found = legacy_arm_found or material_name == "ct_arms.bmp"
+				legacy_glove_found = legacy_glove_found or material_name == "ct_base_glove.bmp"
+		_expect(legacy_arm_found and not legacy_glove_found, "%s keeps the original arms and removes only the legacy gloves" % wid)
+		_expect(not original_arm_arrays.is_empty() and _material_arrays_match(original_arm_arrays, _material_arrays(instance, "ct_arms.bmp")),
+			"%s preserves every original arm vertex, UV, weight and index exactly" % wid)
 		await get_tree().process_frame
 		var animation := _find_animation_player(instance)
 		for pose in ["rest", "draw", "idle"]:
@@ -382,7 +429,7 @@ func _test_team_loadouts() -> void:
 					var box: AABB = evaluated["box"]
 					bounds_ok = bounds_ok and box.position.is_finite() and box.size.is_finite() \
 						and box.size.length() > 0.01 and box.size.length() < 2.5
-			_expect(bounds_ok, "%s replacement arms CPU-skin to a finite human-sized %s pose" % [wid, pose])
+			_expect(bounds_ok, "%s gloves/sleeves CPU-skin to a finite human-sized %s pose" % [wid, pose])
 		instance.free()
 		model_index += 1
 
@@ -405,6 +452,7 @@ func _test_team_loadouts() -> void:
 							var original := mesh.mesh.surface_get_material(surface) as BaseMaterial3D
 							var styled := GameData.get_styled_model_material(original, "vm") as BaseMaterial3D
 							pbr_ok = pbr_ok and original != null and original.albedo_texture != null \
+								and not original.resource_name.to_lower().begins_with("bare_arm") \
 								and styled != null and is_zero_approx(styled.metallic) and styled.roughness >= 0.60
 				_expect(found, "%s applies the exact selected embedded PBR asset" % option_id)
 				_expect(pbr_ok, "%s keeps real colour textures and protected non-metallic skin/cloth" % option_id)

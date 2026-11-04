@@ -699,7 +699,7 @@ func _apply_vm_silencer_visibility() -> void:
 	if not is_instance_valid(_vm_silencer_skeleton) or _vm_silencer_bone < 0:
 		return
 	# A near-zero pose collapses only the suppressor vertices. The weapon,
-	# replacement arms and every animation track remain otherwise untouched.
+	# original arms, glove/sleeve additions and animation tracks stay untouched.
 	var target_scale := Vector3.ONE if _vm_silencer_visible else Vector3.ONE * 0.0001
 	_vm_silencer_skeleton.set_bone_pose_scale(_vm_silencer_bone, target_scale)
 

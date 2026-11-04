@@ -1,9 +1,10 @@
 class_name ViewmodelLoadout
 extends RefCounted
-## Installs selectable PBR arms on the animated skeleton already inside each v_*.
-## Every source mesh is first baked into the TARGET rig's rest space. The result
-## uses native rigid target-rest Skin binds instead of scaled Source inverse binds.
-## Converted meshes are cached per weapon model and loadout asset.
+## Installs selectable PBR gloves/sleeves on the animated skeleton in each v_*.
+## The original ct_arms.bmp surfaces remain untouched. Only the legacy glove is
+## replaced, and bare_arm_133 surfaces from MultiRig are discarded before baking.
+## Every retained source surface is baked into the TARGET rig's rest space and
+## uses native rigid target-rest Skin binds. Meshes are cached per weapon/asset.
 
 static var _filtered_meshes: Dictionary = {}
 static var _baked_sources: Dictionary = {}
@@ -52,8 +53,8 @@ static func apply(root: Node3D, team: String, rig_key: String = "") -> bool:
 			"path": model,
 		}
 
-	# Convert everything before hiding the original arms. Any failure leaves the
-	# known-good original model untouched.
+	# Convert everything before hiding the original gloves. Any failure leaves the
+	# known-good original model, including both legacy arm surfaces, untouched.
 	for kind in sources:
 		var entry: Dictionary = sources[kind]
 		var converted: Array = []
@@ -65,7 +66,7 @@ static func apply(root: Node3D, team: String, rig_key: String = "") -> bool:
 			converted.append(baked)
 		entry["converted"] = converted
 
-	var removed := _remove_legacy_arm_surfaces(root)
+	var removed := _remove_legacy_glove_surfaces(root)
 	if removed == 0:
 		_free_sources(sources)
 		return false
@@ -110,6 +111,12 @@ static func _bake_for_target(source: MeshInstance3D, skeleton: Skeleton3D, cache
 
 	var rebuilt := ArrayMesh.new()
 	for surface in range(source.mesh.get_surface_count()):
+		var material := source.mesh.surface_get_material(surface)
+		var material_name := material.resource_name.to_lower() if material != null else ""
+		# MultiRig glove GLBs contain a complete bare-arm surface as well as the
+		# glove. Never install that surface: the original weapon supplies the arms.
+		if material_name.begins_with("bare_arm"):
+			continue
 		var arrays := source.mesh.surface_get_arrays(surface).duplicate()
 		var vertices: PackedVector3Array = arrays[Mesh.ARRAY_VERTEX]
 		var normals: PackedVector3Array = arrays[Mesh.ARRAY_NORMAL]
@@ -158,7 +165,9 @@ static func _bake_for_target(source: MeshInstance3D, skeleton: Skeleton3D, cache
 		if has_tangents:
 			arrays[Mesh.ARRAY_TANGENT] = baked_tangents
 		rebuilt.add_surface_from_arrays(Mesh.PRIMITIVE_TRIANGLES, arrays)
-		rebuilt.surface_set_material(rebuilt.get_surface_count() - 1, source.mesh.surface_get_material(surface))
+		rebuilt.surface_set_material(rebuilt.get_surface_count() - 1, material)
+	if rebuilt.get_surface_count() == 0:
+		return {}
 	var result := {"mesh": rebuilt, "skin": result_skin}
 	_baked_sources[cache_key] = result
 	return result
@@ -193,7 +202,7 @@ static func _skin_for_skeleton(source: Skin, skeleton: Skeleton3D) -> Skin:
 	return result
 
 
-static func _remove_legacy_arm_surfaces(root: Node) -> int:
+static func _remove_legacy_glove_surfaces(root: Node) -> int:
 	var removed := 0
 	for node in root.find_children("*", "MeshInstance3D", true, false):
 		var instance := node as MeshInstance3D
@@ -215,7 +224,7 @@ static func _filtered_mesh(source: Mesh) -> Mesh:
 	for surface in range(source.get_surface_count()):
 		var material := source.surface_get_material(surface)
 		var material_name := material.resource_name.to_lower() if material != null else ""
-		if material_name in ["ct_arms.bmp", "ct_base_glove.bmp"]:
+		if material_name == "ct_base_glove.bmp":
 			removed += 1
 			continue
 		rebuilt.add_surface_from_arrays(Mesh.PRIMITIVE_TRIANGLES, source.surface_get_arrays(surface))
