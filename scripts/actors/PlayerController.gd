@@ -536,7 +536,7 @@ func _rebuild_viewmodel(wid: String) -> void:
 	# Native GoldSrc camera-space framing (verified across rifles, pistols, knife, grenades & C4)
 	inst.position = Vector3(0.0, -0.015, -0.03)
 	viewmodel_holder.add_child(inst)
-	ViewmodelLoadout.apply(inst, team)
+	ViewmodelLoadout.apply(inst, team, v_name)
 	_prepare_viewmodel_materials(inst)
 	_vm_model_root = inst as Node3D
 	if _vm_model_root != null:

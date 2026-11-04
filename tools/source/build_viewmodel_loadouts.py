@@ -7,8 +7,9 @@ The source is https://github.com/goribby/CS2-MultiRig (reviewed at
 026058b2a70a55257d6b85563f27b3c31e558f26). No licence is declared upstream.
 The source's 38-joint names are mapped to the installed weapon skeleton names.
 Inverse bind matrices are scaled from Source inches to the project's 1/32 metre
-convention. At runtime named Skin binds are resolved against each weapon's active
-skeleton, so no weapon mesh or animation needs to be rebuilt.
+convention. These GLBs are intermediate rigs: at runtime ViewmodelLoadout bakes
+vertices into each weapon's rest space and installs native rigid target Skin
+binds, so no weapon mesh or animation needs to be rebuilt.
 """
 import io
 import json

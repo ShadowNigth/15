@@ -107,6 +107,19 @@ func _run() -> void:
 			and player._vm_model_root == original_root,
 			"Detaching hides only the suppressor even though the weapon model did not change")
 
+	# Reproduce the reported case explicitly: terrorist gloves/sleeves on Glock.
+	player.team = "T"
+	player.weapon_ctrl.give_weapon("glock18", 20, 40)
+	player.weapon_ctrl.equip_weapon_by_id("glock18")
+	await get_tree().process_frame
+	await get_tree().process_frame
+	_expect(_player_loadout_matches(player), "T Glock uses the selected Fingerless/Professional arms with native rigid binds")
+	_expect(_player_arm_bounds_valid(player), "T Glock replacement arms remain human-sized during the live draw/idle transition")
+	if player._vm_anim != null and player._vm_anim.has_animation("draw"):
+		player._vm_anim.play("draw")
+		player._vm_anim.advance(0.55)
+	_expect(_player_arm_bounds_valid(player), "T Glock replacement arms remain human-sized at draw midpoint")
+
 	if player._vm_model_root != null:
 		player._vm_model_root.position += Vector3.ONE * 0.25
 		await get_tree().process_frame
@@ -156,6 +169,9 @@ func _player_loadout_matches(player: PlayerController) -> bool:
 	if player == null or player._vm_model_root == null:
 		return false
 	var expected := GameData.get_viewmodel_loadout(player.team)
+	var skeleton := _find_skeleton(player._vm_model_root)
+	if skeleton == null:
+		return false
 	var found: Dictionary = {}
 	for node in player._vm_model_root.find_children("*", "MeshInstance3D", true, false):
 		var mesh := node as MeshInstance3D
@@ -164,7 +180,88 @@ func _player_loadout_matches(player: PlayerController) -> bool:
 		var kind := String(mesh.get_meta("loadout_kind", ""))
 		var option: Dictionary = expected.get(kind, {})
 		found[kind] = String(mesh.get_meta("loadout_source", "")) == String(option.get("model", ""))
+		if mesh.skin == null or mesh.get_node_or_null(mesh.skeleton) != skeleton \
+			or not mesh.global_transform.is_equal_approx(skeleton.global_transform):
+			return false
+		for bind in range(mesh.skin.get_bind_count()):
+			var bone := mesh.skin.get_bind_bone(bind)
+			if not String(mesh.skin.get_bind_name(bind)).is_empty() or bone < 0 or bone >= skeleton.get_bone_count() \
+				or not mesh.skin.get_bind_pose(bind).basis.get_scale().is_equal_approx(Vector3.ONE):
+				return false
 	return bool(found.get("gloves", false)) and bool(found.get("sleeves", false))
+
+
+func _player_arm_bounds_valid(player: PlayerController) -> bool:
+	var skeleton := _find_skeleton(player._vm_model_root)
+	if skeleton == null:
+		return false
+	skeleton.force_update_all_bone_transforms()
+	var count := 0
+	for node in player._vm_model_root.find_children("*", "MeshInstance3D", true, false):
+		var mesh := node as MeshInstance3D
+		if not mesh.has_meta("loadout_kind"):
+			continue
+		count += 1
+		var evaluated := _cpu_skin_bounds(mesh, skeleton)
+		if not bool(evaluated.get("valid", false)):
+			return false
+		var box: AABB = evaluated["box"]
+		if not box.position.is_finite() or not box.size.is_finite() \
+			or box.size.length() <= 0.01 or box.size.length() >= 2.5:
+			return false
+	return count >= 2
+
+
+func _cpu_skin_bounds(mesh: MeshInstance3D, skeleton: Skeleton3D) -> Dictionary:
+	if mesh == null or skeleton == null or mesh.mesh == null or mesh.skin == null:
+		return {"valid": false}
+	var joints: Array[Transform3D] = []
+	var relative := mesh.global_transform.affine_inverse() * skeleton.global_transform
+	for bind in range(mesh.skin.get_bind_count()):
+		var bone := skeleton.find_bone(String(mesh.skin.get_bind_name(bind)))
+		if String(mesh.skin.get_bind_name(bind)).is_empty():
+			bone = mesh.skin.get_bind_bone(bind)
+		if bone < 0 or bone >= skeleton.get_bone_count():
+			return {"valid": false}
+		joints.append(relative * skeleton.get_bone_global_pose(bone) * mesh.skin.get_bind_pose(bind))
+	var minimum := Vector3.ZERO
+	var maximum := Vector3.ZERO
+	var count := 0
+	for surface in range(mesh.mesh.get_surface_count()):
+		var arrays := mesh.mesh.surface_get_arrays(surface)
+		var vertices: PackedVector3Array = arrays[Mesh.ARRAY_VERTEX]
+		var bones: PackedInt32Array = arrays[Mesh.ARRAY_BONES]
+		var weights: PackedFloat32Array = arrays[Mesh.ARRAY_WEIGHTS]
+		if bones.size() < vertices.size() * 4 or weights.size() < vertices.size() * 4:
+			return {"valid": false}
+		for index in range(vertices.size()):
+			var point := Vector3.ZERO
+			for influence in range(4):
+				var weight := weights[index * 4 + influence]
+				var joint := bones[index * 4 + influence]
+				if weight <= 0.0:
+					continue
+				if joint < 0 or joint >= joints.size():
+					return {"valid": false}
+				point += (joints[joint] * vertices[index]) * weight
+			if count == 0:
+				minimum = point
+				maximum = point
+			else:
+				minimum = Vector3(minf(minimum.x, point.x), minf(minimum.y, point.y), minf(minimum.z, point.z))
+				maximum = Vector3(maxf(maximum.x, point.x), maxf(maximum.y, point.y), maxf(maximum.z, point.z))
+			count += 1
+	return {"valid": count > 0, "box": AABB(minimum, maximum - minimum)}
+
+
+func _find_skeleton(node: Node) -> Skeleton3D:
+	if node is Skeleton3D:
+		return node as Skeleton3D
+	for child in node.get_children():
+		var found := _find_skeleton(child)
+		if found != null:
+			return found
+	return null
 
 
 func _test_live_incendiary_spread() -> void:

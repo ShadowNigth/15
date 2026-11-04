@@ -546,7 +546,7 @@ func _load_viewer_weapon(wid: String) -> void:
 		inst.position = Vector3(-0.08, 0.12, 0.65)
 		inst.rotation_degrees = Vector3(0.0, 25.0, 0.0)
 		_viewer_pivot.add_child(inst)
-		ViewmodelLoadout.apply(inst, _viewer_team)
+		ViewmodelLoadout.apply(inst, _viewer_team, String(spec.get("v_model", "v_ak47")))
 		_style_viewer_meshes(inst, "vm")
 		_viewer_anim = _find_anim_recursive(inst)
 		if _viewer_anim and not _viewer_anim.get_animation_list().is_empty():

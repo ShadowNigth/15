@@ -283,7 +283,9 @@ func _cpu_skin_bounds(mesh: MeshInstance3D, skeleton: Skeleton3D) -> Dictionary:
 	var relative := mesh.global_transform.affine_inverse() * skeleton.global_transform
 	for bind in range(mesh.skin.get_bind_count()):
 		var bone := skeleton.find_bone(String(mesh.skin.get_bind_name(bind)))
-		if bone < 0:
+		if String(mesh.skin.get_bind_name(bind)).is_empty():
+			bone = mesh.skin.get_bind_bone(bind)
+		if bone < 0 or bone >= skeleton.get_bone_count():
 			return {"valid": false}
 		joint_transforms.append(relative * skeleton.get_bone_global_pose(bone) * mesh.skin.get_bind_pose(bind))
 	var minimum := Vector3.ZERO
@@ -335,7 +337,7 @@ func _test_team_loadouts() -> void:
 		var instance := packed.instantiate() as Node3D
 		_world.add_child(instance)
 		var team := "CT" if model_index % 2 == 0 else "T"
-		_expect(ViewmodelLoadout.apply(instance, team), "%s installs %s first-person arms" % [wid, team])
+		_expect(ViewmodelLoadout.apply(instance, team, String(spec["v_model"])), "%s installs %s first-person arms" % [wid, team])
 		var skeleton := _find_skeleton(instance)
 		var installed := _loadout_meshes(instance)
 		var kinds: Dictionary = {}
@@ -347,7 +349,11 @@ func _test_team_loadouts() -> void:
 				bindings_ok = false
 				continue
 			for bind in range(mesh.skin.get_bind_count()):
-				bindings_ok = bindings_ok and skeleton.find_bone(String(mesh.skin.get_bind_name(bind))) >= 0
+				var native_bone := mesh.skin.get_bind_bone(bind)
+				var bind_scale := mesh.skin.get_bind_pose(bind).basis.get_scale()
+				bindings_ok = bindings_ok and String(mesh.skin.get_bind_name(bind)).is_empty() \
+					and native_bone >= 0 and native_bone < skeleton.get_bone_count() \
+					and bind_scale.is_equal_approx(Vector3.ONE)
 		bindings_ok = bindings_ok and kinds.has("gloves") and kinds.has("sleeves")
 		_expect(bindings_ok, "%s resolves every replacement Skin bind on its own animated skeleton" % wid)
 		var legacy_found := false
@@ -361,15 +367,22 @@ func _test_team_loadouts() -> void:
 					legacy_found = true
 		_expect(not legacy_found, "%s removes both legacy arm/glove surfaces without hiding the weapon" % wid)
 		await get_tree().process_frame
-		var bounds_ok := not installed.is_empty()
-		for mesh in installed:
-			var evaluated := _cpu_skin_bounds(mesh, skeleton)
-			bounds_ok = bounds_ok and bool(evaluated.get("valid", false))
-			if bool(evaluated.get("valid", false)):
-				var box: AABB = evaluated["box"]
-				bounds_ok = bounds_ok and box.position.is_finite() and box.size.is_finite() \
-					and box.size.length() > 0.01 and box.size.length() < 2.5
-		_expect(bounds_ok, "%s replacement arms CPU-skin to a finite human-sized pose" % wid)
+		var animation := _find_animation_player(instance)
+		for pose in ["rest", "draw", "idle"]:
+			if animation != null and pose in ["draw", "idle"] and animation.has_animation(pose):
+				animation.play(pose)
+				var clip := animation.get_animation(pose)
+				animation.advance(minf(clip.length * 0.5, 0.55))
+			skeleton.force_update_all_bone_transforms()
+			var bounds_ok := not installed.is_empty()
+			for mesh in installed:
+				var evaluated := _cpu_skin_bounds(mesh, skeleton)
+				bounds_ok = bounds_ok and bool(evaluated.get("valid", false))
+				if bool(evaluated.get("valid", false)):
+					var box: AABB = evaluated["box"]
+					bounds_ok = bounds_ok and box.position.is_finite() and box.size.is_finite() \
+						and box.size.length() > 0.01 and box.size.length() < 2.5
+			_expect(bounds_ok, "%s replacement arms CPU-skin to a finite human-sized %s pose" % [wid, pose])
 		instance.free()
 		model_index += 1
 
@@ -382,7 +395,7 @@ func _test_team_loadouts() -> void:
 				_expect(GameData.select_viewmodel_loadout(team, kind, option_id), "Menu selection accepts " + option_id)
 				var instance := GameData.get_model_scene("weapons/v_m4a1").instantiate() as Node3D
 				_world.add_child(instance)
-				ViewmodelLoadout.apply(instance, team)
+				ViewmodelLoadout.apply(instance, team, "v_m4a1")
 				var found := false
 				var pbr_ok := true
 				for mesh in _loadout_meshes(instance):

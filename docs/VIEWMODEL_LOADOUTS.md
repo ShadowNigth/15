@@ -20,16 +20,19 @@ so no external CS2 installation is needed at runtime.
 ## Runtime attachment
 
 `ViewmodelLoadout.gd` removes only the legacy `ct_arms.bmp` and
-`ct_base_glove.bmp` mesh surfaces. It does not hide the weapon mesh. Copies of the
-selected glove and sleeve `MeshInstance3D`s point at the active weapon's
-`Skeleton3D`; named `Skin` binds let the existing idle, fire, reload, draw and
-inspection clips animate the replacements. Rigs without `UpperArm` use their
-corresponding `Forearm` bind. Source animation clips are not included.
+`ct_base_glove.bmp` mesh surfaces. It does not hide the weapon mesh. Before that,
+it converts every selected glove and sleeve into the active weapon's own rest
+space. Vertices, normals and tangents are baked once per weapon/variant and
+cached; UVs, joint indices, weights and materials are preserved. Rigs without
+`UpperArm` use their corresponding `Forearm` during this mapping.
 
-The source meshes use Source-inch coordinates. The converter scales the upper
-three rows of each inverse-bind matrix by `1/32`, converting bone-local geometry
-while leaving each target weapon's own joint globals in charge of placement.
-This is deliberately not a single rigid rotation/scale fitted to all weapons.
+The intermediate source meshes use Source-inch coordinates and inverse binds
+with `1/32` scale. They are not attached directly to the renderer. The baked
+mesh is in metres and receives a new Skin containing native target-bone indices
+and rigid target-rest inverse binds (`1.0` scale). Its transform is identical to
+the target `Skeleton3D`. Existing idle, fire, reload, draw and inspection clips
+then animate it exactly like the original arm surfaces. If conversion fails,
+the original arms remain untouched.
 
 ## Source and rebuild
 
@@ -49,7 +52,8 @@ renames the 38 hand/arm joints to the installed Bip01 names, embeds and optimize
 PBR images, removes animation clips, and prunes unused accessors. Base colour is
 capped at 2048 px; normal and ORM images are capped at 1024 px.
 
-Engine tests cover all 43 viewmodel rigs, named-bind resolution, finite CPU-skinned
-poses, all eight choices, the real Arsenal selectors, match-start team selection,
-M4A1 suppressor state, green Molotov glass and dropped-grenade scale. These checks
-do not replace rendered inspection in actual gameplay.
+Engine tests cover all 43 viewmodel rigs, native rigid-bind resolution and finite
+CPU-skinned rest/draw/idle poses, all eight choices, the real Arsenal selectors,
+match-start team selection and an explicit T + Glock regression case. They also
+cover M4A1 suppressor state, green Molotov glass and dropped-grenade scale. These
+checks do not replace rendered inspection in actual gameplay.
