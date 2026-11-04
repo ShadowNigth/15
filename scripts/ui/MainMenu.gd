@@ -29,6 +29,7 @@ var _viewer_pivot: Node3D = null
 var _viewer_anim: AnimationPlayer = null
 var _viewer_stats_lbl: Label = null
 var _viewer_current_wid: String = "ak47"
+var _viewer_team: String = "CT"
 
 
 func _ready() -> void:
@@ -458,11 +459,60 @@ func _build_arsenal_dialog() -> void:
 	btn_row.add_child(rel_btn)
 	right.add_child(btn_row)
 
+	_build_loadout_controls(right)
+
 	_viewer_stats_lbl = Label.new()
 	_viewer_stats_lbl.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 	_viewer_stats_lbl.add_theme_font_size_override("font_size", 12)
 	_viewer_stats_lbl.add_theme_color_override("font_color", Color(0.92, 0.88, 0.76))
 	right.add_child(_viewer_stats_lbl)
+
+
+func _build_loadout_controls(parent: VBoxContainer) -> void:
+	var title := Label.new()
+	title.text = "FIRST-PERSON GLOVES & SLEEVES — APPLIED BY TEAM AT MATCH START"
+	title.add_theme_font_size_override("font_size", 11)
+	title.add_theme_color_override("font_color", Color(0.66, 0.78, 0.66))
+	parent.add_child(title)
+
+	var grid := GridContainer.new()
+	grid.columns = 2
+	grid.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	grid.add_theme_constant_override("h_separation", 8)
+	grid.add_theme_constant_override("v_separation", 3)
+	parent.add_child(grid)
+	for team in ["CT", "T"]:
+		for kind in ["gloves", "sleeves"]:
+			var label := Label.new()
+			label.text = "%s %s" % [team, kind.capitalize()]
+			label.custom_minimum_size.x = 92.0
+			label.add_theme_font_size_override("font_size", 12)
+			grid.add_child(label)
+			var option := OptionButton.new()
+			option.name = "Loadout_%s_%s" % [team, kind.capitalize()]
+			option.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+			option.custom_minimum_size.x = 170.0
+			option.add_theme_font_size_override("font_size", 12)
+			var selected := GameData.get_selected_loadout(team, kind)
+			var choices := GameData.get_loadout_options(team, kind)
+			for index in range(choices.size()):
+				var choice: Dictionary = choices[index]
+				option.add_item(String(choice.get("name", choice.get("id", "Default"))), index)
+				option.set_item_metadata(index, String(choice.get("id", "")))
+				if String(choice.get("id", "")) == String(selected.get("id", "")):
+					option.select(index)
+			option.item_selected.connect(_on_loadout_option_selected.bind(team, kind, option))
+			grid.add_child(option)
+
+
+func _on_loadout_option_selected(index: int, team: String, kind: String, button: OptionButton) -> void:
+	var option_id := String(button.get_item_metadata(index))
+	if not GameData.select_viewmodel_loadout(team, kind, option_id):
+		return
+	_viewer_team = team
+	if _viewer_current_wid.is_empty() or not GameData.weapons.has(_viewer_current_wid):
+		_viewer_current_wid = "ak47"
+	_load_viewer_weapon(_viewer_current_wid)
 
 
 func _clear_viewer_pivot() -> void:
@@ -473,16 +523,16 @@ func _clear_viewer_pivot() -> void:
 	_viewer_anim = null
 
 
-func _style_viewer_meshes(n: Node) -> void:
+func _style_viewer_meshes(n: Node, mode: String = "char") -> void:
 	if n is MeshInstance3D:
 		var mi := n as MeshInstance3D
 		if mi.mesh:
 			for s in range(mi.mesh.get_surface_count()):
-				var styled := GameData.get_styled_model_material(mi.mesh.surface_get_material(s), "char")
+				var styled := GameData.get_styled_model_material(mi.mesh.surface_get_material(s), mode)
 				if styled:
 					mi.set_surface_override_material(s, styled)
 	for c in n.get_children():
-		_style_viewer_meshes(c)
+		_style_viewer_meshes(c, mode)
 
 
 func _load_viewer_weapon(wid: String) -> void:
@@ -493,10 +543,11 @@ func _load_viewer_weapon(wid: String) -> void:
 	var sc := GameData.get_model_scene("weapons/" + String(spec.get("v_model", "v_ak47")))
 	if sc:
 		var inst := sc.instantiate()
-		_style_viewer_meshes(inst)
 		inst.position = Vector3(-0.08, 0.12, 0.65)
 		inst.rotation_degrees = Vector3(0.0, 25.0, 0.0)
 		_viewer_pivot.add_child(inst)
+		ViewmodelLoadout.apply(inst, _viewer_team)
+		_style_viewer_meshes(inst, "vm")
 		_viewer_anim = _find_anim_recursive(inst)
 		if _viewer_anim and not _viewer_anim.get_animation_list().is_empty():
 			_viewer_anim.play(_viewer_anim.get_animation_list()[0])
@@ -509,6 +560,10 @@ func _load_viewer_weapon(wid: String) -> void:
 		float(spec.get("cycle_time", 0.1)),
 		String(spec.get("description", "")),
 	]
+	var glove := GameData.get_selected_loadout(_viewer_team, "gloves")
+	var sleeve := GameData.get_selected_loadout(_viewer_team, "sleeves")
+	_viewer_stats_lbl.text += "\n%s first-person arms: %s + %s" % [
+		_viewer_team, String(glove.get("name", "Default")), String(sleeve.get("name", "Default"))]
 
 
 func _load_viewer_player(cid: String) -> void:

@@ -42,6 +42,8 @@ func _run() -> void:
 	_expect(player != null and player.is_alive, "Team choice spawns a living local player")
 	_expect(_world.bots.size() == 9 and RoundManager.actors.size() == 10, "Team choice creates nine bots plus the player")
 	_expect(RoundManager.state == RoundManager.State.FREEZE, "The real round enters freeze time")
+	await get_tree().process_frame
+	_expect(_player_loadout_matches(player), "Match start applies the selected CT gloves and sleeves")
 
 	player.money = 16000
 	for wid in NEW_WEAPONS:
@@ -61,6 +63,7 @@ func _run() -> void:
 			player.weapon_ctrl.equip_weapon_by_id(wid)
 		_expect(player.weapon_ctrl.current_weapon_id == wid, "Real inventory equips " + wid)
 		_expect(player._cur_vm_model_name == String(spec["v_model"]) and player._vm_anim != null, "PlayerController builds the archi viewmodel and AnimationPlayer for " + wid)
+		_expect(_player_loadout_matches(player), "Equipping %s applies the current team's selected arms" % wid)
 
 	_expect(RoundManager.dropped_items.size() >= 8, "Replacing bought weapons creates real dropped-world models")
 	player.team = "CT"
@@ -75,6 +78,34 @@ func _run() -> void:
 	_expect(_world.buy_menu.current_category == 4, "Circular weapon category navigation works")
 	_world.buy_menu.close_menu()
 	player.ui_blocking_input = false
+
+	player.team = "CT"
+	player.weapon_ctrl.give_weapon("m4a1", 30, 90)
+	player.weapon_ctrl.equip_weapon_by_id("m4a1")
+	await get_tree().process_frame
+	_expect(player._vm_silencer_skeleton != null and player._vm_silencer_bone >= 0,
+		"M4A1 resolves its dedicated suppressor bone")
+	if player._vm_silencer_skeleton != null and player._vm_silencer_bone >= 0:
+		var original_root := player._vm_model_root
+		var bone_scale := player._vm_silencer_skeleton.get_bone_pose_scale(player._vm_silencer_bone)
+		_expect(bone_scale.x < 0.001, "Unsilenced M4A1 starts without a visible suppressor")
+		player.weapon_ctrl.fire_cooldown = 0.0
+		player.weapon_ctrl.trigger_secondary()
+		_expect(player.weapon_ctrl.is_attaching_silencer, "M4A1 secondary fire begins silencer attachment")
+		player.weapon_ctrl._process(player.weapon_ctrl.reload_timer + 0.01)
+		await get_tree().process_frame
+		bone_scale = player._vm_silencer_skeleton.get_bone_pose_scale(player._vm_silencer_bone)
+		_expect(bool(player.weapon_ctrl.silenced_state["m4a1"]) and bone_scale.is_equal_approx(Vector3.ONE) \
+			and player._vm_model_root == original_root,
+			"Attaching restores the suppressor on the same viewmodel without replaying draw")
+		player.weapon_ctrl.fire_cooldown = 0.0
+		player.weapon_ctrl.trigger_secondary()
+		player.weapon_ctrl._process(player.weapon_ctrl.reload_timer + 0.01)
+		await get_tree().process_frame
+		bone_scale = player._vm_silencer_skeleton.get_bone_pose_scale(player._vm_silencer_bone)
+		_expect(not bool(player.weapon_ctrl.silenced_state["m4a1"]) and bone_scale.x < 0.001 \
+			and player._vm_model_root == original_root,
+			"Detaching hides only the suppressor even though the weapon model did not change")
 
 	if player._vm_model_root != null:
 		player._vm_model_root.position += Vector3.ONE * 0.25
@@ -119,6 +150,21 @@ func _run() -> void:
 	await get_tree().process_frame
 	await get_tree().process_frame
 	get_tree().quit(0 if _failures.is_empty() else 1)
+
+
+func _player_loadout_matches(player: PlayerController) -> bool:
+	if player == null or player._vm_model_root == null:
+		return false
+	var expected := GameData.get_viewmodel_loadout(player.team)
+	var found: Dictionary = {}
+	for node in player._vm_model_root.find_children("*", "MeshInstance3D", true, false):
+		var mesh := node as MeshInstance3D
+		if not mesh.has_meta("loadout_kind"):
+			continue
+		var kind := String(mesh.get_meta("loadout_kind", ""))
+		var option: Dictionary = expected.get(kind, {})
+		found[kind] = String(mesh.get_meta("loadout_source", "")) == String(option.get("model", ""))
+	return bool(found.get("gloves", false)) and bool(found.get("sleeves", false))
 
 
 func _test_live_incendiary_spread() -> void:

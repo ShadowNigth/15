@@ -6,6 +6,7 @@ render_mode blend_mix, depth_draw_never, cull_back, specular_schlick_ggx;
 // This avoids both an opaque bottle and a completely invisible paper label.
 uniform sampler2D bottle_texture : source_color, filter_linear_mipmap, repeat_disable;
 uniform vec4 bottle_tint : source_color = vec4(1.0);
+uniform vec3 glass_tint : source_color = vec3(0.50, 1.22, 0.58);
 uniform float glass_opacity = 0.14;
 uniform float brightness = 1.18;
 
@@ -16,7 +17,8 @@ void fragment() {
 	float printed_detail = smoothstep(0.25, 0.52, luminance);
 	float fresnel = pow(1.0 - clamp(abs(dot(normalize(NORMAL), normalize(VIEW))), 0.0, 1.0), 3.0);
 	float clear_alpha = max(glass_opacity, fresnel * 0.42);
-	ALBEDO = colour * brightness + vec3(fresnel * 0.035);
+	vec3 green_glass = colour * glass_tint;
+	ALBEDO = mix(green_glass, colour, printed_detail) * brightness + vec3(fresnel * 0.035);
 	ROUGHNESS = mix(0.16, 0.075, fresnel);
 	METALLIC = 0.0;
 	SPECULAR = 0.82;

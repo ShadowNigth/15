@@ -1,0 +1,66 @@
+{
+  "defaults": {
+    "CT": {
+      "gloves": "ct_hardknuckle",
+      "sleeves": "ct_sleeve_sas"
+    },
+    "T": {
+      "gloves": "t_fingerless",
+      "sleeves": "t_sleeve_professional"
+    }
+  },
+  "teams": {
+    "CT": {
+      "gloves": [
+        {
+          "id": "ct_hardknuckle",
+          "name": "Hard Knuckle",
+          "model": "loadouts/ct_hardknuckle"
+        },
+        {
+          "id": "ct_hardknuckle_black",
+          "name": "Hard Knuckle Black",
+          "model": "loadouts/ct_hardknuckle_black"
+        }
+      ],
+      "sleeves": [
+        {
+          "id": "ct_sleeve_sas",
+          "name": "SAS",
+          "model": "loadouts/ct_sleeve_sas"
+        },
+        {
+          "id": "ct_sleeve_fbi",
+          "name": "FBI",
+          "model": "loadouts/ct_sleeve_fbi"
+        }
+      ]
+    },
+    "T": {
+      "gloves": [
+        {
+          "id": "t_fingerless",
+          "name": "Fingerless",
+          "model": "loadouts/t_fingerless"
+        },
+        {
+          "id": "t_fullfinger",
+          "name": "Fullfinger",
+          "model": "loadouts/t_fullfinger"
+        }
+      ],
+      "sleeves": [
+        {
+          "id": "t_sleeve_professional",
+          "name": "Professional",
+          "model": "loadouts/t_sleeve_professional"
+        },
+        {
+          "id": "t_sleeve_balkan",
+          "name": "Balkan",
+          "model": "loadouts/t_sleeve_balkan"
+        }
+      ]
+    }
+  }
+}

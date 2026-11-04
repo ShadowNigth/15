@@ -54,6 +54,9 @@ var _vm_model_rest_transform: Transform3D = Transform3D.IDENTITY
 ## wid the current viewmodel instance was built for (lets same-weapon refresh
 ## events, like silencer toggle completion, skip the rebuild + draw replay)
 var _vm_built_for: String = ""
+var _vm_silencer_skeleton: Skeleton3D = null
+var _vm_silencer_bone: int = -1
+var _vm_silencer_visible: bool = true
 var _pending_vm_events: Array = []
 var _vm_anim_elapsed: float = 0.0
 var _shake_trauma: float = 0.0
@@ -305,6 +308,7 @@ func _process(delta: float) -> void:
 		# Animation tracks drive bones, never the model root. Restore the local
 		# calibration every frame so interrupted clips cannot accumulate offsets.
 		_vm_model_root.transform = _vm_model_rest_transform
+		_apply_vm_silencer_visibility()
 
 	# Full display-refresh-rate camera + sub-tick physics & stair interpolation!
 	_land_dip = lerpf(_land_dip, 0.0, minf(1.0, 12.0 * delta))
@@ -479,6 +483,10 @@ func _on_weapon_switched(wid: String, _spec: Dictionary) -> void:
 	# Same weapon, same viewmodel model: keep the add/detach silencer clip that
 	# just played instead of rebuilding the viewmodel and restarting with DRAW.
 	if wid == _vm_built_for and viewmodel_holder != null and viewmodel_holder.get_child_count() > 0:
+		var spec: Dictionary = GameData.weapons.get(wid, {})
+		_vm_silencer_visible = bool(weapon_ctrl.silenced_state.get(wid, false)) and bool(spec.get("silencer", false))
+		_apply_vm_muzzle_meta(_cur_vm_model_name, _vm_silencer_visible, _vm_model_root)
+		_apply_vm_silencer_visibility()
 		return
 	_vm_draw_offset = 1.0
 	_rebuild_viewmodel(wid)
@@ -512,6 +520,8 @@ func _rebuild_viewmodel(wid: String) -> void:
 		viewmodel_holder.remove_child(c)
 		c.queue_free()
 	_vm_anim = null
+	_vm_silencer_skeleton = null
+	_vm_silencer_bone = -1
 	_pending_vm_events.clear()
 	_vm_anim_elapsed = 0.0
 	_elite_muzzle_left = false
@@ -525,12 +535,14 @@ func _rebuild_viewmodel(wid: String) -> void:
 	var inst := sc.instantiate()
 	# Native GoldSrc camera-space framing (verified across rifles, pistols, knife, grenades & C4)
 	inst.position = Vector3(0.0, -0.015, -0.03)
-	_prepare_viewmodel_materials(inst)
 	viewmodel_holder.add_child(inst)
+	ViewmodelLoadout.apply(inst, team)
+	_prepare_viewmodel_materials(inst)
 	_vm_model_root = inst as Node3D
 	if _vm_model_root != null:
 		_vm_model_rest_transform = _vm_model_root.transform
 	var is_sil := bool(weapon_ctrl.silenced_state.get(wid, false)) and bool(spec.get("silencer", false))
+	_configure_vm_silencer(inst, wid, is_sil)
 	_apply_vm_muzzle_meta(v_name, is_sil, inst)
 	_vm_anim = _find_anim(inst)
 	if _vm_anim:
@@ -665,6 +677,31 @@ func _compute_vm_muzzle_offset(root: Node) -> Vector3:
 	var mx: float = xs[xs.size() / 2]
 	var my: float = ys[ys.size() / 2]
 	return Vector3(mx, my, front_z + 0.05)
+
+
+func _configure_vm_silencer(inst: Node, wid: String, visible: bool) -> void:
+	_vm_silencer_visible = visible
+	var bone_name := String({
+		"m4a1": "v_weapon.M4A1_Silencer",
+		"usp": "v_weapon_silencer",
+	}.get(wid, ""))
+	if bone_name.is_empty():
+		return
+	var skeletons := inst.find_children("*", "Skeleton3D", true, false)
+	if skeletons.is_empty():
+		return
+	_vm_silencer_skeleton = skeletons[0] as Skeleton3D
+	_vm_silencer_bone = _vm_silencer_skeleton.find_bone(bone_name)
+	_apply_vm_silencer_visibility()
+
+
+func _apply_vm_silencer_visibility() -> void:
+	if not is_instance_valid(_vm_silencer_skeleton) or _vm_silencer_bone < 0:
+		return
+	# A near-zero pose collapses only the suppressor vertices. The weapon,
+	# replacement arms and every animation track remain otherwise untouched.
+	var target_scale := Vector3.ONE if _vm_silencer_visible else Vector3.ONE * 0.0001
+	_vm_silencer_skeleton.set_bone_pose_scale(_vm_silencer_bone, target_scale)
 
 
 func _prepare_viewmodel_materials(n: Node) -> void:

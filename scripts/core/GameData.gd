@@ -3,9 +3,10 @@ extends Node
 ## Loads all extracted JSON metadata from res://data/ and caches textures, models, and HUD atlases.
 
 const SCALE: float = 1.0 / 32.0
-## Shared world-model scale for dropped and thrown grenades.  Keep both paths
-## identical so a grenade does not visibly shrink when it leaves the player's hand.
+## Held/thrown grenades stay slightly compact; floor pickups use their own
+## larger scale so they remain easy to see without changing projectile behavior.
 const GRENADE_WORLD_SCALE: float = 0.90
+const GRENADE_DROP_SCALE: float = 1.0
 const MOLOTOV_GLASS_SHADER: Shader = preload("res://assets/shaders/molotov_glass.gdshader")
 const MOLOTOV_LIQUID_SHADER: Shader = preload("res://assets/shaders/molotov_liquid.gdshader")
 
@@ -23,6 +24,8 @@ var radio_menus: Dictionary = {}
 var titles: Dictionary = {}
 var world_textures_meta: Dictionary = {}
 var models_meta: Dictionary = {}
+var viewmodel_loadouts: Dictionary = {}
+var selected_loadouts: Dictionary = {}
 
 # Match / User settings
 var selected_map: String = "de_dust2"
@@ -88,6 +91,48 @@ func _load_all_databases() -> void:
 	titles = _load_json("res://data/titles.json")
 	world_textures_meta = _load_json("res://data/world_textures.json")
 	models_meta = _load_json("res://data/models_meta.json")
+	viewmodel_loadouts = _load_json("res://data/viewmodel_loadouts.json")
+
+
+func get_loadout_options(team: String, kind: String) -> Array:
+	var teams: Dictionary = viewmodel_loadouts.get("teams", {})
+	var team_data: Dictionary = teams.get(team.to_upper(), {})
+	return team_data.get(kind, []) as Array
+
+
+func get_selected_loadout(team: String, kind: String) -> Dictionary:
+	var normalized := team.to_upper()
+	var options := get_loadout_options(normalized, kind)
+	if options.is_empty():
+		return {}
+	var defaults: Dictionary = viewmodel_loadouts.get("defaults", {})
+	var default_team: Dictionary = defaults.get(normalized, {})
+	var selected_team: Dictionary = selected_loadouts.get(normalized, {})
+	var wanted := String(selected_team.get(kind, default_team.get(kind, "")))
+	for raw in options:
+		var option := raw as Dictionary
+		if String(option.get("id", "")) == wanted:
+			return option
+	return options[0] as Dictionary
+
+
+func select_viewmodel_loadout(team: String, kind: String, option_id: String) -> bool:
+	var normalized := team.to_upper()
+	for raw in get_loadout_options(normalized, kind):
+		var option := raw as Dictionary
+		if String(option.get("id", "")) == option_id:
+			if not selected_loadouts.has(normalized):
+				selected_loadouts[normalized] = {}
+			selected_loadouts[normalized][kind] = option_id
+			return true
+	return false
+
+
+func get_viewmodel_loadout(team: String) -> Dictionary:
+	return {
+		"gloves": get_selected_loadout(team, "gloves"),
+		"sleeves": get_selected_loadout(team, "sleeves"),
+	}
 
 
 func load_map_data(map_name: String) -> Dictionary:
@@ -131,6 +176,13 @@ func get_world_model_scale(wid: String) -> float:
 	return clampf(float(spec.get("world_scale", 1.0)), 0.45, 1.0)
 
 
+func get_dropped_model_scale(wid: String) -> float:
+	var spec: Dictionary = weapons.get(wid, {})
+	if bool(spec.get("grenade", false)):
+		return GRENADE_DROP_SCALE
+	return get_world_model_scale(wid)
+
+
 func get_styled_model_material(orig: Material, mode: String) -> Material:
 	if orig == null or not (orig is BaseMaterial3D):
 		return orig
@@ -144,6 +196,7 @@ func get_styled_model_material(orig: Material, mode: String) -> Material:
 		glass.shader = MOLOTOV_GLASS_SHADER
 		glass.set_shader_parameter("bottle_texture", source.albedo_texture)
 		glass.set_shader_parameter("bottle_tint", source.albedo_color)
+		glass.set_shader_parameter("glass_tint", Vector3(0.50, 1.22, 0.58))
 		glass.set_shader_parameter("glass_opacity", 0.14 if material_name == "weapon_molotov" else 0.08)
 		glass.set_shader_parameter("brightness", 1.18 if mode in ["vm", "vm_flip"] else 1.10)
 		# Draw the liquid first, then the intermediate green surface, then the
@@ -158,7 +211,7 @@ func get_styled_model_material(orig: Material, mode: String) -> Material:
 		liquid.set_shader_parameter("liquid_tint", source.albedo_color)
 		liquid.set_shader_parameter("brightness", 1.22 if mode in ["vm", "vm_flip"] else 1.12)
 		liquid.set_shader_parameter("deformation", 1.0 if mode in ["vm", "vm_flip"] else 0.0)
-		liquid.set_shader_parameter("opacity", 0.38 if mode in ["vm", "vm_flip"] else 0.32)
+		liquid.set_shader_parameter("opacity", 0.32 if mode in ["vm", "vm_flip"] else 0.30)
 		liquid.render_priority = 0
 		_styled_mat_cache[key] = liquid
 		return liquid
@@ -176,16 +229,16 @@ func get_styled_model_material(orig: Material, mode: String) -> Material:
 		dup.specular_mode = BaseMaterial3D.SPECULAR_SCHLICK_GGX
 	if mode == "vm":
 		dup.cull_mode = BaseMaterial3D.CULL_BACK
-		dup.roughness = 0.36
-		dup.metallic = 0.30
-		dup.metallic_specular = 0.72
-		dup.albedo_color = Color(original.r * 1.36, original.g * 1.36, original.b * 1.36, original.a)
+		dup.roughness = 0.30
+		dup.metallic = 0.42
+		dup.metallic_specular = 0.78
+		dup.albedo_color = Color(original.r * 1.42, original.g * 1.42, original.b * 1.42, original.a)
 	elif mode == "vm_flip":
 		dup.cull_mode = BaseMaterial3D.CULL_FRONT
-		dup.roughness = 0.36
-		dup.metallic = 0.30
-		dup.metallic_specular = 0.72
-		dup.albedo_color = Color(original.r * 1.36, original.g * 1.36, original.b * 1.36, original.a)
+		dup.roughness = 0.30
+		dup.metallic = 0.42
+		dup.metallic_specular = 0.78
+		dup.albedo_color = Color(original.r * 1.42, original.g * 1.42, original.b * 1.42, original.a)
 	elif mode == "w_held":
 		dup.cull_mode = BaseMaterial3D.CULL_BACK
 		dup.roughness = 0.38
@@ -203,10 +256,19 @@ func get_styled_model_material(orig: Material, mode: String) -> Material:
 		# specular response above.
 		dup.cull_mode = BaseMaterial3D.CULL_BACK
 		dup.albedo_color = Color(original.r * 1.36, original.g * 1.36, original.b * 1.38, original.a)
-	if material_name.contains("glove") or material_name.contains("arms"):
+	var character_surface := material_name.contains("glove") or material_name.contains("arms") \
+		or material_name.contains("bare_arm") or material_name.contains("sleeve") or material_name.contains("skin")
+	if character_surface:
 		dup.metallic = 0.0
-		dup.roughness = 0.72 if material_name.contains("glove") else 0.80
-		dup.metallic_specular = 0.42
+		if material_name.contains("glove"):
+			dup.roughness = 0.64
+		elif material_name.contains("sleeve"):
+			dup.roughness = 0.76
+		else:
+			dup.roughness = 0.72
+		dup.metallic_specular = 0.46
+		if mode in ["vm", "vm_flip"]:
+			dup.albedo_color = Color(original.r * 1.10, original.g * 1.10, original.b * 1.10, original.a)
 	_styled_mat_cache[key] = dup
 	return dup
 
