@@ -5,6 +5,7 @@ extends Node
 
 const EXPECTED_WEAPONS := 43
 const EXPECTED_ARCHI_WAVS := 299
+const EXPECTED_CS2_WAVS := 130
 
 var _checks := 0
 var _failures: Array[String] = []
@@ -77,6 +78,8 @@ func _run() -> void:
 	_controller.set_process(false)
 
 	_test_assets()
+	_test_cs2_audio()
+	_test_world_calibration_and_molotov()
 	_test_scope_tint_preservation()
 	_test_mechanics()
 	_test_grenade_world_scale()
@@ -84,7 +87,7 @@ func _run() -> void:
 	await _test_fire_spread()
 
 	if _failures.is_empty():
-		print("[ARCHI TEST] PASS: %d checks; 43 slots, 129 GLBs and 299 archi WAVs loaded by Godot." % _checks)
+		print("[ARCHI TEST] PASS: %d checks; 43 slots, 129 GLBs, 299 archi WAVs and 130 dedicated CS2 WAVs." % _checks)
 	else:
 		print("[ARCHI TEST] FAIL: %d of %d checks failed." % [_failures.size(), _checks])
 	# Radio/weapon playback runs on the audio thread; stop it before the test's
@@ -159,6 +162,111 @@ func _test_assets() -> void:
 	for path in wavs:
 		var stream := load(path) as AudioStream
 		_expect(stream != null, "Godot must decode " + path)
+
+
+func _test_cs2_audio() -> void:
+	var wavs: Array[String] = []
+	_collect_wavs("res://assets/sounds/weapons/cs2", wavs)
+	_expect(wavs.size() == EXPECTED_CS2_WAVS, "all 130 dedicated CS2 WAVs must be installed (found %d)" % wavs.size())
+	for path in wavs:
+		var stream := load(path) as AudioStream
+		_expect(stream != null, "Godot must decode " + path)
+
+	var owners: Dictionary = {}
+	for wid in GameData.weapons:
+		var spec: Dictionary = GameData.weapons[wid]
+		var sounds: Array = spec.get("fire_sounds", [])
+		if sounds.is_empty():
+			continue
+		var dedicated := true
+		for raw in sounds:
+			var path := String(raw)
+			if not path.begins_with("weapons/cs2/"):
+				dedicated = false
+			if owners.has(path) and String(owners[path]) != wid:
+				dedicated = false
+			owners[path] = wid
+		_expect(dedicated, "%s must use its own CS2 firing recordings" % wid)
+	var m4a4_sounds: Array = GameData.weapons["m4a4"]["fire_sounds"]
+	var m4a1s_sounds: Array = GameData.weapons["m4a1"]["fire_sounds"]
+	_expect("weapons/cs2/m4a1/m4a1_01.wav" in m4a4_sounds,
+		"M4A4 uses the CS2 m4a1_01 recording")
+	_expect("weapons/cs2/m4a1/m4a1_us_01.wav" in m4a1s_sounds,
+		"M4A1-S unsuppressed uses the distinct m4a1_us_01 recording")
+	_expect(String(GameData.weapons["knife"]["wall_sound"]).find("flashbang") < 0,
+		"Knife wall impacts no longer use a flashbang sample")
+	_expect(String(GameData.weapons["molotov"]["explode_sounds"][0]).find("molotov_detonate") >= 0,
+		"Molotov uses its own detonation rather than HE")
+	var m4a4_foley := true
+	for events in GameData.models_meta["weapons/v_m4a4"]["seq_events"].values():
+		for event in events:
+			if not String(event["wav"]).begins_with("weapons/cs2/m4a1/"):
+				m4a4_foley = false
+	_expect(m4a4_foley, "Every M4A4 draw/reload event uses its dedicated CS2 foley")
+	var mag7_foley := true
+	for events in GameData.models_meta["weapons/v_mag7"]["seq_events"].values():
+		for event in events:
+			if not String(event["wav"]).begins_with("weapons/cs2/mag7/"):
+				mag7_foley = false
+	_expect(mag7_foley, "MAG-7 reload, draw and pump events all use MAG-7 recordings")
+	_expect(String(GameData.weapons["molotov"]["pinpull_sound"]).find("cs2_hegren") < 0,
+		"Molotov ignition no longer plays the HE pin sound")
+	_expect(String(GameData.weapons["decoy"]["deploy_sound"]).begins_with("weapons/cs2/decoy/"),
+		"Decoy deploy uses its own recording")
+
+
+func _test_world_calibration_and_molotov() -> void:
+	for wid in GameData.weapons:
+		var spec: Dictionary = GameData.weapons[wid]
+		var scale := GameData.get_world_model_scale(wid)
+		_expect(scale >= 0.45 and scale <= 1.0 and is_equal_approx(scale, float(spec.get("world_scale", 1.0))),
+			"%s has a bounded shared world scale" % wid)
+		if bool(spec.get("grenade", false)):
+			_expect(is_equal_approx(scale, GameData.GRENADE_WORLD_SCALE), "%s preserves grenade scale 0.90" % wid)
+
+	var drop := DroppedWeapon.new()
+	_world.add_child(drop)
+	drop.setup_drop("m4a1", 30, 90, Vector3.ZERO)
+	var held_scale := GameData.get_world_model_scale("m4a1")
+	var drop_scale_ok := drop._visual_root.get_child_count() > 0
+	if drop_scale_ok:
+		var model := drop._visual_root.get_child(0) as Node3D
+		drop_scale_ok = model != null and absf(model.scale.x - held_scale) < 0.0001
+	_expect(drop_scale_ok, "Dropped M4A1 uses the same calibrated scale as the hand model")
+	drop.free()
+
+	var packed := GameData.get_model_scene("weapons/v_molotov")
+	_expect(packed != null, "Molotov material test model loads")
+	if packed == null:
+		return
+	var instance := packed.instantiate()
+	_world.add_child(instance)
+	var glass_ok := false
+	var liquid_ok := false
+	var weapon_finish_ok := false
+	for node in instance.find_children("*", "MeshInstance3D", true, false):
+		var mesh_instance := node as MeshInstance3D
+		if mesh_instance.mesh == null:
+			continue
+		for surface in range(mesh_instance.mesh.get_surface_count()):
+			var original := mesh_instance.mesh.surface_get_material(surface) as BaseMaterial3D
+			if original == null:
+				continue
+			if original.resource_name == "weapon_molotov":
+				var glass := GameData.get_styled_model_material(original, "vm") as BaseMaterial3D
+				glass_ok = glass != null and glass.transparency == BaseMaterial3D.TRANSPARENCY_ALPHA \
+					and glass.albedo_color.a >= 0.20 and glass.albedo_color.a <= 0.33 and glass.roughness <= 0.15
+			elif original.resource_name == "molotov_inside":
+				var liquid := GameData.get_styled_model_material(original, "vm") as ShaderMaterial
+				liquid_ok = liquid != null and liquid.shader == GameData.MOLOTOV_LIQUID_SHADER \
+					and float(liquid.get_shader_parameter("deformation")) > 0.5
+			elif original.resource_name == "weapon_molotov_lighter":
+				var finish := GameData.get_styled_model_material(original, "vm") as BaseMaterial3D
+				weapon_finish_ok = finish != null and finish.roughness <= 0.53 and finish.metallic >= 0.13
+	_expect(glass_ok, "Molotov outer bottle is transparent glass")
+	_expect(liquid_ok, "Molotov has a separate animated liquid volume")
+	_expect(weapon_finish_ok, "Weapon materials use a less opaque realistic specular finish")
+	instance.free()
 
 
 func _test_scope_tint_preservation() -> void:

@@ -8027,7 +8027,7 @@
         },
         {
           "t": 1.533,
-          "wav": "weapons/archi/cs2_p250/clipin.wav"
+          "wav": "weapons/cs2/cz75a/cz75_clipin_01.wav"
         },
         {
           "t": 2.133,
@@ -8045,7 +8045,7 @@
         },
         {
           "t": 0.667,
-          "wav": "weapons/archi/cs2_p250/clipin.wav"
+          "wav": "weapons/cs2/cz75a/cz75_clipin_01.wav"
         },
         {
           "t": 1.0,
@@ -8063,7 +8063,7 @@
         },
         {
           "t": 1.067,
-          "wav": "weapons/archi/cs2_p250/clipin.wav"
+          "wav": "weapons/cs2/cz75a/cz75_clipin_01.wav"
         },
         {
           "t": 1.8,
@@ -8278,33 +8278,33 @@
       "reload": [
         {
           "t": 0.333,
-          "wav": "weapons/archi/cs2_mac10/clipout.wav"
+          "wav": "weapons/cs2/tec9/tec9_clipout.wav"
         },
         {
           "t": 1.167,
-          "wav": "weapons/archi/cs2_mac10/clipin.wav"
+          "wav": "weapons/cs2/tec9/tec9_clipin.wav"
         },
         {
           "t": 1.8,
-          "wav": "weapons/archi/cs2_mac10/boltback.wav"
+          "wav": "weapons/cs2/tec9/tec9_boltpull.wav"
         },
         {
           "t": 2.033,
-          "wav": "weapons/archi/cs2_mac10/boltforward.wav"
+          "wav": "weapons/cs2/tec9/tec9_boltrelease.wav"
         }
       ],
       "draw": [
         {
           "t": 0.0,
-          "wav": "weapons/archi/cs2_mac10/draw.wav"
+          "wav": "weapons/cs2/tec9/tec9_draw.wav"
         },
         {
           "t": 0.333,
-          "wav": "weapons/archi/cs2_mac10/boltback.wav"
+          "wav": "weapons/cs2/tec9/tec9_boltpull.wav"
         },
         {
           "t": 0.533,
-          "wav": "weapons/archi/cs2_mac10/boltforward.wav"
+          "wav": "weapons/cs2/tec9/tec9_boltrelease.wav"
         }
       ]
     },
@@ -8552,29 +8552,29 @@
       "reload": [
         {
           "t": 0.367,
-          "wav": "weapons/archi/cs2_m4a1s/clipout.wav"
+          "wav": "weapons/cs2/m4a1/m4a1_clipout.wav"
         },
         {
           "t": 1.167,
-          "wav": "weapons/archi/cs2_m4a1s/clipin.wav"
+          "wav": "weapons/cs2/m4a1/m4a1_clipin.wav"
         },
         {
           "t": 1.9,
-          "wav": "weapons/archi/cs2_m4a1s/cliphit.wav"
+          "wav": "weapons/cs2/m4a1/m4a1_cliphit.wav"
         }
       ],
       "draw": [
         {
           "t": 0.0,
-          "wav": "weapons/archi/cs2_m4a1s/draw.wav"
+          "wav": "weapons/cs2/m4a1/m4a1_draw.wav"
         },
         {
           "t": 0.333,
-          "wav": "weapons/archi/cs2_m4a1s/boltforward.wav"
+          "wav": "weapons/cs2/m4a1/m4a1_boltforward.wav"
         },
         {
           "t": 0.567,
-          "wav": "weapons/archi/cs2_m4a1s/boltback.wav"
+          "wav": "weapons/cs2/m4a1/m4a1_boltback.wav"
         }
       ]
     },
@@ -8638,53 +8638,53 @@
       "shoot1": [
         {
           "t": 0.033,
-          "wav": "weapons/archi/cs2_ump45/boltback.wav"
+          "wav": "weapons/cs2/mag7/mag7_pump_back.wav"
         },
         {
           "t": 0.2,
-          "wav": "weapons/archi/cs2_ump45/boltforward.wav"
+          "wav": "weapons/cs2/mag7/mag7_pump_forward.wav"
         }
       ],
       "shoot2": [
         {
           "t": 0.033,
-          "wav": "weapons/archi/cs2_ump45/boltback.wav"
+          "wav": "weapons/cs2/mag7/mag7_pump_back.wav"
         },
         {
           "t": 0.2,
-          "wav": "weapons/archi/cs2_ump45/boltforward.wav"
+          "wav": "weapons/cs2/mag7/mag7_pump_forward.wav"
         }
       ],
       "draw": [
         {
           "t": 0.0,
-          "wav": "weapons/archi/cs2_ump45/draw.wav"
+          "wav": "weapons/cs2/mag7/mag7_draw.wav"
         },
         {
           "t": 0.4,
-          "wav": "weapons/archi/cs2_ump45/boltback.wav"
+          "wav": "weapons/cs2/mag7/mag7_pump_back.wav"
         },
         {
           "t": 0.52,
-          "wav": "weapons/archi/cs2_ump45/boltforward.wav"
+          "wav": "weapons/cs2/mag7/mag7_pump_forward.wav"
         }
       ],
       "reload": [
         {
           "t": 0.233,
-          "wav": "weapons/archi/cs2_ump45/clipout.wav"
+          "wav": "weapons/cs2/mag7/mag7_clipout.wav"
         },
         {
           "t": 0.867,
-          "wav": "weapons/archi/cs2_ump45/clipin.wav"
+          "wav": "weapons/cs2/mag7/mag7_clipin.wav"
         },
         {
           "t": 1.767,
-          "wav": "weapons/archi/cs2_ump45/boltback.wav"
+          "wav": "weapons/cs2/mag7/mag7_pump_back.wav"
         },
         {
           "t": 1.967,
-          "wav": "weapons/archi/cs2_ump45/boltforward.wav"
+          "wav": "weapons/cs2/mag7/mag7_pump_forward.wav"
         }
       ]
     },
@@ -8931,33 +8931,33 @@
       "draw": [
         {
           "t": 0.0,
-          "wav": "weapons/archi/cs2_ump45/draw.wav"
+          "wav": "weapons/cs2/bizon/bizon_draw.wav"
         },
         {
           "t": 0.267,
-          "wav": "weapons/archi/cs2_ump45/boltback.wav"
+          "wav": "weapons/cs2/bizon/bizon_boltback.wav"
         },
         {
           "t": 0.567,
-          "wav": "weapons/archi/cs2_ump45/boltforward.wav"
+          "wav": "weapons/cs2/bizon/bizon_boltforward.wav"
         }
       ],
       "reload": [
         {
           "t": 0.333,
-          "wav": "weapons/archi/cs2_ump45/clipout.wav"
+          "wav": "weapons/cs2/bizon/bizon_clipout.wav"
         },
         {
           "t": 1.033,
-          "wav": "weapons/archi/cs2_ump45/clipin.wav"
+          "wav": "weapons/cs2/bizon/bizon_clipin.wav"
         },
         {
           "t": 1.6,
-          "wav": "weapons/archi/cs2_ump45/boltback.wav"
+          "wav": "weapons/cs2/bizon/bizon_boltback.wav"
         },
         {
           "t": 1.867,
-          "wav": "weapons/archi/cs2_ump45/boltforward.wav"
+          "wav": "weapons/cs2/bizon/bizon_boltforward.wav"
         }
       ]
     },
@@ -9165,17 +9165,17 @@
       "pullpin": [
         {
           "t": 0.0,
-          "wav": "weapons/archi/cs2_hegren/pinpull_start.wav"
+          "wav": "weapons/cs2/decoy/pinpull_start.wav"
         },
         {
           "t": 0.4,
-          "wav": "weapons/archi/cs2_hegren/pinpull.wav"
+          "wav": "weapons/cs2/decoy/pinpull.wav"
         }
       ],
       "deploy": [
         {
           "t": 0.0,
-          "wav": "weapons/archi/cs2_hegren/he_draw.wav"
+          "wav": "weapons/cs2/decoy/decoy_draw.wav"
         }
       ]
     },
@@ -9227,7 +9227,7 @@
       "deploy": [
         {
           "t": 0.0,
-          "wav": "weapons/archi/cs2_hegren/he_draw.wav"
+          "wav": "weapons/cs2/molotov/molotov_draw.wav"
         }
       ]
     },
@@ -9283,17 +9283,17 @@
       "pullpin": [
         {
           "t": 0.0,
-          "wav": "weapons/archi/cs2_hegren/pinpull_start.wav"
+          "wav": "weapons/cs2/incgrenade/pinpull_start.wav"
         },
         {
           "t": 0.4,
-          "wav": "weapons/archi/cs2_hegren/pinpull.wav"
+          "wav": "weapons/cs2/incgrenade/pinpull.wav"
         }
       ],
       "deploy": [
         {
           "t": 0.0,
-          "wav": "weapons/archi/cs2_hegren/he_draw.wav"
+          "wav": "weapons/cs2/incgrenade/inc_grenade_draw.wav"
         }
       ]
     },

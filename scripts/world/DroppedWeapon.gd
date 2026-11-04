@@ -85,7 +85,7 @@ func setup_drop(id: String, clip: int, reserve: int, throw_vel: Vector3, is_sile
 	elif GameData.weapons.has(id):
 		mdl_name = String(GameData.weapons[id].get("w_model", "w_" + id))
 
-	var mdl_scale: float = GameData.GRENADE_WORLD_SCALE if _is_grenade else 1.0
+	var mdl_scale: float = GameData.get_world_model_scale(id) if GameData.weapons.has(id) else 1.0
 	var sc := GameData.get_model_scene("weapons/" + mdl_name)
 	if sc != null:
 		var inst := sc.instantiate() as Node3D

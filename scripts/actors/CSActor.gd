@@ -55,6 +55,8 @@ var _body_root: Node3D = null
 var _body_anim: AnimationPlayer = null
 var _skel: Skeleton3D = null
 var _hand_attachment: BoneAttachment3D = null
+var _held_weapon_model: Node3D = null
+var _held_weapon_rest_transform: Transform3D = Transform3D.IDENTITY
 var _tp_muzzle_sprite: Sprite3D = null
 var _tp_muzzle_light: OmniLight3D = null
 var _tp_muzzle_timer: float = 0.0
@@ -141,6 +143,8 @@ func _rebuild_character_model() -> void:
 	_body_anim = null
 	_skel = null
 	_hand_attachment = null
+	_held_weapon_model = null
+	_held_weapon_rest_transform = Transform3D.IDENTITY
 	_tp_muzzle_sprite = null
 	_tp_muzzle_light = null
 	_pelvis_bone_idx = -1
@@ -372,6 +376,7 @@ func _process(delta: float) -> void:
 				_tp_muzzle_light.visible = false
 	if _body_root and _body_root.visible:
 		_evaluate_character_pose(delta)
+	_stabilize_held_weapon()
 
 
 func _tick_corpse_grounding(delta: float) -> void:
@@ -578,27 +583,39 @@ func _on_actor_weapon_switched(wid: String, _spec: Dictionary) -> void:
 
 
 func _update_held_weapon_model(wid: String) -> void:
+	_held_weapon_model = null
 	if _hand_attachment == null:
 		return
 	var old_w := _hand_attachment.get_children()
 	for c in old_w:
-		if c == _tp_muzzle_sprite:
+		if c == _tp_muzzle_sprite or c == _tp_muzzle_light:
 			continue
 		_hand_attachment.remove_child(c)
 		c.queue_free()
 	if not is_alive or wid.is_empty() or not GameData.weapons.has(wid):
 		return
 	var spec: Dictionary = GameData.weapons[wid]
-	var v_name := String(spec.get("v_model", ""))
-	var p_name := ("p_" + v_name.substr(2)) if v_name.begins_with("v_") else ("p_" + wid)
+	var p_name := String(spec.get("p_model", "p_" + wid))
 	var p_sc := GameData.get_model_scene("weapons/" + p_name)
 	if p_sc:
-		var p_inst := p_sc.instantiate()
-		_configure_character_meshes(p_inst)
+		var p_inst := p_sc.instantiate() as Node3D
+		if p_inst == null:
+			return
+		_configure_character_meshes(p_inst, "w_held")
+		p_inst.scale = Vector3.ONE * GameData.get_world_model_scale(wid)
 		_hand_attachment.add_child(p_inst)
+		_held_weapon_model = p_inst
+		_held_weapon_rest_transform = p_inst.transform
 
 
-func _configure_character_meshes(n: Node) -> void:
+func _stabilize_held_weapon() -> void:
+	if is_instance_valid(_held_weapon_model):
+		# The p_ mesh has no root animation. Keep its calibrated local transform
+		# fixed to the hand bone even after weapon switches and upper-body clips.
+		_held_weapon_model.transform = _held_weapon_rest_transform
+
+
+func _configure_character_meshes(n: Node, material_mode: String = "char") -> void:
 	if n is MeshInstance3D:
 		var mi := n as MeshInstance3D
 		mi.layers = 2
@@ -606,11 +623,11 @@ func _configure_character_meshes(n: Node) -> void:
 		if mi.mesh:
 			for s in range(mi.mesh.get_surface_count()):
 				var mat := mi.mesh.surface_get_material(s)
-				var styled := GameData.get_styled_model_material(mat, "char")
+				var styled := GameData.get_styled_model_material(mat, material_mode)
 				if styled:
 					mi.set_surface_override_material(s, styled)
 	for c in n.get_children():
-		_configure_character_meshes(c)
+		_configure_character_meshes(c, material_mode)
 
 
 func _find_anim(n: Node) -> AnimationPlayer:
@@ -1159,6 +1176,7 @@ func _die(killer: Node3D, weapon_id: String, headshot: bool) -> void:
 				continue
 			_hand_attachment.remove_child(c)
 			c.queue_free()
+	_held_weapon_model = null
 
 	# Snapshot current live bone pose so death animation crossfades smoothly without popping!
 	_death_from_pos.clear()

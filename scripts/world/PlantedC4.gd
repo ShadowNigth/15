@@ -30,6 +30,8 @@ func _ready() -> void:
 					var styled := GameData.get_styled_model_material(mi.mesh.surface_get_material(s), "w_drop")
 					if styled:
 						mi.set_surface_override_material(s, styled)
+		if inst is Node3D:
+			(inst as Node3D).scale = Vector3.ONE * GameData.get_world_model_scale("c4")
 		add_child(inst)
 
 	_led_sprite = Sprite3D.new()

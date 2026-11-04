@@ -49,6 +49,8 @@ var _jump_buffer_timer: float = 0.0
 var _coyote_timer: float = 0.0
 var _was_on_floor: bool = true
 var _cur_vm_model_name: String = ""
+var _vm_model_root: Node3D = null
+var _vm_model_rest_transform: Transform3D = Transform3D.IDENTITY
 ## wid the current viewmodel instance was built for (lets same-weapon refresh
 ## events, like silencer toggle completion, skip the rebuild + draw replay)
 var _vm_built_for: String = ""
@@ -299,6 +301,10 @@ func _process(delta: float) -> void:
 	if not is_alive:
 		_update_spectator_camera(delta)
 		return
+	if is_instance_valid(_vm_model_root):
+		# Animation tracks drive bones, never the model root. Restore the local
+		# calibration every frame so interrupted clips cannot accumulate offsets.
+		_vm_model_root.transform = _vm_model_rest_transform
 
 	# Full display-refresh-rate camera + sub-tick physics & stair interpolation!
 	_land_dip = lerpf(_land_dip, 0.0, minf(1.0, 12.0 * delta))
@@ -499,6 +505,8 @@ func apply_camera_shake(intensity: float) -> void:
 
 
 func _rebuild_viewmodel(wid: String) -> void:
+	_vm_model_root = null
+	_vm_model_rest_transform = Transform3D.IDENTITY
 	var old_children := viewmodel_holder.get_children()
 	for c in old_children:
 		viewmodel_holder.remove_child(c)
@@ -519,10 +527,15 @@ func _rebuild_viewmodel(wid: String) -> void:
 	inst.position = Vector3(0.0, -0.015, -0.03)
 	_prepare_viewmodel_materials(inst)
 	viewmodel_holder.add_child(inst)
+	_vm_model_root = inst as Node3D
+	if _vm_model_root != null:
+		_vm_model_rest_transform = _vm_model_root.transform
 	var is_sil := bool(weapon_ctrl.silenced_state.get(wid, false)) and bool(spec.get("silencer", false))
 	_apply_vm_muzzle_meta(v_name, is_sil, inst)
 	_vm_anim = _find_anim(inst)
 	if _vm_anim:
+		# Run animation before this controller restores the calibrated root.
+		_vm_anim.process_priority = -100
 		for aname in _vm_anim.get_animation_list():
 			var low := aname.to_lower()
 			var anim_res := _vm_anim.get_animation(aname)

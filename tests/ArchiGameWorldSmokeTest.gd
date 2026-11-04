@@ -76,6 +76,22 @@ func _run() -> void:
 	_world.buy_menu.close_menu()
 	player.ui_blocking_input = false
 
+	if player._vm_model_root != null:
+		player._vm_model_root.position += Vector3.ONE * 0.25
+		await get_tree().process_frame
+	_expect(player._vm_model_root != null and player._vm_model_root.transform == player._vm_model_rest_transform,
+		"First-person weapon root recovers its calibrated transform after an interruption")
+	if not _world.bots.is_empty():
+		var bot := _world.bots[0] as CSActor
+		if bot._held_weapon_model != null:
+			var expected_scale := GameData.get_world_model_scale(bot.weapon_ctrl.current_weapon_id)
+			_expect(absf(bot._held_weapon_model.scale.x - expected_scale) < 0.0001,
+				"Third-person hand attachment applies the per-weapon calibrated scale")
+			bot._held_weapon_model.position += Vector3.ONE * 0.25
+			await get_tree().process_frame
+			_expect(bot._held_weapon_model.transform == bot._held_weapon_rest_transform,
+				"Third-person weapon root remains locked to its calibrated hand transform")
+
 	for i in range(600):
 		await get_tree().process_frame
 	_expect(RoundManager.state == RoundManager.State.LIVE, "Freeze time finishes and the bot round goes live")

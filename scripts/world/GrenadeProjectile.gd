@@ -262,7 +262,7 @@ func setup_grenade(gtype: String, owner_actor: Node3D, start_vel: Vector3) -> vo
 					if styled:
 						mi.set_surface_override_material(s, styled)
 		if inst is Node3D:
-			(inst as Node3D).scale = Vector3.ONE * GameData.GRENADE_WORLD_SCALE
+			(inst as Node3D).scale = Vector3.ONE * GameData.get_world_model_scale(gtype)
 		add_child(inst)
 
 

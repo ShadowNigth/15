@@ -33,13 +33,15 @@
       "p_model": "p_knife",
       "vgui": "640_knife",
       "fire_sounds": [
-        "weapons/archi/cs2_hegren/grenade_throw.wav"
+        "weapons/cs2/knife/knife_slash1.wav",
+        "weapons/cs2/knife/knife_slash2.wav"
       ],
       "hit_sounds": [
-        "weapons/archi/cs2_flashbang/hit1.wav"
+        "weapons/cs2/knife/knife_hit1.wav",
+        "weapons/cs2/knife/knife_hit2.wav"
       ],
-      "wall_sound": "weapons/archi/cs2_flashbang/hit1.wav",
-      "stab_sound": "weapons/archi/cs2_flashbang/hit1.wav",
+      "wall_sound": "weapons/knife_hitwall1.wav",
+      "stab_sound": "weapons/cs2/knife/knife_stab.wav",
       "deploy_sound": "weapons/archi/cs2_hegren/grenade_throw.wav",
       "max_speed": 260.0,
       "zoomed_speed": 260.0,
@@ -135,7 +137,8 @@
             24
           ]
         }
-      }
+      },
+      "world_scale": 0.736
     },
     "usp": {
       "id": "usp",
@@ -168,11 +171,14 @@
       "p_model": "p_usp",
       "vgui": "640_usp",
       "fire_sounds": [
-        "weapons/archi/core/usp_unsil-1.wav"
+        "weapons/cs2/usp/usp_unsilenced_01.wav",
+        "weapons/cs2/usp/usp_unsilenced_02.wav",
+        "weapons/cs2/usp/usp_unsilenced_03.wav"
       ],
       "silenced_sounds": [
-        "weapons/archi/core/usp1.wav",
-        "weapons/archi/core/usp2.wav"
+        "weapons/cs2/usp/usp_01.wav",
+        "weapons/cs2/usp/usp_02.wav",
+        "weapons/cs2/usp/usp_03.wav"
       ],
       "reload_sound": "weapons/archi/cs2_p2000/clipout.wav",
       "deploy_sound": "weapons/archi/cs2_p2000/draw.wav",
@@ -273,7 +279,8 @@
       },
       "dryfire_sound": "weapons/archi/cs2_revolver/hammer.wav",
       "silencer_on_sound": "weapons/archi/cs2_usps/sil_on.wav",
-      "silencer_off_sound": "weapons/archi/cs2_usps/sil_off.wav"
+      "silencer_off_sound": "weapons/archi/cs2_usps/sil_off.wav",
+      "world_scale": 0.573
     },
     "glock18": {
       "id": "glock18",
@@ -305,10 +312,10 @@
       "p_model": "p_glock18",
       "vgui": "640_glock18",
       "fire_sounds": [
-        "weapons/archi/core/glock18-1.wav",
-        "weapons/archi/core/glock18-2.wav"
+        "weapons/cs2/glock18/glock_01.wav",
+        "weapons/cs2/glock18/glock_02.wav"
       ],
-      "burst_sound": "weapons/archi/core/glock18-2.wav",
+      "burst_sound": "weapons/cs2/glock18/glock_02.wav",
       "reload_sound": "weapons/archi/cs2_glock18/clipout.wav",
       "deploy_sound": "weapons/archi/cs2_glock18/draw.wav",
       "max_speed": 250.0,
@@ -406,7 +413,8 @@
           ]
         }
       },
-      "dryfire_sound": "weapons/archi/cs2_revolver/hammer.wav"
+      "dryfire_sound": "weapons/archi/cs2_revolver/hammer.wav",
+      "world_scale": 0.629
     },
     "deagle": {
       "id": "deagle",
@@ -437,8 +445,8 @@
       "p_model": "p_deagle",
       "vgui": "640_deagle",
       "fire_sounds": [
-        "weapons/archi/core/deagle-1.wav",
-        "weapons/archi/core/deagle-2.wav"
+        "weapons/cs2/deagle/deagle_01.wav",
+        "weapons/cs2/deagle/deagle_02.wav"
       ],
       "reload_sound": "weapons/archi/cs2_deagle/clipout.wav",
       "deploy_sound": "weapons/archi/cs2_deagle/draw.wav",
@@ -537,7 +545,8 @@
           ]
         }
       },
-      "dryfire_sound": "weapons/archi/cs2_revolver/hammer.wav"
+      "dryfire_sound": "weapons/archi/cs2_revolver/hammer.wav",
+      "world_scale": 0.612
     },
     "p228": {
       "id": "p228",
@@ -568,7 +577,7 @@
       "p_model": "p_p228",
       "vgui": "640_p228",
       "fire_sounds": [
-        "weapons/archi/core/p228-1.wav"
+        "weapons/cs2/p250/p250_01.wav"
       ],
       "reload_sound": "weapons/archi/cs2_p250/clipout.wav",
       "deploy_sound": "weapons/archi/cs2_p250/draw.wav",
@@ -667,7 +676,8 @@
           ]
         }
       },
-      "dryfire_sound": "weapons/archi/cs2_revolver/hammer.wav"
+      "dryfire_sound": "weapons/archi/cs2_revolver/hammer.wav",
+      "world_scale": 0.489
     },
     "elite": {
       "id": "elite",
@@ -698,7 +708,10 @@
       "p_model": "p_elite",
       "vgui": "640_elite",
       "fire_sounds": [
-        "weapons/archi/core/elite_fire.wav"
+        "weapons/cs2/elite/elites_01.wav",
+        "weapons/cs2/elite/elites_02.wav",
+        "weapons/cs2/elite/elites_03.wav",
+        "weapons/cs2/elite/elites_04.wav"
       ],
       "reload_sound": "weapons/archi/cs2_elites/clipout.wav",
       "deploy_sound": "weapons/archi/cs2_elites/draw.wav",
@@ -797,7 +810,8 @@
           ]
         }
       },
-      "dryfire_sound": "weapons/archi/cs2_revolver/hammer.wav"
+      "dryfire_sound": "weapons/archi/cs2_revolver/hammer.wav",
+      "world_scale": 0.622
     },
     "fiveseven": {
       "id": "fiveseven",
@@ -828,7 +842,7 @@
       "p_model": "p_fiveseven",
       "vgui": "640_fiveseven",
       "fire_sounds": [
-        "weapons/archi/core/fiveseven-1.wav"
+        "weapons/cs2/fiveseven/fiveseven_01.wav"
       ],
       "reload_sound": "weapons/archi/cs2_fiveseven/clipout.wav",
       "deploy_sound": "weapons/archi/cs2_fiveseven/draw.wav",
@@ -927,7 +941,8 @@
           ]
         }
       },
-      "dryfire_sound": "weapons/archi/cs2_revolver/hammer.wav"
+      "dryfire_sound": "weapons/archi/cs2_revolver/hammer.wav",
+      "world_scale": 0.663
     },
     "m3": {
       "id": "m3",
@@ -960,7 +975,7 @@
       "p_model": "p_m3",
       "vgui": "640_m3",
       "fire_sounds": [
-        "weapons/archi/core/m3-1.wav"
+        "weapons/cs2/nova/nova-1.wav"
       ],
       "reload_sound": "",
       "deploy_sound": "weapons/archi/cs2_nova/draw.wav",
@@ -1061,7 +1076,8 @@
       },
       "insert_sound": "weapons/archi/cs2_nova/insertshell_01.wav",
       "pump_sound": "weapons/archi/cs2_nova/pump.wav",
-      "dryfire_sound": "weapons/archi/cs2_revolver/hammer.wav"
+      "dryfire_sound": "weapons/archi/cs2_revolver/hammer.wav",
+      "world_scale": 0.666
     },
     "xm1014": {
       "id": "xm1014",
@@ -1094,7 +1110,7 @@
       "p_model": "p_xm1014",
       "vgui": "640_xm1014",
       "fire_sounds": [
-        "weapons/archi/core/xm1014-1.wav"
+        "weapons/cs2/xm1014/xm1014-1.wav"
       ],
       "reload_sound": "",
       "deploy_sound": "weapons/archi/cs2_xm1014/draw.wav",
@@ -1230,7 +1246,8 @@
         }
       },
       "insert_sound": "weapons/archi/cs2_xm1014/insertshell_01.wav",
-      "dryfire_sound": "weapons/archi/cs2_revolver/hammer.wav"
+      "dryfire_sound": "weapons/archi/cs2_revolver/hammer.wav",
+      "world_scale": 0.734
     },
     "mp5navy": {
       "id": "mp5navy",
@@ -1261,8 +1278,7 @@
       "p_model": "p_mp5",
       "vgui": "640_mp5",
       "fire_sounds": [
-        "weapons/archi/core/mp5-1.wav",
-        "weapons/archi/core/mp5-2.wav"
+        "weapons/cs2/mp5/mp5_01.wav"
       ],
       "reload_sound": "weapons/archi/cs2_mp5sd/slideback.wav",
       "deploy_sound": "weapons/archi/cs2_mp5sd/draw.wav",
@@ -1362,7 +1378,8 @@
           ]
         }
       },
-      "dryfire_sound": "weapons/archi/cs2_revolver/hammer.wav"
+      "dryfire_sound": "weapons/archi/cs2_revolver/hammer.wav",
+      "world_scale": 0.837
     },
     "tmp": {
       "id": "tmp",
@@ -1394,8 +1411,10 @@
       "p_model": "p_tmp",
       "vgui": "640_tmp",
       "fire_sounds": [
-        "weapons/archi/core/tmp-1.wav",
-        "weapons/archi/core/tmp-2.wav"
+        "weapons/cs2/mp9/mp9_01.wav",
+        "weapons/cs2/mp9/mp9_02.wav",
+        "weapons/cs2/mp9/mp9_03.wav",
+        "weapons/cs2/mp9/mp9_04.wav"
       ],
       "reload_sound": "weapons/archi/cs2_mp9/clipout.wav",
       "deploy_sound": "weapons/archi/cs2_mp9/draw.wav",
@@ -1494,7 +1513,8 @@
           ]
         }
       },
-      "dryfire_sound": "weapons/archi/cs2_revolver/hammer.wav"
+      "dryfire_sound": "weapons/archi/cs2_revolver/hammer.wav",
+      "world_scale": 0.694
     },
     "p90": {
       "id": "p90",
@@ -1525,7 +1545,8 @@
       "p_model": "p_p90",
       "vgui": "640_p90",
       "fire_sounds": [
-        "weapons/archi/core/p90-1.wav"
+        "weapons/cs2/p90/p90_01.wav",
+        "weapons/cs2/p90/p90_02.wav"
       ],
       "reload_sound": "weapons/archi/cs2_p90/cliprelease.wav",
       "deploy_sound": "weapons/archi/cs2_p90/draw.wav",
@@ -1624,7 +1645,8 @@
           ]
         }
       },
-      "dryfire_sound": "weapons/archi/cs2_revolver/hammer.wav"
+      "dryfire_sound": "weapons/archi/cs2_revolver/hammer.wav",
+      "world_scale": 0.778
     },
     "mac10": {
       "id": "mac10",
@@ -1655,7 +1677,8 @@
       "p_model": "p_mac10",
       "vgui": "640_mac10",
       "fire_sounds": [
-        "weapons/archi/core/mac10-1.wav"
+        "weapons/cs2/mac10/mac10_01.wav",
+        "weapons/cs2/mac10/mac10_02.wav"
       ],
       "reload_sound": "weapons/archi/cs2_mac10/clipout.wav",
       "deploy_sound": "weapons/archi/cs2_mac10/draw.wav",
@@ -1754,7 +1777,8 @@
           ]
         }
       },
-      "dryfire_sound": "weapons/archi/cs2_revolver/hammer.wav"
+      "dryfire_sound": "weapons/archi/cs2_revolver/hammer.wav",
+      "world_scale": 0.65
     },
     "ump45": {
       "id": "ump45",
@@ -1785,7 +1809,7 @@
       "p_model": "p_ump45",
       "vgui": "640_ump45",
       "fire_sounds": [
-        "weapons/archi/core/ump45-1.wav"
+        "weapons/cs2/ump45/ump45_02.wav"
       ],
       "reload_sound": "weapons/archi/cs2_ump45/clipout.wav",
       "deploy_sound": "weapons/archi/cs2_ump45/draw.wav",
@@ -1884,7 +1908,8 @@
           ]
         }
       },
-      "dryfire_sound": "weapons/archi/cs2_revolver/hammer.wav"
+      "dryfire_sound": "weapons/archi/cs2_revolver/hammer.wav",
+      "world_scale": 0.587
     },
     "ak47": {
       "id": "ak47",
@@ -1915,8 +1940,10 @@
       "p_model": "p_ak47",
       "vgui": "640_ak47",
       "fire_sounds": [
-        "weapons/archi/core/ak47-1.wav",
-        "weapons/archi/core/ak47-2.wav"
+        "weapons/cs2/ak47/ak47_01.wav",
+        "weapons/cs2/ak47/ak47_02.wav",
+        "weapons/cs2/ak47/ak47_03.wav",
+        "weapons/cs2/ak47/ak47_04.wav"
       ],
       "reload_sound": "weapons/archi/cs2_ak47/clipout.wav",
       "deploy_sound": "weapons/archi/cs2_ak47/draw.wav",
@@ -2015,7 +2042,8 @@
           ]
         }
       },
-      "dryfire_sound": "weapons/archi/cs2_revolver/hammer.wav"
+      "dryfire_sound": "weapons/archi/cs2_revolver/hammer.wav",
+      "world_scale": 0.655
     },
     "sg552": {
       "id": "sg552",
@@ -2050,8 +2078,10 @@
       "p_model": "p_sg552",
       "vgui": "640_sg552",
       "fire_sounds": [
-        "weapons/archi/core/sg552-1.wav",
-        "weapons/archi/core/sg552-2.wav"
+        "weapons/cs2/sg556/sg556_01.wav",
+        "weapons/cs2/sg556/sg556_02.wav",
+        "weapons/cs2/sg556/sg556_03.wav",
+        "weapons/cs2/sg556/sg556_04.wav"
       ],
       "reload_sound": "weapons/archi/cs2_sg553/clipout.wav",
       "deploy_sound": "weapons/archi/cs2_sg553/draw.wav",
@@ -2151,7 +2181,8 @@
         }
       },
       "dryfire_sound": "weapons/archi/cs2_revolver/hammer.wav",
-      "zoom_sound": "weapons/archi/cs2_sg553/zoom_in.wav"
+      "zoom_sound": "weapons/archi/cs2_sg553/zoom_in.wav",
+      "world_scale": 0.613
     },
     "m4a1": {
       "id": "m4a1",
@@ -2184,11 +2215,13 @@
       "p_model": "p_m4a1",
       "vgui": "640_m4a1",
       "fire_sounds": [
-        "weapons/archi/core/m4a1_unsil-1.wav",
-        "weapons/archi/core/m4a1_unsil-2.wav"
+        "weapons/cs2/m4a1/m4a1_us_01.wav",
+        "weapons/cs2/m4a1/m4a1_us_02.wav",
+        "weapons/cs2/m4a1/m4a1_us_03.wav",
+        "weapons/cs2/m4a1/m4a1_us_04.wav"
       ],
       "silenced_sounds": [
-        "weapons/archi/core/m4a1-1.wav"
+        "weapons/cs2/m4a1/m4a1_silencer_01.wav"
       ],
       "reload_sound": "weapons/archi/cs2_m4a1s/clipout.wav",
       "deploy_sound": "weapons/archi/cs2_m4a1s/draw.wav",
@@ -2289,7 +2322,8 @@
       },
       "dryfire_sound": "weapons/archi/cs2_revolver/hammer.wav",
       "silencer_on_sound": "weapons/archi/cs2_m4a1s/sil_on.wav",
-      "silencer_off_sound": "weapons/archi/cs2_m4a1s/sil_off.wav"
+      "silencer_off_sound": "weapons/archi/cs2_m4a1s/sil_off.wav",
+      "world_scale": 0.582
     },
     "aug": {
       "id": "aug",
@@ -2324,7 +2358,10 @@
       "p_model": "p_aug",
       "vgui": "640_aug",
       "fire_sounds": [
-        "weapons/archi/core/aug-1.wav"
+        "weapons/cs2/aug/aug_01.wav",
+        "weapons/cs2/aug/aug_02.wav",
+        "weapons/cs2/aug/aug_03.wav",
+        "weapons/cs2/aug/aug_04.wav"
       ],
       "reload_sound": "weapons/archi/cs2_aug/clipout.wav",
       "deploy_sound": "weapons/archi/cs2_aug/draw.wav",
@@ -2424,7 +2461,8 @@
         }
       },
       "dryfire_sound": "weapons/archi/cs2_revolver/hammer.wav",
-      "zoom_sound": "weapons/archi/cs2_aug/zoom_in.wav"
+      "zoom_sound": "weapons/archi/cs2_aug/zoom_in.wav",
+      "world_scale": 0.848
     },
     "scout": {
       "id": "scout",
@@ -2461,7 +2499,7 @@
       "p_model": "p_scout",
       "vgui": "640_scout",
       "fire_sounds": [
-        "weapons/archi/core/scout_fire-1.wav"
+        "weapons/cs2/ssg08/ssg08_01.wav"
       ],
       "reload_sound": "weapons/archi/cs2_ssg08/clipout.wav",
       "deploy_sound": "weapons/archi/cs2_ssg08/draw.wav",
@@ -2597,7 +2635,8 @@
         }
       },
       "dryfire_sound": "weapons/archi/cs2_revolver/hammer.wav",
-      "zoom_sound": "weapons/archi/cs2_ssg08/zoom.wav"
+      "zoom_sound": "weapons/archi/cs2_ssg08/zoom.wav",
+      "world_scale": 0.57
     },
     "awp": {
       "id": "awp",
@@ -2634,7 +2673,8 @@
       "p_model": "p_awp",
       "vgui": "640_awp",
       "fire_sounds": [
-        "weapons/archi/core/awp1.wav"
+        "weapons/cs2/awp/awp_01.wav",
+        "weapons/cs2/awp/awp_02.wav"
       ],
       "reload_sound": "weapons/archi/cs2_awp/clipout.wav",
       "deploy_sound": "weapons/archi/cs2_awp/draw.wav",
@@ -2770,7 +2810,8 @@
         }
       },
       "dryfire_sound": "weapons/archi/cs2_revolver/hammer.wav",
-      "zoom_sound": "weapons/archi/cs2_awp/zoom_in.wav"
+      "zoom_sound": "weapons/archi/cs2_awp/zoom_in.wav",
+      "world_scale": 0.608
     },
     "g3sg1": {
       "id": "g3sg1",
@@ -2807,7 +2848,9 @@
       "p_model": "p_g3sg1",
       "vgui": "640_g3sg1",
       "fire_sounds": [
-        "weapons/archi/core/g3sg1-1.wav"
+        "weapons/cs2/g3sg1/g3sg1_01.wav",
+        "weapons/cs2/g3sg1/g3sg1_02.wav",
+        "weapons/cs2/g3sg1/g3sg1_03.wav"
       ],
       "reload_sound": "weapons/archi/cs2_g3sg1/clipout.wav",
       "deploy_sound": "weapons/archi/cs2_g3sg1/draw.wav",
@@ -2943,7 +2986,8 @@
         }
       },
       "dryfire_sound": "weapons/archi/cs2_revolver/hammer.wav",
-      "zoom_sound": "weapons/archi/cs2_g3sg1/zoom_in.wav"
+      "zoom_sound": "weapons/archi/cs2_g3sg1/zoom_in.wav",
+      "world_scale": 0.72
     },
     "sg550": {
       "id": "sg550",
@@ -2980,7 +3024,9 @@
       "p_model": "p_sg550",
       "vgui": "640_sg550",
       "fire_sounds": [
-        "weapons/archi/core/sg550-1.wav"
+        "weapons/cs2/scar20/scar20_01.wav",
+        "weapons/cs2/scar20/scar20_02.wav",
+        "weapons/cs2/scar20/scar20_03.wav"
       ],
       "reload_sound": "weapons/archi/cs2_scar20/clipout.wav",
       "deploy_sound": "weapons/archi/cs2_scar20/draw.wav",
@@ -3116,7 +3162,8 @@
         }
       },
       "dryfire_sound": "weapons/archi/cs2_revolver/hammer.wav",
-      "zoom_sound": "weapons/archi/cs2_scar20/zoom.wav"
+      "zoom_sound": "weapons/archi/cs2_scar20/zoom.wav",
+      "world_scale": 0.675
     },
     "m249": {
       "id": "m249",
@@ -3147,8 +3194,9 @@
       "p_model": "p_m249",
       "vgui": "640_m249",
       "fire_sounds": [
-        "weapons/archi/core/m249-1.wav",
-        "weapons/archi/core/m249-2.wav"
+        "weapons/cs2/m249/m249_01.wav",
+        "weapons/cs2/m249/m249_02.wav",
+        "weapons/cs2/m249/m249_03.wav"
       ],
       "reload_sound": "weapons/archi/cs2_m249/coverup.wav",
       "deploy_sound": "weapons/archi/cs2_m249/draw.wav",
@@ -3247,7 +3295,8 @@
           ]
         }
       },
-      "dryfire_sound": "weapons/archi/cs2_revolver/hammer.wav"
+      "dryfire_sound": "weapons/archi/cs2_revolver/hammer.wav",
+      "world_scale": 0.638
     },
     "flashbang": {
       "id": "flashbang",
@@ -3380,7 +3429,8 @@
       "deploy_sound": "weapons/archi/cs2_flashbang/draw.wav",
       "pinpull_sound": "weapons/archi/cs2_flashbang/pinpull_start.wav",
       "throw_sound": "weapons/archi/cs2_hegren/grenade_throw.wav",
-      "bounce_sound": "weapons/archi/cs2_hegren/he_bounce-1.wav"
+      "bounce_sound": "weapons/archi/cs2_hegren/he_bounce-1.wav",
+      "world_scale": 0.9
     },
     "hegrenade": {
       "id": "hegrenade",
@@ -3513,7 +3563,8 @@
       "deploy_sound": "weapons/archi/cs2_hegren/he_draw.wav",
       "pinpull_sound": "weapons/archi/cs2_hegren/pinpull_start.wav",
       "throw_sound": "weapons/archi/cs2_hegren/grenade_throw.wav",
-      "bounce_sound": "weapons/archi/cs2_hegren/he_bounce-1.wav"
+      "bounce_sound": "weapons/archi/cs2_hegren/he_bounce-1.wav",
+      "world_scale": 0.9
     },
     "smokegrenade": {
       "id": "smokegrenade",
@@ -3645,7 +3696,8 @@
       "deploy_sound": "weapons/archi/cs2_smokegren/s_draw.wav",
       "pinpull_sound": "weapons/archi/cs2_smokegren/pinpull_start.wav",
       "throw_sound": "weapons/archi/cs2_hegren/grenade_throw.wav",
-      "bounce_sound": "weapons/archi/cs2_hegren/he_bounce-1.wav"
+      "bounce_sound": "weapons/archi/cs2_hegren/he_bounce-1.wav",
+      "world_scale": 0.9
     },
     "c4": {
       "id": "c4",
@@ -3743,7 +3795,8 @@
           ]
         }
       },
-      "deploy_sound": "weapons/archi/cs2_c4/c4_draw.wav"
+      "deploy_sound": "weapons/archi/cs2_c4/c4_draw.wav",
+      "world_scale": 0.794
     },
     "p2000": {
       "id": "p2000",
@@ -3774,7 +3827,9 @@
       "p_model": "p_p2000",
       "vgui": "640_p2000",
       "fire_sounds": [
-        "weapons/archi/core/usp_unsil-1.wav"
+        "weapons/cs2/hkp2000/hkp2000_01.wav",
+        "weapons/cs2/hkp2000/hkp2000_02.wav",
+        "weapons/cs2/hkp2000/hkp2000_03.wav"
       ],
       "reload_sound": "weapons/archi/cs2_p2000/clipout.wav",
       "deploy_sound": "weapons/archi/cs2_p2000/draw.wav",
@@ -3873,7 +3928,8 @@
           ]
         }
       },
-      "dryfire_sound": "weapons/archi/cs2_revolver/hammer.wav"
+      "dryfire_sound": "weapons/archi/cs2_revolver/hammer.wav",
+      "world_scale": 0.585
     },
     "cz75": {
       "id": "cz75",
@@ -3904,10 +3960,11 @@
       "p_model": "p_cz75",
       "vgui": "640_cz75",
       "fire_sounds": [
-        "weapons/archi/core/glock18-1.wav",
-        "weapons/archi/core/glock18-2.wav"
+        "weapons/cs2/cz75a/cz75_01.wav",
+        "weapons/cs2/cz75a/cz75_02.wav",
+        "weapons/cs2/cz75a/cz75_03.wav"
       ],
-      "reload_sound": "weapons/archi/cs2_p250/clipout.wav",
+      "reload_sound": "weapons/cs2/cz75a/cz75_clipin_01.wav",
       "deploy_sound": "weapons/archi/cs2_p250/draw.wav",
       "max_speed": 250.0,
       "zoomed_speed": 250.0,
@@ -4004,7 +4061,8 @@
           ]
         }
       },
-      "dryfire_sound": "weapons/archi/cs2_revolver/hammer.wav"
+      "dryfire_sound": "weapons/archi/cs2_revolver/hammer.wav",
+      "world_scale": 0.517
     },
     "revolver": {
       "id": "revolver",
@@ -4035,8 +4093,7 @@
       "p_model": "p_revolver",
       "vgui": "640_revolver",
       "fire_sounds": [
-        "weapons/archi/core/deagle-1.wav",
-        "weapons/archi/core/deagle-2.wav"
+        "weapons/cs2/revolver/revolver-1_01.wav"
       ],
       "reload_sound": "weapons/archi/cs2_revolver/siderelease.wav",
       "deploy_sound": "weapons/archi/cs2_revolver/draw.wav",
@@ -4141,7 +4198,8 @@
       "alt_cycle_time": 0.12,
       "alt_spread": 0.065,
       "alt_recoil": 5.2,
-      "prepare_sound": "weapons/archi/cs2_revolver/prepare.wav"
+      "prepare_sound": "weapons/archi/cs2_revolver/prepare.wav",
+      "world_scale": 0.651
     },
     "tec9": {
       "id": "tec9",
@@ -4172,10 +4230,10 @@
       "p_model": "p_tec9",
       "vgui": "640_tec9",
       "fire_sounds": [
-        "weapons/archi/core/mac10-1.wav"
+        "weapons/cs2/tec9/tec9_02.wav"
       ],
-      "reload_sound": "weapons/archi/cs2_mac10/clipout.wav",
-      "deploy_sound": "weapons/archi/cs2_mac10/draw.wav",
+      "reload_sound": "weapons/cs2/tec9/tec9_clipin.wav",
+      "deploy_sound": "weapons/cs2/tec9/tec9_draw.wav",
       "max_speed": 250.0,
       "zoomed_speed": 250.0,
       "description": "Tec-9 from the ShadowNigth/archi CS2GO weapon set.",
@@ -4271,7 +4329,8 @@
           ]
         }
       },
-      "dryfire_sound": "weapons/archi/cs2_revolver/hammer.wav"
+      "dryfire_sound": "weapons/archi/cs2_revolver/hammer.wav",
+      "world_scale": 0.669
     },
     "famas": {
       "id": "famas",
@@ -4302,8 +4361,9 @@
       "p_model": "p_famas",
       "vgui": "640_famas",
       "fire_sounds": [
-        "weapons/archi/core/famas-1.wav",
-        "weapons/archi/core/famas-2.wav"
+        "weapons/cs2/famas/famas_01.wav",
+        "weapons/cs2/famas/famas_02.wav",
+        "weapons/cs2/famas/famas_03.wav"
       ],
       "reload_sound": "weapons/archi/cs2_famas/clipout.wav",
       "deploy_sound": "weapons/archi/cs2_famas/draw.wav",
@@ -4406,7 +4466,8 @@
       "burst": true,
       "burst_count": 3,
       "burst_interval": 0.055,
-      "burst_cooldown": 0.42
+      "burst_cooldown": 0.42,
+      "world_scale": 0.698
     },
     "galil": {
       "id": "galil",
@@ -4437,8 +4498,10 @@
       "p_model": "p_galil",
       "vgui": "640_galil",
       "fire_sounds": [
-        "weapons/archi/core/galil-1.wav",
-        "weapons/archi/core/galil-2.wav"
+        "weapons/cs2/galilar/galil_01.wav",
+        "weapons/cs2/galilar/galil_02.wav",
+        "weapons/cs2/galilar/galil_03.wav",
+        "weapons/cs2/galilar/galil_04.wav"
       ],
       "reload_sound": "weapons/archi/cs2_galilar/clipout.wav",
       "deploy_sound": "weapons/archi/cs2_galilar/draw.wav",
@@ -4537,7 +4600,8 @@
           ]
         }
       },
-      "dryfire_sound": "weapons/archi/cs2_revolver/hammer.wav"
+      "dryfire_sound": "weapons/archi/cs2_revolver/hammer.wav",
+      "world_scale": 0.867
     },
     "m4a4": {
       "id": "m4a4",
@@ -4568,11 +4632,13 @@
       "p_model": "p_m4a4",
       "vgui": "640_m4a4",
       "fire_sounds": [
-        "weapons/archi/core/m4a1_unsil-1.wav",
-        "weapons/archi/core/m4a1_unsil-2.wav"
+        "weapons/cs2/m4a1/m4a1_01.wav",
+        "weapons/cs2/m4a1/m4a1_02.wav",
+        "weapons/cs2/m4a1/m4a1_03.wav",
+        "weapons/cs2/m4a1/m4a1_04.wav"
       ],
-      "reload_sound": "weapons/archi/cs2_m4a1s/clipout.wav",
-      "deploy_sound": "weapons/archi/cs2_m4a1s/draw.wav",
+      "reload_sound": "weapons/cs2/m4a1/m4a1_clipin.wav",
+      "deploy_sound": "weapons/cs2/m4a1/m4a1_draw.wav",
       "max_speed": 225.0,
       "zoomed_speed": 230.0,
       "description": "M4A4 from the ShadowNigth/archi CS2GO weapon set.",
@@ -4668,7 +4734,8 @@
           ]
         }
       },
-      "dryfire_sound": "weapons/archi/cs2_revolver/hammer.wav"
+      "dryfire_sound": "weapons/archi/cs2_revolver/hammer.wav",
+      "world_scale": 0.754
     },
     "mag7": {
       "id": "mag7",
@@ -4700,10 +4767,11 @@
       "p_model": "p_mag7",
       "vgui": "640_mag7",
       "fire_sounds": [
-        "weapons/archi/core/m3-1.wav"
+        "weapons/cs2/mag7/mag7_01.wav",
+        "weapons/cs2/mag7/mag7_02.wav"
       ],
-      "reload_sound": "weapons/archi/cs2_ump45/clipout.wav",
-      "deploy_sound": "weapons/archi/cs2_ump45/draw.wav",
+      "reload_sound": "weapons/cs2/mag7/mag7_clipin.wav",
+      "deploy_sound": "weapons/cs2/mag7/mag7_draw.wav",
       "max_speed": 225.0,
       "zoomed_speed": 240.0,
       "description": "MAG-7 from the ShadowNigth/archi CS2GO weapon set.",
@@ -4836,7 +4904,8 @@
         }
       },
       "insert_sound": "weapons/archi/cs2_xm1014/insertshell_01.wav",
-      "dryfire_sound": "weapons/archi/cs2_revolver/hammer.wav"
+      "dryfire_sound": "weapons/archi/cs2_revolver/hammer.wav",
+      "world_scale": 0.82
     },
     "sawedoff": {
       "id": "sawedoff",
@@ -4869,7 +4938,7 @@
       "p_model": "p_sawedoff",
       "vgui": "640_sawedoff",
       "fire_sounds": [
-        "weapons/archi/core/m3-1.wav"
+        "weapons/cs2/sawedoff/sawedoff-1.wav"
       ],
       "reload_sound": "",
       "deploy_sound": "weapons/archi/cs2_sawedoff/draw.wav",
@@ -4970,7 +5039,8 @@
       },
       "insert_sound": "weapons/archi/cs2_sawedoff/insertshell_01.wav",
       "pump_sound": "weapons/archi/cs2_sawedoff/pump.wav",
-      "dryfire_sound": "weapons/archi/cs2_revolver/hammer.wav"
+      "dryfire_sound": "weapons/archi/cs2_revolver/hammer.wav",
+      "world_scale": 0.746
     },
     "negev": {
       "id": "negev",
@@ -5001,8 +5071,8 @@
       "p_model": "p_negev",
       "vgui": "640_negev",
       "fire_sounds": [
-        "weapons/archi/core/m249-1.wav",
-        "weapons/archi/core/m249-2.wav"
+        "weapons/cs2/negev/negev_01.wav",
+        "weapons/cs2/negev/negev_02.wav"
       ],
       "reload_sound": "weapons/archi/cs2_negev/coverup.wav",
       "deploy_sound": "weapons/archi/cs2_negev/draw.wav",
@@ -5101,7 +5171,8 @@
           ]
         }
       },
-      "dryfire_sound": "weapons/archi/cs2_revolver/hammer.wav"
+      "dryfire_sound": "weapons/archi/cs2_revolver/hammer.wav",
+      "world_scale": 0.754
     },
     "bizon": {
       "id": "bizon",
@@ -5132,10 +5203,11 @@
       "p_model": "p_bizon",
       "vgui": "640_bizon",
       "fire_sounds": [
-        "weapons/archi/core/ump45-1.wav"
+        "weapons/cs2/bizon/bizon_01.wav",
+        "weapons/cs2/bizon/bizon_02.wav"
       ],
-      "reload_sound": "weapons/archi/cs2_ump45/clipout.wav",
-      "deploy_sound": "weapons/archi/cs2_ump45/draw.wav",
+      "reload_sound": "weapons/cs2/bizon/bizon_clipin.wav",
+      "deploy_sound": "weapons/cs2/bizon/bizon_draw.wav",
       "max_speed": 250.0,
       "zoomed_speed": 250.0,
       "description": "PP-Bizon from the ShadowNigth/archi CS2GO weapon set.",
@@ -5231,7 +5303,8 @@
           ]
         }
       },
-      "dryfire_sound": "weapons/archi/cs2_revolver/hammer.wav"
+      "dryfire_sound": "weapons/archi/cs2_revolver/hammer.wav",
+      "world_scale": 0.691
     },
     "mp7": {
       "id": "mp7",
@@ -5262,8 +5335,10 @@
       "p_model": "p_mp7",
       "vgui": "640_mp7",
       "fire_sounds": [
-        "weapons/archi/core/mp5-1.wav",
-        "weapons/archi/core/mp5-2.wav"
+        "weapons/cs2/mp7/mp7_01.wav",
+        "weapons/cs2/mp7/mp7_02.wav",
+        "weapons/cs2/mp7/mp7_03.wav",
+        "weapons/cs2/mp7/mp7_04.wav"
       ],
       "reload_sound": "weapons/archi/cs2_mp7/clipout.wav",
       "deploy_sound": "weapons/archi/cs2_mp7/draw.wav",
@@ -5363,7 +5438,8 @@
           ]
         }
       },
-      "dryfire_sound": "weapons/archi/cs2_revolver/hammer.wav"
+      "dryfire_sound": "weapons/archi/cs2_revolver/hammer.wav",
+      "world_scale": 1.0
     },
     "taser": {
       "id": "taser",
@@ -5394,7 +5470,7 @@
       "p_model": "p_taser",
       "vgui": "640_taser",
       "fire_sounds": [
-        "weapons/archi/cs2_taser/taser_charging.wav"
+        "weapons/cs2/taser/taser_shoot.wav"
       ],
       "reload_sound": "",
       "deploy_sound": "weapons/archi/cs2_taser/taser_charging.wav",
@@ -5493,7 +5569,8 @@
           ]
         }
       },
-      "dryfire_sound": "weapons/archi/cs2_revolver/hammer.wav"
+      "dryfire_sound": "weapons/archi/cs2_revolver/hammer.wav",
+      "world_scale": 0.563
     },
     "decoy": {
       "id": "decoy",
@@ -5622,10 +5699,11 @@
           ]
         }
       },
-      "deploy_sound": "weapons/archi/cs2_hegren/he_draw.wav",
-      "pinpull_sound": "weapons/archi/cs2_hegren/pinpull_start.wav",
+      "deploy_sound": "weapons/cs2/decoy/decoy_draw.wav",
+      "pinpull_sound": "weapons/cs2/decoy/pinpull_start.wav",
       "throw_sound": "weapons/archi/cs2_hegren/grenade_throw.wav",
-      "bounce_sound": "weapons/archi/cs2_hegren/he_bounce-1.wav"
+      "bounce_sound": "weapons/archi/cs2_hegren/he_bounce-1.wav",
+      "world_scale": 0.9
     },
     "molotov": {
       "id": "molotov",
@@ -5654,7 +5732,9 @@
       "vgui": "640_molotov",
       "fire_sounds": [],
       "explode_sounds": [
-        "weapons/archi/core/hegrenade-1.wav"
+        "weapons/cs2/molotov/molotov_detonate_1.wav",
+        "weapons/cs2/molotov/molotov_detonate_2.wav",
+        "weapons/cs2/molotov/molotov_detonate_3.wav"
       ],
       "bounce_sounds": [
         "weapons/archi/cs2_hegren/he_bounce-1.wav"
@@ -5754,10 +5834,11 @@
           ]
         }
       },
-      "deploy_sound": "weapons/archi/cs2_hegren/he_draw.wav",
-      "pinpull_sound": "weapons/archi/cs2_hegren/pinpull.wav",
-      "throw_sound": "weapons/archi/cs2_hegren/grenade_throw.wav",
-      "bounce_sound": "weapons/archi/cs2_hegren/he_bounce-1.wav"
+      "deploy_sound": "weapons/cs2/molotov/molotov_draw.wav",
+      "pinpull_sound": "weapons/cs2/molotov/molotov_draw.wav",
+      "throw_sound": "weapons/cs2/molotov/grenade_throw.wav",
+      "bounce_sound": "weapons/archi/cs2_hegren/he_bounce-1.wav",
+      "world_scale": 0.9
     },
     "incendiary": {
       "id": "incendiary",
@@ -5786,7 +5867,9 @@
       "vgui": "640_incendiary",
       "fire_sounds": [],
       "explode_sounds": [
-        "weapons/archi/core/hegrenade-1.wav"
+        "weapons/cs2/incgrenade/inc_grenade_detonate_1.wav",
+        "weapons/cs2/incgrenade/inc_grenade_detonate_2.wav",
+        "weapons/cs2/incgrenade/inc_grenade_detonate_3.wav"
       ],
       "bounce_sounds": [
         "weapons/archi/cs2_hegren/he_bounce-1.wav"
@@ -5886,10 +5969,11 @@
           ]
         }
       },
-      "deploy_sound": "weapons/archi/cs2_hegren/he_draw.wav",
-      "pinpull_sound": "weapons/archi/cs2_hegren/pinpull_start.wav",
-      "throw_sound": "weapons/archi/cs2_hegren/grenade_throw.wav",
-      "bounce_sound": "weapons/archi/cs2_hegren/he_bounce-1.wav"
+      "deploy_sound": "weapons/cs2/incgrenade/inc_grenade_draw.wav",
+      "pinpull_sound": "weapons/cs2/incgrenade/pinpull_start.wav",
+      "throw_sound": "weapons/cs2/incgrenade/inc_grenade_throw.wav",
+      "bounce_sound": "weapons/archi/cs2_hegren/he_bounce-1.wav",
+      "world_scale": 0.9
     }
   },
   "ammo": {

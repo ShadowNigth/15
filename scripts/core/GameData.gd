@@ -6,6 +6,7 @@ const SCALE: float = 1.0 / 32.0
 ## Shared world-model scale for dropped and thrown grenades.  Keep both paths
 ## identical so a grenade does not visibly shrink when it leaves the player's hand.
 const GRENADE_WORLD_SCALE: float = 0.90
+const MOLOTOV_LIQUID_SHADER: Shader = preload("res://assets/shaders/molotov_liquid.gdshader")
 
 var weapons: Dictionary = {}
 var ammo_types: Dictionary = {}
@@ -119,37 +120,85 @@ func get_model_scene(rel_path: String) -> PackedScene:
 	return sc
 
 
+func get_world_model_scale(wid: String) -> float:
+	var spec: Dictionary = weapons.get(wid, {})
+	if bool(spec.get("grenade", false)):
+		return GRENADE_WORLD_SCALE
+	# Never enlarge an already calibrated model. Every presentation of the same
+	# weapon reads this value, including the hand attachment and dropped mesh.
+	return clampf(float(spec.get("world_scale", 1.0)), 0.45, 1.0)
+
+
 func get_styled_model_material(orig: Material, mode: String) -> Material:
 	if orig == null or not (orig is BaseMaterial3D):
 		return orig
-	var key := "%d_%s" % [orig.get_instance_id(), mode]
+	var source := orig as BaseMaterial3D
+	var key := "%d_%s" % [source.get_instance_id(), mode]
 	if _styled_mat_cache.has(key):
 		return _styled_mat_cache[key] as Material
+	var material_name := source.resource_name.to_lower()
+	if material_name == "molotov_inside":
+		var liquid := ShaderMaterial.new()
+		liquid.shader = MOLOTOV_LIQUID_SHADER
+		liquid.set_shader_parameter("liquid_texture", source.albedo_texture)
+		liquid.set_shader_parameter("liquid_tint", source.albedo_color)
+		liquid.set_shader_parameter("brightness", 1.22 if mode in ["vm", "vm_flip"] else 1.12)
+		liquid.set_shader_parameter("deformation", 1.0 if mode in ["vm", "vm_flip"] else 0.0)
+		_styled_mat_cache[key] = liquid
+		return liquid
+
 	var dup := orig.duplicate() as BaseMaterial3D
 	dup.texture_filter = BaseMaterial3D.TEXTURE_FILTER_LINEAR_WITH_MIPMAPS_ANISOTROPIC
 	dup.diffuse_mode = BaseMaterial3D.DIFFUSE_LAMBERT_WRAP
 	dup.roughness = 0.92
 	dup.metallic = 0.0
-	# Multiply the imported colour instead of replacing it.  Several archi VMTs
-	# use baseColorFactor for essential detail (notably black scope lenses and
-	# Molotov liquid); overwriting it created bright white patches on V/P/W models.
+	# Multiply the imported colour instead of replacing it. Several archi VMTs
+	# use baseColorFactor for essential detail (notably black scope lenses).
 	var original := dup.albedo_color
+	if mode in ["vm", "vm_flip", "w_held", "w_drop"]:
+		dup.diffuse_mode = BaseMaterial3D.DIFFUSE_BURLEY
+		dup.specular_mode = BaseMaterial3D.SPECULAR_SCHLICK_GGX
 	if mode == "vm":
 		dup.cull_mode = BaseMaterial3D.CULL_BACK
-		dup.albedo_color = Color(original.r * 1.38, original.g * 1.38, original.b * 1.38, original.a)
+		dup.roughness = 0.52
+		dup.metallic = 0.14
+		dup.metallic_specular = 0.60
+		dup.albedo_color = Color(original.r * 1.32, original.g * 1.32, original.b * 1.32, original.a)
 	elif mode == "vm_flip":
 		dup.cull_mode = BaseMaterial3D.CULL_FRONT
-		dup.albedo_color = Color(original.r * 1.38, original.g * 1.38, original.b * 1.38, original.a)
+		dup.roughness = 0.52
+		dup.metallic = 0.14
+		dup.metallic_specular = 0.60
+		dup.albedo_color = Color(original.r * 1.32, original.g * 1.32, original.b * 1.32, original.a)
+	elif mode == "w_held":
+		dup.cull_mode = BaseMaterial3D.CULL_BACK
+		dup.roughness = 0.48
+		dup.metallic = 0.18
+		dup.metallic_specular = 0.62
+		dup.albedo_color = Color(original.r * 1.30, original.g * 1.30, original.b * 1.32, original.a)
 	elif mode == "w_drop":
 		dup.cull_mode = BaseMaterial3D.CULL_BACK
-		dup.specular_mode = BaseMaterial3D.SPECULAR_SCHLICK_GGX
 		dup.roughness = 0.44
 		dup.metallic = 0.24
 		dup.metallic_specular = 0.64
 		dup.albedo_color = Color(original.r * 1.25, original.g * 1.25, original.b * 1.27, original.a)
 	else:
+		# Character cloth and skin stay matte; only weapons receive the harder
+		# specular response above.
 		dup.cull_mode = BaseMaterial3D.CULL_BACK
 		dup.albedo_color = Color(original.r * 1.36, original.g * 1.36, original.b * 1.38, original.a)
+	if material_name.contains("glove") or material_name.contains("arms"):
+		dup.metallic = 0.0
+		dup.roughness = 0.72 if material_name.contains("glove") else 0.80
+		dup.metallic_specular = 0.42
+	if material_name == "weapon_molotov":
+		# The source has a separate liquid volume and alpha-tested labels. A
+		# transparent outer bottle reveals them instead of reading as opaque glass.
+		dup.transparency = BaseMaterial3D.TRANSPARENCY_ALPHA
+		dup.roughness = 0.14
+		dup.metallic = 0.0
+		dup.metallic_specular = 0.82
+		dup.albedo_color.a = 0.32 * original.a
 	_styled_mat_cache[key] = dup
 	return dup
 

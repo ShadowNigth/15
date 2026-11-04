@@ -1,6 +1,6 @@
 # Counter-Strike 1.5 Retail — Remake en Godot 4 (GDScript)
 
-Remake jugable de **Counter-Strike 1.5 Retail** construido íntegramente en **Godot 4.x (GDScript)**. Los mapas, texturas de mundo, personajes, HUD, radio y constantes clásicas proceden de [`Ch0wW/counterstrike-betas` (`cs15_retail`)](https://github.com/Ch0wW/counterstrike-betas/tree/cs15_retail). Los **43 slots de armas** usan modelos, texturas, iconos y sonidos convertidos desde [`ShadowNigth/archi`](https://github.com/ShadowNigth/archi), con sus animaciones y eventos.
+Remake jugable de **Counter-Strike 1.5 Retail** construido íntegramente en **Godot 4.x (GDScript)**. Los mapas, texturas de mundo, personajes, HUD, radio y constantes clásicas proceden de [`Ch0wW/counterstrike-betas` (`cs15_retail`)](https://github.com/Ch0wW/counterstrike-betas/tree/cs15_retail). Los **43 slots de armas** usan modelos, texturas, iconos, animaciones y eventos convertidos desde [`ShadowNigth/archi`](https://github.com/ShadowNigth/archi), con audio específico complementado por [`Source2Sounds/cs2`](https://github.com/Source2Sounds/cs2).
 
 ---
 
@@ -26,7 +26,7 @@ Todo el contenido de `cstrike/` fue procesado mediante la suite de ingeniería i
 | **Texturas de Mundo + Cielos** | `*.wad` (`de_aztec`, `cs_dust`, `halflife`…) + `gfx/env/*.tga` | `assets/textures/world/*.png` (`{` alpha Fence) + `sky/*.png` | **2,346 texturas + 109 caras skybox** |
 | **Modelos 3D Animados** | StudioMDL GoldSrc + MDL/VTF de `ShadowNigth/archi` | `assets/models/**/*.glb` (esqueleto + animaciones + winding CCW) | **184 modelos `.glb`** |
 | **Arsenal** | 27 slots clásicos reemplazados + 16 armas/utilidades de archi | `data/weapons.json` | **43 slots + equipamiento** |
-| **Audio Espacial & Radio** | `cs15_retail` + 299 WAV originales de archi | `assets/sounds/**/*.wav` (PCM 16-bit limpio) | **843 archivos `.wav`** |
+| **Audio Espacial & Radio** | `cs15_retail` + 299 WAV de archi + 130 WAV específicos de CS2 | `assets/sounds/**/*.wav` (PCM 16-bit limpio) | **973 archivos `.wav`** |
 | **Sprites HUD & VGUI** | `sprites/*.spr`, `hud.txt`, `gfx/vgui/*.tga`, `overviews/*.bmp` | `assets/sprites/*.png`, `assets/ui/**`, `data/hud_sprites.json` | **88 sprites + 42 VGUI + 26 radares** |
 
 ### Los 26 Mapas Clásicos Incluidos
@@ -46,7 +46,7 @@ Todo el contenido de `cstrike/` fue procesado mediante la suite de ingeniería i
   - **Rifles y Francotiradores**: AK-47, Colt M4A1 Carbine (con silenciador desmontable `Mouse2`), SG-552, Steyr AUG, Scout, **AWP Magnum** (mira telescópica doble zoom), G3SG1, SG-550.
   - **Pesadas / Tácticas**: M249 Para, Cuchillo (corte rápido y **puñalada por la espalda de 195 de daño**), C4 Plastic Explosive, HE Grenade, Flashbang (ceguera direccional en pantalla y a Bots), Smoke Grenade (bloquea visión de Bots IA) y Wallbanging en paredes delgadas.
   - **Nuevas armas de archi**: P2000, CZ75-Auto, R8 Revolver (martillo y fuego alternativo), Tec-9, FAMAS (ráfaga), Galil AR, M4A4, MAG-7 (cargador), Sawed-Off (cartuchos), Negev, PP-Bizon y MP7.
-  - **Nuevas utilidades**: Zeus x27 de una carga, Decoy con señuelo sonoro y explosión final, Molotov e Incendiaria con fuego persistente. Todos los slots incluyen sus GLB V/P/W, iconos y animaciones/sonidos de archi.
+  - **Nuevas utilidades**: Zeus x27 de una carga, Decoy con señuelo sonoro y explosión final, Molotov e Incendiaria con fuego persistente. Todos los slots incluyen sus GLB V/P/W, iconos, animaciones de archi y audio específico de archi/CS2.
   - **Fuego con propagación física**: Molotov e Incendiaria encienden focos escalonados sobre el piso, se expanden alrededor de obstáculos y aplican daño sólo dentro de las llamas activas. Incluyen llamas por capas, brasas, humo, quemaduras y luz parpadeante.
   - **Materiales y granadas corregidos**: las máscaras de tinte CS2 se conservan en los modelos V/P/W, las lentes mantienen su color negro también en los drops y todas las granadas lanzadas/soltadas usan una escala visual moderada y consistente (`0.90`).
 - **Economía, Rondas y Objetivos (`RoundManager.gd`, `BuyMenu.gd`)**:

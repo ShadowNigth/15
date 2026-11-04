@@ -2,8 +2,9 @@
 
 ## Current archi build (43 slots)
 
-Current model, texture, inventory-icon and weapon-audio source:
+Primary model, texture, inventory-icon and animation-foley source:
 <https://github.com/ShadowNigth/archi> (extracted CS2GO Director's Cut MDL/VTF/WAV).
+Dedicated weapon audio is supplemented from Source2Sounds/cs2 as documented below.
 The installed set replaces all 27 classic slots and adds P2000, CZ75, R8, Tec-9,
 FAMAS, Galil, M4A4, MAG-7, Sawed-Off, Negev, PP-Bizon, MP7, Zeus, Decoy, Molotov
 and Incendiary. All 129 shipped weapon GLBs are self-contained; neither archi nor
@@ -39,6 +40,31 @@ python -m tools.source.patch_archi_materials /tmp/archi_build/weapons
 container sizes and word alignment. Animation events retain their source timing;
 C4 cycles through the seven real key-press takes. The elite P/W conversion filters
 out the intentionally distant left pistol from the source buy-menu pose.
+
+### Dedicated CS2 audio and world calibration
+
+Archi does not ship a distinct firing recording for every added weapon. The current
+installation supplements it with 130 authentic 16-bit WAVs from
+<https://github.com/Source2Sounds/cs2>; no firing sample is shared by two weapon IDs.
+In particular, M4A4 uses `m4a1_01..04`, while unsuppressed M4A1-S uses the distinct
+`m4a1_us_01..04` family. The installer also replaces the knife/Zeus and incendiary
+placeholders and 41 draw/reload/pump/pin events with dedicated recordings. Source
+MP3 foley is decoded to PCM16 WAV with the build-only `miniaudio` dependency.
+
+```bash
+git clone --filter=blob:none --no-checkout --depth 1 \
+    https://github.com/Source2Sounds/cs2.git /tmp/cs2
+git -C /tmp/cs2 sparse-checkout set /sounds/weapons/
+git -C /tmp/cs2 checkout
+python -m pip install miniaudio
+python -m tools.source.install_cs2_weapon_sounds /tmp/cs2 /home/user/15
+python -m tools.source.calibrate_weapon_world_scale /home/user/15
+```
+
+`world_scale` is calibrated independently for all 43 slots and shared by hand,
+dropped, thrown and planted presentations. Grenades retain the accepted `0.90`
+scale. View/world material styling is separate from matte character cloth; the
+Molotov has transparent outer glass and an independently animated liquid volume.
 
 CS2 weapon VMTs commonly use `$blendtintbybasealpha` with `$color2`. The converter
 bakes Source's `base * lerp(1, color2, base_alpha)` operation in linear colour space
