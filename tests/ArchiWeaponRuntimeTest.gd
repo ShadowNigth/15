@@ -6,6 +6,16 @@ extends Node
 const EXPECTED_WEAPONS := 43
 const EXPECTED_ARCHI_WAVS := 299
 const EXPECTED_CS2_WAVS := 130
+const EXPECTED_INSPECTIONS := {
+	"deagle": ["inspect", "inspect_2"],
+	"c4": ["inspect", "inspect_2", "inspect_3"],
+	"flashbang": ["inspect", "inspect_2"],
+	"hegrenade": ["inspect", "inspect_2"],
+	"smokegrenade": ["inspect", "inspect_2"],
+	"decoy": ["inspect", "inspect_2"],
+	"molotov": ["inspect", "inspect_2"],
+	"incendiary": ["inspect", "inspect_2"],
+}
 
 var _checks := 0
 var _failures: Array[String] = []
@@ -79,6 +89,8 @@ func _run() -> void:
 
 	_test_assets()
 	_test_animation_refinements()
+	_test_alternate_inspections()
+	_test_hd_materials()
 	await _test_original_viewmodel_arms()
 	_test_cs2_audio()
 	_test_world_calibration_and_molotov()
@@ -173,6 +185,21 @@ func _find_animation_track(clip: Animation, node_name: String, track_type: int) 
 	return -1
 
 
+func _find_material(n: Node, wanted: String) -> BaseMaterial3D:
+	if n is MeshInstance3D:
+		var mesh := n as MeshInstance3D
+		if mesh.mesh != null:
+			for surface in range(mesh.mesh.get_surface_count()):
+				var material := mesh.mesh.surface_get_material(surface) as BaseMaterial3D
+				if material != null and material.resource_name.to_lower() == wanted:
+					return material
+	for child in n.get_children():
+		var found := _find_material(child, wanted)
+		if found != null:
+			return found
+	return null
+
+
 func _test_animation_refinements() -> void:
 	var inspection_models := {
 		"weapons/v_m4a1": "v_weapon.M4A1_s_Parent",
@@ -264,6 +291,104 @@ func _test_animation_refinements() -> void:
 				else:
 					cycle_ok = cycle_ok and finish.distance_to(start) < 0.0001
 				_expect(cycle_ok, "Glock %s performs the expected visible slide cycle" % clip_name)
+		instance.free()
+
+
+func _test_alternate_inspections() -> void:
+	for wid in EXPECTED_INSPECTIONS:
+		var expected: Array = EXPECTED_INSPECTIONS[wid]
+		var spec: Dictionary = GameData.weapons[wid]
+		var model_key := "weapons/" + String(spec["v_model"])
+		var packed := GameData.get_model_scene(model_key)
+		_expect(packed != null, "%s alternate-inspection model loads" % wid)
+		if packed == null:
+			continue
+		var instance := packed.instantiate()
+		_world.add_child(instance)
+		var player := _find_animation_player(instance)
+		_expect(player != null, "%s alternate-inspection AnimationPlayer exists" % wid)
+		var metadata: Dictionary = GameData.models_meta.get(model_key, {})
+		_expect(metadata.get("inspect_clips", []) == expected, "%s metadata lists every inspection in order" % wid)
+		if player != null:
+			for raw_name in expected:
+				var clip_name := String(raw_name)
+				_expect(player.has_animation(clip_name), "%s has %s" % [wid, clip_name])
+				if not player.has_animation(clip_name):
+					continue
+				var clip := player.get_animation(clip_name)
+				_expect(clip.length >= 0.90, "%s/%s has its full authored duration" % [wid, clip_name])
+				var source_duration := float(metadata.get("seq_durations", {}).get(clip_name, 0.0))
+				_expect(absf(clip.length - source_duration) <= 0.04,
+					"%s/%s duration matches Source metadata" % [wid, clip_name])
+				if clip_name == "inspect":
+					continue
+				var hand_track := _find_animation_track(clip, "v_weapon.Bip01_R_Hand", Animation.TYPE_ROTATION_3D)
+				var hand_moves := false
+				if hand_track >= 0:
+					var reference := clip.rotation_track_interpolate(hand_track, 0.0)
+					for fraction in [0.2, 0.4, 0.6, 0.8, 1.0]:
+						var sample := clip.rotation_track_interpolate(hand_track, clip.length * fraction)
+						hand_moves = hand_moves or absf(1.0 - absf(reference.dot(sample))) > 0.000001
+				_expect(hand_moves, "%s/%s is a distinct moving inspection, not a static alias" % [wid, clip_name])
+		instance.free()
+	var deagle_events: Array = GameData.models_meta.get("weapons/v_deagle", {}).get("seq_events", {}).get("inspect_2", [])
+	_expect(deagle_events.size() == 9, "Long Deagle inspection retains all nine authentic foley events")
+	for event in deagle_events:
+		_expect(GameData.get_sound(String(event.get("wav", ""))) != null,
+			"Deagle inspect_2 event loads %s" % String(event.get("wav", "")))
+
+
+func _test_hd_materials() -> void:
+	_expect(GameData.archi_materials.size() == 54, "Shared archi catalog contains all 54 mapped weapon materials")
+	var paths: Dictionary = {}
+	for material_name in GameData.archi_materials:
+		var entry: Dictionary = GameData.archi_materials[material_name]
+		for kind in ["color", "normal", "roughness"]:
+			var path := String(entry.get(kind, ""))
+			if not path.is_empty():
+				paths[path] = entry.get(kind + "_size", [])
+	_expect(paths.size() == 136, "Catalog exposes 136 unique shared HD texture files")
+	for path in paths:
+		var texture := ResourceLoader.load(path) as Texture2D
+		_expect(texture != null, "HD texture imports and loads: " + path)
+		if texture != null:
+			var dimensions: Array = paths[path]
+			_expect(texture.get_size() == Vector2(float(dimensions[0]), float(dimensions[1])),
+				"HD texture dimensions match catalog: " + path)
+		texture = null
+
+	var packed := GameData.get_model_scene("weapons/v_ak47")
+	_expect(packed != null, "AK-47 HD material model loads")
+	if packed != null:
+		var instance := packed.instantiate()
+		_world.add_child(instance)
+		var original := _find_material(instance, "weapon_rif_ak47")
+		_expect(original != null, "AK-47 weapon material is available")
+		if original != null:
+			var styled := GameData.get_styled_model_material(original, "vm") as BaseMaterial3D
+			var entry: Dictionary = GameData.archi_materials["weapon_rif_ak47"]
+			_expect(styled != null and styled.albedo_texture == GameData.get_texture(String(entry["color"])),
+				"AK-47 uses its shared 2K colour texture")
+			_expect(styled != null and styled.normal_enabled and styled.normal_texture == GameData.get_texture(String(entry["normal"])),
+				"AK-47 enables its Source normal map")
+			_expect(styled != null and styled.roughness_texture == GameData.get_texture(String(entry["roughness"])) \
+				and styled.roughness_texture_channel == BaseMaterial3D.TEXTURE_CHANNEL_RED,
+				"AK-47 uses the red-channel Phong roughness modulation")
+			_expect(styled != null and is_equal_approx(styled.roughness, 0.30) and is_equal_approx(styled.metallic, 0.42),
+				"HD maps preserve the accepted metallic and scalar roughness finish")
+			_expect(styled != null and styled.albedo_color.r > original.albedo_color.r,
+				"HD colour preserves first-person brightness multiplication")
+			for kind in ["color", "normal", "roughness"]:
+				var import_config := ConfigFile.new()
+				var import_ok := import_config.load(String(entry[kind]) + ".import") == OK
+				_expect(import_ok and bool(import_config.get_value("params", "mipmaps/generate", false)),
+					"AK-47 %s retains 3D mipmaps after import" % kind)
+		var arms := _find_material(instance, "ct_arms.bmp")
+		_expect(arms != null, "Original AK-47 arms remain available for material comparison")
+		if arms != null:
+			var arm_styled := GameData.get_styled_model_material(arms, "vm") as BaseMaterial3D
+			_expect(arm_styled != null and arm_styled.albedo_texture == arms.albedo_texture and arm_styled.normal_texture == null,
+				"HD weapon catalog never alters original arm textures")
 		instance.free()
 
 
@@ -410,8 +535,11 @@ func _test_world_calibration_and_molotov() -> void:
 			if original.resource_name in ["weapon_molotov", "weapon_molotov_liquid"]:
 				var glass := GameData.get_styled_model_material(original, "vm") as ShaderMaterial
 				var tint: Vector3 = glass.get_shader_parameter("glass_tint") if glass != null else Vector3.ZERO
-				var valid := glass != null and glass.shader == GameData.MOLOTOV_GLASS_SHADER \
+				var hd_entry: Dictionary = GameData.archi_materials.get(original.resource_name.to_lower(), {})
+				var expected_bottle := GameData.get_texture(String(hd_entry.get("color", "")))
+				var valid: bool = glass != null and glass.shader == GameData.MOLOTOV_GLASS_SHADER \
 					and glass.get_shader_parameter("bottle_texture") != null \
+					and glass.get_shader_parameter("bottle_texture") == expected_bottle \
 					and float(glass.get_shader_parameter("glass_opacity")) <= 0.14 \
 					and tint.y > tint.x * 1.5 and tint.y > tint.z * 1.5
 				if original.resource_name == "weapon_molotov":

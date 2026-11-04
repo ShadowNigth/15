@@ -24,6 +24,8 @@ var radio_menus: Dictionary = {}
 var titles: Dictionary = {}
 var world_textures_meta: Dictionary = {}
 var models_meta: Dictionary = {}
+## Shared high-resolution archi weapon textures, keyed by Source material name.
+var archi_materials: Dictionary = {}
 
 # Match / User settings
 var selected_map: String = "de_dust2"
@@ -89,6 +91,8 @@ func _load_all_databases() -> void:
 	titles = _load_json("res://data/titles.json")
 	world_textures_meta = _load_json("res://data/world_textures.json")
 	models_meta = _load_json("res://data/models_meta.json")
+	var archi_db: Dictionary = _load_json("res://data/archi_materials.json")
+	archi_materials = archi_db.get("materials", {})
 
 
 func load_map_data(map_name: String) -> Dictionary:
@@ -147,10 +151,16 @@ func get_styled_model_material(orig: Material, mode: String) -> Material:
 	if _styled_mat_cache.has(key):
 		return _styled_mat_cache[key] as Material
 	var material_name := source.resource_name.to_lower()
+	var archi_entry: Dictionary = archi_materials.get(material_name, {})
+	var hd_albedo: Texture2D = source.albedo_texture
+	if archi_entry.has("color"):
+		var enhanced := get_texture(String(archi_entry["color"]))
+		if enhanced != null:
+			hd_albedo = enhanced
 	if material_name in ["weapon_molotov", "weapon_molotov_liquid"]:
 		var glass := ShaderMaterial.new()
 		glass.shader = MOLOTOV_GLASS_SHADER
-		glass.set_shader_parameter("bottle_texture", source.albedo_texture)
+		glass.set_shader_parameter("bottle_texture", hd_albedo)
 		glass.set_shader_parameter("bottle_tint", source.albedo_color)
 		glass.set_shader_parameter("glass_tint", Vector3(0.50, 1.22, 0.58))
 		glass.set_shader_parameter("glass_opacity", 0.14 if material_name == "weapon_molotov" else 0.08)
@@ -163,7 +173,7 @@ func get_styled_model_material(orig: Material, mode: String) -> Material:
 	if material_name == "molotov_inside":
 		var liquid := ShaderMaterial.new()
 		liquid.shader = MOLOTOV_LIQUID_SHADER
-		liquid.set_shader_parameter("liquid_texture", source.albedo_texture)
+		liquid.set_shader_parameter("liquid_texture", hd_albedo)
 		liquid.set_shader_parameter("liquid_tint", source.albedo_color)
 		liquid.set_shader_parameter("brightness", 1.22 if mode in ["vm", "vm_flip"] else 1.12)
 		liquid.set_shader_parameter("deformation", 1.0 if mode in ["vm", "vm_flip"] else 0.0)
@@ -225,6 +235,20 @@ func get_styled_model_material(orig: Material, mode: String) -> Material:
 		dup.metallic_specular = 0.46
 		if mode in ["vm", "vm_flip"]:
 			dup.albedo_color = Color(original.r * 1.10, original.g * 1.10, original.b * 1.10, original.a)
+	if not archi_entry.is_empty() and not character_surface:
+		if hd_albedo != null:
+			dup.albedo_texture = hd_albedo
+		var normal_map := get_texture(String(archi_entry.get("normal", "")))
+		if normal_map != null:
+			dup.normal_enabled = true
+			dup.normal_texture = normal_map
+			dup.normal_scale = 1.0
+		var roughness_map := get_texture(String(archi_entry.get("roughness", "")))
+		if roughness_map != null:
+			# The red-channel Phong conversion modulates the established scalar;
+			# metallic and the accepted per-mode roughness maxima stay unchanged.
+			dup.roughness_texture = roughness_map
+			dup.roughness_texture_channel = BaseMaterial3D.TEXTURE_CHANNEL_RED
 	_styled_mat_cache[key] = dup
 	return dup
 

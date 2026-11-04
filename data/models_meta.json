@@ -5319,7 +5319,9 @@
       "drop",
       "armswitch",
       "pressbutton",
-      "inspect"
+      "inspect",
+      "inspect_2",
+      "inspect_3"
     ],
     "seq_durations": {
       "idle": 2.5,
@@ -5327,7 +5329,9 @@
       "drop": 0.533,
       "armswitch": 0.4,
       "pressbutton": 2.5,
-      "inspect": 4.1
+      "inspect": 4.1,
+      "inspect_2": 4.167,
+      "inspect_3": 3.867
     },
     "seq_events": {
       "draw": [
@@ -5399,7 +5403,16 @@
       "missing_materials": [
         "c4_light"
       ]
-    }
+    },
+    "inspect_sources": {
+      "inspect_2": "lookat02",
+      "inspect_3": "lookat03"
+    },
+    "inspect_clips": [
+      "inspect",
+      "inspect_2",
+      "inspect_3"
+    ]
   },
   "weapons/v_deagle": {
     "sequences": [
@@ -5410,7 +5423,8 @@
       "shootlast",
       "reload",
       "draw",
-      "inspect"
+      "inspect",
+      "inspect_2"
     ],
     "seq_durations": {
       "idle": 0.033,
@@ -5420,7 +5434,8 @@
       "shootlast": 0.7,
       "reload": 2.2,
       "draw": 1.0,
-      "inspect": 5.667
+      "inspect": 5.667,
+      "inspect_2": 8.5
     },
     "seq_events": {
       "reload": [
@@ -5445,6 +5460,44 @@
         {
           "t": 0.0,
           "wav": "weapons/archi/cs2_deagle/draw.wav"
+        }
+      ],
+      "inspect_2": [
+        {
+          "t": 0.3,
+          "wav": "weapons/archi/cs2_deagle/lookat_f009.wav"
+        },
+        {
+          "t": 1.2,
+          "wav": "weapons/archi/cs2_deagle/lookat_f036.wav"
+        },
+        {
+          "t": 1.9,
+          "wav": "weapons/archi/cs2_deagle/lookat_f057.wav"
+        },
+        {
+          "t": 2.7,
+          "wav": "weapons/archi/cs2_deagle/lookat_f081.wav"
+        },
+        {
+          "t": 3.7,
+          "wav": "weapons/archi/cs2_deagle/lookat_f111.wav"
+        },
+        {
+          "t": 4.433,
+          "wav": "weapons/archi/cs2_deagle/lookat_f133.wav"
+        },
+        {
+          "t": 5.533,
+          "wav": "weapons/archi/cs2_deagle/lookat_f166.wav"
+        },
+        {
+          "t": 6.433,
+          "wav": "weapons/archi/cs2_deagle/lookat_f193.wav"
+        },
+        {
+          "t": 7.6,
+          "wav": "weapons/archi/cs2_deagle/lookat_f228.wav"
         }
       ]
     },
@@ -5483,7 +5536,14 @@
         "residual_m": 0.01297,
         "deg_from_seed": 80.52
       }
-    }
+    },
+    "inspect_sources": {
+      "inspect_2": "lookat02"
+    },
+    "inspect_clips": [
+      "inspect",
+      "inspect_2"
+    ]
   },
   "weapons/v_elite": {
     "sequences": [
@@ -5711,7 +5771,8 @@
       "throw",
       "deploy",
       "underhand",
-      "inspect"
+      "inspect",
+      "inspect_2"
     ],
     "seq_durations": {
       "idle": 0.267,
@@ -5719,7 +5780,8 @@
       "throw": 0.733,
       "deploy": 1.0,
       "underhand": 0.5,
-      "inspect": 5.8
+      "inspect": 5.8,
+      "inspect_2": 4.433
     },
     "seq_events": {
       "pullpin": [
@@ -5764,7 +5826,14 @@
         "residual_m": 0.01238,
         "deg_from_seed": 103.83
       }
-    }
+    },
+    "inspect_sources": {
+      "inspect_2": "lookat02"
+    },
+    "inspect_clips": [
+      "inspect",
+      "inspect_2"
+    ]
   },
   "weapons/v_g3sg1": {
     "sequences": [
@@ -5952,7 +6021,8 @@
       "throw",
       "deploy",
       "underhand",
-      "inspect"
+      "inspect",
+      "inspect_2"
     ],
     "seq_durations": {
       "idle": 1.0,
@@ -5960,7 +6030,8 @@
       "throw": 0.5,
       "deploy": 1.0,
       "underhand": 0.5,
-      "inspect": 5.8
+      "inspect": 5.8,
+      "inspect_2": 3.0
     },
     "seq_events": {
       "pullpin": [
@@ -6005,7 +6076,14 @@
         "residual_m": 0.01096,
         "deg_from_seed": 14.72
       }
-    }
+    },
+    "inspect_sources": {
+      "inspect_2": "lookat02"
+    },
+    "inspect_clips": [
+      "inspect",
+      "inspect_2"
+    ]
   },
   "weapons/v_knife": {
     "sequences": [
@@ -7079,7 +7157,8 @@
       "throw",
       "deploy",
       "underhand",
-      "inspect"
+      "inspect",
+      "inspect_2"
     ],
     "seq_durations": {
       "idle": 1.0,
@@ -7087,7 +7166,8 @@
       "throw": 0.733,
       "deploy": 1.0,
       "underhand": 0.5,
-      "inspect": 7.067
+      "inspect": 7.067,
+      "inspect_2": 3.067
     },
     "seq_events": {
       "pullpin": [
@@ -7132,7 +7212,14 @@
         "residual_m": 0.01182,
         "deg_from_seed": 91.33
       }
-    }
+    },
+    "inspect_sources": {
+      "inspect_2": "lookat02"
+    },
+    "inspect_clips": [
+      "inspect",
+      "inspect_2"
+    ]
   },
   "weapons/v_tmp": {
     "sequences": [
@@ -9151,7 +9238,8 @@
       "throw",
       "deploy",
       "underhand",
-      "inspect"
+      "inspect",
+      "inspect_2"
     ],
     "seq_durations": {
       "idle": 0.267,
@@ -9159,7 +9247,8 @@
       "throw": 0.733,
       "deploy": 1.0,
       "underhand": 0.5,
-      "inspect": 7.033
+      "inspect": 7.033,
+      "inspect_2": 4.033
     },
     "seq_events": {
       "pullpin": [
@@ -9204,7 +9293,14 @@
         "residual_m": 0.01088,
         "deg_from_seed": 99.49
       }
-    }
+    },
+    "inspect_sources": {
+      "inspect_2": "lookat02"
+    },
+    "inspect_clips": [
+      "inspect",
+      "inspect_2"
+    ]
   },
   "weapons/v_molotov": {
     "sequences": [
@@ -9213,7 +9309,8 @@
       "throw",
       "deploy",
       "underhand",
-      "inspect"
+      "inspect",
+      "inspect_2"
     ],
     "seq_durations": {
       "idle": 0.967,
@@ -9221,7 +9318,8 @@
       "throw": 0.55,
       "deploy": 1.0,
       "underhand": 0.4,
-      "inspect": 5.367
+      "inspect": 5.367,
+      "inspect_2": 4.767
     },
     "seq_events": {
       "deploy": [
@@ -9260,7 +9358,14 @@
         "residual_m": 0.02981,
         "deg_from_seed": 23.63
       }
-    }
+    },
+    "inspect_sources": {
+      "inspect_2": "lookat02"
+    },
+    "inspect_clips": [
+      "inspect",
+      "inspect_2"
+    ]
   },
   "weapons/v_incendiary": {
     "sequences": [
@@ -9269,7 +9374,8 @@
       "throw",
       "deploy",
       "underhand",
-      "inspect"
+      "inspect",
+      "inspect_2"
     ],
     "seq_durations": {
       "idle": 0.833,
@@ -9277,7 +9383,8 @@
       "throw": 0.733,
       "deploy": 1.0,
       "underhand": 0.5,
-      "inspect": 5.267
+      "inspect": 5.267,
+      "inspect_2": 3.533
     },
     "seq_events": {
       "pullpin": [
@@ -9322,6 +9429,13 @@
         "residual_m": 0.00633,
         "deg_from_seed": 0.56
       }
-    }
+    },
+    "inspect_sources": {
+      "inspect_2": "lookat02"
+    },
+    "inspect_clips": [
+      "inspect",
+      "inspect_2"
+    ]
   }
 }

@@ -387,6 +387,10 @@ class ArchiSounds:
                 candidates.insert(0, "c4_initiate.wav")
             elif "keypress" in suffix:
                 candidates.insert(0, "key_press1.wav")
+        if folder == "cs2_deagle" and re.fullmatch(r"lookat\d+", suffix):
+            # The long Deagle inspection's authored LookAt009/036/... events
+            # correspond to the shipped lookat_f009/lookat_f036/... recordings.
+            candidates.insert(0, suffix.replace("lookat", "lookat_f", 1) + ".wav")
         if prefix in ("elite", "elites"):
             if suffix == "lclipin":
                 candidates.insert(0, "leftclipin.wav")

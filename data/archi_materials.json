@@ -1,0 +1,916 @@
+{
+  "materials": {
+    "aug_mag_opaque": {
+      "color": "res://assets/textures/archi/aug_color.jpg",
+      "color_size": [
+        2048,
+        2048
+      ],
+      "normal": "res://assets/textures/archi/aug_normal.jpg",
+      "normal_size": [
+        2048,
+        2048
+      ],
+      "roughness": "res://assets/textures/archi/aug_roughness.jpg",
+      "roughness_size": [
+        2048,
+        2048
+      ],
+      "source_vmt": "CS2GO.Pack.Director.s.Cut.-.Rifles/EXTRAIDOS/m_cs2_aug/materials/models/weapons/cs2/weapon_rif_aug/aug_mag_opaque.vmt"
+    },
+    "aug_scope": {
+      "color": "res://assets/textures/archi/shared_scope_lens_mask_color.jpg",
+      "color_size": [
+        256,
+        256
+      ],
+      "source_vmt": "CS2GO.Pack.Director.s.Cut.-.Rifles/EXTRAIDOS/m_cs2_aug/materials/models/weapons/cs2/weapon_rif_aug/aug_scope.vmt"
+    },
+    "mag_inside": {
+      "color": "res://assets/textures/archi/p90_color.jpg",
+      "color_size": [
+        2048,
+        2048
+      ],
+      "normal": "res://assets/textures/archi/p90_normal.jpg",
+      "normal_size": [
+        2048,
+        2048
+      ],
+      "roughness": "res://assets/textures/archi/p90_roughness.jpg",
+      "roughness_size": [
+        2048,
+        2048
+      ],
+      "source_vmt": "CS2GO.Pack.Director.s.Cut.-.SubMachineGuns/EXTRAIDOS/m_cs2_p90/materials/models/weapons/cs2/weapon_smg_p90/mag_inside.vmt"
+    },
+    "magwindow_opaque": {
+      "color": "res://assets/textures/archi/ump45_color.jpg",
+      "color_size": [
+        2048,
+        2048
+      ],
+      "normal": "res://assets/textures/archi/ump45_normal.jpg",
+      "normal_size": [
+        2048,
+        2048
+      ],
+      "roughness": "res://assets/textures/archi/ump45_roughness.jpg",
+      "roughness_size": [
+        2048,
+        2048
+      ],
+      "source_vmt": "CS2GO.Pack.Director.s.Cut.-.SubMachineGuns/EXTRAIDOS/m_cs2_ump45/materials/models/weapons/cs2/weapon_smg_ump45/magwindow_opaque.vmt"
+    },
+    "molotov_inside": {
+      "color": "res://assets/textures/archi/molotov_inside_color.jpg",
+      "color_size": [
+        16,
+        16
+      ],
+      "source_vmt": "CS2GO.Pack.Director.s.Cut.-.Equipment/Grenades/EXTRAIDOS/m_cs2_grenade_molotov/materials/models/weapons/cs2/weapon_eq_molotov/molotov_inside.vmt"
+    },
+    "sg556_scope": {
+      "color": "res://assets/textures/archi/shared_scope_lens_mask_color.jpg",
+      "color_size": [
+        256,
+        256
+      ],
+      "source_vmt": "CS2GO.Pack.Director.s.Cut.-.Rifles/EXTRAIDOS/m_cs2_sg556/materials/models/weapons/cs2/weapon_rif_sg556/sg556_scope.vmt"
+    },
+    "shared_scope_lens": {
+      "color": "res://assets/textures/archi/shared_scope_lens_mask_color.jpg",
+      "color_size": [
+        256,
+        256
+      ],
+      "source_vmt": "CS2GO.Pack.Director.s.Cut.-.Rifles/EXTRAIDOS/m_cs2_aug/materials/models/weapons/cs2/shared/scope/shared_scope_lens.vmt"
+    },
+    "weapon_c4": {
+      "color": "res://assets/textures/archi/c4_color.jpg",
+      "color_size": [
+        2048,
+        2048
+      ],
+      "normal": "res://assets/textures/archi/c4_normal.jpg",
+      "normal_size": [
+        2048,
+        2048
+      ],
+      "roughness": "res://assets/textures/archi/c4_roughness.jpg",
+      "roughness_size": [
+        2048,
+        2048
+      ],
+      "source_vmt": "CS2GO.Pack.Director.s.Cut.-.Equipment/C4 Explosive/EXTRAIDOS/m_cs2_c4/materials/models/weapons/cs2/weapon_c4/weapon_c4.vmt"
+    },
+    "weapon_decoy": {
+      "color": "res://assets/textures/archi/decoy_color.jpg",
+      "color_size": [
+        2048,
+        2048
+      ],
+      "normal": "res://assets/textures/archi/decoy_normal.jpg",
+      "normal_size": [
+        2048,
+        2048
+      ],
+      "roughness": "res://assets/textures/archi/decoy_roughness.jpg",
+      "roughness_size": [
+        2048,
+        2048
+      ],
+      "source_vmt": "CS2GO.Pack.Director.s.Cut.-.Equipment/Grenades/EXTRAIDOS/m_cs2_grenade_decoy/materials/models/weapons/cs2/weapon_eq_decoy/weapon_decoy.vmt"
+    },
+    "weapon_flashbang": {
+      "color": "res://assets/textures/archi/flashbang_color.jpg",
+      "color_size": [
+        2048,
+        2048
+      ],
+      "normal": "res://assets/textures/archi/flashbang_normal.jpg",
+      "normal_size": [
+        2048,
+        2048
+      ],
+      "roughness": "res://assets/textures/archi/flashbang_roughness.jpg",
+      "roughness_size": [
+        2048,
+        2048
+      ],
+      "source_vmt": "CS2GO.Pack.Director.s.Cut.-.Equipment/Grenades/EXTRAIDOS/m_cs2_grenade_flashbang/materials/models/weapons/cs2/weapon_eq_flashbang/weapon_flashbang.vmt"
+    },
+    "weapon_hegrenade": {
+      "color": "res://assets/textures/archi/hegrenade_color.jpg",
+      "color_size": [
+        2048,
+        2048
+      ],
+      "normal": "res://assets/textures/archi/hegrenade_normal.jpg",
+      "normal_size": [
+        2048,
+        2048
+      ],
+      "roughness": "res://assets/textures/archi/hegrenade_roughness.jpg",
+      "roughness_size": [
+        2048,
+        2048
+      ],
+      "source_vmt": "CS2GO.Pack.Director.s.Cut.-.Equipment/Grenades/EXTRAIDOS/m_cs2_grenade_he/materials/models/weapons/cs2/weapon_eq_hegrenade/weapon_hegrenade.vmt"
+    },
+    "weapon_incendiarygrenade": {
+      "color": "res://assets/textures/archi/incgrenade_color.jpg",
+      "color_size": [
+        2048,
+        2048
+      ],
+      "normal": "res://assets/textures/archi/incgrenade_normal.jpg",
+      "normal_size": [
+        2048,
+        2048
+      ],
+      "roughness": "res://assets/textures/archi/incgrenade_roughness.jpg",
+      "roughness_size": [
+        2048,
+        2048
+      ],
+      "source_vmt": "CS2GO.Pack.Director.s.Cut.-.Equipment/Grenades/EXTRAIDOS/m_cs2_grenade_incendary/materials/models/weapons/cs2/weapon_eq_incgrenade/weapon_incendiarygrenade.vmt"
+    },
+    "weapon_knife_kukri": {
+      "color": "res://assets/textures/archi/kukri_color.jpg",
+      "color_size": [
+        2048,
+        2048
+      ],
+      "roughness": "res://assets/textures/archi/kukri_roughness.jpg",
+      "roughness_size": [
+        2048,
+        2048
+      ],
+      "source_vmt": "CS2GO.Pack.Director.s.Cut.-.Equipment/Kukri Knife/EXTRAIDOS/m_cs2_knife_kukri/materials/models/weapons/cs2/weapon_knife_kukri/weapon_knife_kukri.vmt"
+    },
+    "weapon_mach_m249": {
+      "color": "res://assets/textures/archi/m249_color.jpg",
+      "color_size": [
+        2048,
+        2048
+      ],
+      "normal": "res://assets/textures/archi/m249_normal.jpg",
+      "normal_size": [
+        2048,
+        2048
+      ],
+      "roughness": "res://assets/textures/archi/m249_roughness.jpg",
+      "roughness_size": [
+        2048,
+        2048
+      ],
+      "source_vmt": "CS2GO.Pack.Director.s.Cut.-.Heavy.Weapons/EXTRAIDOS/m_cs2_m249/materials/models/weapons/cs2/weapon_mach_m249/weapon_mach_m249.vmt"
+    },
+    "weapon_mach_negev": {
+      "color": "res://assets/textures/archi/negev_color.jpg",
+      "color_size": [
+        2048,
+        2048
+      ],
+      "normal": "res://assets/textures/archi/negev_normal.jpg",
+      "normal_size": [
+        2048,
+        2048
+      ],
+      "roughness": "res://assets/textures/archi/negev_roughness.jpg",
+      "roughness_size": [
+        2048,
+        2048
+      ],
+      "source_vmt": "CS2GO.Pack.Director.s.Cut.-.Heavy.Weapons/EXTRAIDOS/m_cs2_negev/materials/models/weapons/cs2/weapon_mach_negev/weapon_mach_negev.vmt"
+    },
+    "weapon_molotov": {
+      "color": "res://assets/textures/archi/molotov_color.jpg",
+      "color_size": [
+        2048,
+        2048
+      ],
+      "normal": "res://assets/textures/archi/molotov_normal.jpg",
+      "normal_size": [
+        2048,
+        2048
+      ],
+      "roughness": "res://assets/textures/archi/molotov_roughness.jpg",
+      "roughness_size": [
+        2048,
+        2048
+      ],
+      "source_vmt": "CS2GO.Pack.Director.s.Cut.-.Equipment/Grenades/EXTRAIDOS/m_cs2_grenade_molotov/materials/models/weapons/cs2/weapon_eq_molotov/weapon_molotov.vmt"
+    },
+    "weapon_molotov_flame": {
+      "color": "res://assets/textures/archi/molotov_flame_color.png",
+      "color_size": [
+        128,
+        128
+      ],
+      "source_vmt": "CS2GO.Pack.Director.s.Cut.-.Equipment/Grenades/EXTRAIDOS/m_cs2_grenade_molotov/materials/models/weapons/cs2/weapon_eq_molotov/weapon_molotov_flame.vmt"
+    },
+    "weapon_molotov_lighter": {
+      "color": "res://assets/textures/archi/molotov_color_70ae5ff9.jpg",
+      "color_size": [
+        2048,
+        2048
+      ],
+      "normal": "res://assets/textures/archi/molotov_normal.jpg",
+      "normal_size": [
+        2048,
+        2048
+      ],
+      "roughness": "res://assets/textures/archi/molotov_roughness.jpg",
+      "roughness_size": [
+        2048,
+        2048
+      ],
+      "source_vmt": "CS2GO.Pack.Director.s.Cut.-.Equipment/Grenades/EXTRAIDOS/m_cs2_grenade_molotov/materials/models/weapons/cs2/weapon_eq_molotov/weapon_molotov_lighter.vmt"
+    },
+    "weapon_molotov_liquid": {
+      "color": "res://assets/textures/archi/molotov_color.png",
+      "color_size": [
+        2048,
+        2048
+      ],
+      "normal": "res://assets/textures/archi/molotov_normal.jpg",
+      "normal_size": [
+        2048,
+        2048
+      ],
+      "roughness": "res://assets/textures/archi/molotov_roughness.jpg",
+      "roughness_size": [
+        2048,
+        2048
+      ],
+      "source_vmt": "CS2GO.Pack.Director.s.Cut.-.Equipment/Grenades/EXTRAIDOS/m_cs2_grenade_molotov/materials/models/weapons/cs2/weapon_eq_molotov/weapon_molotov_liquid.vmt"
+    },
+    "weapon_pist_cz75a": {
+      "color": "res://assets/textures/archi/cz75a_color.jpg",
+      "color_size": [
+        2048,
+        2048
+      ],
+      "normal": "res://assets/textures/archi/cz75a_normal.jpg",
+      "normal_size": [
+        2048,
+        2048
+      ],
+      "roughness": "res://assets/textures/archi/cz75a_roughness.jpg",
+      "roughness_size": [
+        2048,
+        2048
+      ],
+      "source_vmt": "CS2GO.Pack.Director.s.Cut.-.Pistols/EXTRAIDOS/m_cs2_cz75a/materials/models/weapons/cs2/weapon_pist_cz75a/weapon_pist_cz75a.vmt"
+    },
+    "weapon_pist_deagle": {
+      "color": "res://assets/textures/archi/deagle_color.jpg",
+      "color_size": [
+        2048,
+        2048
+      ],
+      "normal": "res://assets/textures/archi/deagle_normal.jpg",
+      "normal_size": [
+        2048,
+        2048
+      ],
+      "roughness": "res://assets/textures/archi/deagle_roughness.jpg",
+      "roughness_size": [
+        2048,
+        2048
+      ],
+      "source_vmt": "CS2GO.Pack.Director.s.Cut.-.Pistols/EXTRAIDOS/m_cs2_deagle/materials/models/weapons/cs2/weapon_pist_deagle/weapon_pist_deagle.vmt"
+    },
+    "weapon_pist_elite": {
+      "color": "res://assets/textures/archi/beretta_color.jpg",
+      "color_size": [
+        2048,
+        2048
+      ],
+      "normal": "res://assets/textures/archi/beretta_normal.jpg",
+      "normal_size": [
+        2048,
+        2048
+      ],
+      "roughness": "res://assets/textures/archi/beretta_roughness.jpg",
+      "roughness_size": [
+        2048,
+        2048
+      ],
+      "source_vmt": "CS2GO.Pack.Director.s.Cut.-.Pistols/EXTRAIDOS/m_cs2_elite/materials/models/weapons/cs2/weapon_pist_beretta/weapon_pist_elite.vmt"
+    },
+    "weapon_pist_fiveseven": {
+      "color": "res://assets/textures/archi/fiveseven_color.jpg",
+      "color_size": [
+        2048,
+        2048
+      ],
+      "normal": "res://assets/textures/archi/fiveseven_normal.jpg",
+      "normal_size": [
+        2048,
+        2048
+      ],
+      "roughness": "res://assets/textures/archi/fiveseven_roughness.jpg",
+      "roughness_size": [
+        2048,
+        2048
+      ],
+      "source_vmt": "CS2GO.Pack.Director.s.Cut.-.Pistols/EXTRAIDOS/m_cs2_fiveseven/materials/models/weapons/cs2/weapon_pist_fiveseven/weapon_pist_fiveseven.vmt"
+    },
+    "weapon_pist_glock": {
+      "color": "res://assets/textures/archi/glock_color.jpg",
+      "color_size": [
+        2048,
+        2048
+      ],
+      "normal": "res://assets/textures/archi/glock_normal.jpg",
+      "normal_size": [
+        2048,
+        2048
+      ],
+      "roughness": "res://assets/textures/archi/glock_roughness.jpg",
+      "roughness_size": [
+        2048,
+        2048
+      ],
+      "source_vmt": "CS2GO.Pack.Director.s.Cut.-.Pistols/EXTRAIDOS/m_cs2_glock/materials/models/weapons/cs2/weapon_pist_glock18/weapon_pist_glock.vmt"
+    },
+    "weapon_pist_hkp2000": {
+      "color": "res://assets/textures/archi/p2000_color.jpg",
+      "color_size": [
+        2048,
+        2048
+      ],
+      "normal": "res://assets/textures/archi/p2000_normal.jpg",
+      "normal_size": [
+        2048,
+        2048
+      ],
+      "roughness": "res://assets/textures/archi/p2000_roughness.jpg",
+      "roughness_size": [
+        2048,
+        2048
+      ],
+      "source_vmt": "CS2GO.Pack.Director.s.Cut.-.Pistols/EXTRAIDOS/m_cs2_p2000/materials/models/weapons/cs2/weapon_pist_hkp2000/weapon_pist_hkp2000.vmt"
+    },
+    "weapon_pist_p250": {
+      "color": "res://assets/textures/archi/p250_color.jpg",
+      "color_size": [
+        2048,
+        2048
+      ],
+      "normal": "res://assets/textures/archi/p250_normal.jpg",
+      "normal_size": [
+        2048,
+        2048
+      ],
+      "roughness": "res://assets/textures/archi/p250_roughness.jpg",
+      "roughness_size": [
+        2048,
+        2048
+      ],
+      "source_vmt": "CS2GO.Pack.Director.s.Cut.-.Pistols/EXTRAIDOS/m_cs2_p250/materials/models/weapons/cs2/weapon_pist_p250/weapon_pist_p250.vmt"
+    },
+    "weapon_pist_revolver": {
+      "color": "res://assets/textures/archi/revolver_color.jpg",
+      "color_size": [
+        2048,
+        2048
+      ],
+      "normal": "res://assets/textures/archi/revolver_normal.jpg",
+      "normal_size": [
+        2048,
+        2048
+      ],
+      "roughness": "res://assets/textures/archi/revolver_roughness.jpg",
+      "roughness_size": [
+        2048,
+        2048
+      ],
+      "source_vmt": "CS2GO.Pack.Director.s.Cut.-.Pistols/EXTRAIDOS/m_cs2_revolver/materials/models/weapons/cs2/weapon_pist_revolver/weapon_pist_revolver.vmt"
+    },
+    "weapon_pist_taser": {
+      "color": "res://assets/textures/archi/taser_color.jpg",
+      "color_size": [
+        2048,
+        2048
+      ],
+      "normal": "res://assets/textures/archi/taser_normal.jpg",
+      "normal_size": [
+        2048,
+        2048
+      ],
+      "roughness": "res://assets/textures/archi/taser_roughness.jpg",
+      "roughness_size": [
+        2048,
+        2048
+      ],
+      "source_vmt": "CS2GO.Pack.Director.s.Cut.-.Equipment/Zeus X-27 (Taser)/EXTRAIDOS/m_cs2_taser/materials/models/weapons/cs2/weapon_pist_taser/weapon_pist_taser.vmt"
+    },
+    "weapon_pist_taser_chargemeter": {
+      "color": "res://assets/textures/archi/chargemeter_color.png",
+      "color_size": [
+        32,
+        128
+      ],
+      "source_vmt": "CS2GO.Pack.Director.s.Cut.-.Equipment/Zeus X-27 (Taser)/EXTRAIDOS/m_cs2_taser/materials/models/weapons/cs2/weapon_pist_taser/weapon_pist_taser_chargemeter.vmt"
+    },
+    "weapon_pist_tec9": {
+      "color": "res://assets/textures/archi/tec9_color.jpg",
+      "color_size": [
+        2048,
+        2048
+      ],
+      "normal": "res://assets/textures/archi/tec9_normal.jpg",
+      "normal_size": [
+        2048,
+        2048
+      ],
+      "roughness": "res://assets/textures/archi/tec9_roughness.jpg",
+      "roughness_size": [
+        2048,
+        2048
+      ],
+      "source_vmt": "CS2GO.Pack.Director.s.Cut.-.Pistols/EXTRAIDOS/m_cs2_tec9/materials/models/weapons/cs2/weapon_pist_tec9/weapon_pist_tec9.vmt"
+    },
+    "weapon_pist_usp_silencer": {
+      "color": "res://assets/textures/archi/usp_color.jpg",
+      "color_size": [
+        2048,
+        2048
+      ],
+      "normal": "res://assets/textures/archi/usp_normal.jpg",
+      "normal_size": [
+        2048,
+        2048
+      ],
+      "roughness": "res://assets/textures/archi/usp_roughness.jpg",
+      "roughness_size": [
+        2048,
+        2048
+      ],
+      "source_vmt": "CS2GO.Pack.Director.s.Cut.-.Pistols/EXTRAIDOS/m_cs2_usp/materials/models/weapons/cs2/weapon_pist_usp/weapon_pist_usp_silencer.vmt"
+    },
+    "weapon_rif_ak47": {
+      "color": "res://assets/textures/archi/ak47_color.jpg",
+      "color_size": [
+        2048,
+        2048
+      ],
+      "normal": "res://assets/textures/archi/ak47_normal.jpg",
+      "normal_size": [
+        2048,
+        2048
+      ],
+      "roughness": "res://assets/textures/archi/ak47_roughness.jpg",
+      "roughness_size": [
+        2048,
+        2048
+      ],
+      "source_vmt": "CS2GO.Pack.Director.s.Cut.-.Rifles/EXTRAIDOS/m_cs2_ak47/materials/models/weapons/cs2/weapon_rif_ak47/weapon_rif_ak47.vmt"
+    },
+    "weapon_rif_aug": {
+      "color": "res://assets/textures/archi/aug_color_2b89cd50.jpg",
+      "color_size": [
+        2048,
+        2048
+      ],
+      "normal": "res://assets/textures/archi/aug_normal.jpg",
+      "normal_size": [
+        2048,
+        2048
+      ],
+      "roughness": "res://assets/textures/archi/aug_roughness.jpg",
+      "roughness_size": [
+        2048,
+        2048
+      ],
+      "source_vmt": "CS2GO.Pack.Director.s.Cut.-.Rifles/EXTRAIDOS/m_cs2_aug/materials/models/weapons/cs2/weapon_rif_aug/weapon_rif_aug.vmt"
+    },
+    "weapon_rif_famas": {
+      "color": "res://assets/textures/archi/famas_color.jpg",
+      "color_size": [
+        2048,
+        2048
+      ],
+      "normal": "res://assets/textures/archi/famas_normal.jpg",
+      "normal_size": [
+        2048,
+        2048
+      ],
+      "roughness": "res://assets/textures/archi/famas_roughness.jpg",
+      "roughness_size": [
+        2048,
+        2048
+      ],
+      "source_vmt": "CS2GO.Pack.Director.s.Cut.-.Rifles/EXTRAIDOS/m_cs2_famas/materials/models/weapons/cs2/weapon_rif_famas/weapon_rif_famas.vmt"
+    },
+    "weapon_rif_galilar": {
+      "color": "res://assets/textures/archi/galilar_color.jpg",
+      "color_size": [
+        2048,
+        2048
+      ],
+      "normal": "res://assets/textures/archi/galilar_normal.jpg",
+      "normal_size": [
+        2048,
+        2048
+      ],
+      "roughness": "res://assets/textures/archi/galilar_roughness.jpg",
+      "roughness_size": [
+        2048,
+        2048
+      ],
+      "source_vmt": "CS2GO.Pack.Director.s.Cut.-.Rifles/EXTRAIDOS/m_cs2_galilar/materials/models/weapons/cs2/weapon_rif_galilar/weapon_rif_galilar.vmt"
+    },
+    "weapon_rif_m4a1_silencer": {
+      "color": "res://assets/textures/archi/m4a1_color.jpg",
+      "color_size": [
+        2048,
+        2048
+      ],
+      "normal": "res://assets/textures/archi/m4a1_normal.jpg",
+      "normal_size": [
+        2048,
+        2048
+      ],
+      "roughness": "res://assets/textures/archi/m4a1_roughness.jpg",
+      "roughness_size": [
+        2048,
+        2048
+      ],
+      "source_vmt": "CS2GO.Pack.Director.s.Cut.-.Rifles/EXTRAIDOS/m_cs2_m4a1s/materials/models/weapons/cs2/weapon_rif_m4a1s/weapon_rif_m4a1_silencer.vmt"
+    },
+    "weapon_rif_m4a4": {
+      "color": "res://assets/textures/archi/m4a4_color.jpg",
+      "color_size": [
+        2048,
+        2048
+      ],
+      "normal": "res://assets/textures/archi/m4a4_normal.jpg",
+      "normal_size": [
+        2048,
+        2048
+      ],
+      "roughness": "res://assets/textures/archi/m4a4_roughness.jpg",
+      "roughness_size": [
+        2048,
+        2048
+      ],
+      "source_vmt": "CS2GO.Pack.Director.s.Cut.-.Rifles/EXTRAIDOS/m_cs2_m4a4/materials/models/weapons/cs2/weapon_rif_m4a4/weapon_rif_m4a4.vmt"
+    },
+    "weapon_rif_sg556": {
+      "color": "res://assets/textures/archi/sg556_color.jpg",
+      "color_size": [
+        2048,
+        2048
+      ],
+      "normal": "res://assets/textures/archi/sg556_normal.jpg",
+      "normal_size": [
+        2048,
+        2048
+      ],
+      "roughness": "res://assets/textures/archi/sg556_roughness.jpg",
+      "roughness_size": [
+        2048,
+        2048
+      ],
+      "source_vmt": "CS2GO.Pack.Director.s.Cut.-.Rifles/EXTRAIDOS/m_cs2_sg556/materials/models/weapons/cs2/weapon_rif_sg556/weapon_rif_sg556.vmt"
+    },
+    "weapon_shot_mag7": {
+      "color": "res://assets/textures/archi/mag7_color.jpg",
+      "color_size": [
+        2048,
+        2048
+      ],
+      "normal": "res://assets/textures/archi/mag7_normal.jpg",
+      "normal_size": [
+        2048,
+        2048
+      ],
+      "roughness": "res://assets/textures/archi/mag7_roughness.jpg",
+      "roughness_size": [
+        2048,
+        2048
+      ],
+      "source_vmt": "CS2GO.Pack.Director.s.Cut.-.Heavy.Weapons/EXTRAIDOS/m_cs2_mag7/materials/models/weapons/cs2/weapon_shot_mag7/weapon_shot_mag7.vmt"
+    },
+    "weapon_shot_nova": {
+      "color": "res://assets/textures/archi/nova_color.jpg",
+      "color_size": [
+        2048,
+        2048
+      ],
+      "normal": "res://assets/textures/archi/nova_normal.jpg",
+      "normal_size": [
+        2048,
+        2048
+      ],
+      "roughness": "res://assets/textures/archi/nova_roughness.jpg",
+      "roughness_size": [
+        2048,
+        2048
+      ],
+      "source_vmt": "CS2GO.Pack.Director.s.Cut.-.Heavy.Weapons/EXTRAIDOS/m_cs2_nova/materials/models/weapons/cs2/weapon_shot_nova/weapon_shot_nova.vmt"
+    },
+    "weapon_shot_sawedoff": {
+      "color": "res://assets/textures/archi/sawedoff_color.jpg",
+      "color_size": [
+        2048,
+        2048
+      ],
+      "normal": "res://assets/textures/archi/sawedoff_normal.jpg",
+      "normal_size": [
+        2048,
+        2048
+      ],
+      "roughness": "res://assets/textures/archi/sawedoff_roughness.jpg",
+      "roughness_size": [
+        2048,
+        2048
+      ],
+      "source_vmt": "CS2GO.Pack.Director.s.Cut.-.Heavy.Weapons/EXTRAIDOS/m_cs2_sawedoff/materials/models/weapons/cs2/weapon_shot_sawedoff/weapon_shot_sawedoff.vmt"
+    },
+    "weapon_shot_xm1014": {
+      "color": "res://assets/textures/archi/xm1014_color.jpg",
+      "color_size": [
+        2048,
+        2048
+      ],
+      "normal": "res://assets/textures/archi/xm1014_normal.jpg",
+      "normal_size": [
+        2048,
+        2048
+      ],
+      "roughness": "res://assets/textures/archi/xm1014_roughness.jpg",
+      "roughness_size": [
+        2048,
+        2048
+      ],
+      "source_vmt": "CS2GO.Pack.Director.s.Cut.-.Heavy.Weapons/EXTRAIDOS/m_cs2_xm1014/materials/models/weapons/cs2/weapon_shot_xm1014/weapon_shot_xm1014.vmt"
+    },
+    "weapon_smg_bizon": {
+      "color": "res://assets/textures/archi/bizon_color.jpg",
+      "color_size": [
+        2048,
+        2048
+      ],
+      "normal": "res://assets/textures/archi/bizon_normal.jpg",
+      "normal_size": [
+        2048,
+        2048
+      ],
+      "roughness": "res://assets/textures/archi/bizon_roughness.jpg",
+      "roughness_size": [
+        2048,
+        2048
+      ],
+      "source_vmt": "CS2GO.Pack.Director.s.Cut.-.SubMachineGuns/EXTRAIDOS/m_cs2_bizon/materials/models/weapons/cs2/weapon_smg_bizon/weapon_smg_bizon.vmt"
+    },
+    "weapon_smg_mac10": {
+      "color": "res://assets/textures/archi/mac10_color.jpg",
+      "color_size": [
+        2048,
+        2048
+      ],
+      "normal": "res://assets/textures/archi/mac10_normal.jpg",
+      "normal_size": [
+        2048,
+        2048
+      ],
+      "roughness": "res://assets/textures/archi/mac10_roughness.jpg",
+      "roughness_size": [
+        2048,
+        2048
+      ],
+      "source_vmt": "CS2GO.Pack.Director.s.Cut.-.SubMachineGuns/EXTRAIDOS/m_cs2_mac10/materials/models/weapons/cs2/weapon_smg_mac10/weapon_smg_mac10.vmt"
+    },
+    "weapon_smg_mp5sd": {
+      "color": "res://assets/textures/archi/mp5sd_color.jpg",
+      "color_size": [
+        2048,
+        2048
+      ],
+      "normal": "res://assets/textures/archi/mp5sd_normal.jpg",
+      "normal_size": [
+        2048,
+        2048
+      ],
+      "roughness": "res://assets/textures/archi/mp5sd_roughness.jpg",
+      "roughness_size": [
+        2048,
+        2048
+      ],
+      "source_vmt": "CS2GO.Pack.Director.s.Cut.-.SubMachineGuns/EXTRAIDOS/m_cs2_mp5sd/materials/models/weapons/cs2/weapon_smg_mp5sd/weapon_smg_mp5sd.vmt"
+    },
+    "weapon_smg_mp7": {
+      "color": "res://assets/textures/archi/mp7_color.jpg",
+      "color_size": [
+        2048,
+        2048
+      ],
+      "normal": "res://assets/textures/archi/mp7_normal.jpg",
+      "normal_size": [
+        2048,
+        2048
+      ],
+      "roughness": "res://assets/textures/archi/mp7_roughness.jpg",
+      "roughness_size": [
+        2048,
+        2048
+      ],
+      "source_vmt": "CS2GO.Pack.Director.s.Cut.-.SubMachineGuns/EXTRAIDOS/m_cs2_mp7/materials/models/weapons/cs2/weapon_smg_mp7/weapon_smg_mp7.vmt"
+    },
+    "weapon_smg_mp9": {
+      "color": "res://assets/textures/archi/mp9_color.jpg",
+      "color_size": [
+        2048,
+        2048
+      ],
+      "normal": "res://assets/textures/archi/mp9_normal.jpg",
+      "normal_size": [
+        2048,
+        2048
+      ],
+      "roughness": "res://assets/textures/archi/mp9_roughness.jpg",
+      "roughness_size": [
+        2048,
+        2048
+      ],
+      "source_vmt": "CS2GO.Pack.Director.s.Cut.-.SubMachineGuns/EXTRAIDOS/m_cs2_mp9/materials/models/weapons/cs2/weapon_smg_mp9/weapon_smg_mp9.vmt"
+    },
+    "weapon_smg_p90": {
+      "color": "res://assets/textures/archi/p90_color_b5d383da.jpg",
+      "color_size": [
+        2048,
+        2048
+      ],
+      "normal": "res://assets/textures/archi/p90_normal.jpg",
+      "normal_size": [
+        2048,
+        2048
+      ],
+      "roughness": "res://assets/textures/archi/p90_roughness.jpg",
+      "roughness_size": [
+        2048,
+        2048
+      ],
+      "source_vmt": "CS2GO.Pack.Director.s.Cut.-.SubMachineGuns/EXTRAIDOS/m_cs2_p90/materials/models/weapons/cs2/weapon_smg_p90/weapon_smg_p90.vmt"
+    },
+    "weapon_smg_ump45": {
+      "color": "res://assets/textures/archi/ump45_color.jpg",
+      "color_size": [
+        2048,
+        2048
+      ],
+      "normal": "res://assets/textures/archi/ump45_normal.jpg",
+      "normal_size": [
+        2048,
+        2048
+      ],
+      "roughness": "res://assets/textures/archi/ump45_roughness.jpg",
+      "roughness_size": [
+        2048,
+        2048
+      ],
+      "source_vmt": "CS2GO.Pack.Director.s.Cut.-.SubMachineGuns/EXTRAIDOS/m_cs2_ump45/materials/models/weapons/cs2/weapon_smg_ump45/weapon_smg_ump45.vmt"
+    },
+    "weapon_smokegrenade": {
+      "color": "res://assets/textures/archi/smoke_color.jpg",
+      "color_size": [
+        1024,
+        1024
+      ],
+      "normal": "res://assets/textures/archi/smoke_normal.jpg",
+      "normal_size": [
+        1024,
+        1024
+      ],
+      "roughness": "res://assets/textures/archi/smoke_roughness.jpg",
+      "roughness_size": [
+        1024,
+        1024
+      ],
+      "source_vmt": "CS2GO.Pack.Director.s.Cut.-.Equipment/Smoke Grenade/Vanilla (Default)/EXTRAIDOS/m_cs2_grenade_smoke/materials/models/weapons/cs2/weapon_eq_smokegrenade/weapon_smokegrenade.vmt"
+    },
+    "weapon_snip_awp": {
+      "color": "res://assets/textures/archi/awp_color.jpg",
+      "color_size": [
+        2048,
+        2048
+      ],
+      "normal": "res://assets/textures/archi/awp_normal.jpg",
+      "normal_size": [
+        2048,
+        2048
+      ],
+      "roughness": "res://assets/textures/archi/awp_roughness.jpg",
+      "roughness_size": [
+        2048,
+        2048
+      ],
+      "source_vmt": "CS2GO.Pack.Director.s.Cut.-.Rifles/EXTRAIDOS/m_cs2_awp/materials/models/weapons/cs2/weapon_snip_awp/weapon_snip_awp.vmt"
+    },
+    "weapon_snip_g3sg1": {
+      "color": "res://assets/textures/archi/g3sg1_color.jpg",
+      "color_size": [
+        2048,
+        2048
+      ],
+      "normal": "res://assets/textures/archi/g3sg1_normal.jpg",
+      "normal_size": [
+        2048,
+        2048
+      ],
+      "roughness": "res://assets/textures/archi/g3sg1_roughness.jpg",
+      "roughness_size": [
+        2048,
+        2048
+      ],
+      "source_vmt": "CS2GO.Pack.Director.s.Cut.-.Rifles/EXTRAIDOS/m_cs2_g3sg1/materials/models/weapons/cs2/weapon_snip_g3sg1/weapon_snip_g3sg1.vmt"
+    },
+    "weapon_snip_scar20": {
+      "color": "res://assets/textures/archi/scar20_color.jpg",
+      "color_size": [
+        2048,
+        2048
+      ],
+      "normal": "res://assets/textures/archi/scar20_normal.jpg",
+      "normal_size": [
+        2048,
+        2048
+      ],
+      "roughness": "res://assets/textures/archi/scar20_roughness.jpg",
+      "roughness_size": [
+        2048,
+        2048
+      ],
+      "source_vmt": "CS2GO.Pack.Director.s.Cut.-.Rifles/EXTRAIDOS/m_cs2_scar20/materials/models/weapons/cs2/weapon_snip_scar20/weapon_snip_scar20.vmt"
+    },
+    "weapon_snip_ssg08": {
+      "color": "res://assets/textures/archi/ssg08_color.jpg",
+      "color_size": [
+        2048,
+        2048
+      ],
+      "normal": "res://assets/textures/archi/ssg08_normal.jpg",
+      "normal_size": [
+        2048,
+        2048
+      ],
+      "roughness": "res://assets/textures/archi/ssg08_roughness.jpg",
+      "roughness_size": [
+        2048,
+        2048
+      ],
+      "source_vmt": "CS2GO.Pack.Director.s.Cut.-.Rifles/EXTRAIDOS/m_cs2_ssg08/materials/models/weapons/cs2/weapon_snip_ssg08/weapon_snip_ssg08.vmt"
+    }
+  },
+  "max_resolution": 2048,
+  "normal_convention": "Source tangent space with green channel inverted for Godot (+Y)",
+  "roughness_convention": "source _m red Phong exponent -> 1 - 0.30 * red multiplier; never metalness",
+  "source": "ShadowNigth/archi",
+  "source_commit": "43b46172606a31759637c90378782390f374c1ee"
+}

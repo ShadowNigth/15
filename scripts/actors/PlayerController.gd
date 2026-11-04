@@ -59,6 +59,9 @@ var _vm_silencer_bone: int = -1
 var _vm_silencer_visible: bool = true
 var _pending_vm_events: Array = []
 var _vm_anim_elapsed: float = 0.0
+## Last authentic inspection variant per weapon. The first press keeps the
+## original clip; subsequent presses rotate through inspect_2 / inspect_3.
+var _inspect_variant_indices: Dictionary = {}
 var _shake_trauma: float = 0.0
 var _shake_time: float = 0.0
 var _eye_height_cur: float = 1.66
@@ -789,15 +792,36 @@ func _on_vm_anim_finished(anim_name: String) -> void:
 	_play_idle_viewmodel()
 
 
-## CS-style weapon inspect (T): plays the model's inspect clip when available.
+func _available_inspection_clips() -> Array:
+	var available: Array = []
+	if _vm_anim == null:
+		return available
+	var mmeta: Dictionary = GameData.models_meta.get("weapons/" + _cur_vm_model_name, {})
+	var configured: Array = mmeta.get("inspect_clips", [])
+	# Keep the historical fallback for models without an explicit variant list.
+	if configured.is_empty():
+		configured = ["inspect", "inspect_unsil", "inspect_1"]
+	for raw_name in configured:
+		var clip_name := String(raw_name)
+		if _vm_anim.has_animation(clip_name):
+			available.append(clip_name)
+	return available
+
+
+## CS-style weapon inspect (T): rotate through every authentic variant. C4 can
+## inspect while held, but never while planting; reload locking is unchanged.
 func _try_inspect_viewmodel() -> void:
 	if not is_alive or weapon_ctrl == null:
 		return
 	if weapon_ctrl.is_reloading or weapon_ctrl.plant_progress > 0.0:
 		return
-	if weapon_ctrl.current_weapon_id == "c4":
+	var available := _available_inspection_clips()
+	if available.is_empty():
 		return
-	play_viewmodel_sequence(["inspect", "inspect_unsil", "inspect_1"])
+	var wid := weapon_ctrl.current_weapon_id
+	var next_index := (int(_inspect_variant_indices.get(wid, -1)) + 1) % available.size()
+	_inspect_variant_indices[wid] = next_index
+	play_viewmodel_sequence([available[next_index]])
 
 
 func _play_idle_viewmodel() -> void:

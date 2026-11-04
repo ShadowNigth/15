@@ -8,6 +8,16 @@ const NEW_WEAPONS := [
 	"mag7", "sawedoff", "negev", "bizon", "mp7", "taser", "decoy",
 	"molotov", "incendiary",
 ]
+const INSPECTION_ROTATIONS := {
+	"deagle": ["inspect", "inspect_2"],
+	"c4": ["inspect", "inspect_2", "inspect_3"],
+	"flashbang": ["inspect", "inspect_2"],
+	"hegrenade": ["inspect", "inspect_2"],
+	"smokegrenade": ["inspect", "inspect_2"],
+	"decoy": ["inspect", "inspect_2"],
+	"molotov": ["inspect", "inspect_2"],
+	"incendiary": ["inspect", "inspect_2"],
+}
 
 var _checks := 0
 var _failures: Array[String] = []
@@ -133,6 +143,15 @@ func _run() -> void:
 			and player._vm_model_root == original_root,
 			"%s hides the suppressor only after detaching completes" % wid)
 
+	var inspect_key_bound := false
+	for event in InputMap.action_get_events("inspect"):
+		if event is InputEventKey:
+			var key_event := event as InputEventKey
+			if key_event.keycode == KEY_T or key_event.physical_keycode == KEY_T:
+				inspect_key_bound = true
+	_expect(inspect_key_bound, "T remains bound to the real inspection input action")
+	await _test_inspection_rotation(player)
+
 	# The previously reported T + Glock case must now use only its original arms.
 	player.team = "T"
 	player.weapon_ctrl.give_weapon("glock18", 20, 40)
@@ -188,6 +207,50 @@ func _run() -> void:
 	await get_tree().process_frame
 	await get_tree().process_frame
 	get_tree().quit(0 if _failures.is_empty() else 1)
+
+
+func _test_inspection_rotation(player: PlayerController) -> void:
+	player._inspect_variant_indices.clear()
+	for wid in INSPECTION_ROTATIONS:
+		var expected: Array = INSPECTION_ROTATIONS[wid]
+		player.weapon_ctrl.give_weapon(wid, 30, 90)
+		player.weapon_ctrl.equip_weapon_by_id(wid)
+		await get_tree().process_frame
+		_expect(player._vm_anim != null and player._available_inspection_clips() == expected,
+			"%s exposes its complete ordered inspection rotation" % wid)
+		if player._vm_anim == null:
+			continue
+		for clip_name in expected:
+			_press_inspect(player)
+			_expect(player._vm_anim.current_animation == String(clip_name),
+				"%s T selects %s" % [wid, clip_name])
+			if wid == "deagle" and clip_name == "inspect_2":
+				_expect(player._pending_vm_events.size() == 9,
+					"Deagle T schedules all nine authentic inspect_2 foley events")
+		_press_inspect(player)
+		_expect(player._vm_anim.current_animation == "inspect",
+			"%s inspection rotation wraps to the original clip" % wid)
+		if wid == "deagle":
+			player.weapon_ctrl.is_reloading = true
+			player._vm_anim.play("idle")
+			_press_inspect(player)
+			_expect(player._vm_anim.current_animation == "idle",
+				"Reload still blocks inspection variant selection")
+			player.weapon_ctrl.is_reloading = false
+		if wid == "c4":
+			player.weapon_ctrl.plant_progress = 0.5
+			player._vm_anim.play("idle")
+			_press_inspect(player)
+			_expect(player._vm_anim.current_animation == "idle",
+				"C4 planting blocks all three inspection variants")
+			player.weapon_ctrl.plant_progress = 0.0
+
+
+func _press_inspect(player: PlayerController) -> void:
+	var event := InputEventAction.new()
+	event.action = "inspect"
+	event.pressed = true
+	player._unhandled_input(event)
 
 
 func _player_original_arms_only(player: PlayerController) -> bool:
