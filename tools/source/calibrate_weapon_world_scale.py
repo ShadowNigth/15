@@ -1,11 +1,14 @@
 #!/usr/bin/env python3
-"""Calibrate held/dropped archi weapons to useful third-person metre sizes.
+"""Restore normal world sizes, or optionally apply the experimental calibration.
 
     python -m tools.source.calibrate_weapon_world_scale [project root]
+    python -m tools.source.calibrate_weapon_world_scale --calibrate [project root]
 
-The source GLBs are deliberately not rewritten.  The resulting world_scale is
-stored per weapon and shared by held, dropped, thrown and planted presentations,
-so picking up or dropping a gun cannot make it suddenly change size.
+Normal presentation is 1.0 for firearms/tools and 0.90 for grenades. The older
+length-fitting pass remains available only behind --calibrate; it is not the
+accepted default because it made the third-person weapons too small. The source
+GLBs are deliberately not rewritten. Held, dropped, thrown and planted models
+share the resulting value, so pickups never change size abruptly.
 """
 import json
 import os
@@ -79,12 +82,26 @@ def glb_bounds(path):
 
 
 def main():
-    project = os.path.abspath(sys.argv[1] if len(sys.argv) > 1 else
+    calibrate = "--calibrate" in sys.argv[1:]
+    arguments = [arg for arg in sys.argv[1:] if arg != "--calibrate"]
+    if len(arguments) > 1 or any(arg.startswith("--") for arg in arguments):
+        raise SystemExit(__doc__)
+    project = os.path.abspath(arguments[0] if arguments else
                               os.path.join(os.path.dirname(__file__), "../.."))
     path = os.path.join(project, "data", "weapons.json")
     with open(path, encoding="utf-8") as handle:
         database = json.load(handle)
     weapons = database["weapons"]
+    if not calibrate:
+        for spec in weapons.values():
+            spec["world_scale"] = GRENADE_SCALE if spec.get("grenade", False) else 1.0
+        with open(path, "w", encoding="utf-8") as handle:
+            json.dump(database, handle, indent=2, ensure_ascii=False)
+            handle.write("\n")
+        print("Restored normal world scale for %d weapons; grenades remain %.2f" %
+              (len(weapons), GRENADE_SCALE))
+        return
+
     grenades = {key for key, spec in weapons.items() if spec.get("grenade", False)}
     expected = set(weapons) - grenades - set(FIXED_SCALE)
     if expected != set(TARGET_LENGTHS):

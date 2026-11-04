@@ -138,7 +138,7 @@
           ]
         }
       },
-      "world_scale": 0.736
+      "world_scale": 1.0
     },
     "usp": {
       "id": "usp",
@@ -280,7 +280,7 @@
       "dryfire_sound": "weapons/archi/cs2_revolver/hammer.wav",
       "silencer_on_sound": "weapons/archi/cs2_usps/sil_on.wav",
       "silencer_off_sound": "weapons/archi/cs2_usps/sil_off.wav",
-      "world_scale": 0.573
+      "world_scale": 1.0
     },
     "glock18": {
       "id": "glock18",
@@ -414,7 +414,7 @@
         }
       },
       "dryfire_sound": "weapons/archi/cs2_revolver/hammer.wav",
-      "world_scale": 0.629
+      "world_scale": 1.0
     },
     "deagle": {
       "id": "deagle",
@@ -546,7 +546,7 @@
         }
       },
       "dryfire_sound": "weapons/archi/cs2_revolver/hammer.wav",
-      "world_scale": 0.612
+      "world_scale": 1.0
     },
     "p228": {
       "id": "p228",
@@ -677,7 +677,7 @@
         }
       },
       "dryfire_sound": "weapons/archi/cs2_revolver/hammer.wav",
-      "world_scale": 0.489
+      "world_scale": 1.0
     },
     "elite": {
       "id": "elite",
@@ -811,7 +811,7 @@
         }
       },
       "dryfire_sound": "weapons/archi/cs2_revolver/hammer.wav",
-      "world_scale": 0.622
+      "world_scale": 1.0
     },
     "fiveseven": {
       "id": "fiveseven",
@@ -942,7 +942,7 @@
         }
       },
       "dryfire_sound": "weapons/archi/cs2_revolver/hammer.wav",
-      "world_scale": 0.663
+      "world_scale": 1.0
     },
     "m3": {
       "id": "m3",
@@ -1077,7 +1077,7 @@
       "insert_sound": "weapons/archi/cs2_nova/insertshell_01.wav",
       "pump_sound": "weapons/archi/cs2_nova/pump.wav",
       "dryfire_sound": "weapons/archi/cs2_revolver/hammer.wav",
-      "world_scale": 0.666
+      "world_scale": 1.0
     },
     "xm1014": {
       "id": "xm1014",
@@ -1247,7 +1247,7 @@
       },
       "insert_sound": "weapons/archi/cs2_xm1014/insertshell_01.wav",
       "dryfire_sound": "weapons/archi/cs2_revolver/hammer.wav",
-      "world_scale": 0.734
+      "world_scale": 1.0
     },
     "mp5navy": {
       "id": "mp5navy",
@@ -1379,7 +1379,7 @@
         }
       },
       "dryfire_sound": "weapons/archi/cs2_revolver/hammer.wav",
-      "world_scale": 0.837
+      "world_scale": 1.0
     },
     "tmp": {
       "id": "tmp",
@@ -1514,7 +1514,7 @@
         }
       },
       "dryfire_sound": "weapons/archi/cs2_revolver/hammer.wav",
-      "world_scale": 0.694
+      "world_scale": 1.0
     },
     "p90": {
       "id": "p90",
@@ -1646,7 +1646,7 @@
         }
       },
       "dryfire_sound": "weapons/archi/cs2_revolver/hammer.wav",
-      "world_scale": 0.778
+      "world_scale": 1.0
     },
     "mac10": {
       "id": "mac10",
@@ -1778,7 +1778,7 @@
         }
       },
       "dryfire_sound": "weapons/archi/cs2_revolver/hammer.wav",
-      "world_scale": 0.65
+      "world_scale": 1.0
     },
     "ump45": {
       "id": "ump45",
@@ -1909,7 +1909,7 @@
         }
       },
       "dryfire_sound": "weapons/archi/cs2_revolver/hammer.wav",
-      "world_scale": 0.587
+      "world_scale": 1.0
     },
     "ak47": {
       "id": "ak47",
@@ -2043,7 +2043,7 @@
         }
       },
       "dryfire_sound": "weapons/archi/cs2_revolver/hammer.wav",
-      "world_scale": 0.655
+      "world_scale": 1.0
     },
     "sg552": {
       "id": "sg552",
@@ -2182,7 +2182,7 @@
       },
       "dryfire_sound": "weapons/archi/cs2_revolver/hammer.wav",
       "zoom_sound": "weapons/archi/cs2_sg553/zoom_in.wav",
-      "world_scale": 0.613
+      "world_scale": 1.0
     },
     "m4a1": {
       "id": "m4a1",
@@ -2323,7 +2323,7 @@
       "dryfire_sound": "weapons/archi/cs2_revolver/hammer.wav",
       "silencer_on_sound": "weapons/archi/cs2_m4a1s/sil_on.wav",
       "silencer_off_sound": "weapons/archi/cs2_m4a1s/sil_off.wav",
-      "world_scale": 0.582
+      "world_scale": 1.0
     },
     "aug": {
       "id": "aug",
@@ -2462,7 +2462,7 @@
       },
       "dryfire_sound": "weapons/archi/cs2_revolver/hammer.wav",
       "zoom_sound": "weapons/archi/cs2_aug/zoom_in.wav",
-      "world_scale": 0.848
+      "world_scale": 1.0
     },
     "scout": {
       "id": "scout",
@@ -2636,7 +2636,7 @@
       },
       "dryfire_sound": "weapons/archi/cs2_revolver/hammer.wav",
       "zoom_sound": "weapons/archi/cs2_ssg08/zoom.wav",
-      "world_scale": 0.57
+      "world_scale": 1.0
     },
     "awp": {
       "id": "awp",
@@ -2811,7 +2811,7 @@
       },
       "dryfire_sound": "weapons/archi/cs2_revolver/hammer.wav",
       "zoom_sound": "weapons/archi/cs2_awp/zoom_in.wav",
-      "world_scale": 0.608
+      "world_scale": 1.0
     },
     "g3sg1": {
       "id": "g3sg1",
@@ -2987,7 +2987,7 @@
       },
       "dryfire_sound": "weapons/archi/cs2_revolver/hammer.wav",
       "zoom_sound": "weapons/archi/cs2_g3sg1/zoom_in.wav",
-      "world_scale": 0.72
+      "world_scale": 1.0
     },
     "sg550": {
       "id": "sg550",
@@ -3163,7 +3163,7 @@
       },
       "dryfire_sound": "weapons/archi/cs2_revolver/hammer.wav",
       "zoom_sound": "weapons/archi/cs2_scar20/zoom.wav",
-      "world_scale": 0.675
+      "world_scale": 1.0
     },
     "m249": {
       "id": "m249",
@@ -3296,7 +3296,7 @@
         }
       },
       "dryfire_sound": "weapons/archi/cs2_revolver/hammer.wav",
-      "world_scale": 0.638
+      "world_scale": 1.0
     },
     "flashbang": {
       "id": "flashbang",
@@ -3796,7 +3796,7 @@
         }
       },
       "deploy_sound": "weapons/archi/cs2_c4/c4_draw.wav",
-      "world_scale": 0.794
+      "world_scale": 1.0
     },
     "p2000": {
       "id": "p2000",
@@ -3929,7 +3929,7 @@
         }
       },
       "dryfire_sound": "weapons/archi/cs2_revolver/hammer.wav",
-      "world_scale": 0.585
+      "world_scale": 1.0
     },
     "cz75": {
       "id": "cz75",
@@ -4062,7 +4062,7 @@
         }
       },
       "dryfire_sound": "weapons/archi/cs2_revolver/hammer.wav",
-      "world_scale": 0.517
+      "world_scale": 1.0
     },
     "revolver": {
       "id": "revolver",
@@ -4199,7 +4199,7 @@
       "alt_spread": 0.065,
       "alt_recoil": 5.2,
       "prepare_sound": "weapons/archi/cs2_revolver/prepare.wav",
-      "world_scale": 0.651
+      "world_scale": 1.0
     },
     "tec9": {
       "id": "tec9",
@@ -4330,7 +4330,7 @@
         }
       },
       "dryfire_sound": "weapons/archi/cs2_revolver/hammer.wav",
-      "world_scale": 0.669
+      "world_scale": 1.0
     },
     "famas": {
       "id": "famas",
@@ -4467,7 +4467,7 @@
       "burst_count": 3,
       "burst_interval": 0.055,
       "burst_cooldown": 0.42,
-      "world_scale": 0.698
+      "world_scale": 1.0
     },
     "galil": {
       "id": "galil",
@@ -4601,7 +4601,7 @@
         }
       },
       "dryfire_sound": "weapons/archi/cs2_revolver/hammer.wav",
-      "world_scale": 0.867
+      "world_scale": 1.0
     },
     "m4a4": {
       "id": "m4a4",
@@ -4735,7 +4735,7 @@
         }
       },
       "dryfire_sound": "weapons/archi/cs2_revolver/hammer.wav",
-      "world_scale": 0.754
+      "world_scale": 1.0
     },
     "mag7": {
       "id": "mag7",
@@ -4905,7 +4905,7 @@
       },
       "insert_sound": "weapons/archi/cs2_xm1014/insertshell_01.wav",
       "dryfire_sound": "weapons/archi/cs2_revolver/hammer.wav",
-      "world_scale": 0.82
+      "world_scale": 1.0
     },
     "sawedoff": {
       "id": "sawedoff",
@@ -5040,7 +5040,7 @@
       "insert_sound": "weapons/archi/cs2_sawedoff/insertshell_01.wav",
       "pump_sound": "weapons/archi/cs2_sawedoff/pump.wav",
       "dryfire_sound": "weapons/archi/cs2_revolver/hammer.wav",
-      "world_scale": 0.746
+      "world_scale": 1.0
     },
     "negev": {
       "id": "negev",
@@ -5172,7 +5172,7 @@
         }
       },
       "dryfire_sound": "weapons/archi/cs2_revolver/hammer.wav",
-      "world_scale": 0.754
+      "world_scale": 1.0
     },
     "bizon": {
       "id": "bizon",
@@ -5304,7 +5304,7 @@
         }
       },
       "dryfire_sound": "weapons/archi/cs2_revolver/hammer.wav",
-      "world_scale": 0.691
+      "world_scale": 1.0
     },
     "mp7": {
       "id": "mp7",
@@ -5570,7 +5570,7 @@
         }
       },
       "dryfire_sound": "weapons/archi/cs2_revolver/hammer.wav",
-      "world_scale": 0.563
+      "world_scale": 1.0
     },
     "decoy": {
       "id": "decoy",

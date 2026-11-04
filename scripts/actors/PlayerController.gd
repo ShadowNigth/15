@@ -806,9 +806,8 @@ func _on_fired_shot(wid: String, silenced: bool) -> void:
 				var b_pick: String = ["shoot", "shoot2", "shoot3"][clampi(weapon_ctrl.glock_burst_frame - 1, 0, 2)]
 				play_viewmodel_sequence([b_pick, "shoot"])
 		else:
-			# Semi-auto plays the clean single-kick frame — in this model 'shoot'
-			# is the big multi-motion clip that reads as burst; shoot2/shoot3 are
-			# the crisp one-shot kicks
+			# Keep the accepted semi-auto shoot2 -> shoot3 route. The refined GLB
+			# gives all three clips the same mechanical slide cycle.
 			if rem_clip == 0:
 				play_viewmodel_sequence(["shoot_empty", "shoot2"])
 			else:

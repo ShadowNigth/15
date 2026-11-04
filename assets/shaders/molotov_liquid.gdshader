@@ -1,12 +1,14 @@
 shader_type spatial;
+render_mode blend_mix, depth_draw_never, cull_back, specular_schlick_ggx;
 
-// The archi model has a separate closed liquid volume.  Keep it opaque so it
-// renders behind the transparent bottle correctly, while a small animated
-// surface deformation and moving highlights make the contents readable.
+// The archi model has a separate closed liquid volume. It must also transmit
+// the background: leaving this interior surface opaque makes the whole bottle
+// look solid even when both outer glass materials are transparent.
 uniform sampler2D liquid_texture : source_color, filter_linear_mipmap, repeat_disable;
 uniform vec4 liquid_tint : source_color = vec4(0.64, 1.0, 0.4, 1.0);
 uniform float brightness = 1.22;
 uniform float deformation = 1.0;
+uniform float opacity = 0.38;
 
 void vertex() {
 	// Viewmodel bind pose has its liquid surface near local Y=0.062.  Only the
@@ -29,4 +31,5 @@ void fragment() {
 	METALLIC = 0.0;
 	SPECULAR = 0.72;
 	NORMAL = normalize(NORMAL + vec3(shimmer_x, shimmer_y, 0.0));
+	ALPHA = opacity * liquid_tint.a;
 }

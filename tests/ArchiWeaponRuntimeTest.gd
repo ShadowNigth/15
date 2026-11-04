@@ -78,6 +78,7 @@ func _run() -> void:
 	_controller.set_process(false)
 
 	_test_assets()
+	_test_animation_refinements()
 	_test_cs2_audio()
 	_test_world_calibration_and_molotov()
 	_test_scope_tint_preservation()
@@ -164,6 +165,107 @@ func _test_assets() -> void:
 		_expect(stream != null, "Godot must decode " + path)
 
 
+func _find_animation_track(clip: Animation, node_name: String, track_type: int) -> int:
+	for track in range(clip.get_track_count()):
+		if clip.track_get_type(track) == track_type and String(clip.track_get_path(track)).find(node_name) >= 0:
+			return track
+	return -1
+
+
+func _test_animation_refinements() -> void:
+	var inspection_models := {
+		"weapons/v_m4a1": "v_weapon.M4A1_s_Parent",
+		"weapons/v_usp": "weapon_hand_r",
+	}
+	for key in inspection_models:
+		var packed := GameData.get_model_scene(key)
+		_expect(packed != null, "%s inspection refinement model loads" % key)
+		if packed == null:
+			continue
+		var instance := packed.instantiate()
+		_world.add_child(instance)
+		var player := _find_animation_player(instance)
+		var attachment := String(inspection_models[key])
+		var skeleton := _find_skeleton(instance)
+		var bone_index := skeleton.find_bone(attachment) if skeleton != null else -1
+		_expect(bone_index >= 0, "%s exposes its gun attachment bone" % key)
+		if bone_index < 0:
+			instance.free()
+			continue
+		var rest := skeleton.get_bone_rest(bone_index)
+		for clip_name in ["inspect", "inspect_unsil"]:
+			var idle_name := "idle_unsil" if clip_name == "inspect_unsil" else "idle"
+			if player == null or not player.has_animation(clip_name) or not player.has_animation(idle_name):
+				_expect(false, "%s has both inspection and idle clips" % key)
+				continue
+			var clip := player.get_animation(clip_name)
+			var idle := player.get_animation(idle_name)
+			var position_track := _find_animation_track(clip, attachment, Animation.TYPE_POSITION_3D)
+			var idle_position_track := _find_animation_track(idle, attachment, Animation.TYPE_POSITION_3D)
+			var position_reference := rest.origin
+			if idle_position_track >= 0:
+				position_reference = idle.position_track_interpolate(idle_position_track, 0.0)
+			# Godot may remove an immutable track that exactly matches the rest pose.
+			# That is also a valid rigid attachment, so use rest as the sampled value.
+			var position_stable := true
+			if position_track >= 0:
+				for fraction in [0.0, 0.25, 0.5, 0.75, 1.0]:
+					var sample := clip.position_track_interpolate(position_track, clip.length * fraction)
+					position_stable = position_stable and sample.distance_to(position_reference) <= 0.0001
+			else:
+				position_stable = rest.origin.distance_to(position_reference) <= 0.0001
+			_expect(position_stable, "%s/%s keeps the gun rigidly attached to the hand" % [key, clip_name])
+
+			var rotation_track := _find_animation_track(clip, attachment, Animation.TYPE_ROTATION_3D)
+			var idle_rotation_track := _find_animation_track(idle, attachment, Animation.TYPE_ROTATION_3D)
+			var rotation_reference := rest.basis.get_rotation_quaternion()
+			if idle_rotation_track >= 0:
+				rotation_reference = idle.rotation_track_interpolate(idle_rotation_track, 0.0)
+			var rotation_stable := true
+			if rotation_track >= 0:
+				for fraction in [0.0, 0.5, 1.0]:
+					var sample := clip.rotation_track_interpolate(rotation_track, clip.length * fraction)
+					rotation_stable = rotation_stable and absf(1.0 - absf(rotation_reference.dot(sample))) <= 0.000001
+			else:
+				var rest_rotation := rest.basis.get_rotation_quaternion()
+				rotation_stable = absf(1.0 - absf(rotation_reference.dot(rest_rotation))) <= 0.000001
+			_expect(rotation_stable, "%s/%s prevents relative gun/hand rotation" % [key, clip_name])
+
+			var hand_track := _find_animation_track(clip, "v_weapon.Bip01_R_Hand", Animation.TYPE_ROTATION_3D)
+			var hand_moves := false
+			if hand_track >= 0:
+				var start := clip.rotation_track_interpolate(hand_track, 0.0)
+				var middle := clip.rotation_track_interpolate(hand_track, clip.length * 0.5)
+				hand_moves = absf(1.0 - absf(start.dot(middle))) > 0.00001
+			_expect(hand_moves, "%s/%s still animates the arms rather than freezing inspection" % [key, clip_name])
+		instance.free()
+
+	var glock := GameData.get_model_scene("weapons/v_glock18")
+	_expect(glock != null, "Glock slide refinement model loads")
+	if glock != null:
+		var instance := glock.instantiate()
+		_world.add_child(instance)
+		var player := _find_animation_player(instance)
+		for clip_name in ["shoot", "shoot2", "shoot3", "shoot_empty"]:
+			if player == null or not player.has_animation(clip_name):
+				_expect(false, "Glock has its %s clip" % clip_name)
+				continue
+			var clip := player.get_animation(clip_name)
+			var track := _find_animation_track(clip, "v_weapon_glock_slide", Animation.TYPE_POSITION_3D)
+			_expect(track >= 0, "Glock %s has a slide position track" % clip_name)
+			if track >= 0:
+				var start := clip.position_track_interpolate(track, 0.0)
+				var rear := clip.position_track_interpolate(track, 2.0 / 30.0)
+				var finish := clip.position_track_interpolate(track, clip.length)
+				var cycle_ok := start.distance_to(rear) > 0.035
+				if clip_name == "shoot_empty":
+					cycle_ok = cycle_ok and finish.distance_to(rear) < 0.0001
+				else:
+					cycle_ok = cycle_ok and finish.distance_to(start) < 0.0001
+				_expect(cycle_ok, "Glock %s performs the expected visible slide cycle" % clip_name)
+		instance.free()
+
+
 func _test_cs2_audio() -> void:
 	var wavs: Array[String] = []
 	_collect_wavs("res://assets/sounds/weapons/cs2", wavs)
@@ -223,6 +325,8 @@ func _test_world_calibration_and_molotov() -> void:
 			"%s has a bounded shared world scale" % wid)
 		if bool(spec.get("grenade", false)):
 			_expect(is_equal_approx(scale, GameData.GRENADE_WORLD_SCALE), "%s preserves grenade scale 0.90" % wid)
+		else:
+			_expect(is_equal_approx(scale, 1.0), "%s restores normal world size" % wid)
 
 	var drop := DroppedWeapon.new()
 	_world.add_child(drop)
@@ -232,7 +336,7 @@ func _test_world_calibration_and_molotov() -> void:
 	if drop_scale_ok:
 		var model := drop._visual_root.get_child(0) as Node3D
 		drop_scale_ok = model != null and absf(model.scale.x - held_scale) < 0.0001
-	_expect(drop_scale_ok, "Dropped M4A1 uses the same calibrated scale as the hand model")
+	_expect(drop_scale_ok, "Dropped M4A1 uses the same normal scale as the hand model")
 	drop.free()
 
 	var packed := GameData.get_model_scene("weapons/v_molotov")
@@ -241,7 +345,8 @@ func _test_world_calibration_and_molotov() -> void:
 		return
 	var instance := packed.instantiate()
 	_world.add_child(instance)
-	var glass_ok := false
+	var outer_glass_ok := false
+	var intermediate_glass_ok := false
 	var liquid_ok := false
 	var weapon_finish_ok := false
 	for node in instance.find_children("*", "MeshInstance3D", true, false):
@@ -252,20 +357,27 @@ func _test_world_calibration_and_molotov() -> void:
 			var original := mesh_instance.mesh.surface_get_material(surface) as BaseMaterial3D
 			if original == null:
 				continue
-			if original.resource_name == "weapon_molotov":
-				var glass := GameData.get_styled_model_material(original, "vm") as BaseMaterial3D
-				glass_ok = glass != null and glass.transparency == BaseMaterial3D.TRANSPARENCY_ALPHA \
-					and glass.albedo_color.a >= 0.20 and glass.albedo_color.a <= 0.33 and glass.roughness <= 0.15
+			if original.resource_name in ["weapon_molotov", "weapon_molotov_liquid"]:
+				var glass := GameData.get_styled_model_material(original, "vm") as ShaderMaterial
+				var valid := glass != null and glass.shader == GameData.MOLOTOV_GLASS_SHADER \
+					and glass.get_shader_parameter("bottle_texture") != null \
+					and float(glass.get_shader_parameter("glass_opacity")) <= 0.14
+				if original.resource_name == "weapon_molotov":
+					outer_glass_ok = valid and glass.render_priority == 2
+				else:
+					intermediate_glass_ok = valid and glass.render_priority == 1
 			elif original.resource_name == "molotov_inside":
 				var liquid := GameData.get_styled_model_material(original, "vm") as ShaderMaterial
 				liquid_ok = liquid != null and liquid.shader == GameData.MOLOTOV_LIQUID_SHADER \
-					and float(liquid.get_shader_parameter("deformation")) > 0.5
+					and float(liquid.get_shader_parameter("deformation")) > 0.5 \
+					and float(liquid.get_shader_parameter("opacity")) <= 0.38 and liquid.render_priority == 0
 			elif original.resource_name == "weapon_molotov_lighter":
 				var finish := GameData.get_styled_model_material(original, "vm") as BaseMaterial3D
-				weapon_finish_ok = finish != null and finish.roughness <= 0.53 and finish.metallic >= 0.13
-	_expect(glass_ok, "Molotov outer bottle is transparent glass")
-	_expect(liquid_ok, "Molotov has a separate animated liquid volume")
-	_expect(weapon_finish_ok, "Weapon materials use a less opaque realistic specular finish")
+				weapon_finish_ok = finish != null and finish.roughness <= 0.37 and finish.metallic >= 0.29 \
+					and finish.metallic_specular >= 0.71
+	_expect(outer_glass_ok and intermediate_glass_ok, "Both textured Molotov glass layers transmit the background")
+	_expect(liquid_ok, "Molotov liquid is animated, translucent and drawn behind the glass")
+	_expect(weapon_finish_ok, "Weapon materials use a glossier metallic response")
 	instance.free()
 
 
@@ -539,6 +651,16 @@ func _find_animation_player(node: Node) -> AnimationPlayer:
 		return node
 	for child in node.get_children():
 		var found := _find_animation_player(child)
+		if found != null:
+			return found
+	return null
+
+
+func _find_skeleton(node: Node) -> Skeleton3D:
+	if node is Skeleton3D:
+		return node
+	for child in node.get_children():
+		var found := _find_skeleton(child)
 		if found != null:
 			return found
 	return null

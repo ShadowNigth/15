@@ -610,7 +610,7 @@ func _update_held_weapon_model(wid: String) -> void:
 
 func _stabilize_held_weapon() -> void:
 	if is_instance_valid(_held_weapon_model):
-		# The p_ mesh has no root animation. Keep its calibrated local transform
+		# The p_ mesh has no root animation. Keep its normal-scale local transform
 		# fixed to the hand bone even after weapon switches and upper-body clips.
 		_held_weapon_model.transform = _held_weapon_rest_transform
 

@@ -41,7 +41,7 @@ container sizes and word alignment. Animation events retain their source timing;
 C4 cycles through the seven real key-press takes. The elite P/W conversion filters
 out the intentionally distant left pistol from the source buy-menu pose.
 
-### Dedicated CS2 audio and world calibration
+### Dedicated CS2 audio, normal sizing and presentation refinements
 
 Archi does not ship a distinct firing recording for every added weapon. The current
 installation supplements it with 130 authentic 16-bit WAVs from
@@ -61,10 +61,41 @@ python -m tools.source.install_cs2_weapon_sounds /tmp/cs2 /home/user/15
 python -m tools.source.calibrate_weapon_world_scale /home/user/15
 ```
 
-`world_scale` is calibrated independently for all 43 slots and shared by hand,
-dropped, thrown and planted presentations. Grenades retain the accepted `0.90`
-scale. View/world material styling is separate from matte character cloth; the
-Molotov has transparent outer glass and an independently animated liquid volume.
+Normal `world_scale` is `1.0` for the 37 firearms/tools and `0.90` for the six
+grenades, shared by hand, dropped, thrown and planted presentations. The default
+calibration command restores those accepted values. Its optional `--calibrate`
+mode retains the experimental length-fitting table, but that pass made weapons
+too small and is not the shipping configuration. View/world material styling is
+separate from matte character cloth. Weapons use a glossier metallic response;
+the Molotov treats both textured glass surfaces and its inner liquid as ordered
+translucent layers, while bright label/rag texels retain their opacity.
+
+#### Targeted animation repair
+
+```bash
+python -m tools.source.refine_weapon_animations /home/user/15
+python -m tools.source.refine_weapon_animations --check /home/user/15
+```
+
+This appends animation accessors only in `v_m4a1.glb`, `v_usp.glb` and
+`v_glock18.glb`. It stabilises the M4A1/USP gun attachment relative to the right
+hand during both inspection variants, without freezing the arms. Glock firing
+clips reuse the measured 47.6 mm rearward slide axis from `reload`; normal shots
+return to battery and `shoot_empty` stays locked open. Semi/burst clip routing is
+unchanged. Meshes, UVs, textures, materials, skins and unrelated animations are
+not rebuilt; never substitute the historical one-way UV migration for this tool.
+
+#### CS2-MultiRig review
+
+<https://github.com/goribby/CS2-MultiRig> was reviewed at commit
+`026058b2a70a55257d6b85563f27b3c31e558f26`. Its bare arms and glove exports are
+potential mesh sources and include `a_idle`, inspection and icon-pose clips, but
+they are not drop-in replacements: the 38-joint Source 2 rig (`hand_r`,
+`finger_index_0_l`, twist bones, etc.) differs from the installed `Bip01` weapon
+rig. Reuse requires bone mapping, bind-pose alignment and per-weapon inspection/
+reload calibration. No MultiRig assets are installed. The repository declares no
+license or redistribution grant, so permission and asset terms should be confirmed
+before shipping those meshes or textures in this project's archive.
 
 CS2 weapon VMTs commonly use `$blendtintbybasealpha` with `$color2`. The converter
 bakes Source's `base * lerp(1, color2, base_alpha)` operation in linear colour space
