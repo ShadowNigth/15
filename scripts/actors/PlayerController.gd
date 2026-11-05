@@ -25,6 +25,7 @@ var _vm_camera: Camera3D = null
 var _vm_anim: AnimationPlayer = null
 var _muzzle_sprite: Sprite3D = null
 var _muzzle_light: OmniLight3D = null
+var _vm_muzzle_light: OmniLight3D = null
 var _muzzle_timer: float = 0.0
 ## Barrel tip in viewmodel space — baked per weapon in models_meta.json from
 ## the REAL idle pose (bind-pose estimates sit far away: the idle animation
@@ -110,9 +111,40 @@ func _ready() -> void:
 	_vm_viewport.name = "ViewModelViewport"
 	_vm_viewport.transparent_bg = true
 	_vm_viewport.handle_input_locally = false
-	_vm_viewport.msaa_3d = Viewport.MSAA_2X
-	_vm_viewport.world_3d = get_world_3d()
+	_vm_viewport.msaa_3d = Viewport.MSAA_4X
+	# Keep the first-person presentation in the same controlled studio world as
+	# the Arsenal preview. Map lighting remains on the world/character layers;
+	# only this isolated layer receives the viewmodel rig below.
+	_vm_viewport.own_world_3d = true
 	_vm_container.add_child(_vm_viewport)
+
+	var vm_environment := Environment.new()
+	vm_environment.background_mode = Environment.BG_CLEAR_COLOR
+	vm_environment.ambient_light_source = Environment.AMBIENT_SOURCE_COLOR
+	vm_environment.ambient_light_color = Color(0.92, 0.90, 0.86)
+	vm_environment.ambient_light_energy = 1.45
+	vm_environment.tonemap_mode = Environment.TONE_MAPPER_LINEAR
+	var vm_world_environment := WorldEnvironment.new()
+	vm_world_environment.name = "ViewModelStudioEnvironment"
+	vm_world_environment.environment = vm_environment
+	_vm_viewport.add_child(vm_world_environment)
+
+	var vm_key := DirectionalLight3D.new()
+	vm_key.name = "ViewModelStudioKey"
+	vm_key.rotation_degrees = Vector3(-35.0, 35.0, 0.0)
+	vm_key.light_energy = 1.8
+	vm_key.light_cull_mask = 4
+	vm_key.shadow_enabled = false
+	_vm_viewport.add_child(vm_key)
+
+	var vm_fill := DirectionalLight3D.new()
+	vm_fill.name = "ViewModelStudioFill"
+	vm_fill.rotation_degrees = Vector3(32.0, -142.0, 0.0)
+	vm_fill.light_color = Color(0.80, 0.86, 0.95)
+	vm_fill.light_energy = 0.65
+	vm_fill.light_cull_mask = 4
+	vm_fill.shadow_enabled = false
+	_vm_viewport.add_child(vm_fill)
 
 	_vm_camera = Camera3D.new()
 	_vm_camera.name = "ViewModelCamera"
@@ -123,6 +155,16 @@ func _ready() -> void:
 	_vm_camera.cull_mask = 4  # Visual Layer 3 ONLY (first-person weapon + muzzle flash)
 	_vm_camera.current = true
 	_vm_viewport.add_child(_vm_camera)
+
+	var vm_softbox := OmniLight3D.new()
+	vm_softbox.name = "ViewModelStudioSoftbox"
+	vm_softbox.position = Vector3(-0.25, 0.35, 0.15)
+	vm_softbox.light_energy = 2.5
+	vm_softbox.light_specular = 0.45
+	vm_softbox.omni_range = 2.5
+	vm_softbox.light_cull_mask = 4
+	vm_softbox.shadow_enabled = false
+	_vm_camera.add_child(vm_softbox)
 
 	viewmodel_pivot = Node3D.new()
 	viewmodel_pivot.name = "ViewModelPivot"
@@ -149,6 +191,18 @@ func _ready() -> void:
 	_muzzle_light.omni_range = 7.5
 	_muzzle_light.visible = false
 	camera.add_child(_muzzle_light)
+
+	# The world-space flash still lights the map. This companion light preserves
+	# the same pulse inside the isolated first-person studio world.
+	_vm_muzzle_light = OmniLight3D.new()
+	_vm_muzzle_light.name = "ViewModelMuzzleLight"
+	_vm_muzzle_light.light_color = _muzzle_light.light_color
+	_vm_muzzle_light.light_energy = _muzzle_light.light_energy
+	_vm_muzzle_light.omni_range = _muzzle_light.omni_range
+	_vm_muzzle_light.light_cull_mask = 4
+	_vm_muzzle_light.shadow_enabled = false
+	_vm_muzzle_light.visible = false
+	_vm_camera.add_child(_vm_muzzle_light)
 
 	flashlight_spot = SpotLight3D.new()
 	flashlight_spot.light_color = Color(1.0, 0.98, 0.90)
@@ -189,8 +243,6 @@ func spawn_for_round(pos: Vector3, yaw_rad: float, reset_weapons: bool) -> void:
 	camera.rotation = Vector3(0.0, look_yaw, 0.0)
 	camera.current = true
 	camera.fov = GameData.fov
-	if _vm_viewport and _vm_viewport.world_3d != get_world_3d():
-		_vm_viewport.world_3d = get_world_3d()
 	if _vm_container:
 		_vm_container.visible = true
 	viewmodel_pivot.visible = true
@@ -290,6 +342,7 @@ func _process(delta: float) -> void:
 		if _muzzle_timer <= 0.0:
 			_muzzle_sprite.visible = false
 			_muzzle_light.visible = false
+			_vm_muzzle_light.visible = false
 
 	# Tick frame-exact StudioMDL 5004 weapon foley sound events synced to viewmodel animation!
 	if is_alive and not _pending_vm_events.is_empty() and _vm_anim and _vm_anim.is_playing():
@@ -339,8 +392,6 @@ func _process(delta: float) -> void:
 	)
 	if _vm_camera:
 		_vm_camera.global_transform = camera.global_transform
-	if _vm_viewport and _vm_viewport.world_3d != get_world_3d():
-		_vm_viewport.world_3d = get_world_3d()
 
 	# Viewmodel bobbing, mouse sway, airborne inertia, crouch cant, draw spring & recoil kickback at full render FPS
 	_sway_offset = _sway_offset.lerp(Vector2.ZERO, minf(1.0, 9.0 * delta))
@@ -912,6 +963,9 @@ func _on_fired_shot(wid: String, silenced: bool) -> void:
 			_muzzle_light.position = mlp
 			_muzzle_light.light_energy = 2.2 + kick_scale * 1.15
 			_muzzle_light.visible = true
+			_vm_muzzle_light.position = mlp
+			_vm_muzzle_light.light_energy = _muzzle_light.light_energy
+			_vm_muzzle_light.visible = true
 			_muzzle_timer = 0.045
 
 

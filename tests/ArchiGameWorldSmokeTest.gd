@@ -175,6 +175,7 @@ func _run() -> void:
 		player._vm_anim.play("draw")
 		player._vm_anim.advance(0.55)
 	_expect(_player_sport_gloves(player, "arid_mw"), "Sport glove composition remains valid through the real draw animation")
+	_test_viewmodel_studio(player)
 	GameData.select_glove("classic")
 	player.weapon_ctrl.give_weapon("m4a1", 30, 90)
 	player.weapon_ctrl.equip_weapon_by_id("m4a1")
@@ -225,6 +226,45 @@ func _run() -> void:
 	await get_tree().process_frame
 	await get_tree().process_frame
 	get_tree().quit(0 if _failures.is_empty() else 1)
+
+
+func _test_viewmodel_studio(player: PlayerController) -> void:
+	_expect(player._vm_viewport != null and player._vm_viewport.own_world_3d \
+		and player._vm_viewport.msaa_3d == Viewport.MSAA_4X,
+		"First-person HD presentation uses its own 4x-MSAA studio viewport")
+	var key := player._vm_viewport.get_node_or_null("ViewModelStudioKey") as DirectionalLight3D
+	var fill := player._vm_viewport.get_node_or_null("ViewModelStudioFill") as DirectionalLight3D
+	var softbox := player._vm_camera.get_node_or_null("ViewModelStudioSoftbox") as OmniLight3D
+	_expect(key != null and fill != null and softbox != null \
+		and key.light_cull_mask == 4 and fill.light_cull_mask == 4 and softbox.light_cull_mask == 4,
+		"Studio key, fill and softbox illuminate only the first-person render layer")
+	var hd_ok := false
+	if player._vm_model_root != null:
+		for node in player._vm_model_root.find_children("*", "MeshInstance3D", true, false):
+			var mesh := node as MeshInstance3D
+			if mesh.mesh == null:
+				continue
+			for surface in range(mesh.mesh.get_surface_count()):
+				var material := mesh.get_active_material(surface) as BaseMaterial3D
+				if material == null or material.resource_name.to_lower() != "weapon_rif_ak47":
+					continue
+				var entry: Dictionary = GameData.archi_materials.get("weapon_rif_ak47", {})
+				hd_ok = material.albedo_texture == GameData.get_texture(String(entry.get("color", ""))) \
+					and material.normal_texture == GameData.get_texture(String(entry.get("normal", ""))) \
+					and material.roughness_texture == GameData.get_texture(String(entry.get("roughness", "")))
+	_expect(hd_ok, "The real first-person AK retains the same HD colour, normal and roughness maps as the Arsenal")
+	_expect(player._vm_muzzle_light != null and not player._vm_muzzle_light.visible \
+		and player._vm_muzzle_light.light_cull_mask == 4,
+		"The isolated viewmodel has its own bounded muzzle-light companion")
+	player._on_fired_shot("ak47", false)
+	_expect(player._muzzle_light.visible and player._vm_muzzle_light.visible \
+		and player._vm_muzzle_light.position == player._muzzle_light.position \
+		and is_equal_approx(player._vm_muzzle_light.light_energy, player._muzzle_light.light_energy),
+		"Firing synchronizes world and first-person muzzle illumination")
+	player._muzzle_timer = 0.0001
+	player._process(0.001)
+	_expect(not player._muzzle_light.visible and not player._vm_muzzle_light.visible,
+		"Both muzzle lights switch off after the same short flash")
 
 
 func _test_inspection_rotation(player: PlayerController) -> void:
