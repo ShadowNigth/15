@@ -238,6 +238,17 @@ func _test_viewmodel_studio(player: PlayerController) -> void:
 	_expect(key != null and fill != null and softbox != null \
 		and key.light_cull_mask == 4 and fill.light_cull_mask == 4 and softbox.light_cull_mask == 4,
 		"Studio key, fill and softbox illuminate only the first-person render layer")
+	var studio_environment := player._vm_viewport.get_node_or_null("ViewModelStudioEnvironment") as WorldEnvironment
+	var chrome_ok := false
+	if studio_environment != null and studio_environment.environment != null:
+		var environment := studio_environment.environment
+		var sky := environment.sky
+		var panorama := sky.sky_material as PanoramaSkyMaterial if sky != null else null
+		chrome_ok = environment.reflected_light_source == Environment.REFLECTION_SOURCE_SKY \
+			and sky != null and panorama != null and panorama.panorama != null \
+			and panorama.panorama.get_size() == Vector2(512, 256) \
+			and player._vm_viewport.transparent_bg
+	_expect(chrome_ok, "Chrome uses a filtered studio radiance sky without drawing a background")
 	var hd_ok := false
 	if player._vm_model_root != null:
 		for node in player._vm_model_root.find_children("*", "MeshInstance3D", true, false):

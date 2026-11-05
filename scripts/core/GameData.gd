@@ -320,16 +320,18 @@ func get_styled_model_material(orig: Material, mode: String) -> Material:
 		dup.specular_mode = BaseMaterial3D.SPECULAR_SCHLICK_GGX
 	if mode == "vm":
 		dup.cull_mode = BaseMaterial3D.CULL_BACK
-		dup.roughness = 0.30
-		dup.metallic = 0.42
-		dup.metallic_specular = 0.78
-		dup.albedo_color = Color(original.r * 1.42, original.g * 1.42, original.b * 1.42, original.a)
+		# Polished first-person chrome: the isolated studio sky supplies real
+		# reflected softboxes while albedo/normal/roughness textures stay intact.
+		dup.roughness = 0.12
+		dup.metallic = 0.94
+		dup.metallic_specular = 1.0
+		dup.albedo_color = Color(original.r * 1.18, original.g * 1.18, original.b * 1.18, original.a)
 	elif mode == "vm_flip":
 		dup.cull_mode = BaseMaterial3D.CULL_FRONT
-		dup.roughness = 0.30
-		dup.metallic = 0.42
-		dup.metallic_specular = 0.78
-		dup.albedo_color = Color(original.r * 1.42, original.g * 1.42, original.b * 1.42, original.a)
+		dup.roughness = 0.12
+		dup.metallic = 0.94
+		dup.metallic_specular = 1.0
+		dup.albedo_color = Color(original.r * 1.18, original.g * 1.18, original.b * 1.18, original.a)
 	elif mode == "w_held":
 		dup.cull_mode = BaseMaterial3D.CULL_BACK
 		dup.roughness = 0.38

@@ -124,6 +124,19 @@ func _ready() -> void:
 	vm_environment.ambient_light_color = Color(0.92, 0.90, 0.86)
 	vm_environment.ambient_light_energy = 1.45
 	vm_environment.tonemap_mode = Environment.TONE_MAPPER_LINEAR
+	# Chrome needs reflected shapes, not just brighter direct-light highlights.
+	# This studio panorama supplies white softboxes and dark contrast bands to
+	# the isolated viewmodel world. The viewport background remains transparent.
+	var chrome_sky := Sky.new()
+	chrome_sky.resource_name = "ViewModelChromeSky"
+	chrome_sky.radiance_size = Sky.RADIANCE_SIZE_256
+	var chrome_panorama := PanoramaSkyMaterial.new()
+	chrome_panorama.resource_name = "ViewModelChromeStudio"
+	chrome_panorama.panorama = _create_chrome_studio_panorama()
+	chrome_panorama.energy_multiplier = 1.25
+	chrome_sky.sky_material = chrome_panorama
+	vm_environment.sky = chrome_sky
+	vm_environment.reflected_light_source = Environment.REFLECTION_SOURCE_SKY
 	var vm_world_environment := WorldEnvironment.new()
 	vm_world_environment.name = "ViewModelStudioEnvironment"
 	vm_world_environment.environment = vm_environment
@@ -223,6 +236,39 @@ func _ready() -> void:
 	weapon_ctrl.fired_shot.connect(_on_fired_shot)
 	weapon_ctrl.zoom_changed.connect(_on_zoom_changed)
 	damaged_from.connect(_on_player_damaged_from)
+
+
+func _create_chrome_studio_panorama() -> ImageTexture:
+	# A small equi rectangular lighting studio: broad neutral ambience, four
+	# vertical softboxes and a darker floor. It is generated once per player,
+	# needs no HDR download, and Godot filters its radiance for rough surfaces.
+	var width := 512
+	var height := 256
+	var image := Image.create(width, height, false, Image.FORMAT_RGB8)
+	var panels := [
+		Vector3(0.10, 0.040, 0.96),
+		Vector3(0.36, 0.075, 1.00),
+		Vector3(0.64, 0.050, 0.92),
+		Vector3(0.88, 0.030, 0.82),
+	]
+	for y in range(height):
+		var v := (float(y) + 0.5) / float(height)
+		var horizon := 1.0 - absf(v - 0.5) * 2.0
+		var base := Color(0.025, 0.032, 0.045).lerp(Color(0.30, 0.33, 0.38), horizon)
+		if v > 0.52:
+			base = base.lerp(Color(0.018, 0.022, 0.030), smoothstep(0.52, 0.94, v))
+		var vertical_mask := smoothstep(0.08, 0.17, v) * (1.0 - smoothstep(0.72, 0.84, v))
+		for x in range(width):
+			var u := (float(x) + 0.5) / float(width)
+			var color := base
+			for panel in panels:
+				var distance_u := absf(u - panel.x)
+				distance_u = minf(distance_u, 1.0 - distance_u)
+				var horizontal_mask := 1.0 - smoothstep(panel.y, panel.y + 0.025, distance_u)
+				var reflection := horizontal_mask * vertical_mask * float(panel.z)
+				color = color.lerp(Color(0.94, 0.97, 1.0), reflection)
+			image.set_pixel(x, y, color)
+	return ImageTexture.create_from_image(image)
 
 
 func spawn_for_round(pos: Vector3, yaw_rad: float, reset_weapons: bool) -> void:
