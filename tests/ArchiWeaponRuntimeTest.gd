@@ -403,6 +403,8 @@ func _test_weapon_skins() -> void:
 	var previous: Dictionary = GameData.selected_weapon_skins.duplicate(true)
 	GameData.selected_weapon_skins.clear()
 	var total_finishes := 0
+	var reprojected_finishes := 0
+	var native_finishes := 0
 	var material_owners: Dictionary = {}
 	var official_identities: Dictionary = {}
 	var identity: Dictionary = GameData.weapon_skins.get("finish_identity", {})
@@ -418,6 +420,11 @@ func _test_weapon_skins() -> void:
 		for raw_option in options:
 			var option := raw_option as Dictionary
 			total_finishes += 1
+			var uv_layout := String(option.get("uv_layout", ""))
+			if uv_layout == "legacy_to_current_hd":
+				reprojected_finishes += 1
+			elif uv_layout == "native_unmodified":
+				native_finishes += 1
 			var paint_kit := String(option.get("paint_kit", ""))
 			var identity_key := wid + ":" + paint_kit
 			_expect(paint_kit.contains("_") and not official_identities.has(identity_key),
@@ -486,6 +493,13 @@ func _test_weapon_skins() -> void:
 				"%s/%s restores the exact original HD albedo through the cache" % [wid, material_name])
 		instance.free()
 	_expect(total_finishes == 120, "All 120 authentic weapon finishes are cataloged")
+	_expect(reprojected_finishes == 90 and native_finishes == 30 \
+		and reprojected_finishes + native_finishes == total_finishes,
+		"Ninety finishes use current-HD surface correspondence and thirty retain their native atlas")
+	var adaptation: Dictionary = GameData.weapon_skins.get("uv_adaptation", {})
+	_expect(String(adaptation.get("geometry_commit", "")) == "fd1082b388c0274132181ab2621520819a48a12c" \
+		and FileAccess.file_exists(String(adaptation.get("report", ""))),
+		"Current-HD skin placement is pinned to its geometry reference and per-part report")
 
 	var awp := GameData.get_model_scene("weapons/w_awp").instantiate() as Node3D
 	_world.add_child(awp)
@@ -778,9 +792,11 @@ func _test_world_calibration_and_molotov() -> void:
 					and float(glass.get_shader_parameter("refraction_strength")) >= 0.012 \
 					and tint.y >= tint.x and tint.y >= tint.z
 				if original.resource_name == "weapon_molotov":
-					outer_glass_ok = valid and glass.render_priority == 2
+					outer_glass_ok = valid and glass.render_priority == 2 \
+						and is_equal_approx(float(glass.get_shader_parameter("glass_opacity")), 0.48)
 				else:
-					intermediate_glass_ok = valid and glass.render_priority == 1
+					intermediate_glass_ok = valid and glass.render_priority == 1 \
+						and is_equal_approx(float(glass.get_shader_parameter("glass_opacity")), 0.36)
 			elif original.resource_name == "molotov_inside":
 				var liquid := GameData.get_styled_model_material(original, "vm") as ShaderMaterial
 				liquid_ok = liquid != null and liquid.shader == GameData.MOLOTOV_LIQUID_SHADER \
@@ -791,7 +807,7 @@ func _test_world_calibration_and_molotov() -> void:
 				var finish := GameData.get_styled_model_material(original, "vm") as BaseMaterial3D
 				weapon_finish_ok = finish != null and finish.roughness <= 0.31 and finish.metallic >= 0.41 \
 					and finish.metallic_specular >= 0.77
-	_expect(outer_glass_ok and intermediate_glass_ok, "Both Molotov glass layers refract the scene and preserve printed detail")
+	_expect(outer_glass_ok and intermediate_glass_ok, "Slightly more opaque Molotov glass layers refract the scene and preserve printed detail")
 	_expect(liquid_ok, "Molotov liquid is animated, refractive and drawn behind the glass")
 	_expect(GameData.MOLOTOV_GLASS_SHADER.code.contains("hint_screen_texture") \
 		and GameData.MOLOTOV_GLASS_SHADER.code.contains("SCREEN_UV") \

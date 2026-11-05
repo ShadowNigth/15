@@ -1,18 +1,21 @@
 #!/usr/bin/env python3
-"""Install the curated authentic CS weapon-finish UV maps.
+"""Install authentic CS finishes on the UV atlases used by the installed models.
 
-    python -m tools.source.build_weapon_skins /tmp/cs16-skin-inventory /home/user/15
-    python -m tools.source.build_weapon_skins --check /tmp/cs16-skin-inventory /home/user/15
+    python -m tools.source.build_weapon_skins /tmp/cs16-skin-inventory /tmp/sc-csgo /home/user/15
+    python -m tools.source.build_weapon_skins --check /tmp/cs16-skin-inventory /tmp/sc-csgo /home/user/15
 
-Source: ellingtoncody81-ctrl/cs16-skin-inventory, cstrike/CSGO Texture Pack.
+Artwork: ellingtoncody81-ctrl/cs16-skin-inventory, cstrike/CSGO Texture Pack.
 The pack credits Valve and the CS:GO Ports/BDS porters. Its MIT license covers
 only the repository's own source code, not these game assets; retain the source
 and attribution in data/weapon_skins.json and tools/source/README.md.
 
 Only six identifiable, authentic finishes per supported weapon are curated.
 Custom recolours, cross-weapon artwork and numerically named files that cannot
-be identified reliably are deliberately excluded. PNG conversion is lossless:
-geometry, UVs, normals, animations and the original HD default are not rebuilt.
+be identified reliably are deliberately excluded. Ninety finishes are sampled
+through offline legacy-to-current surface correspondence; the other thirty
+already use the native atlas and retain their original PNG bytes. Geometry,
+runtime UVs, normals, animations and Original HD defaults are never rebuilt.
+This is a geometric adaptation of baked artwork, not Valve's paint compositor.
 """
 import hashlib
 import io
@@ -23,11 +26,15 @@ from pathlib import Path
 
 from PIL import Image
 
+from . import weapon_skin_reprojection as reprojection
+
 ROOT = Path(__file__).resolve().parents[2]
 SOURCE_COMMIT = "1cabb2dea3d2bda05cac1d6977abf2c9cc65d0de"
+MESH_SOURCE_COMMIT = "fd1082b388c0274132181ab2621520819a48a12c"
 PACK_REL = Path("cstrike/CSGO Texture Pack")
 OUT_REL = Path("assets/textures/weapon_skins")
 CATALOG_REL = Path("data/weapon_skins.json")
+UV_REPORT_REL = Path("data/weapon_skin_uv_report.json")
 
 # weapon id, display name, Source material names, pack folder, six finishes.
 WEAPONS = [
@@ -385,20 +392,51 @@ def _import_sidecar(relative):
     return """[remap]\n\nimporter=\"texture\"\ntype=\"CompressedTexture2D\"\nuid=\"%s\"\npath=\"%s\"\nmetadata={\n\"vram_texture\": false\n}\n\n[deps]\n\nsource_file=\"%s\"\ndest_files=[\"%s\"]\n\n[params]\n\ncompress/mode=0\ncompress/high_quality=false\ncompress/lossy_quality=0.7\ncompress/uastc_level=0\ncompress/rdo_quality_loss=0.0\ncompress/hdr_compression=1\ncompress/normal_map=0\ncompress/channel_pack=0\nmipmaps/generate=true\nmipmaps/limit=-1\nroughness/mode=0\nroughness/src_normal=\"\"\nprocess/channel_remap/red=0\nprocess/channel_remap/green=1\nprocess/channel_remap/blue=2\nprocess/channel_remap/alpha=3\nprocess/fix_alpha_border=true\nprocess/premult_alpha=false\nprocess/normal_map_invert_y=false\nprocess/hdr_as_srgb=false\nprocess/hdr_clamp_exposure=false\nprocess/size_limit=0\ndetect_3d/compress_to=0\n""" % (_resource_uid(relative), imported, source, imported)
 
 
-def _build_outputs(source):
+def _build_outputs(source, mesh_source):
     pack = source / PACK_REL
     if not pack.is_dir():
         raise AssertionError("Missing CSGO Texture Pack: " + str(pack))
     commit = _source_commit(source)
     if commit != SOURCE_COMMIT:
-        raise AssertionError("Reviewed source commit is %s, found %s" % (SOURCE_COMMIT, commit))
+        raise AssertionError("Reviewed artwork commit is %s, found %s" % (SOURCE_COMMIT, commit))
+    mesh_commit = _source_commit(mesh_source)
+    if mesh_commit != MESH_SOURCE_COMMIT:
+        raise AssertionError("Reviewed mesh commit is %s, found %s" % (MESH_SOURCE_COMMIT, mesh_commit))
+    archi_materials = json.loads((ROOT / "data/archi_materials.json").read_text("utf-8"))["materials"]
     outputs = {}
     catalog_weapons = {}
+    uv_report = {
+        "algorithm": reprojection.ALGORITHM,
+        "atlas_size": 512,
+        "geometry_repository": "https://github.com/zh667/ScCsgoKnives",
+        "geometry_commit": MESH_SOURCE_COMMIT,
+        "method": "Nearest legacy surface point and barycentric UV interpolation; matched bones are hard boundaries, global search is used only for unmatched parts, with repeat-aware island-gutter padding.",
+        "limitations": "Geometric adaptation of already-baked artwork, not Valve's compositor or an official HD paint.",
+        "native_unmodified": [item[0] for item in WEAPONS if item[0] not in reprojection.ASSETS],
+        "weapons": {},
+    }
     for wid, display, materials, folder, finishes in WEAPONS:
         if len(finishes) != 6 or len({item[0] for item in finishes}) != 6:
             raise AssertionError("Each weapon must have six unique finishes: " + wid)
         if set(PAINT_KITS.get(wid, {})) != {item[0] for item in finishes}:
             raise AssertionError("Official paint-kit identities do not match curated finishes: " + wid)
+        adapted = wid in reprojection.ASSETS
+        mapping = preserve = default = None
+        if adapted:
+            asset = reprojection.ASSETS[wid]
+            mapping = reprojection.correspondence(mesh_source, asset)
+            preserve, hardware = reprojection.hardware_mask(
+                ROOT / "assets/models/weapons" / ("v_" + wid + ".glb"), materials)
+            default_path = archi_materials[materials[0]]["color"].removeprefix("res://")
+            with Image.open(ROOT / default_path) as image:
+                default = image.convert("RGB")
+            uv_report["weapons"][wid] = {
+                "asset": asset,
+                "layout": "legacy_to_current_hd",
+                "mesh_sha256": mapping["mesh_hashes"],
+                "original_hardware_preserved": hardware,
+                "parts": mapping["report"],
+            }
         options = []
         for skin_id, finish, filename in finishes:
             source_path = pack / folder / filename
@@ -408,11 +446,11 @@ def _build_outputs(source):
             with Image.open(io.BytesIO(source_bytes)) as image:
                 if image.size != (512, 512):
                     raise AssertionError("Unexpected UV-map dimensions: " + str(source_path))
-                # Preserve the source's 8-bit palette losslessly. Besides being
-                # faithful to the ported UV map, this keeps 120 finishes compact.
                 converted = image.copy()
-                buffer = io.BytesIO()
-                converted.save(buffer, "PNG", compress_level=6)
+            if adapted:
+                converted = reprojection.reproject(converted, default, mapping, preserve)
+            buffer = io.BytesIO()
+            converted.save(buffer, "PNG", compress_level=6)
             relative = OUT_REL / wid / (skin_id + ".png")
             outputs[relative] = buffer.getvalue()
             outputs[Path(relative.as_posix() + ".import")] = _import_sidecar(relative).encode("utf-8")
@@ -424,6 +462,7 @@ def _build_outputs(source):
                 "texture": "res://" + relative.as_posix(),
                 "source": (PACK_REL / folder / filename).as_posix(),
                 "source_sha256": hashlib.sha256(source_bytes).hexdigest(),
+                "uv_layout": "legacy_to_current_hd" if adapted else "native_unmodified",
             })
         catalog_weapons[wid] = {
             "display_name": display,
@@ -446,20 +485,31 @@ def _build_outputs(source):
             "upstream": "Valve; CS:GO Ports studio; BDS 1424 CSGO Texture Pack (GameBanana mod 228944)",
             "asset_terms": "Game assets are not covered by the source repository's MIT code license; original Valve/porter terms and attribution apply.",
         },
+        "uv_adaptation": {
+            "geometry_repository": "https://github.com/zh667/ScCsgoKnives",
+            "geometry_commit": MESH_SOURCE_COMMIT,
+            "algorithm": reprojection.ALGORITHM,
+            "reprojected_finishes": 90,
+            "native_unmodified_finishes": 30,
+            "report": "res://data/weapon_skin_uv_report.json",
+            "limitations": "Offline geometric transfer of authentic baked artwork; not Valve's compositor or an official HD paint.",
+        },
         "weapons": catalog_weapons,
     }
     outputs[CATALOG_REL] = (json.dumps(catalog, indent=2, ensure_ascii=False) + "\n").encode("utf-8")
+    outputs[UV_REPORT_REL] = (json.dumps(uv_report, indent=2, ensure_ascii=False) + "\n").encode("utf-8")
     return outputs
 
 
 def main():
     check_only = "--check" in sys.argv[1:]
     args = [arg for arg in sys.argv[1:] if arg != "--check"]
-    if len(args) not in (1, 2):
+    if len(args) not in (2, 3):
         raise SystemExit(__doc__)
     source = Path(args[0]).resolve()
-    project = Path(args[1]).resolve() if len(args) == 2 else ROOT
-    outputs = _build_outputs(source)
+    mesh_source = Path(args[1]).resolve()
+    project = Path(args[2]).resolve() if len(args) == 3 else ROOT
+    outputs = _build_outputs(source, mesh_source)
     changed = 0
     for relative, data in sorted(outputs.items(), key=lambda item: item[0].as_posix()):
         destination = project / relative
@@ -471,7 +521,7 @@ def main():
             destination.write_bytes(data)
             changed += 1
     finish_count = sum(len(item[4]) for item in WEAPONS)
-    print("%s: %d authentic finishes across %d weapon families, %d files; %d changed" %
+    print("%s: %d authentic finishes across %d weapon families (90 current-HD adaptations, 30 native), %d files; %d changed" %
           ("CHECK PASS" if check_only else "BUILD", finish_count, len(WEAPONS), len(outputs), changed))
 
 

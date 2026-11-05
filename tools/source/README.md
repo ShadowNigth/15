@@ -135,25 +135,44 @@ localization tokens: for example, `cu_mp9_narcis` is the released **Airlock**,
 so the separately supplied Narcis texture is not sold as a second game finish.
 
 ```bash
-git clone --depth 1 --filter=blob:none --no-checkout \
+git clone --filter=blob:none --no-checkout \
     https://github.com/ellingtoncody81-ctrl/cs16-skin-inventory.git /tmp/cs16-skin-inventory
 git -C /tmp/cs16-skin-inventory sparse-checkout init --no-cone
 git -C /tmp/cs16-skin-inventory sparse-checkout set '/cstrike/CSGO Texture Pack' /docs /LICENSE /README.md
-git -C /tmp/cs16-skin-inventory checkout
+git -C /tmp/cs16-skin-inventory checkout 1cabb2dea3d2bda05cac1d6977abf2c9cc65d0de
+
+git clone --filter=blob:none --no-checkout \
+    https://github.com/zh667/ScCsgoKnives.git /tmp/sc-csgo
+git -C /tmp/sc-csgo sparse-checkout init --no-cone
+git -C /tmp/sc-csgo sparse-checkout set '/src/ScCsgoTactical/Assets/Models/ScCsgoTactical/Weapons'
+git -C /tmp/sc-csgo checkout fd1082b388c0274132181ab2621520819a48a12c
+
+python -m pip install numpy Pillow scipy trimesh rtree
 PYTHONPATH=/tmp:. python -m tools.source.build_weapon_skins \
-    /tmp/cs16-skin-inventory /home/user/15
+    /tmp/cs16-skin-inventory /tmp/sc-csgo /home/user/15
 PYTHONPATH=/tmp:. python -m tools.source.build_weapon_skins --check \
-    /tmp/cs16-skin-inventory /home/user/15
+    /tmp/cs16-skin-inventory /tmp/sc-csgo /home/user/15
 ```
 
-The curated builder losslessly converts the identified 512px indexed BMP maps to
-palette PNGs and records source paths/SHA-256 hashes plus official paint-kit IDs.
-It excludes recolours,
-cross-weapon art and numeric files whose authentic finish names cannot be
-established. `GameData` swaps only mapped weapon albedos, including the matching
-AUG/P90 magazine surfaces; scope lenses, original arms/gloves, normals, roughness,
-animations, mechanics and audio stay unchanged. Selections apply consistently to
-viewmodels, third-person weapons and drops, with the accepted matte drop finish.
+The 15 families with distinct legacy/current unwraps use offline surface
+correspondence from the pinned `ScCsgoKnives` NWM1 pairs: nearest legacy surface,
+barycentric UV interpolation, a hard same-bone boundary when an equivalent bone
+exists, repeat-aware sampling and island-gutter padding. This adapts **90 baked
+finishes** to the current HD atlas; it is not Valve's compositor or an official
+HD repaint. The other five families (Elite, G3SG1, MP7, MP9 and P250) have no
+separate legacy body and their **30 PNGs remain byte-identical**. Current-reference
+UVs were compared with the installed Archi GLBs before integration. Nova's shell
+and weapon bullet/casing islands retain Original HD artwork instead of borrowing
+another material's paint. Per-part distances and mesh hashes are recorded in
+`data/weapon_skin_uv_report.json`.
+
+The builder records original source paths/SHA-256 hashes, official paint-kit IDs
+and each finish's UV layout. It excludes recolours, cross-weapon art and numeric
+files whose authentic finish names cannot be established. `GameData` swaps only
+mapped weapon albedos, including the matching AUG/P90 magazine surfaces; scope
+lenses, original arms/gloves, normals, roughness, animations, mechanics and audio
+stay unchanged. Selections apply consistently to viewmodels, third-person
+weapons and drops, with the accepted matte drop finish.
 
 #### CS2-MultiRig review
 

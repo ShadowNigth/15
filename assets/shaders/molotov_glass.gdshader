@@ -8,7 +8,7 @@ uniform sampler2D bottle_texture : source_color, filter_linear_mipmap, repeat_di
 uniform sampler2D screen_texture : hint_screen_texture, repeat_disable, filter_linear_mipmap;
 uniform vec4 bottle_tint : source_color = vec4(1.0);
 uniform vec3 glass_tint : source_color = vec3(0.82, 1.04, 0.88);
-uniform float glass_opacity = 0.38;
+uniform float glass_opacity = 0.48;
 uniform float refraction_strength = 0.018;
 uniform float brightness = 1.12;
 

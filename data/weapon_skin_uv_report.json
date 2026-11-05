@@ -1,0 +1,1260 @@
+{
+  "algorithm": "nwm1-nearest-surface-v5",
+  "atlas_size": 512,
+  "geometry_repository": "https://github.com/zh667/ScCsgoKnives",
+  "geometry_commit": "fd1082b388c0274132181ab2621520819a48a12c",
+  "method": "Nearest legacy surface point and barycentric UV interpolation; matched bones are hard boundaries, global search is used only for unmatched parts, with repeat-aware island-gutter padding.",
+  "limitations": "Geometric adaptation of already-baked artwork, not Valve's compositor or an official HD paint.",
+  "native_unmodified": [
+    "elite",
+    "g3sg1",
+    "mp7",
+    "tmp",
+    "p228"
+  ],
+  "weapons": {
+    "ak47": {
+      "asset": "ak47",
+      "layout": "legacy_to_current_hd",
+      "mesh_sha256": {
+        "current": "79580ab8a6fbf792a44ec5b5f99c3b54010bb5f776495d5ed4b6aed37142c7fe",
+        "legacy": "1672831d2238e5052aa6093e9d2402e521d93cd7338e4beccbed61ce5dd53770"
+      },
+      "original_hardware_preserved": [
+        "bullet01",
+        "bullet02",
+        "bullet03",
+        "bullet04",
+        "bullet05",
+        "bullet06",
+        "bullet07",
+        "bullet08",
+        "bullet09",
+        "bullet10",
+        "bullet11",
+        "bullet12"
+      ],
+      "parts": {
+        "bolt": {
+          "distance_quantiles": [
+            2.0749503164552152e-06,
+            0.04763990454375744,
+            0.09282791092991831,
+            0.1492559358477592,
+            0.15621329843997955
+          ],
+          "global_replacements": 0,
+          "mode": "same-bone",
+          "samples": 8780
+        },
+        "clip": {
+          "distance_quantiles": [
+            2.9277228463797655e-07,
+            0.0027231236454099417,
+            0.0042921556159853935,
+            0.0077032477594912285,
+            0.00943554937839508
+          ],
+          "global_replacements": 0,
+          "mode": "same-bone",
+          "samples": 21561
+        },
+        "trigger": {
+          "distance_quantiles": [
+            1.4505582839774434e-05,
+            0.0029402660438790917,
+            0.01231662416830659,
+            0.016322189942002296,
+            0.016523607075214386
+          ],
+          "global_replacements": 0,
+          "mode": "same-bone",
+          "samples": 422
+        },
+        "weapon_offset": {
+          "distance_quantiles": [
+            7.98476519278668e-13,
+            0.0016107007395476103,
+            0.004931255104020241,
+            0.011721226768568177,
+            0.018635284155607224
+          ],
+          "global_replacements": 0,
+          "mode": "same-bone",
+          "samples": 154910
+        }
+      }
+    },
+    "aug": {
+      "asset": "aug",
+      "layout": "legacy_to_current_hd",
+      "mesh_sha256": {
+        "current": "3b56924e974b3a89987cc348997c108c91a0a16df51d939e3f6ba333c952dac3",
+        "legacy": "f5204a78cc877d1034ee4b1211b05052dc2dc8a2456380d33736ed4fef492249"
+      },
+      "original_hardware_preserved": [
+        "bullet01",
+        "bullet02",
+        "bullet03",
+        "bullet04",
+        "bullet05",
+        "bullet06",
+        "bullet07",
+        "bullet08",
+        "bullet09",
+        "bullet10",
+        "bullet11",
+        "bullet12",
+        "bullet13",
+        "bullet14",
+        "bullet15",
+        "bullet16",
+        "bullet17",
+        "bullet18",
+        "bullet19",
+        "bullet20",
+        "bullet21",
+        "bullet22",
+        "bullet23",
+        "bullet24",
+        "bullet25",
+        "bullet26",
+        "bullet27",
+        "bullet28",
+        "bullet29",
+        "bullet30"
+      ],
+      "parts": {
+        "bolt": {
+          "distance_quantiles": [
+            9.030408136823098e-07,
+            0.0025390463415533304,
+            0.005658156704157591,
+            0.006823969758115706,
+            0.007659228518605232
+          ],
+          "global_replacements": 0,
+          "mode": "same-bone",
+          "samples": 1688
+        },
+        "clip": {
+          "distance_quantiles": [
+            1.7204988012053946e-07,
+            0.0026931705651804805,
+            0.011412788648158312,
+            0.01622772542759776,
+            0.01991814374923706
+          ],
+          "global_replacements": 0,
+          "mode": "same-bone",
+          "samples": 32776
+        },
+        "trigger": {
+          "distance_quantiles": [
+            0.00023551816411782056,
+            0.011461864225566387,
+            0.04232833757996559,
+            0.046214734911918645,
+            0.04660900682210922
+          ],
+          "global_replacements": 0,
+          "mode": "same-bone",
+          "samples": 1905
+        },
+        "weapon_offset": {
+          "distance_quantiles": [
+            3.1074034012590346e-08,
+            0.002834975253790617,
+            0.00745842969045043,
+            0.013778263963758945,
+            0.026909956708550453
+          ],
+          "global_replacements": 0,
+          "mode": "same-bone",
+          "samples": 156473
+        }
+      }
+    },
+    "awp": {
+      "asset": "awp",
+      "layout": "legacy_to_current_hd",
+      "mesh_sha256": {
+        "current": "8dffd9ad46280eb0f382d063289ff7fce9959d7d0b77cc4b85e927f911ee21af",
+        "legacy": "b31d1d4878acdb985efa6225a4e72a491d30eda88a9a837a53d4dd04a8c76d79"
+      },
+      "original_hardware_preserved": [
+        "bullet01",
+        "bullet02",
+        "bullet03",
+        "bullet04"
+      ],
+      "parts": {
+        "bolt_action": {
+          "distance_quantiles": [
+            1.6183691968763014e-06,
+            0.0029269338119775057,
+            0.007421665824949753,
+            0.012901223450899123,
+            0.014121594838798046
+          ],
+          "global_replacements": 0,
+          "mode": "same-bone",
+          "samples": 5453
+        },
+        "clip": {
+          "distance_quantiles": [
+            5.6674949178159295e-08,
+            0.001994454418309033,
+            0.00803104247897863,
+            0.0126121989171952,
+            0.013939726166427135
+          ],
+          "global_replacements": 0,
+          "mode": "same-bone",
+          "samples": 11312
+        },
+        "rail": {
+          "distance_quantiles": [
+            5.088256216367881e-07,
+            0.002102713333442807,
+            0.005126711446791887,
+            0.007072318298742174,
+            0.007182807195931673
+          ],
+          "global_replacements": 0,
+          "mode": "same-bone",
+          "samples": 2531
+        },
+        "trigger": {
+          "distance_quantiles": [
+            2.0540588593576103e-05,
+            0.0006651651638094336,
+            0.0020445895381271837,
+            0.002530180891044438,
+            0.0026795645244419575
+          ],
+          "global_replacements": 0,
+          "mode": "same-bone",
+          "samples": 364
+        },
+        "weapon_offset": {
+          "distance_quantiles": [
+            8.160002534784994e-11,
+            0.0022145998664200306,
+            0.0073458314407616855,
+            0.017582549396902326,
+            0.027811791747808456
+          ],
+          "global_replacements": 0,
+          "mode": "same-bone",
+          "samples": 170782
+        }
+      }
+    },
+    "deagle": {
+      "asset": "deagle",
+      "layout": "legacy_to_current_hd",
+      "mesh_sha256": {
+        "current": "0bde050127e9c1f6e730438af627b4798e60e5d6997e8d0f9161613ed49cc7c3",
+        "legacy": "a11e8ccb74788f5f7e0072734a61bd90e442b01ebcf27af262670820c2551d55"
+      },
+      "original_hardware_preserved": [
+        "bullet01",
+        "bullet02",
+        "bullet03",
+        "bullet04",
+        "bullet05",
+        "bullet06",
+        "bullet07"
+      ],
+      "parts": {
+        "clip": {
+          "distance_quantiles": [
+            1.2353805978193577e-08,
+            0.0027689768467098475,
+            0.013414381630718708,
+            0.022318482510745523,
+            0.02704080566763878
+          ],
+          "global_replacements": 0,
+          "mode": "same-bone",
+          "samples": 25748
+        },
+        "hammer": {
+          "distance_quantiles": [
+            2.347948247916065e-05,
+            0.0013431231491267681,
+            0.0072072713635861875,
+            0.007980414824560285,
+            0.008185135200619698
+          ],
+          "global_replacements": 0,
+          "mode": "same-bone",
+          "samples": 2162
+        },
+        "slide": {
+          "distance_quantiles": [
+            3.3704876667428607e-09,
+            0.001503841718658805,
+            0.005030923616141081,
+            0.011609269082546158,
+            0.017727429047226906
+          ],
+          "global_replacements": 0,
+          "mode": "same-bone",
+          "samples": 45367
+        },
+        "trigger": {
+          "distance_quantiles": [
+            1.0433828379063925e-07,
+            0.0012279498623684049,
+            0.011465210840106009,
+            0.016999681182205673,
+            0.017902927473187447
+          ],
+          "global_replacements": 0,
+          "mode": "same-bone",
+          "samples": 1443
+        },
+        "weapon_offset": {
+          "distance_quantiles": [
+            6.309036848506366e-08,
+            0.0024473113007843494,
+            0.005604830849915743,
+            0.009778128480538726,
+            0.013184472918510437
+          ],
+          "global_replacements": 0,
+          "mode": "same-bone",
+          "samples": 103240
+        }
+      }
+    },
+    "famas": {
+      "asset": "famas",
+      "layout": "legacy_to_current_hd",
+      "mesh_sha256": {
+        "current": "3c0d265793511f2cdb753a7fd0fd1234cb6ffb08cbe83f7ac8debf2c6cd336bd",
+        "legacy": "ad1f106420c11bdccd8055cbfbd873cc1965d2176f9539a47a102d51a8724b42"
+      },
+      "original_hardware_preserved": [
+        "bullet01",
+        "bullet02",
+        "bullet03",
+        "bullet04",
+        "bullet05",
+        "bullet06",
+        "bullet07",
+        "bullet08",
+        "bullet09"
+      ],
+      "parts": {
+        "bolt": {
+          "distance_quantiles": [
+            5.5563600653840695e-06,
+            0.20536137372255325,
+            0.29933885037899016,
+            0.33211003929376604,
+            0.3395146131515503
+          ],
+          "global_replacements": 0,
+          "mode": "same-bone",
+          "samples": 7558
+        },
+        "magazine": {
+          "distance_quantiles": [
+            3.592129758089868e-07,
+            0.0027416797820478678,
+            0.011744511313736439,
+            0.015716675631701947,
+            0.015820462256669998
+          ],
+          "global_replacements": 0,
+          "mode": "same-bone",
+          "samples": 18703
+        },
+        "trigger": {
+          "distance_quantiles": [
+            1.844261532824021e-05,
+            0.00147573824506253,
+            0.008911081403493882,
+            0.011274975314736379,
+            0.012088495306670666
+          ],
+          "global_replacements": 0,
+          "mode": "same-bone",
+          "samples": 397
+        },
+        "weapon_offset": {
+          "distance_quantiles": [
+            1.0222954038852095e-08,
+            0.002281010150909424,
+            0.00898423288017511,
+            0.0186751453951,
+            0.025566797703504562
+          ],
+          "global_replacements": 0,
+          "mode": "same-bone",
+          "samples": 151487
+        }
+      }
+    },
+    "fiveseven": {
+      "asset": "fiveseven",
+      "layout": "legacy_to_current_hd",
+      "mesh_sha256": {
+        "current": "e4ac7b3ab0cd0e59dda1986308997d6f5ec8568d3904a6f5f16fcd382f23f9f1",
+        "legacy": "199cdbaa110b764ca4c48cbe5179ff90d29236046dbba2e4657e60cf27bba425"
+      },
+      "original_hardware_preserved": [
+        "bullet01",
+        "bullet02",
+        "bullet03",
+        "bullet04",
+        "bullet05",
+        "bullet06",
+        "bullet07",
+        "bullet08",
+        "bullet09",
+        "bullet10",
+        "bullet11",
+        "bullet12"
+      ],
+      "parts": {
+        "magazine": {
+          "distance_quantiles": [
+            2.622772887761471e-09,
+            0.003927969839423895,
+            0.005882023926824331,
+            0.010877798870205879,
+            0.012579916045069695
+          ],
+          "global_replacements": 0,
+          "mode": "same-bone",
+          "samples": 46355
+        },
+        "slide": {
+          "distance_quantiles": [
+            9.99309968108264e-09,
+            0.0008892669866327196,
+            0.0044717308133840564,
+            0.008087169248610726,
+            0.010259938426315784
+          ],
+          "global_replacements": 0,
+          "mode": "same-bone",
+          "samples": 40092
+        },
+        "trigger": {
+          "distance_quantiles": [
+            3.736802227649605e-07,
+            0.0010569615988060832,
+            0.0033000384457409397,
+            0.007817156203091145,
+            0.008133096620440483
+          ],
+          "global_replacements": 0,
+          "mode": "same-bone",
+          "samples": 1719
+        },
+        "weapon_offset": {
+          "distance_quantiles": [
+            8.282300179018875e-09,
+            0.001398440101183951,
+            0.005569796962663532,
+            0.009474460696801537,
+            0.013361447490751743
+          ],
+          "global_replacements": 0,
+          "mode": "same-bone",
+          "samples": 90700
+        }
+      }
+    },
+    "galil": {
+      "asset": "galilar",
+      "layout": "legacy_to_current_hd",
+      "mesh_sha256": {
+        "current": "d8a7870be70d7f82c6bdaed262079061626c56baa31661cf230d9695575db321",
+        "legacy": "f55b2932ddcea647ab03d6193a9327f89db91e19f73bb962812878a5d02f4077"
+      },
+      "original_hardware_preserved": [
+        "bullet01",
+        "bullet02",
+        "bullet03",
+        "bullet04",
+        "bullet05",
+        "bullet06",
+        "bullet07",
+        "bullet08",
+        "bullet09",
+        "bullet10",
+        "bullet11",
+        "bullet12",
+        "bullet13",
+        "bullet14",
+        "bullet15",
+        "bullet16"
+      ],
+      "parts": {
+        "bolt": {
+          "distance_quantiles": [
+            1.3635005416290369e-05,
+            0.035195134580135345,
+            0.126271614432335,
+            0.1638785320520401,
+            0.16894635558128357
+          ],
+          "global_replacements": 0,
+          "mode": "same-bone",
+          "samples": 10694
+        },
+        "magazine": {
+          "distance_quantiles": [
+            2.4363751549572044e-07,
+            0.0008096485398709774,
+            0.007913061417639256,
+            0.015305894427001476,
+            0.01938300020992756
+          ],
+          "global_replacements": 0,
+          "mode": "same-bone",
+          "samples": 24201
+        },
+        "plate": {
+          "distance_quantiles": [
+            0.0013415500288829207,
+            0.003981268964707851,
+            0.005624037096276879,
+            0.007209167741239071,
+            0.00764364143833518
+          ],
+          "global_replacements": 0,
+          "mode": "same-bone",
+          "samples": 1754
+        },
+        "trigger": {
+          "distance_quantiles": [
+            1.646993769099936e-05,
+            0.0011173050734214485,
+            0.004445718741044405,
+            0.007680558068677783,
+            0.00770379975438118
+          ],
+          "global_replacements": 0,
+          "mode": "same-bone",
+          "samples": 558
+        },
+        "weapon_offset": {
+          "distance_quantiles": [
+            2.149170086340746e-08,
+            0.00168797024525702,
+            0.004992697294801474,
+            0.011721885027363897,
+            0.019203023985028267
+          ],
+          "global_replacements": 0,
+          "mode": "same-bone",
+          "samples": 126540
+        }
+      }
+    },
+    "glock18": {
+      "asset": "glock18",
+      "layout": "legacy_to_current_hd",
+      "mesh_sha256": {
+        "current": "6917d0f9f5b72bacb7398ea8872f0f8cced75de4096256c7ff21a03f58989410",
+        "legacy": "7d997ee21a2cc5cab98c7b9af813f10fac61f6badee02aeb47e35429f827d2e6"
+      },
+      "original_hardware_preserved": [
+        "bullet01",
+        "bullet02",
+        "bullet03",
+        "bullet04",
+        "bullet05",
+        "bullet06"
+      ],
+      "parts": {
+        "magazine": {
+          "distance_quantiles": [
+            1.0992502463835763e-09,
+            0.0008612001547589898,
+            0.0037774293683469295,
+            0.007514842012897133,
+            0.0098275663331151
+          ],
+          "global_replacements": 0,
+          "mode": "same-bone",
+          "samples": 40712
+        },
+        "slide": {
+          "distance_quantiles": [
+            6.59224781429657e-08,
+            0.0012421257561072707,
+            0.004747883509844542,
+            0.007733234325423837,
+            0.009966690093278885
+          ],
+          "global_replacements": 0,
+          "mode": "same-bone",
+          "samples": 51387
+        },
+        "trigger": {
+          "distance_quantiles": [
+            2.119428017977043e-06,
+            0.0016138742212206125,
+            0.004817149601876736,
+            0.008834901256486779,
+            0.009460886009037495
+          ],
+          "global_replacements": 0,
+          "mode": "same-bone",
+          "samples": 3792
+        },
+        "weapon_offset": {
+          "distance_quantiles": [
+            4.300960143588384e-10,
+            0.0010507325059734285,
+            0.004515199502930046,
+            0.010539044272154565,
+            0.013663242571055889
+          ],
+          "global_replacements": 0,
+          "mode": "same-bone",
+          "samples": 97798
+        }
+      }
+    },
+    "m249": {
+      "asset": "m249",
+      "layout": "legacy_to_current_hd",
+      "mesh_sha256": {
+        "current": "50731dcdcc5fe87c23c78e9c820cc4bb9e9ac6e25ff9340bf3746c07c27fdcbd",
+        "legacy": "aaf066017bef8feb871fa7b47922e33ad30a2470da8e3e50c645b56dc78e513b"
+      },
+      "original_hardware_preserved": [
+        "v_weapon_bullet01",
+        "v_weapon_bullet02",
+        "v_weapon_bullet03",
+        "v_weapon_bullet04",
+        "v_weapon_bullet05",
+        "v_weapon_bullet06",
+        "v_weapon_bullet07",
+        "v_weapon_bullet08",
+        "v_weapon_bullet09",
+        "v_weapon_bullet10",
+        "v_weapon_bullet11",
+        "v_weapon_bullet12",
+        "v_weapon_bullet13",
+        "v_weapon_bullet14",
+        "v_weapon_bullet15",
+        "v_weapon_bullet16",
+        "v_weapon_bullet_scaffold02",
+        "v_weapon_bullet_scaffold03",
+        "v_weapon_bullet_scaffold04",
+        "v_weapon_bullet_scaffold05",
+        "v_weapon_bullet_scaffold06",
+        "v_weapon_bullet_scaffold07",
+        "v_weapon_bullet_scaffold08",
+        "v_weapon_bullet_scaffold09",
+        "v_weapon_bullet_scaffold10",
+        "v_weapon_bullet_scaffold11",
+        "v_weapon_bullet_scaffold12",
+        "v_weapon_bullet_scaffold13",
+        "v_weapon_bullet_scaffold14",
+        "v_weapon_bullet_scaffold15",
+        "v_weapon_bullet_scaffold16"
+      ],
+      "parts": {
+        "ammobox": {
+          "distance_quantiles": [
+            1.9343559642948094e-07,
+            0.010039879940450191,
+            0.02680354379117489,
+            0.030163546465337275,
+            0.0308662261813879
+          ],
+          "global_replacements": 0,
+          "mode": "same-bone",
+          "samples": 23271
+        },
+        "chargehandle": {
+          "distance_quantiles": [
+            6.481976743089035e-05,
+            0.022579189389944077,
+            0.036652762442827225,
+            0.049886091798543926,
+            0.05764157697558403
+          ],
+          "global_replacements": 0,
+          "mode": "same-bone",
+          "samples": 2791
+        },
+        "tophinge": {
+          "distance_quantiles": [
+            1.7849683331405686e-07,
+            0.0029577063396573067,
+            0.009738951921463013,
+            0.016092524155974387,
+            0.022427810356020927
+          ],
+          "global_replacements": 0,
+          "mode": "same-bone",
+          "samples": 17062
+        },
+        "trigger": {
+          "distance_quantiles": [
+            0.00019445929501671344,
+            0.005123554961755872,
+            0.01036200076341629,
+            0.012402102909982204,
+            0.014116447418928146
+          ],
+          "global_replacements": 0,
+          "mode": "same-bone",
+          "samples": 612
+        },
+        "weapon_offset": {
+          "distance_quantiles": [
+            1.3425667688693466e-08,
+            0.002869874704629183,
+            0.01053135897964239,
+            0.018795235380530337,
+            0.030845191329717636
+          ],
+          "global_replacements": 0,
+          "mode": "same-bone",
+          "samples": 116753
+        }
+      }
+    },
+    "m4a1": {
+      "asset": "m4a1s",
+      "layout": "legacy_to_current_hd",
+      "mesh_sha256": {
+        "current": "43590ae56de352be5f4f342dc6f76cb00a323ee54dedc6e6e6667053c93ad425",
+        "legacy": "011cbab6a1c95918485acd9dd823347d53d83b3491a62c5adabbdfae77feb3b5"
+      },
+      "original_hardware_preserved": [
+        "bullet01",
+        "bullet02",
+        "bullet03",
+        "bullet04",
+        "bullet05",
+        "bullet06",
+        "bullet07",
+        "bullet08",
+        "bullet09"
+      ],
+      "parts": {
+        "bolt": {
+          "distance_quantiles": [
+            2.8287631721468642e-06,
+            0.0033472320064902306,
+            0.05371854081749916,
+            0.08201034605503082,
+            0.08545190840959549
+          ],
+          "global_replacements": 0,
+          "mode": "same-bone",
+          "samples": 4575
+        },
+        "clip": {
+          "distance_quantiles": [
+            2.626165667152236e-07,
+            0.0031114190351217985,
+            0.008183294348418713,
+            0.019342161417007443,
+            0.023110833019018173
+          ],
+          "global_replacements": 0,
+          "mode": "same-bone",
+          "samples": 25689
+        },
+        "silencer": {
+          "distance_quantiles": [
+            5.925444565946236e-05,
+            0.003837325260974467,
+            0.009410413354635242,
+            0.0206442814320326,
+            0.022941499948501587
+          ],
+          "global_replacements": 0,
+          "mode": "same-bone",
+          "samples": 12164
+        },
+        "trigger": {
+          "distance_quantiles": [
+            3.58386955667811e-06,
+            0.0010562503011897206,
+            0.006231733318418265,
+            0.012558791898190967,
+            0.013143296353518963
+          ],
+          "global_replacements": 0,
+          "mode": "same-bone",
+          "samples": 493
+        },
+        "weapon_offset": {
+          "distance_quantiles": [
+            6.415637443524247e-08,
+            0.0020757047459483147,
+            0.007736303005367521,
+            0.028650889210402757,
+            0.05318330228328705
+          ],
+          "global_replacements": 0,
+          "mode": "same-bone",
+          "samples": 134662
+        }
+      }
+    },
+    "mac10": {
+      "asset": "mac10",
+      "layout": "legacy_to_current_hd",
+      "mesh_sha256": {
+        "current": "9a4ec6c53ce3595c3276c99b3cf2e528f8a778429bc526034357a862770f5f17",
+        "legacy": "3d36f5048ed0f086bb7a0b5bb9b3948f7d72338aa3580a39be17d1e494995085"
+      },
+      "original_hardware_preserved": [
+        "bullet01",
+        "bullet02",
+        "bullet03",
+        "bullet04",
+        "bullet05",
+        "bullet06"
+      ],
+      "parts": {
+        "": {
+          "distance_quantiles": [
+            0.0010501464130356908,
+            0.009057609364390373,
+            0.012022619228810072,
+            0.012945365449413658,
+            0.013559182174503803
+          ],
+          "global_replacements": 0,
+          "mode": "global-unmatched-bone",
+          "samples": 7324
+        },
+        "bolt": {
+          "distance_quantiles": [
+            1.026123641167942e-06,
+            0.00924746971577406,
+            0.03623622171580793,
+            0.04730992894619703,
+            0.05572611838579178
+          ],
+          "global_replacements": 0,
+          "mode": "same-bone",
+          "samples": 12218
+        },
+        "clip": {
+          "distance_quantiles": [
+            3.0007205964466266e-07,
+            0.0027277045883238316,
+            0.00901047047227621,
+            0.020275330170989037,
+            0.021170126274228096
+          ],
+          "global_replacements": 0,
+          "mode": "same-bone",
+          "samples": 43209
+        },
+        "strap1": {
+          "distance_quantiles": [
+            0.00481242872774601,
+            0.00971804279834032,
+            0.012003347277641296,
+            0.014089783653616905,
+            0.014708992093801498
+          ],
+          "global_replacements": 0,
+          "mode": "same-bone",
+          "samples": 2341
+        },
+        "strap2": {
+          "distance_quantiles": [
+            0.0019346439512446523,
+            0.0074143242090940475,
+            0.010618522111326458,
+            0.012033733082935214,
+            0.013757656328380108
+          ],
+          "global_replacements": 0,
+          "mode": "same-bone",
+          "samples": 5292
+        },
+        "strap3": {
+          "distance_quantiles": [
+            0.006018045824021101,
+            0.01103504654020071,
+            0.015253409836441278,
+            0.01808923689648509,
+            0.019014395773410797
+          ],
+          "global_replacements": 0,
+          "mode": "same-bone",
+          "samples": 1642
+        },
+        "strap4": {
+          "distance_quantiles": [
+            0.0016839775489643216,
+            0.007943486329168081,
+            0.01092305975034833,
+            0.011888309037312864,
+            0.013560007326304913
+          ],
+          "global_replacements": 0,
+          "mode": "same-bone",
+          "samples": 3718
+        },
+        "strap5": {
+          "distance_quantiles": [
+            0.005200526677072048,
+            0.009494342841207981,
+            0.011677984334528447,
+            0.014013635590672494,
+            0.015573808923363686
+          ],
+          "global_replacements": 0,
+          "mode": "same-bone",
+          "samples": 1757
+        },
+        "strap6": {
+          "distance_quantiles": [
+            0.006996776442974806,
+            0.010061031207442284,
+            0.011678512953221799,
+            0.012182620465755462,
+            0.012453832663595676
+          ],
+          "global_replacements": 0,
+          "mode": "same-bone",
+          "samples": 975
+        },
+        "strap7_hd": {
+          "distance_quantiles": [
+            0.0024096444249153137,
+            0.01175567228347063,
+            0.013846228178590537,
+            0.014165941542014476,
+            0.014515120536088943
+          ],
+          "global_replacements": 0,
+          "mode": "global-unmatched-bone",
+          "samples": 1688
+        },
+        "trigger": {
+          "distance_quantiles": [
+            0.000261874491116032,
+            0.0071752434596419334,
+            0.011497736722230912,
+            0.013076136857271187,
+            0.013262586668133736
+          ],
+          "global_replacements": 0,
+          "mode": "same-bone",
+          "samples": 757
+        },
+        "weapon_offset": {
+          "distance_quantiles": [
+            2.0971496894617303e-07,
+            0.0029868476558476686,
+            0.007645397214218974,
+            0.017900010291486974,
+            0.022352635860443115
+          ],
+          "global_replacements": 0,
+          "mode": "same-bone",
+          "samples": 129436
+        }
+      }
+    },
+    "m3": {
+      "asset": "nova",
+      "layout": "legacy_to_current_hd",
+      "mesh_sha256": {
+        "current": "db0fb7ed61849be5c746ad40c21d6e90141d3f3f7e080979afe320f77b313945",
+        "legacy": "848f852750dab269f46cbb91cd2a8e1dc2487247e34013fd47b9e3541930d498"
+      },
+      "original_hardware_preserved": [
+        "v_weapon_nova_shell"
+      ],
+      "parts": {
+        "loader": {
+          "distance_quantiles": [
+            4.860144713347836e-07,
+            0.0005021130491513759,
+            0.0018843608791939924,
+            0.0076667633838951536,
+            0.00852322019636631
+          ],
+          "global_replacements": 0,
+          "mode": "global-unmatched-bone",
+          "samples": 3698
+        },
+        "pump": {
+          "distance_quantiles": [
+            1.146294579257301e-07,
+            0.0016023629577830434,
+            0.0036111585795879364,
+            0.008702246099710455,
+            0.012425219640135765
+          ],
+          "global_replacements": 0,
+          "mode": "same-bone",
+          "samples": 36091
+        },
+        "trigger": {
+          "distance_quantiles": [
+            1.0076186299556866e-05,
+            0.000894445285666734,
+            0.002305202838033438,
+            0.003479189765639603,
+            0.0039123669266700745
+          ],
+          "global_replacements": 0,
+          "mode": "same-bone",
+          "samples": 735
+        },
+        "weapon_offset": {
+          "distance_quantiles": [
+            3.522223934737667e-08,
+            0.0014244787744246423,
+            0.004487209161743522,
+            0.007069041300565007,
+            0.016281869262456894
+          ],
+          "global_replacements": 0,
+          "mode": "same-bone",
+          "samples": 145578
+        }
+      }
+    },
+    "p90": {
+      "asset": "p90",
+      "layout": "legacy_to_current_hd",
+      "mesh_sha256": {
+        "current": "95b74ef018c16cc34c03ce1521ce330f585eff9ca7dbe72c132c01acbbff7c4c",
+        "legacy": "68c941745a309da842b921a17ddf98f548e14bd317522f387f44f0beaf2b007f"
+      },
+      "original_hardware_preserved": [],
+      "parts": {
+        "chargehandle": {
+          "distance_quantiles": [
+            9.773753362196658e-09,
+            0.0010289831552654505,
+            0.01546878684312105,
+            0.031123063787817956,
+            0.032535750418901443
+          ],
+          "global_replacements": 0,
+          "mode": "same-bone",
+          "samples": 6509
+        },
+        "clip": {
+          "distance_quantiles": [
+            3.026548540674412e-07,
+            0.0016164672560989857,
+            0.004444494610652331,
+            0.009305890221148725,
+            0.011809172108769417
+          ],
+          "global_replacements": 0,
+          "mode": "same-bone",
+          "samples": 42674
+        },
+        "trigger": {
+          "distance_quantiles": [
+            2.976544692501193e-06,
+            0.0004301503940951079,
+            0.02227894086390734,
+            0.03160508867353199,
+            0.03372422233223915
+          ],
+          "global_replacements": 0,
+          "mode": "same-bone",
+          "samples": 1598
+        },
+        "weapon_offset": {
+          "distance_quantiles": [
+            1.8097191301080784e-08,
+            0.0015509920194745064,
+            0.006997955078259116,
+            0.019108041841536756,
+            0.03074019029736519
+          ],
+          "global_replacements": 0,
+          "mode": "same-bone",
+          "samples": 141502
+        }
+      }
+    },
+    "sg550": {
+      "asset": "scar20",
+      "layout": "legacy_to_current_hd",
+      "mesh_sha256": {
+        "current": "4375efa545cba253a166eb6263fc0ba5865e8925ead450f31d7c82e0426c2b09",
+        "legacy": "d143a43211a82f2545ebf881fc37c0a4b92b7c8c9522b1033d01ddced3b2419d"
+      },
+      "original_hardware_preserved": [
+        "bullet01",
+        "bullet02",
+        "bullet03",
+        "bullet04",
+        "bullet05",
+        "bullet06",
+        "bullet07",
+        "bullet08",
+        "bullet09",
+        "bullet10"
+      ],
+      "parts": {
+        "bolt": {
+          "distance_quantiles": [
+            1.8462584193912335e-05,
+            0.0694783441722393,
+            0.13430365025997162,
+            0.15392955914139747,
+            0.1591503620147705
+          ],
+          "global_replacements": 0,
+          "mode": "same-bone",
+          "samples": 5314
+        },
+        "clip": {
+          "distance_quantiles": [
+            2.0303448877712071e-07,
+            0.0010358855361118913,
+            0.0027698945254087458,
+            0.01116254705935719,
+            0.012229562737047672
+          ],
+          "global_replacements": 0,
+          "mode": "same-bone",
+          "samples": 12114
+        },
+        "trigger": {
+          "distance_quantiles": [
+            3.838379416265525e-05,
+            0.0017263630870729685,
+            0.00381789724342525,
+            0.004663141425698996,
+            0.004687971901148558
+          ],
+          "global_replacements": 0,
+          "mode": "same-bone",
+          "samples": 255
+        },
+        "weapon_offset": {
+          "distance_quantiles": [
+            5.385624035625369e-07,
+            0.002414137008599937,
+            0.008117404300719498,
+            0.016520091649144888,
+            0.02707446739077568
+          ],
+          "global_replacements": 0,
+          "mode": "same-bone",
+          "samples": 136834
+        }
+      }
+    },
+    "usp": {
+      "asset": "usp_silencer",
+      "layout": "legacy_to_current_hd",
+      "mesh_sha256": {
+        "current": "7a29fa35eb66c538310adb1bd63c993743d98eab5b09e90b0fc046b1fe1e16b4",
+        "legacy": "7a91396d5f3f181e693b70a95ba51d294de91d711cd1d5779c83dc486bbfbbdd"
+      },
+      "original_hardware_preserved": [
+        "bullet01",
+        "bullet02",
+        "bullet03",
+        "bullet04",
+        "bullet05",
+        "bullet06",
+        "bullet07",
+        "bullet08",
+        "bullet09",
+        "bullet10",
+        "bullet11"
+      ],
+      "parts": {
+        "clip": {
+          "distance_quantiles": [
+            1.4325736152898116e-08,
+            0.003384968265891075,
+            0.008925729617476464,
+            0.01773763973265886,
+            0.023534150794148445
+          ],
+          "global_replacements": 0,
+          "mode": "same-bone",
+          "samples": 37234
+        },
+        "hammer": {
+          "distance_quantiles": [
+            2.6838815756491385e-06,
+            0.0013753223465755582,
+            0.010232253279536963,
+            0.012899837950244549,
+            0.013009494170546532
+          ],
+          "global_replacements": 0,
+          "mode": "same-bone",
+          "samples": 2340
+        },
+        "silencer": {
+          "distance_quantiles": [
+            1.0938857712972094e-06,
+            0.0016289304476231337,
+            0.009810646623373031,
+            0.016352958977222443,
+            0.01685437001287937
+          ],
+          "global_replacements": 0,
+          "mode": "same-bone",
+          "samples": 41630
+        },
+        "slide": {
+          "distance_quantiles": [
+            1.1224348384075711e-07,
+            0.0014601520961150527,
+            0.0034970688866451383,
+            0.010499006761237988,
+            0.01596406102180481
+          ],
+          "global_replacements": 0,
+          "mode": "same-bone",
+          "samples": 31638
+        },
+        "trigger": {
+          "distance_quantiles": [
+            8.264672942459583e-06,
+            0.006594500038772821,
+            0.01636788211762906,
+            0.020999095775187018,
+            0.022348057478666306
+          ],
+          "global_replacements": 0,
+          "mode": "same-bone",
+          "samples": 1955
+        },
+        "weapon_offset": {
+          "distance_quantiles": [
+            9.271967194024455e-09,
+            0.0020573160145431757,
+            0.006039163051173093,
+            0.009994449820369438,
+            0.015237354673445225
+          ],
+          "global_replacements": 0,
+          "mode": "same-bone",
+          "samples": 73058
+        }
+      }
+    }
+  }
+}

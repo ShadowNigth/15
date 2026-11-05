@@ -16,6 +16,15 @@
     "upstream": "Valve; CS:GO Ports studio; BDS 1424 CSGO Texture Pack (GameBanana mod 228944)",
     "asset_terms": "Game assets are not covered by the source repository's MIT code license; original Valve/porter terms and attribution apply."
   },
+  "uv_adaptation": {
+    "geometry_repository": "https://github.com/zh667/ScCsgoKnives",
+    "geometry_commit": "fd1082b388c0274132181ab2621520819a48a12c",
+    "algorithm": "nwm1-nearest-surface-v5",
+    "reprojected_finishes": 90,
+    "native_unmodified_finishes": 30,
+    "report": "res://data/weapon_skin_uv_report.json",
+    "limitations": "Offline geometric transfer of authentic baked artwork; not Valve's compositor or an official HD paint."
+  },
   "weapons": {
     "ak47": {
       "display_name": "AK-47",
@@ -30,7 +39,8 @@
           "paint_kit": "cu_ak47_cobra",
           "texture": "res://assets/textures/weapon_skins/ak47/redline.png",
           "source": "cstrike/CSGO Texture Pack/AK-47/redline.bmp",
-          "source_sha256": "090fec28dde00ef2937cd75d3171167910643985c7a2a2337739dc564be4388a"
+          "source_sha256": "090fec28dde00ef2937cd75d3171167910643985c7a2a2337739dc564be4388a",
+          "uv_layout": "legacy_to_current_hd"
         },
         {
           "id": "asiimov",
@@ -39,7 +49,8 @@
           "paint_kit": "cu_ak47_asiimov",
           "texture": "res://assets/textures/weapon_skins/ak47/asiimov.png",
           "source": "cstrike/CSGO Texture Pack/AK-47/assimov.bmp",
-          "source_sha256": "65f5723def09b2cbd39f85c088a5e2a1e6207f8fb5f1591fa34cc810c26565b3"
+          "source_sha256": "65f5723def09b2cbd39f85c088a5e2a1e6207f8fb5f1591fa34cc810c26565b3",
+          "uv_layout": "legacy_to_current_hd"
         },
         {
           "id": "vulcan",
@@ -48,7 +59,8 @@
           "paint_kit": "cu_ak47_rubber",
           "texture": "res://assets/textures/weapon_skins/ak47/vulcan.png",
           "source": "cstrike/CSGO Texture Pack/AK-47/vulcan.bmp",
-          "source_sha256": "9a54b6f3761e0e13f9b6bd5b1dcffc1d0b54b783beff15b5043041c0a62cae81"
+          "source_sha256": "9a54b6f3761e0e13f9b6bd5b1dcffc1d0b54b783beff15b5043041c0a62cae81",
+          "uv_layout": "legacy_to_current_hd"
         },
         {
           "id": "bloodsport",
@@ -57,7 +69,8 @@
           "paint_kit": "gs_ak47_bloodsport",
           "texture": "res://assets/textures/weapon_skins/ak47/bloodsport.png",
           "source": "cstrike/CSGO Texture Pack/AK-47/bloodsport.bmp",
-          "source_sha256": "b3681c5d12aa07f92ae434bf8dc85c06cc005fee0fafefb8d134c1a49d0c2327"
+          "source_sha256": "b3681c5d12aa07f92ae434bf8dc85c06cc005fee0fafefb8d134c1a49d0c2327",
+          "uv_layout": "legacy_to_current_hd"
         },
         {
           "id": "fire_serpent",
@@ -66,7 +79,8 @@
           "paint_kit": "cu_fireserpent_ak47_bravo",
           "texture": "res://assets/textures/weapon_skins/ak47/fire_serpent.png",
           "source": "cstrike/CSGO Texture Pack/AK-47/fireserpent.bmp",
-          "source_sha256": "9337435cb77e5f4769af3ada79631e44ed341262fd9ead1d956ec740db84234e"
+          "source_sha256": "9337435cb77e5f4769af3ada79631e44ed341262fd9ead1d956ec740db84234e",
+          "uv_layout": "legacy_to_current_hd"
         },
         {
           "id": "case_hardened",
@@ -75,7 +89,8 @@
           "paint_kit": "aq_oiled",
           "texture": "res://assets/textures/weapon_skins/ak47/case_hardened.png",
           "source": "cstrike/CSGO Texture Pack/AK-47/casehardened.bmp",
-          "source_sha256": "0f4a1c448ec24741e792f6ab3c50ee180cfbaedcf3c7077e9e01e1acde2ee905"
+          "source_sha256": "0f4a1c448ec24741e792f6ab3c50ee180cfbaedcf3c7077e9e01e1acde2ee905",
+          "uv_layout": "legacy_to_current_hd"
         }
       ]
     },
@@ -93,7 +108,8 @@
           "paint_kit": "cu_anime_aug",
           "texture": "res://assets/textures/weapon_skins/aug/akihabara_accept.png",
           "source": "cstrike/CSGO Texture Pack/AUG/akihabara accept.bmp",
-          "source_sha256": "ba4117ca4c1b76c7db5107d48e6108ecdfe01f0553973d8f748331a1273e4a95"
+          "source_sha256": "ba4117ca4c1b76c7db5107d48e6108ecdfe01f0553973d8f748331a1273e4a95",
+          "uv_layout": "legacy_to_current_hd"
         },
         {
           "id": "chameleon",
@@ -102,7 +118,8 @@
           "paint_kit": "cu_aug_chameleonaire",
           "texture": "res://assets/textures/weapon_skins/aug/chameleon.png",
           "source": "cstrike/CSGO Texture Pack/AUG/chameleon.bmp",
-          "source_sha256": "c902661ca21d9c51f35b6d62859f5894d5934931da935ab818f895b2bc4b24b5"
+          "source_sha256": "c902661ca21d9c51f35b6d62859f5894d5934931da935ab818f895b2bc4b24b5",
+          "uv_layout": "legacy_to_current_hd"
         },
         {
           "id": "momentum",
@@ -111,7 +128,8 @@
           "paint_kit": "cu_aug_momentum",
           "texture": "res://assets/textures/weapon_skins/aug/momentum.png",
           "source": "cstrike/CSGO Texture Pack/AUG/momentum.bmp",
-          "source_sha256": "605ecccfe8226b9f619da07fddc7e992a89a4f07183a98be958fb27cb7e0cb20"
+          "source_sha256": "605ecccfe8226b9f619da07fddc7e992a89a4f07183a98be958fb27cb7e0cb20",
+          "uv_layout": "legacy_to_current_hd"
         },
         {
           "id": "ricochet",
@@ -120,7 +138,8 @@
           "paint_kit": "am_aug_jumble",
           "texture": "res://assets/textures/weapon_skins/aug/ricochet.png",
           "source": "cstrike/CSGO Texture Pack/AUG/ricochet.bmp",
-          "source_sha256": "ffbdbdc07f57a6729c0dd4cfa70a74516585550f1365e7f4129eab6c706b4faf"
+          "source_sha256": "ffbdbdc07f57a6729c0dd4cfa70a74516585550f1365e7f4129eab6c706b4faf",
+          "uv_layout": "legacy_to_current_hd"
         },
         {
           "id": "syd_mead",
@@ -129,7 +148,8 @@
           "paint_kit": "gs_aug_syd_mead",
           "texture": "res://assets/textures/weapon_skins/aug/syd_mead.png",
           "source": "cstrike/CSGO Texture Pack/AUG/syd mead.bmp",
-          "source_sha256": "e54ac05ab99b29044d45b29dfee63f29fb15aa7edac7e8b0a982bf80ec61884b"
+          "source_sha256": "e54ac05ab99b29044d45b29dfee63f29fb15aa7edac7e8b0a982bf80ec61884b",
+          "uv_layout": "legacy_to_current_hd"
         },
         {
           "id": "torque",
@@ -138,7 +158,8 @@
           "paint_kit": "cu_aug_progressiv",
           "texture": "res://assets/textures/weapon_skins/aug/torque.png",
           "source": "cstrike/CSGO Texture Pack/AUG/torque.bmp",
-          "source_sha256": "25f790c988ad6483c3af504c0d58d9504ed88a24f7855a2e18eb86a985a37e22"
+          "source_sha256": "25f790c988ad6483c3af504c0d58d9504ed88a24f7855a2e18eb86a985a37e22",
+          "uv_layout": "legacy_to_current_hd"
         }
       ]
     },
@@ -155,7 +176,8 @@
           "paint_kit": "cu_awp_asimov",
           "texture": "res://assets/textures/weapon_skins/awp/asiimov.png",
           "source": "cstrike/CSGO Texture Pack/AWP/asiimov2.bmp",
-          "source_sha256": "053b64dfd04891b17d27b32451bedee32f1e4d2c80ffa6c53b629589659e813e"
+          "source_sha256": "053b64dfd04891b17d27b32451bedee32f1e4d2c80ffa6c53b629589659e813e",
+          "uv_layout": "legacy_to_current_hd"
         },
         {
           "id": "dragon_lore",
@@ -164,7 +186,8 @@
           "paint_kit": "cu_medieval_dragon_awp",
           "texture": "res://assets/textures/weapon_skins/awp/dragon_lore.png",
           "source": "cstrike/CSGO Texture Pack/AWP/dragonlore1.bmp",
-          "source_sha256": "05afafd8922f2bd8499e6ba88ee0404e940ca0a6e72faf3b98e70b3e0d45579d"
+          "source_sha256": "05afafd8922f2bd8499e6ba88ee0404e940ca0a6e72faf3b98e70b3e0d45579d",
+          "uv_layout": "legacy_to_current_hd"
         },
         {
           "id": "hyper_beast",
@@ -173,7 +196,8 @@
           "paint_kit": "cu_awp_hyper_beast",
           "texture": "res://assets/textures/weapon_skins/awp/hyper_beast.png",
           "source": "cstrike/CSGO Texture Pack/AWP/hyperbeast.bmp",
-          "source_sha256": "71f5aa8c4b92a1391e0a84f97b6a7bcb730ece1c1a70add75d2e9e4c0c0c99c2"
+          "source_sha256": "71f5aa8c4b92a1391e0a84f97b6a7bcb730ece1c1a70add75d2e9e4c0c0c99c2",
+          "uv_layout": "legacy_to_current_hd"
         },
         {
           "id": "medusa",
@@ -182,7 +206,8 @@
           "paint_kit": "cu_medusa_awp",
           "texture": "res://assets/textures/weapon_skins/awp/medusa.png",
           "source": "cstrike/CSGO Texture Pack/AWP/medusa.bmp",
-          "source_sha256": "715397fa6280cc2bd2a08cb2ee889646064fcf43894065b1feb8c1290c6c223a"
+          "source_sha256": "715397fa6280cc2bd2a08cb2ee889646064fcf43894065b1feb8c1290c6c223a",
+          "uv_layout": "legacy_to_current_hd"
         },
         {
           "id": "oni_taiji",
@@ -191,7 +216,8 @@
           "paint_kit": "cu_awp_hannya",
           "texture": "res://assets/textures/weapon_skins/awp/oni_taiji.png",
           "source": "cstrike/CSGO Texture Pack/AWP/Oni Taiji.bmp",
-          "source_sha256": "c726f9cf97f700e1e080d72fad5145dc959eb584cec665defd77a669f66872d6"
+          "source_sha256": "c726f9cf97f700e1e080d72fad5145dc959eb584cec665defd77a669f66872d6",
+          "uv_layout": "legacy_to_current_hd"
         },
         {
           "id": "lightning_strike",
@@ -200,7 +226,8 @@
           "paint_kit": "am_lightning_awp",
           "texture": "res://assets/textures/weapon_skins/awp/lightning_strike.png",
           "source": "cstrike/CSGO Texture Pack/AWP/lightingstrike.bmp",
-          "source_sha256": "409340c2145ea2694a7098b431e88464fe78cc006f811f16c0f0acf6ab4d35cd"
+          "source_sha256": "409340c2145ea2694a7098b431e88464fe78cc006f811f16c0f0acf6ab4d35cd",
+          "uv_layout": "legacy_to_current_hd"
         }
       ]
     },
@@ -217,7 +244,8 @@
           "paint_kit": "aq_deserteagle_kumichodragon",
           "texture": "res://assets/textures/weapon_skins/deagle/kumicho_dragon.png",
           "source": "cstrike/CSGO Texture Pack/Desert Eagle/kumichodragon.bmp",
-          "source_sha256": "6503d5d80a7334edfbe3f6c0155011e6a096d9e9192742109b65b377efb189f8"
+          "source_sha256": "6503d5d80a7334edfbe3f6c0155011e6a096d9e9192742109b65b377efb189f8",
+          "uv_layout": "legacy_to_current_hd"
         },
         {
           "id": "mecha_industries",
@@ -226,7 +254,8 @@
           "paint_kit": "gs_deagle_mecha",
           "texture": "res://assets/textures/weapon_skins/deagle/mecha_industries.png",
           "source": "cstrike/CSGO Texture Pack/Desert Eagle/mechaindustries.bmp",
-          "source_sha256": "0b88d81ea7c79a05ace0b31848f3c7d3bf98f9a253a15b9e26e22a94cd79bf50"
+          "source_sha256": "0b88d81ea7c79a05ace0b31848f3c7d3bf98f9a253a15b9e26e22a94cd79bf50",
+          "uv_layout": "legacy_to_current_hd"
         },
         {
           "id": "midnight_storm",
@@ -235,7 +264,8 @@
           "paint_kit": "am_seastorm",
           "texture": "res://assets/textures/weapon_skins/deagle/midnight_storm.png",
           "source": "cstrike/CSGO Texture Pack/Desert Eagle/midnightstorm.bmp",
-          "source_sha256": "e24a80b1f3b05f4d1f63d5dc59a0f268346f9d49ec9cdae0aff8d6f6ead99484"
+          "source_sha256": "e24a80b1f3b05f4d1f63d5dc59a0f268346f9d49ec9cdae0aff8d6f6ead99484",
+          "uv_layout": "legacy_to_current_hd"
         },
         {
           "id": "naga",
@@ -244,7 +274,8 @@
           "paint_kit": "aq_deagle_naga",
           "texture": "res://assets/textures/weapon_skins/deagle/naga.png",
           "source": "cstrike/CSGO Texture Pack/Desert Eagle/naga.bmp",
-          "source_sha256": "17a03f11b869e8ca22cbb86d9ab4876e612455ea828e668889d65f3e1add0cb4"
+          "source_sha256": "17a03f11b869e8ca22cbb86d9ab4876e612455ea828e668889d65f3e1add0cb4",
+          "uv_layout": "legacy_to_current_hd"
         },
         {
           "id": "oxide_blaze",
@@ -253,7 +284,8 @@
           "paint_kit": "cu_desert_eagle_corroden",
           "texture": "res://assets/textures/weapon_skins/deagle/oxide_blaze.png",
           "source": "cstrike/CSGO Texture Pack/Desert Eagle/oxideblaze.bmp",
-          "source_sha256": "6c579e2a09727b714f591f44845bbbb603cc3c9fc460684c1cf830df0ccd6b1c"
+          "source_sha256": "6c579e2a09727b714f591f44845bbbb603cc3c9fc460684c1cf830df0ccd6b1c",
+          "uv_layout": "legacy_to_current_hd"
         },
         {
           "id": "heirloom",
@@ -262,7 +294,8 @@
           "paint_kit": "aq_engraved_deagle",
           "texture": "res://assets/textures/weapon_skins/deagle/heirloom.png",
           "source": "cstrike/CSGO Texture Pack/Desert Eagle/heirloom.bmp",
-          "source_sha256": "f62983c7da3b17c36b4f7ca98c6b598a11b73f698a5787a7b70ee74cd5a9c2f6"
+          "source_sha256": "f62983c7da3b17c36b4f7ca98c6b598a11b73f698a5787a7b70ee74cd5a9c2f6",
+          "uv_layout": "legacy_to_current_hd"
         }
       ]
     },
@@ -279,7 +312,8 @@
           "paint_kit": "gs_dualberettas_cobra",
           "texture": "res://assets/textures/weapon_skins/elite/cobra_strike.png",
           "source": "cstrike/CSGO Texture Pack/Dual Elites/Cobra Strike.bmp",
-          "source_sha256": "47e5f69ff7fce9b15c902627024398098a72bb148255e67abcdc27582ac82a5a"
+          "source_sha256": "47e5f69ff7fce9b15c902627024398098a72bb148255e67abcdc27582ac82a5a",
+          "uv_layout": "native_unmodified"
         },
         {
           "id": "dualing_dragons",
@@ -288,7 +322,8 @@
           "paint_kit": "cu_dualberretta_dragons",
           "texture": "res://assets/textures/weapon_skins/elite/dualing_dragons.png",
           "source": "cstrike/CSGO Texture Pack/Dual Elites/dualing dragons.bmp",
-          "source_sha256": "713f2609354248eb24c1d1e17b740b6740af40d22d9e20107912f364fba79873"
+          "source_sha256": "713f2609354248eb24c1d1e17b740b6740af40d22d9e20107912f364fba79873",
+          "uv_layout": "native_unmodified"
         },
         {
           "id": "hemoglobin",
@@ -297,7 +332,8 @@
           "paint_kit": "am_ossify_red",
           "texture": "res://assets/textures/weapon_skins/elite/hemoglobin.png",
           "source": "cstrike/CSGO Texture Pack/Dual Elites/hemoglobin.bmp",
-          "source_sha256": "503843b958a6c393b145564a49316e2219ebf77a935a7ca070a9af1438e52ab4"
+          "source_sha256": "503843b958a6c393b145564a49316e2219ebf77a935a7ca070a9af1438e52ab4",
+          "uv_layout": "native_unmodified"
         },
         {
           "id": "marina",
@@ -306,7 +342,8 @@
           "paint_kit": "hy_marina_sunrise",
           "texture": "res://assets/textures/weapon_skins/elite/marina.png",
           "source": "cstrike/CSGO Texture Pack/Dual Elites/marina.bmp",
-          "source_sha256": "ba72b5fece98116e1f4e5419b88a8ee10c72cb453f14911bd7f51e94c7ac49ce"
+          "source_sha256": "ba72b5fece98116e1f4e5419b88a8ee10c72cb453f14911bd7f51e94c7ac49ce",
+          "uv_layout": "native_unmodified"
         },
         {
           "id": "panther",
@@ -315,7 +352,8 @@
           "paint_kit": "so_panther",
           "texture": "res://assets/textures/weapon_skins/elite/panther.png",
           "source": "cstrike/CSGO Texture Pack/Dual Elites/panther.bmp",
-          "source_sha256": "ec6195e2a2b45758e1b0fc30b91b101bdfc12522dc13d0ff772b1a6a7d2ee477"
+          "source_sha256": "ec6195e2a2b45758e1b0fc30b91b101bdfc12522dc13d0ff772b1a6a7d2ee477",
+          "uv_layout": "native_unmodified"
         },
         {
           "id": "royal_consorts",
@@ -324,7 +362,8 @@
           "paint_kit": "gs_dual_berettas_golden_venice",
           "texture": "res://assets/textures/weapon_skins/elite/royal_consorts.png",
           "source": "cstrike/CSGO Texture Pack/Dual Elites/royal consorts.bmp",
-          "source_sha256": "3d53dfd9d3fe5032d0c4f4c58ba9b76cc1d78979a9098b0946123614764a5eed"
+          "source_sha256": "3d53dfd9d3fe5032d0c4f4c58ba9b76cc1d78979a9098b0946123614764a5eed",
+          "uv_layout": "native_unmodified"
         }
       ]
     },
@@ -341,7 +380,8 @@
           "paint_kit": "aq_famas_jinn",
           "texture": "res://assets/textures/weapon_skins/famas/djinn.png",
           "source": "cstrike/CSGO Texture Pack/FAMAS/Djinn.bmp",
-          "source_sha256": "da8e758e91cdf3922f052b88df33346aabaa3975d042dab6629cb303a57054a9"
+          "source_sha256": "da8e758e91cdf3922f052b88df33346aabaa3975d042dab6629cb303a57054a9",
+          "uv_layout": "legacy_to_current_hd"
         },
         {
           "id": "afterimage",
@@ -350,7 +390,8 @@
           "paint_kit": "cu_broken_path_famas",
           "texture": "res://assets/textures/weapon_skins/famas/afterimage.png",
           "source": "cstrike/CSGO Texture Pack/FAMAS/afterimage.bmp",
-          "source_sha256": "d7365f24b9067933025e94dfe235dfb7e3138318dc07ecac878db8b7f7119f5d"
+          "source_sha256": "d7365f24b9067933025e94dfe235dfb7e3138318dc07ecac878db8b7f7119f5d",
+          "uv_layout": "legacy_to_current_hd"
         },
         {
           "id": "eye_of_athena",
@@ -359,7 +400,8 @@
           "paint_kit": "cu_famas_owl_orange",
           "texture": "res://assets/textures/weapon_skins/famas/eye_of_athena.png",
           "source": "cstrike/CSGO Texture Pack/FAMAS/eye of athena.bmp",
-          "source_sha256": "0e23aa503d8a57ba2ce70bd41dea07981aaf78faa651baef7d22c086d4a377cd"
+          "source_sha256": "0e23aa503d8a57ba2ce70bd41dea07981aaf78faa651baef7d22c086d4a377cd",
+          "uv_layout": "legacy_to_current_hd"
         },
         {
           "id": "mecha_industries",
@@ -368,7 +410,8 @@
           "paint_kit": "gs_famas_mecha",
           "texture": "res://assets/textures/weapon_skins/famas/mecha_industries.png",
           "source": "cstrike/CSGO Texture Pack/FAMAS/mecha industries.bmp",
-          "source_sha256": "88b836c7d5ea4dfe681457aa8bbd1ecb012194587df8d4b2dddcbcb9905c24d8"
+          "source_sha256": "88b836c7d5ea4dfe681457aa8bbd1ecb012194587df8d4b2dddcbcb9905c24d8",
+          "uv_layout": "legacy_to_current_hd"
         },
         {
           "id": "neural_net",
@@ -377,7 +420,8 @@
           "paint_kit": "am_famas_dots",
           "texture": "res://assets/textures/weapon_skins/famas/neural_net.png",
           "source": "cstrike/CSGO Texture Pack/FAMAS/neural net.bmp",
-          "source_sha256": "c806e1cf1224a451b9eb37befcb6dffe00174d0c359a0bde7f78e31335636f4a"
+          "source_sha256": "c806e1cf1224a451b9eb37befcb6dffe00174d0c359a0bde7f78e31335636f4a",
+          "uv_layout": "legacy_to_current_hd"
         },
         {
           "id": "roll_cage",
@@ -386,7 +430,8 @@
           "paint_kit": "gs_famas_rally",
           "texture": "res://assets/textures/weapon_skins/famas/roll_cage.png",
           "source": "cstrike/CSGO Texture Pack/FAMAS/roll cage.bmp",
-          "source_sha256": "8d7d83437ed0d8d43d57be90b5e1a64a64e799f94c5d3327af56520885e9134b"
+          "source_sha256": "8d7d83437ed0d8d43d57be90b5e1a64a64e799f94c5d3327af56520885e9134b",
+          "uv_layout": "legacy_to_current_hd"
         }
       ]
     },
@@ -403,7 +448,8 @@
           "paint_kit": "cu_fiveseven_vein",
           "texture": "res://assets/textures/weapon_skins/fiveseven/capillary.png",
           "source": "cstrike/CSGO Texture Pack/Fiveseven/Capillary.bmp",
-          "source_sha256": "434dac1690776293897aedc5f5fc6798313193d2ab87f7a57650b24fe5fbd7ca"
+          "source_sha256": "434dac1690776293897aedc5f5fc6798313193d2ab87f7a57650b24fe5fbd7ca",
+          "uv_layout": "legacy_to_current_hd"
         },
         {
           "id": "fowl_play",
@@ -412,7 +458,8 @@
           "paint_kit": "aq_57_feathers",
           "texture": "res://assets/textures/weapon_skins/fiveseven/fowl_play.png",
           "source": "cstrike/CSGO Texture Pack/Fiveseven/fowl_play.bmp",
-          "source_sha256": "0e2dcdcbecd819b3da67cf61ddef3284cc48629dbfd0406cb285401cf7d41539"
+          "source_sha256": "0e2dcdcbecd819b3da67cf61ddef3284cc48629dbfd0406cb285401cf7d41539",
+          "uv_layout": "legacy_to_current_hd"
         },
         {
           "id": "hyper_beast",
@@ -421,7 +468,8 @@
           "paint_kit": "cu_fiveseven_hyperbeast",
           "texture": "res://assets/textures/weapon_skins/fiveseven/hyper_beast.png",
           "source": "cstrike/CSGO Texture Pack/Fiveseven/hyperbeast.bmp",
-          "source_sha256": "d93913a097675324dec720d80d23291b11438513ddee19a17980aab86fd3ebde"
+          "source_sha256": "d93913a097675324dec720d80d23291b11438513ddee19a17980aab86fd3ebde",
+          "uv_layout": "legacy_to_current_hd"
         },
         {
           "id": "kami",
@@ -430,7 +478,8 @@
           "paint_kit": "hy_kami",
           "texture": "res://assets/textures/weapon_skins/fiveseven/kami.png",
           "source": "cstrike/CSGO Texture Pack/Fiveseven/kami.bmp",
-          "source_sha256": "f768d8844faf361c19ec85e1888f41f9c0ac098f8bc2637c5864abe8173d4ac7"
+          "source_sha256": "f768d8844faf361c19ec85e1888f41f9c0ac098f8bc2637c5864abe8173d4ac7",
+          "uv_layout": "legacy_to_current_hd"
         },
         {
           "id": "monkey_business",
@@ -439,7 +488,8 @@
           "paint_kit": "cu_fiveseven_banana",
           "texture": "res://assets/textures/weapon_skins/fiveseven/monkey_business.png",
           "source": "cstrike/CSGO Texture Pack/Fiveseven/monkey_business.bmp",
-          "source_sha256": "d4db5bebd004e1fa0a876bcedfb9128743948d82f6a8383903ccf1ed78b33098"
+          "source_sha256": "d4db5bebd004e1fa0a876bcedfb9128743948d82f6a8383903ccf1ed78b33098",
+          "uv_layout": "legacy_to_current_hd"
         },
         {
           "id": "triumvirate",
@@ -448,7 +498,8 @@
           "paint_kit": "cu_fiveseven_augmented",
           "texture": "res://assets/textures/weapon_skins/fiveseven/triumvirate.png",
           "source": "cstrike/CSGO Texture Pack/Fiveseven/triumvirate.bmp",
-          "source_sha256": "da18439b7b2a843445ebb047e6ddda1b7fe0f6261782ebc6fc932e58481eeb1b"
+          "source_sha256": "da18439b7b2a843445ebb047e6ddda1b7fe0f6261782ebc6fc932e58481eeb1b",
+          "uv_layout": "legacy_to_current_hd"
         }
       ]
     },
@@ -465,7 +516,8 @@
           "paint_kit": "cu_chronos_g3sg1",
           "texture": "res://assets/textures/weapon_skins/g3sg1/chronos.png",
           "source": "cstrike/CSGO Texture Pack/G3SG1/chronos.bmp",
-          "source_sha256": "55f40c36eaefb55983c4e060ce9c614e1442c053150e6f3130c54b0659eace72"
+          "source_sha256": "55f40c36eaefb55983c4e060ce9c614e1442c053150e6f3130c54b0659eace72",
+          "uv_layout": "native_unmodified"
         },
         {
           "id": "demeter",
@@ -474,7 +526,8 @@
           "paint_kit": "hy_bluepolygon_bravo",
           "texture": "res://assets/textures/weapon_skins/g3sg1/demeter.png",
           "source": "cstrike/CSGO Texture Pack/G3SG1/demeter.bmp",
-          "source_sha256": "802c348e27214b322cbd2f946b18424225dc0f965503be931382a2a125c5bb52"
+          "source_sha256": "802c348e27214b322cbd2f946b18424225dc0f965503be931382a2a125c5bb52",
+          "uv_layout": "native_unmodified"
         },
         {
           "id": "dream_glade",
@@ -483,7 +536,8 @@
           "paint_kit": "cu_g3sg1_glade",
           "texture": "res://assets/textures/weapon_skins/g3sg1/dream_glade.png",
           "source": "cstrike/CSGO Texture Pack/G3SG1/dream glade.bmp",
-          "source_sha256": "e14327fdbb1aa445082cb17f5f263d8ea7ef18453cf53da14cc521cefb55cd36"
+          "source_sha256": "e14327fdbb1aa445082cb17f5f263d8ea7ef18453cf53da14cc521cefb55cd36",
+          "uv_layout": "native_unmodified"
         },
         {
           "id": "flux",
@@ -492,7 +546,8 @@
           "paint_kit": "gs_g3sg1_flux_purple",
           "texture": "res://assets/textures/weapon_skins/g3sg1/flux.png",
           "source": "cstrike/CSGO Texture Pack/G3SG1/flux.bmp",
-          "source_sha256": "484fd6e7e2a0d1a1f0c73688ed37dc2c45defc489136fbb04dab94d73631fa0b"
+          "source_sha256": "484fd6e7e2a0d1a1f0c73688ed37dc2c45defc489136fbb04dab94d73631fa0b",
+          "uv_layout": "native_unmodified"
         },
         {
           "id": "high_seas",
@@ -501,7 +556,8 @@
           "paint_kit": "gs_g3sg1_buccaneer",
           "texture": "res://assets/textures/weapon_skins/g3sg1/high_seas.png",
           "source": "cstrike/CSGO Texture Pack/G3SG1/high seas.bmp",
-          "source_sha256": "1b0b4a19b0730a87cd1918107e110655fcd1e1331965665db5666ad634d62384"
+          "source_sha256": "1b0b4a19b0730a87cd1918107e110655fcd1e1331965665db5666ad634d62384",
+          "uv_layout": "native_unmodified"
         },
         {
           "id": "the_executioner",
@@ -510,7 +566,8 @@
           "paint_kit": "cu_g3sg1_executioner",
           "texture": "res://assets/textures/weapon_skins/g3sg1/the_executioner.png",
           "source": "cstrike/CSGO Texture Pack/G3SG1/the executioner.bmp",
-          "source_sha256": "f2f8b0658d8b1e04fe2c76ade65baad0263ed65098843975d98b28101fe59a97"
+          "source_sha256": "f2f8b0658d8b1e04fe2c76ade65baad0263ed65098843975d98b28101fe59a97",
+          "uv_layout": "native_unmodified"
         }
       ]
     },
@@ -527,7 +584,8 @@
           "paint_kit": "cu_cerbrus_galil",
           "texture": "res://assets/textures/weapon_skins/galil/cerberus.png",
           "source": "cstrike/CSGO Texture Pack/Galil/cerberus.bmp",
-          "source_sha256": "63d895b2b06fb1c91018c3fc68315d707ff32c53b8ef6b43b35b12fe5fb203c3"
+          "source_sha256": "63d895b2b06fb1c91018c3fc68315d707ff32c53b8ef6b43b35b12fe5fb203c3",
+          "uv_layout": "legacy_to_current_hd"
         },
         {
           "id": "chatterbox",
@@ -536,7 +594,8 @@
           "paint_kit": "cu_galil_abrasion",
           "texture": "res://assets/textures/weapon_skins/galil/chatterbox.png",
           "source": "cstrike/CSGO Texture Pack/Galil/chatterbox.bmp",
-          "source_sha256": "f06b511a368520cbd3ab4675ac4d78429c317b219f9e8a85c28344324179b4dd"
+          "source_sha256": "f06b511a368520cbd3ab4675ac4d78429c317b219f9e8a85c28344324179b4dd",
+          "uv_layout": "legacy_to_current_hd"
         },
         {
           "id": "chromatic_aberration",
@@ -545,7 +604,8 @@
           "paint_kit": "cu_galil_chroma_pink",
           "texture": "res://assets/textures/weapon_skins/galil/chromatic_aberration.png",
           "source": "cstrike/CSGO Texture Pack/Galil/chromatic aberration.bmp",
-          "source_sha256": "ad5e0c0bf4b770cb8ebc2edd47c676a904a3ce2ac7fe103a0792d2f216049370"
+          "source_sha256": "ad5e0c0bf4b770cb8ebc2edd47c676a904a3ce2ac7fe103a0792d2f216049370",
+          "uv_layout": "legacy_to_current_hd"
         },
         {
           "id": "eco",
@@ -554,7 +614,8 @@
           "paint_kit": "cu_galil_eco",
           "texture": "res://assets/textures/weapon_skins/galil/eco.png",
           "source": "cstrike/CSGO Texture Pack/Galil/eco.bmp",
-          "source_sha256": "c795ac642aeda0619b53d543f706f63450c9faf1a528631189a02cdde648082f"
+          "source_sha256": "c795ac642aeda0619b53d543f706f63450c9faf1a528631189a02cdde648082f",
+          "uv_layout": "legacy_to_current_hd"
         },
         {
           "id": "firefight",
@@ -563,7 +624,8 @@
           "paint_kit": "gs_galilar_incenerator",
           "texture": "res://assets/textures/weapon_skins/galil/firefight.png",
           "source": "cstrike/CSGO Texture Pack/Galil/firefight.bmp",
-          "source_sha256": "2faffaac44833c3ca22bde31e16be3242ac0aa4eb62bf132af66c3102bdd157c"
+          "source_sha256": "2faffaac44833c3ca22bde31e16be3242ac0aa4eb62bf132af66c3102bdd157c",
+          "uv_layout": "legacy_to_current_hd"
         },
         {
           "id": "rocket_pop",
@@ -572,7 +634,8 @@
           "paint_kit": "cu_galilar_particles",
           "texture": "res://assets/textures/weapon_skins/galil/rocket_pop.png",
           "source": "cstrike/CSGO Texture Pack/Galil/rocket pop.bmp",
-          "source_sha256": "e4912f7d01c603ca3f39249e7910f9a9af7d7afe91bf25aeac6ca33e78e12dfb"
+          "source_sha256": "e4912f7d01c603ca3f39249e7910f9a9af7d7afe91bf25aeac6ca33e78e12dfb",
+          "uv_layout": "legacy_to_current_hd"
         }
       ]
     },
@@ -589,7 +652,8 @@
           "paint_kit": "cu_glock-liquescent",
           "texture": "res://assets/textures/weapon_skins/glock18/water_elemental.png",
           "source": "cstrike/CSGO Texture Pack/Glock 18/waterelemental.bmp",
-          "source_sha256": "193175d097c3d267821c6bc9ee10d5ca1d97e449813a4db26d129233cebf9f9b"
+          "source_sha256": "193175d097c3d267821c6bc9ee10d5ca1d97e449813a4db26d129233cebf9f9b",
+          "uv_layout": "legacy_to_current_hd"
         },
         {
           "id": "wasteland_rebel",
@@ -598,7 +662,8 @@
           "paint_kit": "cu_glock_wasteland_rebel",
           "texture": "res://assets/textures/weapon_skins/glock18/wasteland_rebel.png",
           "source": "cstrike/CSGO Texture Pack/Glock 18/wastelandrebel.bmp",
-          "source_sha256": "2db2ad7886884a62fa82b85cca6bfa4cbe00358097ff5befa8fa2f44782ab259"
+          "source_sha256": "2db2ad7886884a62fa82b85cca6bfa4cbe00358097ff5befa8fa2f44782ab259",
+          "uv_layout": "legacy_to_current_hd"
         },
         {
           "id": "dragon_tattoo",
@@ -607,7 +672,8 @@
           "paint_kit": "am_dragon_glock",
           "texture": "res://assets/textures/weapon_skins/glock18/dragon_tattoo.png",
           "source": "cstrike/CSGO Texture Pack/Glock 18/dragon tattoo.bmp",
-          "source_sha256": "db13d0c09c345f32a997917c9812cb85c58ddd08c88cde8713c6d60931e7a586"
+          "source_sha256": "db13d0c09c345f32a997917c9812cb85c58ddd08c88cde8713c6d60931e7a586",
+          "uv_layout": "legacy_to_current_hd"
         },
         {
           "id": "off_world",
@@ -616,7 +682,8 @@
           "paint_kit": "cu_glock_indigo",
           "texture": "res://assets/textures/weapon_skins/glock18/off_world.png",
           "source": "cstrike/CSGO Texture Pack/Glock 18/off world.bmp",
-          "source_sha256": "fdc9f323420ad61737d023c978a23e59d96534bb7082e27844a0f454da969e15"
+          "source_sha256": "fdc9f323420ad61737d023c978a23e59d96534bb7082e27844a0f454da969e15",
+          "uv_layout": "legacy_to_current_hd"
         },
         {
           "id": "royal_legion",
@@ -625,7 +692,8 @@
           "paint_kit": "gs_glock18_award",
           "texture": "res://assets/textures/weapon_skins/glock18/royal_legion.png",
           "source": "cstrike/CSGO Texture Pack/Glock 18/royallegion.bmp",
-          "source_sha256": "ba46f5aace5852141e2e0acf2151a592f407532d0c86c09e1ca45d1b07cbfb2f"
+          "source_sha256": "ba46f5aace5852141e2e0acf2151a592f407532d0c86c09e1ca45d1b07cbfb2f",
+          "uv_layout": "legacy_to_current_hd"
         },
         {
           "id": "bunsen_burner",
@@ -634,7 +702,8 @@
           "paint_kit": "aq_glock18_flames_blue",
           "texture": "res://assets/textures/weapon_skins/glock18/bunsen_burner.png",
           "source": "cstrike/CSGO Texture Pack/Glock 18/bunsenburner.bmp",
-          "source_sha256": "70d179c09e7be02bf9cc397226781a255ba7a048737e18612caf40d5a8a22ce4"
+          "source_sha256": "70d179c09e7be02bf9cc397226781a255ba7a048737e18612caf40d5a8a22ce4",
+          "uv_layout": "legacy_to_current_hd"
         }
       ]
     },
@@ -651,7 +720,8 @@
           "paint_kit": "gs_m249_nebula_crusader",
           "texture": "res://assets/textures/weapon_skins/m249/nebula_crusader.png",
           "source": "cstrike/CSGO Texture Pack/M249/nebula_crusader.bmp",
-          "source_sha256": "7afa03630b1d12a8a576cc607728df2a9c1c835aaa717ba72df9cda3e851f6b6"
+          "source_sha256": "7afa03630b1d12a8a576cc607728df2a9c1c835aaa717ba72df9cda3e851f6b6",
+          "uv_layout": "legacy_to_current_hd"
         },
         {
           "id": "system_lock",
@@ -660,7 +730,8 @@
           "paint_kit": "cu_m249_sektor",
           "texture": "res://assets/textures/weapon_skins/m249/system_lock.png",
           "source": "cstrike/CSGO Texture Pack/M249/system lock.bmp",
-          "source_sha256": "e88eb5302f966e69cc1af26a0193cf73dee57e7032cf211d86ee37fd77eb1982"
+          "source_sha256": "e88eb5302f966e69cc1af26a0193cf73dee57e7032cf211d86ee37fd77eb1982",
+          "uv_layout": "legacy_to_current_hd"
         },
         {
           "id": "deep_relief",
@@ -669,7 +740,8 @@
           "paint_kit": "cu_m249_deep_relief",
           "texture": "res://assets/textures/weapon_skins/m249/deep_relief.png",
           "source": "cstrike/CSGO Texture Pack/M249/deep relief.bmp",
-          "source_sha256": "0c4b0e19d744be50f5df31fd15d59992ed82745e02235305b8cbf1744fd57152"
+          "source_sha256": "0c4b0e19d744be50f5df31fd15d59992ed82745e02235305b8cbf1744fd57152",
+          "uv_layout": "legacy_to_current_hd"
         },
         {
           "id": "downtown",
@@ -678,7 +750,8 @@
           "paint_kit": "cu_m249_downvote",
           "texture": "res://assets/textures/weapon_skins/m249/downtown.png",
           "source": "cstrike/CSGO Texture Pack/M249/downtown.bmp",
-          "source_sha256": "c8a0ea240363aab42f6cab31413962f09c6a936ab937adec282829806624a7c1"
+          "source_sha256": "c8a0ea240363aab42f6cab31413962f09c6a936ab937adec282829806624a7c1",
+          "uv_layout": "legacy_to_current_hd"
         },
         {
           "id": "shipping_forecast",
@@ -687,7 +760,8 @@
           "paint_kit": "hy_zodiac3",
           "texture": "res://assets/textures/weapon_skins/m249/shipping_forecast.png",
           "source": "cstrike/CSGO Texture Pack/M249/shipping forecast.bmp",
-          "source_sha256": "777515caf770a64082c88aa1c67583008d068e6bf783a9f217782bb4decd2217"
+          "source_sha256": "777515caf770a64082c88aa1c67583008d068e6bf783a9f217782bb4decd2217",
+          "uv_layout": "legacy_to_current_hd"
         },
         {
           "id": "spectre",
@@ -696,7 +770,8 @@
           "paint_kit": "cu_m249_spectre",
           "texture": "res://assets/textures/weapon_skins/m249/spectre.png",
           "source": "cstrike/CSGO Texture Pack/M249/spectre.bmp",
-          "source_sha256": "011a3f55e57a9a21f3fadae673fff4a9a68091a35cafe4764f2db9708f8496a0"
+          "source_sha256": "011a3f55e57a9a21f3fadae673fff4a9a68091a35cafe4764f2db9708f8496a0",
+          "uv_layout": "legacy_to_current_hd"
         }
       ]
     },
@@ -713,7 +788,8 @@
           "paint_kit": "cu_m4a1_hyper_beast",
           "texture": "res://assets/textures/weapon_skins/m4a1/hyper_beast.png",
           "source": "cstrike/CSGO Texture Pack/M4A1-s/hyperbeast.bmp",
-          "source_sha256": "5c92558c383580c04b5d06e8ffbc9986270a2d1b6622b4b22b2fd3e22f05ec2f"
+          "source_sha256": "5c92558c383580c04b5d06e8ffbc9986270a2d1b6622b4b22b2fd3e22f05ec2f",
+          "uv_layout": "legacy_to_current_hd"
         },
         {
           "id": "cyrex",
@@ -722,7 +798,8 @@
           "paint_kit": "cu_m4a1s_cyrex",
           "texture": "res://assets/textures/weapon_skins/m4a1/cyrex.png",
           "source": "cstrike/CSGO Texture Pack/M4A1-s/cyrex.bmp",
-          "source_sha256": "dd48dd35dcd6e7074b25503aea75f255791b0f7cb5c1e7d15b94e2dfc21949e4"
+          "source_sha256": "dd48dd35dcd6e7074b25503aea75f255791b0f7cb5c1e7d15b94e2dfc21949e4",
+          "uv_layout": "legacy_to_current_hd"
         },
         {
           "id": "decimator",
@@ -731,7 +808,8 @@
           "paint_kit": "gs_m4a1_decimator",
           "texture": "res://assets/textures/weapon_skins/m4a1/decimator.png",
           "source": "cstrike/CSGO Texture Pack/M4A1-s/decimator.bmp",
-          "source_sha256": "8e95d4340722785c57c77a9c59927532947220733632d9ae6701e0be64ae123b"
+          "source_sha256": "8e95d4340722785c57c77a9c59927532947220733632d9ae6701e0be64ae123b",
+          "uv_layout": "legacy_to_current_hd"
         },
         {
           "id": "golden_coil",
@@ -740,7 +818,8 @@
           "paint_kit": "gs_m4a1s_snakebite_gold",
           "texture": "res://assets/textures/weapon_skins/m4a1/golden_coil.png",
           "source": "cstrike/CSGO Texture Pack/M4A1-s/golden_coil.bmp",
-          "source_sha256": "5d302cc1d428cf9ecb154d4d8d481f91e9e9ba48adb3719337671f14ef7b2541"
+          "source_sha256": "5d302cc1d428cf9ecb154d4d8d481f91e9e9ba48adb3719337671f14ef7b2541",
+          "uv_layout": "legacy_to_current_hd"
         },
         {
           "id": "master_piece",
@@ -749,7 +828,8 @@
           "paint_kit": "cu_m4a1-s_silence",
           "texture": "res://assets/textures/weapon_skins/m4a1/master_piece.png",
           "source": "cstrike/CSGO Texture Pack/M4A1-s/masterpiece.bmp",
-          "source_sha256": "8109d7c7bc0cf10f2bc2f1b5f471986b068524480bef80c58c89b30e1a174029"
+          "source_sha256": "8109d7c7bc0cf10f2bc2f1b5f471986b068524480bef80c58c89b30e1a174029",
+          "uv_layout": "legacy_to_current_hd"
         },
         {
           "id": "mecha_industries",
@@ -758,7 +838,8 @@
           "paint_kit": "gs_m4a1_mecha_industries",
           "texture": "res://assets/textures/weapon_skins/m4a1/mecha_industries.png",
           "source": "cstrike/CSGO Texture Pack/M4A1-s/mecha_industries.bmp",
-          "source_sha256": "51248473c92f7e2117d89fd13773d522a879c0702461e2cfbf01ba651f2dbd6b"
+          "source_sha256": "51248473c92f7e2117d89fd13773d522a879c0702461e2cfbf01ba651f2dbd6b",
+          "uv_layout": "legacy_to_current_hd"
         }
       ]
     },
@@ -775,7 +856,8 @@
           "paint_kit": "aq_mac_10_alien_camo",
           "texture": "res://assets/textures/weapon_skins/mac10/carnivore.png",
           "source": "cstrike/CSGO Texture Pack/MAC10/carnivore.bmp",
-          "source_sha256": "694547ec490f2f50e4c35bc4f54c66591c618013d5dc1d26102cd27515a34603"
+          "source_sha256": "694547ec490f2f50e4c35bc4f54c66591c618013d5dc1d26102cd27515a34603",
+          "uv_layout": "legacy_to_current_hd"
         },
         {
           "id": "curse",
@@ -784,7 +866,8 @@
           "paint_kit": "cu_mac10_decay",
           "texture": "res://assets/textures/weapon_skins/mac10/curse.png",
           "source": "cstrike/CSGO Texture Pack/MAC10/curse.bmp",
-          "source_sha256": "75c6ca9e4fc52a699e63b8f76fbe4c979ea84dd91a2dfb33bebdd48d9bdefebf"
+          "source_sha256": "75c6ca9e4fc52a699e63b8f76fbe4c979ea84dd91a2dfb33bebdd48d9bdefebf",
+          "uv_layout": "legacy_to_current_hd"
         },
         {
           "id": "graven",
@@ -793,7 +876,8 @@
           "paint_kit": "aq_etched_mac10_bravo",
           "texture": "res://assets/textures/weapon_skins/mac10/graven.png",
           "source": "cstrike/CSGO Texture Pack/MAC10/graven.bmp",
-          "source_sha256": "fafd5b2f6fa6ad8bcf8df69b0438666c4a9b16b872a75d9bba7bd88fd583a0d6"
+          "source_sha256": "fafd5b2f6fa6ad8bcf8df69b0438666c4a9b16b872a75d9bba7bd88fd583a0d6",
+          "uv_layout": "legacy_to_current_hd"
         },
         {
           "id": "rangeen",
@@ -802,7 +886,8 @@
           "paint_kit": "cu_mac10_alekhya_duo",
           "texture": "res://assets/textures/weapon_skins/mac10/rangeen.png",
           "source": "cstrike/CSGO Texture Pack/MAC10/rangeen.bmp",
-          "source_sha256": "00cac2a3e4a2d24c6f010c2faf3aecf1c7f783e2208eac527ab71885a083f276"
+          "source_sha256": "00cac2a3e4a2d24c6f010c2faf3aecf1c7f783e2208eac527ab71885a083f276",
+          "uv_layout": "legacy_to_current_hd"
         },
         {
           "id": "tatter",
@@ -811,7 +896,8 @@
           "paint_kit": "cu_korupt",
           "texture": "res://assets/textures/weapon_skins/mac10/tatter.png",
           "source": "cstrike/CSGO Texture Pack/MAC10/tatter.bmp",
-          "source_sha256": "90f2a9c2459a64f37a82bebc55a780967b3cc575be731a74587582795907f4b4"
+          "source_sha256": "90f2a9c2459a64f37a82bebc55a780967b3cc575be731a74587582795907f4b4",
+          "uv_layout": "legacy_to_current_hd"
         },
         {
           "id": "ultraviolet",
@@ -820,7 +906,8 @@
           "paint_kit": "so_purple",
           "texture": "res://assets/textures/weapon_skins/mac10/ultraviolet.png",
           "source": "cstrike/CSGO Texture Pack/MAC10/ultraviolet.bmp",
-          "source_sha256": "37f085ad526bd5cef7d5baf9dbe861b382ca713bbd374bab886f00aae039c39f"
+          "source_sha256": "37f085ad526bd5cef7d5baf9dbe861b382ca713bbd374bab886f00aae039c39f",
+          "uv_layout": "legacy_to_current_hd"
         }
       ]
     },
@@ -837,7 +924,8 @@
           "paint_kit": "cu_mp7_nemsis",
           "texture": "res://assets/textures/weapon_skins/mp7/nemesis.png",
           "source": "cstrike/CSGO Texture Pack/MP7/nemesis.bmp",
-          "source_sha256": "3bf489eede0da1192e80df1f716b2a5e57ba044bc45f8e696ef5b16de53d79db"
+          "source_sha256": "3bf489eede0da1192e80df1f716b2a5e57ba044bc45f8e696ef5b16de53d79db",
+          "uv_layout": "native_unmodified"
         },
         {
           "id": "cirrus",
@@ -846,7 +934,8 @@
           "paint_kit": "gs_final_pooldeadv2",
           "texture": "res://assets/textures/weapon_skins/mp7/cirrus.png",
           "source": "cstrike/CSGO Texture Pack/MP7/cirrus.bmp",
-          "source_sha256": "bd5096d4c7b6690393b6dba199aeb144cd28a41da76664456e49bdb470861849"
+          "source_sha256": "bd5096d4c7b6690393b6dba199aeb144cd28a41da76664456e49bdb470861849",
+          "uv_layout": "native_unmodified"
         },
         {
           "id": "ocean_foam",
@@ -855,7 +944,8 @@
           "paint_kit": "am_ossify_blue",
           "texture": "res://assets/textures/weapon_skins/mp7/ocean_foam.png",
           "source": "cstrike/CSGO Texture Pack/MP7/oceamfoam.bmp",
-          "source_sha256": "aea22b9b231024c3c750309d7c5e4b709482e627341d98b0bc710fa847195436"
+          "source_sha256": "aea22b9b231024c3c750309d7c5e4b709482e627341d98b0bc710fa847195436",
+          "uv_layout": "native_unmodified"
         },
         {
           "id": "skulls",
@@ -864,7 +954,8 @@
           "paint_kit": "hy_skulls",
           "texture": "res://assets/textures/weapon_skins/mp7/skulls.png",
           "source": "cstrike/CSGO Texture Pack/MP7/skulls.bmp",
-          "source_sha256": "7bf02e425cf9ac3e63a29f1d1d66994c358a9e4ee79bb426791a004b48192a7f"
+          "source_sha256": "7bf02e425cf9ac3e63a29f1d1d66994c358a9e4ee79bb426791a004b48192a7f",
+          "uv_layout": "native_unmodified"
         },
         {
           "id": "special_delivery",
@@ -873,7 +964,8 @@
           "paint_kit": "cu_mp7_classified",
           "texture": "res://assets/textures/weapon_skins/mp7/special_delivery.png",
           "source": "cstrike/CSGO Texture Pack/MP7/specialdelivery.bmp",
-          "source_sha256": "fa5d7dad16956d4a0a211766905a19400ab0faef6d63a7333ba346ae43f4025c"
+          "source_sha256": "fa5d7dad16956d4a0a211766905a19400ab0faef6d63a7333ba346ae43f4025c",
+          "uv_layout": "native_unmodified"
         },
         {
           "id": "whiteout",
@@ -882,7 +974,8 @@
           "paint_kit": "so_whiteout",
           "texture": "res://assets/textures/weapon_skins/mp7/whiteout.png",
           "source": "cstrike/CSGO Texture Pack/MP7/whiteout.bmp",
-          "source_sha256": "d286bea14e06de8b27536061ace4c185af880fe8870e2a3068c1c40ad31aff6c"
+          "source_sha256": "d286bea14e06de8b27536061ace4c185af880fe8870e2a3068c1c40ad31aff6c",
+          "uv_layout": "native_unmodified"
         }
       ]
     },
@@ -899,7 +992,8 @@
           "paint_kit": "cu_mp9_narcis",
           "texture": "res://assets/textures/weapon_skins/tmp/airlock.png",
           "source": "cstrike/CSGO Texture Pack/MP9/airlock.bmp",
-          "source_sha256": "c95ce150121417eccfb631141af2a47340b29f8112f282c7ef7723066a866817"
+          "source_sha256": "c95ce150121417eccfb631141af2a47340b29f8112f282c7ef7723066a866817",
+          "uv_layout": "native_unmodified"
         },
         {
           "id": "bulldozer",
@@ -908,7 +1002,8 @@
           "paint_kit": "so_yellow",
           "texture": "res://assets/textures/weapon_skins/tmp/bulldozer.png",
           "source": "cstrike/CSGO Texture Pack/MP9/bulldozer.bmp",
-          "source_sha256": "3f086b5832afc1e6d9ba4b787c8e8b1cd036eb03ce96f5cd281792cf1521ec5f"
+          "source_sha256": "3f086b5832afc1e6d9ba4b787c8e8b1cd036eb03ce96f5cd281792cf1521ec5f",
+          "uv_layout": "native_unmodified"
         },
         {
           "id": "deadly_poison",
@@ -917,7 +1012,8 @@
           "paint_kit": "cu_mp9_deadly_poison",
           "texture": "res://assets/textures/weapon_skins/tmp/deadly_poison.png",
           "source": "cstrike/CSGO Texture Pack/MP9/deadlypoison.bmp",
-          "source_sha256": "180864412e8bafd2a1bd23f1e8a66a10eaba33f4e1ee8f0131afbd8e104d9efb"
+          "source_sha256": "180864412e8bafd2a1bd23f1e8a66a10eaba33f4e1ee8f0131afbd8e104d9efb",
+          "uv_layout": "native_unmodified"
         },
         {
           "id": "hot_rod",
@@ -926,7 +1022,8 @@
           "paint_kit": "an_red",
           "texture": "res://assets/textures/weapon_skins/tmp/hot_rod.png",
           "source": "cstrike/CSGO Texture Pack/MP9/hotrod.bmp",
-          "source_sha256": "3b8fd9433f2d7625213cf18ad94e62a46466410c9773f7350b4527039a68cb75"
+          "source_sha256": "3b8fd9433f2d7625213cf18ad94e62a46466410c9773f7350b4527039a68cb75",
+          "uv_layout": "native_unmodified"
         },
         {
           "id": "ruby_poison_dart",
@@ -935,7 +1032,8 @@
           "paint_kit": "am_mp9_nitrogen",
           "texture": "res://assets/textures/weapon_skins/tmp/ruby_poison_dart.png",
           "source": "cstrike/CSGO Texture Pack/MP9/rubypoison.bmp",
-          "source_sha256": "b867fd0b4bc12e9b318dd923bca0274c39c9d83cae1b155002b932a8ee747787"
+          "source_sha256": "b867fd0b4bc12e9b318dd923bca0274c39c9d83cae1b155002b932a8ee747787",
+          "uv_layout": "native_unmodified"
         },
         {
           "id": "dart",
@@ -944,7 +1042,8 @@
           "paint_kit": "cu_mp9_chevron",
           "texture": "res://assets/textures/weapon_skins/tmp/dart.png",
           "source": "cstrike/CSGO Texture Pack/MP9/dart.bmp",
-          "source_sha256": "a0dcf760d6c07ec6245e9e962e67dc953a80d1f850ae45931039a8fed63d22ab"
+          "source_sha256": "a0dcf760d6c07ec6245e9e962e67dc953a80d1f850ae45931039a8fed63d22ab",
+          "uv_layout": "native_unmodified"
         }
       ]
     },
@@ -961,7 +1060,8 @@
           "paint_kit": "cu_nova_hyperbeast",
           "texture": "res://assets/textures/weapon_skins/m3/hyper_beast.png",
           "source": "cstrike/CSGO Texture Pack/Nova/hyper beast.bmp",
-          "source_sha256": "ab3b04b46f145f5e9cb4aaacf728375d13e9ee7fe51b494ce445adb363599109"
+          "source_sha256": "ab3b04b46f145f5e9cb4aaacf728375d13e9ee7fe51b494ce445adb363599109",
+          "uv_layout": "legacy_to_current_hd"
         },
         {
           "id": "antique",
@@ -970,7 +1070,8 @@
           "paint_kit": "cu_nova_antique",
           "texture": "res://assets/textures/weapon_skins/m3/antique.png",
           "source": "cstrike/CSGO Texture Pack/Nova/antique.bmp",
-          "source_sha256": "882b3270f329aac90a042fe28894ed65eae0a967028622339c10d0e79378e8a1"
+          "source_sha256": "882b3270f329aac90a042fe28894ed65eae0a967028622339c10d0e79378e8a1",
+          "uv_layout": "legacy_to_current_hd"
         },
         {
           "id": "bloomstick",
@@ -979,7 +1080,8 @@
           "paint_kit": "cu_spring_nova",
           "texture": "res://assets/textures/weapon_skins/m3/bloomstick.png",
           "source": "cstrike/CSGO Texture Pack/Nova/bloomstick.bmp",
-          "source_sha256": "610921d692faa29b6c2d152ecb940bc38bbadcd24d0ad2cd1e2a5a611341aeb2"
+          "source_sha256": "610921d692faa29b6c2d152ecb940bc38bbadcd24d0ad2cd1e2a5a611341aeb2",
+          "uv_layout": "legacy_to_current_hd"
         },
         {
           "id": "koi",
@@ -988,7 +1090,8 @@
           "paint_kit": "cu_nova_koi",
           "texture": "res://assets/textures/weapon_skins/m3/koi.png",
           "source": "cstrike/CSGO Texture Pack/Nova/koi.bmp",
-          "source_sha256": "8befd78dafd1e02fb3896b350a29e695fddc0e4a2809bacf10f58937b900457c"
+          "source_sha256": "8befd78dafd1e02fb3896b350a29e695fddc0e4a2809bacf10f58937b900457c",
+          "uv_layout": "legacy_to_current_hd"
         },
         {
           "id": "rising_skull",
@@ -997,7 +1100,8 @@
           "paint_kit": "cu_skull_nova",
           "texture": "res://assets/textures/weapon_skins/m3/rising_skull.png",
           "source": "cstrike/CSGO Texture Pack/Nova/rising skull.bmp",
-          "source_sha256": "99348b56cc8e967455b4d93a3a21ddd773de8b88609f1cab69fa2798f826e264"
+          "source_sha256": "99348b56cc8e967455b4d93a3a21ddd773de8b88609f1cab69fa2798f826e264",
+          "uv_layout": "legacy_to_current_hd"
         },
         {
           "id": "tempest",
@@ -1006,7 +1110,8 @@
           "paint_kit": "hy_seaside_bravo",
           "texture": "res://assets/textures/weapon_skins/m3/tempest.png",
           "source": "cstrike/CSGO Texture Pack/Nova/tempest.bmp",
-          "source_sha256": "9ae32066b18f747c069da343a53063a2b12151eabef511d4dcc63f56dc08abd5"
+          "source_sha256": "9ae32066b18f747c069da343a53063a2b12151eabef511d4dcc63f56dc08abd5",
+          "uv_layout": "legacy_to_current_hd"
         }
       ]
     },
@@ -1023,7 +1128,8 @@
           "paint_kit": "cu_p250_asiimov",
           "texture": "res://assets/textures/weapon_skins/p228/asiimov.png",
           "source": "cstrike/CSGO Texture Pack/P250/assimov.bmp",
-          "source_sha256": "895e7cfd4c55d8202c645e1b90cbd4e9e466150496d684b4eeac082753f8f11b"
+          "source_sha256": "895e7cfd4c55d8202c645e1b90cbd4e9e466150496d684b4eeac082753f8f11b",
+          "uv_layout": "native_unmodified"
         },
         {
           "id": "cartel",
@@ -1032,7 +1138,8 @@
           "paint_kit": "aq_p250_cartel",
           "texture": "res://assets/textures/weapon_skins/p228/cartel.png",
           "source": "cstrike/CSGO Texture Pack/P250/cartel.bmp",
-          "source_sha256": "7f698ab8519b7b1a148bf5b5fc9373dcc8287f47dfa558310b3b336c0daed788"
+          "source_sha256": "7f698ab8519b7b1a148bf5b5fc9373dcc8287f47dfa558310b3b336c0daed788",
+          "uv_layout": "native_unmodified"
         },
         {
           "id": "franklin",
@@ -1041,7 +1148,8 @@
           "paint_kit": "cu_money",
           "texture": "res://assets/textures/weapon_skins/p228/franklin.png",
           "source": "cstrike/CSGO Texture Pack/P250/franklin.bmp",
-          "source_sha256": "e7644a9bed647671e8c7ece6f0adfa3e4278a52141034ffc165638d636396c36"
+          "source_sha256": "e7644a9bed647671e8c7ece6f0adfa3e4278a52141034ffc165638d636396c36",
+          "uv_layout": "native_unmodified"
         },
         {
           "id": "mehndi",
@@ -1050,7 +1158,8 @@
           "paint_kit": "cu_p250_refined",
           "texture": "res://assets/textures/weapon_skins/p228/mehndi.png",
           "source": "cstrike/CSGO Texture Pack/P250/mehndi.bmp",
-          "source_sha256": "de6b56f887ce17e6ad8d0d0f723e9b46624336a84887ea4305544cc6b953d38b"
+          "source_sha256": "de6b56f887ce17e6ad8d0d0f723e9b46624336a84887ea4305544cc6b953d38b",
+          "uv_layout": "native_unmodified"
         },
         {
           "id": "muertos",
@@ -1059,7 +1168,8 @@
           "paint_kit": "cu_p250_mandala",
           "texture": "res://assets/textures/weapon_skins/p228/muertos.png",
           "source": "cstrike/CSGO Texture Pack/P250/muertos.bmp",
-          "source_sha256": "1e5a1a8986713cca83130697d61aec9642ab5f03426566044dfd3c6afde08570"
+          "source_sha256": "1e5a1a8986713cca83130697d61aec9642ab5f03426566044dfd3c6afde08570",
+          "uv_layout": "native_unmodified"
         },
         {
           "id": "see_ya_later",
@@ -1068,7 +1178,8 @@
           "paint_kit": "cu_p250_cybercroc",
           "texture": "res://assets/textures/weapon_skins/p228/see_ya_later.png",
           "source": "cstrike/CSGO Texture Pack/P250/see ya later.bmp",
-          "source_sha256": "da14882b3934c2ca81be1d266bea649f89e3de4f9a811011ff0d6cd910188ed4"
+          "source_sha256": "da14882b3934c2ca81be1d266bea649f89e3de4f9a811011ff0d6cd910188ed4",
+          "uv_layout": "native_unmodified"
         }
       ]
     },
@@ -1086,7 +1197,8 @@
           "paint_kit": "cu_p90-asiimov",
           "texture": "res://assets/textures/weapon_skins/p90/asiimov.png",
           "source": "cstrike/CSGO Texture Pack/P90/assimov.bmp",
-          "source_sha256": "e2784848e8bc256fb04d7276b57504890203df8544ea9ecb2ba3cb52d7cced58"
+          "source_sha256": "e2784848e8bc256fb04d7276b57504890203df8544ea9ecb2ba3cb52d7cced58",
+          "uv_layout": "legacy_to_current_hd"
         },
         {
           "id": "death_by_kitty",
@@ -1095,7 +1207,8 @@
           "paint_kit": "cu_catskulls_p90",
           "texture": "res://assets/textures/weapon_skins/p90/death_by_kitty.png",
           "source": "cstrike/CSGO Texture Pack/P90/deathbykitty.bmp",
-          "source_sha256": "6374b8c0bf7a2629fbd0908036d54396e614c9b59cb09cf5987c51190ea89ae8"
+          "source_sha256": "6374b8c0bf7a2629fbd0908036d54396e614c9b59cb09cf5987c51190ea89ae8",
+          "uv_layout": "legacy_to_current_hd"
         },
         {
           "id": "emerald_dragon",
@@ -1104,7 +1217,8 @@
           "paint_kit": "cu_dragon_p90_bravo",
           "texture": "res://assets/textures/weapon_skins/p90/emerald_dragon.png",
           "source": "cstrike/CSGO Texture Pack/P90/emeralddragon.bmp",
-          "source_sha256": "35540fc5b8a24ec9a5ad874fc05ff87ba568d778393596c45ce694063db02d88"
+          "source_sha256": "35540fc5b8a24ec9a5ad874fc05ff87ba568d778393596c45ce694063db02d88",
+          "uv_layout": "legacy_to_current_hd"
         },
         {
           "id": "shallow_grave",
@@ -1113,7 +1227,8 @@
           "paint_kit": "gs_p90_shallow_grave",
           "texture": "res://assets/textures/weapon_skins/p90/shallow_grave.png",
           "source": "cstrike/CSGO Texture Pack/P90/shallowgrave.bmp",
-          "source_sha256": "5cc319b149e5a23facf4d23bf8a20a4d66f8589325884d2df631679de3a8d891"
+          "source_sha256": "5cc319b149e5a23facf4d23bf8a20a4d66f8589325884d2df631679de3a8d891",
+          "uv_layout": "legacy_to_current_hd"
         },
         {
           "id": "shapewood",
@@ -1122,7 +1237,8 @@
           "paint_kit": "cu_p90_shapewood",
           "texture": "res://assets/textures/weapon_skins/p90/shapewood.png",
           "source": "cstrike/CSGO Texture Pack/P90/shapewood.bmp",
-          "source_sha256": "76a906b4a65159ab0e7e8d2ad73115874f923e0c35bb405d6f68ffc0d050bc3c"
+          "source_sha256": "76a906b4a65159ab0e7e8d2ad73115874f923e0c35bb405d6f68ffc0d050bc3c",
+          "uv_layout": "legacy_to_current_hd"
         },
         {
           "id": "trigon",
@@ -1131,7 +1247,8 @@
           "paint_kit": "cu_p90_trigon",
           "texture": "res://assets/textures/weapon_skins/p90/trigon.png",
           "source": "cstrike/CSGO Texture Pack/P90/trigon.bmp",
-          "source_sha256": "696125e39c7130517a4e3bbd0e4f98f17e04b980a94d954e6ab17b0572a800d8"
+          "source_sha256": "696125e39c7130517a4e3bbd0e4f98f17e04b980a94d954e6ab17b0572a800d8",
+          "uv_layout": "legacy_to_current_hd"
         }
       ]
     },
@@ -1148,7 +1265,8 @@
           "paint_kit": "gs_scar20_bloodsport",
           "texture": "res://assets/textures/weapon_skins/sg550/bloodsport.png",
           "source": "cstrike/CSGO Texture Pack/SG550/bloodsport.bmp",
-          "source_sha256": "72c53bb0a375d9cdb1e1eac8ef10c5299afeaa705b23799c5a85afe6a589942f"
+          "source_sha256": "72c53bb0a375d9cdb1e1eac8ef10c5299afeaa705b23799c5a85afe6a589942f",
+          "uv_layout": "legacy_to_current_hd"
         },
         {
           "id": "cardiac",
@@ -1157,7 +1275,8 @@
           "paint_kit": "cu_scar20_intervention",
           "texture": "res://assets/textures/weapon_skins/sg550/cardiac.png",
           "source": "cstrike/CSGO Texture Pack/SG550/cardiac.bmp",
-          "source_sha256": "f04d6e91a6e3b6ab68a81de1d1af3e89b5e46706abf15752e7e6cd623490ca28"
+          "source_sha256": "f04d6e91a6e3b6ab68a81de1d1af3e89b5e46706abf15752e7e6cd623490ca28",
+          "uv_layout": "legacy_to_current_hd"
         },
         {
           "id": "cyrex",
@@ -1166,7 +1285,8 @@
           "paint_kit": "cu_scar_cyrex",
           "texture": "res://assets/textures/weapon_skins/sg550/cyrex.png",
           "source": "cstrike/CSGO Texture Pack/SG550/cyrex.bmp",
-          "source_sha256": "cbaa291775641dadd966ab0745188005bbb950e1701683e0719e7d87a0784a65"
+          "source_sha256": "cbaa291775641dadd966ab0745188005bbb950e1701683e0719e7d87a0784a65",
+          "uv_layout": "legacy_to_current_hd"
         },
         {
           "id": "emerald",
@@ -1175,7 +1295,8 @@
           "paint_kit": "an_emerald_bravo",
           "texture": "res://assets/textures/weapon_skins/sg550/emerald.png",
           "source": "cstrike/CSGO Texture Pack/SG550/emerald.bmp",
-          "source_sha256": "654e9efee22af0d18d12ee9e6a9903b85def2912db6af9e37cccc0a2bfaeac1c"
+          "source_sha256": "654e9efee22af0d18d12ee9e6a9903b85def2912db6af9e37cccc0a2bfaeac1c",
+          "uv_layout": "legacy_to_current_hd"
         },
         {
           "id": "outbreak",
@@ -1184,7 +1305,8 @@
           "paint_kit": "hy_scar20_jungler",
           "texture": "res://assets/textures/weapon_skins/sg550/outbreak.png",
           "source": "cstrike/CSGO Texture Pack/SG550/outbreak.bmp",
-          "source_sha256": "1b7294db3f92d73d263e1f8afea94383c65dbb54e0a43394fd7a20e77240671f"
+          "source_sha256": "1b7294db3f92d73d263e1f8afea94383c65dbb54e0a43394fd7a20e77240671f",
+          "uv_layout": "legacy_to_current_hd"
         },
         {
           "id": "powercore",
@@ -1193,7 +1315,8 @@
           "paint_kit": "gs_scar20_powercore",
           "texture": "res://assets/textures/weapon_skins/sg550/powercore.png",
           "source": "cstrike/CSGO Texture Pack/SG550/powercore.bmp",
-          "source_sha256": "4190eea885aa10e642878aeb75480055f204bc9391778ba795574ebe14aa3672"
+          "source_sha256": "4190eea885aa10e642878aeb75480055f204bc9391778ba795574ebe14aa3672",
+          "uv_layout": "legacy_to_current_hd"
         }
       ]
     },
@@ -1210,7 +1333,8 @@
           "paint_kit": "cu_usp_kill_confirmed",
           "texture": "res://assets/textures/weapon_skins/usp/kill_confirmed.png",
           "source": "cstrike/CSGO Texture Pack/USP-S/kill_confirmed.bmp",
-          "source_sha256": "0b2ae8a8e5c89c7b458abfa861e7d1e4bef8b0741c862802969d851c1bc34ec2"
+          "source_sha256": "0b2ae8a8e5c89c7b458abfa861e7d1e4bef8b0741c862802969d851c1bc34ec2",
+          "uv_layout": "legacy_to_current_hd"
         },
         {
           "id": "neo_noir",
@@ -1219,7 +1343,8 @@
           "paint_kit": "cu_usps_noir",
           "texture": "res://assets/textures/weapon_skins/usp/neo_noir.png",
           "source": "cstrike/CSGO Texture Pack/USP-S/Neo-Noir.bmp",
-          "source_sha256": "0afd8d80721668a04154c65e80e102239b4ed6550c1fc5ce32319268ce93bd0d"
+          "source_sha256": "0afd8d80721668a04154c65e80e102239b4ed6550c1fc5ce32319268ce93bd0d",
+          "uv_layout": "legacy_to_current_hd"
         },
         {
           "id": "blueprint",
@@ -1228,7 +1353,8 @@
           "paint_kit": "cu_usps_blueprint",
           "texture": "res://assets/textures/weapon_skins/usp/blueprint.png",
           "source": "cstrike/CSGO Texture Pack/USP-S/blueprint.bmp",
-          "source_sha256": "c17b162f604ea89e35f7417c9d7aac5f4cffb788d4686ec5a59a6669d99342a9"
+          "source_sha256": "c17b162f604ea89e35f7417c9d7aac5f4cffb788d4686ec5a59a6669d99342a9",
+          "uv_layout": "legacy_to_current_hd"
         },
         {
           "id": "caiman",
@@ -1237,7 +1363,8 @@
           "paint_kit": "cu_kaiman",
           "texture": "res://assets/textures/weapon_skins/usp/caiman.png",
           "source": "cstrike/CSGO Texture Pack/USP-S/caiman.bmp",
-          "source_sha256": "a156fbaa18c2f67c5e7cad53d8d1a170d4b76a2bb63590a24a3a6b1d0cd46be7"
+          "source_sha256": "a156fbaa18c2f67c5e7cad53d8d1a170d4b76a2bb63590a24a3a6b1d0cd46be7",
+          "uv_layout": "legacy_to_current_hd"
         },
         {
           "id": "guardian",
@@ -1246,7 +1373,8 @@
           "paint_kit": "cu_usp_elegant",
           "texture": "res://assets/textures/weapon_skins/usp/guardian.png",
           "source": "cstrike/CSGO Texture Pack/USP-S/guardian.bmp",
-          "source_sha256": "12f1a6013d0a33e59a0477f1937cc4f50eb990facab5eb322dd2af81f13b5c93"
+          "source_sha256": "12f1a6013d0a33e59a0477f1937cc4f50eb990facab5eb322dd2af81f13b5c93",
+          "uv_layout": "legacy_to_current_hd"
         },
         {
           "id": "lead_conduit",
@@ -1255,7 +1383,8 @@
           "paint_kit": "gs_usp_voltage",
           "texture": "res://assets/textures/weapon_skins/usp/lead_conduit.png",
           "source": "cstrike/CSGO Texture Pack/USP-S/leadconcuit.bmp",
-          "source_sha256": "627b7ca292aad07746e8c6cb849250f298a3bdb693f186e8e7464fb6106476d8"
+          "source_sha256": "627b7ca292aad07746e8c6cb849250f298a3bdb693f186e8e7464fb6106476d8",
+          "uv_layout": "legacy_to_current_hd"
         }
       ]
     }
