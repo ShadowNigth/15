@@ -16,6 +16,8 @@ var bombsites: Array[AABB] = []
 var buyzones: Array = []
 var rescue_zones: Array[AABB] = []
 var escape_zones: Array[AABB] = []
+var water_zones: Array[AABB] = []
+var water: WaterEffects = null
 
 var player: PlayerController = null
 var bots: Array[CSBot] = []
@@ -50,6 +52,11 @@ func _ready() -> void:
 	buyzones = map_runtime.get("buyzones", [])
 	rescue_zones.assign(map_runtime.get("rescue_zones", []))
 	escape_zones.assign(map_runtime.get("escape_zones", []))
+	water_zones.assign(map_runtime.get("water_zones", []))
+	water = WaterEffects.new()
+	water.name = "BSPWaterEffects"
+	add_child(water)
+	water.setup(water_zones)
 
 	# 2. Setup Bot A* Waypoint Graph
 	bot_navigator = BotNavigator.new()
@@ -313,6 +320,16 @@ func _return_to_main_menu() -> void:
 
 
 # --- SPATIAL ZONE QUERIES ---
+
+func get_water_info(feet_pos: Vector3, actor_height: float = 1.88) -> Dictionary:
+	if water == null:
+		return {"in_water": false, "surface_y": feet_pos.y, "depth": 0.0}
+	return water.get_water_info(feet_pos, actor_height)
+
+
+func spawn_water_ray_impact(from_pos: Vector3, to_pos: Vector3, strength: float = 1.0) -> bool:
+	return water != null and water.spawn_ray_impact(from_pos, to_pos, strength)
+
 
 func is_in_buyzone(pos: Vector3, tm: String) -> bool:
 	var t_code := "2" if tm == "CT" else "1"

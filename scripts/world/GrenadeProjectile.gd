@@ -296,6 +296,14 @@ func _physics_process(delta: float) -> void:
 		q.collision_mask = 1 | 8
 		q.hit_from_inside = true
 		var hit: Dictionary = space.intersect_ray(q)
+		var travel_end: Vector3 = global_position + step if hit.is_empty() else hit["position"]
+		var water_hit := false
+		if is_instance_valid(RoundManager.game_world) \
+			and RoundManager.game_world.has_method("spawn_water_ray_impact"):
+			water_hit = bool(RoundManager.game_world.call("spawn_water_ray_impact", global_position, travel_end, clampf(spd / 7.0, 0.60, 1.55)))
+		if water_hit:
+			velocity *= 0.82
+			_ang_vel *= 0.85
 		if hit.is_empty():
 			global_position += step
 			rotation += _ang_vel * rem_dt

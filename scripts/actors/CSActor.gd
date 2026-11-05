@@ -42,6 +42,9 @@ var deaths: int = 0
 var is_crouching: bool = false
 var is_walking: bool = false
 var on_ladder: bool = false
+var in_water: bool = false
+var water_depth: float = 0.0
+var _was_in_water: bool = false
 var bot_ladder_dir: float = 0.0
 var look_yaw: float = 0.0
 var look_pitch: float = 0.0
@@ -648,6 +651,9 @@ func spawn_for_round(pos: Vector3, yaw_rad: float, reset_weapons: bool) -> void:
 	stamina_factor = 1.0
 	is_crouching = false
 	velocity = Vector3.ZERO
+	in_water = false
+	water_depth = 0.0
+	_was_in_water = false
 
 	# Snap GoldSrc waist-origin spawn entities (+36u above floor) cleanly down onto the BSP floor!
 	var floor_pos := pos
@@ -792,7 +798,21 @@ func apply_goldsrc_movement(wish_dir_world: Vector3, want_jump: bool, want_crouc
 		lad_info = RoundManager.game_world.get_ladder_info(global_position, actor_h)
 		on_ladder = bool(lad_info.get("on_ladder", false))
 
+	in_water = false
+	water_depth = 0.0
+	if is_instance_valid(RoundManager.game_world) and RoundManager.game_world.has_method("get_water_info"):
+		var water_info: Dictionary = RoundManager.game_world.get_water_info(global_position, actor_h)
+		in_water = bool(water_info.get("in_water", false))
+		water_depth = float(water_info.get("depth", 0.0))
+		var water_fx := RoundManager.game_world.get("water") as WaterEffects
+		if in_water and not _was_in_water and water_fx != null:
+			var splash_strength := clampf(0.65 + absf(velocity.y) * 0.10, 0.65, 1.65)
+			water_fx.splash_at(global_position, splash_strength, team)
+	_was_in_water = in_water
+
 	var max_spd := weapon_ctrl.get_max_speed_gs() * GameData.SCALE * stamina_factor
+	if in_water:
+		max_spd *= lerpf(0.82, 0.58, clampf(water_depth / 1.45, 0.0, 1.0))
 	if is_crouching:
 		max_spd *= 0.34
 	elif is_walking:
@@ -899,7 +919,17 @@ func apply_goldsrc_movement(wish_dir_world: Vector3, want_jump: bool, want_crouc
 				var acc_spd := minf(add_spd, AIR_ACCEL * max_spd * delta)
 				velocity.x += wish_dir_world.x * acc_spd
 				velocity.z += wish_dir_world.z * acc_spd
-		velocity.y -= GRAVITY_MPS2 * delta
+		if in_water:
+			# Water resistance cushions a fall and permits a gentle swim upwards
+			# while the body intersects the real BSP water surface.
+			velocity.y = maxf(velocity.y - GRAVITY_MPS2 * 0.24 * delta, -4.2)
+			var water_drag := maxf(0.0, 1.0 - 1.55 * delta)
+			velocity.x *= water_drag
+			velocity.z *= water_drag
+			if want_jump:
+				velocity.y = 3.4
+		else:
+			velocity.y -= GRAVITY_MPS2 * delta
 
 	var prev_vy := velocity.y
 	var pre_move_y := global_position.y
@@ -918,13 +948,13 @@ func apply_goldsrc_movement(wish_dir_world: Vector3, want_jump: bool, want_crouc
 
 	# Fall damage & landing sound (GoldSrc > 580u/s = 18.1 m/s)
 	if not grounded and is_on_floor():
-		if prev_vy < -18.2:
+		if not in_water and prev_vy < -18.2:
 			var fall_dmg := int((absf(prev_vy) - 18.0) * 11.0)
 			if fall_dmg > 0:
 				AudioManager.play_3d("player/pl_fallpain%d.wav" % randi_range(1, 3), global_position, 0.0, 22.0)
 				damaged_from.emit(global_position, fall_dmg, false)
 				_apply_raw_hp_loss(null, fall_dmg, "world", false)
-		elif prev_vy < -6.5 and not is_walking and not is_crouching:
+		elif not in_water and prev_vy < -6.5 and not is_walking and not is_crouching:
 			AudioManager.play_3d("player/pl_jumpland2.wav", global_position, -5.0, 20.0, 1.0, 14.0, team)
 			stamina_factor = maxf(0.65, stamina_factor - 0.18)
 
@@ -955,16 +985,25 @@ func _tick_footsteps(delta: float, climbing_ladder: bool) -> void:
 				AudioManager.play_footstep("L", global_position, team)
 		return
 
-	if not is_on_floor() or is_crouching or is_walking:
+	if not is_on_floor():
+		return
+	var water_fx: WaterEffects = null
+	if in_water and is_instance_valid(RoundManager.game_world):
+		water_fx = RoundManager.game_world.get("water") as WaterEffects
+	var water_step := water_fx != null
+	if (is_crouching or is_walking) and not water_step:
 		return
 	var hspd := Vector2(velocity.x, velocity.z).length()
-	if hspd < 3.6:
+	if hspd < (1.0 if water_step else 3.6):
 		return
-	_step_accum += hspd * delta * 0.42
+	_step_accum += hspd * delta * (0.34 if water_step else 0.42)
 	if _step_accum >= 1.0:
 		_step_accum = 0.0
-		var mchar := _sample_floor_material()
-		AudioManager.play_footstep(mchar, global_position, team)
+		if water_step:
+			water_fx.footstep_at(global_position, team, is_crouching or is_walking)
+		else:
+			var mchar := _sample_floor_material()
+			AudioManager.play_footstep(mchar, global_position, team)
 
 
 func _try_step_up(horiz_motion: Vector3, preserve_hvel: Vector3) -> void:

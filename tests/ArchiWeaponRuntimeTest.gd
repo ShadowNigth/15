@@ -379,10 +379,10 @@ func _test_hd_materials() -> void:
 			_expect(styled != null and styled.roughness_texture == GameData.get_texture(String(entry["roughness"])) \
 				and styled.roughness_texture_channel == BaseMaterial3D.TEXTURE_CHANNEL_RED,
 				"AK-47 uses the red-channel Phong roughness modulation")
-			_expect(styled != null and is_equal_approx(styled.roughness, 0.12) and is_equal_approx(styled.metallic, 0.94),
-				"HD maps retain the polished first-person Chrome finish")
-			_expect(styled != null and styled.albedo_color.r > original.albedo_color.r,
-				"HD colour preserves first-person brightness multiplication")
+			_expect(styled != null and is_equal_approx(styled.roughness, 0.22) and is_equal_approx(styled.metallic, 0.68),
+				"HD maps retain Chrome beneath the original first-person artwork")
+			_expect(styled != null and styled.albedo_color == original.albedo_color,
+				"Chrome preserves the original albedo colour without bleaching the texture")
 			for kind in ["color", "normal", "roughness"]:
 				var import_config := ConfigFile.new()
 				var import_ok := import_config.load(String(entry[kind]) + ".import") == OK
@@ -806,8 +806,8 @@ func _test_world_calibration_and_molotov() -> void:
 					and float(liquid.get_shader_parameter("refraction_strength")) > 0.0 and liquid.render_priority == 0
 			elif original.resource_name == "weapon_molotov_lighter":
 				var finish := GameData.get_styled_model_material(original, "vm") as BaseMaterial3D
-				weapon_finish_ok = finish != null and is_equal_approx(finish.roughness, 0.12) \
-					and is_equal_approx(finish.metallic, 0.94) and is_equal_approx(finish.metallic_specular, 1.0)
+				weapon_finish_ok = finish != null and is_equal_approx(finish.roughness, 0.22) \
+					and is_equal_approx(finish.metallic, 0.68) and is_equal_approx(finish.metallic_specular, 0.86)
 	_expect(outer_glass_ok and intermediate_glass_ok, "Slightly more opaque Molotov glass layers refract the scene and preserve printed detail")
 	_expect(liquid_ok, "Molotov liquid is animated, refractive and drawn behind the glass")
 	_expect(GameData.MOLOTOV_GLASS_SHADER.code.contains("hint_screen_texture") \
@@ -829,9 +829,9 @@ func _test_gameplay_material_fixes() -> void:
 		_expect(dropped != null and is_equal_approx(dropped.roughness, 0.70) \
 			and is_equal_approx(dropped.metallic, 0.06) and is_equal_approx(dropped.metallic_specular, 0.34),
 			"Dropped weapons use the matte low-specular floor finish")
-		_expect(first_person != null and is_equal_approx(first_person.roughness, 0.12) \
-			and is_equal_approx(first_person.metallic, 0.94) and is_equal_approx(first_person.metallic_specular, 1.0),
-			"First-person Chrome is polished without changing the dropped-weapon finish")
+		_expect(first_person != null and is_equal_approx(first_person.roughness, 0.22) \
+			and is_equal_approx(first_person.metallic, 0.68) and is_equal_approx(first_person.metallic_specular, 0.86),
+			"First-person Chrome stays below the texture without changing the dropped-weapon finish")
 	ak.free()
 
 	var c4 := GameData.get_model_scene("weapons/w_c4").instantiate() as Node3D

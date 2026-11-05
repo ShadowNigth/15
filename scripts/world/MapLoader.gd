@@ -10,6 +10,7 @@ static func build_map(parent: Node3D, map_data: Dictionary) -> Dictionary:
 	var bombsites_typed: Array[AABB] = []
 	var rescue_typed: Array[AABB] = []
 	var escape_typed: Array[AABB] = []
+	var water_typed: Array[AABB] = []
 
 	var result := {
 		"root": null,
@@ -22,6 +23,7 @@ static func build_map(parent: Node3D, map_data: Dictionary) -> Dictionary:
 		"buyzones": [],
 		"rescue_zones": rescue_typed,
 		"escape_zones": escape_typed,
+		"water_zones": water_typed,
 	}
 
 	var map_root := Node3D.new()
@@ -39,6 +41,7 @@ static func build_map(parent: Node3D, map_data: Dictionary) -> Dictionary:
 	var world_shader := load("res://assets/shaders/goldsrc_world.gdshader") as Shader
 	var masked_shader := load("res://assets/shaders/goldsrc_world_masked.gdshader") as Shader
 	var alpha_shader := load("res://assets/shaders/goldsrc_world_alpha.gdshader") as Shader
+	var water_shader := load("res://assets/shaders/water.gdshader") as Shader
 
 	var glb_scene := load(glb_path) as PackedScene
 	if not glb_scene:
@@ -89,6 +92,7 @@ static func build_map(parent: Node3D, map_data: Dictionary) -> Dictionary:
 		var has_ladder_tex := false
 		var has_grate_tex := false
 		var has_crate_tex := false
+		var water_surfaces: Array[int] = []
 
 		# Apply GoldSrc baked lightmap shader (opaque vs alpha-scissor vs translucent)
 		mi.layers = 1
@@ -114,7 +118,9 @@ static func build_map(parent: Node3D, map_data: Dictionary) -> Dictionary:
 					has_crate_tex = true
 				var tmeta: Dictionary = GameData.world_textures_meta.get(tex_safe, {})
 				var is_masked := bool(tmeta.get("masked", tex_safe.begins_with("mask_")))
-				var surf_water := is_water or tex_safe.begins_with("water_")
+				var surf_water := is_water or "water" in tlow
+				if surf_water:
+					water_surfaces.append(surf_i)
 				var use_alpha := (alpha_f < 0.99) or surf_water
 
 				var ckey := "%s_%.2f_%s_%s" % [tex_safe, alpha_f, str(is_masked), str(surf_water)]
@@ -122,14 +128,22 @@ static func build_map(parent: Node3D, map_data: Dictionary) -> Dictionary:
 				if not smat:
 					smat = ShaderMaterial.new()
 					smat.resource_name = tex_safe
-					if use_alpha and alpha_shader:
+					if surf_water and water_shader:
+						smat.shader = water_shader
+						smat.set_shader_parameter("alpha_Val", minf(alpha_f, 0.76))
+					elif use_alpha and alpha_shader:
 						smat.shader = alpha_shader
 						smat.set_shader_parameter("alpha_Val", alpha_f)
-						smat.set_shader_parameter("is_water", surf_water)
+						smat.set_shader_parameter("is_water", false)
 					elif is_masked and masked_shader:
 						smat.shader = masked_shader
 					else:
 						smat.shader = world_shader
+						var decorative := tlow.begins_with("ad_") or tlow.begins_with("lgt_") \
+							or "sign" in tlow or "poster" in tlow or "graff" in tlow \
+							or "screen" in tlow or "money" in tlow
+						smat.set_shader_parameter("relief_depth", 0.0 if decorative else 0.045)
+						smat.set_shader_parameter("detail_strength", 0.12 if decorative else 0.34)
 					if albedo:
 						smat.set_shader_parameter("albedo_tex", albedo)
 					if lm_tex:
@@ -149,7 +163,12 @@ static func build_map(parent: Node3D, map_data: Dictionary) -> Dictionary:
 		# - Layer 8 on func_illusionary metal ladders/grates so bullets & knives spark/ricochet on metal rungs!
 		var pure_ladder_brush: bool = (sub_idx > 0 and has_ladder_tex and cname in ["func_wall", "func_illusionary"])
 		if not is_water and mi.mesh and (is_solid or has_ladder_tex or has_grate_tex):
-			mi.create_trimesh_collision()
+			if water_surfaces.is_empty():
+				mi.create_trimesh_collision()
+			else:
+				# Worldspawn can mix water and solid primitives. Never drop the whole
+				# map's collision, but never make the liquid primitive solid either.
+				_create_filtered_trimesh_collision(mi, water_surfaces)
 			var col_layer: int = 8 if (pure_ladder_brush or not is_solid) else 1
 			for sc in mi.get_children():
 				if sc is StaticBody3D:
@@ -263,6 +282,7 @@ static func build_map(parent: Node3D, map_data: Dictionary) -> Dictionary:
 					"target": t_tgt,
 				})
 
+	water_typed.assign(_parse_aabbs(map_data.get("water_zones", []), 0.0))
 	result["bombsites"] = _parse_aabbs(map_data.get("bombsites", []), 0.5)
 	result["rescue_zones"] = _parse_aabbs(map_data.get("rescue_zones", []), 0.6)
 	result["escape_zones"] = _parse_aabbs(map_data.get("escape_zones", []), 0.6)
@@ -322,6 +342,27 @@ static func build_map(parent: Node3D, map_data: Dictionary) -> Dictionary:
 		amb_count += 1
 
 	return result
+
+
+static func _create_filtered_trimesh_collision(mi: MeshInstance3D, skipped: Array[int]) -> void:
+	var source := mi.mesh as ArrayMesh
+	if source == null:
+		mi.create_trimesh_collision()
+		return
+	var filtered := ArrayMesh.new()
+	for surface in range(source.get_surface_count()):
+		if surface in skipped:
+			continue
+		filtered.add_surface_from_arrays(Mesh.PRIMITIVE_TRIANGLES, source.surface_get_arrays(surface))
+	if filtered.get_surface_count() == 0:
+		return
+	var body := StaticBody3D.new()
+	body.name = "FilteredWorldCollision"
+	mi.add_child(body)
+	var collider := CollisionShape3D.new()
+	collider.name = "CollisionShape3D"
+	collider.shape = filtered.create_trimesh_shape()
+	body.add_child(collider)
 
 
 static func _dict_to_aabb(d: Dictionary, expand: float = 0.0) -> AABB:

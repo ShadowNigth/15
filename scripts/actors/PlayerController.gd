@@ -133,7 +133,7 @@ func _ready() -> void:
 	var chrome_panorama := PanoramaSkyMaterial.new()
 	chrome_panorama.resource_name = "ViewModelChromeStudio"
 	chrome_panorama.panorama = _create_chrome_studio_panorama()
-	chrome_panorama.energy_multiplier = 1.25
+	chrome_panorama.energy_multiplier = 0.68
 	chrome_sky.sky_material = chrome_panorama
 	vm_environment.sky = chrome_sky
 	vm_environment.reflected_light_source = Environment.REFLECTION_SOURCE_SKY

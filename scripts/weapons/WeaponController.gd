@@ -714,6 +714,10 @@ func _fire_penetrating_ray(
 		q.collision_mask = 1 | 2 | 4 | 8  # World (1) + Actors/Hostages (2) + Dropped Weapons (4) + Metal Ladders/Grates (8)
 		q.exclude = exclude_rids
 		var hit: Dictionary = space.intersect_ray(q)
+		var water_end: Vector3 = ray_end if hit.is_empty() else hit["position"]
+		if is_instance_valid(RoundManager.game_world) \
+			and RoundManager.game_world.has_method("spawn_water_ray_impact"):
+			RoundManager.game_world.call("spawn_water_ray_impact", cur_from, water_end, cal_scale)
 		if hit.is_empty():
 			if not tracer_spawned and is_instance_valid(RoundManager.game_world):
 				tracer_spawned = true

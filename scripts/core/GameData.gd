@@ -320,18 +320,19 @@ func get_styled_model_material(orig: Material, mode: String) -> Material:
 		dup.specular_mode = BaseMaterial3D.SPECULAR_SCHLICK_GGX
 	if mode == "vm":
 		dup.cull_mode = BaseMaterial3D.CULL_BACK
-		# Polished first-person chrome: the isolated studio sky supplies real
-		# reflected softboxes while albedo/normal/roughness textures stay intact.
-		dup.roughness = 0.12
-		dup.metallic = 0.94
-		dup.metallic_specular = 1.0
-		dup.albedo_color = Color(original.r * 1.18, original.g * 1.18, original.b * 1.18, original.a)
+		# Chrome stays beneath the original albedo artwork. The studio sky still
+		# supplies real reflections, but the texture's own colour and contrast
+		# remain dominant instead of being replaced by a silver/white surface.
+		dup.roughness = 0.22
+		dup.metallic = 0.68
+		dup.metallic_specular = 0.86
+		dup.albedo_color = original
 	elif mode == "vm_flip":
 		dup.cull_mode = BaseMaterial3D.CULL_FRONT
-		dup.roughness = 0.12
-		dup.metallic = 0.94
-		dup.metallic_specular = 1.0
-		dup.albedo_color = Color(original.r * 1.18, original.g * 1.18, original.b * 1.18, original.a)
+		dup.roughness = 0.22
+		dup.metallic = 0.68
+		dup.metallic_specular = 0.86
+		dup.albedo_color = original
 	elif mode == "w_held":
 		dup.cull_mode = BaseMaterial3D.CULL_BACK
 		dup.roughness = 0.38

@@ -247,6 +247,7 @@ func _test_viewmodel_studio(player: PlayerController) -> void:
 		chrome_ok = environment.reflected_light_source == Environment.REFLECTION_SOURCE_SKY \
 			and sky != null and panorama != null and panorama.panorama != null \
 			and panorama.panorama.get_size() == Vector2(512, 256) \
+			and is_equal_approx(panorama.energy_multiplier, 0.68) \
 			and player._vm_viewport.transparent_bg
 	_expect(chrome_ok, "Chrome uses a filtered studio radiance sky without drawing a background")
 	var hd_ok := false
