@@ -1,20 +1,19 @@
 class_name IncendiaryArea
 extends Node3D
-## Propagating Molotov/incendiary ground fire.
+## Independent procedural Molotov/incendiary simulation.
 ##
-## Fuel ignites in staggered patches instead of appearing as one instant ring.
-## Each new patch is projected onto walkable geometry and must be reachable from
-## an existing patch without crossing a wall. Damage follows the burning patches,
-## not the maximum radius, so the fire cannot hurt through cover or ahead of its
-## visible expansion. All simulation runs in physics; only presentation is per-frame.
+## Connected random-walk fuel branches are projected onto real floor geometry.
+## Every throw owns its seed, envelope, branch lengths, flame meshes and particles.
+## Damage follows ignited patches only; neither visuals nor damage cross cover.
 
-const MAX_PATCHES: int = 42
+const MAX_PATCHES: int = 44
 const PATCH_RADIUS: float = 0.82
 const SPREAD_STEP: float = 0.72
 const SPREAD_INTERVAL: float = 0.052
 const PATCHES_PER_STEP: int = 2
 const WORLD_COLLISION_MASK: int = 1
 const FLAME_SHADER: Shader = preload("res://assets/shaders/incendiary_flame.gdshader")
+const HEAT_SHADER: Shader = preload("res://assets/shaders/incendiary_heat.gdshader")
 
 static var _ember_texture: Texture2D = null
 
@@ -23,45 +22,76 @@ var area_type: String = "molotov"
 ## Maximum fuel travel, not an always-active damage sphere.
 var radius: float = 3.25
 var life_left: float = 7.0
+var simulation_seed: int = 0
+var target_patch_count: int = 1
+var envelope_aspect: float = 1.0
+var propagation_heading: float = 0.0
 
 var _tick: float = 0.0
 var _age: float = 0.0
 var _visual_time: float = 0.0
 var _spread_tick: float = 0.0
+var _spread_interval: float = SPREAD_INTERVAL
+var _patches_per_step: int = PATCHES_PER_STEP
 var _current_radius: float = PATCH_RADIUS
+var _initial_life: float = 7.0
+var _branch_budget: int = 3
+var _branch_arc: float = TAU
+var _branches_started: int = 0
 var _rng := RandomNumberGenerator.new()
 var _patches: Array[Dictionary] = []
-var _frontier: Array[Vector3] = []
-var _pending: Array[Dictionary] = []
+var _walkers: Array[Dictionary] = []
 var _flames: Array[Dictionary] = []
-var _smoke: Array[Dictionary] = []
-var _embers: Array[Dictionary] = []
+var _heat: Array[Dictionary] = []
 var _light: OmniLight3D = null
+var _burst: GPUParticles3D = null
+var _ember_particles: GPUParticles3D = null
+var _smoke_particles: GPUParticles3D = null
+var _burst_process: ParticleProcessMaterial = null
+var _ember_process: ParticleProcessMaterial = null
+var _smoke_process: ParticleProcessMaterial = null
 
 
-func setup_fire(owner_actor: Node3D, kind: String) -> void:
+func setup_fire(owner_actor: Node3D, kind: String, seed_override: int = 0) -> void:
 	thrower = owner_actor
 	area_type = kind
-	life_left = 7.0 if kind == "molotov" else 8.0
-	radius = 3.35 if kind == "molotov" else 3.10
+	_initial_life = 7.0 if kind == "molotov" else 8.0
+	life_left = _initial_life
+	if seed_override != 0:
+		simulation_seed = seed_override
+	else:
+		_rng.randomize()
+		simulation_seed = int(_rng.randi())
+		if simulation_seed == 0:
+			simulation_seed = 1
+	_rng.seed = simulation_seed
+
+	# These are independent simulation parameters, not a scale applied to a
+	# prebuilt ring. Compact blobs, long branches and multi-arm fires emerge here.
+	target_patch_count = _rng.randi_range(20, MAX_PATCHES)
+	var base_radius := 3.35 if kind == "molotov" else 3.10
+	radius = base_radius * _rng.randf_range(0.72, 1.18)
+	envelope_aspect = _rng.randf_range(0.48, 1.0)
+	propagation_heading = _rng.randf_range(-PI, PI)
+	_branch_budget = _rng.randi_range(2, 5)
+	_branch_arc = _rng.randf_range(0.70, TAU)
+	_spread_interval = _rng.randf_range(0.046, 0.072)
+	_patches_per_step = _rng.randi_range(1, 3)
+	_spread_tick = _rng.randf_range(0.12, 0.24)
 	_tick = 0.08
-	_spread_tick = 0.09
-	_rng.randomize()
 	_ensure_textures()
 	_snap_origin_to_floor()
-	_add_patch(Vector3.ZERO)
-	_frontier.append(Vector3.ZERO)
+	_add_patch(Vector3.ZERO, Vector3.ZERO)
 	_create_light()
-	_create_smoke()
-	_create_embers()
+	_create_particle_systems()
+	_refresh_particle_emission()
 
 
 func _snap_origin_to_floor() -> void:
 	if get_world_3d() == null:
 		return
 	var query := PhysicsRayQueryParameters3D.create(
-		global_position + Vector3.UP * 0.45,
-		global_position - Vector3.UP * 1.1
+		global_position + Vector3.UP * 0.45, global_position - Vector3.UP * 1.1
 	)
 	query.collision_mask = WORLD_COLLISION_MASK
 	var hit: Dictionary = get_world_3d().direct_space_state.intersect_ray(query)
@@ -87,162 +117,361 @@ static func _ensure_textures() -> void:
 	_ember_texture = ImageTexture.create_from_image(ember_image)
 
 
+static func _make_ramp(start: Color, middle: Color, end: Color) -> Texture2D:
+	var image := Image.create(64, 1, false, Image.FORMAT_RGBA8)
+	for x in range(64):
+		var t := float(x) / 63.0
+		var colour := (
+			start.lerp(middle, t / 0.32) if t < 0.32 else middle.lerp(end, (t - 0.32) / 0.68)
+		)
+		image.set_pixel(x, 0, colour)
+	return ImageTexture.create_from_image(image)
+
+
 func _create_light() -> void:
 	_light = OmniLight3D.new()
 	_light.name = "FireLight"
-	_light.light_color = Color(1.0, 0.36, 0.065)
+	_light.light_color = Color(1.0, 0.42, 0.075)
 	_light.light_energy = 0.0
 	_light.omni_range = 2.0
-	_light.position = Vector3(0.0, 0.72, 0.0)
 	_light.light_cull_mask = 3
 	add_child(_light)
+	_light.position = Vector3(0.0, 0.72, 0.0)
 
 
-func _add_patch(local_pos: Vector3) -> void:
+func _add_patch(local_pos: Vector3, parent_pos: Vector3) -> void:
 	var patch_index := _patches.size()
+	var patch_radius := PATCH_RADIUS * _rng.randf_range(0.76, 1.18)
+	var fade_offset := _rng.randf_range(0.0, 0.72)
 	var patch := {
 		"pos": local_pos,
 		"born": _age,
 		"phase": _rng.randf_range(0.0, TAU),
+		"radius": patch_radius,
+		"fade_offset": fade_offset,
 	}
 	_patches.append(patch)
-	_current_radius = maxf(_current_radius, Vector2(local_pos.x, local_pos.z).length() + PATCH_RADIUS)
+	_current_radius = maxf(
+		_current_radius, Vector2(local_pos.x, local_pos.z).length() + patch_radius
+	)
 
-	var scorch := Sprite3D.new()
-	scorch.name = "Scorch%02d" % patch_index
-	scorch.texture = GameData.get_scorch_decal_texture()
-	scorch.pixel_size = 0.012 * _rng.randf_range(0.85, 1.18)
-	scorch.rotation = Vector3(-PI * 0.5, 0.0, _rng.randf_range(0.0, TAU))
-	scorch.position = local_pos + Vector3.UP * 0.012
-	scorch.modulate = Color(0.42, 0.19, 0.075, 0.0)
-	scorch.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
-	add_child(scorch)
-	patch["scorch"] = scorch
+	var flame := MeshInstance3D.new()
+	flame.name = "VolumetricFlame%02d" % patch_index
+	var flame_mesh := _build_flame_mesh(local_pos, parent_pos, patch_radius, patch_index == 0)
+	flame.custom_aabb = flame_mesh.get_aabb().grow(0.45)
+	flame.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
+	var material := ShaderMaterial.new()
+	material.shader = FLAME_SHADER
+	material.render_priority = 4
+	material.set_shader_parameter(
+		"seed", float(simulation_seed % 4096) * 0.013 + float(patch_index) * 7.17 + _rng.randf()
+	)
+	material.set_shader_parameter("ignition", 0.0)
+	material.set_shader_parameter("fade", 1.0)
+	material.set_shader_parameter("height_fade", 1.0)
+	material.set_shader_parameter("intensity", _rng.randf_range(0.88, 1.18))
+	material.set_shader_parameter("motion_rate", _rng.randf_range(0.76, 1.34))
+	flame.material_override = material
+	add_child(flame)
+	flame.position = local_pos
+	flame.mesh = flame_mesh
+	(
+		_flames
+		. append(
+			{
+				"node": flame,
+				"material": material,
+				"born": _age,
+				"ignition_span": _rng.randf_range(0.17, 0.34),
+				"fade_offset": fade_offset,
+				"phase": _rng.randf_range(0.0, TAU),
+				"intensity": _rng.randf_range(0.90, 1.12),
+			}
+		)
+	)
 
-	# Two animated shaders per fuel patch: a broad violet/orange envelope and a
-	# smaller white-hot core. Their low, irregular tongues merge into the broad
-	# CS2-style ground fire instead of forming repeated upright orange cones.
-	var quad_sizes := [Vector2(1.42, 0.82), Vector2(0.96, 0.68)]
-	var base_heights := [0.37, 0.31]
-	for layer in range(2):
-		var flame := MeshInstance3D.new()
-		flame.name = "Flame%02d_%d" % [patch_index, layer]
+	# Sparse heat plumes distort only the air above connected fire zones.
+	if patch_index % 4 == 0:
+		var heat := MeshInstance3D.new()
+		heat.name = "HeatPlume%02d" % patch_index
 		var quad := QuadMesh.new()
-		var quad_size: Vector2 = quad_sizes[layer]
-		quad.size = quad_size
-		flame.mesh = quad
-		flame.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
-		var material := ShaderMaterial.new()
-		material.shader = FLAME_SHADER
-		material.set_shader_parameter("seed", _rng.randf_range(0.0, 80.0))
-		material.set_shader_parameter("layer", float(layer))
-		material.set_shader_parameter("ignition", 0.0)
-		flame.material_override = material
-		var lateral := Vector3(_rng.randf_range(-0.15, 0.15), 0.0, _rng.randf_range(-0.15, 0.15))
-		flame.position = local_pos + lateral + Vector3.UP * float(base_heights[layer])
-		flame.scale = Vector3.ONE * 0.01
-		add_child(flame)
-		_flames.append({
-			"node": flame,
-			"material": material,
-			"origin": flame.position,
-			"root_y": flame.position.y - quad_size.y * 0.5,
-			"born": _age + float(layer) * 0.045,
-			"phase": _rng.randf_range(0.0, TAU),
-			"scale": Vector2(_rng.randf_range(0.82, 1.18), _rng.randf_range(0.80, 1.20)),
-			"layer": layer,
-		})
+		quad.size = Vector2(_rng.randf_range(1.05, 1.72), _rng.randf_range(1.0, 1.65))
+		heat.mesh = quad
+		var heat_height := _rng.randf_range(0.56, 0.86)
+		heat.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
+		var heat_material := ShaderMaterial.new()
+		heat_material.shader = HEAT_SHADER
+		heat_material.render_priority = 6
+		heat_material.set_shader_parameter("seed", _rng.randf_range(0.0, 90.0))
+		heat_material.set_shader_parameter("ignition", 0.0)
+		heat.material_override = heat_material
+		add_child(heat)
+		heat.position = local_pos + Vector3.UP * heat_height
+		_heat.append(
+			{"node": heat, "material": heat_material, "born": _age, "fade_offset": fade_offset}
+		)
+	_refresh_particle_emission()
 
 
-func _create_smoke() -> void:
-	for index in range(8):
-		var sprite := Sprite3D.new()
-		sprite.name = "FireSmoke%02d" % index
-		sprite.texture = GameData.get_smoke_cloud_variant(index)
-		sprite.billboard = BaseMaterial3D.BILLBOARD_ENABLED
-		sprite.shaded = false
-		sprite.pixel_size = 0.009
-		sprite.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
-		sprite.visible = false
-		add_child(sprite)
-		var entry := {"node": sprite, "age": 0.0, "life": 1.0, "origin": Vector3.ZERO,
-			"velocity": Vector3.ZERO, "size": 1.0}
-		_smoke.append(entry)
-		_reset_smoke(entry, true)
+func _build_flame_mesh(
+	local_pos: Vector3, parent_pos: Vector3, patch_radius: float, initial: bool
+) -> ArrayMesh:
+	var surface := SurfaceTool.new()
+	surface.begin(Mesh.PRIMITIVE_TRIANGLES)
+	var tongue_count := _rng.randi_range(2, 4) + (1 if initial else 0)
+	var connector_count := 0 if initial else _rng.randi_range(1, 2)
+	var size_factor := patch_radius / PATCH_RADIUS
+	for tongue_index in range(tongue_count + connector_count):
+		var connector := tongue_index >= tongue_count
+		var root := Vector3.ZERO
+		if connector:
+			var t := _rng.randf_range(0.28, 0.76)
+			root = (parent_pos - local_pos) * t
+			root += Vector3(_rng.randf_range(-0.09, 0.09), 0.0, _rng.randf_range(-0.09, 0.09))
+		else:
+			root = Vector3(
+				_rng.randf_range(-0.27, 0.27) * size_factor,
+				0.0,
+				_rng.randf_range(-0.27, 0.27) * size_factor
+			)
+		var height := _rng.randf_range(0.34, 0.94) * size_factor
+		if initial:
+			height *= 1.20
+		if connector:
+			height *= _rng.randf_range(0.50, 0.76)
+		var width := _rng.randf_range(0.42, 0.78) * size_factor
+		var angle := _rng.randf_range(0.0, TAU)
+		var lean_angle := angle + _rng.randf_range(-1.2, 1.2)
+		var lean := (
+			Vector3(cos(lean_angle), 0.0, sin(lean_angle)) * height * _rng.randf_range(0.12, 0.38)
+		)
+		var phase := _rng.randf_range(0.0, TAU)
+		for plane in range(2):
+			var ribbon_angle := angle + float(plane) * PI * 0.5
+			var right := Vector3(cos(ribbon_angle), 0.0, sin(ribbon_angle))
+			_append_ribbon(surface, root, right, lean, height, width, 7, phase + float(plane))
+	return surface.commit()
 
 
-func _reset_smoke(entry: Dictionary, initial: bool = false) -> void:
-	if _patches.is_empty():
+static func _append_ribbon(
+	surface: SurfaceTool,
+	root: Vector3,
+	right: Vector3,
+	lean: Vector3,
+	height: float,
+	width: float,
+	segments: int,
+	phase: float
+) -> void:
+	for segment in range(segments):
+		var h0 := float(segment) / float(segments)
+		var h1 := float(segment + 1) / float(segments)
+		var curl0 := sin(phase + h0 * 6.2) * width * 0.16 * h0
+		var curl1 := sin(phase + h1 * 6.2) * width * 0.16 * h1
+		var centre0 := root + Vector3.UP * (height * h0) + lean * (h0 * h0) + right * curl0
+		var centre1 := root + Vector3.UP * (height * h1) + lean * (h1 * h1) + right * curl1
+		var billow0 := 0.94 + 0.18 * sin(phase + h0 * 8.0) + 0.08 * sin(phase * 1.7 + h0 * 17.0)
+		var billow1 := 0.94 + 0.18 * sin(phase + h1 * 8.0) + 0.08 * sin(phase * 1.7 + h1 * 17.0)
+		var width0 := width * maxf(0.025, pow(1.0 - h0, 0.52) * billow0)
+		var width1 := width * maxf(0.025, pow(1.0 - h1, 0.52) * billow1)
+		var v00 := centre0 - right * width0 * 0.5
+		var v01 := centre0 + right * width0 * 0.5
+		var v10 := centre1 - right * width1 * 0.5
+		var v11 := centre1 + right * width1 * 0.5
+		_mesh_vertex(surface, v00, Vector2(0.0, h0))
+		_mesh_vertex(surface, v01, Vector2(1.0, h0))
+		_mesh_vertex(surface, v11, Vector2(1.0, h1))
+		_mesh_vertex(surface, v00, Vector2(0.0, h0))
+		_mesh_vertex(surface, v11, Vector2(1.0, h1))
+		_mesh_vertex(surface, v10, Vector2(0.0, h1))
+
+
+static func _mesh_vertex(surface: SurfaceTool, point: Vector3, uv: Vector2) -> void:
+	surface.set_uv(uv)
+	surface.add_vertex(point)
+
+
+func _particle_mesh(
+	texture: Texture2D, size: float, tint: Color, additive: bool = false
+) -> QuadMesh:
+	var material := StandardMaterial3D.new()
+	material.shading_mode = BaseMaterial3D.SHADING_MODE_UNSHADED
+	material.transparency = BaseMaterial3D.TRANSPARENCY_ALPHA
+	material.depth_draw_mode = BaseMaterial3D.DEPTH_DRAW_DISABLED
+	material.cull_mode = BaseMaterial3D.CULL_DISABLED
+	material.billboard_mode = BaseMaterial3D.BILLBOARD_ENABLED
+	material.vertex_color_use_as_albedo = true
+	material.albedo_texture = texture
+	material.albedo_color = tint
+	material.render_priority = 5
+	if additive:
+		material.blend_mode = BaseMaterial3D.BLEND_MODE_ADD
+	var quad := QuadMesh.new()
+	quad.size = Vector2.ONE * size
+	quad.material = material
+	return quad
+
+
+func _new_gpu_particles(
+	node_name: String, amount: int, lifetime: float, process: ParticleProcessMaterial, mesh: Mesh
+) -> GPUParticles3D:
+	var particles := GPUParticles3D.new()
+	particles.name = node_name
+	particles.amount = amount
+	particles.lifetime = lifetime
+	particles.randomness = 0.72
+	particles.local_coords = true
+	particles.emitting = false
+	particles.process_material = process
+	particles.draw_passes = 1
+	particles.draw_pass_1 = mesh
+	particles.visibility_aabb = AABB(Vector3(-8.0, -1.0, -8.0), Vector3(16.0, 8.0, 16.0))
+	particles.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
+	add_child(particles)
+	return particles
+
+
+func _create_particle_systems() -> void:
+	_burst_process = ParticleProcessMaterial.new()
+	_burst_process.emission_shape = ParticleProcessMaterial.EMISSION_SHAPE_SPHERE
+	_burst_process.emission_sphere_radius = 0.24
+	_burst_process.direction = Vector3.UP
+	_burst_process.spread = 74.0
+	_burst_process.initial_velocity_min = 1.15
+	_burst_process.initial_velocity_max = 2.85
+	_burst_process.gravity = Vector3(0.0, -3.8, 0.0)
+	_burst_process.damping_min = 1.1
+	_burst_process.damping_max = 2.0
+	_burst_process.scale_min = 0.48
+	_burst_process.scale_max = 1.25
+	_burst_process.color_ramp = _make_ramp(
+		Color(1.0, 0.98, 0.68, 1.0), Color(1.0, 0.28, 0.015, 0.90), Color(0.35, 0.008, 0.001, 0.0)
+	)
+	_burst = _new_gpu_particles(
+		"InitialFlameBurst",
+		42,
+		0.68,
+		_burst_process,
+		_particle_mesh(_ember_texture, 0.15, Color.WHITE, true)
+	)
+	_burst.one_shot = true
+	_burst.explosiveness = 0.94
+	_burst.emitting = true
+
+	_ember_process = ParticleProcessMaterial.new()
+	_ember_process.emission_shape = ParticleProcessMaterial.EMISSION_SHAPE_POINTS
+	_ember_process.emission_shape_offset = Vector3.UP * 0.24
+	_ember_process.direction = Vector3.UP
+	_ember_process.spread = 54.0
+	_ember_process.initial_velocity_min = 0.58
+	_ember_process.initial_velocity_max = 1.62
+	_ember_process.gravity = Vector3(0.0, -0.78, 0.0)
+	_ember_process.damping_min = 0.25
+	_ember_process.damping_max = 0.68
+	_ember_process.scale_min = 0.34
+	_ember_process.scale_max = 1.0
+	_ember_process.color_ramp = _make_ramp(
+		Color(1.0, 0.94, 0.46, 1.0), Color(1.0, 0.31, 0.025, 0.82), Color(0.42, 0.012, 0.001, 0.0)
+	)
+	_ember_particles = _new_gpu_particles(
+		"IncandescentEmbers",
+		88,
+		1.35,
+		_ember_process,
+		_particle_mesh(_ember_texture, 0.075, Color.WHITE, true)
+	)
+	_ember_particles.emitting = true
+
+	_smoke_process = ParticleProcessMaterial.new()
+	_smoke_process.emission_shape = ParticleProcessMaterial.EMISSION_SHAPE_POINTS
+	_smoke_process.emission_shape_offset = Vector3.UP * 0.58
+	_smoke_process.direction = Vector3.UP
+	_smoke_process.spread = 24.0
+	_smoke_process.initial_velocity_min = 0.22
+	_smoke_process.initial_velocity_max = 0.52
+	_smoke_process.gravity = Vector3(0.0, 0.045, 0.0)
+	_smoke_process.damping_min = 0.10
+	_smoke_process.damping_max = 0.32
+	_smoke_process.scale_min = 0.52
+	_smoke_process.scale_max = 1.35
+	_smoke_process.color_ramp = _make_ramp(
+		Color(0.22, 0.20, 0.18, 0.0), Color(0.26, 0.23, 0.20, 0.14), Color(0.18, 0.17, 0.16, 0.0)
+	)
+	_smoke_particles = _new_gpu_particles(
+		"LightFireSmoke",
+		30,
+		3.35,
+		_smoke_process,
+		_particle_mesh(GameData.get_smoke_cloud_variant(0), 0.92, Color(0.42, 0.39, 0.35, 0.58))
+	)
+	_smoke_particles.emitting = true
+
+
+func _refresh_particle_emission() -> void:
+	if _ember_process == null or _smoke_process == null or _patches.is_empty():
 		return
-	var patch: Dictionary = _patches[_rng.randi_range(0, _patches.size() - 1)]
-	var origin: Vector3 = patch.get("pos", Vector3.ZERO)
-	origin += Vector3(_rng.randf_range(-0.28, 0.28), _rng.randf_range(0.45, 0.82), _rng.randf_range(-0.28, 0.28))
-	var life := _rng.randf_range(2.1, 3.4)
-	entry["life"] = life
-	entry["age"] = -_rng.randf_range(0.0, 1.5) if initial else 0.0
-	entry["origin"] = origin
-	entry["velocity"] = Vector3(_rng.randf_range(-0.13, 0.13), _rng.randf_range(0.34, 0.58), _rng.randf_range(-0.13, 0.13))
-	entry["size"] = _rng.randf_range(0.72, 1.18)
+	var image := Image.create(_patches.size(), 1, false, Image.FORMAT_RGBF)
+	for index in range(_patches.size()):
+		var point: Vector3 = _patches[index].get("pos", Vector3.ZERO)
+		image.set_pixel(index, 0, Color(point.x, point.y, point.z, 1.0))
+	var points := ImageTexture.create_from_image(image)
+	for process in [_ember_process, _smoke_process]:
+		process.emission_point_count = _patches.size()
+		process.emission_point_texture = points
 
 
-func _create_embers() -> void:
-	for index in range(16):
-		var sprite := Sprite3D.new()
-		sprite.name = "Ember%02d" % index
-		sprite.texture = _ember_texture
-		sprite.billboard = BaseMaterial3D.BILLBOARD_ENABLED
-		sprite.shaded = false
-		sprite.pixel_size = 0.0032
-		sprite.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
-		sprite.visible = false
-		add_child(sprite)
-		var entry := {"node": sprite, "age": 0.0, "life": 1.0, "origin": Vector3.ZERO,
-			"velocity": Vector3.ZERO, "size": 1.0}
-		_embers.append(entry)
-		_reset_ember(entry, true)
+func _inside_fuel_envelope(candidate: Vector3) -> bool:
+	var point := Vector2(candidate.x, candidate.z)
+	if point.length() > radius * 1.08:
+		return false
+	var forward := Vector2(cos(propagation_heading), sin(propagation_heading))
+	var side := Vector2(-forward.y, forward.x)
+	var along := point.dot(forward) / maxf(0.1, radius)
+	var across := point.dot(side) / maxf(0.1, radius * envelope_aspect)
+	var wobble := 1.0 + 0.13 * sin(along * 5.3 + across * 3.7 + float(simulation_seed % 997))
+	return along * along + across * across <= wobble
 
 
-func _reset_ember(entry: Dictionary, initial: bool = false) -> void:
-	if _patches.is_empty():
+func _start_branch(
+	origin: Vector3, forced_angle: float = 999.0, continuation: bool = false
+) -> void:
+	if not continuation and _branches_started >= _branch_budget:
 		return
-	var patch: Dictionary = _patches[_rng.randi_range(0, _patches.size() - 1)]
-	var origin: Vector3 = patch.get("pos", Vector3.ZERO)
-	origin += Vector3(_rng.randf_range(-0.20, 0.20), _rng.randf_range(0.18, 0.46), _rng.randf_range(-0.20, 0.20))
-	entry["life"] = _rng.randf_range(0.65, 1.45)
-	entry["age"] = -_rng.randf_range(0.0, 1.1) if initial else 0.0
-	entry["origin"] = origin
-	entry["velocity"] = Vector3(_rng.randf_range(-0.42, 0.42), _rng.randf_range(0.85, 1.85), _rng.randf_range(-0.42, 0.42))
-	entry["size"] = _rng.randf_range(0.45, 1.0)
-
-
-func _refill_candidates() -> void:
-	if _frontier.is_empty():
-		return
-	var parent: Vector3 = _frontier.pop_front()
-	var start := _rng.randi_range(0, 7)
-	for offset in range(8):
-		var direction_index := (start + offset) % 8
-		var angle := float(direction_index) * TAU / 8.0 + _rng.randf_range(-0.09, 0.09)
-		var distance := SPREAD_STEP * _rng.randf_range(0.93, 1.07)
-		var candidate := parent + Vector3(cos(angle) * distance, 0.0, sin(angle) * distance)
-		_pending.append({"from": parent, "to": candidate})
+	var branch_index := _branches_started % _branch_budget
+	var angle := forced_angle
+	if angle > 100.0:
+		var arc_position := float(branch_index) / maxf(1.0, float(_branch_budget - 1)) - 0.5
+		angle = propagation_heading + arc_position * _branch_arc + _rng.randf_range(-0.45, 0.45)
+	var direction := Vector2(cos(angle), sin(angle))
+	(
+		_walkers
+		. append(
+			{
+				"pos": origin,
+				"direction": direction,
+				"remaining": _rng.randi_range(4, 11),
+				"step": _rng.randf_range(0.52, 0.86),
+				"failures": 0,
+			}
+		)
+	)
+	_branches_started += 1
 
 
 func _is_occupied(candidate: Vector3) -> bool:
 	for patch in _patches:
 		var pos: Vector3 = patch.get("pos", Vector3.ZERO)
-		if Vector2(pos.x - candidate.x, pos.z - candidate.z).length() < SPREAD_STEP * 0.63:
+		if Vector2(pos.x - candidate.x, pos.z - candidate.z).length() < SPREAD_STEP * 0.52:
 			return true
 	return false
 
 
 func _project_candidate(parent: Vector3, candidate: Vector3) -> Variant:
-	if Vector2(candidate.x, candidate.z).length() > radius or get_world_3d() == null:
+	if get_world_3d() == null:
 		return null
 	var space := get_world_3d().direct_space_state
 	var floor_query := PhysicsRayQueryParameters3D.create(
-		to_global(candidate + Vector3.UP * 0.62),
-		to_global(candidate - Vector3.UP * 1.05)
+		to_global(candidate + Vector3.UP * 0.62), to_global(candidate - Vector3.UP * 1.05)
 	)
 	floor_query.collision_mask = WORLD_COLLISION_MASK
 	var floor_hit: Dictionary = space.intersect_ray(floor_query)
@@ -257,8 +486,7 @@ func _project_candidate(parent: Vector3, candidate: Vector3) -> Variant:
 	if absf(local.y - parent.y) > 0.46:
 		return null
 	var wall_query := PhysicsRayQueryParameters3D.create(
-		to_global(parent + Vector3.UP * 0.20),
-		to_global(local + Vector3.UP * 0.20)
+		to_global(parent + Vector3.UP * 0.20), to_global(local + Vector3.UP * 0.20)
 	)
 	wall_query.collision_mask = WORLD_COLLISION_MASK
 	if not space.intersect_ray(wall_query).is_empty():
@@ -268,146 +496,141 @@ func _project_candidate(parent: Vector3, candidate: Vector3) -> Variant:
 
 func _expand_one() -> void:
 	var attempts := 0
-	while attempts < 12 and _patches.size() < MAX_PATCHES:
-		if _pending.is_empty():
-			_refill_candidates()
-			if _pending.is_empty():
-				return
-		var candidate: Dictionary = _pending.pop_front()
-		var parent: Vector3 = candidate.get("from", Vector3.ZERO)
-		var target: Vector3 = candidate.get("to", Vector3.ZERO)
-		attempts += 1
-		if _is_occupied(target):
+	while attempts < 18 and _patches.size() < target_patch_count:
+		if _walkers.is_empty():
+			var continuation := _branches_started >= _branch_budget
+			var origin := Vector3.ZERO
+			if continuation or (_patches.size() > 6 and _rng.randf() < 0.42):
+				var parent_patch: Dictionary = _patches[_rng.randi_range(0, _patches.size() - 1)]
+				origin = parent_patch.get("pos", Vector3.ZERO)
+			# A finished primary arm does not extinguish unused fuel. Continue from
+			# an existing connected patch; walls and the fuel envelope still apply.
+			_start_branch(origin, 999.0, continuation)
 			continue
-		var projected: Variant = _project_candidate(parent, target)
+		var walker_index := _rng.randi_range(0, _walkers.size() - 1)
+		var walker: Dictionary = _walkers[walker_index]
+		var parent: Vector3 = walker.get("pos", Vector3.ZERO)
+		var direction := (walker.get("direction", Vector2.RIGHT) as Vector2).rotated(
+			_rng.randf_range(-0.38, 0.38)
+		)
+		var distance := float(walker.get("step", SPREAD_STEP)) * _rng.randf_range(0.84, 1.18)
+		var lateral := Vector2(-direction.y, direction.x) * _rng.randf_range(-0.15, 0.15)
+		var offset := (direction + lateral).normalized() * distance
+		var candidate := parent + Vector3(offset.x, 0.0, offset.y)
+		attempts += 1
+		if not _inside_fuel_envelope(candidate):
+			_walkers.remove_at(walker_index)
+			continue
+		if _is_occupied(candidate):
+			walker["direction"] = direction.rotated(_rng.randf_range(0.42, 1.05))
+			walker["failures"] = int(walker.get("failures", 0)) + 1
+			if int(walker["failures"]) >= 7:
+				_walkers.remove_at(walker_index)
+			continue
+		var projected: Variant = _project_candidate(parent, candidate)
 		if projected == null:
+			_walkers.remove_at(walker_index)
 			continue
 		var local_pos := projected as Vector3
-		_add_patch(local_pos)
-		_frontier.append(local_pos)
+		_add_patch(local_pos, parent)
+		walker["pos"] = local_pos
+		walker["direction"] = direction
+		walker["failures"] = 0
+		walker["remaining"] = int(walker.get("remaining", 1)) - 1
+		walker["step"] = clampf(
+			float(walker.get("step", SPREAD_STEP)) * _rng.randf_range(0.90, 1.10), 0.44, 0.94
+		)
+		if (
+			int(walker["remaining"]) > 1
+			and _branches_started < _branch_budget
+			and _rng.randf() < 0.16
+		):
+			_start_branch(local_pos, direction.angle() + _rng.randf_range(-1.15, 1.15))
+		if int(walker["remaining"]) <= 0:
+			_walkers.remove_at(walker_index)
 		return
 
 
 func _physics_process(delta: float) -> void:
 	life_left -= delta
-	if life_left <= 0.0:
+	if life_left <= -1.15:
 		queue_free()
 		return
 	_age += delta
-	_spread_tick -= delta
-	if _spread_tick <= 0.0:
-		_spread_tick = maxf(_spread_tick + SPREAD_INTERVAL, SPREAD_INTERVAL)
-		for _index in range(PATCHES_PER_STEP):
-			_expand_one()
-	if is_instance_valid(_light):
-		var flicker := 0.88 + 0.09 * sin(_age * 19.0) + 0.06 * sin(_age * 31.7)
-		_light.light_energy = (1.45 + _current_radius * 0.32) * flicker * clampf(life_left, 0.0, 1.0)
-		_light.omni_range = maxf(1.8, _current_radius * 2.15)
-
-	_tick -= delta
-	if _tick <= 0.0:
-		_tick += 0.25
-		_damage_tick()
+	if life_left > 0.0:
+		_spread_tick -= delta
+		if _spread_tick <= 0.0:
+			_spread_tick = maxf(_spread_tick + _spread_interval, _spread_interval)
+			for _index in range(_patches_per_step):
+				_expand_one()
+		if is_instance_valid(_light):
+			var flicker := (
+				0.88
+				+ 0.09 * sin(_age * 19.0 + float(simulation_seed % 31))
+				+ 0.06 * sin(_age * 31.7)
+			)
+			_light.light_energy = (
+				(1.40 + _current_radius * 0.30) * flicker * clampf(life_left / 1.05, 0.0, 1.0)
+			)
+			_light.omni_range = maxf(1.8, _current_radius * 2.15)
+		_tick -= delta
+		if _tick <= 0.0:
+			_tick += 0.25
+			_damage_tick()
+	else:
+		if is_instance_valid(_light):
+			_light.light_energy = 0.0
+	if life_left < 0.95:
+		if is_instance_valid(_ember_particles):
+			_ember_particles.emitting = false
+		if is_instance_valid(_smoke_particles):
+			_smoke_particles.emitting = false
 
 
 func _process(delta: float) -> void:
 	_visual_time += delta
-	var fade := clampf(life_left / 0.90, 0.0, 1.0)
 	for entry in _flames:
 		var flame := entry.get("node") as MeshInstance3D
 		if not is_instance_valid(flame):
 			continue
 		var material := entry.get("material") as ShaderMaterial
 		var born := float(entry.get("born", 0.0))
-		var ignition := clampf((_age - born) / 0.24, 0.0, 1.0)
-		flame.visible = ignition > 0.001 and fade > 0.001
+		var ignition := clampf((_age - born) / float(entry.get("ignition_span", 0.24)), 0.0, 1.0)
+		var patch_fade := clampf(
+			(life_left - float(entry.get("fade_offset", 0.0))) / 1.05, 0.0, 1.0
+		)
+		flame.visible = ignition > 0.001 and patch_fade > 0.001
 		if not flame.visible:
 			continue
 		var phase := float(entry.get("phase", 0.0))
-		var layer := int(entry.get("layer", 0))
-		var wave := sin(_visual_time * (9.0 + float(layer) * 1.7) + phase)
-		var sway := sin(_visual_time * 5.3 + phase * 1.3)
-		var base_scale: Vector2 = entry.get("scale", Vector2.ONE)
-		var width_scale := base_scale.x * (0.94 + wave * 0.09) * ignition
-		var height_scale := base_scale.y * (0.95 + wave * 0.13) * ignition
-		flame.scale = Vector3(width_scale, height_scale, 1.0)
-		var origin: Vector3 = entry.get("origin", Vector3.ZERO)
-		flame.position = origin + Vector3(sway * 0.028, 0.0, -sway * 0.020)
-		# QuadMesh scales around its centre. Reconstruct its centre from the
-		# ground root so ignition grows upward instead of floating in mid-air.
-		var quad := flame.mesh as QuadMesh
-		if quad != null:
-			var root_y := float(entry.get("root_y", origin.y - quad.size.y * 0.5))
-			flame.position.y = root_y + quad.size.y * height_scale * 0.5
+		var flicker := 0.95 + 0.05 * sin(_visual_time * 11.0 + phase)
+		var time_height := lerpf(0.68, 1.0, clampf(life_left / _initial_life, 0.0, 1.0))
 		if is_instance_valid(material):
 			material.set_shader_parameter("ignition", ignition)
-			material.set_shader_parameter("fade", fade * (0.94 + wave * 0.06))
-
-	for patch in _patches:
-		var scorch := patch.get("scorch") as Sprite3D
-		if is_instance_valid(scorch):
-			var born := float(patch.get("born", 0.0))
-			var ignition := clampf((_age - born) / 0.35, 0.0, 1.0)
-			scorch.modulate.a = 0.40 * ignition * fade
-
-	_process_smoke(delta, fade)
-	_process_embers(delta, fade)
-
-
-func _process_smoke(delta: float, fade: float) -> void:
-	for entry in _smoke:
-		var sprite := entry.get("node") as Sprite3D
-		if not is_instance_valid(sprite):
+			material.set_shader_parameter("fade", patch_fade * flicker)
+			material.set_shader_parameter("height_fade", time_height * lerpf(0.25, 1.0, patch_fade))
+			material.set_shader_parameter(
+				"intensity",
+				float(entry.get("intensity", 1.0)) * (0.94 + 0.06 * sin(_visual_time * 7.3 + phase))
+			)
+	for entry in _heat:
+		var heat := entry.get("node") as MeshInstance3D
+		if not is_instance_valid(heat):
 			continue
-		var age := float(entry.get("age", 0.0)) + delta
-		var life := float(entry.get("life", 1.0))
-		entry["age"] = age
-		if age >= life:
-			_reset_smoke(entry)
-			age = float(entry["age"])
-			life = float(entry["life"])
-		if age < 0.0:
-			sprite.visible = false
-			continue
-		var t := clampf(age / maxf(0.01, life), 0.0, 1.0)
-		var origin: Vector3 = entry.get("origin", Vector3.ZERO)
-		var velocity: Vector3 = entry.get("velocity", Vector3.ZERO)
-		var size := float(entry.get("size", 1.0))
-		sprite.visible = fade > 0.001
-		sprite.position = origin + velocity * age + Vector3(sin(age * 1.7) * 0.08, 0.0, cos(age * 1.3) * 0.06)
-		sprite.scale = Vector3.ONE * size * lerpf(0.42, 1.65, t)
-		var alpha := sin(t * PI) * 0.19 * fade
-		sprite.modulate = Color(0.30, 0.27, 0.24, alpha)
-
-
-func _process_embers(delta: float, fade: float) -> void:
-	for entry in _embers:
-		var sprite := entry.get("node") as Sprite3D
-		if not is_instance_valid(sprite):
-			continue
-		var age := float(entry.get("age", 0.0)) + delta
-		var life := float(entry.get("life", 1.0))
-		entry["age"] = age
-		if age >= life:
-			_reset_ember(entry)
-			age = float(entry["age"])
-			life = float(entry["life"])
-		if age < 0.0:
-			sprite.visible = false
-			continue
-		var t := clampf(age / maxf(0.01, life), 0.0, 1.0)
-		var origin: Vector3 = entry.get("origin", Vector3.ZERO)
-		var velocity: Vector3 = entry.get("velocity", Vector3.ZERO)
-		var size := float(entry.get("size", 1.0))
-		sprite.visible = fade > 0.001
-		sprite.position = origin + velocity * age + Vector3.DOWN * (0.62 * age * age)
-		sprite.scale = Vector3.ONE * size * lerpf(1.0, 0.30, t)
-		sprite.modulate = Color(1.0, 0.64, 0.20, (1.0 - t) * 0.82 * fade)
+		var material := entry.get("material") as ShaderMaterial
+		var ignition := clampf((_age - float(entry.get("born", 0.0))) / 0.38, 0.0, 1.0)
+		var fade := clampf((life_left - float(entry.get("fade_offset", 0.0))) / 1.2, 0.0, 1.0)
+		heat.visible = ignition > 0.001 and fade > 0.001
+		if is_instance_valid(material):
+			material.set_shader_parameter("ignition", ignition)
+			material.set_shader_parameter("fade", fade)
 
 
 func _nearest_patch(target: Vector3) -> Dictionary:
 	var best: Dictionary = {}
-	var best_distance := PATCH_RADIUS
+	if life_left <= 0.0:
+		return best
+	var best_distance := INF
 	for patch in _patches:
 		# Let the short ignition flare become visible before this patch can hurt.
 		if _age - float(patch.get("born", 0.0)) < 0.12:
@@ -417,7 +640,8 @@ func _nearest_patch(target: Vector3) -> Dictionary:
 		if absf(target.y - world.y) > 1.85:
 			continue
 		var distance := Vector2(target.x - world.x, target.z - world.z).length()
-		if distance <= best_distance:
+		var patch_radius := float(patch.get("radius", PATCH_RADIUS))
+		if distance <= patch_radius and distance < best_distance:
 			best_distance = distance
 			best = patch
 	return best
@@ -432,10 +656,17 @@ func _patch_visible_to_actor(patch_pos: Vector3, target: Vector3) -> bool:
 
 
 func _damage_tick() -> void:
+	if life_left <= 0.0:
+		return
 	for actor in RoundManager.actors:
 		if not is_instance_valid(actor) or not bool(actor.get("is_alive")):
 			continue
-		if is_instance_valid(thrower) and actor != thrower and String(actor.get("team")) == String(thrower.get("team")) and not GameData.friendly_fire:
+		if (
+			is_instance_valid(thrower)
+			and actor != thrower
+			and String(actor.get("team")) == String(thrower.get("team"))
+			and not GameData.friendly_fire
+		):
 			continue
 		var target: Vector3 = actor.global_position + Vector3(0.0, 0.65, 0.0)
 		var patch := _nearest_patch(target)
@@ -444,7 +675,16 @@ func _damage_tick() -> void:
 		var patch_pos := to_global(patch.get("pos", Vector3.ZERO) as Vector3)
 		if not _patch_visible_to_actor(patch_pos, target):
 			continue
-		var falloff := lerpf(1.0, 0.62, clampf(Vector2(target.x - patch_pos.x, target.z - patch_pos.z).length() / PATCH_RADIUS, 0.0, 1.0))
+		var patch_radius := float(patch.get("radius", PATCH_RADIUS))
+		var falloff := lerpf(
+			1.0,
+			0.62,
+			clampf(
+				Vector2(target.x - patch_pos.x, target.z - patch_pos.z).length() / patch_radius,
+				0.0,
+				1.0
+			)
+		)
 		if actor.has_method("apply_explosion_damage"):
 			actor.call("apply_explosion_damage", thrower, 5.5 * falloff, area_type, patch_pos)
 
@@ -455,6 +695,10 @@ func _damage_tick() -> void:
 		for breakable in world.get("breakables"):
 			if not is_instance_valid(breakable) or not breakable.has_method("apply_damage"):
 				continue
-			var centre: Vector3 = breakable.world_aabb.get_center() if breakable.world_aabb.size.length_squared() > 0.001 else breakable.global_position
+			var centre: Vector3 = (
+				breakable.world_aabb.get_center()
+				if breakable.world_aabb.size.length_squared() > 0.001
+				else breakable.global_position
+			)
 			if not _nearest_patch(centre).is_empty():
 				breakable.call("apply_damage", 2.0, centre, true)
