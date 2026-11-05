@@ -133,6 +133,17 @@ def _axis_calibration(references, rig, target_names, target_nodes):
     return axis_row, max(errors)
 
 
+def _winding_alignment(points, normals, indices):
+    """Dot products between geometric front-face normals and authored normals."""
+    triangles = np.asarray(indices, dtype=np.int64).reshape(-1, 3)
+    geometric = np.cross(points[triangles[:, 1]] - points[triangles[:, 0]],
+                         points[triangles[:, 2]] - points[triangles[:, 0]])
+    authored = normals[triangles].sum(axis=1)
+    denominator = np.linalg.norm(geometric, axis=1) * np.linalg.norm(authored, axis=1)
+    valid = denominator > 1e-12
+    return (geometric[valid] * authored[valid]).sum(axis=1) / denominator[valid]
+
+
 def _original_glove_bounds(document, binary):
     points = []
     for mesh in document.get("meshes", []):
@@ -161,7 +172,9 @@ def _build_model(model_path, references, rig, source_inverse):
         for source_material, triangle in reference["triangles"]:
             material_name = _material_name(source_material)
             bucket = buckets.setdefault(material_name, {"unique": {}, "p": [], "n": [], "uv": [], "j": [], "w": [], "i": []})
-            for vertex in reversed(triangle):  # Source -> glTF reflection reverses the front face.
+            # This conversion uses proper rotations, not a reflection. Keep the
+            # authored winding so glTF front faces agree with the outer normals.
+            for vertex in triangle:
                 bone, position, normal, uv, _links = vertex
                 target_node = target_names.get(rig.names[bone].lower())
                 if target_node is None or target_node not in joint_position:
@@ -190,9 +203,12 @@ def _build_model(model_path, references, rig, source_inverse):
     materials = []
     primitives = []
     all_points = []
+    winding_samples = []
     for material_index, material_name in enumerate(sorted(buckets)):
         bucket = buckets[material_name]
         points = np.asarray(bucket["p"], dtype=np.float64)
+        indices = np.asarray(bucket["i"], dtype=np.int64)
+        winding_samples.append(_winding_alignment(points, np.asarray(bucket["n"], dtype=np.float64), indices))
         all_points.append(points)
         materials.append({"name": material_name,
                           "pbrMetallicRoughness": {"baseColorFactor": [1.0, 1.0, 1.0, 1.0],
@@ -204,7 +220,6 @@ def _build_model(model_path, references, rig, source_inverse):
             "JOINTS_0": writer.acc(np.asarray(bucket["j"], dtype="<u2"), 5123, "VEC4", 34962),
             "WEIGHTS_0": writer.acc(np.asarray(bucket["w"], dtype="<f4"), 5126, "VEC4", 34962),
         }
-        indices = np.asarray(bucket["i"], dtype=np.int64)
         primitives.append({"attributes": attributes,
                            "indices": writer.acc(indices.astype("<u4"), 5125, "SCALAR", 34963),
                            "material": material_index, "mode": 4})
@@ -241,8 +256,15 @@ def _build_model(model_path, references, rig, source_inverse):
                              np.max(np.abs(generated_points.max(axis=0) - original_max))))
     if bounds_delta > 0.035:
         raise AssertionError("%s glove bounds differ from the original by %.4fm" % (model_path.name, bounds_delta))
+    winding = np.concatenate(winding_samples)
+    winding_mean = float(winding.mean())
+    winding_positive = float((winding > 0.0).mean())
+    if winding_mean < 0.75 or winding_positive < 0.90:
+        raise AssertionError("%s has inward glove faces: mean normal alignment %.4f, positive %.2f%%" %
+                             (model_path.name, winding_mean, winding_positive * 100.0))
     return glb, {"vertices": int(len(generated_points)), "triangles": 9900,
-                 "axis_error_deg": axis_error, "bounds_delta_m": bounds_delta}
+                 "axis_error_deg": axis_error, "bounds_delta_m": bounds_delta,
+                 "winding_mean": winding_mean, "winding_positive": winding_positive}
 
 
 def _resource_uid(relative):
@@ -347,8 +369,12 @@ def main():
             changed += 1
     maximum_axis = max(report["axis_error_deg"] for report in reports.values())
     maximum_bounds = max(report["bounds_delta_m"] for report in reports.values())
-    print("%s: 43 native-bind models, 26 finishes, %d shared textures; max axis %.4f deg, max bounds %.5fm; %d changed" %
-          ("CHECK PASS" if check_only else "BUILD", texture_count, maximum_axis, maximum_bounds, changed))
+    minimum_winding = min(report["winding_mean"] for report in reports.values())
+    minimum_front = min(report["winding_positive"] for report in reports.values())
+    print("%s: 43 native-bind models, 26 finishes, %d shared textures; max axis %.4f deg, max bounds %.5fm; "
+          "min normal alignment %.4f, min front faces %.2f%%; %d changed" %
+          ("CHECK PASS" if check_only else "BUILD", texture_count, maximum_axis, maximum_bounds,
+           minimum_winding, minimum_front * 100.0, changed))
 
 
 if __name__ == "__main__":

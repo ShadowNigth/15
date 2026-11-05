@@ -92,6 +92,7 @@ func _run() -> void:
 	_test_animation_refinements()
 	_test_alternate_inspections()
 	_test_hd_materials()
+	_test_weapon_skins()
 	await _test_original_viewmodel_arms()
 	await _test_sport_gloves()
 	_test_cs2_audio()
@@ -396,6 +397,113 @@ func _test_hd_materials() -> void:
 		instance.free()
 
 
+func _test_weapon_skins() -> void:
+	var catalog: Dictionary = GameData.weapon_skins.get("weapons", {})
+	_expect(catalog.size() == 20, "Authentic skin catalog covers 20 verified weapon families")
+	var previous: Dictionary = GameData.selected_weapon_skins.duplicate(true)
+	GameData.selected_weapon_skins.clear()
+	var total_finishes := 0
+	var material_owners: Dictionary = {}
+	var official_identities: Dictionary = {}
+	var identity: Dictionary = GameData.weapon_skins.get("finish_identity", {})
+	_expect(String(identity.get("commit", "")).length() == 40 \
+		and String(identity.get("repository", "")).contains("GameTracking-CS2"),
+		"Authentic finish names are pinned to reviewed official game metadata")
+	for raw_wid in catalog:
+		var wid := String(raw_wid)
+		var entry: Dictionary = catalog[wid]
+		var options: Array = entry.get("options", [])
+		_expect(options.size() == 6, "%s exposes six identified authentic finishes" % wid)
+		_expect(GameData.get_selected_weapon_skin_id(wid) == "original", "%s defaults to Original HD" % wid)
+		for raw_option in options:
+			var option := raw_option as Dictionary
+			total_finishes += 1
+			var paint_kit := String(option.get("paint_kit", ""))
+			var identity_key := wid + ":" + paint_kit
+			_expect(paint_kit.contains("_") and not official_identities.has(identity_key),
+				"%s has one unique official paint-kit identity" % String(option.get("name", wid)))
+			official_identities[identity_key] = true
+			var texture := GameData.get_texture(String(option.get("texture", "")))
+			_expect(texture != null, "%s imports %s" % [wid, String(option.get("name", "skin"))])
+			if texture != null:
+				_expect(texture.get_size() == Vector2(512.0, 512.0), "%s retains its lossless 512px UV map" % String(option.get("name", wid)))
+			var import_config := ConfigFile.new()
+			var import_ok := import_config.load(String(option.get("texture", "")) + ".import") == OK
+			_expect(import_ok and bool(import_config.get_value("params", "mipmaps/generate", false)) \
+				and int(import_config.get_value("params", "compress/mode", -1)) == 0,
+				"%s retains lossless 3D mipmaps" % String(option.get("name", wid)))
+			_expect(String(option.get("source_sha256", "")).length() == 64 and not String(option.get("source", "")).is_empty(),
+				"%s records authentic source provenance" % String(option.get("name", wid)))
+
+		var spec: Dictionary = GameData.weapons.get(wid, {})
+		var packed := GameData.get_model_scene("weapons/" + String(spec.get("w_model", "w_" + wid)))
+		_expect(packed != null, "%s skin test world model loads" % wid)
+		if packed == null:
+			continue
+		var instance := packed.instantiate() as Node3D
+		_world.add_child(instance)
+		var originals: Dictionary = {}
+		var baselines: Dictionary = {}
+		for raw_material in entry.get("materials", []):
+			var material_name := String(raw_material).to_lower()
+			_expect(not material_owners.has(material_name), "%s has one unambiguous skin owner" % material_name)
+			material_owners[material_name] = wid
+			var original := _find_material(instance, material_name)
+			_expect(original != null, "%s finds mapped material %s" % [wid, material_name])
+			if original != null:
+				originals[material_name] = original
+				baselines[material_name] = GameData.get_styled_model_material(original, "vm") as BaseMaterial3D
+		if originals.is_empty() or options.is_empty():
+			instance.free()
+			continue
+		var selected: Dictionary = options[0]
+		var selected_texture := GameData.get_texture(String(selected["texture"]))
+		_expect(GameData.select_weapon_skin(wid, String(selected["id"])), "%s accepts a curated finish" % wid)
+		_expect(GameData.get_selected_weapon_skin_id(wid) == String(selected["id"]), "%s stores its own selection" % wid)
+		for material_name in originals:
+			var original := originals[material_name] as BaseMaterial3D
+			var baseline := baselines[material_name] as BaseMaterial3D
+			for mode in ["vm", "w_held", "w_drop"]:
+				var styled := GameData.get_styled_model_material(original, mode) as BaseMaterial3D
+				_expect(styled != null and styled.albedo_texture == selected_texture,
+					"%s/%s applies the selected UV map in %s" % [wid, material_name, mode])
+				_expect(styled != null and styled.normal_texture == baseline.normal_texture \
+					and styled.roughness_texture == baseline.roughness_texture,
+					"%s/%s preserves normal and roughness maps in %s" % [wid, material_name, mode])
+				if mode == "w_drop":
+					_expect(styled != null and is_equal_approx(styled.roughness, 0.70) \
+						and is_equal_approx(styled.metallic, 0.06) and is_equal_approx(styled.metallic_specular, 0.34),
+						"%s skin retains the matte dropped-weapon finish" % wid)
+		_expect(not GameData.select_weapon_skin(wid, "not_a_real_skin") \
+			and GameData.get_selected_weapon_skin_id(wid) == String(selected["id"]),
+			"%s rejects unknown finishes without changing selection" % wid)
+		_expect(GameData.select_weapon_skin(wid, "original"), "%s restores Original HD" % wid)
+		for material_name in originals:
+			var restored := GameData.get_styled_model_material(originals[material_name], "vm") as BaseMaterial3D
+			var baseline := baselines[material_name] as BaseMaterial3D
+			_expect(restored != null and baseline != null and restored.albedo_texture == baseline.albedo_texture \
+				and restored.albedo_texture != selected_texture,
+				"%s/%s restores the exact original HD albedo through the cache" % [wid, material_name])
+		instance.free()
+	_expect(total_finishes == 120, "All 120 authentic weapon finishes are cataloged")
+
+	var awp := GameData.get_model_scene("weapons/w_awp").instantiate() as Node3D
+	_world.add_child(awp)
+	var lens := _find_material(awp, "shared_scope_lens")
+	_expect(lens != null, "AWP scope lens is available during skin selection")
+	if lens != null:
+		var before := GameData.get_styled_model_material(lens, "vm") as BaseMaterial3D
+		GameData.select_weapon_skin("awp", "asiimov")
+		var after := GameData.get_styled_model_material(lens, "vm") as BaseMaterial3D
+		_expect(before != null and before == after and after.albedo_texture == before.albedo_texture,
+			"AWP skin never replaces the independent scope-lens material")
+		GameData.select_weapon_skin("awp", "original")
+	awp.free()
+	_expect(GameData.get_weapon_skin_options("m4a4").is_empty() \
+		and not GameData.select_weapon_skin("m4a4", "original"), "Uncurated weapons remain explicitly Original-only")
+	GameData.selected_weapon_skins = previous
+
+
 func _original_arm_composition(root: Node) -> bool:
 	var original_arms := false
 	var original_gloves := false
@@ -479,6 +587,40 @@ func _sport_composition(root: Node, expected_id: String) -> bool:
 	return valid and original_arms and not original_glove and sport_surfaces == 10
 
 
+func _sport_front_faces_valid(root: Node) -> bool:
+	# glTF authors exterior triangles CCW; Godot's importer reverses them to its
+	# clockwise front-face convention while preserving the outward normals.
+	# Consequently an outward geometric cross product must oppose those normals.
+	var total := 0
+	var clockwise := 0
+	var alignment := 0.0
+	for node in root.find_children("*", "MeshInstance3D", true, false):
+		var mesh_instance := node as MeshInstance3D
+		if not mesh_instance.has_meta("sport_gloves") or mesh_instance.mesh == null:
+			continue
+		for surface in range(mesh_instance.mesh.get_surface_count()):
+			var arrays := mesh_instance.mesh.surface_get_arrays(surface)
+			var vertices: PackedVector3Array = arrays[Mesh.ARRAY_VERTEX]
+			var normals: PackedVector3Array = arrays[Mesh.ARRAY_NORMAL]
+			var indices: PackedInt32Array = arrays[Mesh.ARRAY_INDEX]
+			if vertices.is_empty() or normals.size() != vertices.size() or indices.is_empty():
+				return false
+			for index in range(0, indices.size(), 3):
+				var a := indices[index]
+				var b := indices[index + 1]
+				var c := indices[index + 2]
+				var geometric := (vertices[b] - vertices[a]).cross(vertices[c] - vertices[a])
+				var authored := normals[a] + normals[b] + normals[c]
+				var denominator := geometric.length() * authored.length()
+				if denominator <= 0.000000000001:
+					continue
+				var dot := geometric.dot(authored) / denominator
+				alignment += dot
+				clockwise += 1 if dot < 0.0 else 0
+				total += 1
+	return total > 0 and alignment / float(total) <= -0.75 and float(clockwise) / float(total) >= 0.90
+
+
 func _test_sport_gloves() -> void:
 	var previous_glove := GameData.selected_glove_id
 	_expect(GameData.get_glove_options().size() == 26, "Sport Gloves catalog exposes all 26 authored finishes")
@@ -508,6 +650,9 @@ func _test_sport_gloves() -> void:
 		_expect(applied, "%s installs Sport native binds" % wid)
 		_expect(_sport_composition(instance, "arid_mw"),
 			"%s keeps original arms, ten textured Sport surfaces and no original glove overlap" % wid)
+		if wid == "ak47":
+			_expect(_sport_front_faces_valid(instance),
+				"Imported AK Sport gloves render exterior front faces, not their inward back faces")
 		_expect(_find_animation_player(instance) == animation, "%s retains its original AnimationPlayer" % wid)
 		instance.free()
 

@@ -11,7 +11,7 @@ Remake jugable de **Counter-Strike 1.5 Retail** construido íntegramente en **Go
 3. Pulsa **F5 (Run Project)**:
    - Se abrirá el **Menú Clásico WON de Counter-Strike 1.5** (`splash.png` original + sonidos `launch_glow1.wav` / `launch_select1.wav`).
    - Elige **Quick Launch: de_dust2** o **Play CS 1.5 (LAN / Bots)** para escoger cualquiera de los **26 mapas originales**, cantidad de **Bots IA**, nivel de habilidad y dinero inicial (`$800` / `$3500` / `$16000`).
-   - También puedes abrir el **3D Arsenal & Model Viewer** desde el menú principal para inspeccionar en 3D los modelos `.glb` de armas y personajes convertidos desde `.mdl` junto con sus estadísticas extraídas de `cs_i386.so` y sus animaciones originales.
+   - También puedes abrir **3D Arsenal, Skins & Models** para inspeccionar los modelos y animaciones, elegir entre **120 acabados auténticos en 20 familias de armas** y previsualizar los guantes para la próxima partida. **Original HD** siempre permanece disponible.
 
 ---
 
@@ -25,6 +25,7 @@ Todo el contenido de `cstrike/` fue procesado mediante la suite de ingeniería i
 | **Grafo de Navegación IA** | Hull 1 (`CLIPNODES`) de cada `.bsp` | `waypoints` A* en `data/maps/*.json` | **26 grafos** (230–340 nodos/mapa) |
 | **Texturas de Mundo + Cielos** | `*.wad` (`de_aztec`, `cs_dust`, `halflife`…) + `gfx/env/*.tga` | `assets/textures/world/*.png` (`{` alpha Fence) + `sky/*.png` | **2,346 texturas + 109 caras skybox** |
 | **Materiales HD de armas** | VMT/VTF de `ShadowNigth/archi` | `assets/textures/archi/` + `data/archi_materials.json` | **54 materiales + 136 mapas compartidos de hasta 2K** |
+| **Skins UV auténticas** | Valve / CS:GO Ports / BDS, vía `cs16-skin-inventory` | `assets/textures/weapon_skins/` + `data/weapon_skins.json` | **120 acabados / 20 familias + Original HD** |
 | **Modelos 3D Animados** | StudioMDL GoldSrc + MDL/VTF de `ShadowNigth/archi` | `assets/models/**/*.glb` (esqueleto + animaciones + winding CCW) | **176 modelos `.glb`** |
 | **Arsenal** | 27 slots clásicos reemplazados + 16 armas/utilidades de archi | `data/weapons.json` | **43 slots + equipamiento** |
 | **Audio Espacial & Radio** | `cs15_retail` + 299 WAV de archi + 130 WAV específicos de CS2 | `assets/sounds/**/*.wav` (PCM 16-bit limpio) | **973 archivos `.wav`** |
@@ -51,7 +52,8 @@ Todo el contenido de `cstrike/` fue procesado mediante la suite de ingeniería i
   - **Fuego con propagación física**: Molotov e Incendiaria encienden focos escalonados sobre el piso, se expanden alrededor de obstáculos y aplican daño sólo dentro de las llamas activas. Incluyen llamas por capas, brasas, humo, quemaduras y luz parpadeante.
   - **Presentación y materiales corregidos**: las armas conservan tamaño normal (`1.0`), las granadas en mano/proyectil usan `0.90` y las soltadas en el piso `1.0`. M4A1/USP mantienen el acople con las manos al inspeccionar, la corredera de Glock se mueve al disparar y el silenciador permanece visible durante su animación de montaje/desmontaje, ocultándose únicamente en estado desmontado. Las máscaras de tinte y lentes negras se conservan, el acabado de primera persona es más brillante/metálico y el Molotov combina vidrio verde y líquido translúcidos con etiqueta y trapo legibles.
   - **Inspecciones alternativas y materiales HD**: `T` rota las inspecciones auténticas disponibles. Deagle añade su secuencia larga con nueve eventos de foley, C4 añade dos variantes y las seis granadas añaden una segunda; recarga y plantado siguen bloqueando la inspección. 54 materiales comparten 136 texturas de color, normales y rugosidad derivada de Phong, con resolución de hasta 2K y sin alterar los brazos, guantes, tintes ni acabados ya calibrados.
-  - **Brazos originales restaurados**: los 43 viewmodels usan únicamente sus superficies originales `ct_arms.bmp` y `ct_base_glove.bmp`. El sistema MultiRig, sus ocho GLB y los selectores de guantes/mangas fueron eliminados.
+  - **Selector de skins auténticas**: el 3D Arsenal ofrece seis acabados identificados para cada una de 20 familias (120 en total), con vista previa inmediata y selección independiente por arma para la próxima partida. Los PNG conservan los mapas UV originales de 512px, no son recolores procedurales; se aplican al viewmodel, tercera persona y drops sin reemplazar geometría, normales, roughness, miras, animaciones ni audio. Cada opción registra su paint-kit oficial, cotejado con `items_game.txt` y `csgo_english.txt` de GameTracking-CS2. Los créditos y términos de Valve/CS:GO Ports/BDS se conservan en `data/weapon_skins.json` y `tools/source/README.md`.
+  - **Brazos originales y Sport Gloves opcionales**: los 43 viewmodels conservan sus brazos originales `ct_arms.bmp`. Se puede elegir el guante clásico o uno de 26 acabados Sport con binds nativos y winding exterior corregido; no se utiliza MultiRig ni retargeting híbrido.
 - **Economía, Rondas y Objetivos (`RoundManager.gd`, `BuyMenu.gd`)**:
   - Freeze time, Buy time en `func_buyzone`, menú VGUI clásico con previsualización de armas y **atajos rápidos clásicos** (ej. `B-4-1` AK-47, `B-4-3` M4A1, `B-4-6` AWP, `B-8-2` Kevlar+Casco, `,` y `.` para munición primaria/secundaria).
   - Plantado y desactivación del **C4** (`de_*`, 5s con Defuse Kit / 10s sin Kit), rescate de **Rehenes** (`cs_*` con `E`) y escolta de **VIP** (`as_*`).

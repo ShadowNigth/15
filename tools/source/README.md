@@ -110,7 +110,50 @@ PYTHONPATH=/tmp:. python -m tools.source.build_sport_gloves --check \
 `GameData.selected_glove_id` stores the local player's choice for subsequent
 matches. Create Game and the 3D Arsenal expose Original plus all 26 Sport
 finishes. `SportGloves` validates every native Skin bind before removing only
-`ct_base_glove.bmp`; any failure leaves the original viewmodel untouched.
+`ct_base_glove.bmp`; any failure leaves the original viewmodel untouched. The
+converter preserves authored triangle order and rejects poor geometric/authored
+normal alignment or front-face ratios; never reverse these triangles or conceal
+an inside-out mesh with a double-sided material.
+
+#### Authentic selectable weapon finishes
+
+The 3D Arsenal exposes Original HD plus 120 authentic finishes: six for each of
+20 weapon families whose UV maps and identities were verified. The source is
+<https://github.com/ellingtoncody81-ctrl/cs16-skin-inventory> at
+`1cabb2dea3d2bda05cac1d6977abf2c9cc65d0de`, specifically its `CSGO Texture Pack`.
+That repository credits **Valve**, the **CS:GO Ports** studio and **BDS** (1424
+CSGO Texture Pack, GameBanana mod 228944). Its MIT license covers only its own
+source code, **not the game assets**. Original Valve/porter terms and attribution
+apply; do not rebrand the artwork as original project content.
+
+Every curated finish also records its official `paint_kit` identity. All 120
+weapon/finish/name combinations were checked against `items_game.txt` and
+`csgo_english.txt` from <https://github.com/SteamDatabase/GameTracking-CS2> at
+`1a3016b053eb006daaf741396f0d0416388519ca`; the manifest paths and commit are
+embedded in `data/weapon_skins.json`. This catches workshop titles and shared
+localization tokens: for example, `cu_mp9_narcis` is the released **Airlock**,
+so the separately supplied Narcis texture is not sold as a second game finish.
+
+```bash
+git clone --depth 1 --filter=blob:none --no-checkout \
+    https://github.com/ellingtoncody81-ctrl/cs16-skin-inventory.git /tmp/cs16-skin-inventory
+git -C /tmp/cs16-skin-inventory sparse-checkout init --no-cone
+git -C /tmp/cs16-skin-inventory sparse-checkout set '/cstrike/CSGO Texture Pack' /docs /LICENSE /README.md
+git -C /tmp/cs16-skin-inventory checkout
+PYTHONPATH=/tmp:. python -m tools.source.build_weapon_skins \
+    /tmp/cs16-skin-inventory /home/user/15
+PYTHONPATH=/tmp:. python -m tools.source.build_weapon_skins --check \
+    /tmp/cs16-skin-inventory /home/user/15
+```
+
+The curated builder losslessly converts the identified 512px indexed BMP maps to
+palette PNGs and records source paths/SHA-256 hashes plus official paint-kit IDs.
+It excludes recolours,
+cross-weapon art and numeric files whose authentic finish names cannot be
+established. `GameData` swaps only mapped weapon albedos, including the matching
+AUG/P90 magazine surfaces; scope lenses, original arms/gloves, normals, roughness,
+animations, mechanics and audio stay unchanged. Selections apply consistently to
+viewmodels, third-person weapons and drops, with the accepted matte drop finish.
 
 #### CS2-MultiRig review
 

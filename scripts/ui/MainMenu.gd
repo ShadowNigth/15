@@ -30,6 +30,8 @@ var _viewer_pivot: Node3D = null
 var _viewer_anim: AnimationPlayer = null
 var _viewer_stats_lbl: Label = null
 var _viewer_current_wid: String = "ak47"
+var _skin_opt: OptionButton = null
+var _syncing_skin_options := false
 
 
 func _ready() -> void:
@@ -93,7 +95,7 @@ func _build_main_screen() -> void:
 		GameData.selected_map = "de_dust2"
 		_start_selected_game()
 	)
-	_add_won_button(menu_vbox, "3D Arsenal & Models", func():
+	_add_won_button(menu_vbox, "3D Arsenal, Skins & Models", func():
 		_show_subpanel(_arsenal_panel)
 		_load_viewer_weapon("ak47")
 	)
@@ -501,6 +503,19 @@ func _build_arsenal_dialog() -> void:
 	btn_row.add_child(rel_btn)
 	right.add_child(btn_row)
 
+	var skin_row := HBoxContainer.new()
+	skin_row.add_theme_constant_override("separation", 8)
+	var skin_label := Label.new()
+	skin_label.text = "Weapon finish (next match):"
+	skin_label.add_theme_font_size_override("font_size", 12)
+	skin_row.add_child(skin_label)
+	_skin_opt = OptionButton.new()
+	_skin_opt.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	_skin_opt.add_theme_font_size_override("font_size", 12)
+	_skin_opt.item_selected.connect(_on_viewer_skin_selected)
+	skin_row.add_child(_skin_opt)
+	right.add_child(skin_row)
+
 	_viewer_stats_lbl = Label.new()
 	_viewer_stats_lbl.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 	_viewer_stats_lbl.add_theme_font_size_override("font_size", 12)
@@ -536,8 +551,45 @@ func _style_viewer_meshes(n: Node, mode: String = "char") -> void:
 		_style_viewer_meshes(c, mode)
 
 
+func _populate_viewer_skin_options(wid: String) -> void:
+	if _skin_opt == null:
+		return
+	_syncing_skin_options = true
+	_skin_opt.clear()
+	var options := GameData.get_weapon_skin_options(wid)
+	_skin_opt.disabled = options.is_empty()
+	var original := String(GameData.weapon_skins.get("default", "original"))
+	var original_index := _skin_opt.item_count
+	_skin_opt.add_item("Original HD" if not options.is_empty() else "Original HD — no curated finishes")
+	_skin_opt.set_item_metadata(original_index, original)
+	for raw in options:
+		var option := raw as Dictionary
+		var index := _skin_opt.item_count
+		_skin_opt.add_item(String(option.get("finish", option.get("name", "Weapon Finish"))))
+		_skin_opt.set_item_metadata(index, String(option.get("id", "")))
+	var selected := GameData.get_selected_weapon_skin_id(wid)
+	for index in range(_skin_opt.item_count):
+		if String(_skin_opt.get_item_metadata(index)) == selected:
+			_skin_opt.select(index)
+			break
+	_syncing_skin_options = false
+
+
+func _on_viewer_skin_selected(index: int) -> void:
+	if _syncing_skin_options or _skin_opt == null or _viewer_current_wid.is_empty():
+		return
+	if index < 0 or index >= _skin_opt.item_count:
+		return
+	var wid := _viewer_current_wid
+	if not GameData.select_weapon_skin(wid, String(_skin_opt.get_item_metadata(index))):
+		return
+	AudioManager.play_ui("launch_select1.wav")
+	_load_viewer_weapon(wid)
+
+
 func _load_viewer_weapon(wid: String) -> void:
 	_viewer_current_wid = wid
+	_populate_viewer_skin_options(wid)
 	_clear_viewer_pivot()
 	_viewer_pivot.rotation = Vector3.ZERO
 	var spec: Dictionary = GameData.weapons.get(wid, {})
@@ -562,10 +614,13 @@ func _load_viewer_weapon(wid: String) -> void:
 		String(spec.get("description", "")),
 	]
 	_viewer_stats_lbl.text += "\nFirst-person gloves for the next match: " + GameData.get_glove_display_name()
+	if not GameData.get_weapon_skin_options(wid).is_empty():
+		_viewer_stats_lbl.text += "\nWeapon finish for the next match: " + GameData.get_weapon_skin_display_name(wid)
 
 
 func _load_viewer_player(cid: String) -> void:
 	_viewer_current_wid = ""
+	_populate_viewer_skin_options("")
 	_clear_viewer_pivot()
 	var sc := GameData.get_model_scene("players/" + cid)
 	if sc:

@@ -29,6 +29,10 @@ var archi_materials: Dictionary = {}
 ## Sport_gloves catalog and the local player's choice for subsequent matches.
 var sport_gloves: Dictionary = {}
 var selected_glove_id: String = ""
+## Authentic UV-mapped weapon finishes, selected independently per weapon.
+var weapon_skins: Dictionary = {}
+var selected_weapon_skins: Dictionary = {}
+var _skin_material_owners: Dictionary = {}
 
 # Match / User settings
 var selected_map: String = "de_dust2"
@@ -99,6 +103,13 @@ func _load_all_databases() -> void:
 	sport_gloves = _load_json("res://data/sport_gloves.json")
 	if selected_glove_id.is_empty():
 		selected_glove_id = String(sport_gloves.get("default", "classic"))
+	weapon_skins = _load_json("res://data/weapon_skins.json")
+	_skin_material_owners.clear()
+	var skin_weapons: Dictionary = weapon_skins.get("weapons", {})
+	for raw_wid in skin_weapons:
+		var entry: Dictionary = skin_weapons[raw_wid]
+		for raw_material in entry.get("materials", []):
+			_skin_material_owners[String(raw_material).to_lower()] = String(raw_wid)
 
 
 func get_glove_options() -> Array:
@@ -149,6 +160,53 @@ func get_sport_glove_source_material(orig: Material, option: Dictionary) -> Mate
 	dup.albedo_color = Color.WHITE
 	_styled_mat_cache[key] = dup
 	return dup
+
+
+func get_weapon_skin_options(wid: String) -> Array:
+	var entry: Dictionary = weapon_skins.get("weapons", {}).get(wid, {})
+	return entry.get("options", []) as Array
+
+
+func get_selected_weapon_skin_id(wid: String) -> String:
+	var original := String(weapon_skins.get("default", "original"))
+	var selected := String(selected_weapon_skins.get(wid, original))
+	for raw in get_weapon_skin_options(wid):
+		if String((raw as Dictionary).get("id", "")) == selected:
+			return selected
+	return original
+
+
+func get_selected_weapon_skin(wid: String) -> Dictionary:
+	var selected := get_selected_weapon_skin_id(wid)
+	if selected == String(weapon_skins.get("default", "original")):
+		return {}
+	for raw in get_weapon_skin_options(wid):
+		var option := raw as Dictionary
+		if String(option.get("id", "")) == selected:
+			return option
+	return {}
+
+
+func get_weapon_skin_display_name(wid: String) -> String:
+	var selected := get_selected_weapon_skin(wid)
+	return String(selected.get("name", "Original HD"))
+
+
+func select_weapon_skin(wid: String, option_id: String) -> bool:
+	var original := String(weapon_skins.get("default", "original"))
+	if option_id == original and weapon_skins.get("weapons", {}).has(wid):
+		selected_weapon_skins.erase(wid)
+		return true
+	for raw in get_weapon_skin_options(wid):
+		if String((raw as Dictionary).get("id", "")) == option_id:
+			selected_weapon_skins[wid] = option_id
+			return true
+	return false
+
+
+func _selected_skin_for_material(material_name: String) -> Dictionary:
+	var wid := String(_skin_material_owners.get(material_name, ""))
+	return get_selected_weapon_skin(wid) if not wid.is_empty() else {}
 
 
 func load_map_data(map_name: String) -> Dictionary:
@@ -203,16 +261,25 @@ func get_styled_model_material(orig: Material, mode: String) -> Material:
 	if orig == null or not (orig is BaseMaterial3D):
 		return orig
 	var source := orig as BaseMaterial3D
+	var material_name := source.resource_name.to_lower()
+	var skin_wid := String(_skin_material_owners.get(material_name, ""))
+	var skin_id := get_selected_weapon_skin_id(skin_wid) if not skin_wid.is_empty() else ""
 	var key := "%d_%s" % [source.get_instance_id(), mode]
+	if not skin_id.is_empty():
+		key += "_" + skin_id
 	if _styled_mat_cache.has(key):
 		return _styled_mat_cache[key] as Material
-	var material_name := source.resource_name.to_lower()
 	var archi_entry: Dictionary = archi_materials.get(material_name, {})
+	var skin_entry := _selected_skin_for_material(material_name)
 	var hd_albedo: Texture2D = source.albedo_texture
 	if archi_entry.has("color"):
 		var enhanced := get_texture(String(archi_entry["color"]))
 		if enhanced != null:
 			hd_albedo = enhanced
+	if not skin_entry.is_empty():
+		var skin_texture := get_texture(String(skin_entry.get("texture", "")))
+		if skin_texture != null:
+			hd_albedo = skin_texture
 	if material_name in ["weapon_molotov", "weapon_molotov_liquid"]:
 		var glass := ShaderMaterial.new()
 		glass.shader = MOLOTOV_GLASS_SHADER
@@ -306,7 +373,7 @@ func get_styled_model_material(orig: Material, mode: String) -> Material:
 		dup.metallic_specular = 0.46
 		if mode in ["vm", "vm_flip"]:
 			dup.albedo_color = Color(original.r * 1.10, original.g * 1.10, original.b * 1.10, original.a)
-	if not archi_entry.is_empty() and not character_surface:
+	if (not archi_entry.is_empty() or not skin_entry.is_empty()) and not character_surface:
 		if hd_albedo != null:
 			dup.albedo_texture = hd_albedo
 		var normal_map := get_texture(String(archi_entry.get("normal", "")))
