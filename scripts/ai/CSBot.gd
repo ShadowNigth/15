@@ -1949,12 +1949,13 @@ func _follow_navigation_path(delta: float) -> void:
 		vert_d = absf(signed_dy)
 
 	# Multi-story Metal Ladder Climbing. A waypoint at the current height is a
-	# horizontal entry/exit, not a command to vault upward along the rungs.
+	# horizontal entry/exit except across the top lip, which needs the vault.
+	var near_ladder_top := false
 	if on_ladder:
 		var actor_h := CROUCH_HEIGHT if is_crouching else STAND_HEIGHT
 		var ladder_info: Dictionary = RoundManager.game_world.call("get_ladder_info", global_position, actor_h)
 		var ladder_top := float(ladder_info.get("top_y", global_position.y + 2.0))
-		var near_ladder_top := global_position.y >= ladder_top - 0.85
+		near_ladder_top = global_position.y >= ladder_top - 0.85
 		if absf(signed_dy) < 0.35 and flat_d > 0.20 and not near_ladder_top:
 			bot_ladder_dir = 0.0
 		else:
@@ -2105,7 +2106,7 @@ func _follow_navigation_path(delta: float) -> void:
 
 	# Dismount only near the exit waypoint's height. Testing merely "target is
 	# below" kicks the bot off at the top of a long descent.
-	if on_ladder and absf(bot_ladder_dir) > 0.1 and (cur_flags & BotNavigator.FLAG_LADDER) == 0 and absf(signed_dy) < 0.75 and flat_d > 0.35:
+	if on_ladder and not near_ladder_top and absf(bot_ladder_dir) > 0.1 and (cur_flags & BotNavigator.FLAG_LADDER) == 0 and absf(signed_dy) < 0.75 and flat_d > 0.35:
 		want_jump = true
 
 	var crouch_air: bool = (_air_crouch_timer > 0.0 and not is_on_floor())
