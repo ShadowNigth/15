@@ -36,6 +36,7 @@ func _expect(condition: bool, description: String) -> void:
 
 
 func _run() -> void:
+	print("[ARCHI GAMEWORLD TEST] phase=load")
 	GameData.select_glove("classic")
 	GameData.selected_map = "de_dust2"
 	GameData.bot_count = 9
@@ -77,6 +78,7 @@ func _run() -> void:
 		_expect(_player_original_arms_only(player), "Equipping %s uses only the original arms and gloves" % wid)
 
 	_expect(RoundManager.dropped_items.size() >= 8, "Replacing bought weapons creates real dropped-world models")
+	print("[ARCHI GAMEWORLD TEST] phase=buy-menu")
 	player.team = "CT"
 	_place_in_buyzone("CT")
 	_world.buy_menu.open_menu(player)
@@ -176,6 +178,7 @@ func _run() -> void:
 		player._vm_anim.advance(0.55)
 	_expect(_player_sport_gloves(player, "arid_mw"), "Sport glove composition remains valid through the real draw animation")
 	_test_viewmodel_studio(player)
+	print("[ARCHI GAMEWORLD TEST] phase=inspections-complete")
 	GameData.select_glove("classic")
 	player.weapon_ctrl.give_weapon("m4a1", 30, 90)
 	player.weapon_ctrl.equip_weapon_by_id("m4a1")
@@ -198,8 +201,12 @@ func _run() -> void:
 			_expect(bot._held_weapon_model.transform == bot._held_weapon_rest_transform,
 				"Third-person weapon root remains locked to its calibrated hand transform")
 
+	print("[ARCHI GAMEWORLD TEST] phase=live-round-600")
 	for i in range(600):
+		if i % 120 == 0:
+			print("[ARCHI GAMEWORLD TEST] live_frame=%d" % i)
 		await get_tree().process_frame
+	print("[ARCHI GAMEWORLD TEST] phase=incendiary-and-c4")
 	_expect(RoundManager.state == RoundManager.State.LIVE, "Freeze time finishes and the bot round goes live")
 	_expect(RoundManager.actors.size() == 10 and is_instance_valid(_world.player), "The live scene retains its real actors")
 	await _test_live_incendiary_spread()

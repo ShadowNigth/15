@@ -2,6 +2,15 @@ name: Native Godot QA
 
 on:
   workflow_dispatch:
+    inputs:
+      suite:
+        description: 'Test group to run'
+        required: true
+        default: 'all'
+        type: choice
+        options:
+          - all
+          - world
   push:
 
 concurrency:
@@ -11,7 +20,7 @@ concurrency:
 jobs:
   native-tests:
     runs-on: ubuntu-latest
-    timeout-minutes: 35
+    timeout-minutes: 60
     steps:
       - uses: actions/checkout@v4
 
@@ -40,12 +49,14 @@ jobs:
           stdbuf -o0 -e0 godot --headless --path . --import 2>&1 | tee /tmp/import.log
 
       - name: Smoke mission scene with native autoloads
+        if: ${{ inputs.suite != 'world' }}
         timeout-minutes: 2
         run: |
           set -o pipefail
           stdbuf -o0 -e0 godot --headless --path . --quit-after 10 res://tests/MissionObjectiveRegressionTest.tscn -- --scenario=check 2>&1 | tee /tmp/mission-check.log
 
       - name: OilRig physical escort regression
+        if: ${{ inputs.suite != 'world' }}
         timeout-minutes: 4
         run: |
           set -o pipefail
@@ -66,18 +77,18 @@ jobs:
           PY
 
       - name: cs_747 physical hostage regression
+        if: ${{ inputs.suite != 'world' }}
         timeout-minutes: 8
         run: godot --headless --path . --fixed-fps 60 res://tests/MissionObjectiveRegressionTest.tscn -- --scenario=747
 
       - name: cs_estate physical hostage regression
+        if: ${{ inputs.suite != 'world' }}
         timeout-minutes: 8
         run: godot --headless --path . --fixed-fps 60 res://tests/MissionObjectiveRegressionTest.tscn -- --scenario=estate
 
       - name: Weapon runtime regression
+        if: ${{ inputs.suite != 'world' }}
         run: godot --headless --path . res://tests/ArchiWeaponRuntimeTest.tscn
-
-      - name: Game world smoke regression
-        run: godot --headless --path . --fixed-fps 60 res://tests/ArchiGameWorldSmokeTest.tscn
 
       - name: Procedural fire regression
         run: godot --headless --path . --fixed-fps 60 res://tests/IncendiaryProceduralTest.tscn
@@ -87,3 +98,21 @@ jobs:
 
       - name: Tactical AI regression
         run: godot --headless --path . --fixed-fps 60 res://tests/TacticalAIRegressionTest.tscn
+
+      - name: Game world smoke regression
+        timeout-minutes: 12
+        run: |
+          set -o pipefail
+          timeout --signal=TERM --kill-after=5s 660s stdbuf -o0 -e0 godot --headless --path . --fixed-fps 60 res://tests/ArchiGameWorldSmokeTest.tscn 2>&1 | tee /tmp/gameworld-smoke.log
+
+      - name: Publish failed world diagnostics
+        if: ${{ failure() }}
+        run: |
+          python3 - <<'PY'
+          from pathlib import Path
+          path = Path('/tmp/gameworld-smoke.log')
+          if path.exists():
+              for line in path.read_text(errors='replace').splitlines()[-120:]:
+                  escaped = line.replace('%', '%25').replace('\r', '%0D').replace('\n', '%0A')
+                  print(f'::notice title=Game world native log::{escaped}')
+          PY
