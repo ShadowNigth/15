@@ -76,6 +76,23 @@ func play_3d(
 		world_sound_emitted.emit(world_pos, ai_hear_radius, team)
 
 
+func stop_all() -> void:
+	# Scene transitions and isolated native tests must also release map-ambient
+	# players, not only this manager's pools, before the audio thread shuts down.
+	_stop_audio_branch(get_tree().root)
+
+
+func _stop_audio_branch(node: Node) -> void:
+	if node is AudioStreamPlayer:
+		(node as AudioStreamPlayer).stop()
+		(node as AudioStreamPlayer).stream = null
+	elif node is AudioStreamPlayer3D:
+		(node as AudioStreamPlayer3D).stop()
+		(node as AudioStreamPlayer3D).stream = null
+	for child in node.get_children():
+		_stop_audio_branch(child)
+
+
 func play_footstep(mat_char: String, world_pos: Vector3, team: String) -> void:
 	var prefix := "player/pl_step"
 	var count := 4

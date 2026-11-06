@@ -85,10 +85,19 @@ func _run() -> void:
 	var materials: Dictionary = (world.map_runtime["root"] as Node3D).get_meta("world_materials", {})
 	var relief_materials := 0
 	var water_materials := 0
+	var external_materials := 0
+	var upscaled_bindings := 0
 	for raw in materials.values():
 		var material := raw as ShaderMaterial
 		if material == null or material.shader == null:
 			continue
+		var bound := material.get_shader_parameter("albedo_tex") as Texture2D
+		if bound != null and bound.resource_path.begins_with("res://assets/textures/world/"):
+			external_materials += 1
+			var texture_name := bound.resource_path.get_file().get_basename()
+			var logical: Dictionary = GameData.world_textures_meta.get(texture_name, {})
+			if not logical.is_empty() and bound.get_width() == int(logical.get("w", 0)) * 4 and bound.get_height() == int(logical.get("h", 0)) * 4:
+				upscaled_bindings += 1
 		if material.shader == water_shader:
 			water_materials += 1
 		elif material.shader == world_shader:
@@ -96,6 +105,8 @@ func _run() -> void:
 				relief_materials += 1
 	_expect(relief_materials >= 12, "Opaque Aztec walls and floors receive height relief and definition")
 	_expect(water_materials > 0, "Aztec water meshes use the dedicated animated water shader")
+	_expect(external_materials > 0, "Rendered BSP shaders prefer shared HD sources over embedded GLB thumbnails")
+	_expect(upscaled_bindings == external_materials, "Every bound source texture has four times its logical UV resolution")
 	_expect(world_shader.code.contains("dFdx") and world_shader.code.contains("textureLod"),
 		"Architectural relief uses derivative normals and mip-stable detail")
 	_expect(water_shader.code.contains("hint_screen_texture") and water_shader.code.contains("TIME"),
@@ -149,6 +160,11 @@ func _run() -> void:
 		"Water resistance cushions downward velocity instead of applying full air gravity")
 
 	world.queue_free()
+	await get_tree().process_frame
+	AudioManager.stop_all()
+	# Fixed-FPS headless frames can elapse faster than one audio mix block.
+	OS.delay_msec(50)
+	await get_tree().process_frame
 	await get_tree().process_frame
 	_finish()
 

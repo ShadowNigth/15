@@ -157,10 +157,12 @@ func _unhandled_input(event: InputEvent) -> void:
 		radio_menu.toggle_radio("radio3", player)
 
 
-func _on_player_team_chosen(tm: String, cid: String) -> void:
+func _on_player_team_chosen(tm: String, cid: String, capture_mouse: bool = true) -> void:
 	player.ui_blocking_input = false
 	player.set_team_and_class(tm, cid)
-	Input.set_mouse_mode(Input.MOUSE_MODE_CAPTURED)
+	# Browser QA has no user gesture; normal menu selections always capture.
+	if capture_mouse:
+		Input.set_mouse_mode(Input.MOUSE_MODE_CAPTURED)
 
 	if not _match_started:
 		_match_started = true

@@ -6,7 +6,9 @@ extends Node3D
 ## Every throw owns its seed, envelope, branch lengths, flame meshes and particles.
 ## Damage follows ignited patches only; neither visuals nor damage cross cover.
 
-const MAX_PATCHES: int = 44
+const MAX_PATCHES: int = 68
+const MOLOTOV_MIN_PATCHES: int = 30
+const INCENDIARY_MAX_PATCHES: int = 44
 const PATCH_RADIUS: float = 0.82
 const SPREAD_STEP: float = 0.72
 const SPREAD_INTERVAL: float = 0.052
@@ -68,15 +70,27 @@ func setup_fire(owner_actor: Node3D, kind: String, seed_override: int = 0) -> vo
 
 	# These are independent simulation parameters, not a scale applied to a
 	# prebuilt ring. Compact blobs, long branches and multi-arm fires emerge here.
-	target_patch_count = _rng.randi_range(20, MAX_PATCHES)
-	var base_radius := 3.35 if kind == "molotov" else 3.10
+	# Molotovs now cover a genuinely wider tactical area, not merely a scaled
+	# visual ring. More fuel and longer irregular walker envelopes enlarge both
+	# the rendered fire and the exact connected damage patches. The incendiary
+	# retains its previous accepted profile.
+	target_patch_count = (
+		_rng.randi_range(MOLOTOV_MIN_PATCHES, MAX_PATCHES)
+		if kind == "molotov"
+		else _rng.randi_range(20, INCENDIARY_MAX_PATCHES)
+	)
+	var base_radius := 4.35 if kind == "molotov" else 3.10
 	radius = base_radius * _rng.randf_range(0.72, 1.18)
 	envelope_aspect = _rng.randf_range(0.48, 1.0)
 	propagation_heading = _rng.randf_range(-PI, PI)
-	_branch_budget = _rng.randi_range(2, 5)
+	_branch_budget = _rng.randi_range(3, 7) if kind == "molotov" else _rng.randi_range(2, 5)
 	_branch_arc = _rng.randf_range(0.70, TAU)
-	_spread_interval = _rng.randf_range(0.046, 0.072)
-	_patches_per_step = _rng.randi_range(1, 3)
+	_spread_interval = (
+		_rng.randf_range(0.042, 0.064)
+		if kind == "molotov"
+		else _rng.randf_range(0.046, 0.072)
+	)
+	_patches_per_step = _rng.randi_range(2, 4) if kind == "molotov" else _rng.randi_range(1, 3)
 	_spread_tick = _rng.randf_range(0.12, 0.24)
 	_tick = 0.08
 	_ensure_textures()
@@ -85,6 +99,23 @@ func setup_fire(owner_actor: Node3D, kind: String, seed_override: int = 0) -> vo
 	_create_light()
 	_create_particle_systems()
 	_refresh_particle_emission()
+	RoundManager.register_incendiary(self)
+
+
+func _exit_tree() -> void:
+	RoundManager.unregister_incendiary(self)
+
+
+func navigation_danger_at(world_pos: Vector3) -> float:
+	## Coarse, inexpensive cost used by bot A* only. Actual fire damage continues
+	## to use the individual wall-tested patches below, never this radial estimate.
+	if life_left <= 0.0 or _patches.is_empty() or not is_inside_tree():
+		return 0.0
+	var local_pos := to_local(world_pos)
+	if absf(local_pos.y) > 2.2:
+		return 0.0
+	var distance := Vector2(local_pos.x, local_pos.z).length()
+	return clampf((_current_radius + 0.85 - distance) / 1.25, 0.0, 1.0)
 
 
 func _snap_origin_to_floor() -> void:

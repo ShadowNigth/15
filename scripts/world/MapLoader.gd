@@ -100,14 +100,18 @@ static func build_map(parent: Node3D, map_data: Dictionary) -> Dictionary:
 			for surf_i in range(mi.mesh.get_surface_count()):
 				var orig_mat := mi.mesh.surface_get_material(surf_i)
 				var tex_safe := orig_mat.resource_name if orig_mat else "default_tex"
-				var albedo: Texture2D = null
-				if orig_mat is BaseMaterial3D and (orig_mat as BaseMaterial3D).albedo_texture:
-					albedo = (orig_mat as BaseMaterial3D).albedo_texture
-					if tex_safe.is_empty():
-						tex_safe = albedo.resource_path.get_file().get_basename()
+				if tex_safe.is_empty() and orig_mat is BaseMaterial3D and (orig_mat as BaseMaterial3D).albedo_texture:
+					tex_safe = (orig_mat as BaseMaterial3D).albedo_texture.resource_path.get_file().get_basename()
+				# Prefer shared restored artwork over the small copy embedded in
+				# each GLB. Original PNG and embedded fallbacks keep third-party or
+				# incomplete texture sets usable without changing any UVs.
+				var hd_path := "res://assets/textures/world/hd/%s.webp" % tex_safe
+				var tex_path := "res://assets/textures/world/%s.png" % tex_safe
+				var albedo: Texture2D = GameData.get_texture(hd_path)
 				if albedo == null:
-					var tex_path := "res://assets/textures/world/%s.png" % tex_safe
 					albedo = GameData.get_texture(tex_path)
+				if albedo == null and orig_mat is BaseMaterial3D:
+					albedo = (orig_mat as BaseMaterial3D).albedo_texture
 				var tlow := tex_safe.to_lower()
 				if "ladder" in tlow or "rung" in tlow:
 					has_ladder_tex = true
@@ -265,12 +269,33 @@ static func build_map(parent: Node3D, map_data: Dictionary) -> Dictionary:
 		var climb_box := AABB(c_min, c_max - c_min)
 		ladders_typed.append(climb_box)
 		var thin_axis: Vector3 = Vector3(1, 0, 0) if raw_l.size.x <= raw_l.size.z else Vector3(0, 0, 1)
+		# YaPB's authored ladder node identifies the usable side without letting
+		# the first nearby actor cache a different normal for the whole match.
+		var authored_normal := Vector3.ZERO
+		var authored_resolved := false
+		var top_center := Vector3(raw_l.get_center().x, raw_l.end.y, raw_l.get_center().z)
+		var nearest_ladder_node := 3.0
+		var raw_waypoints: Array = map_data.get("waypoints", [])
+		var raw_flags: Array = map_data.get("wp_flags", [])
+		for node_idx in range(mini(raw_waypoints.size(), raw_flags.size())):
+			if (int(raw_flags[node_idx]) & BotNavigator.FLAG_LADDER) == 0:
+				continue
+			var p: Array = raw_waypoints[node_idx]
+			var node_pos := Vector3(float(p[0]), float(p[1]), float(p[2]))
+			var node_distance := node_pos.distance_to(top_center)
+			if node_distance >= nearest_ladder_node:
+				continue
+			var side := (node_pos - raw_l.get_center()).dot(thin_axis)
+			if absf(side) > 0.05:
+				nearest_ladder_node = node_distance
+				authored_normal = thin_axis * signf(side)
+				authored_resolved = true
 		result["ladder_volumes"].append({
 			"raw_aabb": raw_l,
 			"climb_aabb": climb_box,
 			"axis": thin_axis,
-			"normal": Vector3.ZERO,
-			"resolved": false,
+			"normal": authored_normal,
+			"resolved": authored_resolved,
 		})
 
 	for tdict in map_data.get("triggers", []):

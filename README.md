@@ -23,7 +23,7 @@ Todo el contenido de `cstrike/` fue procesado mediante la suite de ingeniería i
 | :--- | :--- | :--- | :--- |
 | **Mapas 3D + Lightmaps** | `maps/*.bsp` (GoldSrc BSP v30 + 23 WAD3) | `assets/maps/*.glb` + `*_lm.png` + `data/maps/*.json` | **26 / 26 mapas** |
 | **Grafo de Navegación IA** | Hull 1 (`CLIPNODES`) de cada `.bsp` | `waypoints` A* en `data/maps/*.json` | **26 grafos** (230–340 nodos/mapa) |
-| **Texturas de Mundo + Cielos** | `*.wad` (`de_aztec`, `cs_dust`, `halflife`…) + `gfx/env/*.tga` | `assets/textures/world/*.png` (`{` alpha Fence) + `sky/*.png` | **2,346 texturas + 109 caras skybox** |
+| **Texturas de Mundo + Cielos** | `*.wad` (`de_aztec`, `cs_dust`, `halflife`…) + `gfx/env/*.tga` | PNG originales + overrides `world/hd/*.webp` x4 con mipmaps; FSRCNN de [`Saafke/FSRCNN_Tensorflow`](https://github.com/Saafke/FSRCNN_Tensorflow) solo en producción | **2,346 originales + 2,346 HD + 109 caras skybox** |
 | **Materiales HD de armas** | VMT/VTF de `ShadowNigth/archi` | `assets/textures/archi/` + `data/archi_materials.json` | **54 materiales + 136 mapas compartidos de hasta 2K** |
 | **Skins UV auténticas** | Valve / CS:GO Ports / BDS, vía `cs16-skin-inventory` | `assets/textures/weapon_skins/` + `data/weapon_skins.json` | **120 acabados / 20 familias + Original HD** |
 | **Modelos 3D Animados** | StudioMDL GoldSrc + MDL/VTF de `ShadowNigth/archi` | `assets/models/**/*.glb` (esqueleto + animaciones + winding CCW) | **176 modelos `.glb`** |
@@ -49,7 +49,7 @@ Todo el contenido de `cstrike/` fue procesado mediante la suite de ingeniería i
   - **Pesadas / Tácticas**: M249 Para, Cuchillo (corte rápido y **puñalada por la espalda de 195 de daño**), C4 Plastic Explosive, HE Grenade, Flashbang (ceguera direccional en pantalla y a Bots), Smoke Grenade (bloquea visión de Bots IA) y Wallbanging en paredes delgadas.
   - **Nuevas armas de archi**: P2000, CZ75-Auto, R8 Revolver (martillo y fuego alternativo), Tec-9, FAMAS (ráfaga), Galil AR, M4A4, MAG-7 (cargador), Sawed-Off (cartuchos), Negev, PP-Bizon y MP7.
   - **Nuevas utilidades**: Zeus x27 de una carga, Decoy con señuelo sonoro y explosión final, Molotov e Incendiaria con fuego persistente. Todos los slots incluyen sus GLB V/P/W, iconos, animaciones de archi y audio específico de archi/CS2.
-  - **Fuego con propagación física**: Molotov e Incendiaria encienden focos escalonados sobre el piso, se expanden alrededor de obstáculos y aplican daño sólo dentro de las llamas activas. Incluyen llamas por capas, brasas, humo, quemaduras y luz parpadeante.
+  - **Fuego con propagación física**: Molotov e Incendiaria encienden focos escalonados sobre el piso, se expanden alrededor de obstáculos y aplican daño sólo dentro de las llamas activas. La Molotov usa ahora 30–68 parches conectados, ramas y una envolvente irregular más amplia, con semilla independiente por lanzamiento; no es un círculo prefabricado. Incluyen llamas por capas, brasas, humo, quemaduras y luz parpadeante.
   - **Presentación y materiales corregidos**: las armas conservan tamaño normal (`1.0`), las granadas en mano/proyectil usan `0.90` y las soltadas en el piso `1.0`. M4A1/USP mantienen el acople con las manos al inspeccionar, la corredera de Glock se mueve al disparar y el silenciador permanece visible durante su animación de montaje/desmontaje, ocultándose únicamente en estado desmontado. Las máscaras de tinte y lentes negras se conservan, el acabado de primera persona es más brillante/metálico y el Molotov combina vidrio verde y líquido translúcidos con etiqueta y trapo legibles.
   - **Inspecciones alternativas y materiales HD**: `T` rota las inspecciones auténticas disponibles. Deagle añade su secuencia larga con nueve eventos de foley, C4 añade dos variantes y las seis granadas añaden una segunda; recarga y plantado siguen bloqueando la inspección. 54 materiales comparten 136 texturas de color, normales y rugosidad derivada de Phong, con resolución de hasta 2K y sin alterar los brazos, guantes, tintes ni acabados ya calibrados.
   - **Selector de skins auténticas**: el 3D Arsenal ofrece seis acabados identificados para cada una de 20 familias (120 en total), con vista previa inmediata y selección independiente por arma para la próxima partida. Los PNG conservan los mapas UV originales de 512px, no son recolores procedurales; se aplican al viewmodel, tercera persona y drops sin reemplazar geometría, normales, roughness, miras, animaciones ni audio. Cada opción registra su paint-kit oficial, cotejado con `items_game.txt` y `csgo_english.txt` de GameTracking-CS2. Los créditos y términos de Valve/CS:GO Ports/BDS se conservan en `data/weapon_skins.json` y `tools/source/README.md`.
@@ -60,7 +60,7 @@ Todo el contenido de `cstrike/` fue procesado mediante la suite de ingeniería i
 - **HUD Ámbar Original y VGUI (`CSHud.gd`, `TeamSelectMenu.gd`, `Scoreboard.gd`, `RadioMenu.gd`)**:
   - Números ámbar recortados del atlas original `640hud7.spr`, radar giratorio con puntos de aliados/bomba/rehenes, killfeed con iconos `d_*` de `hud.txt`, indicador de zona de compra/C4/Kit, linterna (`F`) y **Visión Nocturna verde (`N`)**.
 - **Bots IA estilo PodBot (`CSBot.gd`, `BotNavigator.gd`)**:
-  - Compra automática según presupuesto y equipo, navegación A* sobre el grafo del BSP, plantado/desactivación de C4, rescate de rehenes, escolta VIP, reacción a sonidos de disparos, ceguera por Flashbang, bloqueo visual por humo y órdenes de radio (`Z` / `X` / `C`).
+  - Compras legales variadas según presupuesto, personalidad y composición de escuadra; navegación A* compartida sobre el grafo del BSP con costes de contactos y fuego, cobertura física al recargar, plantado/desactivación de C4 y rescate de rehenes. En `as_*`, el VIP bot navega activamente hasta las zonas auténticas `func_vip_safetyzone`, los CT forman escolta y los T cazan o preparan emboscadas. Conservan reacción a sonidos, Flashbang, humo y órdenes de radio (`Z` / `X` / `C`).
 
 ---
 
@@ -115,4 +115,7 @@ python3 tools/verify_godot_project.py
 # Después de la primera importación, pruebas reales de recursos y mecánicas:
 godot --headless --path . res://tests/ArchiWeaponRuntimeTest.tscn
 godot --headless --path . --fixed-fps 60 res://tests/ArchiGameWorldSmokeTest.tscn
+godot --headless --path . --fixed-fps 60 res://tests/IncendiaryProceduralTest.tscn
+godot --headless --path . --fixed-fps 60 res://tests/MapSurfaceWaterTest.tscn
+godot --headless --path . --fixed-fps 60 res://tests/TacticalAIRegressionTest.tscn
 ```

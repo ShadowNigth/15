@@ -846,10 +846,19 @@ func apply_goldsrc_movement(wish_dir_world: Vector3, want_jump: bool, want_crouc
 					velocity += (-n_ladder) * 1.6
 			else:
 				velocity.y = -climb_spd
+				# Keep clearing the top lip until the capsule is safely below it.
+				# Switching to wall attraction on the first airborne frame can
+				# pin a descending bot against the ledge with zero actual motion.
 				if is_on_floor():
 					velocity += n_ladder * 3.8
+				elif global_position.y > top_y - 1.15:
+					velocity += n_ladder * 1.2
 				else:
 					velocity += (-n_ladder) * 1.4
+		elif not is_human and wish_dir_world.length_squared() > 0.01:
+			# Horizontal entry/dismount: do not interpret a level bot's aim as
+			# human climb input merely because its feet overlap the ladder brush.
+			velocity = Vector3(wish_dir_world.x * max_spd, 0.0, wish_dir_world.z * max_spd)
 		elif wish_dir_world.length_squared() > 0.01:
 			var fwd := get_look_forward()
 			var flat_fwd := Vector3(fwd.x, 0.0, fwd.z)

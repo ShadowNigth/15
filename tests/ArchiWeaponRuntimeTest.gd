@@ -988,9 +988,11 @@ func _test_fire_projectile(kind: String) -> void:
 	if area != null:
 		_expect(area._patches.size() == 1 and area._flames.size() == 1 and area.life_left >= 7.0,
 			"%s fire has one procedural ignition patch and a real lifetime" % kind)
-		_expect(area.simulation_seed != 0 and area.target_patch_count >= 20 \
-			and area.target_patch_count <= IncendiaryArea.MAX_PATCHES,
-			"%s owns an independent seed and randomized fuel budget" % kind)
+		var min_patches := IncendiaryArea.MOLOTOV_MIN_PATCHES if kind == "molotov" else 20
+		var max_patches := IncendiaryArea.MAX_PATCHES if kind == "molotov" else IncendiaryArea.INCENDIARY_MAX_PATCHES
+		_expect(area.simulation_seed != 0 and area.target_patch_count >= min_patches \
+			and area.target_patch_count <= max_patches,
+			"%s owns an independent seed and its intended randomized fuel budget" % kind)
 		var shaders_valid := true
 		for flame_entry in area._flames:
 			var flame := flame_entry.get("node") as MeshInstance3D

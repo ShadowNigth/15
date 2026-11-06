@@ -80,15 +80,12 @@ def save_miptex_png(raw_name: str, w: int, h: int, indices: bytes, pal: bytes, o
         rgb = np.where(opaque_mask[..., None], rgb, fill_rgb)
         rgba = np.dstack([rgb, alpha])
         im = Image.fromarray(rgba, mode="RGBA")
-        if im.width > 256 or im.height > 256:
-            im = im.resize((min(256, im.width), min(256, im.height)), Image.Resampling.BILINEAR)
         im.save(out_path, format="PNG", optimize=True)
         return True
 
+    # Preserve the authentic mip0 resolution. The old 128px export cap threw
+    # away real WAD/BSP detail before any runtime filtering or HD restoration.
     im = Image.fromarray(rgb, mode="RGB")
-    if im.width > 128 or im.height > 128:
-        scale = 128.0 / float(max(im.width, im.height))
-        im = im.resize((max(8, int(round(im.width * scale))), max(8, int(round(im.height * scale)))), Image.Resampling.BILINEAR)
     im.quantize(colors=256).save(out_path, format="PNG", optimize=True)
     return False
 

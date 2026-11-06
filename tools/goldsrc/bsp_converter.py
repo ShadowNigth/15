@@ -665,7 +665,11 @@ def convert_single_bsp(
                 trigger_submodels.add(sub_idx)
                 rescue_zones.append({"min": lo_gd, "max": hi_gd, "center": center_gd})
                 seed_points_gs.append(center_gs)
-            elif cname == "func_escapezone":
+            elif cname in ("func_escapezone", "func_vip_safetyzone"):
+                # Assassination maps author the VIP extraction helicopter/vehicle
+                # as func_vip_safetyzone brush models. Treating only info_vip_
+                # safetyzone and func_escapezone as objectives silently produced
+                # playable AS maps with no destination at all.
                 trigger_submodels.add(sub_idx)
                 escape_zones.append({"min": lo_gd, "max": hi_gd, "center": center_gd})
                 seed_points_gs.append(center_gs)

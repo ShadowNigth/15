@@ -97,10 +97,11 @@ func open_menu() -> void:
 	_show_team_step()
 
 
-func close_menu() -> void:
+func close_menu(capture_mouse: bool = true) -> void:
 	is_open = false
 	visible = false
-	Input.set_mouse_mode(Input.MOUSE_MODE_CAPTURED)
+	if capture_mouse:
+		Input.set_mouse_mode(Input.MOUSE_MODE_CAPTURED)
 
 
 func _unhandled_input(event: InputEvent) -> void:

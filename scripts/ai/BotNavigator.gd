@@ -157,6 +157,32 @@ func report_team_damage(victim_team: String, victim_pos: Vector3, amount: float)
 				_danger_ct[nb2] = minf(450.0, _danger_ct[nb2] + boost * 0.45)
 
 
+func report_team_contact(observer_team: String, enemy_pos: Vector3, confidence: float = 1.0) -> void:
+	# Radio-visible contacts become soft team knowledge rather than omniscient
+	# targets. Safe/diversity routes can bend around the reported neighbourhood.
+	report_team_damage(observer_team, enemy_pos, 12.0 * clampf(confidence, 0.15, 1.0))
+
+
+func get_team_danger_at_node(node_idx: int, team: String) -> float:
+	if node_idx < 0 or node_idx >= waypoints.size():
+		return 0.0
+	return _danger_t[node_idx] if team == "T" else _danger_ct[node_idx]
+
+
+func get_path_tactical_cost(path: PackedInt32Array, team: String) -> float:
+	if path.is_empty():
+		return 1e12
+	var cost := 0.0
+	for i in range(path.size()):
+		var node_idx := path[i]
+		if i > 0:
+			cost += waypoints[path[i - 1]].distance_to(waypoints[node_idx])
+		cost += get_team_danger_at_node(node_idx, team) * 0.32
+		if not RoundManager.incendiary_areas.is_empty():
+			cost += RoundManager.get_incendiary_danger_at(waypoints[node_idx]) * 95.0
+	return cost
+
+
 func report_blocked_segment(_from_pos: Vector3, blocked_wp: Vector3) -> void:
 	var idx := get_nearest_node(blocked_wp)
 	if idx >= 0 and idx < _congestion.size():
@@ -234,7 +260,8 @@ func get_nearest_node(
 	pos: Vector3,
 	space: PhysicsDirectSpaceState3D = null,
 	max_dy: float = 3.6,
-	for_walk_start: bool = false
+	for_walk_start: bool = false,
+	avoid_start_nodes: Dictionary = {}
 ) -> int:
 	var n: int = waypoints.size()
 	if n == 0:
@@ -244,6 +271,10 @@ func get_nearest_node(
 	var cands: Array = []
 
 	for i in range(n):
+		# A banned origin must not be selected again after physical stuck
+		# recovery. Keep the existing global fallback when it is the only node.
+		if for_walk_start and avoid_start_nodes.has(i):
+			continue
 		var wp: Vector3 = waypoints[i]
 		var signed_dy: float = wp.y - pos.y
 		var dy: float = absf(signed_dy)
@@ -327,7 +358,7 @@ func plan_node_path(
 	if n == 0 or goal_idx < 0 or goal_idx >= n:
 		return PackedInt32Array()
 
-	var start_idx: int = get_nearest_node(from_pos, space, 3.6, true)
+	var start_idx: int = get_nearest_node(from_pos, space, 3.6, true, banned_nodes)
 	if start_idx < 0:
 		return PackedInt32Array()
 	if start_idx == goal_idx:
@@ -426,6 +457,9 @@ func plan_node_path(
 				if (v_flags & FLAG_CROSSING) != 0 or links_u.size() >= 3:
 					var h_noise: int = ((v * 73856093) ^ (diversity_seed * 19349663)) & 1023
 					extra_cost += (float(h_noise) / 1023.0) * 14.5
+			if not RoundManager.incendiary_areas.is_empty():
+				var fire_danger: float = RoundManager.get_incendiary_danger_at(waypoints[v])
+				extra_cost += fire_danger * (105.0 if path_mode == PATH_SAFE else 72.0)
 
 			var cand_g: float = u_g + step_d + extra_cost
 			if cand_g < g_score[v]:

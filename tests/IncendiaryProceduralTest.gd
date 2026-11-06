@@ -106,6 +106,16 @@ func _run() -> void:
 			area._burst.one_shot and area._burst.emitting,
 			"Every impact creates an initial GPU flame burst"
 		)
+		_expect(
+			(
+				area.target_patch_count >= IncendiaryArea.MOLOTOV_MIN_PATCHES
+				and area.target_patch_count <= IncendiaryArea.MAX_PATCHES
+				and area.radius >= 4.35 * 0.72
+				and area._branch_budget >= 3
+				and area._patches_per_step >= 2
+			),
+			"Wider Molotovs combine a larger fuel envelope with more connected branches and progressive spread"
+		)
 		profiles[_profile_signature(area)] = true
 		initial_meshes[_mesh_signature(area)] = true
 	_expect(
@@ -120,7 +130,12 @@ func _run() -> void:
 	var distributions := {}
 	for area in areas:
 		_expand(area)
+		print("[INCENDIARY PROCEDURAL TEST] expanded seed=%d patches=%d/%d radius=%.3f" % [area.simulation_seed, area._patches.size(), area.target_patch_count, area._current_radius])
 		distributions[_distribution_signature(area)] = true
+		_expect(
+			area._patches.size() >= IncendiaryArea.MOLOTOV_MIN_PATCHES and area._current_radius >= 3.5,
+			"The fully expanded Molotov is visibly wider in both connected patch count and damage footprint"
+		)
 		_expect(
 			area._patches.size() >= 8 and area._patches.size() <= area.target_patch_count,
 			(

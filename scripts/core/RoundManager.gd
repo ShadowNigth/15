@@ -32,6 +32,7 @@ var hostages: Array = []  # Array of HostageNPC
 var dropped_items: Array = []
 var smoke_clouds: Array = []  # Array of {pos: Vector3, radius: float, expire: float}
 var smoke_volumes: Array = []  # Array of SmokeCloudVolume
+var incendiary_areas: Array = []  # Active procedural fires, for tactical path costs
 var planted_c4: Node3D = null
 var hostages_rescued_this_round: int = 0
 var total_hostages_in_round: int = 0
@@ -51,6 +52,7 @@ func reset_match(map_data: Dictionary, world_node: Node3D) -> void:
 	dropped_items.clear()
 	smoke_clouds.clear()
 	smoke_volumes.clear()
+	incendiary_areas.clear()
 	planted_c4 = null
 	state = State.WAITING
 
@@ -62,6 +64,23 @@ func register_actor(actor: Node3D) -> void:
 
 func unregister_actor(actor: Node3D) -> void:
 	actors.erase(actor)
+
+
+func register_incendiary(area: Node3D) -> void:
+	if not incendiary_areas.has(area):
+		incendiary_areas.append(area)
+
+
+func unregister_incendiary(area: Node3D) -> void:
+	incendiary_areas.erase(area)
+
+
+func get_incendiary_danger_at(world_pos: Vector3) -> float:
+	var danger := 0.0
+	for area in incendiary_areas:
+		if is_instance_valid(area) and area.has_method("navigation_danger_at"):
+			danger = maxf(danger, float(area.call("navigation_danger_at", world_pos)))
+	return danger
 
 
 ## Kill a bomb still ticking when a round closes or restarts. Without this the
@@ -94,6 +113,13 @@ func start_new_round() -> void:
 				sv_node.get_parent().remove_child(sv_node)
 			sv_node.queue_free()
 	smoke_volumes.clear()
+	for area in incendiary_areas.duplicate():
+		if is_instance_valid(area):
+			var area_node := area as Node
+			if area_node.get_parent():
+				area_node.get_parent().remove_child(area_node)
+			area_node.queue_free()
+	incendiary_areas.clear()
 	_clear_stale_planted_c4()
 	planted_c4 = null
 	bomb_state_changed.emit(false, Vector3.ZERO)
