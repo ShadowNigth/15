@@ -1920,8 +1920,11 @@ func _follow_navigation_path(delta: float) -> void:
 	var signed_dy: float = wp.y - global_position.y
 	var vert_d: float = absf(signed_dy)
 
-	# Tight arrival radius on narrow/ramp/ladder/jump nodes; NEVER mark an upper ledge reached from below!
-	var touch_r: float = 0.54 if ((cur_flags & BotNavigator.ACTION_FLAGS) != 0 or is_jump_link) else 1.15
+	# Tight arrival on ladders/jumps; NEVER mark an upper ledge reached from
+	# below. Ground-only narrow nodes need capsule clearance: a 0.54 m radius
+	# can be smaller than the collision-free orbit around their centre.
+	var ground_narrow := (cur_flags & BotNavigator.ACTION_FLAGS) == BotNavigator.FLAG_NARROW and not is_jump_link
+	var touch_r: float = 0.90 if ground_narrow else (0.54 if ((cur_flags & BotNavigator.ACTION_FLAGS) != 0 or is_jump_link) else 1.15)
 	var max_vert_touch: float = 2.1 if (cur_flags & BotNavigator.FLAG_LADDER) != 0 else (0.68 if signed_dy > 0.0 else 1.45)
 	if flat_d < touch_r and vert_d < max_vert_touch:
 		_record_vip_route_node(cur_id)
@@ -1993,9 +1996,9 @@ func _follow_navigation_path(delta: float) -> void:
 	# Do NOT let obstacle whiskers deflect away from a climbable step/ledge when heading to a higher node!
 	var is_climb_step: bool = (not on_ladder) and (is_jump_link or (signed_dy > 0.44 and signed_dy < 1.90 and flat_d < 2.6 and _is_jumpable_ledge(raw_dir)))
 	# Narrow/action waypoints already encode the safe corridor. Deflecting a VIP
-	# away from their centres can orbit a junction indefinitely; use exact input
+	# or breadcrumb escort away from their centres can orbit a junction; use exact input
 	# there and retain obstacle steering in open combat/roaming space.
-	var precision_route: bool = is_vip and ((cur_flags & BotNavigator.ACTION_FLAGS) != 0 or _node_path.size() <= 2)
+	var precision_route: bool = (is_vip or _vip_breadcrumb_active) and ((cur_flags & BotNavigator.ACTION_FLAGS) != 0 or _node_path.size() <= 2)
 	var exact_input: bool = on_ladder or is_climb_step or precision_route or ladder_entry_exact
 	var target_move_dir := raw_dir if exact_input else _steer_around_obstacles(raw_dir)
 	_smoothed_move_dir = target_move_dir if exact_input else _blend_move_dir(_smoothed_move_dir, target_move_dir, delta * 12.5)
