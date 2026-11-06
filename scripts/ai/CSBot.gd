@@ -1951,9 +1951,15 @@ func _follow_navigation_path(delta: float) -> void:
 	# Multi-story Metal Ladder Climbing. A waypoint at the current height is a
 	# horizontal entry/exit, not a command to vault upward along the rungs.
 	if on_ladder:
-		if absf(signed_dy) < 0.35 and flat_d > 0.20:
+		var actor_h := CROUCH_HEIGHT if is_crouching else STAND_HEIGHT
+		var ladder_info: Dictionary = RoundManager.game_world.call("get_ladder_info", global_position, actor_h)
+		var ladder_top := float(ladder_info.get("top_y", global_position.y + 2.0))
+		var near_ladder_top := global_position.y >= ladder_top - 0.85
+		if absf(signed_dy) < 0.35 and flat_d > 0.20 and not near_ladder_top:
 			bot_ladder_dir = 0.0
 		else:
+			# At the top lip, keep climbing through the vault even when the exit
+			# node is level. Switching to horizontal input here can hit the rungs.
 			bot_ladder_dir = 1.0 if signed_dy >= -0.30 else -1.0
 
 	# Pure-pursuit corner rounding ONLY on flat, non-action, non-jump links
@@ -2202,7 +2208,16 @@ func _pick_open_escape_direction(blocked_dir: Vector3) -> Vector3:
 		var d_c := 4.2 if h_c.is_empty() else chest.distance_to(h_c["position"] as Vector3)
 		var free_d := minf(d_s, d_c)
 		var away_bonus := (1.0 - cand.dot(base)) * 0.85
-		var score := free_d + away_bonus + randf_range(-0.12, 0.12)
+		# Open air is not an escape route. Prefer a nearby walkable floor so a
+		# stuck recovery on a ladder/top catwalk never throws the bot off a ledge.
+		var floor_probe := global_position + cand * 1.15
+		var floor_q := PhysicsRayQueryParameters3D.create(floor_probe + Vector3(0.0, 0.65, 0.0), floor_probe - Vector3(0.0, 1.45, 0.0))
+		floor_q.collision_mask = 1
+		var floor_hit := space.intersect_ray(floor_q)
+		var floor_penalty := 0.0
+		if floor_hit.is_empty() or (floor_hit.get("normal", Vector3.UP) as Vector3).y < 0.45:
+			floor_penalty = 12.0
+		var score := free_d + away_bonus + randf_range(-0.12, 0.12) - floor_penalty
 		if score > best_score:
 			best_score = score
 			best_dir = cand
