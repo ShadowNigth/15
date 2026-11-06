@@ -28,6 +28,12 @@ func _expect(condition: bool, description: String) -> void:
 		print("::error title=Mission objective QA::" + annotation)
 
 
+func _progress(message: String) -> void:
+	print("[MISSION AI TEST] " + message)
+	var annotation := message.replace("%", "%25").replace("\r", "%0D").replace("\n", "%0A")
+	print("::notice title=Mission progress::" + annotation)
+
+
 func _make_world(map_name: String, bot_count: int) -> GameWorld:
 	GameData.selected_map = map_name
 	GameData.bot_count = bot_count
@@ -117,7 +123,7 @@ func _test_oilrig_escort() -> void:
 			var distances: Array[String] = []
 			for escort in escorts:
 				distances.append("%.1f" % escort.global_position.distance_to(vip.global_position))
-			print("[MISSION AI TEST] OilRig t=%ds VIP=%s escort_dist=%s path=%d" % [frames / 60, vip.global_position, ", ".join(distances), vip._node_path.size()])
+			_progress("OilRig t=%ds VIP=%s escort_dist=%s path=%d" % [frames / 60, vip.global_position, ", ".join(distances), vip._node_path.size()])
 
 	_expect(not escort_camped, "Assigned OilRig escorts never switch into stationary camp behaviour")
 	for escort in escorts:
@@ -162,7 +168,7 @@ func _test_hostage_map(map_name: String, expected_hostages: int, bot_count: int,
 			if is_instance_valid(hostage.leader):
 				assigned[hostage.get_instance_id()] = true
 		if frames % 1800 == 0:
-			print("[MISSION AI TEST] %s t=%ds rescued=%d/%d" % [map_name, frames / 60, RoundManager.hostages_rescued_this_round, hostages.size()])
+			_progress("%s t=%ds rescued=%d/%d" % [map_name, frames / 60, RoundManager.hostages_rescued_this_round, hostages.size()])
 
 	for hostage in hostages:
 		var hid := hostage.get_instance_id()

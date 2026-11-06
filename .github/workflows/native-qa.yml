@@ -4,6 +4,10 @@ on:
   workflow_dispatch:
   push:
 
+concurrency:
+  group: native-qa-${{ github.ref }}
+  cancel-in-progress: true
+
 jobs:
   native-tests:
     runs-on: ubuntu-latest
