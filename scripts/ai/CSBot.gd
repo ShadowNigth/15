@@ -1959,7 +1959,7 @@ func _follow_navigation_path(delta: float) -> void:
 		var ladder_center: Vector3 = ladder_info.get("center", global_position)
 		# Only vault onto the platform behind the rungs after climbing. A level
 		# approach on the exposed side is an entry, not a top exit (OilRig).
-		near_ladder_top = global_position.y >= ladder_top - 0.85 and wp.y >= ladder_top - 0.40 and (nav.get_node_flags(_prev_node_idx) & BotNavigator.FLAG_LADDER) != 0 and (wp - ladder_center).dot(ladder_normal) < -0.20
+		near_ladder_top = global_position.y >= ladder_top - 0.85 and wp.y >= ladder_top - 0.40 and ((nav.get_node_flags(_prev_node_idx) & BotNavigator.FLAG_LADDER) != 0 or bot_ladder_dir > 0.1) and (wp - ladder_center).dot(ladder_normal) < -0.20
 		if absf(signed_dy) < 0.35 and flat_d > 0.20 and not near_ladder_top:
 			bot_ladder_dir = 0.0
 		else:

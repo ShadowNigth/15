@@ -20,6 +20,8 @@ func _expect(condition: bool, description: String) -> void:
 	if not condition:
 		_failures.append(description)
 		push_error("[TACTICAL AI TEST] " + description)
+		var annotation := description.replace("%", "%25").replace("\r", "%0D").replace("\n", "%0A")
+		print("::error title=Tactical AI QA::" + annotation)
 
 
 func _place_in_buyzone(bot: CSBot, world: GameWorld, team: String) -> bool:
