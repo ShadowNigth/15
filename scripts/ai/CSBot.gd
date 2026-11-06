@@ -1171,7 +1171,7 @@ func _follow_vip_escort_direct(delta: float) -> void:
 	_smoothed_move_dir = _blend_move_dir(_smoothed_move_dir, move_dir, delta * 12.0)
 	if not _has_vip_escort_floor_path(global_position, global_position + _smoothed_move_dir * 1.10):
 		_vip_escort_direct_active = false
-		_vip_escort_repath = 0.0
+		_vip_escort_repath = 0.65
 		_stuck_timer = 0.0
 		apply_goldsrc_movement(Vector3.ZERO, false, false, false, delta)
 		_last_pos = global_position
@@ -1185,7 +1185,7 @@ func _follow_vip_escort_direct(delta: float) -> void:
 	# shortcut. Return to A* instead of pushing indefinitely against geometry.
 	if _vip_escort_direct_elapsed > 3.0 or _stuck_timer > 0.55 or distance > 16.0:
 		_vip_escort_direct_active = false
-		_vip_escort_repath = 0.0
+		_vip_escort_repath = 0.65
 		_stuck_timer = 0.0
 
 
@@ -1222,7 +1222,7 @@ func _update_as_squad_objective(nav: BotNavigator, gw: Node3D) -> bool:
 			var formation_distance := global_position.distance_to(formation_pos)
 			# Nearby escorts track the moving formation directly. This avoids
 			# repeatedly snapping back to an old node while the VIP advances.
-			if formation_distance < 12.0 and _has_wide_corridor_sight(global_position, formation_pos) and _has_vip_escort_floor_path(global_position, formation_pos):
+			if _vip_escort_repath <= 0.0 and formation_distance < 12.0 and _has_wide_corridor_sight(global_position, formation_pos) and _has_vip_escort_floor_path(global_position, formation_pos):
 				if not _vip_escort_direct_active or _vip_escort_direct_goal.distance_to(formation_pos) > 0.45:
 					_start_vip_escort_direct(formation_pos)
 				else:
@@ -1230,11 +1230,10 @@ func _update_as_squad_objective(nav: BotNavigator, gw: Node3D) -> bool:
 			else:
 				_vip_escort_direct_active = false
 				# Follow the leader rather than repeatedly restarting A* toward a
-				# moving offset. A wider update threshold gives the escort time to
-				# complete links and ladders; close formation is handled directly.
-				if _vip_escort_repath <= 0.0 and (_node_path.is_empty() or not _has_goal or _goal_pos.distance_to(vip.global_position) > 6.0):
+				# moving offset. Keep a valid route until it completes or ordinary
+				# stuck recovery invalidates it; close formation is handled directly.
+				if _node_path.is_empty() or not _has_goal:
 					_plan_to_world_pos(nav, vip.global_position, false, BotNavigator.PATH_FAST)
-					_vip_escort_repath = 0.75
 					if not _has_goal:
 						_plan_to_world_pos(nav, formation_pos, false, BotNavigator.PATH_SAFE)
 			return true
