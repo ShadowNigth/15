@@ -184,7 +184,7 @@ func _test_hostage_map(map_name: String, expected_hostages: int, bot_count: int,
 		_progress("%s hostage=%d pos=%s rescued=%s leader=%s nav=%s stuck=%.2f blocked=%.2f" % [map_name, i, hostage.global_position, hostage.is_rescued, leader_pos, str(hostage._nav_path.slice(0, 4)), hostage._stuck_timer, hostage._blocked_timer])
 	for bot in world.bots:
 		if bot.team == "CT":
-			_progress("%s CT pos=%s target=%d led=%d direct=%s/%d next=%s goal=%s" % [map_name, bot.global_position, hostages.find(bot._hostage_target), bot._led_hostages().size(), bot._hostage_direct_active, bot._hostage_direct_mode, str(bot._node_path.slice(0, 6)), bot._goal_pos])
+			_progress("%s CT pos=%s alive=%s hp=%.0f target=%d led=%d direct=%s/%d next=%s goal=%s" % [map_name, bot.global_position, bot.is_alive, bot.health, hostages.find(bot._hostage_target), bot._led_hostages().size(), bot._hostage_direct_active, bot._hostage_direct_mode, str(bot._node_path.slice(0, 6)), bot._goal_pos])
 
 	for hostage in hostages:
 		var hid := hostage.get_instance_id()

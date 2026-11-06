@@ -210,6 +210,10 @@ func _solid_between(space: PhysicsDirectSpaceState3D, a: Vector3, b: Vector3) ->
 func _has_clear_move_line(to_pos: Vector3) -> bool:
 	if get_world_3d() == null:
 		return true
+	# Direct following is horizontal plus a small GoldSrc step. Never confuse
+	# a leader on another deck with an unobstructed walk to the same X/Z.
+	if absf(to_pos.y - global_position.y) > STEP_HEIGHT + 0.14:
+		return false
 	var delta := to_pos - global_position
 	delta.y = 0.0
 	if delta.length_squared() < 0.04:
@@ -277,7 +281,15 @@ func _physics_process(delta: float) -> void:
 
 	if is_instance_valid(leader) and bool(leader.get("is_alive")):
 		var dist := global_position.distance_to(leader.global_position)
-		if dist > 2.15:
+		var finishing_rescue := false
+		if is_instance_valid(RoundManager.game_world) and RoundManager.game_world.has_method("is_in_rescue_zone"):
+			var leader_inside := bool(RoundManager.game_world.call("is_in_rescue_zone", leader.global_position + Vector3(0.0, 0.95, 0.0)))
+			var self_inside := bool(RoundManager.game_world.call("is_in_rescue_zone", global_position + Vector3(0.0, 0.95, 0.0))) or bool(RoundManager.game_world.call("is_in_rescue_zone", global_position))
+			finishing_rescue = leader_inside and not self_inside
+		# The normal 2.15 m follow gap must not leave the NPC just outside the
+		# trigger after its rescuer has entered. Close in until this body crosses.
+		var follow_stop := 0.35 if finishing_rescue else 2.15
+		if dist > follow_stop:
 			_repath_timer -= delta
 			var direct_clear := dist < 7.0 and _has_clear_move_line(leader.global_position)
 			if (dist > 5.2 or not direct_clear) and _repath_timer <= 0.0 and is_instance_valid(RoundManager.game_world):
