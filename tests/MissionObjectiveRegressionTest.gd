@@ -193,6 +193,22 @@ func _test_hostage_map(map_name: String, expected_hostages: int, bot_count: int,
 			if not death_logged and not bot.is_alive:
 				death_logged = true
 				_progress("%s first CT death pos=%s peak=%s next=%s prev=%d goal=%s" % [map_name, bot.global_position, peak, str(bot._node_path.slice(0, 5)), bot._prev_node_idx, bot._goal_pos])
+		if frames == 7200 or frames == 14400:
+			for bot in world.bots:
+				if bot.team != "CT" or not bot.is_alive or not is_instance_valid(bot._hostage_target) or bot._node_path.is_empty():
+					continue
+				var waypoint := world.bot_navigator.get_node_pos(bot._node_path[0])
+				var forward := waypoint - bot.global_position
+				forward.y = 0.0
+				forward = forward.normalized()
+				var collision := KinematicCollision3D.new()
+				var blocked := bot.test_move(bot.global_transform, forward * 0.9, collision)
+				var obstacle := collision.get_collider() as Node if blocked else null
+				var obstacle_info := "none"
+				if is_instance_valid(obstacle):
+					obstacle_info = "%s parent=%s meta=%s normal=%s" % [obstacle.name, obstacle.get_parent().name, obstacle.get_meta_list(), collision.get_normal()]
+				_progress("%s obstruction t=%d pos=%s waypoint=%s crouch=%s floor=%s velocity=%s stuck=%.2f elapsed=%.2f collider=%s" % [map_name, frames / 60, bot.global_position, waypoint, bot.is_crouching, bot.is_on_floor(), bot.velocity, bot._stuck_timer, bot._cur_node_elapsed, obstacle_info])
+				break
 		if frames % 1800 == 0:
 			# Keep the step's ten notice annotations available for final actor
 			# diagnostics; periodic counts remain in the raw native log.
