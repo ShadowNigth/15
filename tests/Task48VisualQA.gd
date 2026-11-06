@@ -75,8 +75,8 @@ func _run() -> void:
 			return
 		# Keep the full PNG as the artifact; a smaller JPEG permits inspection
 		# through check annotations when artifact storage is inaccessible.
-		image.resize(720, 405, Image.INTERPOLATE_LANCZOS)
-		if image.save_jpg(jpg, 0.65) != OK:
+		image.resize(640, 360, Image.INTERPOLATE_LANCZOS)
+		if image.save_jpg(jpg, 0.45) != OK:
 			get_tree().quit(1)
 			return
 		manifest.append({"map": map_name, "subject": str(subject.global_position), "renderer": RenderingServer.get_video_adapter_name(), "rescued": RoundManager.hostages_rescued_this_round})

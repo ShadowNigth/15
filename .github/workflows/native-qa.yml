@@ -144,22 +144,25 @@ jobs:
         if: ${{ always() && inputs.suite != 'world' }}
         run: |
           python3 - <<'PY'
-          import base64
           from pathlib import Path
           log = Path('/tmp/task48-render.log')
           if log.exists():
               text = '\n'.join(log.read_text(errors='replace').splitlines()[-45:])
               escaped = text.replace('%', '%25').replace('\r', '%0D').replace('\n', '%0A')
               print(f'::notice title=Task48 renderer log::{escaped}')
-          root = Path('/tmp/task48-captures')
-          for image in sorted(root.glob('*.jpg')):
-              name = image.stem
-              data = base64.b64encode(image.read_bytes()).decode()
-              chunks = [data[i:i + 45000] for i in range(0, len(data), 45000)]
-              assert len(chunks) <= 3, 'Capture exceeds diagnostic transport budget'
-              for i, chunk in enumerate(chunks):
-                  print(f'::notice title=Task48 JPEG {name} {i+1}/{len(chunks)}::{chunk}')
           PY
+
+      - name: Inspect OilRig rendered capture
+        if: ${{ !cancelled() && inputs.suite != 'world' }}
+        run: python3 tools/publish_rendered_capture.py as_oilrig
+
+      - name: Inspect 747 rendered capture
+        if: ${{ !cancelled() && inputs.suite != 'world' }}
+        run: python3 tools/publish_rendered_capture.py cs_747
+
+      - name: Inspect Estate rendered capture
+        if: ${{ !cancelled() && inputs.suite != 'world' }}
+        run: python3 tools/publish_rendered_capture.py cs_estate
 
       - name: Save task 48 rendered evidence
         if: ${{ !cancelled() && inputs.suite != 'world' }}
