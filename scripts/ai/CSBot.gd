@@ -461,6 +461,7 @@ func _perform_bot_buy() -> void:
 
 func _physics_process(delta: float) -> void:
 	bot_ladder_dir = 0.0
+	bot_ladder_anchor_valid = false
 	if not is_alive:
 		return
 	_nav_clock += delta
@@ -1962,6 +1963,12 @@ func _follow_navigation_path(delta: float) -> void:
 	# horizontal entry/exit except across the top lip, which needs the vault.
 	var near_ladder_top := false
 	if on_ladder:
+		if (cur_flags & BotNavigator.FLAG_LADDER) != 0:
+			bot_ladder_anchor = nav.get_node_pos(cur_id)
+			bot_ladder_anchor_valid = true
+		elif (nav.get_node_flags(_prev_node_idx) & BotNavigator.FLAG_LADDER) != 0:
+			bot_ladder_anchor = nav.get_node_pos(_prev_node_idx)
+			bot_ladder_anchor_valid = true
 		var actor_h := CROUCH_HEIGHT if is_crouching else STAND_HEIGHT
 		var ladder_info: Dictionary = RoundManager.game_world.call("get_ladder_info", global_position, actor_h)
 		var ladder_top := float(ladder_info.get("top_y", global_position.y + 2.0))

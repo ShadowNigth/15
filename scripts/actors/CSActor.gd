@@ -46,6 +46,8 @@ var in_water: bool = false
 var water_depth: float = 0.0
 var _was_in_water: bool = false
 var bot_ladder_dir: float = 0.0
+var bot_ladder_anchor: Vector3 = Vector3.ZERO
+var bot_ladder_anchor_valid: bool = false
 var look_yaw: float = 0.0
 var look_pitch: float = 0.0
 var stamina_factor: float = 1.0  # CS 1.5 landing / bullet-tagging slowdown!
@@ -837,6 +839,11 @@ func apply_goldsrc_movement(wish_dir_world: Vector3, want_jump: bool, want_crouc
 			# Precision AI Bot ladder climb + automatic top-platform step-forward
 			var to_c: Vector3 = lad_center - global_position
 			var lat_err: float = to_c.dot(lat_axis)
+			if bot_ladder_anchor_valid:
+				# Authored rung origins may avoid trim on one side of a narrow
+				# opening. Retain that small lateral offset rather than recentering
+				# the capsule under the roof lip on every climb frame.
+				lat_err += clampf((bot_ladder_anchor - lad_center).dot(lat_axis), -0.32, 0.32)
 			velocity = lat_axis * clampf(lat_err * 5.0, -2.5, 2.5)
 			if bot_ladder_dir > 0.0:
 				velocity.y = climb_spd
