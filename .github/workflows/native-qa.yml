@@ -1,0 +1,51 @@
+name: Native Godot QA
+
+on:
+  workflow_dispatch:
+  push:
+
+jobs:
+  native-tests:
+    runs-on: ubuntu-latest
+    timeout-minutes: 35
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Install static validator
+        run: python -m pip install 'gdtoolkit==4.3.4'
+
+      - name: Verify project assets and GDScript AST
+        run: python tools/verify_godot_project.py
+
+      - name: Install Godot 4.3
+        run: |
+          curl -fL --retry 3 -o /tmp/godot.zip \
+            https://github.com/godotengine/godot-builds/releases/download/4.3-stable/Godot_v4.3-stable_linux.x86_64.zip
+          unzip -q /tmp/godot.zip -d /tmp/godot
+          sudo install -m 755 /tmp/godot/Godot_v4.3-stable_linux.x86_64 /usr/local/bin/godot
+          godot --version
+
+      - name: Import project resources
+        run: godot --headless --path . --editor --quit
+
+      - name: Mission objective regression
+        run: godot --headless --path . --fixed-fps 60 res://tests/MissionObjectiveRegressionTest.tscn
+
+      - name: Weapon runtime regression
+        run: godot --headless --path . res://tests/ArchiWeaponRuntimeTest.tscn
+
+      - name: Game world smoke regression
+        run: godot --headless --path . --fixed-fps 60 res://tests/ArchiGameWorldSmokeTest.tscn
+
+      - name: Procedural fire regression
+        run: godot --headless --path . --fixed-fps 60 res://tests/IncendiaryProceduralTest.tscn
+
+      - name: Original textures, surface and water regression
+        run: godot --headless --path . --fixed-fps 60 res://tests/MapSurfaceWaterTest.tscn
+
+      - name: Tactical AI regression
+        run: godot --headless --path . --fixed-fps 60 res://tests/TacticalAIRegressionTest.tscn

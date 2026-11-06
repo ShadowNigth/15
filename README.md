@@ -23,7 +23,7 @@ Todo el contenido de `cstrike/` fue procesado mediante la suite de ingeniería i
 | :--- | :--- | :--- | :--- |
 | **Mapas 3D + Lightmaps** | `maps/*.bsp` (GoldSrc BSP v30 + 23 WAD3) | `assets/maps/*.glb` + `*_lm.png` + `data/maps/*.json` | **26 / 26 mapas** |
 | **Grafo de Navegación IA** | Hull 1 (`CLIPNODES`) de cada `.bsp` | `waypoints` A* en `data/maps/*.json` | **26 grafos** (230–340 nodos/mapa) |
-| **Texturas de Mundo + Cielos** | `*.wad` (`de_aztec`, `cs_dust`, `halflife`…) + `gfx/env/*.tga` | PNG originales + overrides `world/hd/*.webp` x4 con mipmaps; FSRCNN de [`Saafke/FSRCNN_Tensorflow`](https://github.com/Saafke/FSRCNN_Tensorflow) solo en producción | **2,346 originales + 2,346 HD + 109 caras skybox** |
+| **Texturas de Mundo + Cielos** | `*.wad` (`de_aztec`, `cs_dust`, `halflife`…) + `gfx/env/*.tga` | PNG originales con mipmaps, sin overrides reescalados | **2,346 texturas originales + 109 caras skybox** |
 | **Materiales HD de armas** | VMT/VTF de `ShadowNigth/archi` | `assets/textures/archi/` + `data/archi_materials.json` | **54 materiales + 136 mapas compartidos de hasta 2K** |
 | **Skins UV auténticas** | Valve / CS:GO Ports / BDS, vía `cs16-skin-inventory` | `assets/textures/weapon_skins/` + `data/weapon_skins.json` | **120 acabados / 20 familias + Original HD** |
 | **Modelos 3D Animados** | StudioMDL GoldSrc + MDL/VTF de `ShadowNigth/archi` | `assets/models/**/*.glb` (esqueleto + animaciones + winding CCW) | **176 modelos `.glb`** |
@@ -60,7 +60,7 @@ Todo el contenido de `cstrike/` fue procesado mediante la suite de ingeniería i
 - **HUD Ámbar Original y VGUI (`CSHud.gd`, `TeamSelectMenu.gd`, `Scoreboard.gd`, `RadioMenu.gd`)**:
   - Números ámbar recortados del atlas original `640hud7.spr`, radar giratorio con puntos de aliados/bomba/rehenes, killfeed con iconos `d_*` de `hud.txt`, indicador de zona de compra/C4/Kit, linterna (`F`) y **Visión Nocturna verde (`N`)**.
 - **Bots IA estilo PodBot (`CSBot.gd`, `BotNavigator.gd`)**:
-  - Compras legales variadas según presupuesto, personalidad y composición de escuadra; navegación A* compartida sobre el grafo del BSP con costes de contactos y fuego, cobertura física al recargar, plantado/desactivación de C4 y rescate de rehenes. En `as_*`, el VIP bot navega activamente hasta las zonas auténticas `func_vip_safetyzone`, los CT forman escolta y los T cazan o preparan emboscadas. Conservan reacción a sonidos, Flashbang, humo y órdenes de radio (`Z` / `X` / `C`).
+  - Compras legales variadas según presupuesto, personalidad y composición de escuadra; navegación A* compartida sobre el grafo del BSP con costes de contactos y fuego, cobertura física al recargar, plantado/desactivación de C4 y rescate de rehenes. En `as_*`, el VIP bot navega activamente hasta las zonas auténticas `func_vip_safetyzone`, los CT mantienen una escolta móvil sin acampar al quedar asignados y los T cazan o preparan emboscadas. En `cs_*`, los rescatadores reparten objetivos, recorren los últimos metros hasta cada rehén, vuelven a por seguidores bloqueados y escoltan hacia volúmenes reales de rescate. Conservan reacción a sonidos, Flashbang, humo y órdenes de radio (`Z` / `X` / `C`).
 
 ---
 
@@ -118,4 +118,5 @@ godot --headless --path . --fixed-fps 60 res://tests/ArchiGameWorldSmokeTest.tsc
 godot --headless --path . --fixed-fps 60 res://tests/IncendiaryProceduralTest.tscn
 godot --headless --path . --fixed-fps 60 res://tests/MapSurfaceWaterTest.tscn
 godot --headless --path . --fixed-fps 60 res://tests/TacticalAIRegressionTest.tscn
+godot --headless --path . --fixed-fps 60 res://tests/MissionObjectiveRegressionTest.tscn
 ```

@@ -352,7 +352,8 @@ func plan_node_path(
 	leading_hostage: bool = false,
 	space: PhysicsDirectSpaceState3D = null,
 	diversity_seed: int = 0,
-	banned_nodes: Dictionary = {}
+	banned_nodes: Dictionary = {},
+	allow_unsafe_hostage_fallback: bool = true
 ) -> PackedInt32Array:
 	var n: int = waypoints.size()
 	if n == 0 or goal_idx < 0 or goal_idx >= n:
@@ -484,8 +485,10 @@ func plan_node_path(
 					else:
 						break
 
-	# If hostage-safe search couldn't reach, fall back to normal directed search
-	if parent[goal_idx] == -1 and leading_hostage:
+	# Ordinary CT movement may deliberately fall back when a graph has no safe
+	# hostage route. Rescue selection and HostageNPC itself disable this fallback
+	# so they never commit a follower to a jump, ladder or NoHostage link.
+	if parent[goal_idx] == -1 and leading_hostage and allow_unsafe_hostage_fallback:
 		return plan_node_path(from_pos, goal_idx, team, path_mode, false, space, diversity_seed, banned_nodes)
 	if parent[goal_idx] == -1:
 		return PackedInt32Array([start_idx])
@@ -527,7 +530,7 @@ func find_path(from_pos: Vector3, to_pos: Vector3, space: PhysicsDirectSpaceStat
 	if g_idx < 0:
 		out.append(to_pos)
 		return out
-	var node_ids := plan_node_path(from_pos, g_idx, "CT", PATH_FAST, true, space, 0)
+	var node_ids := plan_node_path(from_pos, g_idx, "CT", PATH_FAST, true, space, 0, {}, false)
 	for nid in node_ids:
 		out.append(waypoints[nid])
 	return out

@@ -98,20 +98,16 @@ static func build_map(parent: Node3D, map_data: Dictionary) -> Dictionary:
 		mi.layers = 1
 		if mi.mesh and world_shader:
 			for surf_i in range(mi.mesh.get_surface_count()):
-				var orig_mat := mi.mesh.surface_get_material(surf_i)
-				var tex_safe := orig_mat.resource_name if orig_mat else "default_tex"
-				if tex_safe.is_empty() and orig_mat is BaseMaterial3D and (orig_mat as BaseMaterial3D).albedo_texture:
-					tex_safe = (orig_mat as BaseMaterial3D).albedo_texture.resource_path.get_file().get_basename()
-				# Prefer shared restored artwork over the small copy embedded in
-				# each GLB. Original PNG and embedded fallbacks keep third-party or
-				# incomplete texture sets usable without changing any UVs.
-				var hd_path := "res://assets/textures/world/hd/%s.webp" % tex_safe
+			var orig_mat := mi.mesh.surface_get_material(surf_i)
+			var tex_safe := orig_mat.resource_name if orig_mat else "default_tex"
+			var albedo: Texture2D = null
+			if orig_mat is BaseMaterial3D and (orig_mat as BaseMaterial3D).albedo_texture:
+				albedo = (orig_mat as BaseMaterial3D).albedo_texture
+				if tex_safe.is_empty():
+					tex_safe = albedo.resource_path.get_file().get_basename()
+			if albedo == null:
 				var tex_path := "res://assets/textures/world/%s.png" % tex_safe
-				var albedo: Texture2D = GameData.get_texture(hd_path)
-				if albedo == null:
-					albedo = GameData.get_texture(tex_path)
-				if albedo == null and orig_mat is BaseMaterial3D:
-					albedo = (orig_mat as BaseMaterial3D).albedo_texture
+				albedo = GameData.get_texture(tex_path)
 				var tlow := tex_safe.to_lower()
 				if "ladder" in tlow or "rung" in tlow:
 					has_ladder_tex = true
