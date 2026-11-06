@@ -86,6 +86,7 @@ var _vip_escort_direct_active: bool = false
 var _vip_escort_direct_goal: Vector3 = Vector3.ZERO
 var _vip_escort_direct_elapsed: float = 0.0
 var _vip_escort_repath: float = 0.0
+var _vip_escort_wait_since: float = -1.0
 var _contact_report_cd: float = 0.0
 var _cover_dir: Vector3 = Vector3.ZERO
 var _cover_check_timer: float = 0.0
@@ -208,6 +209,7 @@ func spawn_for_round(pos: Vector3, yaw_rad: float, reset_weapons: bool) -> void:
 	_vip_escort_direct_goal = Vector3.ZERO
 	_vip_escort_direct_elapsed = 0.0
 	_vip_escort_repath = 0.0
+	_vip_escort_wait_since = -1.0
 	_contact_report_cd = 0.0
 	_cover_dir = Vector3.ZERO
 	_cover_check_timer = 0.0
@@ -970,6 +972,21 @@ func _is_assigned_vip_escort() -> bool:
 	return RoundManager.map_mode == "as" and team == "CT" and not is_vip and _vip_escort_slot >= 0 and _vip_escort_slot < 3
 
 
+func _vip_escort_proximity(radius: float) -> Vector2i:
+	var escorts: Array[CSBot] = []
+	for raw in RoundManager.actors:
+		var bot := raw as CSBot
+		if is_instance_valid(bot) and bot != self and bot.is_alive and bot.team == "CT" and not bot.is_vip:
+			escorts.append(bot)
+	escorts.sort_custom(func(a: CSBot, b: CSBot) -> bool: return a.get_instance_id() < b.get_instance_id())
+	var close := 0
+	var designated := mini(3, escorts.size())
+	for i in range(designated):
+		if escorts[i].global_position.distance_to(global_position) <= radius:
+			close += 1
+	return Vector2i(designated, close)
+
+
 func _update_vip_escape(nav: BotNavigator, gw: Node3D) -> void:
 	var zones: Array = gw.get("escape_zones")
 	if zones.is_empty():
@@ -978,6 +995,24 @@ func _update_vip_escape(nav: BotNavigator, gw: Node3D) -> void:
 		if _node_path.is_empty() or not _has_goal:
 			_plan_to_node(nav, nav.pick_roam_node(global_position, team), false, BotNavigator.PATH_SAFE)
 		return
+
+	# Do not cross the extraction brush alone while a living escort group is
+	# still completing the same stairs/ladders. The bounded wait preserves round
+	# momentum and is skipped when combat has left fewer than two escorts alive.
+	if _vip_escape_node >= 0 and not bool(gw.call("is_in_escape_zone", global_position)):
+		var proximity := _vip_escort_proximity(16.0)
+		var near_threshold := global_position.distance_to(_vip_direct_goal) < 9.0
+		if proximity.x >= 2 and proximity.y < 2 and near_threshold:
+			if _vip_escort_wait_since < 0.0:
+				_vip_escort_wait_since = _nav_clock
+			if _nav_clock - _vip_escort_wait_since < 15.0:
+				_vip_direct_active = false
+				_node_path = PackedInt32Array()
+				_has_goal = false
+				_hold_pos_timer = maxf(_hold_pos_timer, 0.30)
+				return
+		elif proximity.y >= 2 or not near_threshold:
+			_vip_escort_wait_since = -1.0
 	if bool(gw.call("is_in_escape_zone", global_position)):
 		_vip_direct_active = false
 		return
