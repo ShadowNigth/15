@@ -87,6 +87,8 @@ var _vip_escort_direct_goal: Vector3 = Vector3.ZERO
 var _vip_escort_direct_elapsed: float = 0.0
 var _vip_escort_repath: float = 0.0
 var _vip_escort_wait_since: float = -1.0
+var _vip_route_history := PackedInt32Array()
+var _vip_breadcrumb_active: bool = false
 var _contact_report_cd: float = 0.0
 var _cover_dir: Vector3 = Vector3.ZERO
 var _cover_check_timer: float = 0.0
@@ -210,6 +212,8 @@ func spawn_for_round(pos: Vector3, yaw_rad: float, reset_weapons: bool) -> void:
 	_vip_escort_direct_elapsed = 0.0
 	_vip_escort_repath = 0.0
 	_vip_escort_wait_since = -1.0
+	_vip_route_history = PackedInt32Array()
+	_vip_breadcrumb_active = false
 	_contact_report_cd = 0.0
 	_cover_dir = Vector3.ZERO
 	_cover_check_timer = 0.0
@@ -972,6 +976,13 @@ func _is_assigned_vip_escort() -> bool:
 	return RoundManager.map_mode == "as" and team == "CT" and not is_vip and _vip_escort_slot >= 0 and _vip_escort_slot < 3
 
 
+func _record_vip_route_node(node_idx: int) -> void:
+	if not is_vip or RoundManager.map_mode != "as" or node_idx < 0:
+		return
+	if _vip_route_history.is_empty() or _vip_route_history[_vip_route_history.size() - 1] != node_idx:
+		_vip_route_history.append(node_idx)
+
+
 func _vip_escort_proximity(radius: float) -> Vector2i:
 	var escorts: Array[CSBot] = []
 	for raw in RoundManager.actors:
@@ -1167,6 +1178,7 @@ func _has_vip_escort_floor_path(from_p: Vector3, to_p: Vector3) -> bool:
 
 func _start_vip_escort_direct(goal: Vector3) -> void:
 	_vip_escort_direct_goal = goal
+	_vip_breadcrumb_active = false
 	_vip_escort_direct_elapsed = 0.0
 	_vip_escort_direct_active = true
 	_node_path = PackedInt32Array()
@@ -1224,6 +1236,62 @@ func _follow_vip_escort_direct(delta: float) -> void:
 		_stuck_timer = 0.0
 
 
+func _follow_vip_breadcrumbs(nav: BotNavigator, vip: CSActor) -> bool:
+	var vip_bot := vip as CSBot
+	if vip_bot == null:
+		return false
+	var route := PackedInt32Array()
+	for node_idx in vip_bot._vip_route_history:
+		if route.is_empty() or route[route.size() - 1] != node_idx:
+			route.append(node_idx)
+	for node_idx in vip_bot._node_path:
+		if route.is_empty() or route[route.size() - 1] != node_idx:
+			route.append(node_idx)
+	if route.is_empty():
+		return false
+
+	if _vip_breadcrumb_active:
+		if not _node_path.is_empty() and route.find(_node_path[0]) >= 0:
+			return true
+		_node_path = PackedInt32Array()
+		_has_goal = false
+	_vip_breadcrumb_active = false
+
+	# Merge with the closest few points of the VIP's actual route, then retain
+	# its suffix. Only this short merge needs a fresh A* search.
+	var candidates: Array[int] = []
+	for i in range(route.size()):
+		candidates.append(i)
+	candidates.sort_custom(func(a: int, b: int) -> bool:
+		var da := global_position.distance_squared_to(nav.get_node_pos(route[a]))
+		var db := global_position.distance_squared_to(nav.get_node_pos(route[b]))
+		return da < db
+	)
+	var space := get_world_3d().direct_space_state
+	for candidate_i in range(mini(4, candidates.size())):
+		var route_idx := candidates[candidate_i]
+		var merge_node := route[route_idx]
+		var prefix := nav.plan_node_path(global_position, merge_node, team, BotNavigator.PATH_FAST, false, space, _diversity_seed, _banned_nodes)
+		if prefix.is_empty() or prefix[prefix.size() - 1] != merge_node:
+			continue
+		var combined := PackedInt32Array()
+		combined.append_array(prefix)
+		for j in range(route_idx + 1, route.size()):
+			if combined.is_empty() or combined[combined.size() - 1] != route[j]:
+				combined.append(route[j])
+		if combined.is_empty():
+			continue
+		_node_path = combined
+		_goal_node_idx = combined[combined.size() - 1]
+		_goal_pos = vip.global_position
+		_has_goal = true
+		_prev_node_idx = nav.get_nearest_node(global_position, space, 3.6, true)
+		_advance_to_node_entry(nav, _node_path[0])
+		_vip_breadcrumb_active = true
+		return true
+	return false
+
+
 func _update_as_squad_objective(nav: BotNavigator, gw: Node3D) -> bool:
 	var vip := _find_live_vip()
 	if not is_instance_valid(vip):
@@ -1264,18 +1332,20 @@ func _update_as_squad_objective(nav: BotNavigator, gw: Node3D) -> bool:
 					_vip_escort_direct_goal = formation_pos
 			else:
 				_vip_escort_direct_active = false
-				# Follow the leader rather than repeatedly restarting A* toward a
-				# moving offset. Refresh only a changed VIP destination node at a
-				# ladder-safe cadence; close formation is handled directly.
-				var vip_goal_node := nav.get_nearest_node(vip.global_position, null, 6.5)
-				if vip_goal_node >= 0 and (_node_path.is_empty() or not _has_goal or (_vip_route_rethink <= 0.0 and vip_goal_node != _goal_node_idx)):
-					_plan_to_node(nav, vip_goal_node, false, BotNavigator.PATH_FAST)
-					_goal_pos = vip.global_position
-					_vip_route_rethink = 8.0
-				if not _has_goal:
-					_plan_to_world_pos(nav, formation_pos, false, BotNavigator.PATH_SAFE)
+				# Reuse the VIP's actual directed route before considering an
+				# independent pursuit. This preserves deck/ladder transitions.
+				var following_breadcrumbs := _follow_vip_breadcrumbs(nav, vip)
+				if not following_breadcrumbs:
+					var vip_goal_node := nav.get_nearest_node(vip.global_position, null, 6.5)
+					if vip_goal_node >= 0 and (_node_path.is_empty() or not _has_goal or (_vip_route_rethink <= 0.0 and vip_goal_node != _goal_node_idx)):
+						_plan_to_node(nav, vip_goal_node, false, BotNavigator.PATH_FAST)
+						_goal_pos = vip.global_position
+						_vip_route_rethink = 8.0
+					if not _has_goal:
+						_plan_to_world_pos(nav, formation_pos, false, BotNavigator.PATH_SAFE)
 			return true
 		_vip_escort_direct_active = false
+		_vip_breadcrumb_active = false
 
 		# Additional CTs move ahead and hold extraction approaches instead of
 		# stacking in one formation. They remain available for normal combat.
@@ -1836,6 +1906,7 @@ func _follow_navigation_path(delta: float) -> void:
 			var p_next := nav.get_node_pos(next_id)
 			if absf(p_next.y - global_position.y) < 0.32 and global_position.distance_to(p_next) < 5.0:
 				if _has_wide_corridor_sight(global_position, p_next):
+					_record_vip_route_node(cur_id)
 					_prev_node_idx = cur_id
 					_node_path.remove_at(0)
 					cur_id = _node_path[0]
@@ -1853,6 +1924,7 @@ func _follow_navigation_path(delta: float) -> void:
 	var touch_r: float = 0.54 if ((cur_flags & BotNavigator.ACTION_FLAGS) != 0 or is_jump_link) else 1.15
 	var max_vert_touch: float = 2.1 if (cur_flags & BotNavigator.FLAG_LADDER) != 0 else (0.68 if signed_dy > 0.0 else 1.45)
 	if flat_d < touch_r and vert_d < max_vert_touch:
+		_record_vip_route_node(cur_id)
 		_prev_node_idx = cur_id
 		_node_path.remove_at(0)
 		_stuck_timer = 0.0
