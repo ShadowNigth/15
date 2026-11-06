@@ -1104,6 +1104,32 @@ func _follow_vip_direct_path(delta: float) -> void:
 		_stuck_timer = 0.0
 
 
+func _has_vip_escort_floor_path(from_p: Vector3, to_p: Vector3) -> bool:
+	if absf(to_p.y - from_p.y) > 1.10:
+		return false
+	var flat := to_p - from_p
+	flat.y = 0.0
+	var distance := flat.length()
+	if distance < 0.05:
+		return true
+	var steps := maxi(1, int(ceil(distance / 0.65)))
+	var previous_y := from_p.y
+	var space := get_world_3d().direct_space_state
+	for i in range(1, steps + 1):
+		var probe := from_p.lerp(to_p, float(i) / float(steps))
+		var query := PhysicsRayQueryParameters3D.create(probe + Vector3(0.0, 0.60, 0.0), probe - Vector3(0.0, 1.40, 0.0))
+		query.collision_mask = 1
+		var hit := space.intersect_ray(query)
+		if hit.is_empty():
+			return false
+		var floor_y := (hit["position"] as Vector3).y
+		var normal := hit.get("normal", Vector3.UP) as Vector3
+		if normal.y < 0.45 or absf(floor_y - previous_y) > 0.62:
+			return false
+		previous_y = floor_y
+	return true
+
+
 func _start_vip_escort_direct(goal: Vector3) -> void:
 	_vip_escort_direct_goal = goal
 	_vip_escort_direct_elapsed = 0.0
@@ -1143,6 +1169,13 @@ func _follow_vip_escort_direct(delta: float) -> void:
 	raw_dir /= maxf(distance, 0.001)
 	var move_dir := _steer_around_obstacles(raw_dir)
 	_smoothed_move_dir = _blend_move_dir(_smoothed_move_dir, move_dir, delta * 12.0)
+	if not _has_vip_escort_floor_path(global_position, global_position + _smoothed_move_dir * 1.10):
+		_vip_escort_direct_active = false
+		_vip_escort_repath = 0.0
+		_stuck_timer = 0.0
+		apply_goldsrc_movement(Vector3.ZERO, false, false, false, delta)
+		_last_pos = global_position
+		return
 	_look_smoothly_toward(vip.global_position + Vector3(0.0, 1.35, 0.0), delta * 8.0)
 	apply_goldsrc_movement(_smoothed_move_dir, false, false, false, delta)
 	var moved := global_position.distance_to(_last_pos)
@@ -1189,7 +1222,7 @@ func _update_as_squad_objective(nav: BotNavigator, gw: Node3D) -> bool:
 			var formation_distance := global_position.distance_to(formation_pos)
 			# Nearby escorts track the moving formation directly. This avoids
 			# repeatedly snapping back to an old node while the VIP advances.
-			if formation_distance < 12.0 and _has_wide_corridor_sight(global_position, formation_pos):
+			if formation_distance < 12.0 and _has_wide_corridor_sight(global_position, formation_pos) and _has_vip_escort_floor_path(global_position, formation_pos):
 				if not _vip_escort_direct_active or _vip_escort_direct_goal.distance_to(formation_pos) > 0.45:
 					_start_vip_escort_direct(formation_pos)
 				else:
