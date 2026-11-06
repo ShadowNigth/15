@@ -166,6 +166,12 @@ func _test_hostage_map(map_name: String, expected_hostages: int, bot_count: int,
 		starts[hostage.get_instance_id()] = hostage.global_position
 		assigned[hostage.get_instance_id()] = false
 
+	var peak_positions: Dictionary = {}
+	for bot in world.bots:
+		if bot.team == "CT":
+			peak_positions[bot.get_instance_id()] = bot.global_position
+	var fall_logged := false
+	var death_logged := false
 	var frames := 0
 	while frames < max_frames and RoundManager.state == RoundManager.State.LIVE:
 		await get_tree().physics_frame
@@ -173,15 +179,30 @@ func _test_hostage_map(map_name: String, expected_hostages: int, bot_count: int,
 		for hostage in hostages:
 			if is_instance_valid(hostage.leader):
 				assigned[hostage.get_instance_id()] = true
+		for bot in world.bots:
+			if bot.team != "CT":
+				continue
+			var bid := bot.get_instance_id()
+			var peak := peak_positions[bid] as Vector3
+			if bot.global_position.y > peak.y:
+				peak_positions[bid] = bot.global_position
+				peak = bot.global_position
+			if not fall_logged and bot.is_alive and peak.y > 2.0 and bot.velocity.y < -6.0 and bot.global_position.y < peak.y - 1.0:
+				fall_logged = true
+				_progress("%s fall start pos=%s peak=%s velocity=%s next=%s prev=%d ladder=%s" % [map_name, bot.global_position, peak, bot.velocity, str(bot._node_path.slice(0, 5)), bot._prev_node_idx, bot.on_ladder])
+			if not death_logged and not bot.is_alive:
+				death_logged = true
+				_progress("%s first CT death pos=%s peak=%s next=%s prev=%d goal=%s" % [map_name, bot.global_position, peak, str(bot._node_path.slice(0, 5)), bot._prev_node_idx, bot._goal_pos])
 		if frames % 1800 == 0:
 			# Keep the step's ten notice annotations available for final actor
 			# diagnostics; periodic counts remain in the raw native log.
 			print("[MISSION AI TEST] %s t=%ds rescued=%d/%d" % [map_name, frames / 60, RoundManager.hostages_rescued_this_round, hostages.size()])
 
+	var diagnostic_lines: Array[String] = []
 	for i in range(hostages.size()):
 		var hostage := hostages[i]
 		var leader_pos := str(hostage.leader.global_position) if is_instance_valid(hostage.leader) else "none"
-		_progress("%s hostage=%d pos=%s rescued=%s leader=%s nav=%s stuck=%.2f blocked=%.2f" % [map_name, i, hostage.global_position, hostage.is_rescued, leader_pos, str(hostage._nav_path.slice(0, 4)), hostage._stuck_timer, hostage._blocked_timer])
+		diagnostic_lines.append("%s hostage=%d pos=%s rescued=%s leader=%s nav=%s stuck=%.2f blocked=%.2f" % [map_name, i, hostage.global_position, hostage.is_rescued, leader_pos, str(hostage._nav_path.slice(0, 4)), hostage._stuck_timer, hostage._blocked_timer])
 	var ct_total := 0
 	var ct_survivors := 0
 	for bot in world.bots:
@@ -189,7 +210,8 @@ func _test_hostage_map(map_name: String, expected_hostages: int, bot_count: int,
 			ct_total += 1
 			if bot.is_alive:
 				ct_survivors += 1
-			_progress("%s CT pos=%s alive=%s hp=%.0f target=%d led=%d direct=%s/%d next=%s goal=%s" % [map_name, bot.global_position, bot.is_alive, bot.health, hostages.find(bot._hostage_target), bot._led_hostages().size(), bot._hostage_direct_active, bot._hostage_direct_mode, str(bot._node_path.slice(0, 6)), bot._goal_pos])
+			diagnostic_lines.append("%s CT pos=%s alive=%s hp=%.0f target=%d led=%d direct=%s/%d next=%s goal=%s" % [map_name, bot.global_position, bot.is_alive, bot.health, hostages.find(bot._hostage_target), bot._led_hostages().size(), bot._hostage_direct_active, bot._hostage_direct_mode, str(bot._node_path.slice(0, 6)), bot._goal_pos])
+	_progress("\n".join(diagnostic_lines))
 	_expect(ct_survivors == ct_total, "%s CT rescuers survive objective navigation (%d/%d)" % [map_name, ct_survivors, ct_total])
 
 	for hostage in hostages:
