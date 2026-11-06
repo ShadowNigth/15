@@ -184,6 +184,11 @@ def main(source_root):
         existing_options[key] = option
         meta = copy.deepcopy(metadata["weapons/v_knife"])
         meta.update(source="zh667/ScCsgoKnives", source_commit=base.SOURCE_COMMIT, source_model=key, materials=["sc_cs2_" + key, "ct_base_glove.bmp", "ct_arms.bmp"], vertices=len(vertices) + int(meta["vertices"]) - len(old_positions), animation_source="original archi arms; source mechanical folding tracks appended")
+        part_names = [joint for i, joint in enumerate(joints) if joint in ["blade", "rear", "lock"] and vertices["w"][vertices["j"] == i].sum() > 0]
+        meta["bones"] = 40 + len(part_names)
+        meta["mechanical_bones"] = part_names
+        if not part_names:
+            meta["animation_source"] = "original archi arm and knife clips retained without modification"
         metadata["weapons/v_knife_" + key] = meta
         print("KNIFE", key, len(vertices), flush=True)
     catalog["options"] = [existing_options["original"]] + [existing_options[key] for key in NAMES]

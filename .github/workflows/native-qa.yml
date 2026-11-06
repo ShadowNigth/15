@@ -14,7 +14,7 @@ on:
   push:
 
 concurrency:
-  group: native-qa-${{ github.ref }}${{ contains(github.event.head_commit.message, '[render-review]') && '-render-review' || '' }}
+  group: native-qa-${{ github.ref }}${{ contains(github.event.head_commit.message, '[render-review]') && '-render-review' || contains(github.event.head_commit.message, '[package-only]') && '-package' || '' }}
   cancel-in-progress: true
 
 jobs:
@@ -363,9 +363,11 @@ jobs:
       - name: Stage downloadable release for visual approval
         env:
           GH_TOKEN: ${{ github.token }}
+          RELEASE_TAG: catalog-2026-11-06
         run: |
           set -o pipefail
-          gh release upload knives-2026-11-06 export/CounterStrike15-Windows-x64.zip export/CounterStrike15-Linux-x64.zip export/SHA256SUMS.txt --clobber 2>&1 | tee /tmp/release-upload.log
+          test "$(gh release view "$RELEASE_TAG" --json isDraft --jq .isDraft)" = true || { echo 'Refusing to overwrite a published release'; exit 1; }
+          gh release upload "$RELEASE_TAG" export/CounterStrike15-Windows-x64.zip export/CounterStrike15-Linux-x64.zip export/SHA256SUMS.txt --clobber 2>&1 | tee /tmp/release-upload.log
       - name: Publish packaging diagnostics
         if: ${{ always() }}
         run: |

@@ -1,4 +1,5 @@
 COUNTER-STRIKE 1.5 — GODOT FAN REMAKE
+COMPLETE SHIPPED COSMETIC CATALOG
 
 Windows: extract the entire ZIP and run CounterStrike15.exe.
 Linux: extract the entire ZIP, enable executable permission if necessary
@@ -6,13 +7,19 @@ Linux: extract the entire ZIP, enable executable permission if necessary
 Keep the .pck file next to the executable. Godot installation is not required.
 64-bit PC and an OpenGL 3.3-compatible graphics driver are required.
 
-NEW KNIVES
-Create Game -> Knife model: choose Original Kukri, Karambit Gamma Doppler,
-M9 Bayonet Gamma Doppler, or Bayonet Ruby before launching a match.
-The 3D Arsenal also lists the three new knives; selecting one sets the loadout.
+KNIVES AND FINISHES
+Create Game -> Knife model: original Kukri + all 22 source knife models.
+The 3D Arsenal also lists the knives; selecting one sets the loadout.
+Arsenal -> Weapon finish: choose a matching finish for the selected model.
+The catalog includes 22 factory and 20 painted knife finishes, 44 gun finishes
+from ScCsgoKnives, plus the 120 previously installed BDS/CS:GO Ports finishes.
+New gun entries are labelled '(CS2 catalog)' to distinguish alternate bakes of
+the same paint kit without replacing previously accepted artwork.
 3: equip knife. Left click: light slash. Right click: heavy stab. T: inspect.
-The new models retain the existing knife animations and gameplay balance.
-Sport Glove selection continues to work. The original knife is still available.
+Knife chrome is subordinate to base-colour artwork; normal/ORM follow the finish.
+Original arms/gloves and gameplay balance are retained; folding knives append
+mechanical blade/hinge tracks, not complete native CS2 hand choreography.
+Sport Glove selection continues to work. Each knife remembers its own finish.
 
 WASD move; mouse aim; Space jump; Ctrl crouch; Shift walk; B buy;
 1/2/3/4/5 weapon slots; R reload; E use/rescue/defuse; Tab scores; Esc pause.
@@ -20,3 +27,4 @@ WASD move; mouse aim; Space jump; Ctrl crouch; Shift walk; B buy;
 
 This is an unofficial fan project. Third-party assets are not covered by a
 blanket free-use license. Read KNIFE_ASSET_NOTICES.md and PROJECT_README.md.
+The catalog covers the source repository's shipped assets, not every Valve skin.

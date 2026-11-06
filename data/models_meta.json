@@ -9612,7 +9612,8 @@
       }
     },
     "source_commit": "1eb8067fd0b7214df5bccf3ac3807fbaa3aee70d",
-    "animation_source": "original archi arms; source mechanical folding tracks appended"
+    "animation_source": "original archi arm and knife clips retained without modification",
+    "mechanical_bones": []
   },
   "weapons/v_knife_butterfly": {
     "sequences": [
@@ -9638,7 +9639,7 @@
       "inspect": 6.033
     },
     "seq_events": {},
-    "bones": 40,
+    "bones": 43,
     "offset": [
       0.0,
       0.0,
@@ -9665,7 +9666,12 @@
       }
     },
     "source_commit": "1eb8067fd0b7214df5bccf3ac3807fbaa3aee70d",
-    "animation_source": "original archi arms; source mechanical folding tracks appended"
+    "animation_source": "original archi arms; source mechanical folding tracks appended",
+    "mechanical_bones": [
+      "blade",
+      "rear",
+      "lock"
+    ]
   },
   "weapons/v_knife_canis": {
     "sequences": [
@@ -9718,7 +9724,8 @@
       }
     },
     "source_commit": "1eb8067fd0b7214df5bccf3ac3807fbaa3aee70d",
-    "animation_source": "original archi arms; source mechanical folding tracks appended"
+    "animation_source": "original archi arm and knife clips retained without modification",
+    "mechanical_bones": []
   },
   "weapons/v_knife_cord": {
     "sequences": [
@@ -9771,7 +9778,8 @@
       }
     },
     "source_commit": "1eb8067fd0b7214df5bccf3ac3807fbaa3aee70d",
-    "animation_source": "original archi arms; source mechanical folding tracks appended"
+    "animation_source": "original archi arm and knife clips retained without modification",
+    "mechanical_bones": []
   },
   "weapons/v_knife_css": {
     "sequences": [
@@ -9824,7 +9832,8 @@
       }
     },
     "source_commit": "1eb8067fd0b7214df5bccf3ac3807fbaa3aee70d",
-    "animation_source": "original archi arms; source mechanical folding tracks appended"
+    "animation_source": "original archi arm and knife clips retained without modification",
+    "mechanical_bones": []
   },
   "weapons/v_knife_default_ct": {
     "sequences": [
@@ -9877,7 +9886,8 @@
       }
     },
     "source_commit": "1eb8067fd0b7214df5bccf3ac3807fbaa3aee70d",
-    "animation_source": "original archi arms; source mechanical folding tracks appended"
+    "animation_source": "original archi arm and knife clips retained without modification",
+    "mechanical_bones": []
   },
   "weapons/v_knife_default_t": {
     "sequences": [
@@ -9930,7 +9940,8 @@
       }
     },
     "source_commit": "1eb8067fd0b7214df5bccf3ac3807fbaa3aee70d",
-    "animation_source": "original archi arms; source mechanical folding tracks appended"
+    "animation_source": "original archi arm and knife clips retained without modification",
+    "mechanical_bones": []
   },
   "weapons/v_knife_falchion": {
     "sequences": [
@@ -9956,7 +9967,7 @@
       "inspect": 6.033
     },
     "seq_events": {},
-    "bones": 40,
+    "bones": 41,
     "offset": [
       0.0,
       0.0,
@@ -9983,7 +9994,10 @@
       }
     },
     "source_commit": "1eb8067fd0b7214df5bccf3ac3807fbaa3aee70d",
-    "animation_source": "original archi arms; source mechanical folding tracks appended"
+    "animation_source": "original archi arms; source mechanical folding tracks appended",
+    "mechanical_bones": [
+      "blade"
+    ]
   },
   "weapons/v_knife_flip": {
     "sequences": [
@@ -10009,7 +10023,7 @@
       "inspect": 6.033
     },
     "seq_events": {},
-    "bones": 40,
+    "bones": 41,
     "offset": [
       0.0,
       0.0,
@@ -10036,7 +10050,10 @@
       }
     },
     "source_commit": "1eb8067fd0b7214df5bccf3ac3807fbaa3aee70d",
-    "animation_source": "original archi arms; source mechanical folding tracks appended"
+    "animation_source": "original archi arms; source mechanical folding tracks appended",
+    "mechanical_bones": [
+      "blade"
+    ]
   },
   "weapons/v_knife_gut": {
     "sequences": [
@@ -10089,7 +10106,8 @@
       }
     },
     "source_commit": "1eb8067fd0b7214df5bccf3ac3807fbaa3aee70d",
-    "animation_source": "original archi arms; source mechanical folding tracks appended"
+    "animation_source": "original archi arm and knife clips retained without modification",
+    "mechanical_bones": []
   },
   "weapons/v_knife_kukri": {
     "sequences": [
@@ -10142,7 +10160,8 @@
       }
     },
     "source_commit": "1eb8067fd0b7214df5bccf3ac3807fbaa3aee70d",
-    "animation_source": "original archi arms; source mechanical folding tracks appended"
+    "animation_source": "original archi arm and knife clips retained without modification",
+    "mechanical_bones": []
   },
   "weapons/v_knife_navaja": {
     "sequences": [
@@ -10168,7 +10187,7 @@
       "inspect": 6.033
     },
     "seq_events": {},
-    "bones": 40,
+    "bones": 41,
     "offset": [
       0.0,
       0.0,
@@ -10195,7 +10214,10 @@
       }
     },
     "source_commit": "1eb8067fd0b7214df5bccf3ac3807fbaa3aee70d",
-    "animation_source": "original archi arms; source mechanical folding tracks appended"
+    "animation_source": "original archi arms; source mechanical folding tracks appended",
+    "mechanical_bones": [
+      "blade"
+    ]
   },
   "weapons/v_knife_outdoor": {
     "sequences": [
@@ -10221,7 +10243,7 @@
       "inspect": 6.033
     },
     "seq_events": {},
-    "bones": 40,
+    "bones": 41,
     "offset": [
       0.0,
       0.0,
@@ -10248,7 +10270,10 @@
       }
     },
     "source_commit": "1eb8067fd0b7214df5bccf3ac3807fbaa3aee70d",
-    "animation_source": "original archi arms; source mechanical folding tracks appended"
+    "animation_source": "original archi arms; source mechanical folding tracks appended",
+    "mechanical_bones": [
+      "blade"
+    ]
   },
   "weapons/v_knife_push": {
     "sequences": [
@@ -10301,7 +10326,8 @@
       }
     },
     "source_commit": "1eb8067fd0b7214df5bccf3ac3807fbaa3aee70d",
-    "animation_source": "original archi arms; source mechanical folding tracks appended"
+    "animation_source": "original archi arm and knife clips retained without modification",
+    "mechanical_bones": []
   },
   "weapons/v_knife_skeleton": {
     "sequences": [
@@ -10354,7 +10380,8 @@
       }
     },
     "source_commit": "1eb8067fd0b7214df5bccf3ac3807fbaa3aee70d",
-    "animation_source": "original archi arms; source mechanical folding tracks appended"
+    "animation_source": "original archi arm and knife clips retained without modification",
+    "mechanical_bones": []
   },
   "weapons/v_knife_stiletto": {
     "sequences": [
@@ -10380,7 +10407,7 @@
       "inspect": 6.033
     },
     "seq_events": {},
-    "bones": 40,
+    "bones": 41,
     "offset": [
       0.0,
       0.0,
@@ -10407,7 +10434,10 @@
       }
     },
     "source_commit": "1eb8067fd0b7214df5bccf3ac3807fbaa3aee70d",
-    "animation_source": "original archi arms; source mechanical folding tracks appended"
+    "animation_source": "original archi arms; source mechanical folding tracks appended",
+    "mechanical_bones": [
+      "blade"
+    ]
   },
   "weapons/v_knife_tactical": {
     "sequences": [
@@ -10460,7 +10490,8 @@
       }
     },
     "source_commit": "1eb8067fd0b7214df5bccf3ac3807fbaa3aee70d",
-    "animation_source": "original archi arms; source mechanical folding tracks appended"
+    "animation_source": "original archi arm and knife clips retained without modification",
+    "mechanical_bones": []
   },
   "weapons/v_knife_talon": {
     "sequences": [
@@ -10513,7 +10544,8 @@
       }
     },
     "source_commit": "1eb8067fd0b7214df5bccf3ac3807fbaa3aee70d",
-    "animation_source": "original archi arms; source mechanical folding tracks appended"
+    "animation_source": "original archi arm and knife clips retained without modification",
+    "mechanical_bones": []
   },
   "weapons/v_knife_ursus": {
     "sequences": [
@@ -10566,6 +10598,7 @@
       }
     },
     "source_commit": "1eb8067fd0b7214df5bccf3ac3807fbaa3aee70d",
-    "animation_source": "original archi arms; source mechanical folding tracks appended"
+    "animation_source": "original archi arm and knife clips retained without modification",
+    "mechanical_bones": []
   }
 }
