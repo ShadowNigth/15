@@ -91,6 +91,58 @@
           "source": "cstrike/CSGO Texture Pack/AK-47/casehardened.bmp",
           "source_sha256": "0f4a1c448ec24741e792f6ab3c50ee180cfbaedcf3c7077e9e01e1acde2ee905",
           "uv_layout": "legacy_to_current_hd"
+        },
+        {
+          "id": "sc_cu_ak_island_floral",
+          "name": "AK-47 | Wild Lotus",
+          "finish": "Wild Lotus",
+          "paint_kit": "cu_ak_island_floral",
+          "paint_id": 724,
+          "texture": "res://assets/textures/weapon_skins/ak47/sc_cu_ak_island_floral.png",
+          "source": "zh667/ScCsgoKnives@1eb8067fd0b7214df5bccf3ac3807fbaa3aee70d/ak47_hd__cu_ak_island_floral.png",
+          "source_sha256": "91a625f500640bcfc486d437add0ad72c97e2f6ef83a6d48a8b105819af40cd5",
+          "uv_layout": "native_current_hd",
+          "uv_algorithm": "native",
+          "menu_label": "Wild Lotus (CS2 catalog)"
+        },
+        {
+          "id": "sc_cu_fireserpent_ak47_bravo",
+          "name": "AK-47 | Fire Serpent",
+          "finish": "Fire Serpent",
+          "paint_kit": "cu_fireserpent_ak47_bravo",
+          "paint_id": 180,
+          "texture": "res://assets/textures/weapon_skins/ak47/sc_cu_fireserpent_ak47_bravo.png",
+          "source": "zh667/ScCsgoKnives@1eb8067fd0b7214df5bccf3ac3807fbaa3aee70d/ak47_hd__cu_fireserpent_ak47_bravo.png",
+          "source_sha256": "f11a7c50afc3ca8e96fa62b79666d384268c028426238c44c8ac2640f88ebbae",
+          "uv_layout": "native_current_hd",
+          "uv_algorithm": "native",
+          "menu_label": "Fire Serpent (CS2 catalog)"
+        },
+        {
+          "id": "sc_am_bamboo_jungle",
+          "name": "AK-47 | Hydroponic",
+          "finish": "Hydroponic",
+          "paint_kit": "am_bamboo_jungle",
+          "paint_id": 456,
+          "texture": "res://assets/textures/weapon_skins/ak47/sc_am_bamboo_jungle.png",
+          "source": "zh667/ScCsgoKnives@1eb8067fd0b7214df5bccf3ac3807fbaa3aee70d/ak47_hd__am_bamboo_jungle.png",
+          "source_sha256": "53ee9f07b5e4fe276ee3ff5342aaeeb361bb5faebcff5da1159ab31ecb938127",
+          "uv_layout": "native_current_hd",
+          "uv_algorithm": "native",
+          "menu_label": "Hydroponic (CS2 catalog)"
+        },
+        {
+          "id": "sc_cu_ak47_rubber",
+          "name": "AK-47 | Vulcan",
+          "finish": "Vulcan",
+          "paint_kit": "cu_ak47_rubber",
+          "paint_id": 302,
+          "texture": "res://assets/textures/weapon_skins/ak47/sc_cu_ak47_rubber.png",
+          "source": "zh667/ScCsgoKnives@1eb8067fd0b7214df5bccf3ac3807fbaa3aee70d/ak47_hd__cu_ak47_rubber.png",
+          "source_sha256": "23a43ddacd25da889b97b1ff89bc7199cc5cf7ed7b84e9cd9328804cc4fe5611",
+          "uv_layout": "native_current_hd",
+          "uv_algorithm": "native",
+          "menu_label": "Vulcan (CS2 catalog)"
         }
       ]
     },
@@ -160,6 +212,19 @@
           "source": "cstrike/CSGO Texture Pack/AUG/torque.bmp",
           "source_sha256": "25f790c988ad6483c3af504c0d58d9504ed88a24f7855a2e18eb86a985a37e22",
           "uv_layout": "legacy_to_current_hd"
+        },
+        {
+          "id": "sc_cu_anime_aug",
+          "name": "AUG | Akihabara Accept",
+          "finish": "Akihabara Accept",
+          "paint_kit": "cu_anime_aug",
+          "paint_id": 455,
+          "texture": "res://assets/textures/weapon_skins/aug/sc_cu_anime_aug.png",
+          "source": "zh667/ScCsgoKnives@1eb8067fd0b7214df5bccf3ac3807fbaa3aee70d/aug_hd__cu_anime_aug.png",
+          "source_sha256": "43ae0f20aff5897dbe0f46086217fccda86642fcef4c34ff163e2dee04eb0985",
+          "uv_layout": "legacy_to_current_hd",
+          "uv_algorithm": "nwm1-nearest-surface-v5",
+          "menu_label": "Akihabara Accept (CS2 catalog)"
         }
       ]
     },
@@ -228,6 +293,45 @@
           "source": "cstrike/CSGO Texture Pack/AWP/lightingstrike.bmp",
           "source_sha256": "409340c2145ea2694a7098b431e88464fe78cc006f811f16c0f0acf6ab4d35cd",
           "uv_layout": "legacy_to_current_hd"
+        },
+        {
+          "id": "sc_am_lightning_awp",
+          "name": "AWP | Lightning Strike",
+          "finish": "Lightning Strike",
+          "paint_kit": "am_lightning_awp",
+          "paint_id": 51,
+          "texture": "res://assets/textures/weapon_skins/awp/sc_am_lightning_awp.png",
+          "source": "zh667/ScCsgoKnives@1eb8067fd0b7214df5bccf3ac3807fbaa3aee70d/awp_hd__am_lightning_awp.png",
+          "source_sha256": "586b9a7019ca2e4f1b5c55a8a49347ebfb581cbe83821229ad703784d3503a71",
+          "uv_layout": "legacy_to_current_hd",
+          "uv_algorithm": "nwm1-nearest-surface-v5",
+          "menu_label": "Lightning Strike (CS2 catalog)"
+        },
+        {
+          "id": "sc_gs_awp_gungnir",
+          "name": "AWP | Gungnir",
+          "finish": "Gungnir",
+          "paint_kit": "gs_awp_gungnir",
+          "paint_id": 756,
+          "texture": "res://assets/textures/weapon_skins/awp/sc_gs_awp_gungnir.png",
+          "source": "zh667/ScCsgoKnives@1eb8067fd0b7214df5bccf3ac3807fbaa3aee70d/awp_hd__gs_awp_gungnir.png",
+          "source_sha256": "6b8fc89279ebb1c2b7aa3886065403be39dad4edd1e9bbc93e7e4503be188fa9",
+          "uv_layout": "legacy_to_current_hd",
+          "uv_algorithm": "nwm1-nearest-surface-v5",
+          "menu_label": "Gungnir (CS2 catalog)"
+        },
+        {
+          "id": "sc_cu_medieval_dragon_awp",
+          "name": "AWP | Dragon Lore",
+          "finish": "Dragon Lore",
+          "paint_kit": "cu_medieval_dragon_awp",
+          "paint_id": 344,
+          "texture": "res://assets/textures/weapon_skins/awp/sc_cu_medieval_dragon_awp.png",
+          "source": "zh667/ScCsgoKnives@1eb8067fd0b7214df5bccf3ac3807fbaa3aee70d/awp_hd__cu_medieval_dragon_awp.png",
+          "source_sha256": "cd4ff802e95ffa2d7b0b04e5a2590c247598c0c425123a847ae520165c2bbfff",
+          "uv_layout": "legacy_to_current_hd",
+          "uv_algorithm": "nwm1-nearest-surface-v5",
+          "menu_label": "Dragon Lore (CS2 catalog)"
         }
       ]
     },
@@ -296,6 +400,19 @@
           "source": "cstrike/CSGO Texture Pack/Desert Eagle/heirloom.bmp",
           "source_sha256": "f62983c7da3b17c36b4f7ca98c6b598a11b73f698a5787a7b70ee74cd5a9c2f6",
           "uv_layout": "legacy_to_current_hd"
+        },
+        {
+          "id": "sc_cu_deag_printstream",
+          "name": "Desert Eagle | Printstream",
+          "finish": "Printstream",
+          "paint_kit": "cu_deag_printstream",
+          "paint_id": 962,
+          "texture": "res://assets/textures/weapon_skins/deagle/sc_cu_deag_printstream.png",
+          "source": "zh667/ScCsgoKnives@1eb8067fd0b7214df5bccf3ac3807fbaa3aee70d/deagle_hd__cu_deag_printstream.png",
+          "source_sha256": "7b3d8f9b694292144916be96e8342cd3093baeaa78b0bce861aa010d11ee7952",
+          "uv_layout": "legacy_to_current_hd",
+          "uv_algorithm": "nwm1-nearest-surface-v5",
+          "menu_label": "Printstream (CS2 catalog)"
         }
       ]
     },
@@ -364,6 +481,19 @@
           "source": "cstrike/CSGO Texture Pack/Dual Elites/royal consorts.bmp",
           "source_sha256": "3d53dfd9d3fe5032d0c4f4c58ba9b76cc1d78979a9098b0946123614764a5eed",
           "uv_layout": "native_unmodified"
+        },
+        {
+          "id": "sc_sp_dry_wood",
+          "name": "Dual Berettas | Drift Wood",
+          "finish": "Drift Wood",
+          "paint_kit": "sp_dry_wood",
+          "paint_id": 824,
+          "texture": "res://assets/textures/weapon_skins/elite/sc_sp_dry_wood.png",
+          "source": "zh667/ScCsgoKnives@1eb8067fd0b7214df5bccf3ac3807fbaa3aee70d/elite_hd__sp_dry_wood.png",
+          "source_sha256": "b915c6c1734476a11f93e580c8c6a27253749d88893e57add6e27477ef9d4845",
+          "uv_layout": "native_current_hd",
+          "uv_algorithm": "native",
+          "menu_label": "Drift Wood (CS2 catalog)"
         }
       ]
     },
@@ -432,6 +562,19 @@
           "source": "cstrike/CSGO Texture Pack/FAMAS/roll cage.bmp",
           "source_sha256": "8d7d83437ed0d8d43d57be90b5e1a64a64e799f94c5d3327af56520885e9134b",
           "uv_layout": "legacy_to_current_hd"
+        },
+        {
+          "id": "sc_gs_famas_mecha",
+          "name": "FAMAS | Mecha Industries",
+          "finish": "Mecha Industries",
+          "paint_kit": "gs_famas_mecha",
+          "paint_id": 626,
+          "texture": "res://assets/textures/weapon_skins/famas/sc_gs_famas_mecha.png",
+          "source": "zh667/ScCsgoKnives@1eb8067fd0b7214df5bccf3ac3807fbaa3aee70d/famas_hd__gs_famas_mecha.png",
+          "source_sha256": "69d34ebbca4eb0eacad2cc3106f1e7e4fe6a0c4816e92d2863292376ad950a86",
+          "uv_layout": "legacy_to_current_hd",
+          "uv_algorithm": "nwm1-nearest-surface-v5",
+          "menu_label": "Mecha Industries (CS2 catalog)"
         }
       ]
     },
@@ -500,6 +643,19 @@
           "source": "cstrike/CSGO Texture Pack/Fiveseven/triumvirate.bmp",
           "source_sha256": "da18439b7b2a843445ebb047e6ddda1b7fe0f6261782ebc6fc932e58481eeb1b",
           "uv_layout": "legacy_to_current_hd"
+        },
+        {
+          "id": "sc_cu_fiveseven_hyperbeast",
+          "name": "Five-SeveN | Hyper Beast",
+          "finish": "Hyper Beast",
+          "paint_kit": "cu_fiveseven_hyperbeast",
+          "paint_id": 660,
+          "texture": "res://assets/textures/weapon_skins/fiveseven/sc_cu_fiveseven_hyperbeast.png",
+          "source": "zh667/ScCsgoKnives@1eb8067fd0b7214df5bccf3ac3807fbaa3aee70d/fiveseven_hd__cu_fiveseven_hyperbeast.png",
+          "source_sha256": "fccd4c78ac842d850cff68b377a6b2a39fd70aae17158cc553294c2fe086eb72",
+          "uv_layout": "legacy_to_current_hd",
+          "uv_algorithm": "nwm1-nearest-surface-v5",
+          "menu_label": "Hyper Beast (CS2 catalog)"
         }
       ]
     },
@@ -568,6 +724,19 @@
           "source": "cstrike/CSGO Texture Pack/G3SG1/the executioner.bmp",
           "source_sha256": "f2f8b0658d8b1e04fe2c76ade65baad0263ed65098843975d98b28101fe59a97",
           "uv_layout": "native_unmodified"
+        },
+        {
+          "id": "sc_so_green",
+          "name": "G3SG1 | Green Apple",
+          "finish": "Green Apple",
+          "paint_kit": "so_green",
+          "paint_id": 294,
+          "texture": "res://assets/textures/weapon_skins/g3sg1/sc_so_green.png",
+          "source": "zh667/ScCsgoKnives@1eb8067fd0b7214df5bccf3ac3807fbaa3aee70d/g3sg1_hd__so_green.png",
+          "source_sha256": "fbfeb6f616360c2b33ac063596101db9f926397d7e0e8264998c45b44a8a0d1c",
+          "uv_layout": "native_current_hd",
+          "uv_algorithm": "native",
+          "menu_label": "Green Apple (CS2 catalog)"
         }
       ]
     },
@@ -636,6 +805,19 @@
           "source": "cstrike/CSGO Texture Pack/Galil/rocket pop.bmp",
           "source_sha256": "e4912f7d01c603ca3f39249e7910f9a9af7d7afe91bf25aeac6ca33e78e12dfb",
           "uv_layout": "legacy_to_current_hd"
+        },
+        {
+          "id": "sc_cu_galil_candychaos",
+          "name": "Galil AR | Sugar Rush",
+          "finish": "Sugar Rush",
+          "paint_kit": "cu_galil_candychaos",
+          "paint_id": 661,
+          "texture": "res://assets/textures/weapon_skins/galil/sc_cu_galil_candychaos.png",
+          "source": "zh667/ScCsgoKnives@1eb8067fd0b7214df5bccf3ac3807fbaa3aee70d/galilar_hd__cu_galil_candychaos.png",
+          "source_sha256": "9db153297d5d97560dd9671d3196b02712e28c83d4e2adc293524d8e7a162c15",
+          "uv_layout": "legacy_to_current_hd",
+          "uv_algorithm": "nwm1-nearest-surface-v5",
+          "menu_label": "Sugar Rush (CS2 catalog)"
         }
       ]
     },
@@ -704,6 +886,19 @@
           "source": "cstrike/CSGO Texture Pack/Glock 18/bunsenburner.bmp",
           "source_sha256": "70d179c09e7be02bf9cc397226781a255ba7a048737e18612caf40d5a8a22ce4",
           "uv_layout": "legacy_to_current_hd"
+        },
+        {
+          "id": "sc_am_emerald_marbleized_glock",
+          "name": "Glock-18 | Gamma Doppler Emerald",
+          "finish": "Gamma Doppler Emerald",
+          "paint_kit": "am_emerald_marbleized_glock",
+          "paint_id": 1119,
+          "texture": "res://assets/textures/weapon_skins/glock18/sc_am_emerald_marbleized_glock.png",
+          "source": "zh667/ScCsgoKnives@1eb8067fd0b7214df5bccf3ac3807fbaa3aee70d/glock18_hd__am_emerald_marbleized_glock.png",
+          "source_sha256": "b5a61e0ddddf572d2ed5dd052367b374ddd2c4da668b67761d6a40f66a4dfd26",
+          "uv_layout": "legacy_to_current_hd",
+          "uv_algorithm": "nwm1-nearest-surface-v5",
+          "menu_label": "Gamma Doppler Emerald (CS2 catalog)"
         }
       ]
     },
@@ -772,6 +967,19 @@
           "source": "cstrike/CSGO Texture Pack/M249/spectre.bmp",
           "source_sha256": "011a3f55e57a9a21f3fadae673fff4a9a68091a35cafe4764f2db9708f8496a0",
           "uv_layout": "legacy_to_current_hd"
+        },
+        {
+          "id": "sc_gs_m249_nebula_crusader",
+          "name": "M249 | Nebula Crusader",
+          "finish": "Nebula Crusader",
+          "paint_kit": "gs_m249_nebula_crusader",
+          "paint_id": 496,
+          "texture": "res://assets/textures/weapon_skins/m249/sc_gs_m249_nebula_crusader.png",
+          "source": "zh667/ScCsgoKnives@1eb8067fd0b7214df5bccf3ac3807fbaa3aee70d/m249_hd__gs_m249_nebula_crusader.png",
+          "source_sha256": "c75166e8abf81b46d2f60d98cc70ef1bb8fa34495d0811d62e76a79051cb706d",
+          "uv_layout": "legacy_to_current_hd",
+          "uv_algorithm": "nwm1-nearest-surface-v5",
+          "menu_label": "Nebula Crusader (CS2 catalog)"
         }
       ]
     },
@@ -840,6 +1048,58 @@
           "source": "cstrike/CSGO Texture Pack/M4A1-s/mecha_industries.bmp",
           "source_sha256": "51248473c92f7e2117d89fd13773d522a879c0702461e2cfbf01ba651f2dbd6b",
           "uv_layout": "legacy_to_current_hd"
+        },
+        {
+          "id": "sc_cu_m4a1s_printstream",
+          "name": "M4A1-S | Printstream",
+          "finish": "Printstream",
+          "paint_kit": "cu_m4a1s_printstream",
+          "paint_id": 984,
+          "texture": "res://assets/textures/weapon_skins/m4a1/sc_cu_m4a1s_printstream.png",
+          "source": "zh667/ScCsgoKnives@1eb8067fd0b7214df5bccf3ac3807fbaa3aee70d/m4a1s_hd__cu_m4a1s_printstream.png",
+          "source_sha256": "2ee53cb67f94bf304946823f86ef85983a353b88922892b032b6f62efbb7f734",
+          "uv_layout": "legacy_to_current_hd",
+          "uv_algorithm": "nwm1-nearest-surface-v5",
+          "menu_label": "Printstream (CS2 catalog)"
+        },
+        {
+          "id": "sc_cu_m4a1s_csgo2048",
+          "name": "M4A1-S | Player Two",
+          "finish": "Player Two",
+          "paint_kit": "cu_m4a1s_csgo2048",
+          "paint_id": 946,
+          "texture": "res://assets/textures/weapon_skins/m4a1/sc_cu_m4a1s_csgo2048.png",
+          "source": "zh667/ScCsgoKnives@1eb8067fd0b7214df5bccf3ac3807fbaa3aee70d/m4a1s_hd__cu_m4a1s_csgo2048.png",
+          "source_sha256": "16dfc86b85730b8f428f330b57f2a4397ca858ba84f8ea3c13f805a5992693a9",
+          "uv_layout": "legacy_to_current_hd",
+          "uv_algorithm": "nwm1-nearest-surface-v5",
+          "menu_label": "Player Two (CS2 catalog)"
+        },
+        {
+          "id": "sc_aa_fade_m4a1s",
+          "name": "M4A1-S | Fade",
+          "finish": "Fade",
+          "paint_kit": "aa_fade_m4a1s",
+          "paint_id": 1177,
+          "texture": "res://assets/textures/weapon_skins/m4a1/sc_aa_fade_m4a1s.png",
+          "source": "zh667/ScCsgoKnives@1eb8067fd0b7214df5bccf3ac3807fbaa3aee70d/m4a1s_hd__aa_fade_m4a1s.png",
+          "source_sha256": "912ec7d5d1b35c2625bb8a641b2ff3d076b35bf20cd80e014746ab150ea4e388",
+          "uv_layout": "native_current_hd",
+          "uv_algorithm": "native",
+          "menu_label": "Fade (CS2 catalog)"
+        },
+        {
+          "id": "sc_gs_m4a1s_snakebite_gold",
+          "name": "M4A1-S | Golden Coil",
+          "finish": "Golden Coil",
+          "paint_kit": "gs_m4a1s_snakebite_gold",
+          "paint_id": 497,
+          "texture": "res://assets/textures/weapon_skins/m4a1/sc_gs_m4a1s_snakebite_gold.png",
+          "source": "zh667/ScCsgoKnives@1eb8067fd0b7214df5bccf3ac3807fbaa3aee70d/m4a1s_hd__gs_m4a1s_snakebite_gold.png",
+          "source_sha256": "2153e2167dc1810d7ca313d3655ace1c7a8e23405a5fa39cbca28faa2aea3025",
+          "uv_layout": "legacy_to_current_hd",
+          "uv_algorithm": "nwm1-nearest-surface-v5",
+          "menu_label": "Golden Coil (CS2 catalog)"
         }
       ]
     },
@@ -908,6 +1168,19 @@
           "source": "cstrike/CSGO Texture Pack/MAC10/ultraviolet.bmp",
           "source_sha256": "37f085ad526bd5cef7d5baf9dbe861b382ca713bbd374bab886f00aae039c39f",
           "uv_layout": "legacy_to_current_hd"
+        },
+        {
+          "id": "sc_cu_mac10_sakkaku",
+          "name": "MAC-10 | Sakkaku",
+          "finish": "Sakkaku",
+          "paint_kit": "cu_mac10_sakkaku",
+          "paint_id": 1229,
+          "texture": "res://assets/textures/weapon_skins/mac10/sc_cu_mac10_sakkaku.png",
+          "source": "zh667/ScCsgoKnives@1eb8067fd0b7214df5bccf3ac3807fbaa3aee70d/mac10_hd__cu_mac10_sakkaku.png",
+          "source_sha256": "6d274e950da20a44bc121808840bf77c890696e8c16fe709b0e6767c987b8e30",
+          "uv_layout": "legacy_to_current_hd",
+          "uv_algorithm": "nwm1-nearest-surface-v5",
+          "menu_label": "Sakkaku (CS2 catalog)"
         }
       ]
     },
@@ -976,6 +1249,19 @@
           "source": "cstrike/CSGO Texture Pack/MP7/whiteout.bmp",
           "source_sha256": "d286bea14e06de8b27536061ace4c185af880fe8870e2a3068c1c40ad31aff6c",
           "uv_layout": "native_unmodified"
+        },
+        {
+          "id": "sc_mp7_smoking_kills_v2",
+          "name": "MP7 | Smoking Kills",
+          "finish": "Smoking Kills",
+          "paint_kit": "mp7_smoking_kills_v2",
+          "paint_id": 1354,
+          "texture": "res://assets/textures/weapon_skins/mp7/sc_mp7_smoking_kills_v2.png",
+          "source": "zh667/ScCsgoKnives@1eb8067fd0b7214df5bccf3ac3807fbaa3aee70d/mp7_hd__mp7_smoking_kills_v2.png",
+          "source_sha256": "adb6b6e3a9c49a6d3ccdeae66e62d550c3c58cd92e4160922a55080346c3924a",
+          "uv_layout": "native_current_hd",
+          "uv_algorithm": "native",
+          "menu_label": "Smoking Kills (CS2 catalog)"
         }
       ]
     },
@@ -1044,6 +1330,19 @@
           "source": "cstrike/CSGO Texture Pack/MP9/dart.bmp",
           "source_sha256": "a0dcf760d6c07ec6245e9e962e67dc953a80d1f850ae45931039a8fed63d22ab",
           "uv_layout": "native_unmodified"
+        },
+        {
+          "id": "sc_an_red",
+          "name": "MP9 | Hot Rod",
+          "finish": "Hot Rod",
+          "paint_kit": "an_red",
+          "paint_id": 33,
+          "texture": "res://assets/textures/weapon_skins/tmp/sc_an_red.png",
+          "source": "zh667/ScCsgoKnives@1eb8067fd0b7214df5bccf3ac3807fbaa3aee70d/mp9_hd__an_red.png",
+          "source_sha256": "98a03f5faee34797081bbd72634862c5f87ba87bbb4ab5c5653f1c623992f542",
+          "uv_layout": "native_current_hd",
+          "uv_algorithm": "native",
+          "menu_label": "Hot Rod (CS2 catalog)"
         }
       ]
     },
@@ -1112,6 +1411,19 @@
           "source": "cstrike/CSGO Texture Pack/Nova/tempest.bmp",
           "source_sha256": "9ae32066b18f747c069da343a53063a2b12151eabef511d4dcc63f56dc08abd5",
           "uv_layout": "legacy_to_current_hd"
+        },
+        {
+          "id": "sc_cu_nova_toy_soldier",
+          "name": "Nova | Toy Soldier",
+          "finish": "Toy Soldier",
+          "paint_kit": "cu_nova_toy_soldier",
+          "paint_id": 716,
+          "texture": "res://assets/textures/weapon_skins/m3/sc_cu_nova_toy_soldier.png",
+          "source": "zh667/ScCsgoKnives@1eb8067fd0b7214df5bccf3ac3807fbaa3aee70d/nova_hd__cu_nova_toy_soldier.png",
+          "source_sha256": "2d713e906559d827c67ab450a533732788f9ca95c42012ff5d10c0c54af54f69",
+          "uv_layout": "legacy_to_current_hd",
+          "uv_algorithm": "nwm1-nearest-surface-v5",
+          "menu_label": "Toy Soldier (CS2 catalog)"
         }
       ]
     },
@@ -1180,6 +1492,19 @@
           "source": "cstrike/CSGO Texture Pack/P250/see ya later.bmp",
           "source_sha256": "da14882b3934c2ca81be1d266bea649f89e3de4f9a811011ff0d6cd910188ed4",
           "uv_layout": "native_unmodified"
+        },
+        {
+          "id": "sc_so_whiteout",
+          "name": "P250 | Whiteout",
+          "finish": "Whiteout",
+          "paint_kit": "so_whiteout",
+          "paint_id": 102,
+          "texture": "res://assets/textures/weapon_skins/p228/sc_so_whiteout.png",
+          "source": "zh667/ScCsgoKnives@1eb8067fd0b7214df5bccf3ac3807fbaa3aee70d/p250_hd__so_whiteout.png",
+          "source_sha256": "eef9a4d44c4c136b205b7d57e8234c8778d94b5676baf1da075b46d610702222",
+          "uv_layout": "native_current_hd",
+          "uv_algorithm": "native",
+          "menu_label": "Whiteout (CS2 catalog)"
         }
       ]
     },
@@ -1249,6 +1574,19 @@
           "source": "cstrike/CSGO Texture Pack/P90/trigon.bmp",
           "source_sha256": "696125e39c7130517a4e3bbd0e4f98f17e04b980a94d954e6ab17b0572a800d8",
           "uv_layout": "legacy_to_current_hd"
+        },
+        {
+          "id": "sc_cu_p90-asiimov",
+          "name": "P90 | Asiimov",
+          "finish": "Asiimov",
+          "paint_kit": "cu_p90-asiimov",
+          "paint_id": 359,
+          "texture": "res://assets/textures/weapon_skins/p90/sc_cu_p90-asiimov.png",
+          "source": "zh667/ScCsgoKnives@1eb8067fd0b7214df5bccf3ac3807fbaa3aee70d/p90_hd__cu_p90-asiimov.png",
+          "source_sha256": "594cb0e5d3115fb3238d5ee2a55eeb1cd94b3e48e3b2e614a2ec67bdec315dfb",
+          "uv_layout": "legacy_to_current_hd",
+          "uv_algorithm": "nwm1-nearest-surface-v5",
+          "menu_label": "Asiimov (CS2 catalog)"
         }
       ]
     },
@@ -1317,6 +1655,19 @@
           "source": "cstrike/CSGO Texture Pack/SG550/powercore.bmp",
           "source_sha256": "4190eea885aa10e642878aeb75480055f204bc9391778ba795574ebe14aa3672",
           "uv_layout": "legacy_to_current_hd"
+        },
+        {
+          "id": "sc_cu_scar20_intervention",
+          "name": "SCAR-20 | Cardiac",
+          "finish": "Cardiac",
+          "paint_kit": "cu_scar20_intervention",
+          "paint_id": 391,
+          "texture": "res://assets/textures/weapon_skins/sg550/sc_cu_scar20_intervention.png",
+          "source": "zh667/ScCsgoKnives@1eb8067fd0b7214df5bccf3ac3807fbaa3aee70d/scar20_hd__cu_scar20_intervention.png",
+          "source_sha256": "e0be2b058171af3f7cef8082cfdb6237ab2e03e280c332a5237ce24cb3df2fb2",
+          "uv_layout": "legacy_to_current_hd",
+          "uv_algorithm": "nwm1-nearest-surface-v5",
+          "menu_label": "Cardiac (CS2 catalog)"
         }
       ]
     },
@@ -1385,8 +1736,952 @@
           "source": "cstrike/CSGO Texture Pack/USP-S/leadconcuit.bmp",
           "source_sha256": "627b7ca292aad07746e8c6cb849250f298a3bdb693f186e8e7464fb6106476d8",
           "uv_layout": "legacy_to_current_hd"
+        },
+        {
+          "id": "sc_cu_usp_printstream",
+          "name": "USP-S | Printstream",
+          "finish": "Printstream",
+          "paint_kit": "cu_usp_printstream",
+          "paint_id": 1142,
+          "texture": "res://assets/textures/weapon_skins/usp/sc_cu_usp_printstream.png",
+          "source": "zh667/ScCsgoKnives@1eb8067fd0b7214df5bccf3ac3807fbaa3aee70d/usp_silencer_hd__cu_usp_printstream.png",
+          "source_sha256": "8a77c661c8d1b59158163fd2c5be3cf6b6a06f02286ec6dc64d2886bde7e5352",
+          "uv_layout": "legacy_to_current_hd",
+          "uv_algorithm": "nwm1-nearest-surface-v5",
+          "menu_label": "Printstream (CS2 catalog)"
+        }
+      ]
+    },
+    "knife_bayonet": {
+      "display_name": "Bayonet",
+      "materials": [
+        "sc_cs2_bayonet"
+      ],
+      "options": [
+        {
+          "id": "factory",
+          "name": "Bayonet | Factory",
+          "finish": "Factory",
+          "texture": "res://assets/textures/cs2_catalog/bayonet_cs2.jpg",
+          "source_sha256": "3005a384eea827dc6dca5ea53c9e666d35d8265676392f5b35d44b24218efafa",
+          "normal": "res://assets/textures/cs2_catalog/normal_3d873d67af1870e686e3.png",
+          "orm": "res://assets/textures/cs2_catalog/orm_1e8f14a109867ac997e4.png"
+        },
+        {
+          "id": "am_ruby_marbleized",
+          "name": "Bayonet | Ruby",
+          "finish": "Ruby",
+          "paint_kit": "am_ruby_marbleized",
+          "paint_id": 415,
+          "texture": "res://assets/textures/cs2_catalog/bayonet_finish__am_ruby_marbleized.jpg",
+          "source_sha256": "c14cf64848b4bb82a6197c653ef76a71fe7f13bbf5cf5ddcc1eeb2cb7a32ff28",
+          "normal": "res://assets/textures/cs2_catalog/normal_3d873d67af1870e686e3.png",
+          "orm": "res://assets/textures/cs2_catalog/orm_0a5c0549618efcf2b5dd.png"
+        }
+      ]
+    },
+    "knife_bowie": {
+      "display_name": "Bowie Knife",
+      "materials": [
+        "sc_cs2_bowie"
+      ],
+      "options": [
+        {
+          "id": "factory",
+          "name": "Bowie Knife | Factory",
+          "finish": "Factory",
+          "texture": "res://assets/textures/cs2_catalog/bowie_cs2.jpg",
+          "source_sha256": "30a0aeb90fb0a6af25c1678cbb2f0da798475c57f591c677b1fd123a0ce6e360",
+          "normal": "res://assets/textures/cs2_catalog/normal_3d873d67af1870e686e3.png",
+          "orm": "res://assets/textures/cs2_catalog/orm_9bf6691fd0cdc2a76a0e.png"
+        },
+        {
+          "id": "am_gamma_doppler_phase4",
+          "name": "Bowie Knife | Gamma Doppler Phase 4",
+          "finish": "Gamma Doppler Phase 4",
+          "paint_kit": "am_gamma_doppler_phase4",
+          "paint_id": 572,
+          "texture": "res://assets/textures/cs2_catalog/bowie_finish__am_gamma_doppler_phase4.jpg",
+          "source_sha256": "0f23ee426240d39d4611dc50e4bf5017ea4eda4b5235a10b9c3bd2230c2d0367",
+          "normal": "res://assets/textures/cs2_catalog/normal_3d873d67af1870e686e3.png",
+          "orm": "res://assets/textures/cs2_catalog/orm_0946eb598a07d0e6805f.png"
+        }
+      ]
+    },
+    "knife_butterfly": {
+      "display_name": "Butterfly Knife",
+      "materials": [
+        "sc_cs2_butterfly"
+      ],
+      "options": [
+        {
+          "id": "factory",
+          "name": "Butterfly Knife | Factory",
+          "finish": "Factory",
+          "texture": "res://assets/textures/cs2_catalog/butterfly_cs2.jpg",
+          "source_sha256": "b7e11bd2cfa06acfbc2ea32ea78f12729325c7eaa9ed46f16cbb761bd3385d6e",
+          "normal": "res://assets/textures/cs2_catalog/normal_3d873d67af1870e686e3.png",
+          "orm": "res://assets/textures/cs2_catalog/orm_ffb3a788069a8c8eb441.png"
+        },
+        {
+          "id": "am_gamma_doppler_phase2",
+          "name": "Butterfly Knife | Gamma Doppler Phase 2",
+          "finish": "Gamma Doppler Phase 2",
+          "paint_kit": "am_gamma_doppler_phase2",
+          "paint_id": 570,
+          "texture": "res://assets/textures/cs2_catalog/butterfly_finish__am_gamma_doppler_phase2.jpg",
+          "source_sha256": "67925d6ef3d9669fc03e647cb13eb5b7bb74e549caae7e55252de594e68f5872",
+          "normal": "res://assets/textures/cs2_catalog/normal_3d873d67af1870e686e3.png",
+          "orm": "res://assets/textures/cs2_catalog/orm_465a7e60895aea0d8ecf.png"
+        }
+      ]
+    },
+    "knife_canis": {
+      "display_name": "Survival Knife",
+      "materials": [
+        "sc_cs2_canis"
+      ],
+      "options": [
+        {
+          "id": "factory",
+          "name": "Survival Knife | Factory",
+          "finish": "Factory",
+          "texture": "res://assets/textures/cs2_catalog/canis_cs2.jpg",
+          "source_sha256": "1b49deb11528a59f01b380ea30e7814dec4eb29d814109ba99128eb7e9c07f00",
+          "normal": "res://assets/textures/cs2_catalog/normal_3d873d67af1870e686e3.png",
+          "orm": "res://assets/textures/cs2_catalog/orm_ea5acada3d3da63d3c42.png"
+        },
+        {
+          "id": "aa_fade",
+          "name": "Survival Knife | Fade",
+          "finish": "Fade",
+          "paint_kit": "aa_fade",
+          "paint_id": 38,
+          "texture": "res://assets/textures/cs2_catalog/canis_finish__aa_fade.jpg",
+          "source_sha256": "30524d12a41a33990a4ce3aac47423f54de1b0fa94829106835f89da4be322ad",
+          "normal": "res://assets/textures/cs2_catalog/normal_3d873d67af1870e686e3.png",
+          "orm": "res://assets/textures/cs2_catalog/orm_45956642f035d4b46c3e.png"
+        }
+      ]
+    },
+    "knife_cord": {
+      "display_name": "Paracord Knife",
+      "materials": [
+        "sc_cs2_cord"
+      ],
+      "options": [
+        {
+          "id": "factory",
+          "name": "Paracord Knife | Factory",
+          "finish": "Factory",
+          "texture": "res://assets/textures/cs2_catalog/cord_cs2.jpg",
+          "source_sha256": "4e83a81264917aec206bb6f916941c57a16745902468ee18e1e78ea9b3c14c8b",
+          "normal": "res://assets/textures/cs2_catalog/normal_13f2b17a8f160187679a.png",
+          "orm": "res://assets/textures/cs2_catalog/orm_4ee5b3d1608a05d3fd9a.png"
+        },
+        {
+          "id": "aa_fade",
+          "name": "Paracord Knife | Fade",
+          "finish": "Fade",
+          "paint_kit": "aa_fade",
+          "paint_id": 38,
+          "texture": "res://assets/textures/cs2_catalog/cord_finish__aa_fade.jpg",
+          "source_sha256": "f2f35ad8dae6057f029ddc6b1aee222d2aebd4a55631be8f8d2ae998477f04f4",
+          "normal": "res://assets/textures/cs2_catalog/normal_13f2b17a8f160187679a.png",
+          "orm": "res://assets/textures/cs2_catalog/orm_c9ba47bd791fd1634720.png"
+        }
+      ]
+    },
+    "knife_css": {
+      "display_name": "Classic Knife",
+      "materials": [
+        "sc_cs2_css"
+      ],
+      "options": [
+        {
+          "id": "factory",
+          "name": "Classic Knife | Factory",
+          "finish": "Factory",
+          "texture": "res://assets/textures/cs2_catalog/css_cs2.jpg",
+          "source_sha256": "394d25cc0a78c98116a989f9ef3b3d7279e946428f2384997d9ce6feda9097f1",
+          "normal": "res://assets/textures/cs2_catalog/normal_d3bb888d329ae48b80ed.png",
+          "orm": "res://assets/textures/cs2_catalog/orm_a538802410157c024a74.png"
+        },
+        {
+          "id": "aa_fade",
+          "name": "Classic Knife | Fade",
+          "finish": "Fade",
+          "paint_kit": "aa_fade",
+          "paint_id": 38,
+          "texture": "res://assets/textures/cs2_catalog/css_finish__aa_fade.jpg",
+          "source_sha256": "0262c3e2b803c3ddd7ba3ebc2552f5fd157525bf996f8e15c7486762d1507fa8",
+          "normal": "res://assets/textures/cs2_catalog/normal_d3bb888d329ae48b80ed.png",
+          "orm": "res://assets/textures/cs2_catalog/orm_f5dc212d779f1f7de2e3.png"
+        }
+      ]
+    },
+    "knife_default_ct": {
+      "display_name": "Default CT Knife",
+      "materials": [
+        "sc_cs2_default_ct"
+      ],
+      "options": [
+        {
+          "id": "factory",
+          "name": "Default CT Knife | Factory",
+          "finish": "Factory",
+          "texture": "res://assets/textures/cs2_catalog/default_ct_cs2.jpg",
+          "source_sha256": "68cb9d89065313bb69770043be1460e0b217f251f71fc38ead761eac76477df9",
+          "normal": "res://assets/textures/cs2_catalog/normal_3d873d67af1870e686e3.png",
+          "orm": "res://assets/textures/cs2_catalog/orm_1134f4e068681f5897f4.png"
+        }
+      ]
+    },
+    "knife_default_t": {
+      "display_name": "Default T Knife",
+      "materials": [
+        "sc_cs2_default_t"
+      ],
+      "options": [
+        {
+          "id": "factory",
+          "name": "Default T Knife | Factory",
+          "finish": "Factory",
+          "texture": "res://assets/textures/cs2_catalog/default_t_cs2.jpg",
+          "source_sha256": "a380ce2c55f0c11283fe325289de5879a81a1416c4e6cb601318abacf43fe057",
+          "normal": "res://assets/textures/cs2_catalog/normal_3d873d67af1870e686e3.png",
+          "orm": "res://assets/textures/cs2_catalog/orm_a58edbdce413e26e47aa.png"
+        }
+      ]
+    },
+    "knife_falchion": {
+      "display_name": "Falchion Knife",
+      "materials": [
+        "sc_cs2_falchion"
+      ],
+      "options": [
+        {
+          "id": "factory",
+          "name": "Falchion Knife | Factory",
+          "finish": "Factory",
+          "texture": "res://assets/textures/cs2_catalog/falchion_cs2.jpg",
+          "source_sha256": "07bd10203433514678a3b57d03a77e7959640f664c8a2f060fd6c987f323ea42",
+          "normal": "res://assets/textures/cs2_catalog/normal_3d873d67af1870e686e3.png",
+          "orm": "res://assets/textures/cs2_catalog/orm_c4a0a5b57cc0864312b5.png"
+        },
+        {
+          "id": "am_gamma_doppler_phase2",
+          "name": "Falchion Knife | Gamma Doppler Phase 2",
+          "finish": "Gamma Doppler Phase 2",
+          "paint_kit": "am_gamma_doppler_phase2",
+          "paint_id": 570,
+          "texture": "res://assets/textures/cs2_catalog/falchion_finish__am_gamma_doppler_phase2.jpg",
+          "source_sha256": "7b6b1869de3b08e1e2229020e1545cc175a015dc23ff37a300b0737581987edf",
+          "normal": "res://assets/textures/cs2_catalog/normal_3d873d67af1870e686e3.png",
+          "orm": "res://assets/textures/cs2_catalog/orm_82551a95b3fbca2f88bf.png"
+        }
+      ]
+    },
+    "knife_flip": {
+      "display_name": "Flip Knife",
+      "materials": [
+        "sc_cs2_flip"
+      ],
+      "options": [
+        {
+          "id": "factory",
+          "name": "Flip Knife | Factory",
+          "finish": "Factory",
+          "texture": "res://assets/textures/cs2_catalog/flip_cs2.jpg",
+          "source_sha256": "09f7367d313cb4274d3af56d3a6fd0fdc73a2d1dc8b381ef5bab46a365a6196e",
+          "normal": "res://assets/textures/cs2_catalog/normal_1e95fdebb0632c5a16f2.png",
+          "orm": "res://assets/textures/cs2_catalog/orm_5933f68b2c4b3b5feacd.png"
+        },
+        {
+          "id": "am_gamma_doppler_phase3",
+          "name": "Flip Knife | Gamma Doppler Phase 3",
+          "finish": "Gamma Doppler Phase 3",
+          "paint_kit": "am_gamma_doppler_phase3",
+          "paint_id": 571,
+          "texture": "res://assets/textures/cs2_catalog/flip_finish__am_gamma_doppler_phase3.jpg",
+          "source_sha256": "d432201baf3b7ee7ac7049b1b105f48e0b4b578d0d80a1c1a52403a41cb11ce2",
+          "normal": "res://assets/textures/cs2_catalog/normal_1e95fdebb0632c5a16f2.png",
+          "orm": "res://assets/textures/cs2_catalog/orm_338737196bc63b993216.png"
+        }
+      ]
+    },
+    "knife_gut": {
+      "display_name": "Gut Knife",
+      "materials": [
+        "sc_cs2_gut"
+      ],
+      "options": [
+        {
+          "id": "factory",
+          "name": "Gut Knife | Factory",
+          "finish": "Factory",
+          "texture": "res://assets/textures/cs2_catalog/gut_cs2.jpg",
+          "source_sha256": "54951fa5da7a62d557f260fef8755ffb66b7e0dfbd2fff47cd130cd247c955f5",
+          "normal": "res://assets/textures/cs2_catalog/normal_3d873d67af1870e686e3.png",
+          "orm": "res://assets/textures/cs2_catalog/orm_04ffde3951de1505d2f1.png"
+        },
+        {
+          "id": "am_gamma_doppler_phase4",
+          "name": "Gut Knife | Gamma Doppler Phase 4",
+          "finish": "Gamma Doppler Phase 4",
+          "paint_kit": "am_gamma_doppler_phase4",
+          "paint_id": 572,
+          "texture": "res://assets/textures/cs2_catalog/gut_finish__am_gamma_doppler_phase4.jpg",
+          "source_sha256": "077f5b15c813fc44a3901601032c3eefab894f722f4bb42a68a4012d6eabc80c",
+          "normal": "res://assets/textures/cs2_catalog/normal_3d873d67af1870e686e3.png",
+          "orm": "res://assets/textures/cs2_catalog/orm_369611a2c69e810f5fba.png"
+        }
+      ]
+    },
+    "knife_karambit": {
+      "display_name": "Karambit",
+      "materials": [
+        "sc_cs2_karambit"
+      ],
+      "options": [
+        {
+          "id": "factory",
+          "name": "Karambit | Factory",
+          "finish": "Factory",
+          "texture": "res://assets/textures/cs2_catalog/karambit_cs2.jpg",
+          "source_sha256": "8dc8dc6c23d0f306ed2e51bd1db8d77c6d35a96e37ebdf214a24e9ff73be9ec4",
+          "normal": "res://assets/textures/cs2_catalog/normal_3d873d67af1870e686e3.png",
+          "orm": "res://assets/textures/cs2_catalog/orm_ddad1fdbd3651a6a780d.png"
+        },
+        {
+          "id": "am_gamma_doppler_phase4",
+          "name": "Karambit | Gamma Doppler Phase 4",
+          "finish": "Gamma Doppler Phase 4",
+          "paint_kit": "am_gamma_doppler_phase4",
+          "paint_id": 572,
+          "texture": "res://assets/textures/cs2_catalog/karambit_finish__am_gamma_doppler_phase4.jpg",
+          "source_sha256": "30204bf737f110a135fb3ccbdb085f706dc2557feb054f629e241e20d4c0c9f0",
+          "normal": "res://assets/textures/cs2_catalog/normal_3d873d67af1870e686e3.png",
+          "orm": "res://assets/textures/cs2_catalog/orm_0ced65ea4f3258a54d82.png"
+        }
+      ]
+    },
+    "knife_kukri": {
+      "display_name": "CS2 Kukri",
+      "materials": [
+        "sc_cs2_kukri"
+      ],
+      "options": [
+        {
+          "id": "factory",
+          "name": "CS2 Kukri | Factory",
+          "finish": "Factory",
+          "texture": "res://assets/textures/cs2_catalog/kukri_cs2.jpg",
+          "source_sha256": "9313ec7785807399ebe3ab04679dbd8afc2d9e56cb8d2386d5e544b447661a1e",
+          "normal": "res://assets/textures/cs2_catalog/normal_3d873d67af1870e686e3.png",
+          "orm": "res://assets/textures/cs2_catalog/orm_0b7b41196a08982bf917.png"
+        },
+        {
+          "id": "aa_fade",
+          "name": "CS2 Kukri | Fade",
+          "finish": "Fade",
+          "paint_kit": "aa_fade",
+          "paint_id": 38,
+          "texture": "res://assets/textures/cs2_catalog/kukri_finish__aa_fade.jpg",
+          "source_sha256": "cc56279429025413e625b1122aa3838afd3bdfecaee9731843d9d353f786df87",
+          "normal": "res://assets/textures/cs2_catalog/normal_3d873d67af1870e686e3.png",
+          "orm": "res://assets/textures/cs2_catalog/orm_de77f96f68361de488d6.png"
+        }
+      ]
+    },
+    "knife_m9": {
+      "display_name": "M9 Bayonet",
+      "materials": [
+        "sc_cs2_m9"
+      ],
+      "options": [
+        {
+          "id": "factory",
+          "name": "M9 Bayonet | Factory",
+          "finish": "Factory",
+          "texture": "res://assets/textures/cs2_catalog/m9_cs2.jpg",
+          "source_sha256": "989b95b5dfd343b15a02e40a3804df52872e80b3e0d0f1eb433c55061b064263",
+          "normal": "res://assets/textures/cs2_catalog/normal_3d873d67af1870e686e3.png",
+          "orm": "res://assets/textures/cs2_catalog/orm_489089a9a1afaf7e7f43.png"
+        },
+        {
+          "id": "am_gamma_doppler_phase1",
+          "name": "M9 Bayonet | Gamma Doppler Phase 1",
+          "finish": "Gamma Doppler Phase 1",
+          "paint_kit": "am_gamma_doppler_phase1",
+          "paint_id": 569,
+          "texture": "res://assets/textures/cs2_catalog/m9_finish__am_gamma_doppler_phase1.jpg",
+          "source_sha256": "e7bcfa2e0e627ce6361702f46b976e0dd2bfceb814b60864d760791255209b33",
+          "normal": "res://assets/textures/cs2_catalog/normal_3d873d67af1870e686e3.png",
+          "orm": "res://assets/textures/cs2_catalog/orm_4a6a594b6810b843c316.png"
+        }
+      ]
+    },
+    "knife_navaja": {
+      "display_name": "Navaja Knife",
+      "materials": [
+        "sc_cs2_navaja"
+      ],
+      "options": [
+        {
+          "id": "factory",
+          "name": "Navaja Knife | Factory",
+          "finish": "Factory",
+          "texture": "res://assets/textures/cs2_catalog/navaja_cs2.jpg",
+          "source_sha256": "8e0445e20c0a8e3f2fd807974d95ea8da019760989839d87af5af44c67328012",
+          "normal": "res://assets/textures/cs2_catalog/normal_3d873d67af1870e686e3.png",
+          "orm": "res://assets/textures/cs2_catalog/orm_bb51ac60c1a2439befaf.png"
+        },
+        {
+          "id": "aa_fade",
+          "name": "Navaja Knife | Fade",
+          "finish": "Fade",
+          "paint_kit": "aa_fade",
+          "paint_id": 38,
+          "texture": "res://assets/textures/cs2_catalog/navaja_finish__aa_fade.jpg",
+          "source_sha256": "a9aa2fbe0f6f5ddfef5a7f46c72483de14e44adcf5546344245e7bfce26a42e6",
+          "normal": "res://assets/textures/cs2_catalog/normal_3d873d67af1870e686e3.png",
+          "orm": "res://assets/textures/cs2_catalog/orm_6c3097962e561727b0e1.png"
+        }
+      ]
+    },
+    "knife_outdoor": {
+      "display_name": "Nomad Knife",
+      "materials": [
+        "sc_cs2_outdoor"
+      ],
+      "options": [
+        {
+          "id": "factory",
+          "name": "Nomad Knife | Factory",
+          "finish": "Factory",
+          "texture": "res://assets/textures/cs2_catalog/outdoor_cs2.jpg",
+          "source_sha256": "30b1886f5fb1490d0a2795133d3d6f2754a589d8a4033d0c9d9f20837bd77efb",
+          "normal": "res://assets/textures/cs2_catalog/normal_f8db891a712d670b9e4b.png",
+          "orm": "res://assets/textures/cs2_catalog/orm_d7230c459a4a2909be72.png"
+        },
+        {
+          "id": "aa_fade",
+          "name": "Nomad Knife | Fade",
+          "finish": "Fade",
+          "paint_kit": "aa_fade",
+          "paint_id": 38,
+          "texture": "res://assets/textures/cs2_catalog/outdoor_finish__aa_fade.jpg",
+          "source_sha256": "e6d6905298897bba9ef3b383497c1342d2b72aaa67246ba87c05ea7013c28012",
+          "normal": "res://assets/textures/cs2_catalog/normal_f8db891a712d670b9e4b.png",
+          "orm": "res://assets/textures/cs2_catalog/orm_330646f8cbec5ec36132.png"
+        }
+      ]
+    },
+    "knife_push": {
+      "display_name": "Shadow Daggers",
+      "materials": [
+        "sc_cs2_push"
+      ],
+      "options": [
+        {
+          "id": "factory",
+          "name": "Shadow Daggers | Factory",
+          "finish": "Factory",
+          "texture": "res://assets/textures/cs2_catalog/push_cs2.jpg",
+          "source_sha256": "803614b2180e831ce8a7dd1546801309a317a664d774b50a7e1fb39e88f0aa16",
+          "normal": "res://assets/textures/cs2_catalog/normal_3d873d67af1870e686e3.png",
+          "orm": "res://assets/textures/cs2_catalog/orm_de55ae9048baffe6c47d.png"
+        },
+        {
+          "id": "am_gamma_doppler_phase4",
+          "name": "Shadow Daggers | Gamma Doppler Phase 4",
+          "finish": "Gamma Doppler Phase 4",
+          "paint_kit": "am_gamma_doppler_phase4",
+          "paint_id": 572,
+          "texture": "res://assets/textures/cs2_catalog/push_finish__am_gamma_doppler_phase4.jpg",
+          "source_sha256": "f8d0d3c2815e694228d0c01e546763933875cc52321238c4873cf472b3974dff",
+          "normal": "res://assets/textures/cs2_catalog/normal_3d873d67af1870e686e3.png",
+          "orm": "res://assets/textures/cs2_catalog/orm_e5cae2581c4a6a93636d.png"
+        }
+      ]
+    },
+    "knife_skeleton": {
+      "display_name": "Skeleton Knife",
+      "materials": [
+        "sc_cs2_skeleton"
+      ],
+      "options": [
+        {
+          "id": "factory",
+          "name": "Skeleton Knife | Factory",
+          "finish": "Factory",
+          "texture": "res://assets/textures/cs2_catalog/skeleton_cs2.jpg",
+          "source_sha256": "66a5f72326e78a0b0972271b8e53ba8914061b589942392aa6cf30818fa58411",
+          "normal": "res://assets/textures/cs2_catalog/normal_3d873d67af1870e686e3.png",
+          "orm": "res://assets/textures/cs2_catalog/orm_443ff116d8078393abee.png"
+        },
+        {
+          "id": "aa_fade",
+          "name": "Skeleton Knife | Fade",
+          "finish": "Fade",
+          "paint_kit": "aa_fade",
+          "paint_id": 38,
+          "texture": "res://assets/textures/cs2_catalog/skeleton_finish__aa_fade.jpg",
+          "source_sha256": "e2d0f9da14eb7d40a59d17afa8a1f227ab6add63fc99114bbe093b17ed0029c0",
+          "normal": "res://assets/textures/cs2_catalog/normal_3d873d67af1870e686e3.png",
+          "orm": "res://assets/textures/cs2_catalog/orm_0ea8ee60736afa5f4bab.png"
+        }
+      ]
+    },
+    "knife_stiletto": {
+      "display_name": "Stiletto Knife",
+      "materials": [
+        "sc_cs2_stiletto"
+      ],
+      "options": [
+        {
+          "id": "factory",
+          "name": "Stiletto Knife | Factory",
+          "finish": "Factory",
+          "texture": "res://assets/textures/cs2_catalog/stiletto_cs2.jpg",
+          "source_sha256": "be2ad68224d22107c969e9bacd8a21267923f024a3f9ddd382eacdd6963d3387",
+          "normal": "res://assets/textures/cs2_catalog/normal_3d873d67af1870e686e3.png",
+          "orm": "res://assets/textures/cs2_catalog/orm_2439b95148d66a916a99.png"
+        },
+        {
+          "id": "aa_fade",
+          "name": "Stiletto Knife | Fade",
+          "finish": "Fade",
+          "paint_kit": "aa_fade",
+          "paint_id": 38,
+          "texture": "res://assets/textures/cs2_catalog/stiletto_finish__aa_fade.jpg",
+          "source_sha256": "657d9d2b9dcc8100a07d6bf6d8e4a44baf0a9e78bb259bc40c5a63243caef861",
+          "normal": "res://assets/textures/cs2_catalog/normal_3d873d67af1870e686e3.png",
+          "orm": "res://assets/textures/cs2_catalog/orm_ad66e78fd5938ad843ae.png"
+        }
+      ]
+    },
+    "knife_tactical": {
+      "display_name": "Huntsman Knife",
+      "materials": [
+        "sc_cs2_tactical"
+      ],
+      "options": [
+        {
+          "id": "factory",
+          "name": "Huntsman Knife | Factory",
+          "finish": "Factory",
+          "texture": "res://assets/textures/cs2_catalog/tactical_cs2.jpg",
+          "source_sha256": "2e358a88614521c838cfe8a03c85636867be5287530a9391c0e080a4a83474d7",
+          "normal": "res://assets/textures/cs2_catalog/normal_8d0929eb081dd5af03cc.png",
+          "orm": "res://assets/textures/cs2_catalog/orm_56d203c45a1a65cf1c97.png"
+        },
+        {
+          "id": "am_gamma_doppler_phase3",
+          "name": "Huntsman Knife | Gamma Doppler Phase 3",
+          "finish": "Gamma Doppler Phase 3",
+          "paint_kit": "am_gamma_doppler_phase3",
+          "paint_id": 571,
+          "texture": "res://assets/textures/cs2_catalog/tactical_finish__am_gamma_doppler_phase3.jpg",
+          "source_sha256": "f94c567dc4da19a8395c84df2cec262051db4a285a75807b0d326f142ab26b5c",
+          "normal": "res://assets/textures/cs2_catalog/normal_8d0929eb081dd5af03cc.png",
+          "orm": "res://assets/textures/cs2_catalog/orm_d2555bcd1ac344a3ba60.png"
+        }
+      ]
+    },
+    "knife_talon": {
+      "display_name": "Talon Knife",
+      "materials": [
+        "sc_cs2_talon"
+      ],
+      "options": [
+        {
+          "id": "factory",
+          "name": "Talon Knife | Factory",
+          "finish": "Factory",
+          "texture": "res://assets/textures/cs2_catalog/talon_cs2.jpg",
+          "source_sha256": "1bce2fb6e2d29d57746c19d1b55b4baa2a9dc4c99f59f5e293e46cca7e91d489",
+          "normal": "res://assets/textures/cs2_catalog/normal_3d873d67af1870e686e3.png",
+          "orm": "res://assets/textures/cs2_catalog/orm_5f77e4e2acefdade16e7.png"
+        },
+        {
+          "id": "aa_fade",
+          "name": "Talon Knife | Fade",
+          "finish": "Fade",
+          "paint_kit": "aa_fade",
+          "paint_id": 38,
+          "texture": "res://assets/textures/cs2_catalog/talon_finish__aa_fade.jpg",
+          "source_sha256": "2fcdcbb866c57b7e8c6bf82df8df08ba55a28bb946eef3690031fe4f59153196",
+          "normal": "res://assets/textures/cs2_catalog/normal_3d873d67af1870e686e3.png",
+          "orm": "res://assets/textures/cs2_catalog/orm_80dfce8fd9605cc2e237.png"
+        }
+      ]
+    },
+    "knife_ursus": {
+      "display_name": "Ursus Knife",
+      "materials": [
+        "sc_cs2_ursus"
+      ],
+      "options": [
+        {
+          "id": "factory",
+          "name": "Ursus Knife | Factory",
+          "finish": "Factory",
+          "texture": "res://assets/textures/cs2_catalog/ursus_cs2.jpg",
+          "source_sha256": "9cc8b9b2555041c02e671a4eaf912f1149ee6a511445a85bf04f515355b1fbb0",
+          "normal": "res://assets/textures/cs2_catalog/normal_5a67de193668848c7432.png",
+          "orm": "res://assets/textures/cs2_catalog/orm_50993d7481da20c49db1.png"
+        },
+        {
+          "id": "aa_fade",
+          "name": "Ursus Knife | Fade",
+          "finish": "Fade",
+          "paint_kit": "aa_fade",
+          "paint_id": 38,
+          "texture": "res://assets/textures/cs2_catalog/ursus_finish__aa_fade.jpg",
+          "source_sha256": "ba47a110c00f5228e8b39c33f2b592de92c113890959de4e69d57a9d65550e67",
+          "normal": "res://assets/textures/cs2_catalog/normal_5a67de193668848c7432.png",
+          "orm": "res://assets/textures/cs2_catalog/orm_fb2593964f282f7eb1c5.png"
+        }
+      ]
+    },
+    "m4a4": {
+      "display_name": "M4A4",
+      "materials": [
+        "weapon_rif_m4a4"
+      ],
+      "options": [
+        {
+          "id": "sc_cu_m4a4_temukau",
+          "name": "M4A4 | Temukau",
+          "finish": "Temukau",
+          "paint_kit": "cu_m4a4_temukau",
+          "paint_id": 1228,
+          "texture": "res://assets/textures/weapon_skins/m4a4/sc_cu_m4a4_temukau.png",
+          "source": "zh667/ScCsgoKnives@1eb8067fd0b7214df5bccf3ac3807fbaa3aee70d/m4a4_hd__cu_m4a4_temukau.png",
+          "source_sha256": "e35d6602c75a5dc71ce9def2da4687465f049689e90502f5dd23179a2c7f495b",
+          "uv_layout": "legacy_to_current_hd",
+          "uv_algorithm": "nwm1-nearest-surface-v5",
+          "menu_label": "Temukau (CS2 catalog)"
+        },
+        {
+          "id": "sc_cu_m4a1_howling",
+          "name": "M4A4 | Howl",
+          "finish": "Howl",
+          "paint_kit": "cu_m4a1_howling",
+          "paint_id": 309,
+          "texture": "res://assets/textures/weapon_skins/m4a4/sc_cu_m4a1_howling.png",
+          "source": "zh667/ScCsgoKnives@1eb8067fd0b7214df5bccf3ac3807fbaa3aee70d/m4a4_hd__cu_m4a1_howling.png",
+          "source_sha256": "07b1dc7203657b343567293d393f01676017d0c494beaea2d5299c74c94fff6d",
+          "uv_layout": "legacy_to_current_hd",
+          "uv_algorithm": "nwm1-nearest-surface-v5",
+          "menu_label": "Howl (CS2 catalog)"
+        }
+      ]
+    },
+    "scout": {
+      "display_name": "Steyr Scout",
+      "materials": [
+        "weapon_snip_ssg08"
+      ],
+      "options": [
+        {
+          "id": "sc_cu_ssg08_dragonfire_scope",
+          "name": "Steyr Scout | Dragonfire",
+          "finish": "Dragonfire",
+          "paint_kit": "cu_ssg08_dragonfire_scope",
+          "paint_id": 624,
+          "texture": "res://assets/textures/weapon_skins/scout/sc_cu_ssg08_dragonfire_scope.png",
+          "source": "zh667/ScCsgoKnives@1eb8067fd0b7214df5bccf3ac3807fbaa3aee70d/ssg08_hd__cu_ssg08_dragonfire_scope.png",
+          "source_sha256": "b3770aa2f3e192f56d232113f8af2d9b7c49ee36644b5cef3065ede8c330a62e",
+          "uv_layout": "legacy_to_current_hd",
+          "uv_algorithm": "nwm1-nearest-surface-v5",
+          "menu_label": "Dragonfire (CS2 catalog)"
+        }
+      ]
+    },
+    "p2000": {
+      "display_name": "P2000",
+      "materials": [
+        "weapon_pist_hkp2000"
+      ],
+      "options": [
+        {
+          "id": "sc_gs_p2000-sport",
+          "name": "P2000 | Turf",
+          "finish": "Turf",
+          "paint_kit": "gs_p2000-sport",
+          "paint_id": 635,
+          "texture": "res://assets/textures/weapon_skins/p2000/sc_gs_p2000-sport.png",
+          "source": "zh667/ScCsgoKnives@1eb8067fd0b7214df5bccf3ac3807fbaa3aee70d/hkp2000_hd__gs_p2000-sport.png",
+          "source_sha256": "b0b759eb969bbb5ea69bb1b363abd7148307295486d9b142a092c5c2beecbf69",
+          "uv_layout": "legacy_to_current_hd",
+          "uv_algorithm": "nwm1-nearest-surface-v5",
+          "menu_label": "Turf (CS2 catalog)"
+        }
+      ]
+    },
+    "tec9": {
+      "display_name": "Tec-9",
+      "materials": [
+        "weapon_pist_tec9"
+      ],
+      "options": [
+        {
+          "id": "sc_gs_tec9_supercharged",
+          "name": "Tec-9 | Fuel Injector",
+          "finish": "Fuel Injector",
+          "paint_kit": "gs_tec9_supercharged",
+          "paint_id": 614,
+          "texture": "res://assets/textures/weapon_skins/tec9/sc_gs_tec9_supercharged.png",
+          "source": "zh667/ScCsgoKnives@1eb8067fd0b7214df5bccf3ac3807fbaa3aee70d/tec9_hd__gs_tec9_supercharged.png",
+          "source_sha256": "a2623d35f4f852519a08f1d86fa690bc44f79b3b8ce7b222e9cb1202a866199f",
+          "uv_layout": "legacy_to_current_hd",
+          "uv_algorithm": "nwm1-nearest-surface-v5",
+          "menu_label": "Fuel Injector (CS2 catalog)"
+        }
+      ]
+    },
+    "cz75": {
+      "display_name": "CZ75-Auto",
+      "materials": [
+        "weapon_pist_cz75a"
+      ],
+      "options": [
+        {
+          "id": "sc_cu_cz75_precision",
+          "name": "CZ75-Auto | Pole Position",
+          "finish": "Pole Position",
+          "paint_kit": "cu_cz75_precision",
+          "paint_id": 435,
+          "texture": "res://assets/textures/weapon_skins/cz75/sc_cu_cz75_precision.png",
+          "source": "zh667/ScCsgoKnives@1eb8067fd0b7214df5bccf3ac3807fbaa3aee70d/cz75a_hd__cu_cz75_precision.png",
+          "source_sha256": "fba76d9df0fb866558ba39ff249b35ff2a457151bb6025b10bed2382e3f16be1",
+          "uv_layout": "legacy_to_current_hd",
+          "uv_algorithm": "nwm1-nearest-surface-v5",
+          "menu_label": "Pole Position (CS2 catalog)"
+        }
+      ]
+    },
+    "ump45": {
+      "display_name": "H&K UMP45",
+      "materials": [
+        "weapon_smg_ump45"
+      ],
+      "options": [
+        {
+          "id": "sc_aa_fade_ump",
+          "name": "H&K UMP45 | Fade",
+          "finish": "Fade",
+          "paint_kit": "aa_fade_ump",
+          "paint_id": 879,
+          "texture": "res://assets/textures/weapon_skins/ump45/sc_aa_fade_ump.png",
+          "source": "zh667/ScCsgoKnives@1eb8067fd0b7214df5bccf3ac3807fbaa3aee70d/ump45_hd__aa_fade_ump.png",
+          "source_sha256": "a68474ada5e1e4db2a1c41cf23ec180a59d319bf918bf01e104b80bc74ba8622",
+          "uv_layout": "native_current_hd",
+          "uv_algorithm": "native",
+          "menu_label": "Fade (CS2 catalog)"
+        }
+      ]
+    },
+    "bizon": {
+      "display_name": "PP-Bizon",
+      "materials": [
+        "weapon_smg_bizon"
+      ],
+      "options": [
+        {
+          "id": "sc_cu_bizon_Curse",
+          "name": "PP-Bizon | Judgement of Anubis",
+          "finish": "Judgement of Anubis",
+          "paint_kit": "cu_bizon_Curse",
+          "paint_id": 542,
+          "texture": "res://assets/textures/weapon_skins/bizon/sc_cu_bizon_Curse.png",
+          "source": "zh667/ScCsgoKnives@1eb8067fd0b7214df5bccf3ac3807fbaa3aee70d/bizon_hd__cu_bizon_Curse.png",
+          "source_sha256": "90cd96084aed7f261ce5e6d0941f3851a5cac3d21d5997dca148def6bac67462",
+          "uv_layout": "legacy_to_current_hd",
+          "uv_algorithm": "nwm1-nearest-surface-v5",
+          "menu_label": "Judgement of Anubis (CS2 catalog)"
+        }
+      ]
+    },
+    "mp5navy": {
+      "display_name": "H&K MP5-Navy",
+      "materials": [
+        "weapon_smg_mp5sd"
+      ],
+      "options": [
+        {
+          "id": "sc_gs_mp5_neon_flektarn",
+          "name": "H&K MP5-Navy | Phosphor",
+          "finish": "Phosphor",
+          "paint_kit": "gs_mp5_neon_flektarn",
+          "paint_id": 923,
+          "texture": "res://assets/textures/weapon_skins/mp5navy/sc_gs_mp5_neon_flektarn.png",
+          "source": "zh667/ScCsgoKnives@1eb8067fd0b7214df5bccf3ac3807fbaa3aee70d/mp5sd_hd__gs_mp5_neon_flektarn.png",
+          "source_sha256": "49fbc58a881d29c03527d4481af8a9e10a901c337f4caa04aae3689d2fe0e7dd",
+          "uv_layout": "legacy_to_current_hd",
+          "uv_algorithm": "nwm1-nearest-surface-v5",
+          "menu_label": "Phosphor (CS2 catalog)"
+        }
+      ]
+    },
+    "sg552": {
+      "display_name": "SIG SG-552 Commando",
+      "materials": [
+        "weapon_rif_sg556"
+      ],
+      "options": [
+        {
+          "id": "sc_cu_sg553_caution",
+          "name": "SIG SG-552 Commando | Hazard Pay",
+          "finish": "Hazard Pay",
+          "paint_kit": "cu_sg553_caution",
+          "paint_id": 1084,
+          "texture": "res://assets/textures/weapon_skins/sg552/sc_cu_sg553_caution.png",
+          "source": "zh667/ScCsgoKnives@1eb8067fd0b7214df5bccf3ac3807fbaa3aee70d/sg556_hd__cu_sg553_caution.png",
+          "source_sha256": "5c6c5d877d69c80c6c28a3b44dab2990c48a183155bf85670448e2f50b3b96b0",
+          "uv_layout": "legacy_to_current_hd",
+          "uv_algorithm": "nwm1-nearest-surface-v5",
+          "menu_label": "Hazard Pay (CS2 catalog)"
+        }
+      ]
+    },
+    "xm1014": {
+      "display_name": "Benelli XM1014",
+      "materials": [
+        "weapon_shot_xm1014"
+      ],
+      "options": [
+        {
+          "id": "sc_cu_xm1014_caritas",
+          "name": "Benelli XM1014 | Tranquility",
+          "finish": "Tranquility",
+          "paint_kit": "cu_xm1014_caritas",
+          "paint_id": 393,
+          "texture": "res://assets/textures/weapon_skins/xm1014/sc_cu_xm1014_caritas.png",
+          "source": "zh667/ScCsgoKnives@1eb8067fd0b7214df5bccf3ac3807fbaa3aee70d/xm1014_hd__cu_xm1014_caritas.png",
+          "source_sha256": "379b331737d74e512c68f56c357f3de30e9dfeca7b58226c016862c27600f630",
+          "uv_layout": "legacy_to_current_hd",
+          "uv_algorithm": "nwm1-nearest-surface-v5",
+          "menu_label": "Tranquility (CS2 catalog)"
+        }
+      ]
+    },
+    "sawedoff": {
+      "display_name": "Sawed-Off",
+      "materials": [
+        "weapon_shot_sawedoff"
+      ],
+      "options": [
+        {
+          "id": "sc_cu_sawedoff_kisslove",
+          "name": "Sawed-Off | Kiss Love",
+          "finish": "Kiss Love",
+          "paint_kit": "cu_sawedoff_kisslove",
+          "paint_id": 1155,
+          "texture": "res://assets/textures/weapon_skins/sawedoff/sc_cu_sawedoff_kisslove.png",
+          "source": "zh667/ScCsgoKnives@1eb8067fd0b7214df5bccf3ac3807fbaa3aee70d/sawedoff_hd__cu_sawedoff_kisslove.png",
+          "source_sha256": "6b02e02745120325efb3ff64e5b3e34e7b360f7aee20896e19dd1ec7fe9f2935",
+          "uv_layout": "legacy_to_current_hd",
+          "uv_algorithm": "nwm1-nearest-surface-v5",
+          "menu_label": "Kiss Love (CS2 catalog)"
+        }
+      ]
+    },
+    "mag7": {
+      "display_name": "MAG-7",
+      "materials": [
+        "weapon_shot_mag7"
+      ],
+      "options": [
+        {
+          "id": "sc_hy_geometric_steps_green",
+          "name": "MAG-7 | Counter Terrace",
+          "finish": "Counter Terrace",
+          "paint_kit": "hy_geometric_steps_green",
+          "paint_id": 462,
+          "texture": "res://assets/textures/weapon_skins/mag7/sc_hy_geometric_steps_green.png",
+          "source": "zh667/ScCsgoKnives@1eb8067fd0b7214df5bccf3ac3807fbaa3aee70d/mag7_hd__hy_geometric_steps_green.png",
+          "source_sha256": "d741ae7b222c2435489de92715f143573b6de3b6e64a9abbc6d0fbeffed99b3d",
+          "uv_layout": "legacy_to_current_hd",
+          "uv_algorithm": "nwm1-nearest-surface-v5",
+          "menu_label": "Counter Terrace (CS2 catalog)"
+        }
+      ]
+    },
+    "negev": {
+      "display_name": "Negev",
+      "materials": [
+        "weapon_mach_negev"
+      ],
+      "options": [
+        {
+          "id": "sc_gs_negev_thor",
+          "name": "Negev | Mjolnir",
+          "finish": "Mjolnir",
+          "paint_kit": "gs_negev_thor",
+          "paint_id": 763,
+          "texture": "res://assets/textures/weapon_skins/negev/sc_gs_negev_thor.png",
+          "source": "zh667/ScCsgoKnives@1eb8067fd0b7214df5bccf3ac3807fbaa3aee70d/negev_hd__gs_negev_thor.png",
+          "source_sha256": "238bedad83dca618f8360be32f0ee8383e3a461d80ca159dc0e0aa07ecb9bdac",
+          "uv_layout": "legacy_to_current_hd",
+          "uv_algorithm": "nwm1-nearest-surface-v5",
+          "menu_label": "Mjolnir (CS2 catalog)"
+        }
+      ]
+    },
+    "revolver": {
+      "display_name": "R8 Revolver",
+      "materials": [
+        "weapon_pist_revolver"
+      ],
+      "options": [
+        {
+          "id": "sc_gs_revolver_purple_elite",
+          "name": "R8 Revolver | Crazy 8",
+          "finish": "Crazy 8",
+          "paint_kit": "gs_revolver_purple_elite",
+          "paint_id": 1145,
+          "texture": "res://assets/textures/weapon_skins/revolver/sc_gs_revolver_purple_elite.png",
+          "source": "zh667/ScCsgoKnives@1eb8067fd0b7214df5bccf3ac3807fbaa3aee70d/revolver_hd__gs_revolver_purple_elite.png",
+          "source_sha256": "44db85cb1b91d49e0dbc17d80f2d9105a0c6999414cdda3f6a9b866f8c2fafbb",
+          "uv_layout": "legacy_to_current_hd",
+          "uv_algorithm": "nwm1-nearest-surface-v5",
+          "menu_label": "Crazy 8 (CS2 catalog)"
+        }
+      ]
+    },
+    "taser": {
+      "display_name": "Zeus x27",
+      "materials": [
+        "weapon_pist_taser"
+      ],
+      "options": [
+        {
+          "id": "sc_zeus_thunder_god",
+          "name": "Zeus x27 | Olympus",
+          "finish": "Olympus",
+          "paint_kit": "zeus_thunder_god",
+          "paint_id": 1172,
+          "texture": "res://assets/textures/weapon_skins/taser/sc_zeus_thunder_god.png",
+          "source": "zh667/ScCsgoKnives@1eb8067fd0b7214df5bccf3ac3807fbaa3aee70d/taser_hd__zeus_thunder_god.png",
+          "source_sha256": "26f5f3af3c673773e275e866fa6489a24ff0ad9f85bf3dbf271e60904dc9889a",
+          "uv_layout": "native_current_hd",
+          "uv_algorithm": "native",
+          "menu_label": "Olympus (CS2 catalog)"
         }
       ]
     }
+  },
+  "shipped_cs2_catalog": {
+    "source_commit": "1eb8067fd0b7214df5bccf3ac3807fbaa3aee70d",
+    "gun_finishes": 44,
+    "knife_models": 22,
+    "knife_painted_finishes": 20,
+    "knife_factory_finishes": 22,
+    "report": "res://data/shipped_cs2_uv_report.json",
+    "limitations": "All shipped baked finishes, not all Valve paint kits; fixed patterns, no official wear/compositor."
   }
 }

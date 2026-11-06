@@ -198,12 +198,18 @@ func get_sport_glove_source_material(orig: Material, option: Dictionary) -> Mate
 	return dup
 
 
+func _weapon_skin_key(wid: String) -> String:
+	return "knife_" + selected_knife_id if wid == "knife" and selected_knife_id != "original" else wid
+
+
 func get_weapon_skin_options(wid: String) -> Array:
+	wid = _weapon_skin_key(wid)
 	var entry: Dictionary = weapon_skins.get("weapons", {}).get(wid, {})
 	return entry.get("options", []) as Array
 
 
 func get_selected_weapon_skin_id(wid: String) -> String:
+	wid = _weapon_skin_key(wid)
 	var original := String(weapon_skins.get("default", "original"))
 	var selected := String(selected_weapon_skins.get(wid, original))
 	for raw in get_weapon_skin_options(wid):
@@ -229,6 +235,7 @@ func get_weapon_skin_display_name(wid: String) -> String:
 
 
 func select_weapon_skin(wid: String, option_id: String) -> bool:
+	wid = _weapon_skin_key(wid)
 	var original := String(weapon_skins.get("default", "original"))
 	if option_id == original and weapon_skins.get("weapons", {}).has(wid):
 		selected_weapon_skins.erase(wid)
@@ -399,9 +406,11 @@ func get_styled_model_material(orig: Material, mode: String) -> Material:
 		dup.metallic = 0.0
 		dup.metallic_specular = 0.22
 		dup.roughness = 0.86
-	if material_name.begins_with("sc_cs2_"):
-		dup.roughness = 0.65 if mode in ["vm", "vm_flip"] else 0.85
-		dup.metallic = 0.68 if mode in ["vm", "vm_flip"] else 0.32
+	if material_name.begins_with("sc_cs2_") or material_name == "weapon_knife_kukri":
+		# Subordinate PBR chrome: reflect beneath the unchanged base-colour art.
+		dup.roughness = 0.48 if mode in ["vm", "vm_flip"] else 0.72
+		dup.metallic = 0.42 if mode in ["vm", "vm_flip"] else 0.22
+		dup.metallic_specular = 0.54 if mode in ["vm", "vm_flip"] else 0.38
 		dup.albedo_color = original
 	var character_surface := material_name.contains("glove") or material_name.contains("arms") \
 		or material_name.contains("bare_arm") or material_name.contains("sleeve") or material_name.contains("skin")
@@ -419,7 +428,7 @@ func get_styled_model_material(orig: Material, mode: String) -> Material:
 	if (not archi_entry.is_empty() or not skin_entry.is_empty()) and not character_surface:
 		if hd_albedo != null:
 			dup.albedo_texture = hd_albedo
-		var normal_map := get_texture(String(archi_entry.get("normal", "")))
+		var normal_map := get_texture(String(skin_entry.get("normal", archi_entry.get("normal", ""))))
 		if normal_map != null:
 			dup.normal_enabled = true
 			dup.normal_texture = normal_map
@@ -430,6 +439,18 @@ func get_styled_model_material(orig: Material, mode: String) -> Material:
 			# metallic and the accepted per-mode roughness maxima stay unchanged.
 			dup.roughness_texture = roughness_map
 			dup.roughness_texture_channel = BaseMaterial3D.TEXTURE_CHANNEL_RED
+	# Knife finishes carry their own matching packed material maps. Never mix
+	# a new finish with the preceding knife's material or the archi red channel.
+	if material_name.begins_with("sc_cs2_") and skin_entry.has("orm"):
+		var packed_orm := get_texture(String(skin_entry["orm"]))
+		if packed_orm != null:
+			dup.roughness_texture = packed_orm
+			dup.roughness_texture_channel = BaseMaterial3D.TEXTURE_CHANNEL_GREEN
+			dup.metallic_texture = packed_orm
+			dup.metallic_texture_channel = BaseMaterial3D.TEXTURE_CHANNEL_BLUE
+			dup.ao_enabled = true
+			dup.ao_texture = packed_orm
+			dup.ao_texture_channel = BaseMaterial3D.TEXTURE_CHANNEL_RED
 	_styled_mat_cache[key] = dup
 	return dup
 

@@ -24,6 +24,8 @@ jobs:
     timeout-minutes: 60
     steps:
       - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
 
       - uses: actions/setup-python@v5
         with:
@@ -36,6 +38,7 @@ jobs:
         run: |
           python tools/verify_godot_project.py
           python tests/check_knife_assets.py
+          python tests/check_complete_cosmetics.py
 
       - name: Install Godot 4.3
         run: |
@@ -75,6 +78,72 @@ jobs:
               text = text.replace('%', '%25').replace('\r', '%0D').replace('\n', '%0A')
               print(f'::notice title=Knife test::{text}')
           PY
+
+      - name: Complete cosmetics catalog native regression
+        timeout-minutes: 8
+        run: |
+          set -o pipefail
+          timeout 420s godot --headless --path . --fixed-fps 60 res://tests/CompleteCosmeticCatalogTest.tscn 2>&1 | tee /tmp/catalog-test.log
+          if grep -Eq 'SCRIPT ERROR:|Parse Error:|Compile Error:' /tmp/catalog-test.log; then exit 1; fi
+          grep -q '\[CATALOG TEST\] PASS:' /tmp/catalog-test.log
+
+      - name: Render complete cosmetic catalog in OpenGL gameplay
+        timeout-minutes: 10
+        env:
+          LIBGL_ALWAYS_SOFTWARE: '1'
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y -qq xvfb libgl1-mesa-dri
+          set -o pipefail
+          timeout 480s xvfb-run -a godot --path . --audio-driver Dummy --rendering-method gl_compatibility --rendering-driver opengl3 --disable-render-loop --fixed-fps 60 --resolution 960x540 res://tests/CompleteCosmeticCatalogTest.tscn -- --capture 2>&1 | tee /tmp/catalog-render.log
+          if grep -Eq 'SCRIPT ERROR:|Parse Error:|Compile Error:' /tmp/catalog-render.log; then exit 1; fi
+          grep -q '\[CATALOG TEST\] PASS:' /tmp/catalog-render.log
+
+      - name: Publish complete catalog diagnostics
+        if: ${{ always() }}
+        run: |
+          python3 - <<'PY'
+          from pathlib import Path
+          for name in ('catalog-test', 'catalog-render'):
+              log = Path('/tmp') / (name + '.log')
+              if log.exists():
+                  text = log.read_text(errors='replace')[-3000:]
+                  text = text.replace('%', '%25').replace('\r', '%0D').replace('\n', '%0A')
+                  print(f'::notice title={name}::{text}')
+          PY
+
+      - name: Review catalog butterfly_fold
+        if: ${{ !cancelled() }}
+        run: python3 tools/publish_rendered_capture.py butterfly_fold
+
+      - name: Review catalog push_idle
+        if: ${{ !cancelled() }}
+        run: python3 tools/publish_rendered_capture.py push_idle
+
+      - name: Review catalog talon_idle
+        if: ${{ !cancelled() }}
+        run: python3 tools/publish_rendered_capture.py talon_idle
+
+      - name: Review catalog awp_sc_gs_awp_gungnir
+        if: ${{ !cancelled() }}
+        run: python3 tools/publish_rendered_capture.py awp_sc_gs_awp_gungnir
+
+      - name: Review catalog m4a1_sc_cu_m4a1s_printstream
+        if: ${{ !cancelled() }}
+        run: python3 tools/publish_rendered_capture.py m4a1_sc_cu_m4a1s_printstream
+
+      - name: Review catalog ak47_sc_cu_ak_island_floral
+        if: ${{ !cancelled() }}
+        run: python3 tools/publish_rendered_capture.py ak47_sc_cu_ak_island_floral
+
+      - name: Save all rendered catalog views
+        if: ${{ !cancelled() }}
+        uses: actions/upload-artifact@v4
+        with:
+          name: complete-cosmetics-gameplay
+          path: /tmp/catalog-captures/
+          if-no-files-found: error
+          retention-days: 14
 
       - name: Smoke mission scene with native autoloads
         if: ${{ inputs.suite != 'world' }}
@@ -249,6 +318,8 @@ jobs:
       contents: write
     steps:
       - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
       - name: Install Godot and PC export templates
         run: |
           curl -fL --retry 3 -o /tmp/godot.zip https://github.com/godotengine/godot-builds/releases/download/4.3-stable/Godot_v4.3-stable_linux.x86_64.zip
@@ -314,6 +385,8 @@ jobs:
     timeout-minutes: 20
     steps:
       - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
       - name: Install Godot and OpenGL display
         run: |
           curl -fL --retry 3 -o /tmp/godot.zip https://github.com/godotengine/godot-builds/releases/download/4.3-stable/Godot_v4.3-stable_linux.x86_64.zip

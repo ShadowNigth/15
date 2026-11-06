@@ -32,3 +32,26 @@ No upstream C# gameplay code, BF1/EA/DICE audio or other resource packs are incl
 by this knife conversion. Existing game assets retain their original provenance
 and rights; see the project README. This is an unofficial fan project, not a Valve
 product or an assertion that cross-game redistribution is authorized.
+
+## Complete shipped catalog expansion
+
+The game additionally includes all 22 knife models shipped at the pinned source
+revision (plus the original archi Kukri), all 20 shipped painted knife finishes,
+22 matching factory finishes, and all 44 shipped gun finishes. Existing 120
+BDS/CS:GO Ports finishes and their accepted UV placement are preserved.
+
+Original arm, glove and hand animation tracks are retained. Folding knives append
+source-derived mechanical blade/hinge tracks to those clips: this is not a claim
+of complete native CS2 hand choreography. Shadow Daggers bind one blade to each
+first-person hand; third-person/floor presentation uses the right-hand dagger.
+
+Legacy gun artwork is adapted through the existing `nwm1-nearest-surface-v5`
+pipeline with bone boundaries and original hardware protection. Current-HD art
+keeps its native UV placement. Details/hashes are recorded in
+`data/shipped_cs2_uv_report.json`. Knife UVs always use their matching geometry;
+materials use the finish's own normal/ORM maps. Subordinate PBR chrome leaves
+base-colour artwork unmodified; it does not whiten or recolour the finishes.
+
+This catalog is the resources actually shipped by that repository, NOT every
+Valve skin, random seed, wear state, StatTrak variation or Source 2 compositor.
+The third-party rights caveats above continue to apply.

@@ -137,3 +137,19 @@ procedencia: [avisos de recursos](docs/KNIFE_ASSET_NOTICES.md).
 
 Las compilaciones PC de Releases incluyen ejecutable y `.pck`: extraer todo el
 ZIP y mantener ambos archivos juntos. No requieren instalar Godot.
+
+### Catálogo completo de cuchillos y acabados
+
+**Create Game → Knife model** y el Arsenal 3D ofrecen los **22 cuchillos del
+repositorio fuente**, además del Kukri original. El selector **Weapon finish**
+se adapta al cuchillo seleccionado, conserva una elección independiente por
+modelo y ofrece sus acabados de fábrica y pintados compatibles: **22 de fábrica
++ 20 pintados**. Las armas conservan las **120 skins BDS** anteriores y añaden
+los **44 acabados de armas** disponibles en el mismo catálogo fuente.
+
+El chrome PBR de los cuchillos es discreto y queda subordinado a la textura;
+normal/ORM cambian junto al acabado, sin alterar brazos ni guantes. Los plegables
+incluyen articulación mecánica de hojas/bisagras, conservando las animaciones de
+brazos existentes. No se afirma reproducir toda la coreografía de manos de CS2.
+Los Shadow Daggers tienen geometría separada para ambas manos en primera persona.
+Se conserva el daño, velocidad, ranura y economía del cuchillo clásico.

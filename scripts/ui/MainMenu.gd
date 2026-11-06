@@ -601,12 +601,17 @@ func _populate_viewer_skin_options(wid: String) -> void:
 	_skin_opt.disabled = options.is_empty()
 	var original := String(GameData.weapon_skins.get("default", "original"))
 	var original_index := _skin_opt.item_count
-	_skin_opt.add_item("Original HD" if not options.is_empty() else "Original HD — no curated finishes")
+	var default_label := "Original HD" if not options.is_empty() else "Original HD — no curated finishes"
+	if wid == "knife" and GameData.selected_knife_id != "original":
+		for raw in GameData.get_knife_options():
+			if String((raw as Dictionary)["id"]) == GameData.selected_knife_id:
+				default_label = "Default — " + String((raw as Dictionary).get("default_finish", "Factory"))
+	_skin_opt.add_item(default_label)
 	_skin_opt.set_item_metadata(original_index, original)
 	for raw in options:
 		var option := raw as Dictionary
 		var index := _skin_opt.item_count
-		_skin_opt.add_item(String(option.get("finish", option.get("name", "Weapon Finish"))))
+		_skin_opt.add_item(String(option.get("menu_label", option.get("finish", option.get("name", "Weapon Finish")))))
 		_skin_opt.set_item_metadata(index, String(option.get("id", "")))
 	var selected := GameData.get_selected_weapon_skin_id(wid)
 	for index in range(_skin_opt.item_count):

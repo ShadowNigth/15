@@ -400,7 +400,8 @@ func _test_hd_materials() -> void:
 
 func _test_weapon_skins() -> void:
 	var catalog: Dictionary = GameData.weapon_skins.get("weapons", {})
-	_expect(catalog.size() == 20, "Authentic skin catalog covers 20 verified weapon families")
+	_expect(catalog.size() == 57, "Expanded catalog covers 35 gun families and 22 knife models")
+	var curated_families := 0
 	var previous: Dictionary = GameData.selected_weapon_skins.duplicate(true)
 	GameData.selected_weapon_skins.clear()
 	var total_finishes := 0
@@ -414,8 +415,16 @@ func _test_weapon_skins() -> void:
 		"Authentic finish names are pinned to reviewed official game metadata")
 	for raw_wid in catalog:
 		var wid := String(raw_wid)
+		if wid.begins_with("knife_"):
+			continue
 		var entry: Dictionary = catalog[wid]
-		var options: Array = entry.get("options", [])
+		var options: Array = []
+		for raw in entry.get("options", []):
+			if not String((raw as Dictionary).get("id", "")).begins_with("sc_"):
+				options.append(raw)
+		if options.is_empty():
+			continue
+		curated_families += 1
 		_expect(options.size() == 6, "%s exposes six identified authentic finishes" % wid)
 		_expect(GameData.get_selected_weapon_skin_id(wid) == "original", "%s defaults to Original HD" % wid)
 		for raw_option in options:
@@ -493,6 +502,7 @@ func _test_weapon_skins() -> void:
 				and restored.albedo_texture != selected_texture,
 				"%s/%s restores the exact original HD albedo through the cache" % [wid, material_name])
 		instance.free()
+	_expect(curated_families == 20, "All 20 original BDS families remain intact")
 	_expect(total_finishes == 120, "All 120 authentic weapon finishes are cataloged")
 	_expect(reprojected_finishes == 90 and native_finishes == 30 \
 		and reprojected_finishes + native_finishes == total_finishes,

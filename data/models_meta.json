@@ -9560,5 +9560,1012 @@
     "vertices": 13882,
     "source_commit": "1eb8067fd0b7214df5bccf3ac3807fbaa3aee70d",
     "animation_source": "existing ShadowNigth/archi v_knife_kukri; retained without modification"
+  },
+  "weapons/v_knife_bowie": {
+    "sequences": [
+      "draw",
+      "idle",
+      "slash1",
+      "slash2",
+      "midslash1",
+      "midslash2",
+      "stab_miss",
+      "stab",
+      "inspect"
+    ],
+    "seq_durations": {
+      "draw": 0.8,
+      "idle": 1.6,
+      "slash1": 0.933,
+      "slash2": 0.933,
+      "midslash1": 0.933,
+      "midslash2": 0.933,
+      "stab_miss": 0.9,
+      "stab": 0.9,
+      "inspect": 6.033
+    },
+    "seq_events": {},
+    "bones": 40,
+    "offset": [
+      0.0,
+      0.0,
+      0.0625
+    ],
+    "source": "zh667/ScCsgoKnives",
+    "source_model": "bowie",
+    "materials": [
+      "sc_cs2_bowie",
+      "ct_base_glove.bmp",
+      "ct_arms.bmp"
+    ],
+    "vertices": 25813,
+    "world": {
+      "source_model": "w_knife_kukri",
+      "reference": "knife",
+      "p_fit": {
+        "residual_m": 0.01124,
+        "deg_from_seed": 0.14
+      },
+      "w_fit": {
+        "residual_m": 0.01124,
+        "deg_from_seed": 0.14
+      }
+    },
+    "source_commit": "1eb8067fd0b7214df5bccf3ac3807fbaa3aee70d",
+    "animation_source": "original archi arms; source mechanical folding tracks appended"
+  },
+  "weapons/v_knife_butterfly": {
+    "sequences": [
+      "draw",
+      "idle",
+      "slash1",
+      "slash2",
+      "midslash1",
+      "midslash2",
+      "stab_miss",
+      "stab",
+      "inspect"
+    ],
+    "seq_durations": {
+      "draw": 0.8,
+      "idle": 1.6,
+      "slash1": 0.933,
+      "slash2": 0.933,
+      "midslash1": 0.933,
+      "midslash2": 0.933,
+      "stab_miss": 0.9,
+      "stab": 0.9,
+      "inspect": 6.033
+    },
+    "seq_events": {},
+    "bones": 40,
+    "offset": [
+      0.0,
+      0.0,
+      0.0625
+    ],
+    "source": "zh667/ScCsgoKnives",
+    "source_model": "butterfly",
+    "materials": [
+      "sc_cs2_butterfly",
+      "ct_base_glove.bmp",
+      "ct_arms.bmp"
+    ],
+    "vertices": 22065,
+    "world": {
+      "source_model": "w_knife_kukri",
+      "reference": "knife",
+      "p_fit": {
+        "residual_m": 0.01124,
+        "deg_from_seed": 0.14
+      },
+      "w_fit": {
+        "residual_m": 0.01124,
+        "deg_from_seed": 0.14
+      }
+    },
+    "source_commit": "1eb8067fd0b7214df5bccf3ac3807fbaa3aee70d",
+    "animation_source": "original archi arms; source mechanical folding tracks appended"
+  },
+  "weapons/v_knife_canis": {
+    "sequences": [
+      "draw",
+      "idle",
+      "slash1",
+      "slash2",
+      "midslash1",
+      "midslash2",
+      "stab_miss",
+      "stab",
+      "inspect"
+    ],
+    "seq_durations": {
+      "draw": 0.8,
+      "idle": 1.6,
+      "slash1": 0.933,
+      "slash2": 0.933,
+      "midslash1": 0.933,
+      "midslash2": 0.933,
+      "stab_miss": 0.9,
+      "stab": 0.9,
+      "inspect": 6.033
+    },
+    "seq_events": {},
+    "bones": 40,
+    "offset": [
+      0.0,
+      0.0,
+      0.0625
+    ],
+    "source": "zh667/ScCsgoKnives",
+    "source_model": "canis",
+    "materials": [
+      "sc_cs2_canis",
+      "ct_base_glove.bmp",
+      "ct_arms.bmp"
+    ],
+    "vertices": 17474,
+    "world": {
+      "source_model": "w_knife_kukri",
+      "reference": "knife",
+      "p_fit": {
+        "residual_m": 0.01124,
+        "deg_from_seed": 0.14
+      },
+      "w_fit": {
+        "residual_m": 0.01124,
+        "deg_from_seed": 0.14
+      }
+    },
+    "source_commit": "1eb8067fd0b7214df5bccf3ac3807fbaa3aee70d",
+    "animation_source": "original archi arms; source mechanical folding tracks appended"
+  },
+  "weapons/v_knife_cord": {
+    "sequences": [
+      "draw",
+      "idle",
+      "slash1",
+      "slash2",
+      "midslash1",
+      "midslash2",
+      "stab_miss",
+      "stab",
+      "inspect"
+    ],
+    "seq_durations": {
+      "draw": 0.8,
+      "idle": 1.6,
+      "slash1": 0.933,
+      "slash2": 0.933,
+      "midslash1": 0.933,
+      "midslash2": 0.933,
+      "stab_miss": 0.9,
+      "stab": 0.9,
+      "inspect": 6.033
+    },
+    "seq_events": {},
+    "bones": 40,
+    "offset": [
+      0.0,
+      0.0,
+      0.0625
+    ],
+    "source": "zh667/ScCsgoKnives",
+    "source_model": "cord",
+    "materials": [
+      "sc_cs2_cord",
+      "ct_base_glove.bmp",
+      "ct_arms.bmp"
+    ],
+    "vertices": 15549,
+    "world": {
+      "source_model": "w_knife_kukri",
+      "reference": "knife",
+      "p_fit": {
+        "residual_m": 0.01124,
+        "deg_from_seed": 0.14
+      },
+      "w_fit": {
+        "residual_m": 0.01124,
+        "deg_from_seed": 0.14
+      }
+    },
+    "source_commit": "1eb8067fd0b7214df5bccf3ac3807fbaa3aee70d",
+    "animation_source": "original archi arms; source mechanical folding tracks appended"
+  },
+  "weapons/v_knife_css": {
+    "sequences": [
+      "draw",
+      "idle",
+      "slash1",
+      "slash2",
+      "midslash1",
+      "midslash2",
+      "stab_miss",
+      "stab",
+      "inspect"
+    ],
+    "seq_durations": {
+      "draw": 0.8,
+      "idle": 1.6,
+      "slash1": 0.933,
+      "slash2": 0.933,
+      "midslash1": 0.933,
+      "midslash2": 0.933,
+      "stab_miss": 0.9,
+      "stab": 0.9,
+      "inspect": 6.033
+    },
+    "seq_events": {},
+    "bones": 40,
+    "offset": [
+      0.0,
+      0.0,
+      0.0625
+    ],
+    "source": "zh667/ScCsgoKnives",
+    "source_model": "css",
+    "materials": [
+      "sc_cs2_css",
+      "ct_base_glove.bmp",
+      "ct_arms.bmp"
+    ],
+    "vertices": 12908,
+    "world": {
+      "source_model": "w_knife_kukri",
+      "reference": "knife",
+      "p_fit": {
+        "residual_m": 0.01124,
+        "deg_from_seed": 0.14
+      },
+      "w_fit": {
+        "residual_m": 0.01124,
+        "deg_from_seed": 0.14
+      }
+    },
+    "source_commit": "1eb8067fd0b7214df5bccf3ac3807fbaa3aee70d",
+    "animation_source": "original archi arms; source mechanical folding tracks appended"
+  },
+  "weapons/v_knife_default_ct": {
+    "sequences": [
+      "draw",
+      "idle",
+      "slash1",
+      "slash2",
+      "midslash1",
+      "midslash2",
+      "stab_miss",
+      "stab",
+      "inspect"
+    ],
+    "seq_durations": {
+      "draw": 0.8,
+      "idle": 1.6,
+      "slash1": 0.933,
+      "slash2": 0.933,
+      "midslash1": 0.933,
+      "midslash2": 0.933,
+      "stab_miss": 0.9,
+      "stab": 0.9,
+      "inspect": 6.033
+    },
+    "seq_events": {},
+    "bones": 40,
+    "offset": [
+      0.0,
+      0.0,
+      0.0625
+    ],
+    "source": "zh667/ScCsgoKnives",
+    "source_model": "default_ct",
+    "materials": [
+      "sc_cs2_default_ct",
+      "ct_base_glove.bmp",
+      "ct_arms.bmp"
+    ],
+    "vertices": 16484,
+    "world": {
+      "source_model": "w_knife_kukri",
+      "reference": "knife",
+      "p_fit": {
+        "residual_m": 0.01124,
+        "deg_from_seed": 0.14
+      },
+      "w_fit": {
+        "residual_m": 0.01124,
+        "deg_from_seed": 0.14
+      }
+    },
+    "source_commit": "1eb8067fd0b7214df5bccf3ac3807fbaa3aee70d",
+    "animation_source": "original archi arms; source mechanical folding tracks appended"
+  },
+  "weapons/v_knife_default_t": {
+    "sequences": [
+      "draw",
+      "idle",
+      "slash1",
+      "slash2",
+      "midslash1",
+      "midslash2",
+      "stab_miss",
+      "stab",
+      "inspect"
+    ],
+    "seq_durations": {
+      "draw": 0.8,
+      "idle": 1.6,
+      "slash1": 0.933,
+      "slash2": 0.933,
+      "midslash1": 0.933,
+      "midslash2": 0.933,
+      "stab_miss": 0.9,
+      "stab": 0.9,
+      "inspect": 6.033
+    },
+    "seq_events": {},
+    "bones": 40,
+    "offset": [
+      0.0,
+      0.0,
+      0.0625
+    ],
+    "source": "zh667/ScCsgoKnives",
+    "source_model": "default_t",
+    "materials": [
+      "sc_cs2_default_t",
+      "ct_base_glove.bmp",
+      "ct_arms.bmp"
+    ],
+    "vertices": 13514,
+    "world": {
+      "source_model": "w_knife_kukri",
+      "reference": "knife",
+      "p_fit": {
+        "residual_m": 0.01124,
+        "deg_from_seed": 0.14
+      },
+      "w_fit": {
+        "residual_m": 0.01124,
+        "deg_from_seed": 0.14
+      }
+    },
+    "source_commit": "1eb8067fd0b7214df5bccf3ac3807fbaa3aee70d",
+    "animation_source": "original archi arms; source mechanical folding tracks appended"
+  },
+  "weapons/v_knife_falchion": {
+    "sequences": [
+      "draw",
+      "idle",
+      "slash1",
+      "slash2",
+      "midslash1",
+      "midslash2",
+      "stab_miss",
+      "stab",
+      "inspect"
+    ],
+    "seq_durations": {
+      "draw": 0.8,
+      "idle": 1.6,
+      "slash1": 0.933,
+      "slash2": 0.933,
+      "midslash1": 0.933,
+      "midslash2": 0.933,
+      "stab_miss": 0.9,
+      "stab": 0.9,
+      "inspect": 6.033
+    },
+    "seq_events": {},
+    "bones": 40,
+    "offset": [
+      0.0,
+      0.0,
+      0.0625
+    ],
+    "source": "zh667/ScCsgoKnives",
+    "source_model": "falchion",
+    "materials": [
+      "sc_cs2_falchion",
+      "ct_base_glove.bmp",
+      "ct_arms.bmp"
+    ],
+    "vertices": 20646,
+    "world": {
+      "source_model": "w_knife_kukri",
+      "reference": "knife",
+      "p_fit": {
+        "residual_m": 0.01124,
+        "deg_from_seed": 0.14
+      },
+      "w_fit": {
+        "residual_m": 0.01124,
+        "deg_from_seed": 0.14
+      }
+    },
+    "source_commit": "1eb8067fd0b7214df5bccf3ac3807fbaa3aee70d",
+    "animation_source": "original archi arms; source mechanical folding tracks appended"
+  },
+  "weapons/v_knife_flip": {
+    "sequences": [
+      "draw",
+      "idle",
+      "slash1",
+      "slash2",
+      "midslash1",
+      "midslash2",
+      "stab_miss",
+      "stab",
+      "inspect"
+    ],
+    "seq_durations": {
+      "draw": 0.8,
+      "idle": 1.6,
+      "slash1": 0.933,
+      "slash2": 0.933,
+      "midslash1": 0.933,
+      "midslash2": 0.933,
+      "stab_miss": 0.9,
+      "stab": 0.9,
+      "inspect": 6.033
+    },
+    "seq_events": {},
+    "bones": 40,
+    "offset": [
+      0.0,
+      0.0,
+      0.0625
+    ],
+    "source": "zh667/ScCsgoKnives",
+    "source_model": "flip",
+    "materials": [
+      "sc_cs2_flip",
+      "ct_base_glove.bmp",
+      "ct_arms.bmp"
+    ],
+    "vertices": 14813,
+    "world": {
+      "source_model": "w_knife_kukri",
+      "reference": "knife",
+      "p_fit": {
+        "residual_m": 0.01124,
+        "deg_from_seed": 0.14
+      },
+      "w_fit": {
+        "residual_m": 0.01124,
+        "deg_from_seed": 0.14
+      }
+    },
+    "source_commit": "1eb8067fd0b7214df5bccf3ac3807fbaa3aee70d",
+    "animation_source": "original archi arms; source mechanical folding tracks appended"
+  },
+  "weapons/v_knife_gut": {
+    "sequences": [
+      "draw",
+      "idle",
+      "slash1",
+      "slash2",
+      "midslash1",
+      "midslash2",
+      "stab_miss",
+      "stab",
+      "inspect"
+    ],
+    "seq_durations": {
+      "draw": 0.8,
+      "idle": 1.6,
+      "slash1": 0.933,
+      "slash2": 0.933,
+      "midslash1": 0.933,
+      "midslash2": 0.933,
+      "stab_miss": 0.9,
+      "stab": 0.9,
+      "inspect": 6.033
+    },
+    "seq_events": {},
+    "bones": 40,
+    "offset": [
+      0.0,
+      0.0,
+      0.0625
+    ],
+    "source": "zh667/ScCsgoKnives",
+    "source_model": "gut",
+    "materials": [
+      "sc_cs2_gut",
+      "ct_base_glove.bmp",
+      "ct_arms.bmp"
+    ],
+    "vertices": 19558,
+    "world": {
+      "source_model": "w_knife_kukri",
+      "reference": "knife",
+      "p_fit": {
+        "residual_m": 0.01124,
+        "deg_from_seed": 0.14
+      },
+      "w_fit": {
+        "residual_m": 0.01124,
+        "deg_from_seed": 0.14
+      }
+    },
+    "source_commit": "1eb8067fd0b7214df5bccf3ac3807fbaa3aee70d",
+    "animation_source": "original archi arms; source mechanical folding tracks appended"
+  },
+  "weapons/v_knife_kukri": {
+    "sequences": [
+      "draw",
+      "idle",
+      "slash1",
+      "slash2",
+      "midslash1",
+      "midslash2",
+      "stab_miss",
+      "stab",
+      "inspect"
+    ],
+    "seq_durations": {
+      "draw": 0.8,
+      "idle": 1.6,
+      "slash1": 0.933,
+      "slash2": 0.933,
+      "midslash1": 0.933,
+      "midslash2": 0.933,
+      "stab_miss": 0.9,
+      "stab": 0.9,
+      "inspect": 6.033
+    },
+    "seq_events": {},
+    "bones": 40,
+    "offset": [
+      0.0,
+      0.0,
+      0.0625
+    ],
+    "source": "zh667/ScCsgoKnives",
+    "source_model": "kukri",
+    "materials": [
+      "sc_cs2_kukri",
+      "ct_base_glove.bmp",
+      "ct_arms.bmp"
+    ],
+    "vertices": 17195,
+    "world": {
+      "source_model": "w_knife_kukri",
+      "reference": "knife",
+      "p_fit": {
+        "residual_m": 0.01124,
+        "deg_from_seed": 0.14
+      },
+      "w_fit": {
+        "residual_m": 0.01124,
+        "deg_from_seed": 0.14
+      }
+    },
+    "source_commit": "1eb8067fd0b7214df5bccf3ac3807fbaa3aee70d",
+    "animation_source": "original archi arms; source mechanical folding tracks appended"
+  },
+  "weapons/v_knife_navaja": {
+    "sequences": [
+      "draw",
+      "idle",
+      "slash1",
+      "slash2",
+      "midslash1",
+      "midslash2",
+      "stab_miss",
+      "stab",
+      "inspect"
+    ],
+    "seq_durations": {
+      "draw": 0.8,
+      "idle": 1.6,
+      "slash1": 0.933,
+      "slash2": 0.933,
+      "midslash1": 0.933,
+      "midslash2": 0.933,
+      "stab_miss": 0.9,
+      "stab": 0.9,
+      "inspect": 6.033
+    },
+    "seq_events": {},
+    "bones": 40,
+    "offset": [
+      0.0,
+      0.0,
+      0.0625
+    ],
+    "source": "zh667/ScCsgoKnives",
+    "source_model": "navaja",
+    "materials": [
+      "sc_cs2_navaja",
+      "ct_base_glove.bmp",
+      "ct_arms.bmp"
+    ],
+    "vertices": 17145,
+    "world": {
+      "source_model": "w_knife_kukri",
+      "reference": "knife",
+      "p_fit": {
+        "residual_m": 0.01124,
+        "deg_from_seed": 0.14
+      },
+      "w_fit": {
+        "residual_m": 0.01124,
+        "deg_from_seed": 0.14
+      }
+    },
+    "source_commit": "1eb8067fd0b7214df5bccf3ac3807fbaa3aee70d",
+    "animation_source": "original archi arms; source mechanical folding tracks appended"
+  },
+  "weapons/v_knife_outdoor": {
+    "sequences": [
+      "draw",
+      "idle",
+      "slash1",
+      "slash2",
+      "midslash1",
+      "midslash2",
+      "stab_miss",
+      "stab",
+      "inspect"
+    ],
+    "seq_durations": {
+      "draw": 0.8,
+      "idle": 1.6,
+      "slash1": 0.933,
+      "slash2": 0.933,
+      "midslash1": 0.933,
+      "midslash2": 0.933,
+      "stab_miss": 0.9,
+      "stab": 0.9,
+      "inspect": 6.033
+    },
+    "seq_events": {},
+    "bones": 40,
+    "offset": [
+      0.0,
+      0.0,
+      0.0625
+    ],
+    "source": "zh667/ScCsgoKnives",
+    "source_model": "outdoor",
+    "materials": [
+      "sc_cs2_outdoor",
+      "ct_base_glove.bmp",
+      "ct_arms.bmp"
+    ],
+    "vertices": 23277,
+    "world": {
+      "source_model": "w_knife_kukri",
+      "reference": "knife",
+      "p_fit": {
+        "residual_m": 0.01124,
+        "deg_from_seed": 0.14
+      },
+      "w_fit": {
+        "residual_m": 0.01124,
+        "deg_from_seed": 0.14
+      }
+    },
+    "source_commit": "1eb8067fd0b7214df5bccf3ac3807fbaa3aee70d",
+    "animation_source": "original archi arms; source mechanical folding tracks appended"
+  },
+  "weapons/v_knife_push": {
+    "sequences": [
+      "draw",
+      "idle",
+      "slash1",
+      "slash2",
+      "midslash1",
+      "midslash2",
+      "stab_miss",
+      "stab",
+      "inspect"
+    ],
+    "seq_durations": {
+      "draw": 0.8,
+      "idle": 1.6,
+      "slash1": 0.933,
+      "slash2": 0.933,
+      "midslash1": 0.933,
+      "midslash2": 0.933,
+      "stab_miss": 0.9,
+      "stab": 0.9,
+      "inspect": 6.033
+    },
+    "seq_events": {},
+    "bones": 40,
+    "offset": [
+      0.0,
+      0.0,
+      0.0625
+    ],
+    "source": "zh667/ScCsgoKnives",
+    "source_model": "push",
+    "materials": [
+      "sc_cs2_push",
+      "ct_base_glove.bmp",
+      "ct_arms.bmp"
+    ],
+    "vertices": 18494,
+    "world": {
+      "source_model": "w_knife_kukri",
+      "reference": "knife",
+      "p_fit": {
+        "residual_m": 0.01124,
+        "deg_from_seed": 0.14
+      },
+      "w_fit": {
+        "residual_m": 0.01124,
+        "deg_from_seed": 0.14
+      }
+    },
+    "source_commit": "1eb8067fd0b7214df5bccf3ac3807fbaa3aee70d",
+    "animation_source": "original archi arms; source mechanical folding tracks appended"
+  },
+  "weapons/v_knife_skeleton": {
+    "sequences": [
+      "draw",
+      "idle",
+      "slash1",
+      "slash2",
+      "midslash1",
+      "midslash2",
+      "stab_miss",
+      "stab",
+      "inspect"
+    ],
+    "seq_durations": {
+      "draw": 0.8,
+      "idle": 1.6,
+      "slash1": 0.933,
+      "slash2": 0.933,
+      "midslash1": 0.933,
+      "midslash2": 0.933,
+      "stab_miss": 0.9,
+      "stab": 0.9,
+      "inspect": 6.033
+    },
+    "seq_events": {},
+    "bones": 40,
+    "offset": [
+      0.0,
+      0.0,
+      0.0625
+    ],
+    "source": "zh667/ScCsgoKnives",
+    "source_model": "skeleton",
+    "materials": [
+      "sc_cs2_skeleton",
+      "ct_base_glove.bmp",
+      "ct_arms.bmp"
+    ],
+    "vertices": 15285,
+    "world": {
+      "source_model": "w_knife_kukri",
+      "reference": "knife",
+      "p_fit": {
+        "residual_m": 0.01124,
+        "deg_from_seed": 0.14
+      },
+      "w_fit": {
+        "residual_m": 0.01124,
+        "deg_from_seed": 0.14
+      }
+    },
+    "source_commit": "1eb8067fd0b7214df5bccf3ac3807fbaa3aee70d",
+    "animation_source": "original archi arms; source mechanical folding tracks appended"
+  },
+  "weapons/v_knife_stiletto": {
+    "sequences": [
+      "draw",
+      "idle",
+      "slash1",
+      "slash2",
+      "midslash1",
+      "midslash2",
+      "stab_miss",
+      "stab",
+      "inspect"
+    ],
+    "seq_durations": {
+      "draw": 0.8,
+      "idle": 1.6,
+      "slash1": 0.933,
+      "slash2": 0.933,
+      "midslash1": 0.933,
+      "midslash2": 0.933,
+      "stab_miss": 0.9,
+      "stab": 0.9,
+      "inspect": 6.033
+    },
+    "seq_events": {},
+    "bones": 40,
+    "offset": [
+      0.0,
+      0.0,
+      0.0625
+    ],
+    "source": "zh667/ScCsgoKnives",
+    "source_model": "stiletto",
+    "materials": [
+      "sc_cs2_stiletto",
+      "ct_base_glove.bmp",
+      "ct_arms.bmp"
+    ],
+    "vertices": 18268,
+    "world": {
+      "source_model": "w_knife_kukri",
+      "reference": "knife",
+      "p_fit": {
+        "residual_m": 0.01124,
+        "deg_from_seed": 0.14
+      },
+      "w_fit": {
+        "residual_m": 0.01124,
+        "deg_from_seed": 0.14
+      }
+    },
+    "source_commit": "1eb8067fd0b7214df5bccf3ac3807fbaa3aee70d",
+    "animation_source": "original archi arms; source mechanical folding tracks appended"
+  },
+  "weapons/v_knife_tactical": {
+    "sequences": [
+      "draw",
+      "idle",
+      "slash1",
+      "slash2",
+      "midslash1",
+      "midslash2",
+      "stab_miss",
+      "stab",
+      "inspect"
+    ],
+    "seq_durations": {
+      "draw": 0.8,
+      "idle": 1.6,
+      "slash1": 0.933,
+      "slash2": 0.933,
+      "midslash1": 0.933,
+      "midslash2": 0.933,
+      "stab_miss": 0.9,
+      "stab": 0.9,
+      "inspect": 6.033
+    },
+    "seq_events": {},
+    "bones": 40,
+    "offset": [
+      0.0,
+      0.0,
+      0.0625
+    ],
+    "source": "zh667/ScCsgoKnives",
+    "source_model": "tactical",
+    "materials": [
+      "sc_cs2_tactical",
+      "ct_base_glove.bmp",
+      "ct_arms.bmp"
+    ],
+    "vertices": 24637,
+    "world": {
+      "source_model": "w_knife_kukri",
+      "reference": "knife",
+      "p_fit": {
+        "residual_m": 0.01124,
+        "deg_from_seed": 0.14
+      },
+      "w_fit": {
+        "residual_m": 0.01124,
+        "deg_from_seed": 0.14
+      }
+    },
+    "source_commit": "1eb8067fd0b7214df5bccf3ac3807fbaa3aee70d",
+    "animation_source": "original archi arms; source mechanical folding tracks appended"
+  },
+  "weapons/v_knife_talon": {
+    "sequences": [
+      "draw",
+      "idle",
+      "slash1",
+      "slash2",
+      "midslash1",
+      "midslash2",
+      "stab_miss",
+      "stab",
+      "inspect"
+    ],
+    "seq_durations": {
+      "draw": 0.8,
+      "idle": 1.6,
+      "slash1": 0.933,
+      "slash2": 0.933,
+      "midslash1": 0.933,
+      "midslash2": 0.933,
+      "stab_miss": 0.9,
+      "stab": 0.9,
+      "inspect": 6.033
+    },
+    "seq_events": {},
+    "bones": 40,
+    "offset": [
+      0.0,
+      0.0,
+      0.0625
+    ],
+    "source": "zh667/ScCsgoKnives",
+    "source_model": "talon",
+    "materials": [
+      "sc_cs2_talon",
+      "ct_base_glove.bmp",
+      "ct_arms.bmp"
+    ],
+    "vertices": 18063,
+    "world": {
+      "source_model": "w_knife_kukri",
+      "reference": "knife",
+      "p_fit": {
+        "residual_m": 0.01124,
+        "deg_from_seed": 0.14
+      },
+      "w_fit": {
+        "residual_m": 0.01124,
+        "deg_from_seed": 0.14
+      }
+    },
+    "source_commit": "1eb8067fd0b7214df5bccf3ac3807fbaa3aee70d",
+    "animation_source": "original archi arms; source mechanical folding tracks appended"
+  },
+  "weapons/v_knife_ursus": {
+    "sequences": [
+      "draw",
+      "idle",
+      "slash1",
+      "slash2",
+      "midslash1",
+      "midslash2",
+      "stab_miss",
+      "stab",
+      "inspect"
+    ],
+    "seq_durations": {
+      "draw": 0.8,
+      "idle": 1.6,
+      "slash1": 0.933,
+      "slash2": 0.933,
+      "midslash1": 0.933,
+      "midslash2": 0.933,
+      "stab_miss": 0.9,
+      "stab": 0.9,
+      "inspect": 6.033
+    },
+    "seq_events": {},
+    "bones": 40,
+    "offset": [
+      0.0,
+      0.0,
+      0.0625
+    ],
+    "source": "zh667/ScCsgoKnives",
+    "source_model": "ursus",
+    "materials": [
+      "sc_cs2_ursus",
+      "ct_base_glove.bmp",
+      "ct_arms.bmp"
+    ],
+    "vertices": 15464,
+    "world": {
+      "source_model": "w_knife_kukri",
+      "reference": "knife",
+      "p_fit": {
+        "residual_m": 0.01124,
+        "deg_from_seed": 0.14
+      },
+      "w_fit": {
+        "residual_m": 0.01124,
+        "deg_from_seed": 0.14
+      }
+    },
+    "source_commit": "1eb8067fd0b7214df5bccf3ac3807fbaa3aee70d",
+    "animation_source": "original archi arms; source mechanical folding tracks appended"
   }
 }

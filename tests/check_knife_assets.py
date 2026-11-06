@@ -31,12 +31,22 @@ def main():
     folder = ROOT / 'assets/models/weapons'
     original, original_binary = glb(folder / 'v_knife.glb')
     catalog = json.loads((ROOT / 'data/knife_models.json').read_text())
-    assert len(catalog['options']) == 4
+    assert len(catalog['options']) == 23
     geometry_hashes = set()
     for option in catalog['options'][1:]:
         document, binary = glb(folder / (option['v_model'] + '.glb'))
-        for field in ('nodes', 'skins', 'animations'):
-            assert document[field] == original[field], (option['id'], field)
+        for index, old in enumerate(original['nodes']):
+            current = dict(document['nodes'][index])
+            if 'children' in old:
+                assert current.get('children', [])[:len(old['children'])] == old['children']
+                current['children'] = old['children']
+            assert current == old, (option['id'], index)
+        assert document['skins'][0]['joints'][:len(original['skins'][0]['joints'])] == original['skins'][0]['joints']
+        assert accessor(document, binary, document['skins'][0]['inverseBindMatrices'])[:len(original['skins'][0]['joints'])] == accessor(original, original_binary, original['skins'][0]['inverseBindMatrices'])
+        for old, new in zip(original['animations'], document['animations']):
+            assert new['name'] == old['name']
+            assert new['channels'][:len(old['channels'])] == old['channels']
+            assert new['samplers'][:len(old['samplers'])] == old['samplers']
         # Existing binary prefix includes every animation and original arm accessor.
         assert binary[:len(original_binary)] == original_binary
         assert document['meshes'][0]['primitives'][1:] == original['meshes'][0]['primitives'][1:]
@@ -47,8 +57,9 @@ def main():
         uv = accessor(document, binary, attributes['TEXCOORD_0'])
         joints = accessor(document, binary, attributes['JOINTS_0'])
         weights = accessor(document, binary, attributes['WEIGHTS_0'])
-        assert len(pos) == len(uv) == len(joints) == len(weights) > 2000
-        assert all(j[0] == 37 and w == (1, 0, 0, 0) for j, w in zip(joints, weights))
+        assert len(pos) == len(uv) == len(joints) == len(weights) > 1000
+        assert all(abs(sum(w) - 1) < 1e-5 for w in weights)
+        assert all(0 <= j < len(document['skins'][0]['joints']) for item in joints for j in item)
         assert all(0 <= i[0] < len(pos) for i in accessor(document, binary, primitive['indices']))
         geometry_hashes.add(hashlib.sha256(repr(pos).encode()).hexdigest())
         material = document['materials'][primitive['material']]
@@ -61,7 +72,7 @@ def main():
             assert len(accessor(world, world_binary, world_prim['attributes']['POSITION'])) == len(pos)
             assert accessor(world, world_binary, world_prim['attributes']['TEXCOORD_0']) == uv
         print('[KNIFE ASSETS]', option['name'], 'geometry/UV/material/world/arms/animation integrity PASS')
-    assert len(geometry_hashes) == 3, 'Three geometrically distinct knives, not recolors'
+    assert len(geometry_hashes) == 22, 'All 22 models have distinct geometry'
 
 
 if __name__ == '__main__':

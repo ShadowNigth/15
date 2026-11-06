@@ -9,25 +9,202 @@
       "w_model": "w_knife"
     },
     {
+      "id": "bayonet",
+      "name": "Bayonet",
+      "v_model": "v_knife_bayonet",
+      "p_model": "p_knife_bayonet",
+      "w_model": "w_knife_bayonet",
+      "model_name": "Bayonet",
+      "default_finish": "Ruby"
+    },
+    {
+      "id": "bowie",
+      "name": "Bowie Knife",
+      "model_name": "Bowie Knife",
+      "default_finish": "Factory",
+      "v_model": "v_knife_bowie",
+      "p_model": "p_knife_bowie",
+      "w_model": "w_knife_bowie"
+    },
+    {
+      "id": "butterfly",
+      "name": "Butterfly Knife",
+      "model_name": "Butterfly Knife",
+      "default_finish": "Factory",
+      "v_model": "v_knife_butterfly",
+      "p_model": "p_knife_butterfly",
+      "w_model": "w_knife_butterfly"
+    },
+    {
+      "id": "canis",
+      "name": "Survival Knife",
+      "model_name": "Survival Knife",
+      "default_finish": "Factory",
+      "v_model": "v_knife_canis",
+      "p_model": "p_knife_canis",
+      "w_model": "w_knife_canis"
+    },
+    {
+      "id": "cord",
+      "name": "Paracord Knife",
+      "model_name": "Paracord Knife",
+      "default_finish": "Factory",
+      "v_model": "v_knife_cord",
+      "p_model": "p_knife_cord",
+      "w_model": "w_knife_cord"
+    },
+    {
+      "id": "css",
+      "name": "Classic Knife",
+      "model_name": "Classic Knife",
+      "default_finish": "Factory",
+      "v_model": "v_knife_css",
+      "p_model": "p_knife_css",
+      "w_model": "w_knife_css"
+    },
+    {
+      "id": "default_ct",
+      "name": "Default CT Knife",
+      "model_name": "Default CT Knife",
+      "default_finish": "Factory",
+      "v_model": "v_knife_default_ct",
+      "p_model": "p_knife_default_ct",
+      "w_model": "w_knife_default_ct"
+    },
+    {
+      "id": "default_t",
+      "name": "Default T Knife",
+      "model_name": "Default T Knife",
+      "default_finish": "Factory",
+      "v_model": "v_knife_default_t",
+      "p_model": "p_knife_default_t",
+      "w_model": "w_knife_default_t"
+    },
+    {
+      "id": "falchion",
+      "name": "Falchion Knife",
+      "model_name": "Falchion Knife",
+      "default_finish": "Factory",
+      "v_model": "v_knife_falchion",
+      "p_model": "p_knife_falchion",
+      "w_model": "w_knife_falchion"
+    },
+    {
+      "id": "flip",
+      "name": "Flip Knife",
+      "model_name": "Flip Knife",
+      "default_finish": "Factory",
+      "v_model": "v_knife_flip",
+      "p_model": "p_knife_flip",
+      "w_model": "w_knife_flip"
+    },
+    {
+      "id": "gut",
+      "name": "Gut Knife",
+      "model_name": "Gut Knife",
+      "default_finish": "Factory",
+      "v_model": "v_knife_gut",
+      "p_model": "p_knife_gut",
+      "w_model": "w_knife_gut"
+    },
+    {
       "id": "karambit",
-      "name": "Karambit | Gamma Doppler Phase 4",
+      "name": "Karambit",
       "v_model": "v_knife_karambit",
       "p_model": "p_knife_karambit",
-      "w_model": "w_knife_karambit"
+      "w_model": "w_knife_karambit",
+      "model_name": "Karambit",
+      "default_finish": "Gamma Doppler Phase 4"
+    },
+    {
+      "id": "kukri",
+      "name": "CS2 Kukri",
+      "model_name": "CS2 Kukri",
+      "default_finish": "Factory",
+      "v_model": "v_knife_kukri",
+      "p_model": "p_knife_kukri",
+      "w_model": "w_knife_kukri"
     },
     {
       "id": "m9",
-      "name": "M9 Bayonet | Gamma Doppler Phase 1",
+      "name": "M9 Bayonet",
       "v_model": "v_knife_m9",
       "p_model": "p_knife_m9",
-      "w_model": "w_knife_m9"
+      "w_model": "w_knife_m9",
+      "model_name": "M9 Bayonet",
+      "default_finish": "Gamma Doppler Phase 1"
     },
     {
-      "id": "bayonet",
-      "name": "Bayonet | Ruby",
-      "v_model": "v_knife_bayonet",
-      "p_model": "p_knife_bayonet",
-      "w_model": "w_knife_bayonet"
+      "id": "navaja",
+      "name": "Navaja Knife",
+      "model_name": "Navaja Knife",
+      "default_finish": "Factory",
+      "v_model": "v_knife_navaja",
+      "p_model": "p_knife_navaja",
+      "w_model": "w_knife_navaja"
+    },
+    {
+      "id": "outdoor",
+      "name": "Nomad Knife",
+      "model_name": "Nomad Knife",
+      "default_finish": "Factory",
+      "v_model": "v_knife_outdoor",
+      "p_model": "p_knife_outdoor",
+      "w_model": "w_knife_outdoor"
+    },
+    {
+      "id": "push",
+      "name": "Shadow Daggers",
+      "model_name": "Shadow Daggers",
+      "default_finish": "Factory",
+      "v_model": "v_knife_push",
+      "p_model": "p_knife_push",
+      "w_model": "w_knife_push"
+    },
+    {
+      "id": "skeleton",
+      "name": "Skeleton Knife",
+      "model_name": "Skeleton Knife",
+      "default_finish": "Factory",
+      "v_model": "v_knife_skeleton",
+      "p_model": "p_knife_skeleton",
+      "w_model": "w_knife_skeleton"
+    },
+    {
+      "id": "stiletto",
+      "name": "Stiletto Knife",
+      "model_name": "Stiletto Knife",
+      "default_finish": "Factory",
+      "v_model": "v_knife_stiletto",
+      "p_model": "p_knife_stiletto",
+      "w_model": "w_knife_stiletto"
+    },
+    {
+      "id": "tactical",
+      "name": "Huntsman Knife",
+      "model_name": "Huntsman Knife",
+      "default_finish": "Factory",
+      "v_model": "v_knife_tactical",
+      "p_model": "p_knife_tactical",
+      "w_model": "w_knife_tactical"
+    },
+    {
+      "id": "talon",
+      "name": "Talon Knife",
+      "model_name": "Talon Knife",
+      "default_finish": "Factory",
+      "v_model": "v_knife_talon",
+      "p_model": "p_knife_talon",
+      "w_model": "w_knife_talon"
+    },
+    {
+      "id": "ursus",
+      "name": "Ursus Knife",
+      "model_name": "Ursus Knife",
+      "default_finish": "Factory",
+      "v_model": "v_knife_ursus",
+      "p_model": "p_knife_ursus",
+      "w_model": "w_knife_ursus"
     }
   ],
   "provenance": {
@@ -89,5 +266,11 @@
         "grip_distance_m": 0.10468290341044954
       }
     }
+  },
+  "complete_catalog": {
+    "models": 22,
+    "painted_finishes": 20,
+    "factory_finishes": 22,
+    "source_commit": "1eb8067fd0b7214df5bccf3ac3807fbaa3aee70d"
   }
 }
