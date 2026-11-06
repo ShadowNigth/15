@@ -218,7 +218,7 @@ func _has_clear_move_line(to_pos: Vector3) -> bool:
 	var space := get_world_3d().direct_space_state
 	for height in [0.38, 1.02]:
 		for lateral in [Vector3.ZERO, side, -side]:
-			var offset := lateral + Vector3(0.0, float(height), 0.0)
+			var offset: Vector3 = lateral + Vector3(0.0, float(height), 0.0)
 			if _solid_between(space, global_position + offset, to_pos + offset):
 				return false
 	return true
