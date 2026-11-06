@@ -1955,7 +1955,11 @@ func _follow_navigation_path(delta: float) -> void:
 		var actor_h := CROUCH_HEIGHT if is_crouching else STAND_HEIGHT
 		var ladder_info: Dictionary = RoundManager.game_world.call("get_ladder_info", global_position, actor_h)
 		var ladder_top := float(ladder_info.get("top_y", global_position.y + 2.0))
-		near_ladder_top = global_position.y >= ladder_top - 0.85
+		var ladder_normal: Vector3 = ladder_info.get("normal", Vector3.ZERO)
+		var ladder_center: Vector3 = ladder_info.get("center", global_position)
+		# Only vault onto the platform behind the rungs after climbing. A level
+		# approach on the exposed side is an entry, not a top exit (OilRig).
+		near_ladder_top = global_position.y >= ladder_top - 0.85 and wp.y >= ladder_top - 0.40 and (nav.get_node_flags(_prev_node_idx) & BotNavigator.FLAG_LADDER) != 0 and (wp - ladder_center).dot(ladder_normal) < -0.20
 		if absf(signed_dy) < 0.35 and flat_d > 0.20 and not near_ladder_top:
 			bot_ladder_dir = 0.0
 		else:
