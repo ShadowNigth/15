@@ -1265,12 +1265,15 @@ func _update_as_squad_objective(nav: BotNavigator, gw: Node3D) -> bool:
 			else:
 				_vip_escort_direct_active = false
 				# Follow the leader rather than repeatedly restarting A* toward a
-				# moving offset. Keep a valid route until it completes or ordinary
-				# stuck recovery invalidates it; close formation is handled directly.
-				if _node_path.is_empty() or not _has_goal:
-					_plan_to_world_pos(nav, vip.global_position, false, BotNavigator.PATH_FAST)
-					if not _has_goal:
-						_plan_to_world_pos(nav, formation_pos, false, BotNavigator.PATH_SAFE)
+				# moving offset. Refresh only a changed VIP destination node at a
+				# ladder-safe cadence; close formation is handled directly.
+				var vip_goal_node := nav.get_nearest_node(vip.global_position, null, 6.5)
+				if vip_goal_node >= 0 and (_node_path.is_empty() or not _has_goal or (_vip_route_rethink <= 0.0 and vip_goal_node != _goal_node_idx)):
+					_plan_to_node(nav, vip_goal_node, false, BotNavigator.PATH_FAST)
+					_goal_pos = vip.global_position
+					_vip_route_rethink = 8.0
+				if not _has_goal:
+					_plan_to_world_pos(nav, formation_pos, false, BotNavigator.PATH_SAFE)
 			return true
 		_vip_escort_direct_active = false
 
