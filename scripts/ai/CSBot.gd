@@ -2059,7 +2059,10 @@ func _follow_navigation_path(delta: float) -> void:
 				velocity.z = raw_dir.z * 6.8
 
 	# Auto-crouch on YaPB FLAG_CROUCH nodes or low vents/ducts!
-	if (cur_flags & BotNavigator.FLAG_CROUCH) != 0 or (not on_ladder and _needs_crouch_clearance(move_dir)):
+	# An ascending capsule can also hit the edge of a ladder's roof opening.
+	# Probe with the real hull; retain the duck until this climb exits the brush.
+	var ladder_needs_duck := on_ladder and bot_ladder_dir > 0.1 and test_move(global_transform, Vector3.UP * 0.45)
+	if (cur_flags & BotNavigator.FLAG_CROUCH) != 0 or ladder_needs_duck or (not on_ladder and _needs_crouch_clearance(move_dir)):
 		_vent_crouch_timer = 0.35
 
 	# Pre-aiming along upcoming YaPB corridor or toward heard enemy sound
@@ -2135,7 +2138,7 @@ func _follow_navigation_path(delta: float) -> void:
 		want_jump = true
 
 	var crouch_air: bool = (_air_crouch_timer > 0.0 and not is_on_floor())
-	var want_crouch: bool = (_vent_crouch_timer > 0.0 and not on_ladder) or crouch_air
+	var want_crouch: bool = (_vent_crouch_timer > 0.0 and (not on_ladder or ladder_needs_duck)) or (on_ladder and is_crouching) or crouch_air
 	var approaching_ladder: bool = (cur_flags & BotNavigator.FLAG_LADDER) != 0 and not on_ladder and flat_d < 1.8
 	var want_silent_walk: bool = (approaching_ladder or (_stealth_walk_timer > 0.0 and _knife_rush_timer <= 0.0)) and not want_jump and not want_crouch
 	apply_goldsrc_movement(move_dir, want_jump, want_crouch, want_silent_walk, delta)

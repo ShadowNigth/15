@@ -292,7 +292,10 @@ func _physics_process(delta: float) -> void:
 		if dist > follow_stop:
 			_repath_timer -= delta
 			var direct_clear := dist < 7.0 and _has_clear_move_line(leader.global_position)
-			if (dist > 5.2 or not direct_clear) and _repath_timer <= 0.0 and is_instance_valid(RoundManager.game_world):
+			# Keep progress along a ramp/corridor. Rebuilding every half second
+			# can select the lower origin again while the follower is mid-edge.
+			var route_needs_refresh := _nav_path.is_empty() or _nav_path.back().distance_to(leader.global_position) > 5.2
+			if route_needs_refresh and (dist > 5.2 or not direct_clear) and _repath_timer <= 0.0 and is_instance_valid(RoundManager.game_world):
 				_repath_timer = 0.55
 				var nav = RoundManager.game_world.get("bot_navigator")
 				if nav != null and nav.has_method("find_path"):
