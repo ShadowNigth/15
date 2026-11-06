@@ -62,8 +62,8 @@ jobs:
           set -o pipefail
           timeout --signal=TERM --kill-after=5s 210s stdbuf -o0 -e0 godot --headless --path . --fixed-fps 60 res://tests/MissionObjectiveRegressionTest.tscn -- --scenario=oilrig 2>&1 | tee /tmp/oilrig-mission.log
 
-      - name: Publish failed mission diagnostics
-        if: ${{ failure() }}
+      - name: Publish mission diagnostics
+        if: ${{ always() && inputs.suite != 'world' }}
         run: |
           python3 - <<'PY'
           from pathlib import Path

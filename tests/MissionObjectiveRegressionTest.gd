@@ -43,6 +43,9 @@ func _make_world(map_name: String, bot_count: int) -> GameWorld:
 	if packed == null:
 		return null
 	var world := packed.instantiate() as GameWorld
+	_expect(world != null, "%s GameWorld root instantiates with its native script" % map_name)
+	if world == null:
+		return null
 	add_child(world)
 	world._on_player_team_chosen("T", "terror", false)
 	world.team_menu.close_menu(false)
