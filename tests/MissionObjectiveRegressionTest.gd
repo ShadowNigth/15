@@ -174,7 +174,9 @@ func _test_hostage_map(map_name: String, expected_hostages: int, bot_count: int,
 			if is_instance_valid(hostage.leader):
 				assigned[hostage.get_instance_id()] = true
 		if frames % 1800 == 0:
-			_progress("%s t=%ds rescued=%d/%d" % [map_name, frames / 60, RoundManager.hostages_rescued_this_round, hostages.size()])
+			# Keep the step's ten notice annotations available for final actor
+			# diagnostics; periodic counts remain in the raw native log.
+			print("[MISSION AI TEST] %s t=%ds rescued=%d/%d" % [map_name, frames / 60, RoundManager.hostages_rescued_this_round, hostages.size()])
 
 	for i in range(hostages.size()):
 		var hostage := hostages[i]
