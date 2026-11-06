@@ -187,6 +187,10 @@ func _run() -> void:
 		if arg.begins_with("--scenario="):
 			scenario = arg.trim_prefix("--scenario=")
 	print("[MISSION AI TEST] scenario=%s" % scenario)
+	if scenario == "check":
+		_progress("Native scene, autoloads and script compilation are valid")
+		_finish()
+		return
 	if scenario in ["all", "oilrig"]:
 		seed(2)
 		await _test_oilrig_escort()

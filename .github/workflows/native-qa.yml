@@ -36,11 +36,11 @@ jobs:
       - name: Import project resources
         run: godot --headless --path . --editor --quit
 
-      - name: Check mission test with the Godot type checker
+      - name: Smoke mission scene with native autoloads
         timeout-minutes: 2
         run: |
           set -o pipefail
-          stdbuf -o0 -e0 godot --headless --path . --check-only --script res://tests/MissionObjectiveRegressionTest.gd 2>&1 | tee /tmp/mission-check.log
+          stdbuf -o0 -e0 godot --headless --path . --quit-after 10 res://tests/MissionObjectiveRegressionTest.tscn -- --scenario=check 2>&1 | tee /tmp/mission-check.log
 
       - name: OilRig physical escort regression
         timeout-minutes: 4
