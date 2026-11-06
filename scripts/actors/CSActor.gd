@@ -843,7 +843,12 @@ func apply_goldsrc_movement(wish_dir_world: Vector3, want_jump: bool, want_crouc
 				if global_position.y >= top_y - 0.48:
 					velocity += (-n_ladder) * 4.4
 				else:
-					velocity += (-n_ladder) * 1.6
+					# Keep the capsule on the usable side of the rungs instead of
+					# pinning its shoulder against facade trim/roof overhangs.
+					# This stand-off remains within MapLoader's padded climb box.
+					var stand_off := lad_center + n_ladder * 0.50
+					var normal_error := (stand_off - global_position).dot(n_ladder)
+					velocity += n_ladder * clampf(normal_error * 5.0, -1.6, 1.6)
 			else:
 				velocity.y = -climb_spd
 				# Keep clearing the top lip until the capsule is safely below it.
