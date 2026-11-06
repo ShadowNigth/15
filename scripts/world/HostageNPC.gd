@@ -283,8 +283,8 @@ func _physics_process(delta: float) -> void:
 		var dist := global_position.distance_to(leader.global_position)
 		var finishing_rescue := false
 		if is_instance_valid(RoundManager.game_world) and RoundManager.game_world.has_method("is_in_rescue_zone"):
-			var leader_inside := RoundManager.game_world.is_hostage_in_rescue_zone(leader.global_position)
-			var self_inside := RoundManager.game_world.is_hostage_in_rescue_zone(global_position)
+			var leader_inside: bool = RoundManager.game_world.is_hostage_in_rescue_zone(leader.global_position)
+			var self_inside: bool = RoundManager.game_world.is_hostage_in_rescue_zone(global_position)
 			finishing_rescue = leader_inside and not self_inside
 		# The normal 2.15 m follow gap must not leave the NPC just outside the
 		# trigger after its rescuer has entered. Close in until this body crosses.
