@@ -6,6 +6,7 @@ extends Node
 ## elimination, while VIP escorts and hostage rescuers use their real AI/physics.
 
 var _checks := 0
+var _minimum_checks := 4
 var _failures: Array[String] = []
 var _last_round_result: Dictionary = {}
 
@@ -256,6 +257,11 @@ func _run() -> void:
 		if arg.begins_with("--scenario="):
 			scenario = arg.trim_prefix("--scenario=")
 	print("[MISSION AI TEST] scenario=%s" % scenario)
+	match scenario:
+		"oilrig": _minimum_checks = 18
+		"747": _minimum_checks = 25
+		"estate": _minimum_checks = 19
+		"all": _minimum_checks = 54
 	if scenario == "check":
 		_progress("Native scene, autoloads and script compilation are valid")
 		_finish()
@@ -275,6 +281,7 @@ func _run() -> void:
 
 
 func _finish() -> void:
+	_expect(_checks >= _minimum_checks, "Scenario executed its full minimum check count (%d/%d)" % [_checks, _minimum_checks])
 	if _failures.is_empty():
 		print("[MISSION AI TEST] PASS: %d checks; full VIP escort and physical hostage rescues." % _checks)
 		print("::notice title=Mission objective QA::PASS: %d physical checks" % _checks)

@@ -48,6 +48,10 @@ jobs:
         run: |
           set -o pipefail
           stdbuf -o0 -e0 godot --headless --path . --import 2>&1 | tee /tmp/import.log
+          if grep -Eq 'SCRIPT ERROR:|Parse Error:|Compile Error:' /tmp/import.log; then
+            echo '::error title=Native import::Godot reported a script compilation error'
+            exit 1
+          fi
 
       - name: Smoke mission scene with native autoloads
         if: ${{ inputs.suite != 'world' }}
