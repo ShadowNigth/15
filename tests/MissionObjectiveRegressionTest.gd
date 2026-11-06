@@ -127,10 +127,6 @@ func _test_oilrig_escort() -> void:
 			for escort in escorts:
 				distances.append("%.1f" % escort.global_position.distance_to(vip.global_position))
 			_progress("OilRig t=%ds VIP=%s escort_dist=%s path=%d" % [frames / 60, vip.global_position, ", ".join(distances), vip._node_path.size()])
-		if frames % 1200 == 0:
-			_progress("OilRig route t=%ds VIP=%s next=%s history=%d wait=%.1f hold=%.2f" % [frames / 60, vip.global_position, str(vip._node_path.slice(0, 6)), vip._vip_route_history.size(), vip._vip_escort_wait_since, vip._hold_pos_timer])
-			for escort in escorts:
-				_progress("OilRig escort t=%ds pos=%s next=%s goal=%s crumb=%s direct=%s stuck=%.2f escape=%.2f" % [frames / 60, escort.global_position, str(escort._node_path.slice(0, 6)), escort._goal_pos, escort._vip_breadcrumb_active, escort._vip_escort_direct_active, escort._stuck_timer, escort._escape_timer])
 
 	_progress("OilRig final VIP pos=%s result=%s" % [vip.global_position, str(_last_round_result)])
 	for escort in escorts:
@@ -179,6 +175,14 @@ func _test_hostage_map(map_name: String, expected_hostages: int, bot_count: int,
 				assigned[hostage.get_instance_id()] = true
 		if frames % 1800 == 0:
 			_progress("%s t=%ds rescued=%d/%d" % [map_name, frames / 60, RoundManager.hostages_rescued_this_round, hostages.size()])
+
+	for i in range(hostages.size()):
+		var hostage := hostages[i]
+		var leader_pos := str(hostage.leader.global_position) if is_instance_valid(hostage.leader) else "none"
+		_progress("%s hostage=%d pos=%s rescued=%s leader=%s nav=%s stuck=%.2f blocked=%.2f" % [map_name, i, hostage.global_position, hostage.is_rescued, leader_pos, str(hostage._nav_path.slice(0, 4)), hostage._stuck_timer, hostage._blocked_timer])
+	for bot in world.bots:
+		if bot.team == "CT":
+			_progress("%s CT pos=%s target=%d led=%d direct=%s/%d next=%s goal=%s" % [map_name, bot.global_position, hostages.find(bot._hostage_target), bot._led_hostages().size(), bot._hostage_direct_active, bot._hostage_direct_mode, str(bot._node_path.slice(0, 6)), bot._goal_pos])
 
 	for hostage in hostages:
 		var hid := hostage.get_instance_id()
