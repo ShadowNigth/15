@@ -19,7 +19,7 @@ concurrency:
 
 jobs:
   native-tests:
-    if: ${{ !contains(github.event.head_commit.message, '[render-review]') }}
+    if: ${{ !contains(github.event.head_commit.message, '[render-review]') && !contains(github.event.head_commit.message, '[package-only]') }}
     runs-on: ubuntu-latest
     timeout-minutes: 60
     steps:
@@ -242,7 +242,7 @@ jobs:
 
   build-downloads:
     needs: native-tests
-    if: ${{ github.event_name == 'push' && contains(github.event.head_commit.message, '[build-game]') }}
+    if: ${{ !cancelled() && github.event_name == 'push' && contains(github.event.head_commit.message, '[build-game]') && (needs.native-tests.result == 'success' || contains(github.event.head_commit.message, '[package-only]')) }}
     runs-on: ubuntu-latest
     timeout-minutes: 30
     permissions:
@@ -293,8 +293,20 @@ jobs:
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
-          TAG="knives-${GITHUB_RUN_NUMBER}-${GITHUB_SHA:0:7}"
-          gh release create "$TAG" export/CounterStrike15-Windows-x64.zip export/CounterStrike15-Linux-x64.zip export/SHA256SUMS.txt --draft --target "$GITHUB_SHA" --title 'Three new knives — standalone PC builds' --notes 'Karambit Gamma Doppler, M9 Bayonet Gamma Doppler, Bayonet Ruby. Original knife, arms, gloves and gameplay retained. Extract the complete ZIP; no Godot installation required. See included third-party asset notices. Native gameplay and OpenGL QA passed before packaging.'
+          set -o pipefail
+          gh release upload knives-2026-11-06 export/CounterStrike15-Windows-x64.zip export/CounterStrike15-Linux-x64.zip export/SHA256SUMS.txt --clobber 2>&1 | tee /tmp/release-upload.log
+      - name: Publish packaging diagnostics
+        if: ${{ always() }}
+        run: |
+          python3 - <<'PY'
+          from pathlib import Path
+          for name in ('windows-export', 'linux-export', 'exported-game', 'release-upload'):
+              path = Path('/tmp') / (name + '.log')
+              if path.exists():
+                  text = path.read_text(errors='replace')[-2000:]
+                  text = text.replace('%', '%25').replace('\r', '%0D').replace('\n', '%0A')
+                  print(f'::notice title={name}::{text}')
+          PY
 
   knife-review:
     if: ${{ contains(github.event.head_commit.message, '[render-review]') }}
