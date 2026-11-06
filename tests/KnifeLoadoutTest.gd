@@ -142,6 +142,6 @@ func _save_capture(name: String) -> void:
 	_expect(image != null and not image.is_empty(), "Nonempty OpenGL framebuffer " + name)
 	if image != null and not image.is_empty():
 		_expect(image.save_png(_output.path_join(name + ".png")) == OK, "Save full-resolution " + name)
-		image.resize(640, 360, Image.INTERPOLATE_LANCZOS)
-		_expect(image.save_jpg(_output.path_join(name + ".jpg"), 0.45) == OK, "Save review JPEG " + name)
+		image.resize(480, 270, Image.INTERPOLATE_LANCZOS)
+		_expect(image.save_jpg(_output.path_join(name + ".jpg"), 0.35) == OK, "Save review JPEG " + name)
 	get_tree().paused = false
