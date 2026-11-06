@@ -43,6 +43,7 @@ jobs:
           godot --version
 
       - name: Import project resources and global script classes
+        id: native_import
         timeout-minutes: 10
         run: |
           set -o pipefail
@@ -77,29 +78,33 @@ jobs:
           PY
 
       - name: cs_747 physical hostage regression
-        if: ${{ inputs.suite != 'world' }}
+        if: ${{ !cancelled() && steps.native_import.outcome == 'success' && inputs.suite != 'world' }}
         timeout-minutes: 8
         run: godot --headless --path . --fixed-fps 60 res://tests/MissionObjectiveRegressionTest.tscn -- --scenario=747
 
       - name: cs_estate physical hostage regression
-        if: ${{ inputs.suite != 'world' }}
+        if: ${{ !cancelled() && steps.native_import.outcome == 'success' && inputs.suite != 'world' }}
         timeout-minutes: 8
         run: godot --headless --path . --fixed-fps 60 res://tests/MissionObjectiveRegressionTest.tscn -- --scenario=estate
 
       - name: Weapon runtime regression
-        if: ${{ inputs.suite != 'world' }}
+        if: ${{ !cancelled() && steps.native_import.outcome == 'success' && inputs.suite != 'world' }}
         run: godot --headless --path . res://tests/ArchiWeaponRuntimeTest.tscn
 
       - name: Procedural fire regression
+        if: ${{ !cancelled() && steps.native_import.outcome == 'success' }}
         run: godot --headless --path . --fixed-fps 60 res://tests/IncendiaryProceduralTest.tscn
 
       - name: Original textures, surface and water regression
+        if: ${{ !cancelled() && steps.native_import.outcome == 'success' }}
         run: godot --headless --path . --fixed-fps 60 res://tests/MapSurfaceWaterTest.tscn
 
       - name: Tactical AI regression
+        if: ${{ !cancelled() && steps.native_import.outcome == 'success' }}
         run: godot --headless --path . --fixed-fps 60 res://tests/TacticalAIRegressionTest.tscn
 
       - name: Game world smoke regression
+        if: ${{ !cancelled() && steps.native_import.outcome == 'success' }}
         timeout-minutes: 12
         run: |
           set -o pipefail

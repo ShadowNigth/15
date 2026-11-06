@@ -2018,7 +2018,11 @@ func _follow_navigation_path(delta: float) -> void:
 	# use exact input there; obstacle steering remains for open combat/roaming.
 	var precision_route: bool = (is_vip or _vip_breadcrumb_active or is_instance_valid(_hostage_target)) and ((cur_flags & BotNavigator.ACTION_FLAGS) != 0 or _node_path.size() <= 2)
 	var exact_input: bool = on_ladder or is_climb_step or precision_route or ladder_entry_exact
-	var target_move_dir := raw_dir if exact_input else _steer_around_obstacles(raw_dir)
+	# Precision removes lateral steering, not world interaction. Authored
+	# crouch routes can pass through breakable windows (e.g. the 747 cabin).
+	# Still open doors/clear panels, then keep the exact waypoint direction.
+	var obstacle_dir := _steer_around_obstacles(raw_dir)
+	var target_move_dir := raw_dir if exact_input else obstacle_dir
 	_smoothed_move_dir = target_move_dir if exact_input else _blend_move_dir(_smoothed_move_dir, target_move_dir, delta * 12.5)
 	var move_dir := _smoothed_move_dir
 
