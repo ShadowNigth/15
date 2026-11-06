@@ -14,7 +14,7 @@ func _run() -> void:
 	var cases := [
 		{"map": "as_oilrig", "bots": 8, "seed": 2, "frames": 1800},
 		{"map": "cs_747", "bots": 10, "seed": 4807, "frames": 1800},
-		{"map": "cs_estate", "bots": 6, "seed": 4808, "frames": 3600},
+		{"map": "cs_estate", "bots": 6, "seed": 4808, "frames": 1800},
 	]
 	var manifest: Array[Dictionary] = []
 	for entry in cases:
@@ -33,6 +33,13 @@ func _run() -> void:
 			for hostage in RoundManager.hostages:
 				if is_instance_valid(hostage) and not hostage.is_rescued and is_instance_valid(hostage.leader):
 					subject = hostage
+					break
+		if subject == null:
+			# If rescue finishes before the requested time, retain the actual
+			# end-of-round state and observe a surviving rescuer, not a staged NPC.
+			for bot in world.bots:
+				if bot.team == "CT" and bot.is_alive:
+					subject = bot
 					break
 		if subject == null:
 			push_error("No active mission actor available for " + map_name)

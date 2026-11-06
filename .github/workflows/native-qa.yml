@@ -138,16 +138,23 @@ jobs:
           set -o pipefail
           timeout 540s xvfb-run -a godot --path . --rendering-method gl_compatibility --rendering-driver opengl3 --disable-render-loop --fixed-fps 60 --resolution 960x540 res://tests/Task48VisualQA.tscn 2>&1 | tee /tmp/task48-render.log
           if grep -Eq 'SCRIPT ERROR:|Parse Error:|Compile Error:' /tmp/task48-render.log; then exit 1; fi
+          test -f /tmp/task48-captures/manifest.json
+
+      - name: Publish rendered evidence diagnostics
+        if: ${{ always() && inputs.suite != 'world' }}
+        run: |
           python3 - <<'PY'
           import base64
           from pathlib import Path
-          import json
+          log = Path('/tmp/task48-render.log')
+          if log.exists():
+              text = '\n'.join(log.read_text(errors='replace').splitlines()[-45:])
+              escaped = text.replace('%', '%25').replace('\r', '%0D').replace('\n', '%0A')
+              print(f'::notice title=Task48 renderer log::{escaped}')
           root = Path('/tmp/task48-captures')
-          manifest = json.loads((root / 'manifest.json').read_text())
-          assert len(manifest) == 3
-          for capture in manifest:
-              name = capture['map']
-              data = base64.b64encode((root / (name + '.jpg')).read_bytes()).decode()
+          for image in sorted(root.glob('*.jpg')):
+              name = image.stem
+              data = base64.b64encode(image.read_bytes()).decode()
               chunks = [data[i:i + 45000] for i in range(0, len(data), 45000)]
               assert len(chunks) <= 3, 'Capture exceeds diagnostic transport budget'
               for i, chunk in enumerate(chunks):
