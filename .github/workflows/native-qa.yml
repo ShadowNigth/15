@@ -32,7 +32,9 @@ jobs:
         run: python -m pip install 'gdtoolkit==4.3.4'
 
       - name: Verify project assets and GDScript AST
-        run: python tools/verify_godot_project.py
+        run: |
+          python tools/verify_godot_project.py
+          python tests/check_knife_assets.py
 
       - name: Install Godot 4.3
         run: |
@@ -52,6 +54,26 @@ jobs:
             echo '::error title=Native import::Godot reported a script compilation error'
             exit 1
           fi
+
+      - name: Three-knife loadout gameplay regression
+        timeout-minutes: 5
+        run: |
+          set -o pipefail
+          timeout 240s godot --headless --path . --fixed-fps 60 res://tests/KnifeLoadoutTest.tscn 2>&1 | tee /tmp/knife-test.log
+          if grep -Eq 'SCRIPT ERROR:|Parse Error:|Compile Error:' /tmp/knife-test.log; then exit 1; fi
+          grep -q '\[KNIFE TEST\] PASS:' /tmp/knife-test.log
+
+      - name: Publish knife test diagnostics
+        if: ${{ always() }}
+        run: |
+          python3 - <<'PY'
+          from pathlib import Path
+          log = Path('/tmp/knife-test.log')
+          if log.exists():
+              text = '\n'.join(log.read_text(errors='replace').splitlines()[-40:])
+              text = text.replace('%', '%25').replace('\r', '%0D').replace('\n', '%0A')
+              print(f'::notice title=Knife test::{text}')
+          PY
 
       - name: Smoke mission scene with native autoloads
         if: ${{ inputs.suite != 'world' }}
@@ -172,3 +194,103 @@ jobs:
           path: /tmp/task48-captures/
           if-no-files-found: ignore
           retention-days: 14
+
+      - name: Render new knives in real gameplay with OpenGL
+        if: ${{ success() && inputs.suite != 'world' }}
+        timeout-minutes: 6
+        env:
+          LIBGL_ALWAYS_SOFTWARE: '1'
+        run: |
+          set -o pipefail
+          timeout 300s xvfb-run -a godot --path . --audio-driver Dummy --rendering-method gl_compatibility --rendering-driver opengl3 --disable-render-loop --fixed-fps 60 --resolution 960x540 res://tests/KnifeLoadoutTest.tscn -- --capture 2>&1 | tee /tmp/knife-render.log
+          if grep -Eq 'SCRIPT ERROR:|Parse Error:|Compile Error:' /tmp/knife-render.log; then exit 1; fi
+          grep -q '\[KNIFE TEST\] PASS:' /tmp/knife-render.log
+
+      - name: Inspect karambit_idle rendered capture
+        if: ${{ !cancelled() && inputs.suite != 'world' }}
+        run: python3 tools/publish_rendered_capture.py karambit_idle
+
+      - name: Inspect karambit_inspect rendered capture
+        if: ${{ !cancelled() && inputs.suite != 'world' }}
+        run: python3 tools/publish_rendered_capture.py karambit_inspect
+
+      - name: Inspect m9_idle rendered capture
+        if: ${{ !cancelled() && inputs.suite != 'world' }}
+        run: python3 tools/publish_rendered_capture.py m9_idle
+
+      - name: Inspect m9_inspect rendered capture
+        if: ${{ !cancelled() && inputs.suite != 'world' }}
+        run: python3 tools/publish_rendered_capture.py m9_inspect
+
+      - name: Inspect bayonet_idle rendered capture
+        if: ${{ !cancelled() && inputs.suite != 'world' }}
+        run: python3 tools/publish_rendered_capture.py bayonet_idle
+
+      - name: Inspect bayonet_inspect rendered capture
+        if: ${{ !cancelled() && inputs.suite != 'world' }}
+        run: python3 tools/publish_rendered_capture.py bayonet_inspect
+
+      - name: Save knife rendered evidence
+        if: ${{ !cancelled() && inputs.suite != 'world' }}
+        uses: actions/upload-artifact@v4
+        with:
+          name: knife-rendered-gameplay
+          path: /tmp/knife-captures/
+          if-no-files-found: error
+          retention-days: 14
+
+  build-downloads:
+    needs: native-tests
+    if: ${{ github.event_name == 'push' && contains(github.event.head_commit.message, '[build-game]') }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install Godot and PC export templates
+        run: |
+          curl -fL --retry 3 -o /tmp/godot.zip https://github.com/godotengine/godot-builds/releases/download/4.3-stable/Godot_v4.3-stable_linux.x86_64.zip
+          unzip -q /tmp/godot.zip -d /tmp/godot
+          sudo install -m 755 /tmp/godot/Godot_v4.3-stable_linux.x86_64 /usr/local/bin/godot
+          curl -fL --retry 3 -o /tmp/templates.zip https://github.com/godotengine/godot-builds/releases/download/4.3-stable/Godot_v4.3-stable_export_templates.tpz
+          mkdir -p ~/.local/share/godot/export_templates/4.3.stable
+          unzip -j -q /tmp/templates.zip 'templates/windows_release_x86_64.exe' 'templates/linux_release.x86_64' -d ~/.local/share/godot/export_templates/4.3.stable
+      - name: Import and export standalone games
+        run: |
+          set -o pipefail
+          godot --headless --path . --import 2>&1 | tee /tmp/export-import.log
+          if grep -Eq 'SCRIPT ERROR:|Parse Error:|Compile Error:' /tmp/export-import.log; then exit 1; fi
+          mkdir -p export/windows export/linux
+          godot --headless --path . --export-release 'Windows Desktop' export/windows/CounterStrike15.exe 2>&1 | tee /tmp/windows-export.log
+          godot --headless --path . --export-release Linux export/linux/CounterStrike15.x86_64 2>&1 | tee /tmp/linux-export.log
+          test -s export/windows/CounterStrike15.exe
+          test -s export/windows/CounterStrike15.pck
+          test -s export/linux/CounterStrike15.x86_64
+          test -s export/linux/CounterStrike15.pck
+      - name: Smoke test exported Linux game and data
+        run: |
+          set -o pipefail
+          chmod +x export/linux/CounterStrike15.x86_64
+          cd export/linux
+          timeout 90s ./CounterStrike15.x86_64 --headless --audio-driver Dummy --quit-after 30 2>&1 | tee /tmp/exported-game.log
+          if grep -Eq 'SCRIPT ERROR:|Parse Error:|Compile Error:|Missing JSON|Failed loading resource|Error loading resource' /tmp/exported-game.log; then exit 1; fi
+      - name: Package ZIP downloads and checksums
+        run: |
+          for platform in windows linux; do
+            cp docs/PLAY_RELEASE.txt export/$platform/LEEME.txt
+            cp docs/KNIFE_ASSET_NOTICES.md export/$platform/
+            cp README.md export/$platform/PROJECT_README.md
+            printf 'Commit: %s\n' "$GITHUB_SHA" > export/$platform/VERSION.txt
+          done
+          (cd export/windows && zip -q -r ../CounterStrike15-Windows-x64.zip .)
+          (cd export/linux && zip -q -r ../CounterStrike15-Linux-x64.zip .)
+          (cd export && sha256sum CounterStrike15-*.zip > SHA256SUMS.txt)
+          unzip -tq export/CounterStrike15-Windows-x64.zip
+          unzip -tq export/CounterStrike15-Linux-x64.zip
+      - name: Stage downloadable release for visual approval
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          TAG="knives-${GITHUB_RUN_NUMBER}-${GITHUB_SHA:0:7}"
+          gh release create "$TAG" export/CounterStrike15-Windows-x64.zip export/CounterStrike15-Linux-x64.zip export/SHA256SUMS.txt --draft --target "$GITHUB_SHA" --title 'Three new knives — standalone PC builds' --notes 'Karambit Gamma Doppler, M9 Bayonet Gamma Doppler, Bayonet Ruby. Original knife, arms, gloves and gameplay retained. Extract the complete ZIP; no Godot installation required. See included third-party asset notices. Native gameplay and OpenGL QA passed before packaging.'

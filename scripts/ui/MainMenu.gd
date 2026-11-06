@@ -23,6 +23,7 @@ var _bot_spin: SpinBox = null
 var _diff_opt: OptionButton = null
 var _money_opt: OptionButton = null
 var _glove_opt: OptionButton = null
+var _knife_opt: OptionButton = null
 
 # 3D Arsenal Viewer widgets
 var _viewer_viewport: SubViewport = null
@@ -319,6 +320,24 @@ func _build_play_dialog() -> void:
 	_populate_glove_options(_glove_opt)
 	settings_grid.add_child(_glove_opt)
 
+	var knife_label := Label.new()
+	knife_label.text = "Knife model:"
+	knife_label.add_theme_font_size_override("font_size", 13)
+	settings_grid.add_child(knife_label)
+	_knife_opt = OptionButton.new()
+	_knife_opt.custom_minimum_size.x = 260.0
+	for raw in GameData.get_knife_options():
+		var option := raw as Dictionary
+		var index := _knife_opt.item_count
+		_knife_opt.add_item(String(option["name"]))
+		_knife_opt.set_item_metadata(index, String(option["id"]))
+		if String(option["id"]) == GameData.selected_knife_id:
+			_knife_opt.select(index)
+	_knife_opt.item_selected.connect(func(index: int):
+		_select_knife_for_match(String(_knife_opt.get_item_metadata(index)))
+	)
+	settings_grid.add_child(_knife_opt)
+
 	var start_btn := Button.new()
 	start_btn.text = "LAUNCH MATCH  >>"
 	start_btn.custom_minimum_size = Vector2(0, 38)
@@ -397,6 +416,8 @@ func _sync_glove_option() -> void:
 
 
 func _start_selected_game() -> void:
+	if _knife_opt and _knife_opt.selected >= 0:
+		GameData.select_knife(String(_knife_opt.get_item_metadata(_knife_opt.selected)))
 	if _glove_opt and _glove_opt.selected >= 0:
 		GameData.select_glove(String(_glove_opt.get_item_metadata(_glove_opt.selected)))
 	if _bot_spin:
@@ -433,6 +454,12 @@ func _build_arsenal_dialog() -> void:
 		for cinfo in GameData.classes.get(tm, []):
 			var idx2 := wlist.add_item("[Player %s] %s" % [tm, String(cinfo["name"])])
 			wlist.set_item_metadata(idx2, "player:" + String(cinfo["id"]))
+	for raw in GameData.get_knife_options():
+		var knife_option := raw as Dictionary
+		if String(knife_option["id"]) == "original":
+			continue
+		var knife_idx := wlist.add_item("[Knife] " + String(knife_option["name"]))
+		wlist.set_item_metadata(knife_idx, "knife:" + String(knife_option["id"]))
 	var glove_idx := wlist.add_item("[Gloves] Original Counter-Strike")
 	wlist.set_item_metadata(glove_idx, "glove:" + String(GameData.sport_gloves.get("classic_id", "classic")))
 	for raw in GameData.get_glove_options():
@@ -444,6 +471,8 @@ func _build_arsenal_dialog() -> void:
 		var meta := String(wlist.get_item_metadata(idx))
 		if meta.begins_with("player:"):
 			_load_viewer_player(meta.trim_prefix("player:"))
+		elif meta.begins_with("knife:"):
+			_select_knife_for_match(meta.trim_prefix("knife:"))
 		elif meta.begins_with("glove:"):
 			_select_glove_for_match(meta.trim_prefix("glove:"))
 		else:
@@ -521,6 +550,18 @@ func _build_arsenal_dialog() -> void:
 	_viewer_stats_lbl.add_theme_font_size_override("font_size", 12)
 	_viewer_stats_lbl.add_theme_color_override("font_color", Color(0.92, 0.88, 0.76))
 	right.add_child(_viewer_stats_lbl)
+
+
+func _select_knife_for_match(option_id: String) -> void:
+	if not GameData.select_knife(option_id):
+		return
+	if _knife_opt != null:
+		for index in range(_knife_opt.item_count):
+			if String(_knife_opt.get_item_metadata(index)) == option_id:
+				_knife_opt.select(index)
+	AudioManager.play_ui("launch_select1.wav")
+	if _viewer_pivot != null:
+		_load_viewer_weapon("knife")
 
 
 func _select_glove_for_match(option_id: String) -> void:
@@ -603,7 +644,7 @@ func _load_viewer_weapon(wid: String) -> void:
 		_style_viewer_meshes(inst, "vm")
 		_viewer_anim = _find_anim_recursive(inst)
 		if _viewer_anim and not _viewer_anim.get_animation_list().is_empty():
-			_viewer_anim.play(_viewer_anim.get_animation_list()[0])
+			_viewer_anim.play("idle" if _viewer_anim.has_animation("idle") else _viewer_anim.get_animation_list()[0])
 
 	_viewer_stats_lbl.text = "%s  |  Price: $%d  |  Damage: %d  |  MaxSpeed (cs_i386.so): %.0f u/s  |  Cycle: %.3fs\n%s" % [
 		String(spec.get("name", wid)),

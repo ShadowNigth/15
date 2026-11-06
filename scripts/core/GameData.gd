@@ -33,6 +33,10 @@ var selected_glove_id: String = ""
 var weapon_skins: Dictionary = {}
 var selected_weapon_skins: Dictionary = {}
 var _skin_material_owners: Dictionary = {}
+## Knife appearances share the classic slot, economy and melee rules.
+var knife_models: Dictionary = {}
+var selected_knife_id: String = "original"
+var _original_knife_spec: Dictionary = {}
 
 # Match / User settings
 var selected_map: String = "de_dust2"
@@ -103,6 +107,10 @@ func _load_all_databases() -> void:
 	sport_gloves = _load_json("res://data/sport_gloves.json")
 	if selected_glove_id.is_empty():
 		selected_glove_id = String(sport_gloves.get("default", "classic"))
+	knife_models = _load_json("res://data/knife_models.json")
+	_original_knife_spec = (weapons.get("knife", {}) as Dictionary).duplicate(true)
+	if not select_knife(selected_knife_id):
+		select_knife("original")
 	weapon_skins = _load_json("res://data/weapon_skins.json")
 	_skin_material_owners.clear()
 	var skin_weapons: Dictionary = weapon_skins.get("weapons", {})
@@ -110,6 +118,34 @@ func _load_all_databases() -> void:
 		var entry: Dictionary = skin_weapons[raw_wid]
 		for raw_material in entry.get("materials", []):
 			_skin_material_owners[String(raw_material).to_lower()] = String(raw_wid)
+
+
+func get_knife_options() -> Array:
+	return knife_models.get("options", []) as Array
+
+
+func select_knife(option_id: String) -> bool:
+	for raw in get_knife_options():
+		var option := raw as Dictionary
+		if String(option.get("id", "")) != option_id:
+			continue
+		var spec := _original_knife_spec.duplicate(true)
+		for field in ["v_model", "p_model", "w_model"]:
+			spec[field] = String(option[field])
+		if option_id != "original":
+			spec["name"] = String(option["name"])
+		weapons["knife"] = spec
+		selected_knife_id = option_id
+		return true
+	return false
+
+
+func get_knife_glove_model(viewmodel_name: String) -> String:
+	# New fixed-blade knives retain exactly the original rig and arm surfaces.
+	for raw in get_knife_options():
+		if String((raw as Dictionary).get("v_model", "")) == viewmodel_name:
+			return "v_knife"
+	return viewmodel_name
 
 
 func get_glove_options() -> Array:
@@ -363,6 +399,10 @@ func get_styled_model_material(orig: Material, mode: String) -> Material:
 		dup.metallic = 0.0
 		dup.metallic_specular = 0.22
 		dup.roughness = 0.86
+	if material_name.begins_with("sc_cs2_"):
+		dup.roughness = 0.65 if mode in ["vm", "vm_flip"] else 0.85
+		dup.metallic = 0.68 if mode in ["vm", "vm_flip"] else 0.32
+		dup.albedo_color = original
 	var character_surface := material_name.contains("glove") or material_name.contains("arms") \
 		or material_name.contains("bare_arm") or material_name.contains("sleeve") or material_name.contains("skin")
 	if character_surface:

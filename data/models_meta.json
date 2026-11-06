@@ -9437,5 +9437,128 @@
       "inspect",
       "inspect_2"
     ]
+  },
+  "weapons/v_knife_karambit": {
+    "sequences": [
+      "draw",
+      "idle",
+      "slash1",
+      "slash2",
+      "midslash1",
+      "midslash2",
+      "stab_miss",
+      "stab",
+      "inspect"
+    ],
+    "seq_durations": {
+      "draw": 0.8,
+      "idle": 1.6,
+      "slash1": 0.933,
+      "slash2": 0.933,
+      "midslash1": 0.933,
+      "midslash2": 0.933,
+      "stab_miss": 0.9,
+      "stab": 0.9,
+      "inspect": 6.033
+    },
+    "seq_events": {},
+    "bones": 40,
+    "offset": [
+      0.0,
+      0.0,
+      0.0625
+    ],
+    "source": "zh667/ScCsgoKnives",
+    "source_model": "karambit",
+    "materials": [
+      "sc_cs2_karambit",
+      "ct_base_glove.bmp",
+      "ct_arms.bmp"
+    ],
+    "vertices": 23956,
+    "source_commit": "1eb8067fd0b7214df5bccf3ac3807fbaa3aee70d",
+    "animation_source": "existing ShadowNigth/archi v_knife_kukri; retained without modification"
+  },
+  "weapons/v_knife_m9": {
+    "sequences": [
+      "draw",
+      "idle",
+      "slash1",
+      "slash2",
+      "midslash1",
+      "midslash2",
+      "stab_miss",
+      "stab",
+      "inspect"
+    ],
+    "seq_durations": {
+      "draw": 0.8,
+      "idle": 1.6,
+      "slash1": 0.933,
+      "slash2": 0.933,
+      "midslash1": 0.933,
+      "midslash2": 0.933,
+      "stab_miss": 0.9,
+      "stab": 0.9,
+      "inspect": 6.033
+    },
+    "seq_events": {},
+    "bones": 40,
+    "offset": [
+      0.0,
+      0.0,
+      0.0625
+    ],
+    "source": "zh667/ScCsgoKnives",
+    "source_model": "m9",
+    "materials": [
+      "sc_cs2_m9",
+      "ct_base_glove.bmp",
+      "ct_arms.bmp"
+    ],
+    "vertices": 20477,
+    "source_commit": "1eb8067fd0b7214df5bccf3ac3807fbaa3aee70d",
+    "animation_source": "existing ShadowNigth/archi v_knife_kukri; retained without modification"
+  },
+  "weapons/v_knife_bayonet": {
+    "sequences": [
+      "draw",
+      "idle",
+      "slash1",
+      "slash2",
+      "midslash1",
+      "midslash2",
+      "stab_miss",
+      "stab",
+      "inspect"
+    ],
+    "seq_durations": {
+      "draw": 0.8,
+      "idle": 1.6,
+      "slash1": 0.933,
+      "slash2": 0.933,
+      "midslash1": 0.933,
+      "midslash2": 0.933,
+      "stab_miss": 0.9,
+      "stab": 0.9,
+      "inspect": 6.033
+    },
+    "seq_events": {},
+    "bones": 40,
+    "offset": [
+      0.0,
+      0.0,
+      0.0625
+    ],
+    "source": "zh667/ScCsgoKnives",
+    "source_model": "bayonet",
+    "materials": [
+      "sc_cs2_bayonet",
+      "ct_base_glove.bmp",
+      "ct_arms.bmp"
+    ],
+    "vertices": 13882,
+    "source_commit": "1eb8067fd0b7214df5bccf3ac3807fbaa3aee70d",
+    "animation_source": "existing ShadowNigth/archi v_knife_kukri; retained without modification"
   }
 }

@@ -1,0 +1,22 @@
+COUNTER-STRIKE 1.5 — GODOT FAN REMAKE
+
+Windows: extract the entire ZIP and run CounterStrike15.exe.
+Linux: extract the entire ZIP, enable executable permission if necessary
+(chmod +x CounterStrike15.x86_64), then run CounterStrike15.x86_64.
+Keep the .pck file next to the executable. Godot installation is not required.
+64-bit PC and an OpenGL 3.3-compatible graphics driver are required.
+
+NEW KNIVES
+Create Game -> Knife model: choose Original Kukri, Karambit Gamma Doppler,
+M9 Bayonet Gamma Doppler, or Bayonet Ruby before launching a match.
+The 3D Arsenal also lists the three new knives; selecting one sets the loadout.
+3: equip knife. Left click: light slash. Right click: heavy stab. T: inspect.
+The new models retain the existing knife animations and gameplay balance.
+Sport Glove selection continues to work. The original knife is still available.
+
+WASD move; mouse aim; Space jump; Ctrl crouch; Shift walk; B buy;
+1/2/3/4/5 weapon slots; R reload; E use/rescue/defuse; Tab scores; Esc pause.
+26 classic maps, local bots, hostages, VIP and bomb missions; no networking.
+
+This is an unofficial fan project. Third-party assets are not covered by a
+blanket free-use license. Read KNIFE_ASSET_NOTICES.md and PROJECT_README.md.

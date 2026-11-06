@@ -12,12 +12,13 @@ static func apply(root: Node3D, viewmodel_name: String) -> bool:
 	if root == null:
 		return false
 	var option := GameData.get_selected_glove()
-	if option.is_empty() or not String(viewmodel_name) in GameData.sport_gloves.get("models", []):
+	var glove_model := GameData.get_knife_glove_model(viewmodel_name)
+	if option.is_empty() or not glove_model in GameData.sport_gloves.get("models", []):
 		return false
 	var skeleton := _find_skeleton(root)
 	if skeleton == null:
 		return false
-	var packed := GameData.get_model_scene("sport_gloves/" + viewmodel_name)
+	var packed := GameData.get_model_scene("sport_gloves/" + glove_model)
 	if packed == null:
 		return false
 	var source := packed.instantiate() as Node3D

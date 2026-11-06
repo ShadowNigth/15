@@ -120,3 +120,20 @@ godot --headless --path . --fixed-fps 60 res://tests/MapSurfaceWaterTest.tscn
 godot --headless --path . --fixed-fps 60 res://tests/TacticalAIRegressionTest.tscn
 godot --headless --path . --fixed-fps 60 res://tests/MissionObjectiveRegressionTest.tscn
 ```
+
+## Tres cuchillos adicionales
+
+En **Create Game → Knife model** se puede elegir el Kukri original o uno de los
+nuevos **Karambit Gamma Doppler Phase 4**, **M9 Bayonet Gamma Doppler Phase 1** y
+**Bayonet Ruby**. También aparecen por separado en el Arsenal 3D; seleccionarlos
+configura el cuchillo de la siguiente partida. Se usa la ranura `3`, ataque ligero
+con clic izquierdo, puñalada con clic derecho e inspección con `T`.
+
+Son tres geometrías y UV propias, no recoloreados del Kukri. Conservan los nueve
+clips existentes del cuchillo archi, los brazos originales, las opciones Sport
+Gloves, los modelos en tercera persona y las reglas clásicas de daño/velocidad.
+No se han sustituido las animaciones por las de CS2/Survivalcraft. Conversión y
+procedencia: [avisos de recursos](docs/KNIFE_ASSET_NOTICES.md).
+
+Las compilaciones PC de Releases incluyen ejecutable y `.pck`: extraer todo el
+ZIP y mantener ambos archivos juntos. No requieren instalar Godot.

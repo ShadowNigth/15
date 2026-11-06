@@ -1,0 +1,93 @@
+{
+  "default": "original",
+  "options": [
+    {
+      "id": "original",
+      "name": "Original Kukri",
+      "v_model": "v_knife",
+      "p_model": "p_knife",
+      "w_model": "w_knife"
+    },
+    {
+      "id": "karambit",
+      "name": "Karambit | Gamma Doppler Phase 4",
+      "v_model": "v_knife_karambit",
+      "p_model": "p_knife_karambit",
+      "w_model": "w_knife_karambit"
+    },
+    {
+      "id": "m9",
+      "name": "M9 Bayonet | Gamma Doppler Phase 1",
+      "v_model": "v_knife_m9",
+      "p_model": "p_knife_m9",
+      "w_model": "w_knife_m9"
+    },
+    {
+      "id": "bayonet",
+      "name": "Bayonet | Ruby",
+      "v_model": "v_knife_bayonet",
+      "p_model": "p_knife_bayonet",
+      "w_model": "w_knife_bayonet"
+    }
+  ],
+  "provenance": {
+    "source_commit": "1eb8067fd0b7214df5bccf3ac3807fbaa3aee70d",
+    "animation_policy": "preserve installed archi clips; source idle only calibrates grip",
+    "knives": {
+      "karambit": {
+        "vertices": 12228,
+        "triangles": 13938,
+        "mesh_sha256": "57065d1da70d27a0f4e04570921f936e5bea37be33bbdf690a6a75d097afccb0",
+        "bind_bounds": [
+          [
+            -0.11190076258282644,
+            -0.23935141879670485,
+            0.05330738037133592
+          ],
+          [
+            0.029964654719781103,
+            0.1007129637762872,
+            0.17499585847797045
+          ]
+        ],
+        "grip_distance_m": 0.10339232657752022
+      },
+      "m9": {
+        "vertices": 8749,
+        "triangles": 10124,
+        "mesh_sha256": "021330079d81457f9981368907574816c137e4c14d5d582cc181da2d624ae098",
+        "bind_bounds": [
+          [
+            -0.05192597091126294,
+            -0.10227139636728037,
+            0.0918643624729496
+          ],
+          [
+            0.07483625698363988,
+            0.37636579126458136,
+            0.15873661548731277
+          ]
+        ],
+        "grip_distance_m": 0.15217561612538016
+      },
+      "bayonet": {
+        "vertices": 2154,
+        "triangles": 2202,
+        "mesh_sha256": "f96300564979b92c256ac3cb4e7661dd74952591e1670e60204f77b50f23299b",
+        "bind_bounds": [
+          [
+            -0.03999409439049517,
+            -0.0906142730314533,
+            0.10034513282401525
+          ],
+          [
+            0.054213673826749575,
+            0.36313808308673073,
+            0.1554279218141793
+          ]
+        ],
+        "grip_distance_m": 0.10468290341044954
+      }
+    }
+  }
+}
