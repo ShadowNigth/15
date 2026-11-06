@@ -1970,11 +1970,11 @@ func _follow_navigation_path(delta: float) -> void:
 	if raw_dir.length_squared() > 0.001:
 		raw_dir = raw_dir.normalized()
 
-	# A ladder's lower waypoint is often horizontally beyond the rungs. Walking
-	# straight at it from the top leaves the ladder volume and stalls the route.
-	# Enter the real brush first; once on_ladder, CSActor performs the descent.
+	# Ladder waypoints can be horizontally beyond the rungs. Enter the real
+	# brush before ascending/descending; once on_ladder, CSActor takes over.
+	# Upward entries aim at the brush centre because two rungs may share X/Z.
 	var ladder_entry_exact := false
-	if not on_ladder and signed_dy < -0.68 and (nav.get_node_flags(_prev_node_idx) & BotNavigator.FLAG_LADDER) != 0:
+	if not on_ladder and absf(signed_dy) > 0.68 and (nav.get_node_flags(_prev_node_idx) & BotNavigator.FLAG_LADDER) != 0:
 		var previous_wp := nav.get_node_pos(_prev_node_idx)
 		for raw_ladder in RoundManager.game_world.ladder_volumes:
 			var ladder: Dictionary = raw_ladder
@@ -1982,11 +1982,19 @@ func _follow_navigation_path(delta: float) -> void:
 			var climb_box := ladder["climb_aabb"] as AABB
 			if not climb_box.has_point(previous_wp):
 				continue
-			if previous_wp.y < raw_box.end.y - 1.6 or previous_wp.y > raw_box.end.y + 0.8:
-				continue
-			if wp.y < raw_box.position.y - 0.8 or wp.y > raw_box.end.y:
-				continue
-			var entry: Vector3 = previous_wp - global_position
+			var entry := Vector3.ZERO
+			if signed_dy < 0.0:
+				if previous_wp.y < raw_box.end.y - 1.6 or previous_wp.y > raw_box.end.y + 0.8:
+					continue
+				if wp.y < raw_box.position.y - 0.8 or wp.y > raw_box.end.y:
+					continue
+				entry = previous_wp - global_position
+			else:
+				if previous_wp.y < raw_box.position.y - 0.8 or previous_wp.y > raw_box.end.y + 0.8:
+					continue
+				if wp.y < raw_box.position.y - 0.8 or wp.y > raw_box.end.y + 0.8:
+					continue
+				entry = raw_box.get_center() - global_position
 			entry.y = 0.0
 			if entry.length_squared() > 0.006:
 				raw_dir = entry.normalized()
@@ -1995,10 +2003,9 @@ func _follow_navigation_path(delta: float) -> void:
 
 	# Do NOT let obstacle whiskers deflect away from a climbable step/ledge when heading to a higher node!
 	var is_climb_step: bool = (not on_ladder) and (is_jump_link or (signed_dy > 0.44 and signed_dy < 1.90 and flat_d < 2.6 and _is_jumpable_ledge(raw_dir)))
-	# Narrow/action waypoints already encode the safe corridor. Deflecting a VIP
-	# or breadcrumb escort away from their centres can orbit a junction; use exact input
-	# there and retain obstacle steering in open combat/roaming space.
-	var precision_route: bool = (is_vip or _vip_breadcrumb_active) and ((cur_flags & BotNavigator.ACTION_FLAGS) != 0 or _node_path.size() <= 2)
+	# Narrow/action waypoints already encode the safe corridor. Objective actors
+	# use exact input there; obstacle steering remains for open combat/roaming.
+	var precision_route: bool = (is_vip or _vip_breadcrumb_active or is_instance_valid(_hostage_target)) and ((cur_flags & BotNavigator.ACTION_FLAGS) != 0 or _node_path.size() <= 2)
 	var exact_input: bool = on_ladder or is_climb_step or precision_route or ladder_entry_exact
 	var target_move_dir := raw_dir if exact_input else _steer_around_obstacles(raw_dir)
 	_smoothed_move_dir = target_move_dir if exact_input else _blend_move_dir(_smoothed_move_dir, target_move_dir, delta * 12.5)
