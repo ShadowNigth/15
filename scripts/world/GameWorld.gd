@@ -357,6 +357,24 @@ func is_in_rescue_zone(pos: Vector3) -> bool:
 	return false
 
 
+static func capsule_overlaps_zone(feet: Vector3, height: float, radius: float, zone: AABB) -> bool:
+	# A vertical capsule is a line segment swept by a sphere. Measure the
+	# exact segment/AABB distance, including the rounded head and shoulders.
+	var segment_bottom := feet.y + radius
+	var segment_top := feet.y + height - radius
+	var dx := maxf(maxf(zone.position.x - feet.x, feet.x - zone.end.x), 0.0)
+	var dz := maxf(maxf(zone.position.z - feet.z, feet.z - zone.end.z), 0.0)
+	var dy := maxf(maxf(zone.position.y - segment_top, segment_bottom - zone.end.y), 0.0)
+	return dx * dx + dy * dy + dz * dz <= radius * radius
+
+
+func is_hostage_in_rescue_zone(feet: Vector3) -> bool:
+	for zone in rescue_zones:
+		if capsule_overlaps_zone(feet, 1.90, 0.36, zone):
+			return true
+	return false
+
+
 func is_in_escape_zone(pos: Vector3) -> bool:
 	for e in escape_zones:
 		if e.has_point(pos):

@@ -379,15 +379,11 @@ func _physics_process(delta: float) -> void:
 		_avoid_timer = 0.48 if _avoid_dir.length_squared() > 0.01 else 0.0
 		_stuck_timer = 0.0
 
-	# A rescue brush intersects the hostage capsule, not merely its feet. Some
-	# authored YaPB rescue nodes sit slightly below the BSP trigger's lower Y.
-	if is_instance_valid(RoundManager.game_world) and RoundManager.game_world.has_method("is_in_rescue_zone"):
-		var feet_inside := bool(RoundManager.game_world.call("is_in_rescue_zone", global_position))
-		var body_inside := bool(RoundManager.game_world.call("is_in_rescue_zone", global_position + Vector3(0.0, 0.95, 0.0)))
-		if feet_inside or body_inside:
-			is_rescued = true
-			visible = false
-			if _col_shape != null:
-				_col_shape.set_deferred("disabled", true)
-			RoundManager.notify_hostage_rescued(leader)
-			leader = null
+	# Test the real capsule against the rescue brush, including rounded ends.
+	if is_instance_valid(RoundManager.game_world) and RoundManager.game_world.is_hostage_in_rescue_zone(global_position):
+		is_rescued = true
+		visible = false
+		if _col_shape != null:
+			_col_shape.set_deferred("disabled", true)
+		RoundManager.notify_hostage_rescued(leader)
+		leader = null

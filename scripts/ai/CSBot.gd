@@ -1504,9 +1504,14 @@ func _best_hostage_rescue(nav: BotNavigator, gw: Node3D) -> Dictionary:
 		for node_idx in nav.rescue_nodes:
 			if not candidates.has(node_idx) and nav.get_node_pos(node_idx).distance_to(center) < 28.0:
 				candidates.append(node_idx)
+		# Rescue flags can lie below a trigger or omit a ramp landing entirely.
+		# Any physically intersecting node is a legitimate safe-route endpoint.
+		for node_idx in range(nav.waypoints.size()):
+			if not candidates.has(node_idx) and GameWorld.capsule_overlaps_zone(nav.get_node_pos(node_idx), 1.90, 0.36, zone):
+				candidates.append(node_idx)
 		for node_idx in candidates:
 			var node_pos := nav.get_node_pos(node_idx)
-			var node_in_zone := bool(gw.call("is_in_rescue_zone", node_pos + Vector3(0.0, 0.95, 0.0)))
+			var node_in_zone := GameWorld.capsule_overlaps_zone(node_pos, 1.90, 0.36, zone)
 			var direct_goal := node_pos if node_in_zone else center
 			if not node_in_zone:
 				var flat := Vector2(node_pos.x - center.x, node_pos.z - center.z).length()

@@ -241,7 +241,16 @@ func _test_hostage_map(map_name: String, expected_hostages: int, bot_count: int,
 	await _free_world(world)
 
 
+func _test_rescue_capsule_geometry() -> void:
+	var zone := AABB(Vector3(-1.0, 1.80, -1.0), Vector3(2.0, 1.0, 2.0))
+	_expect(GameWorld.capsule_overlaps_zone(Vector3.ZERO, 1.90, 0.36, zone), "Rounded hostage head can physically intersect a rescue brush above its centre")
+	_expect(not GameWorld.capsule_overlaps_zone(Vector3(0.0, -0.20, 0.0), 1.90, 0.36, zone), "A vertical gap below the rescue brush does not count as a rescue")
+	_expect(not GameWorld.capsule_overlaps_zone(Vector3(1.30, 0.0, 1.30), 1.90, 0.36, zone), "Capsule corner distance rejects a bounding-box-only false rescue")
+	_expect(GameWorld.capsule_overlaps_zone(Vector3(1.10, 0.0, 0.0), 1.90, 0.36, zone), "Rounded capsule shoulder contact counts as a real rescue overlap")
+
+
 func _run() -> void:
+	_test_rescue_capsule_geometry()
 	var scenario := "all"
 	for arg in OS.get_cmdline_user_args():
 		if arg.begins_with("--scenario="):
