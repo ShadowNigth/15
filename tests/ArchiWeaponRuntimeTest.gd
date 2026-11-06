@@ -524,8 +524,10 @@ func _test_weapon_skins() -> void:
 			"AWP skin never replaces the independent scope-lens material")
 		GameData.select_weapon_skin("awp", "original")
 	awp.free()
-	_expect(GameData.get_weapon_skin_options("m4a4").is_empty() \
-		and not GameData.select_weapon_skin("m4a4", "original"), "Uncurated weapons remain explicitly Original-only")
+	_expect(GameData.get_weapon_skin_options("c4").is_empty() \
+		and not GameData.select_weapon_skin("c4", "original"), "Unpaintable equipment remains explicitly Original-only")
+	_expect(GameData.get_weapon_skin_options("m4a4").size() == 2 \
+		and GameData.select_weapon_skin("m4a4", "original"), "M4A4 now exposes its two shipped CS2 finishes and restores Original HD")
 	GameData.selected_weapon_skins = previous
 
 

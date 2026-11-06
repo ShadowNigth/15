@@ -112,9 +112,9 @@ jobs:
                   print(f'::notice title={name}::{text}')
           PY
 
-      - name: Review catalog butterfly_fold
+      - name: Review catalog butterfly_idle
         if: ${{ !cancelled() }}
-        run: python3 tools/publish_rendered_capture.py butterfly_fold
+        run: python3 tools/publish_rendered_capture.py butterfly_idle
 
       - name: Review catalog push_idle
         if: ${{ !cancelled() }}
@@ -185,7 +185,20 @@ jobs:
 
       - name: Weapon runtime regression
         if: ${{ !cancelled() && steps.native_import.outcome == 'success' && inputs.suite != 'world' }}
-        run: godot --headless --path . res://tests/ArchiWeaponRuntimeTest.tscn
+        run: |
+          set -o pipefail
+          godot --headless --path . res://tests/ArchiWeaponRuntimeTest.tscn 2>&1 | tee /tmp/weapon-runtime.log
+      - name: Publish weapon regression diagnostics
+        if: ${{ failure() }}
+        run: |
+          python3 - <<'PYLOG'
+          from pathlib import Path
+          p = Path('/tmp/weapon-runtime.log')
+          if p.exists():
+              lines = [s for s in p.read_text(errors='replace').splitlines() if 'ARCHI TEST' in s or 'SCRIPT ERROR' in s or 'FAIL' in s]
+              text = '\n'.join(lines[-30:]).replace('%', '%25').replace('\n', '%0A').replace('\r', '%0D')
+              print(f'::notice title=Weapon regression::{text}')
+          PYLOG
 
       - name: Procedural fire regression
         if: ${{ !cancelled() && steps.native_import.outcome == 'success' }}
