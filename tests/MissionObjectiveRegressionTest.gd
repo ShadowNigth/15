@@ -24,6 +24,8 @@ func _expect(condition: bool, description: String) -> void:
 	if not condition:
 		_failures.append(description)
 		push_error("[MISSION AI TEST] " + description)
+		var annotation := description.replace("%", "%25").replace("\r", "%0D").replace("\n", "%0A")
+		print("::error title=Mission objective QA::" + annotation)
 
 
 func _make_world(map_name: String, bot_count: int) -> GameWorld:
@@ -174,18 +176,29 @@ func _test_hostage_map(map_name: String, expected_hostages: int, bot_count: int,
 
 
 func _run() -> void:
-	seed(2)
-	await _test_oilrig_escort()
-	seed(4807)
-	await _test_hostage_map("cs_747", 5, 10, 18000)
-	seed(4808)
-	await _test_hostage_map("cs_estate", 3, 6, 14400)
+	var scenario := "all"
+	for arg in OS.get_cmdline_user_args():
+		if arg.begins_with("--scenario="):
+			scenario = arg.trim_prefix("--scenario=")
+	print("[MISSION AI TEST] scenario=%s" % scenario)
+	if scenario in ["all", "oilrig"]:
+		seed(2)
+		await _test_oilrig_escort()
+	if scenario in ["all", "747"]:
+		seed(4807)
+		await _test_hostage_map("cs_747", 5, 10, 18000)
+	if scenario in ["all", "estate"]:
+		seed(4808)
+		await _test_hostage_map("cs_estate", 3, 6, 14400)
+	if scenario not in ["all", "oilrig", "747", "estate"]:
+		_expect(false, "Unknown scenario: %s" % scenario)
 	_finish()
 
 
 func _finish() -> void:
 	if _failures.is_empty():
 		print("[MISSION AI TEST] PASS: %d checks; full VIP escort and physical hostage rescues." % _checks)
+		print("::notice title=Mission objective QA::PASS: %d physical checks" % _checks)
 		get_tree().quit()
 	else:
 		printerr("[MISSION AI TEST] FAIL: %d of %d checks" % [_failures.size(), _checks])

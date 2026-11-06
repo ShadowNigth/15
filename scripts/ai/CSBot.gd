@@ -1397,6 +1397,12 @@ func _update_ct_hostage_objective(nav: BotNavigator, gw: Node3D, live_hostages: 
 			_hold_pos_timer = maxf(_hold_pos_timer, 0.28)
 			return true
 
+		# Keep a valid safe route instead of solving every rescue candidate on
+		# each 0.12–0.22 s think tick. Lagging followers are handled above and
+		# still interrupt the route immediately when they need help.
+		if not _hostage_direct_active and _hostage_rescue_zone_idx >= 0 and _has_goal and not _node_path.is_empty():
+			return true
+
 		var best := _best_hostage_rescue(nav, gw)
 		if best.is_empty():
 			# Third-party incomplete graphs retain motion while safer candidates

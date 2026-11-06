@@ -32,8 +32,17 @@ jobs:
       - name: Import project resources
         run: godot --headless --path . --editor --quit
 
-      - name: Mission objective regression
-        run: godot --headless --path . --fixed-fps 60 res://tests/MissionObjectiveRegressionTest.tscn
+      - name: OilRig physical escort regression
+        timeout-minutes: 8
+        run: godot --headless --path . --fixed-fps 60 res://tests/MissionObjectiveRegressionTest.tscn -- --scenario=oilrig
+
+      - name: cs_747 physical hostage regression
+        timeout-minutes: 8
+        run: godot --headless --path . --fixed-fps 60 res://tests/MissionObjectiveRegressionTest.tscn -- --scenario=747
+
+      - name: cs_estate physical hostage regression
+        timeout-minutes: 8
+        run: godot --headless --path . --fixed-fps 60 res://tests/MissionObjectiveRegressionTest.tscn -- --scenario=estate
 
       - name: Weapon runtime regression
         run: godot --headless --path . res://tests/ArchiWeaponRuntimeTest.tscn
