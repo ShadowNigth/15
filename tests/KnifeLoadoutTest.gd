@@ -61,6 +61,7 @@ func _run() -> void:
 		if player._vm_anim == null:
 			get_tree().quit(1)
 			return
+		_expect(_surface_count(player._vm_model_root, "sc_cs2_" + key) > 0, key + " renders its distinct knife material and geometry")
 		for clip in ["draw", "idle", "slash1", "slash2", "midslash1", "midslash2", "stab_miss", "stab", "inspect"]:
 			_expect(player._vm_anim.has_animation(clip), key + " retains animation " + clip)
 		_expect(_surface_count(player._vm_model_root, "ct_arms.bmp") > 0, key + " preserves original arms")
