@@ -167,7 +167,9 @@ func _test_vip_map(map_name: String, expected_zones: int, drive_to_extraction: b
 			continue
 		bot._update_tactical_objective()
 		if bot._vip_escort_slot >= 0 and bot._vip_escort_slot < 3:
-			escort_verified = escort_verified or bot._has_goal or bot._hold_pos_timer > 0.0
+			# Formation may be a capsule/floor-validated direct approach rather
+			# than a graph goal. Both are real active escort navigation states.
+			escort_verified = escort_verified or bot._has_goal or bot._vip_escort_direct_active or bot._hold_pos_timer > 0.0
 	_expect(escort_verified, "%s assigns a CT formation escort around the VIP" % map_name)
 
 	if drive_to_extraction:

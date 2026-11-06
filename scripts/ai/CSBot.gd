@@ -1925,8 +1925,13 @@ func _follow_navigation_path(delta: float) -> void:
 	# can be smaller than the collision-free orbit around their centre.
 	var ground_narrow := (cur_flags & BotNavigator.ACTION_FLAGS) == BotNavigator.FLAG_NARROW and not is_jump_link
 	var touch_r: float = 0.90 if ground_narrow else (0.54 if ((cur_flags & BotNavigator.ACTION_FLAGS) != 0 or is_jump_link) else 1.15)
-	var max_vert_touch: float = 2.1 if (cur_flags & BotNavigator.FLAG_LADDER) != 0 else (0.68 if signed_dy > 0.0 else 1.45)
-	if flat_d < touch_r and vert_d < max_vert_touch:
+	var max_vert_touch: float = (0.68 if signed_dy > 0.0 else 2.1) if (cur_flags & BotNavigator.FLAG_LADDER) != 0 else (0.68 if signed_dy > 0.0 else 1.45)
+	var previous_is_ladder := (nav.get_node_flags(_prev_node_idx) & BotNavigator.FLAG_LADDER) != 0
+	var leaving_ladder_top := previous_is_ladder and (cur_flags & BotNavigator.FLAG_LADDER) == 0 and wp.y >= nav.get_node_pos(_prev_node_idx).y - 0.8
+	# A capsule beside/below the top platform can be within the arrival sphere
+	# while still falling. Finish the vault and actually land before advancing.
+	var arrival_supported := not leaving_ladder_top or is_on_floor()
+	if flat_d < touch_r and vert_d < max_vert_touch and arrival_supported:
 		_record_vip_route_node(cur_id)
 		_prev_node_idx = cur_id
 		_node_path.remove_at(0)
