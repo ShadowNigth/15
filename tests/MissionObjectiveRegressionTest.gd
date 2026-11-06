@@ -128,6 +128,8 @@ func _test_oilrig_escort() -> void:
 				distances.append("%.1f" % escort.global_position.distance_to(vip.global_position))
 			_progress("OilRig t=%ds VIP=%s escort_dist=%s path=%d" % [frames / 60, vip.global_position, ", ".join(distances), vip._node_path.size()])
 
+	for escort in escorts:
+		_progress("OilRig final escort dist=%.2f pos=%s path=%d goal=%s direct=%s stuck=%.2f escape=%.2f weapon=%s" % [escort.global_position.distance_to(vip.global_position), escort.global_position, escort._node_path.size(), escort._goal_pos, escort._vip_escort_direct_active, escort._stuck_timer, escort._escape_timer, escort.weapon_ctrl.current_weapon_id])
 	_expect(not escort_camped, "Assigned OilRig escorts never switch into stationary camp behaviour")
 	for escort in escorts:
 		var moved := escort.global_position.distance_to(start_positions[escort.get_instance_id()] as Vector3)

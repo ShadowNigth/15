@@ -621,7 +621,12 @@ func _physics_process(delta: float) -> void:
 		return
 
 	# Weapon discipline during navigation: Knife rush out of spawn, then draw Primary Rifle before contact!
-	if not weapon_ctrl.is_reloading:
+	# Assigned escorts also use the knife to match the lighter VIP while catching up.
+	if _is_assigned_vip_escort():
+		var vip := _find_live_vip()
+		if is_instance_valid(vip):
+			_update_vip_escort_weapon(vip)
+	elif not weapon_ctrl.is_reloading:
 		if _knife_rush_timer > 0.0 and _sound_investigate_timer <= 0.0 and not is_vip:
 			if weapon_ctrl.current_weapon_id != "knife":
 				weapon_ctrl.equip_slot(3)
@@ -1109,11 +1114,24 @@ func _start_vip_escort_direct(goal: Vector3) -> void:
 	_stuck_timer = 0.0
 
 
+func _update_vip_escort_weapon(vip: CSActor) -> void:
+	if weapon_ctrl.is_reloading:
+		return
+	var catch_up := global_position.distance_to(vip.global_position) > 4.5 and _sound_investigate_timer <= 0.0
+	if catch_up:
+		if weapon_ctrl.current_weapon_id != "knife":
+			weapon_ctrl.equip_slot(3)
+	elif _is_utility_weapon(weapon_ctrl.current_weapon_id):
+		if not weapon_ctrl.equip_slot(1):
+			weapon_ctrl.equip_slot(2)
+
+
 func _follow_vip_escort_direct(delta: float) -> void:
 	var vip := _find_live_vip()
 	if not is_instance_valid(vip):
 		_vip_escort_direct_active = false
 		return
+	_update_vip_escort_weapon(vip)
 	_vip_escort_direct_elapsed += delta
 	var raw_dir := _vip_escort_direct_goal - global_position
 	raw_dir.y = 0.0
@@ -1132,7 +1150,7 @@ func _follow_vip_escort_direct(delta: float) -> void:
 	_last_pos = global_position
 	# A moving VIP can turn a previously open formation slot into a wall-corner
 	# shortcut. Return to A* instead of pushing indefinitely against geometry.
-	if _vip_escort_direct_elapsed > 3.0 or _stuck_timer > 0.55 or distance > 10.0:
+	if _vip_escort_direct_elapsed > 3.0 or _stuck_timer > 0.55 or distance > 16.0:
 		_vip_escort_direct_active = false
 		_vip_escort_repath = 0.0
 		_stuck_timer = 0.0
@@ -1171,20 +1189,21 @@ func _update_as_squad_objective(nav: BotNavigator, gw: Node3D) -> bool:
 			var formation_distance := global_position.distance_to(formation_pos)
 			# Nearby escorts track the moving formation directly. This avoids
 			# repeatedly snapping back to an old node while the VIP advances.
-			if formation_distance < 8.5 and _has_wide_corridor_sight(global_position, formation_pos):
+			if formation_distance < 12.0 and _has_wide_corridor_sight(global_position, formation_pos):
 				if not _vip_escort_direct_active or _vip_escort_direct_goal.distance_to(formation_pos) > 0.45:
 					_start_vip_escort_direct(formation_pos)
 				else:
 					_vip_escort_direct_goal = formation_pos
 			else:
 				_vip_escort_direct_active = false
-				if _vip_escort_repath <= 0.0 and (_node_path.is_empty() or not _has_goal or _goal_pos.distance_to(formation_pos) > 3.0):
-					_plan_to_world_pos(nav, formation_pos, false, BotNavigator.PATH_SAFE)
-					_vip_escort_repath = 0.48
-					# An invalid formation offset must never leave an escort idle at
-					# spawn. Falling back to the VIP keeps the squad on mission.
+				# Follow the leader rather than repeatedly restarting A* toward a
+				# moving offset. A wider update threshold gives the escort time to
+				# complete links and ladders; close formation is handled directly.
+				if _vip_escort_repath <= 0.0 and (_node_path.is_empty() or not _has_goal or _goal_pos.distance_to(vip.global_position) > 6.0):
+					_plan_to_world_pos(nav, vip.global_position, false, BotNavigator.PATH_FAST)
+					_vip_escort_repath = 0.75
 					if not _has_goal:
-						_plan_to_world_pos(nav, vip.global_position, false, BotNavigator.PATH_SAFE)
+						_plan_to_world_pos(nav, formation_pos, false, BotNavigator.PATH_SAFE)
 			return true
 		_vip_escort_direct_active = false
 
