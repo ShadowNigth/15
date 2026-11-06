@@ -125,3 +125,40 @@ jobs:
                   escaped = line.replace('%', '%25').replace('\r', '%0D').replace('\n', '%0A')
                   print(f'::notice title=Game world native log::{escaped}')
           PY
+
+      - name: Render task 48 mission gameplay with OpenGL
+        if: ${{ success() && inputs.suite != 'world' }}
+        timeout-minutes: 12
+        env:
+          TASK48_CAPTURE_DIR: /tmp/task48-captures
+          LIBGL_ALWAYS_SOFTWARE: '1'
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y -qq xvfb libgl1-mesa-dri
+          set -o pipefail
+          timeout 540s xvfb-run -a godot --path . --rendering-method gl_compatibility --rendering-driver opengl3 --disable-render-loop --fixed-fps 60 --resolution 960x540 res://tests/Task48VisualQA.tscn 2>&1 | tee /tmp/task48-render.log
+          if grep -Eq 'SCRIPT ERROR:|Parse Error:|Compile Error:' /tmp/task48-render.log; then exit 1; fi
+          python3 - <<'PY'
+          import base64
+          from pathlib import Path
+          import json
+          root = Path('/tmp/task48-captures')
+          manifest = json.loads((root / 'manifest.json').read_text())
+          assert len(manifest) == 3
+          for capture in manifest:
+              name = capture['map']
+              data = base64.b64encode((root / (name + '.jpg')).read_bytes()).decode()
+              chunks = [data[i:i + 45000] for i in range(0, len(data), 45000)]
+              assert len(chunks) <= 3, 'Capture exceeds diagnostic transport budget'
+              for i, chunk in enumerate(chunks):
+                  print(f'::notice title=Task48 JPEG {name} {i+1}/{len(chunks)}::{chunk}')
+          PY
+
+      - name: Save task 48 rendered evidence
+        if: ${{ !cancelled() && inputs.suite != 'world' }}
+        uses: actions/upload-artifact@v4
+        with:
+          name: task48-rendered-gameplay
+          path: /tmp/task48-captures/
+          if-no-files-found: ignore
+          retention-days: 14
