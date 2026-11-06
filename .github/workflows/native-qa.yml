@@ -36,9 +36,31 @@ jobs:
       - name: Import project resources
         run: godot --headless --path . --editor --quit
 
+      - name: Check mission test with the Godot type checker
+        timeout-minutes: 2
+        run: |
+          set -o pipefail
+          stdbuf -o0 -e0 godot --headless --path . --check-only --script res://tests/MissionObjectiveRegressionTest.gd 2>&1 | tee /tmp/mission-check.log
+
       - name: OilRig physical escort regression
-        timeout-minutes: 8
-        run: godot --headless --path . --fixed-fps 60 res://tests/MissionObjectiveRegressionTest.tscn -- --scenario=oilrig
+        timeout-minutes: 4
+        run: |
+          set -o pipefail
+          timeout --signal=TERM --kill-after=5s 210s stdbuf -o0 -e0 godot --headless --path . --fixed-fps 60 res://tests/MissionObjectiveRegressionTest.tscn -- --scenario=oilrig 2>&1 | tee /tmp/oilrig-mission.log
+
+      - name: Publish failed mission diagnostics
+        if: ${{ failure() }}
+        run: |
+          python3 - <<'PY'
+          from pathlib import Path
+          for name in ('mission-check', 'oilrig-mission'):
+              path = Path('/tmp') / (name + '.log')
+              if not path.exists():
+                  continue
+              for line in path.read_text(errors='replace').splitlines()[-80:]:
+                  escaped = line.replace('%', '%25').replace('\r', '%0D').replace('\n', '%0A')
+                  print(f'::notice title={name} native log::{escaped}')
+          PY
 
       - name: cs_747 physical hostage regression
         timeout-minutes: 8
