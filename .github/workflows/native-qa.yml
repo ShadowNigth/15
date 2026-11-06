@@ -33,8 +33,11 @@ jobs:
           sudo install -m 755 /tmp/godot/Godot_v4.3-stable_linux.x86_64 /usr/local/bin/godot
           godot --version
 
-      - name: Import project resources
-        run: godot --headless --path . --editor --quit
+      - name: Import project resources and global script classes
+        timeout-minutes: 10
+        run: |
+          set -o pipefail
+          stdbuf -o0 -e0 godot --headless --path . --import 2>&1 | tee /tmp/import.log
 
       - name: Smoke mission scene with native autoloads
         timeout-minutes: 2
@@ -53,7 +56,7 @@ jobs:
         run: |
           python3 - <<'PY'
           from pathlib import Path
-          for name in ('mission-check', 'oilrig-mission'):
+          for name in ('import', 'mission-check', 'oilrig-mission'):
               path = Path('/tmp') / (name + '.log')
               if not path.exists():
                   continue
