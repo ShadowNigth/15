@@ -122,11 +122,15 @@ func _test_oilrig_escort() -> void:
 			closest_distances[escort.get_instance_id()] = minf(float(closest_distances[escort.get_instance_id()]), distance)
 			if escort._is_assigned_vip_escort() and escort._camp_timer > 0.0:
 				escort_camped = true
-		if frames % 1800 == 0:
+		if frames % 600 == 0:
 			var distances: Array[String] = []
 			for escort in escorts:
 				distances.append("%.1f" % escort.global_position.distance_to(vip.global_position))
 			_progress("OilRig t=%ds VIP=%s escort_dist=%s path=%d" % [frames / 60, vip.global_position, ", ".join(distances), vip._node_path.size()])
+			for escort in escorts:
+				var escort_node := escort._node_path[0] if not escort._node_path.is_empty() else -1
+				var vip_node := vip._node_path[0] if not vip._node_path.is_empty() else -1
+				_progress("OilRig track t=%ds escort=%s node=%d vip_node=%d direct=%s path=%s" % [frames / 60, escort.global_position, escort_node, vip_node, escort._vip_escort_direct_active, str(escort._node_path.slice(0, 6))])
 
 	_progress("OilRig final VIP pos=%s result=%s" % [vip.global_position, str(_last_round_result)])
 	for escort in escorts:
