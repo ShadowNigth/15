@@ -468,9 +468,15 @@ func _build_arsenal_dialog() -> void:
 		var idx3 := wlist.add_item("[Gloves] %s — %s" % [String(option.get("family", "Sport")), String(option.get("wear_code", ""))])
 		wlist.set_item_metadata(idx3, "glove:" + String(option.get("id", "")))
 
+	for resource in ["ct", "t", "hostage", "defuser_item", "chicken"]:
+		var native_idx := wlist.add_item("[Native review] " + resource)
+		wlist.set_item_metadata(native_idx, "native:" + resource)
+
 	wlist.item_selected.connect(func(idx: int):
 		var meta := String(wlist.get_item_metadata(idx))
-		if meta.begins_with("player:"):
+		if meta.begins_with("native:"):
+			_load_viewer_native(meta.trim_prefix("native:"))
+		elif meta.begins_with("player:"):
 			_load_viewer_player(meta.trim_prefix("player:"))
 		elif meta.begins_with("knife:"):
 			_select_knife_for_match(meta.trim_prefix("knife:"))
@@ -830,6 +836,17 @@ func _build_options_dialog() -> void:
 	grid.add_theme_constant_override("v_separation", 8)
 	content.add_child(grid)
 
+	var cosmetic_labels := ["Original casings + native ejection timing", "Native ammunition HUD icons", "Low-ammunition warning colors", "Ambient chickens (Italy / Inferno / Cobble)", "Native dropped defuse-kit model"]
+	for index in range(GameData.COSMETIC_KEYS.size()):
+		var label := Label.new()
+		label.text = cosmetic_labels[index]
+		grid.add_child(label)
+		var check := CheckBox.new()
+		var key: String = GameData.COSMETIC_KEYS[index]
+		check.button_pressed = GameData.get(key)
+		check.toggled.connect(GameData.set_cosmetic_preference.bind(key))
+		grid.add_child(check)
+
 	var voice_label := Label.new()
 	voice_label.text = "Radio voices:"
 	grid.add_child(voice_label)
@@ -902,3 +919,33 @@ func _build_options_dialog() -> void:
 		"• M: Change Team   |   Z / X / C: Radio Commands   |   Tab: Scoreboard   |   Esc: Menu"
 	)
 	content.add_child(keys_lbl)
+
+
+func _load_viewer_native(resource: String) -> void:
+	_viewer_current_wid = ""
+	_populate_viewer_skin_options("")
+	_clear_viewer_pivot()
+	var scene := GameData.get_model_scene("native/" + resource)
+	if scene == null:
+		return
+	var instance := scene.instantiate() as Node3D
+	_viewer_pivot.add_child(instance)
+	instance.scale = Vector3.ONE * (0.5 if resource in ["ct", "t", "hostage"] else 1.8)
+	instance.position.y = -0.35 if resource in ["ct", "t", "hostage"] else -0.15
+	_viewer_anim = _find_anim_recursive(instance)
+	_populate_viewer_animations()
+	if _viewer_anim != null:
+		for clip in _viewer_anim.get_animation_list():
+			if clip in ["walk", "run"]:
+				_viewer_anim.get_animation(clip).loop_mode = Animation.LOOP_LINEAR
+		if _viewer_anim.has_animation("walk"):
+			_viewer_anim.play("walk")
+	_viewer_stats_lbl.text = "ScCsgoKnives native review: " + resource + "\n"
+	if resource in ["ct", "t"]:
+		_viewer_stats_lbl.text += "170 restored external clips. Review only: classic bots, classes and VIP remain unchanged. No GoldSrc/CS2 skeleton mix."
+	elif resource == "hostage":
+		_viewer_stats_lbl.text += "7 clips, adapted upstream rifle/knife poses; not a full native hostage animation set. Classic rescue NPC preserved."
+	elif resource == "defuser_item":
+		_viewer_stats_lbl.text += "CS2 waist tool pouch. Used for dropped kits; CT pickup, price and 5s / 10s defuse unchanged."
+	else:
+		_viewer_stats_lbl.text += "Native idle / walk / run. Ambient animals do not count as enemies or objectives."

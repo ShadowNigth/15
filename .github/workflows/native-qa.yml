@@ -562,3 +562,70 @@ jobs:
       - name: Review additional native close-up
         if: ${{ matrix.extra != '' }}
         run: python3 tools/publish_native_gun_review.py ${{ matrix.batch }} ${{ matrix.extra }}
+
+
+  native-world-assets:
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install Godot and OpenGL
+        run: |
+          curl -fL --retry 3 -o /tmp/godot.zip https://github.com/godotengine/godot-builds/releases/download/4.3-stable/Godot_v4.3-stable_linux.x86_64.zip
+          unzip -q /tmp/godot.zip -d /tmp/godot
+          sudo install -m 755 /tmp/godot/Godot_v4.3-stable_linux.x86_64 /usr/local/bin/godot
+          sudo apt-get update -qq
+          sudo apt-get install -y -qq xvfb libgl1-mesa-dri
+      - name: Verify native world provenance
+        run: python3 tests/check_native_world_assets.py
+      - name: Import project
+        run: |
+          set -o pipefail
+          godot --headless --path . --import 2>&1 | tee /tmp/world-import.log
+          if grep -Eq 'SCRIPT ERROR:|Parse Error:|Compile Error:' /tmp/world-import.log; then exit 1; fi
+      - name: Render production ejection, HUD, chickens and animated candidates
+        env:
+          LIBGL_ALWAYS_SOFTWARE: '1'
+        run: |
+          set -o pipefail
+          timeout 420s xvfb-run -a godot --path . --audio-driver Dummy --rendering-method gl_compatibility --rendering-driver opengl3 --disable-render-loop --fixed-fps 60 --resolution 1280x720 res://tests/NativeWorldAssetsTest.tscn -- --capture 2>&1 | tee /tmp/native-world.log
+          if grep -Eq 'SCRIPT ERROR:|Parse Error:|Compile Error:' /tmp/native-world.log; then exit 1; fi
+          grep -q '\[NATIVE WORLD TEST\] PASS:' /tmp/native-world.log
+      - name: Native world diagnostics
+        if: ${{ always() }}
+        run: |
+          python3 - <<'PYCODE'
+          from pathlib import Path
+          for name in ['world-import', 'native-world']:
+              path=Path('/tmp/'+name+'.log')
+              if path.exists():
+                  text=path.read_text(errors='replace')[-5500:].replace('%','%25').replace('\n','%0A')
+                  print('::notice title='+name+'::'+text)
+          PYCODE
+      - name: Publish CT review
+        if: ${{ always() }}
+        run: python3 tools/publish_native_world_capture.py ct_0
+      - name: Publish T review
+        if: ${{ always() }}
+        run: python3 tools/publish_native_world_capture.py t_0
+      - name: Publish hostage review
+        if: ${{ always() }}
+        run: python3 tools/publish_native_world_capture.py hostage_0
+      - name: Publish chicken review
+        if: ${{ always() }}
+        run: python3 tools/publish_native_world_capture.py chicken_0
+      - name: Publish native kit review
+        if: ${{ always() }}
+        run: python3 tools/publish_native_world_capture.py defuser_item_0
+      - name: Publish Italy gameplay
+        if: ${{ always() }}
+        run: python3 tools/publish_native_world_capture.py italy_hud_chicken
+      - uses: actions/upload-artifact@v4
+        if: ${{ always() }}
+        with:
+          name: native-world-rendered-evidence
+          path: |
+            /tmp/native-world-review/
+            /tmp/native-world.log
+            /tmp/world-import.log
+          retention-days: 14

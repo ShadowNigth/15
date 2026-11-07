@@ -14,6 +14,7 @@ signal zoom_changed(fov_deg: float, scoped_overlay: bool)
 signal plant_progress_changed(ratio: float)
 
 var actor = null  # CSActor owner (duck-typed to avoid cyclic class_name reference)
+var casing_epoch: int = 0
 var current_weapon_id: String = "knife"
 var last_weapon_id: String = "knife"
 
@@ -59,6 +60,7 @@ func setup_for_actor(owner_actor: CharacterBody3D) -> void:
 
 
 func reset_loadout(team: String, is_vip: bool = false) -> void:
+	casing_epoch += 1
 	slots = {1: "", 2: "", 3: "knife", 5: ""}
 	grenades = {"hegrenade": 0, "flashbang": 0, "smokegrenade": 0, "decoy": 0, "molotov": 0, "incendiary": 0}
 	clips.clear()
@@ -169,6 +171,7 @@ func equip_slot(slot_num: int) -> bool:
 
 
 func equip_weapon_by_id(wid: String) -> bool:
+	casing_epoch += 1
 	if wid.is_empty() or not GameData.weapons.has(wid):
 		return false
 	if wid != current_weapon_id:
@@ -527,6 +530,7 @@ func clear_zoom() -> void:
 
 
 func start_reload() -> void:
+	casing_epoch += 1
 	if is_reloading or is_attaching_silencer:
 		return
 	var spec := get_current_spec()
@@ -767,6 +771,10 @@ func _fire_penetrating_ray(
 			rem_dist = max_dist - step
 			cur_from = hit_pos + dir * 0.25
 			continue
+
+		if col is AmbientChicken:
+			col.take_damage(actor, dmg_at_dist)
+			break
 
 		if col is HostageNPC:
 			if is_instance_valid(RoundManager.game_world):
@@ -1062,6 +1070,22 @@ func _launch_grenade_now(gid: String) -> void:
 
 
 func _spawn_brass_casing(spec: Dictionary) -> void:
+	if current_weapon_id in ["taser", "revolver"]:
+		return  # Neither has a source shot-ejection event.
+	if GameData.native_casings.get("weapons", {}).has(current_weapon_id) and GameData.native_casings_enabled:
+		if is_instance_valid(actor) and is_instance_valid(RoundManager.game_world):
+			var clip := "shoot1"
+			if actor.has_method("native_casing_clip"):
+				clip = actor.native_casing_clip()
+			elif current_weapon_id == "elite":
+				clip = "shoot_left1" if int(clips.get(current_weapon_id, 0)) % 2 == 1 else "shoot_right1"
+			var system := RoundManager.game_world.get_node_or_null("NativeCasings") as NativeCasings
+			if system == null:
+				system = NativeCasings.new()
+				system.name = "NativeCasings"
+				RoundManager.game_world.add_child(system)
+			system.queue_shot(actor, current_weapon_id, clip)
+		return
 	if not is_instance_valid(RoundManager.game_world) or not is_instance_valid(actor):
 		return
 	var sl := int(spec.get("slot", 1))

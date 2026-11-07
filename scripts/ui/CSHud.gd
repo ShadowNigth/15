@@ -45,6 +45,7 @@ var _hp_icon: TextureRect = null
 var _ap_icon: TextureRect = null
 var _money_label: Label = null
 var _money_delta_label: Label = null
+var _native_ammo_icon: TextureRect = null
 var _ammo_label: Label = null
 var _ammo_reserve_label: Label = null
 var _weapon_name_label: Label = null
@@ -614,6 +615,13 @@ func _build_hud_tree() -> void:
 
 	_ammo_label = _make_label("12", 40, HUD_WHITE)
 	ammo_row.add_child(_ammo_label)
+	_native_ammo_icon = TextureRect.new()
+	_native_ammo_icon.custom_minimum_size = Vector2(26, 26)
+	_native_ammo_icon.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
+	_native_ammo_icon.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
+	_native_ammo_icon.size_flags_vertical = Control.SIZE_SHRINK_CENTER
+	_native_ammo_icon.tooltip_text = "Reserve ammunition (rounds, not magazines)"
+	ammo_row.add_child(_native_ammo_icon)
 	_ammo_reserve_label = _make_label("| 24", 22, HUD_DIM)
 	ammo_row.add_child(_ammo_reserve_label)
 
@@ -693,6 +701,10 @@ func _process(delta: float) -> void:
 	_score_ctrl.queue_redraw()
 
 	if is_instance_valid(player):
+		_native_ammo_icon.texture = GameData.ammo_icon_for(player.weapon_ctrl.current_weapon_id)
+		_native_ammo_icon.visible = GameData.native_ammo_icons and _native_ammo_icon.texture != null and player.is_alive
+		if not GameData.low_ammo_warning:
+			_ammo_label.add_theme_color_override("font_color", HUD_WHITE)
 		var smoke_d := RoundManager.get_smoke_density_at(player.get_eye_position()) if player.is_alive else 0.0
 		_smoke_rect.color.a = lerpf(_smoke_rect.color.a, clampf(smoke_d * 0.97, 0.0, 0.97), minf(1.0, delta * 9.0))
 		var fl_raw: float = clampf(player.flash_alpha, 0.0, 1.35)
@@ -1029,7 +1041,9 @@ func _on_ammo_updated(clip: int, reserve: int) -> void:
 	else:
 		_ammo_label.text = str(clip)
 		_ammo_reserve_label.text = "| %d" % reserve
-		if clip == 0:
+		if not GameData.low_ammo_warning:
+			_ammo_label.add_theme_color_override("font_color", HUD_WHITE)
+		elif clip == 0:
 			_ammo_label.add_theme_color_override("font_color", RED_WARN)
 		elif clip <= 5:
 			_ammo_label.add_theme_color_override("font_color", Color(0.98, 0.82, 0.35, 0.98))

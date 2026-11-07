@@ -1,0 +1,210 @@
+{
+  "repository": "zh667/ScCsgoKnives",
+  "commit": "1eb8067fd0b7214df5bccf3ac3807fbaa3aee70d",
+  "files": [
+    {
+      "source": "src/ScCsgoKnives/Assets/Textures/ScCsgoKnives/hud_ammo_banana_mag.png",
+      "path": "res://assets/ui/native/hud_ammo_banana_mag.png",
+      "source_sha256": "f17a3b8b4c8908a9628f03d20d6b5e59c9db92f21a1a0b51b068b8eed1724c3d",
+      "sha256": "f17a3b8b4c8908a9628f03d20d6b5e59c9db92f21a1a0b51b068b8eed1724c3d",
+      "operation": "unchanged bytes"
+    },
+    {
+      "source": "src/ScCsgoKnives/Assets/Textures/ScCsgoKnives/hud_ammo_bizon_tube.png",
+      "path": "res://assets/ui/native/hud_ammo_bizon_tube.png",
+      "source_sha256": "5bac3818e2c46f1857c0550774a4a3d387ff90ea49cef7bfa7281ed25ae76f8f",
+      "sha256": "5bac3818e2c46f1857c0550774a4a3d387ff90ea49cef7bfa7281ed25ae76f8f",
+      "operation": "unchanged bytes"
+    },
+    {
+      "source": "src/ScCsgoKnives/Assets/Textures/ScCsgoKnives/hud_ammo_box.png",
+      "path": "res://assets/ui/native/hud_ammo_box.png",
+      "source_sha256": "9f6663be161b6eca8f293fbee8ff60e5da3b254937fffeb6d66bb3d11cca3267",
+      "sha256": "9f6663be161b6eca8f293fbee8ff60e5da3b254937fffeb6d66bb3d11cca3267",
+      "operation": "unchanged bytes"
+    },
+    {
+      "source": "src/ScCsgoKnives/Assets/Textures/ScCsgoKnives/hud_ammo_generic_bullet.png",
+      "path": "res://assets/ui/native/hud_ammo_generic_bullet.png",
+      "source_sha256": "472590173082b8d32b5e1b3eb2bab66c5818f7968aa3cc0443b59240b6066cd1",
+      "sha256": "472590173082b8d32b5e1b3eb2bab66c5818f7968aa3cc0443b59240b6066cd1",
+      "operation": "unchanged bytes"
+    },
+    {
+      "source": "src/ScCsgoKnives/Assets/Textures/ScCsgoKnives/hud_ammo_magazine.png",
+      "path": "res://assets/ui/native/hud_ammo_magazine.png",
+      "source_sha256": "7cfd7a61449ee7d11de23dd653bdafbb5f3adaaaf3cc696dd067aaa8d543af43",
+      "sha256": "7cfd7a61449ee7d11de23dd653bdafbb5f3adaaaf3cc696dd067aaa8d543af43",
+      "operation": "unchanged bytes"
+    },
+    {
+      "source": "src/ScCsgoKnives/Assets/Textures/ScCsgoKnives/hud_ammo_p90.png",
+      "path": "res://assets/ui/native/hud_ammo_p90.png",
+      "source_sha256": "47d6350d24d0c0426c240aa5f5a0c9f07229fd95d06ecf93243ff8fa2f7ac814",
+      "sha256": "47d6350d24d0c0426c240aa5f5a0c9f07229fd95d06ecf93243ff8fa2f7ac814",
+      "operation": "unchanged bytes"
+    },
+    {
+      "source": "src/ScCsgoKnives/Assets/Textures/ScCsgoKnives/hud_ammo_revolver_loader.png",
+      "path": "res://assets/ui/native/hud_ammo_revolver_loader.png",
+      "source_sha256": "003f81c3524696847de39d5993108e0f554d5908010e9bc2bc6c04fe79d4ed15",
+      "sha256": "003f81c3524696847de39d5993108e0f554d5908010e9bc2bc6c04fe79d4ed15",
+      "operation": "unchanged bytes"
+    },
+    {
+      "source": "src/ScCsgoKnives/Assets/Textures/ScCsgoKnives/hud_ammo_shotgun_shell.png",
+      "path": "res://assets/ui/native/hud_ammo_shotgun_shell.png",
+      "source_sha256": "47cb4dac2c1064d7e882c6d9ccd83ef4b77fffc69ce4b5ece6afb806d687b3fc",
+      "sha256": "47cb4dac2c1064d7e882c6d9ccd83ef4b77fffc69ce4b5ece6afb806d687b3fc",
+      "operation": "unchanged bytes"
+    },
+    {
+      "source": "src/ScCsgoKnives/Assets/Models/ScCsgoKnives/casing_ak47_casing.obj",
+      "path": "res://assets/models/native/casing_ak47_casing.glb",
+      "source_sha256": "bb1e0d9b48af3f526a5cefe45b41a449d2979e98a00cbc00165f1310bc165cfa",
+      "sha256": "f66af1d34cdb2a25bc2a69302dc3fec4db348996dbd94cde492559184fe6480a",
+      "operation": "OBJ triangle positions/normals/UV exact; embedded original PNG; no resize"
+    },
+    {
+      "source": "src/ScCsgoKnives/Assets/Textures/ScCsgoKnives/casing_ak47_casing.png",
+      "embedded_in": "res://assets/models/native/casing_ak47_casing.glb",
+      "source_sha256": "8550282c30a4b8c3b386cdb824e3502c09a4f069fba9c459f7e24910c8adaed5"
+    },
+    {
+      "source": "src/ScCsgoKnives/Assets/Models/ScCsgoKnives/casing_awp_casing.obj",
+      "path": "res://assets/models/native/casing_awp_casing.glb",
+      "source_sha256": "c8a7f425be9e00753f8097a52e73a7b520a3ecb2a3182888bb3fc940f27d9558",
+      "sha256": "1a41a1deb5c807fc5cb5075448939ab77e5fc2329786d208e787cb874b9c28a8",
+      "operation": "OBJ triangle positions/normals/UV exact; embedded original PNG; no resize"
+    },
+    {
+      "source": "src/ScCsgoKnives/Assets/Textures/ScCsgoKnives/casing_awp_casing.png",
+      "embedded_in": "res://assets/models/native/casing_awp_casing.glb",
+      "source_sha256": "fea85d154bf0f2d41975a89d82d5510d23bdd4c6ad374a97063f6599ac42af99"
+    },
+    {
+      "source": "src/ScCsgoKnives/Assets/Models/ScCsgoKnives/casing_deagle_casing.obj",
+      "path": "res://assets/models/native/casing_deagle_casing.glb",
+      "source_sha256": "a8130444f7946a4283b9684605895d1ecf214968c10ee72f309d0c06f755b972",
+      "sha256": "7e767f7517f097fd3e6e8844721bc8631b463c112354e40994271210f54cbe6e",
+      "operation": "OBJ triangle positions/normals/UV exact; embedded original PNG; no resize"
+    },
+    {
+      "source": "src/ScCsgoKnives/Assets/Textures/ScCsgoKnives/casing_deagle_casing.png",
+      "embedded_in": "res://assets/models/native/casing_deagle_casing.glb",
+      "source_sha256": "6c1ca1f95f833074030f9b132d1a6d7e6fa7bf1b72876ede7bfce1e638bfa03f"
+    },
+    {
+      "source": "src/ScCsgoKnives/Assets/Models/ScCsgoKnives/casing_glock_casing.obj",
+      "path": "res://assets/models/native/casing_glock_casing.glb",
+      "source_sha256": "b530a0db6d90cf4071bdba4637658022e6003f948b4871a0556a41134d5af19c",
+      "sha256": "70226bc6e1d4acd34b1b1df06aac83ed94d666fe0ac13cf6a7d439f93c21c0a3",
+      "operation": "OBJ triangle positions/normals/UV exact; embedded original PNG; no resize"
+    },
+    {
+      "source": "src/ScCsgoKnives/Assets/Textures/ScCsgoKnives/casing_glock_casing.png",
+      "embedded_in": "res://assets/models/native/casing_glock_casing.glb",
+      "source_sha256": "22b09c5d51b344cf3cb639f886a120cc6c58edd19d210a86db58b3dd30f35d17"
+    },
+    {
+      "source": "src/ScCsgoKnives/Assets/Models/ScCsgoKnives/casing_mag7_casing.obj",
+      "path": "res://assets/models/native/casing_mag7_casing.glb",
+      "source_sha256": "4ccc96a0300b7c1977234e421fa3ca2d3f7a4e0fec5886ae4af0fa37bafac39b",
+      "sha256": "89ebfd38713022adcf2b14b822e8d12edff63892873018a38c7cbc1d113fbf83",
+      "operation": "OBJ triangle positions/normals/UV exact; embedded original PNG; no resize"
+    },
+    {
+      "source": "src/ScCsgoKnives/Assets/Textures/ScCsgoKnives/casing_mag7_casing.png",
+      "embedded_in": "res://assets/models/native/casing_mag7_casing.glb",
+      "source_sha256": "fd987209a4a8bb821d951e88fa8eabc68c610183ca3196179cbcd10740f8cfdd"
+    },
+    {
+      "source": "src/ScCsgoKnives/Assets/Models/ScCsgoKnives/casing_nova_casing.obj",
+      "path": "res://assets/models/native/casing_nova_casing.glb",
+      "source_sha256": "1900e27b240687fd4479f7fee14e4f7a436c1e1cc8def35e62687e827aae2c47",
+      "sha256": "fa13219654c2ed315a27ceffe6a7e831177acd80b81342c5ca88313735a5c90b",
+      "operation": "OBJ triangle positions/normals/UV exact; embedded original PNG; no resize"
+    },
+    {
+      "source": "src/ScCsgoKnives/Assets/Textures/ScCsgoKnives/casing_nova_casing.png",
+      "embedded_in": "res://assets/models/native/casing_nova_casing.glb",
+      "source_sha256": "3a36a79dd669949995ff0f6aeac2551f36e9b517635970589746f68065ab73c9"
+    },
+    {
+      "source": "src/ScCsgoKnives/Assets/Models/ScCsgoKnives/casing_p90_casing.obj",
+      "path": "res://assets/models/native/casing_p90_casing.glb",
+      "source_sha256": "fe05b6291a4dd4ccadd0dbed6481a218fcbd1854ab3d662b48ed4694347ba1df",
+      "sha256": "fce5e7c9ad2c94267d96bbe823f7514ab61c9b8e16d6108b7ae9d9daeb73ade4",
+      "operation": "OBJ triangle positions/normals/UV exact; embedded original PNG; no resize"
+    },
+    {
+      "source": "src/ScCsgoKnives/Assets/Textures/ScCsgoKnives/casing_p90_casing.png",
+      "embedded_in": "res://assets/models/native/casing_p90_casing.glb",
+      "source_sha256": "8550282c30a4b8c3b386cdb824e3502c09a4f069fba9c459f7e24910c8adaed5"
+    },
+    {
+      "source": "src/ScCsgoKnives/Assets/Models/ScCsgoKnives/casing_xm1014_casing.obj",
+      "path": "res://assets/models/native/casing_xm1014_casing.glb",
+      "source_sha256": "1900e27b240687fd4479f7fee14e4f7a436c1e1cc8def35e62687e827aae2c47",
+      "sha256": "8639b3cf69a0c9699b444f743eb43b01bce011cfc19ccf5e3402c342a1120f94",
+      "operation": "OBJ triangle positions/normals/UV exact; embedded original PNG; no resize"
+    },
+    {
+      "source": "src/ScCsgoKnives/Assets/Textures/ScCsgoKnives/casing_xm1014_casing.png",
+      "embedded_in": "res://assets/models/native/casing_xm1014_casing.glb",
+      "source_sha256": "e51429c108169e6775c1ae4648a247c71833c1939355e3ee845b22e3f41ff920"
+    },
+    {
+      "source": "src/ScCsgoKnives/Assets/Models/ScCsgoKnives/chicken.glb",
+      "path": "res://assets/models/native/chicken.glb",
+      "source_sha256": "db3768317236b1ff5c12e81fe860e06ce3fb4c892326ac5566481b97e7d7576c",
+      "sha256": "db3768317236b1ff5c12e81fe860e06ce3fb4c892326ac5566481b97e7d7576c",
+      "operation": "unchanged bytes"
+    },
+    {
+      "source": "src/ScCsgoTactical/Assets/Models/ScCsgoTactical/hostage.glb",
+      "path": "res://assets/models/native/hostage.glb",
+      "source_sha256": "42f44c081860534b097114364d978ad3f01c048df2d4d47b10c3b894a93155fa",
+      "sha256": "42f44c081860534b097114364d978ad3f01c048df2d4d47b10c3b894a93155fa",
+      "operation": "unchanged bytes"
+    },
+    {
+      "source": "src/ScCsgoTactical/Assets/Models/ScCsgoTactical/defuser_item.glb",
+      "path": "res://assets/models/native/defuser_item.glb",
+      "source_sha256": "e076baec7f0ad64d402698c0f5818f944f5683a7c5e36f3d41abb13e10612a9a",
+      "sha256": "e076baec7f0ad64d402698c0f5818f944f5683a7c5e36f3d41abb13e10612a9a",
+      "operation": "unchanged bytes"
+    },
+    {
+      "source": "src/ScCsgoTactical/Assets/Models/ScCsgoTactical/ct.glb",
+      "path": "res://assets/models/native/ct.glb",
+      "source_sha256": "3413f08276be4e319a4cdf83e14007a9c64a1395e7617e0f2dc238c90951f110",
+      "sha256": "a7f473c7f34ae080e69e73e510ed0b31f503782b6f228b15fbf9909bea40caa1",
+      "operation": "Geometry, skins and embedded images exact; restore 170 external local-TRS clips; root travel omitted"
+    },
+    {
+      "source": "src/ScCsgoTactical/Assets/Animations/ScCsgoTactical/ct.scanim",
+      "source_sha256": "12aa671a5ecc5343403e06fb414ac41d920609ea0676b49ea3e16c29965fcdf1",
+      "embedded_in": "res://assets/models/native/ct.glb"
+    },
+    {
+      "source": "src/ScCsgoTactical/Assets/Models/ScCsgoTactical/t.glb",
+      "path": "res://assets/models/native/t.glb",
+      "source_sha256": "5bf6c391ecd12e8f5a2c3f4340b49186d278dc4eb8f5a815c07eed3c0c96b1b5",
+      "sha256": "ce2b81a3e381eeb2b17744caa708b79f6bd329e50b04d163979588c7aae4a050",
+      "operation": "Geometry, skins and embedded images exact; restore 170 external local-TRS clips; root travel omitted"
+    },
+    {
+      "source": "src/ScCsgoTactical/Assets/Animations/ScCsgoTactical/t.scanim",
+      "source_sha256": "d98e766337f39d262281c7e0bde11fd6088214dd4f5be72691dc2d1fa6cbe671",
+      "embedded_in": "res://assets/models/native/t.glb"
+    },
+    {
+      "source": "src/ScCsgoKnives/AnimationData/cs2_casings.json",
+      "source_sha256": "4b154f9d5952dc4dc9d527acd1259706b2f752533cc30071e5c1331ca20d63d1",
+      "path": "res://data/native_casings.json",
+      "sha256": "9962174241de2a18d28d2b75a10fc3988f763fe0b97b903d92e0cceca3c015c9",
+      "operation": "Source timing/attachment/velocity preserved; per-bone idle frame calibration onto existing native viewmodels"
+    }
+  ]
+}

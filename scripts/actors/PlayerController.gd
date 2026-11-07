@@ -728,6 +728,20 @@ func get_vm_world_point(local_p: Vector3) -> Vector3:
 	return camera.global_transform * p
 
 
+func native_casing_clip() -> String:
+	return String(_vm_anim.current_animation) if _vm_anim != null else "shoot1"
+
+
+func native_casing_frame(cue: Dictionary) -> Transform3D:
+	if is_instance_valid(_vm_model_root):
+		var skeletons := _vm_model_root.find_children("*", "Skeleton3D", true, false)
+		for sk in skeletons:
+			var bone: int = sk.find_bone(String(cue["bone"]))
+			if bone >= 0:
+				return sk.global_transform * sk.get_bone_global_pose(bone) * NativeCasings.frame_from_rows(cue["frame"])
+	return Transform3D(camera.global_basis.scaled(Vector3.ONE * 0.0254), get_vm_eject_world())
+
+
 func get_vm_eject_world() -> Vector3:
 	return get_vm_world_point(_vm_eject_offset)
 

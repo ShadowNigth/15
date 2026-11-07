@@ -52,6 +52,14 @@ var round_time: float = 135.0
 var c4_timer: float = 45.0
 var friendly_fire: bool = false
 
+# Cosmetic world resources (no weapon/economy changes).
+var native_casings: Dictionary = {}
+var native_casings_enabled: bool = true
+var native_ammo_icons: bool = true
+var low_ammo_warning: bool = true
+var ambient_chickens_enabled: bool = true
+var native_defuser_model: bool = true
+
 # Player preferences
 var mouse_sensitivity: float = 0.16
 var invert_mouse_y: bool = false
@@ -73,6 +81,7 @@ var _styled_mat_cache: Dictionary = {}
 func _ready() -> void:
 	_ensure_input_map()
 	_load_all_databases()
+	_load_cosmetic_preferences()
 
 
 func _load_json(path: String) -> Variant:
@@ -85,6 +94,7 @@ func _load_json(path: String) -> Variant:
 
 
 func _load_all_databases() -> void:
+	native_casings = _load_json("res://data/native_casings.json")
 	var wdb: Dictionary = _load_json("res://data/weapons.json")
 	weapons = wdb.get("weapons", {})
 	ammo_types = wdb.get("ammo", {})
@@ -841,3 +851,42 @@ func _ensure_input_map() -> void:
 		var m2 := InputEventMouseButton.new()
 		m2.button_index = MOUSE_BUTTON_RIGHT
 		InputMap.action_add_event("attack2", m2)
+
+
+const COSMETIC_KEYS := ["native_casings_enabled", "native_ammo_icons", "low_ammo_warning", "ambient_chickens_enabled", "native_defuser_model"]
+
+func _load_cosmetic_preferences() -> void:
+	var config := ConfigFile.new()
+	if config.load("user://cosmetics.cfg") == OK:
+		for key in COSMETIC_KEYS:
+			set(key, bool(config.get_value("cosmetics", key, get(key))))
+
+func set_cosmetic_preference(enabled: bool, key: String) -> void:
+	if key not in COSMETIC_KEYS:
+		return
+	set(key, enabled)
+	var config := ConfigFile.new()
+	for setting in COSMETIC_KEYS:
+		config.set_value("cosmetics", setting, get(setting))
+	config.save("user://cosmetics.cfg")
+
+func ammo_icon_for(wid: String) -> Texture2D:
+	var spec: Dictionary = weapons.get(wid, {})
+	if int(spec.get("clip_size", 0)) <= 0 or wid == "taser":
+		return null
+	var icon := "magazine"
+	if wid in ["ak47", "galil", "sg552"]:
+		icon = "banana_mag"
+	elif wid == "bizon":
+		icon = "bizon_tube"
+	elif wid in ["m249", "negev"]:
+		icon = "box"
+	elif wid == "p90":
+		icon = "p90"
+	elif wid == "revolver":
+		icon = "revolver_loader"
+	elif bool(spec.get("shotgun_reload", false)) or wid in ["mag7", "sawedoff"]:
+		icon = "shotgun_shell"
+	elif wid in ["awp", "scout"]:
+		icon = "generic_bullet"
+	return get_texture("res://assets/ui/native/hud_ammo_" + icon + ".png")

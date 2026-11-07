@@ -93,7 +93,7 @@ class ShellRunner extends Node3D:
 			"life": 3.4,
 			"bounces": 0,
 			"settled": false,
-			"casing_sound": "native/sccsgoknives/casing_shotgun.wav" if shell_node.name.to_lower().contains("rshell_big") else "native/sccsgoknives/casing_metal.wav",
+			"casing_sound": "native/sccsgoknives/casing_shotgun.wav" if (shell_node.name.to_lower().contains("rshell_big") or shell_node.name.contains("nova") or shell_node.name.contains("xm1014") or shell_node.name.contains("mag7")) else "native/sccsgoknives/casing_metal.wav",
 		})
 		set_physics_process(true)
 
@@ -351,7 +351,7 @@ static func spawn_physical_shell(
 ) -> void:
 	if world_root == null or not is_instance_valid(world_root):
 		return
-	var sc := GameData.get_model_scene("weapons/" + shell_mdl)
+	var sc := GameData.get_model_scene(shell_mdl if shell_mdl.begins_with("native/") else "weapons/" + shell_mdl)
 	if sc == null:
 		return
 	var sr := world_root.get_node_or_null("__ShellRunner") as ShellRunner
@@ -360,7 +360,7 @@ static func spawn_physical_shell(
 		sr.name = "__ShellRunner"
 		world_root.add_child(sr)
 	var shell := sc.instantiate() as Node3D
-	shell.name = shell_mdl
+	shell.name = shell_mdl.get_file()
 	for c in shell.find_children("*", "MeshInstance3D", true, false):
 		var mi := c as MeshInstance3D
 		mi.layers = 2

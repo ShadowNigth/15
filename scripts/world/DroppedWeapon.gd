@@ -87,6 +87,10 @@ func setup_drop(id: String, clip: int, reserve: int, throw_vel: Vector3, is_sile
 
 	var mdl_scale: float = GameData.get_dropped_model_scale(id) if GameData.weapons.has(id) else 1.0
 	var sc := GameData.get_model_scene("weapons/" + mdl_name)
+	if id == "defuser" and GameData.native_defuser_model:
+		var native_kit := GameData.get_model_scene("native/defuser_item")
+		if native_kit != null:
+			sc = native_kit
 	if sc != null:
 		var inst := sc.instantiate() as Node3D
 		_style_meshes_recursive(inst)

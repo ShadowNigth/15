@@ -7,3 +7,6 @@ export/
 __pycache__/
 *.pyc
 .venv/
+
+# Development source caches, never part of editable releases
+.cache/
