@@ -375,7 +375,7 @@ func _detonate() -> void:
 
 
 func _detonate_he() -> void:
-	AudioManager.play_3d("weapons/archi/core/hegrenade-%d.wav" % randi_range(1, 2), global_position, 4.0, 72.0, 1.0, 46.0)
+	AudioManager.play_cue_3d("he_explode", global_position, 4.0, 72.0, 46.0)
 	spawn_explosion_fx(get_parent(), global_position, 1.0)
 
 	var space := get_world_3d().direct_space_state
@@ -399,7 +399,7 @@ func _detonate_he() -> void:
 
 
 func _detonate_flash() -> void:
-	AudioManager.play_3d("weapons/archi/core/flashbang-%d.wav" % randi_range(1, 2), global_position, 3.0, 58.0, 1.0, 38.0)
+	AudioManager.play_cue_3d("flash_explode", global_position, 3.0, 58.0, 38.0)
 
 	if is_instance_valid(get_parent()):
 		var flash_fx := Node3D.new()
@@ -457,7 +457,7 @@ func _detonate_flash() -> void:
 
 
 func _detonate_smoke() -> void:
-	AudioManager.play_3d("weapons/archi/core/sg_explode.wav", global_position, 2.5, 48.0)
+	AudioManager.play_cue_3d("smoke_emit", global_position, 2.5, 48.0)
 	var parent_node := get_parent()
 	if not is_instance_valid(parent_node):
 		return
@@ -468,7 +468,7 @@ func _detonate_smoke() -> void:
 
 
 func _detonate_fire() -> void:
-	AudioManager.play_3d("weapons/archi/core/hegrenade-1.wav", global_position, -8.0, 28.0, 1.12, 20.0)
+	AudioManager.play_cue_3d("molotov_explode" if grenade_type == "molotov" else "incendiary_explode", global_position, -3.0, 36.0, 20.0)
 	var parent_node := get_parent()
 	if not is_instance_valid(parent_node):
 		return

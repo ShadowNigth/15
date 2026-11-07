@@ -730,7 +730,7 @@ func _test_cs2_audio() -> void:
 		var dedicated := true
 		for raw in sounds:
 			var path := String(raw)
-			if not path.begins_with("weapons/cs2/"):
+			if not path.begins_with("native/sccsgoknives/"):
 				dedicated = false
 			if owners.has(path) and String(owners[path]) != wid:
 				dedicated = false
@@ -738,29 +738,29 @@ func _test_cs2_audio() -> void:
 		_expect(dedicated, "%s must use its own CS2 firing recordings" % wid)
 	var m4a4_sounds: Array = GameData.weapons["m4a4"]["fire_sounds"]
 	var m4a1s_sounds: Array = GameData.weapons["m4a1"]["fire_sounds"]
-	_expect("weapons/cs2/m4a1/m4a1_01.wav" in m4a4_sounds,
-		"M4A4 uses the CS2 m4a1_01 recording")
-	_expect("weapons/cs2/m4a1/m4a1_us_01.wav" in m4a1s_sounds,
-		"M4A1-S unsuppressed uses the distinct m4a1_us_01 recording")
+	_expect("native/sccsgoknives/m4a4_fire_1.ogg" in m4a4_sounds,
+		"M4A4 uses its distinct native firing recording")
+	_expect("native/sccsgoknives/m4a1s_fire_1.ogg" in m4a1s_sounds,
+		"M4A1-S unsuppressed uses its distinct native firing recording")
 	_expect(String(GameData.weapons["knife"]["wall_sound"]).find("flashbang") < 0,
 		"Knife wall impacts no longer use a flashbang sample")
-	_expect(String(GameData.weapons["molotov"]["explode_sounds"][0]).find("molotov_detonate") >= 0,
+	_expect(String(GameData.weapons["molotov"]["explode_sounds"][0]).find("grenade_molotov_explode") >= 0,
 		"Molotov uses its own detonation rather than HE")
 	var m4a4_foley := true
 	for events in GameData.models_meta["weapons/v_m4a4"]["seq_events"].values():
 		for event in events:
-			if not String(event["wav"]).begins_with("weapons/cs2/m4a1/"):
+			if not String(event["wav"]).begins_with("native/sccsgoknives/"):
 				m4a4_foley = false
 	_expect(m4a4_foley, "Every M4A4 draw/reload event uses its dedicated CS2 foley")
 	var mag7_foley := true
 	for events in GameData.models_meta["weapons/v_mag7"]["seq_events"].values():
 		for event in events:
-			if not String(event["wav"]).begins_with("weapons/cs2/mag7/"):
+			if not String(event["wav"]).begins_with("native/sccsgoknives/"):
 				mag7_foley = false
 	_expect(mag7_foley, "MAG-7 reload, draw and pump events all use MAG-7 recordings")
 	_expect(String(GameData.weapons["molotov"]["pinpull_sound"]).find("cs2_hegren") < 0,
 		"Molotov ignition no longer plays the HE pin sound")
-	_expect(String(GameData.weapons["decoy"]["deploy_sound"]).begins_with("weapons/cs2/decoy/"),
+	_expect(String(GameData.weapons["decoy"]["deploy_sound"]).begins_with("native/sccsgoknives/grenade_decoy_"),
 		"Decoy deploy uses its own recording")
 
 

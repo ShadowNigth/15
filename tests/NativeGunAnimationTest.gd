@@ -113,7 +113,7 @@ func _run() -> void:
 			_expect(player._is_viewmodel_mirrored() == (not hand), wid + " native handedness")
 		GameData.right_hand = true
 		if wid == "cz75":
-			_expect(not player.weapon_ctrl._viewmodel_has_events(String(spec["v_model"]), "draw"), "Empty CZ draw event alias does not suppress its fallback sound")
+			_expect(player.weapon_ctrl._viewmodel_has_events(String(spec["v_model"]), "draw"), "CZ draw now has original repository audio rather than an empty alias")
 			var detach: Variant = meta["cz_spare_detach_times"].get("reload")
 			_expect(detach != null, "CZ spare has native detach marker")
 			if detach != null:

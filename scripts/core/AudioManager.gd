@@ -47,8 +47,40 @@ func play_ui(sound_name: String) -> void:
 	play_2d("ui/%s" % sound_name, -3.0)
 
 
-func play_radio(rel_path: String) -> void:
+func play_radio(rel_path: String, speaker_team: String = "CT") -> void:
+	var commands := {
+		"radio/ct_fireinhole.wav": "grenade", "radio/ct_coverme.wav": "radio.needbackup",
+		"radio/com_go.wav": "radio.letsgo", "radio/letsgo.wav": "radio.letsgo",
+		"radio/locknload.wav": "radio.letsgo", "radio/moveout.wav": "radio.letsgo",
+		"radio/followme.wav": "radio.followme", "radio/ct_enemys.wav": "radio.enemyspotted",
+		"radio/ct_backup.wav": "radio.needbackup", "radio/fireassis.wav": "radio.takingfire",
+		"radio/roger.wav": "affirmative", "radio/negative.wav": "negative",
+		"radio/enemydown.wav": "enemydown", "radio/position.wav": "waitinghere",
+		"radio/inpos.wav": "inposition"
+	}
+	var command := String(commands.get(rel_path, ""))
+	if not command.is_empty() and play_voice(command, speaker_team):
+		return
 	play_2d(rel_path, -1.5)
+
+
+func play_voice(command: String, speaker_team: String) -> bool:
+	var voices: Dictionary = GameData.native_audio.get("voices", {})
+	var language := GameData.voice_language if voices.has(GameData.voice_language) else "en"
+	var variants: Array = voices.get(language, {}).get(speaker_team.to_lower(), {}).get(command, [])
+	if variants.is_empty():
+		return false
+	play_2d(String(variants.pick_random()), -1.5)
+	return true
+
+
+func cue_path(cue: String, fallback: String = "") -> String:
+	var variants: Array = GameData.native_audio.get("cues", {}).get(cue, [])
+	return String(variants.pick_random()) if not variants.is_empty() else fallback
+
+
+func play_cue_3d(cue: String, pos: Vector3, vol_db: float = 0.0, max_dist: float = 55.0, hear_radius: float = 0.0, team: String = "") -> void:
+	play_3d(cue_path(cue), pos, vol_db, max_dist, 1.0, hear_radius, team)
 
 
 func play_3d(
@@ -117,3 +149,30 @@ func play_footstep(mat_char: String, world_pos: Vector3, team: String) -> void:
 			prefix = "player/pl_slosh"
 	var idx := randi_range(1, count)
 	play_3d("%s%d.wav" % [prefix, idx], world_pos, -5.0, 24.0, randf_range(0.96, 1.04), 16.0, team)
+
+
+func stop_viewmodel_audio(owner_node: Node) -> void:
+	var branch := owner_node.get_node_or_null("NativeViewmodelFoley")
+	if branch != null:
+		for child in branch.get_children():
+			if child is AudioStreamPlayer:
+				(child as AudioStreamPlayer).stop()
+			child.queue_free()
+
+
+func play_viewmodel_audio(owner_node: Node, path: String, pitch: float = 1.0) -> void:
+	var stream := GameData.get_sound(path)
+	if stream == null:
+		return
+	var branch := owner_node.get_node_or_null("NativeViewmodelFoley")
+	if branch == null:
+		branch = Node.new()
+		branch.name = "NativeViewmodelFoley"
+		owner_node.add_child(branch)
+	var player := AudioStreamPlayer.new()
+	player.stream = stream
+	player.volume_db = -2.2 + GameData.master_volume_db
+	player.pitch_scale = pitch
+	branch.add_child(player)
+	player.finished.connect(player.queue_free)
+	player.play()

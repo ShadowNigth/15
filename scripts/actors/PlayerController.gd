@@ -399,9 +399,9 @@ func _process(delta: float) -> void:
 		while not _pending_vm_events.is_empty():
 			var ev: Dictionary = _pending_vm_events[0]
 			if float(ev.get("t", 0.0)) <= _vm_anim_elapsed + 0.004:
-				var wav := String(ev.get("wav", ""))
+				var wav := GameData.sound_variant(ev)
 				if not wav.is_empty():
-					AudioManager.play_2d(wav, -2.2, randf_range(0.985, 1.015))
+					AudioManager.play_viewmodel_audio(self, wav, randf_range(0.985, 1.015))
 				_pending_vm_events.remove_at(0)
 			else:
 				break
@@ -631,6 +631,7 @@ func _rebuild_viewmodel(wid: String) -> void:
 	_vm_silencer_skeleton = null
 	_vm_silencer_bone = -1
 	_pending_vm_events.clear()
+	AudioManager.stop_viewmodel_audio(self)
 	_vm_anim_elapsed = 0.0
 	_elite_muzzle_left = false
 	var spec: Dictionary = GameData.weapons.get(wid, {})
@@ -878,6 +879,7 @@ func _start_vm_clip(anim_name: String) -> void:
 	_vm_anim.play(anim_name)
 	_vm_anim.advance(0.0)
 	_pending_vm_events.clear()
+	AudioManager.stop_viewmodel_audio(self)
 	_vm_anim_elapsed = 0.0
 	if not _cur_vm_model_name.is_empty():
 		var mmeta: Dictionary = GameData.models_meta.get("weapons/" + _cur_vm_model_name, {})
@@ -904,9 +906,9 @@ func _start_vm_clip(anim_name: String) -> void:
 					var d_ev := (item as Dictionary).duplicate()
 					d_ev["t"] = float(d_ev.get("t", 0.0)) * event_time_scale
 					if float(d_ev.get("t", 0.0)) <= 0.01:
-						var w0 := String(d_ev.get("wav", ""))
+						var w0 := GameData.sound_variant(d_ev)
 						if not w0.is_empty():
-							AudioManager.play_2d(w0, -2.2)
+							AudioManager.play_viewmodel_audio(self, w0)
 					else:
 						_pending_vm_events.append(d_ev)
 

@@ -526,6 +526,7 @@ func _physics_process(delta: float) -> void:
 			c.queue_free()
 		if get_parent() != null:
 			get_parent().remove_child(self)
+		AudioManager.play_cue_3d("smoke_clear", cloud_center, -4.0, 30.0)
 		queue_free()
 		return
 

@@ -647,6 +647,8 @@ func _find_anim(n: Node) -> AnimationPlayer:
 
 func spawn_for_round(pos: Vector3, yaw_rad: float, reset_weapons: bool) -> void:
 	var was_alive := is_alive
+	if is_human:
+		AudioManager.play_2d(AudioManager.cue_path("respawn"), -8.0)
 	is_alive = true
 	health = 100
 	flash_alpha = 0.0
@@ -1100,7 +1102,7 @@ func take_bullet_damage(
 			new_dmg = dmg - float(armor) * 2.0
 		armor = maxi(0, armor - maxi(1, armor_loss))
 		dmg = new_dmg
-		var awav := "player/bhit_helmet-1.wav" if hitgroup == 1 else "player/bhit_kevlar-1.wav"
+		var awav := AudioManager.cue_path("headshot_armor") if hitgroup == 1 else "player/bhit_kevlar-1.wav"
 		AudioManager.play_3d(awav, hit_pos, 0.0, 26.0)
 	else:
 		var fwav := ("player/headshot%d.wav" % randi_range(1, 3)) if hitgroup == 1 else ("player/bhit_flesh-%d.wav" % randi_range(1, 3))
@@ -1190,6 +1192,8 @@ func _die(killer: Node3D, weapon_id: String, headshot: bool) -> void:
 		_gait_yaw = look_yaw
 		_evaluate_character_pose(0.016)
 	is_alive = false
+	if is_instance_valid(killer) and killer != self and bool(killer.get("is_human")) and String(killer.get("team")) != team:
+		AudioManager.play_2d(AudioManager.cue_path("kill_confirm"), -8.0)
 	_col_shape.set_deferred("disabled", true)
 	AudioManager.play_3d("player/die%d.wav" % randi_range(1, 3), global_position, 1.0, 32.0)
 

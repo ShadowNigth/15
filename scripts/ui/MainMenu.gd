@@ -549,6 +549,37 @@ func _build_arsenal_dialog() -> void:
 	animation_row.add_child(_viewer_animation_opt)
 	right.add_child(animation_row)
 
+	var audio_row := HBoxContainer.new()
+	var audio_options := OptionButton.new()
+	audio_options.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	audio_options.clip_text = true
+	audio_options.tooltip_text = "All 649 pinned source recordings, including languages and effects without a current gameplay equivalent."
+	var manifest: Dictionary = GameData._load_json("res://data/native_audio_manifest.json")
+	for entry in manifest.get("files", []):
+		audio_options.add_item(String(entry["path"]).trim_prefix("native/"))
+		audio_options.set_item_metadata(audio_options.item_count - 1, entry["path"])
+	var audition := AudioStreamPlayer.new()
+	audio_row.add_child(audition)
+	var listen := Button.new()
+	listen.text = "Listen"
+	listen.pressed.connect(func():
+		audition.stop()
+		audition.stream = GameData.get_sound(String(audio_options.get_item_metadata(audio_options.selected)))
+		audition.volume_db = -5.0 + GameData.master_volume_db
+		audition.play()
+	)
+	var stop_audio := Button.new()
+	stop_audio.text = "Stop"
+	stop_audio.pressed.connect(audition.stop)
+	audio_row.add_child(audio_options)
+	audio_row.add_child(listen)
+	audio_row.add_child(stop_audio)
+	right.add_child(audio_row)
+	_arsenal_panel.visibility_changed.connect(func():
+		if not _arsenal_panel.visible:
+			audition.stop()
+	)
+
 	var skin_row := HBoxContainer.new()
 	skin_row.add_theme_constant_override("separation", 8)
 	var skin_label := Label.new()
@@ -796,6 +827,16 @@ func _build_options_dialog() -> void:
 	grid.add_theme_constant_override("h_separation", 18)
 	grid.add_theme_constant_override("v_separation", 8)
 	content.add_child(grid)
+
+	var voice_label := Label.new()
+	voice_label.text = "Radio voices:"
+	grid.add_child(voice_label)
+	var voice_options := OptionButton.new()
+	voice_options.add_item("English (CT / T)")
+	voice_options.add_item("中文 (CT / T)")
+	voice_options.select(1 if GameData.voice_language == "zh" else 0)
+	voice_options.item_selected.connect(func(index: int): GameData.voice_language = "zh" if index == 1 else "en")
+	grid.add_child(voice_options)
 
 	var sl := Label.new()
 	sl.text = "Mouse Sensitivity:"

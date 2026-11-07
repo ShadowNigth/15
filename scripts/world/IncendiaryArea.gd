@@ -29,6 +29,8 @@ var target_patch_count: int = 1
 var envelope_aspect: float = 1.0
 var propagation_heading: float = 0.0
 
+var _fire_audio: AudioStreamPlayer3D = null
+var _audio_extinguished: bool = false
 var _tick: float = 0.0
 var _age: float = 0.0
 var _visual_time: float = 0.0
@@ -100,6 +102,19 @@ func setup_fire(owner_actor: Node3D, kind: String, seed_override: int = 0) -> vo
 	_create_particle_systems()
 	_refresh_particle_emission()
 	RoundManager.register_incendiary(self)
+	if is_instance_valid(_fire_audio):
+		_fire_audio.queue_free()
+	_audio_extinguished = false
+	_fire_audio = AudioStreamPlayer3D.new()
+	_fire_audio.stream = GameData.get_sound(AudioManager.cue_path("fire_loop"))
+	_fire_audio.volume_db = -8.0 + GameData.master_volume_db
+	_fire_audio.max_distance = 30.0
+	add_child(_fire_audio)
+	_fire_audio.finished.connect(func():
+		if life_left > 0.0 and is_instance_valid(_fire_audio):
+			_fire_audio.play()
+	)
+	_fire_audio.play()
 
 
 func _exit_tree() -> void:
@@ -584,6 +599,11 @@ func _expand_one() -> void:
 
 func _physics_process(delta: float) -> void:
 	life_left -= delta
+	if life_left <= 0.0 and not _audio_extinguished:
+		_audio_extinguished = true
+		if is_instance_valid(_fire_audio):
+			_fire_audio.stop()
+		AudioManager.play_cue_3d("fire_extinguish", global_position, -5.0, 25.0)
 	if life_left <= -1.15:
 		queue_free()
 		return

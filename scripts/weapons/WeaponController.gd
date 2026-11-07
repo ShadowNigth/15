@@ -1037,7 +1037,7 @@ func _launch_grenade_now(gid: String) -> void:
 	if not _human_vm_has_events(grenade_spec, throw_anim):
 		AudioManager.play_3d(String(grenade_spec.get("throw_sound", "weapons/archi/cs2_hegren/grenade_throw.wav")), actor.global_position, -4.0, 16.0)
 
-	AudioManager.play_radio("radio/ct_fireinhole.wav")
+	AudioManager.play_voice({"flashbang": "flashbang", "smokegrenade": "smoke", "decoy": "decoy", "molotov": "molotov", "incendiary": "molotov"}.get(gid, "grenade"), String(actor.get("team")))
 	RoundManager.chat_radio_message.emit(String(actor.get("actor_name")), String(actor.get("team")), "(RADIO): Fire in the hole!")
 
 	var eye: Vector3 = actor.call("get_eye_position")

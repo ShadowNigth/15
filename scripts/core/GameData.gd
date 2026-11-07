@@ -12,6 +12,8 @@ const MOLOTOV_LIQUID_FLIP_SHADER: Shader = preload("res://assets/shaders/molotov
 const MOLOTOV_GLASS_SHADER: Shader = preload("res://assets/shaders/molotov_glass.gdshader")
 const MOLOTOV_LIQUID_SHADER: Shader = preload("res://assets/shaders/molotov_liquid.gdshader")
 
+var native_audio: Dictionary = {}
+var voice_language: String = "en"
 var weapons: Dictionary = {}
 var ammo_types: Dictionary = {}
 var equipment: Dictionary = {}
@@ -109,6 +111,8 @@ func _load_all_databases() -> void:
 	sport_gloves = _load_json("res://data/sport_gloves.json")
 	if selected_glove_id.is_empty():
 		selected_glove_id = String(sport_gloves.get("default", "classic"))
+	native_audio = _load_json("res://data/native_audio.json")
+	_apply_native_audio()
 	knife_models = _load_json("res://data/knife_models.json")
 	_original_knife_spec = (weapons.get("knife", {}) as Dictionary).duplicate(true)
 	if not select_knife(selected_knife_id):
@@ -120,6 +124,29 @@ func _load_all_databases() -> void:
 		var entry: Dictionary = skin_weapons[raw_wid]
 		for raw_material in entry.get("materials", []):
 			_skin_material_owners[String(raw_material).to_lower()] = String(raw_wid)
+
+
+func _apply_native_audio() -> void:
+	# Sound-only overlays: source assets/gameplay data remain independently rebuildable.
+	for wid in native_audio.get("weapons", {}):
+		if weapons.has(wid):
+			weapons[wid].merge(native_audio["weapons"][wid], true)
+	for model in native_audio.get("model_events", {}):
+		if models_meta.has(model):
+			var events: Dictionary = models_meta[model].get("seq_events", {}).duplicate(true)
+			events.merge(native_audio["model_events"][model], true)
+			models_meta[model]["seq_events"] = events
+
+
+func sound_variant(event: Dictionary) -> String:
+	var variants: Array = event.get("variants", [])
+	return String(variants.pick_random()) if not variants.is_empty() else String(event.get("wav", ""))
+
+
+func resolve_sound_path(rel_path: String) -> String:
+	var key := rel_path.trim_prefix("res://assets/sounds/").to_lower()
+	var replacements: Array = native_audio.get("replacements", {}).get(key, [])
+	return String(replacements.pick_random()) if not replacements.is_empty() else key
 
 
 func get_knife_options() -> Array:
@@ -677,7 +704,7 @@ func get_scorch_decal_texture() -> Texture2D:
 func get_sound(rel_path: String) -> AudioStream:
 	if rel_path.is_empty():
 		return null
-	var full := rel_path if rel_path.begins_with("res://") else ("res://assets/sounds/%s" % rel_path.to_lower())
+	var full := rel_path if rel_path.begins_with("res://") else ("res://assets/sounds/%s" % resolve_sound_path(rel_path))
 	if _wav_cache.has(full):
 		return _wav_cache[full]
 	if not ResourceLoader.exists(full):

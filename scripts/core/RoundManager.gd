@@ -432,6 +432,6 @@ func send_radio_command(sender: Node3D, label: String, sound_rel: String, action
 		return
 	var tm := String(sender.get("team"))
 	var sname := String(sender.get("actor_name"))
-	AudioManager.play_radio(sound_rel)
+	AudioManager.play_radio(sound_rel, tm)
 	chat_radio_message.emit(sname, tm, "(RADIO): " + label)
 	radio_order_issued.emit(sender, tm, action, sender.global_position)

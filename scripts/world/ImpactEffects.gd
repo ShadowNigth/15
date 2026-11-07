@@ -93,6 +93,7 @@ class ShellRunner extends Node3D:
 			"life": 3.4,
 			"bounces": 0,
 			"settled": false,
+			"casing_sound": "native/sccsgoknives/casing_shotgun.wav" if shell_node.name.to_lower().contains("rshell_big") else "native/sccsgoknives/casing_metal.wav",
 		})
 		set_physics_process(true)
 
@@ -167,7 +168,7 @@ class ShellRunner extends Node3D:
 							d["bounces"] = bcnt + 1
 							var vol_db: float = lerpf(-13.5, -7.8, clampf(imp / 5.5, 0.0, 1.0))
 							AudioManager.play_3d(
-								"player/pl_shell%d.wav" % randi_range(1, 3),
+								String(d.get("casing_sound", "native/sccsgoknives/casing_metal.wav")),
 								nd.global_position,
 								vol_db,
 								13.5,
@@ -359,6 +360,7 @@ static func spawn_physical_shell(
 		sr.name = "__ShellRunner"
 		world_root.add_child(sr)
 	var shell := sc.instantiate() as Node3D
+	shell.name = shell_mdl
 	for c in shell.find_children("*", "MeshInstance3D", true, false):
 		var mi := c as MeshInstance3D
 		mi.layers = 2

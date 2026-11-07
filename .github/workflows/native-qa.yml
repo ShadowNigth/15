@@ -40,6 +40,7 @@ jobs:
           python tests/check_knife_assets.py
           python tests/check_complete_cosmetics.py
           python tests/check_native_gun_animations.py
+          python tests/check_native_audio.py
 
       - name: Install Godot 4.3
         run: |
@@ -86,6 +87,25 @@ jobs:
           timeout 240s godot --headless --path . --fixed-fps 60 res://tests/KnifeLoadoutTest.tscn 2>&1 | tee /tmp/knife-test.log
           if grep -Eq 'SCRIPT ERROR:|Parse Error:|Compile Error:' /tmp/knife-test.log; then exit 1; fi
           grep -q '\[KNIFE TEST\] PASS:' /tmp/knife-test.log
+
+      - name: Native audio decoding and production routes
+        run: |
+          set -o pipefail
+          timeout 180s godot --headless --path . res://tests/NativeAudioTest.tscn 2>&1 | tee /tmp/native-audio.log
+          if grep -Eq 'SCRIPT ERROR:|Parse Error:|Compile Error:' /tmp/native-audio.log; then exit 1; fi
+          grep -q '\[NATIVE AUDIO\] PASS:' /tmp/native-audio.log
+
+      - name: Publish native audio diagnostics
+        if: ${{ always() }}
+        run: |
+          python3 - <<'PY'
+          from pathlib import Path
+          log = Path('/tmp/native-audio.log')
+          if log.exists():
+              text = '\n'.join(log.read_text(errors='replace').splitlines()[-45:])
+              text = text.replace('%', '%25').replace('\r', '%0D').replace('\n', '%0A')
+              print(f'::notice title=Native audio::{text}')
+          PY
 
       - name: Publish knife test diagnostics
         if: ${{ always() }}

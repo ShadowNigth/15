@@ -26,7 +26,7 @@ and legal caveats remain relevant to any further distribution:
 - https://github.com/zh667/ScCsgoKnives/blob/1eb8067fd0b7214df5bccf3ac3807fbaa3aee70d/THIRD_PARTY_NOTICES.md
 - https://github.com/zh667/ScCsgoKnives/blob/1eb8067fd0b7214df5bccf3ac3807fbaa3aee70d/docs/legal-assessment-2026-09-21.md
 
-No upstream C# gameplay code, BF1/EA/DICE audio or other resource packs are included
+No upstream C# gameplay code or other resource packs are included
 by this knife conversion. Existing game assets retain their original provenance
 and rights; see the project README. This is an unofficial fan project, not a Valve
 product or an assertion that cross-game redistribution is authorized.
@@ -102,3 +102,16 @@ composition and helper-part visibility follow the upstream `Cs2Rig.cs` and
 
 These conversions do not grant new rights to Valve or other third-party assets.
 The existing upstream GPL/code notices and separate asset-rights cautions apply.
+
+
+## Complete native audio integration (2026-11-07)
+
+The audio update additionally includes all 649 WAV/OGG recordings shipped in
+`zh667/ScCsgoKnives` at `1eb8067fd0b7214df5bccf3ac3807fbaa3aee70d`:
+436 ScCsgoKnives, 204 ScCsgoVoice, 7 ScCsgoTactical and 2 ScCsgoDeathmatch files.
+Exact source paths, Git blob IDs and SHA-256 hashes are recorded in
+`data/native_audio_manifest.json`. This now includes the two upstream
+`bf1_kill_*` recordings, attributed to Battlefield 1 / EA / DICE, unlike the
+previous knife-only package. Valve/CS2 recordings and agent voices retain their
+respective owners' rights. Repository inclusion does not establish permission
+for cross-game redistribution. No blanket GPL/ownership claim is made for audio.
