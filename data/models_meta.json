@@ -5039,48 +5039,103 @@
   },
   "weapons/v_ak47": {
     "sequences": [
+      "draw",
       "idle",
       "shoot1",
+      "reload",
+      "inspect",
+      "native_lookat01_draw_ak",
+      "native_lookat01_transfix_ak",
+      "inspect_2",
+      "native_lookat03_draw_ak",
+      "native_lookat03_transfix_ak",
+      "native_lookat_draw_ak",
+      "shoot",
       "shoot2",
       "shoot3",
-      "draw",
-      "reload",
-      "inspect"
+      "fire",
+      "draw_unsil",
+      "idle_unsil",
+      "reload_unsil",
+      "inspect_unsil",
+      "shoot1_unsil",
+      "shoot2_unsil",
+      "shoot3_unsil"
     ],
     "seq_durations": {
-      "idle": 0.033,
-      "shoot1": 0.767,
-      "shoot2": 0.767,
-      "shoot3": 0.767,
       "draw": 1.0,
-      "reload": 2.467,
-      "inspect": 4.567
+      "idle": 1.0,
+      "shoot1": 0.7666,
+      "reload": 2.4333,
+      "inspect": 4.5667,
+      "native_lookat01_draw_ak": 4.5667,
+      "native_lookat01_transfix_ak": 4.5667,
+      "inspect_2": 7.6,
+      "native_lookat03_draw_ak": 7.6,
+      "native_lookat03_transfix_ak": 7.6,
+      "native_lookat_draw_ak": 0.2666,
+      "shoot": 0.7666,
+      "shoot2": 0.7666,
+      "shoot3": 0.7666,
+      "fire": 0.7666,
+      "draw_unsil": 1.0,
+      "idle_unsil": 1.0,
+      "reload_unsil": 2.4333,
+      "inspect_unsil": 4.5667,
+      "shoot1_unsil": 0.7666,
+      "shoot2_unsil": 0.7666,
+      "shoot3_unsil": 0.7666
     },
     "seq_events": {
       "draw": [
         {
-          "t": 0.0,
+          "t": 0.166667,
           "wav": "weapons/archi/cs2_ak47/draw.wav"
-        },
-        {
-          "t": 0.367,
-          "wav": "weapons/archi/cs2_ak47/boltpull.wav"
         }
       ],
       "reload": [
         {
-          "t": 0.3,
+          "t": 0.366662,
           "wav": "weapons/archi/cs2_ak47/clipout.wav"
         },
         {
-          "t": 1.0,
+          "t": 1.066652,
           "wav": "weapons/archi/cs2_ak47/clipin.wav"
         },
         {
-          "t": 1.667,
+          "t": 1.599978,
           "wav": "weapons/archi/cs2_ak47/boltpull.wav"
         }
-      ]
+      ],
+      "shoot": [],
+      "shoot2": [],
+      "shoot3": [],
+      "fire": [],
+      "draw_unsil": [
+        {
+          "t": 0.166667,
+          "wav": "weapons/archi/cs2_ak47/draw.wav"
+        }
+      ],
+      "idle_unsil": [],
+      "reload_unsil": [
+        {
+          "t": 0.366662,
+          "wav": "weapons/archi/cs2_ak47/clipout.wav"
+        },
+        {
+          "t": 1.066652,
+          "wav": "weapons/archi/cs2_ak47/clipin.wav"
+        },
+        {
+          "t": 1.599978,
+          "wav": "weapons/archi/cs2_ak47/boltpull.wav"
+        }
+      ],
+      "inspect_unsil": [],
+      "shoot1_unsil": [],
+      "shoot2_unsil": [],
+      "shoot3_unsil": []
     },
     "bones": 69,
     "offset": [
@@ -5097,14 +5152,14 @@
     ],
     "vertices": 33484,
     "muzzle": [
-      -0.1537,
-      -0.106,
-      -1.1069
+      0.1884274,
+      -0.1242568,
+      -0.9504883
     ],
     "eject": [
-      -0.1732,
-      -0.0813,
-      -0.5017
+      0.204277,
+      -0.1041806,
+      -0.4585818
     ],
     "world": {
       "source_model": "w_rif_ak47",
@@ -5117,60 +5172,132 @@
         "residual_m": 0.0191,
         "deg_from_seed": 75.94
       }
-    }
+    },
+    "gameplay_seq_durations": {
+      "idle": 0.033,
+      "shoot1": 0.767,
+      "shoot2": 0.767,
+      "shoot3": 0.767,
+      "draw": 1.0,
+      "reload": 2.467,
+      "inspect": 4.567
+    },
+    "native_cs2_animation": true,
+    "native_gun_animations": true,
+    "authored_right_hand": true,
+    "inspect_clips": [
+      "inspect",
+      "inspect_2"
+    ],
+    "animation_source": "ScCsgoKnives native per-weapon clips, original geometry and anatomical arm retarget"
   },
   "weapons/v_aug": {
     "sequences": [
+      "draw",
       "idle",
       "shoot1",
-      "draw",
       "reload",
-      "inspect"
+      "inspect",
+      "ironsightIdle",
+      "ironsightShoot",
+      "shoot",
+      "shoot2",
+      "shoot3",
+      "fire",
+      "draw_unsil",
+      "idle_unsil",
+      "reload_unsil",
+      "inspect_unsil",
+      "shoot1_unsil",
+      "shoot2_unsil",
+      "shoot3_unsil"
     ],
     "seq_durations": {
-      "idle": 0.033,
-      "shoot1": 0.933,
-      "draw": 1.167,
-      "reload": 3.3,
-      "inspect": 4.333
+      "draw": 1.1666,
+      "idle": 1.0,
+      "shoot1": 0.9332,
+      "reload": 3.7666,
+      "inspect": 4.3332,
+      "ironsightIdle": 1.0,
+      "ironsightShoot": 0.2667,
+      "shoot": 0.9332,
+      "shoot2": 0.9332,
+      "shoot3": 0.9332,
+      "fire": 0.9332,
+      "draw_unsil": 1.1666,
+      "idle_unsil": 1.0,
+      "reload_unsil": 3.7666,
+      "inspect_unsil": 4.3332,
+      "shoot1_unsil": 0.9332,
+      "shoot2_unsil": 0.9332,
+      "shoot3_unsil": 0.9332
     },
     "seq_events": {
       "draw": [
         {
           "t": 0.0,
           "wav": "weapons/archi/cs2_aug/draw.wav"
-        },
-        {
-          "t": 0.267,
-          "wav": "weapons/archi/cs2_aug/boltpull.wav"
-        },
-        {
-          "t": 0.467,
-          "wav": "weapons/archi/cs2_aug/boltrelease.wav"
         }
       ],
       "reload": [
         {
-          "t": 0.438,
+          "t": 0.500004,
           "wav": "weapons/archi/cs2_aug/clipout.wav"
         },
         {
-          "t": 1.285,
+          "t": 1.46668,
           "wav": "weapons/archi/cs2_aug/clipin.wav"
         },
         {
-          "t": 1.752,
+          "t": 2.033351,
           "wav": "weapons/archi/cs2_aug/cliphit.wav"
         },
         {
-          "t": 2.307,
+          "t": 2.600023,
           "wav": "weapons/archi/cs2_aug/boltpull.wav"
         },
         {
-          "t": 2.453,
+          "t": 2.833358,
           "wav": "weapons/archi/cs2_aug/boltrelease.wav"
         }
-      ]
+      ],
+      "shoot": [],
+      "shoot2": [],
+      "shoot3": [],
+      "fire": [],
+      "draw_unsil": [
+        {
+          "t": 0.0,
+          "wav": "weapons/archi/cs2_aug/draw.wav"
+        }
+      ],
+      "idle_unsil": [],
+      "reload_unsil": [
+        {
+          "t": 0.500004,
+          "wav": "weapons/archi/cs2_aug/clipout.wav"
+        },
+        {
+          "t": 1.46668,
+          "wav": "weapons/archi/cs2_aug/clipin.wav"
+        },
+        {
+          "t": 2.033351,
+          "wav": "weapons/archi/cs2_aug/cliphit.wav"
+        },
+        {
+          "t": 2.600023,
+          "wav": "weapons/archi/cs2_aug/boltpull.wav"
+        },
+        {
+          "t": 2.833358,
+          "wav": "weapons/archi/cs2_aug/boltrelease.wav"
+        }
+      ],
+      "inspect_unsil": [],
+      "shoot1_unsil": [],
+      "shoot2_unsil": [],
+      "shoot3_unsil": []
     },
     "bones": 78,
     "offset": [
@@ -5189,14 +5316,14 @@
     ],
     "vertices": 49686,
     "muzzle": [
-      -0.1122,
-      -0.0849,
-      -0.874
+      0.1546962,
+      -0.1071067,
+      -0.7611872
     ],
     "eject": [
-      -0.1275,
-      -0.0836,
-      -0.1988
+      0.167132,
+      -0.1060501,
+      -0.2123846
     ],
     "world": {
       "source_model": "w_rif_aug",
@@ -5209,70 +5336,125 @@
         "residual_m": 0.01147,
         "deg_from_seed": 88.41
       }
-    }
+    },
+    "gameplay_seq_durations": {
+      "idle": 0.033,
+      "shoot1": 0.933,
+      "draw": 1.167,
+      "reload": 3.3,
+      "inspect": 4.333
+    },
+    "native_cs2_animation": true,
+    "native_gun_animations": true,
+    "authored_right_hand": true,
+    "inspect_clips": [
+      "inspect"
+    ],
+    "animation_source": "ScCsgoKnives native per-weapon clips, original geometry and anatomical arm retarget"
   },
   "weapons/v_awp": {
     "sequences": [
+      "draw",
       "idle",
       "shoot1",
-      "draw",
       "reload",
-      "inspect"
+      "inspect",
+      "shoot",
+      "shoot2",
+      "shoot3",
+      "fire",
+      "draw_unsil",
+      "idle_unsil",
+      "reload_unsil",
+      "inspect_unsil",
+      "shoot1_unsil",
+      "shoot2_unsil",
+      "shoot3_unsil"
     ],
     "seq_durations": {
-      "idle": 0.033,
-      "shoot1": 1.667,
-      "draw": 1.267,
-      "reload": 2.9,
-      "inspect": 5.0
+      "draw": 1.2666,
+      "idle": 1.0,
+      "shoot1": 1.5999,
+      "reload": 3.6666,
+      "inspect": 5.0,
+      "shoot": 1.5999,
+      "shoot2": 1.5999,
+      "shoot3": 1.5999,
+      "fire": 1.5999,
+      "draw_unsil": 1.2666,
+      "idle_unsil": 1.0,
+      "reload_unsil": 3.6666,
+      "inspect_unsil": 5.0,
+      "shoot1_unsil": 1.5999,
+      "shoot2_unsil": 1.5999,
+      "shoot3_unsil": 1.5999
     },
     "seq_events": {
-      "shoot1": [
-        {
-          "t": 0.6,
-          "wav": "weapons/archi/cs2_awp/boltback.wav"
-        },
-        {
-          "t": 0.933,
-          "wav": "weapons/archi/cs2_awp/boltforward.wav"
-        }
-      ],
       "draw": [
         {
           "t": 0.0,
           "wav": "weapons/archi/cs2_awp/draw.wav"
-        },
-        {
-          "t": 0.3,
-          "wav": "weapons/archi/cs2_awp/boltback.wav"
-        },
-        {
-          "t": 0.567,
-          "wav": "weapons/archi/cs2_awp/boltforward.wav"
         }
       ],
       "reload": [
         {
-          "t": 0.183,
+          "t": 0.266669,
           "wav": "weapons/archi/cs2_awp/clipout.wav"
         },
         {
-          "t": 1.019,
+          "t": 1.533347,
           "wav": "weapons/archi/cs2_awp/clipin.wav"
         },
         {
-          "t": 1.542,
+          "t": 2.000018,
           "wav": "weapons/archi/cs2_awp/cliphit.wav"
         },
         {
-          "t": 1.985,
+          "t": 2.633357,
           "wav": "weapons/archi/cs2_awp/boltback.wav"
         },
         {
-          "t": 2.247,
+          "t": 2.966693,
           "wav": "weapons/archi/cs2_awp/boltforward.wav"
         }
-      ]
+      ],
+      "shoot": [],
+      "shoot2": [],
+      "shoot3": [],
+      "fire": [],
+      "draw_unsil": [
+        {
+          "t": 0.0,
+          "wav": "weapons/archi/cs2_awp/draw.wav"
+        }
+      ],
+      "idle_unsil": [],
+      "reload_unsil": [
+        {
+          "t": 0.266669,
+          "wav": "weapons/archi/cs2_awp/clipout.wav"
+        },
+        {
+          "t": 1.533347,
+          "wav": "weapons/archi/cs2_awp/clipin.wav"
+        },
+        {
+          "t": 2.000018,
+          "wav": "weapons/archi/cs2_awp/cliphit.wav"
+        },
+        {
+          "t": 2.633357,
+          "wav": "weapons/archi/cs2_awp/boltback.wav"
+        },
+        {
+          "t": 2.966693,
+          "wav": "weapons/archi/cs2_awp/boltforward.wav"
+        }
+      ],
+      "inspect_unsil": [],
+      "shoot1_unsil": [],
+      "shoot2_unsil": [],
+      "shoot3_unsil": []
     },
     "bones": 63,
     "offset": [
@@ -5290,14 +5472,14 @@
     ],
     "vertices": 43233,
     "muzzle": [
-      -0.1567,
-      -0.107,
-      -1.6572
+      0.1908658,
+      -0.1250696,
+      -1.3977722
     ],
     "eject": [
-      -0.1535,
-      -0.0961,
-      -0.5309
+      0.1882648,
+      -0.1162101,
+      -0.4823155
     ],
     "world": {
       "source_model": "w_snip_awp",
@@ -5310,28 +5492,44 @@
         "residual_m": 0.02694,
         "deg_from_seed": 77.69
       }
-    }
+    },
+    "gameplay_seq_durations": {
+      "idle": 0.033,
+      "shoot1": 1.667,
+      "draw": 1.267,
+      "reload": 2.9,
+      "inspect": 5.0
+    },
+    "native_cs2_animation": true,
+    "native_gun_animations": true,
+    "authored_right_hand": true,
+    "inspect_clips": [
+      "inspect"
+    ],
+    "animation_source": "ScCsgoKnives native per-weapon clips, original geometry and anatomical arm retarget"
   },
   "weapons/v_c4": {
     "sequences": [
-      "idle",
       "draw",
-      "drop",
-      "armswitch",
-      "pressbutton",
+      "idle",
       "inspect",
       "inspect_2",
-      "inspect_3"
+      "inspect_3",
+      "pressbutton",
+      "draw_unsil",
+      "idle_unsil",
+      "inspect_unsil"
     ],
     "seq_durations": {
-      "idle": 2.5,
-      "draw": 1.233,
-      "drop": 0.533,
-      "armswitch": 0.4,
-      "pressbutton": 2.5,
+      "draw": 1.2333,
+      "idle": 1.0,
       "inspect": 4.1,
-      "inspect_2": 4.167,
-      "inspect_3": 3.867
+      "inspect_2": 4.1,
+      "inspect_3": 3.8666,
+      "pressbutton": 4.0,
+      "draw_unsil": 1.2333,
+      "idle_unsil": 1.0,
+      "inspect_unsil": 4.1
     },
     "seq_events": {
       "draw": [
@@ -5346,34 +5544,42 @@
           "wav": "weapons/archi/cs2_c4/c4_initiate.wav"
         },
         {
-          "t": 0.667,
+          "t": 0.666667,
           "wav": "weapons/archi/cs2_c4/key_press1.wav"
         },
         {
-          "t": 0.967,
-          "wav": "weapons/archi/cs2_c4/key_press2.wav"
+          "t": 0.966667,
+          "wav": "weapons/archi/cs2_c4/key_press1.wav"
         },
         {
-          "t": 1.233,
-          "wav": "weapons/archi/cs2_c4/key_press3.wav"
+          "t": 1.233333,
+          "wav": "weapons/archi/cs2_c4/key_press1.wav"
         },
         {
-          "t": 1.467,
-          "wav": "weapons/archi/cs2_c4/key_press4.wav"
+          "t": 1.466667,
+          "wav": "weapons/archi/cs2_c4/key_press1.wav"
         },
         {
-          "t": 1.667,
-          "wav": "weapons/archi/cs2_c4/key_press5.wav"
+          "t": 1.666667,
+          "wav": "weapons/archi/cs2_c4/key_press1.wav"
         },
         {
-          "t": 1.967,
-          "wav": "weapons/archi/cs2_c4/key_press6.wav"
+          "t": 1.966667,
+          "wav": "weapons/archi/cs2_c4/key_press1.wav"
         },
         {
-          "t": 2.033,
-          "wav": "weapons/archi/cs2_c4/key_press7.wav"
+          "t": 2.166667,
+          "wav": "weapons/archi/cs2_c4/key_press1.wav"
         }
-      ]
+      ],
+      "draw_unsil": [
+        {
+          "t": 0.0,
+          "wav": "weapons/archi/cs2_c4/c4_draw.wav"
+        }
+      ],
+      "idle_unsil": [],
+      "inspect_unsil": []
     },
     "bones": 42,
     "offset": [
@@ -5412,54 +5618,112 @@
       "inspect",
       "inspect_2",
       "inspect_3"
-    ]
+    ],
+    "gameplay_seq_durations": {
+      "idle": 2.5,
+      "draw": 1.233,
+      "drop": 0.533,
+      "armswitch": 0.4,
+      "pressbutton": 2.5,
+      "inspect": 4.1,
+      "inspect_2": 4.167,
+      "inspect_3": 3.867
+    },
+    "native_cs2_animation": true,
+    "native_gun_animations": true,
+    "authored_right_hand": true,
+    "animation_source": "ScCsgoKnives native per-weapon clips, original geometry and anatomical arm retarget"
   },
   "weapons/v_deagle": {
     "sequences": [
+      "draw",
       "idle",
+      "idle_empty",
       "shoot1",
-      "shoot2",
-      "shoot3",
       "shootlast",
       "reload",
-      "draw",
+      "reload_empty",
       "inspect",
-      "inspect_2"
+      "inspect_2",
+      "shoot",
+      "shoot2",
+      "shoot3",
+      "shoot_empty",
+      "fire",
+      "draw_unsil",
+      "idle_unsil",
+      "reload_unsil",
+      "inspect_unsil",
+      "shoot1_unsil",
+      "shoot2_unsil",
+      "shoot3_unsil",
+      "shootlast_unsil"
     ],
     "seq_durations": {
-      "idle": 0.033,
+      "draw": 1.0,
+      "idle": 1.0,
+      "idle_empty": 1.0,
       "shoot1": 0.7,
-      "shoot2": 0.7,
-      "shoot3": 0.7,
       "shootlast": 0.7,
       "reload": 2.2,
-      "draw": 1.0,
-      "inspect": 5.667,
-      "inspect_2": 8.5
+      "reload_empty": 2.2,
+      "inspect": 5.6666,
+      "inspect_2": 8.5,
+      "shoot": 0.7,
+      "shoot2": 0.7,
+      "shoot3": 0.7,
+      "shoot_empty": 0.7,
+      "fire": 0.7,
+      "draw_unsil": 1.0,
+      "idle_unsil": 1.0,
+      "reload_unsil": 2.2,
+      "inspect_unsil": 5.6666,
+      "shoot1_unsil": 0.7,
+      "shoot2_unsil": 0.7,
+      "shoot3_unsil": 0.7,
+      "shootlast_unsil": 0.7
     },
     "seq_events": {
-      "reload": [
-        {
-          "t": 0.267,
-          "wav": "weapons/archi/cs2_deagle/clipout.wav"
-        },
-        {
-          "t": 0.633,
-          "wav": "weapons/archi/cs2_deagle/clipin.wav"
-        },
-        {
-          "t": 1.367,
-          "wav": "weapons/archi/cs2_deagle/slideback.wav"
-        },
-        {
-          "t": 1.567,
-          "wav": "weapons/archi/cs2_deagle/slideforward.wav"
-        }
-      ],
       "draw": [
         {
           "t": 0.0,
           "wav": "weapons/archi/cs2_deagle/draw.wav"
+        }
+      ],
+      "reload": [
+        {
+          "t": 0.133333,
+          "wav": "weapons/archi/cs2_deagle/clipout.wav"
+        },
+        {
+          "t": 0.7,
+          "wav": "weapons/archi/cs2_deagle/clipin.wav"
+        },
+        {
+          "t": 1.366667,
+          "wav": "weapons/archi/cs2_deagle/slideback.wav"
+        },
+        {
+          "t": 1.566667,
+          "wav": "weapons/archi/cs2_deagle/slideforward.wav"
+        }
+      ],
+      "reload_empty": [
+        {
+          "t": 0.2,
+          "wav": "weapons/archi/cs2_deagle/clipout.wav"
+        },
+        {
+          "t": 0.933333,
+          "wav": "weapons/archi/cs2_deagle/clipin.wav"
+        },
+        {
+          "t": 1.5,
+          "wav": "weapons/archi/cs2_deagle/slideforward.wav"
+        },
+        {
+          "t": 1.533333,
+          "wav": "weapons/archi/cs2_deagle/slideback.wav"
         }
       ],
       "inspect_2": [
@@ -5484,22 +5748,57 @@
           "wav": "weapons/archi/cs2_deagle/lookat_f111.wav"
         },
         {
-          "t": 4.433,
+          "t": 4.433333,
           "wav": "weapons/archi/cs2_deagle/lookat_f133.wav"
         },
         {
-          "t": 5.533,
+          "t": 5.533333,
           "wav": "weapons/archi/cs2_deagle/lookat_f166.wav"
         },
         {
-          "t": 6.433,
+          "t": 6.433333,
           "wav": "weapons/archi/cs2_deagle/lookat_f193.wav"
         },
         {
           "t": 7.6,
           "wav": "weapons/archi/cs2_deagle/lookat_f228.wav"
         }
-      ]
+      ],
+      "shoot": [],
+      "shoot2": [],
+      "shoot3": [],
+      "shoot_empty": [],
+      "fire": [],
+      "draw_unsil": [
+        {
+          "t": 0.0,
+          "wav": "weapons/archi/cs2_deagle/draw.wav"
+        }
+      ],
+      "idle_unsil": [],
+      "reload_unsil": [
+        {
+          "t": 0.133333,
+          "wav": "weapons/archi/cs2_deagle/clipout.wav"
+        },
+        {
+          "t": 0.7,
+          "wav": "weapons/archi/cs2_deagle/clipin.wav"
+        },
+        {
+          "t": 1.366667,
+          "wav": "weapons/archi/cs2_deagle/slideback.wav"
+        },
+        {
+          "t": 1.566667,
+          "wav": "weapons/archi/cs2_deagle/slideforward.wav"
+        }
+      ],
+      "inspect_unsil": [],
+      "shoot1_unsil": [],
+      "shoot2_unsil": [],
+      "shoot3_unsil": [],
+      "shootlast_unsil": []
     },
     "bones": 65,
     "offset": [
@@ -5516,14 +5815,14 @@
     ],
     "vertices": 26504,
     "muzzle": [
-      -0.1193,
-      -0.0381,
-      -0.6973
+      0.160467,
+      -0.0690677,
+      -0.6175654
     ],
     "eject": [
-      -0.1297,
-      -0.0243,
-      -0.4624
+      0.1689202,
+      -0.057851,
+      -0.4266387
     ],
     "world": {
       "source_model": "w_pist_deagle",
@@ -5543,91 +5842,120 @@
     "inspect_clips": [
       "inspect",
       "inspect_2"
-    ]
+    ],
+    "gameplay_seq_durations": {
+      "idle": 0.033,
+      "shoot1": 0.7,
+      "shoot2": 0.7,
+      "shoot3": 0.7,
+      "shootlast": 0.7,
+      "reload": 2.2,
+      "draw": 1.0,
+      "inspect": 5.667,
+      "inspect_2": 8.5
+    },
+    "native_cs2_animation": true,
+    "native_gun_animations": true,
+    "authored_right_hand": true,
+    "animation_source": "ScCsgoKnives native per-weapon clips, original geometry and anatomical arm retarget"
   },
   "weapons/v_elite": {
     "sequences": [
+      "draw",
       "idle",
-      "idle_leftempty",
+      "shoot1",
+      "reload",
+      "inspect",
       "shoot_left1",
       "shoot_leftlast",
-      "shoot_right1",
       "shoot_rightlast",
-      "reload",
-      "draw",
-      "inspect",
-      "slideback_left",
-      "slideback_right"
+      "idle_leftempty",
+      "idle_bothempty",
+      "shoot",
+      "shoot2",
+      "shoot3",
+      "fire",
+      "draw_unsil",
+      "idle_unsil",
+      "reload_unsil",
+      "inspect_unsil",
+      "shoot1_unsil",
+      "shoot2_unsil",
+      "shoot3_unsil",
+      "shoot_right1"
     ],
     "seq_durations": {
-      "idle": 0.033,
-      "idle_leftempty": 0.033,
-      "shoot_left1": 0.833,
-      "shoot_leftlast": 0.833,
-      "shoot_right1": 0.833,
-      "shoot_rightlast": 0.833,
-      "reload": 4.5,
       "draw": 1.0,
+      "idle": 1.0,
+      "shoot1": 0.8333,
+      "reload": 3.7666,
       "inspect": 4.6,
-      "slideback_left": 0.033,
-      "slideback_right": 0.033
+      "shoot_left1": 0.8333,
+      "shoot_leftlast": 0.8333,
+      "shoot_rightlast": 0.8333,
+      "idle_leftempty": 0.0332,
+      "idle_bothempty": 0.0332,
+      "shoot": 0.8333,
+      "shoot2": 0.8333,
+      "shoot3": 0.8333,
+      "fire": 0.8333,
+      "draw_unsil": 1.0,
+      "idle_unsil": 1.0,
+      "reload_unsil": 3.7666,
+      "inspect_unsil": 4.6,
+      "shoot1_unsil": 0.8333,
+      "shoot2_unsil": 0.8333,
+      "shoot3_unsil": 0.8333,
+      "shoot_right1": 0.8333
     },
     "seq_events": {
-      "reload": [
-        {
-          "t": 0.199,
-          "wav": "weapons/archi/cs2_elites/clipout.wav"
-        },
-        {
-          "t": 0.278,
-          "wav": "weapons/archi/cs2_elites/clipout.wav"
-        },
-        {
-          "t": 1.951,
-          "wav": "weapons/archi/cs2_elites/leftclipin.wav"
-        },
-        {
-          "t": 3.345,
-          "wav": "weapons/archi/cs2_elites/rightclipin.wav"
-        },
-        {
-          "t": 4.062,
-          "wav": "weapons/archi/cs2_elites/sliderelease.wav"
-        },
-        {
-          "t": 4.261,
-          "wav": "weapons/archi/cs2_elites/sliderelease.wav"
-        }
-      ],
       "draw": [
         {
           "t": 0.0,
           "wav": "weapons/archi/cs2_elites/draw.wav"
+        }
+      ],
+      "reload": [
+        {
+          "t": 0.266669,
+          "wav": "weapons/archi/cs2_elites/clipout.wav"
         },
         {
-          "t": 0.5,
+          "t": 0.333336,
+          "wav": "weapons/archi/cs2_elites/clipout.wav"
+        },
+        {
+          "t": 1.666681,
+          "wav": "weapons/archi/cs2_elites/leftclipin.wav"
+        },
+        {
+          "t": 2.800025,
+          "wav": "weapons/archi/cs2_elites/rightclipin.wav"
+        },
+        {
+          "t": 3.366696,
           "wav": "weapons/archi/cs2_elites/sliderelease.wav"
         },
         {
-          "t": 0.6,
+          "t": 3.533364,
           "wav": "weapons/archi/cs2_elites/sliderelease.wav"
         }
       ],
       "inspect": [
         {
-          "t": 0.067,
+          "t": 0.066667,
           "wav": "weapons/archi/cs2_elites/taunt_tap.wav"
         },
         {
-          "t": 0.833,
+          "t": 0.833333,
           "wav": "weapons/archi/cs2_elites/taunt_tap.wav"
         },
         {
-          "t": 2.733,
+          "t": 2.733333,
           "wav": "weapons/archi/cs2_elites/taunt_tap.wav"
         },
         {
-          "t": 2.933,
+          "t": 2.933333,
           "wav": "weapons/archi/cs2_elites/taunt_tap.wav"
         },
         {
@@ -5635,10 +5963,77 @@
           "wav": "weapons/archi/cs2_elites/taunt_tap.wav"
         },
         {
-          "t": 3.767,
+          "t": 3.766667,
           "wav": "weapons/archi/cs2_elites/taunt_tap.wav"
         }
-      ]
+      ],
+      "shoot": [],
+      "shoot2": [],
+      "shoot3": [],
+      "fire": [],
+      "draw_unsil": [
+        {
+          "t": 0.0,
+          "wav": "weapons/archi/cs2_elites/draw.wav"
+        }
+      ],
+      "idle_unsil": [],
+      "reload_unsil": [
+        {
+          "t": 0.266669,
+          "wav": "weapons/archi/cs2_elites/clipout.wav"
+        },
+        {
+          "t": 0.333336,
+          "wav": "weapons/archi/cs2_elites/clipout.wav"
+        },
+        {
+          "t": 1.666681,
+          "wav": "weapons/archi/cs2_elites/leftclipin.wav"
+        },
+        {
+          "t": 2.800025,
+          "wav": "weapons/archi/cs2_elites/rightclipin.wav"
+        },
+        {
+          "t": 3.366696,
+          "wav": "weapons/archi/cs2_elites/sliderelease.wav"
+        },
+        {
+          "t": 3.533364,
+          "wav": "weapons/archi/cs2_elites/sliderelease.wav"
+        }
+      ],
+      "inspect_unsil": [
+        {
+          "t": 0.066667,
+          "wav": "weapons/archi/cs2_elites/taunt_tap.wav"
+        },
+        {
+          "t": 0.833333,
+          "wav": "weapons/archi/cs2_elites/taunt_tap.wav"
+        },
+        {
+          "t": 2.733333,
+          "wav": "weapons/archi/cs2_elites/taunt_tap.wav"
+        },
+        {
+          "t": 2.933333,
+          "wav": "weapons/archi/cs2_elites/taunt_tap.wav"
+        },
+        {
+          "t": 3.1,
+          "wav": "weapons/archi/cs2_elites/taunt_tap.wav"
+        },
+        {
+          "t": 3.766667,
+          "wav": "weapons/archi/cs2_elites/taunt_tap.wav"
+        }
+      ],
+      "shoot1_unsil": [],
+      "shoot2_unsil": [],
+      "shoot3_unsil": [],
+      "shoot_right1": []
     },
     "bones": 79,
     "offset": [
@@ -5655,14 +6050,14 @@
     ],
     "vertices": 43012,
     "muzzle": [
-      -0.0958,
-      -0.0548,
-      -0.6797
+      0.1413662,
+      -0.0826414,
+      -0.6032602
     ],
     "eject": [
-      0.0967,
-      -0.0561,
-      -0.6717
+      -0.0150978,
+      -0.0836981,
+      -0.5967578
     ],
     "world": {
       "source_model": "w_pist_elite",
@@ -5676,56 +6071,153 @@
         "residual_m": 0.0074,
         "deg_from_seed": 42.73
       }
-    }
+    },
+    "gameplay_seq_durations": {
+      "idle": 0.033,
+      "idle_leftempty": 0.033,
+      "shoot_left1": 0.833,
+      "shoot_leftlast": 0.833,
+      "shoot_right1": 0.833,
+      "shoot_rightlast": 0.833,
+      "reload": 4.5,
+      "draw": 1.0,
+      "inspect": 4.6,
+      "slideback_left": 0.033,
+      "slideback_right": 0.033
+    },
+    "native_cs2_animation": true,
+    "native_gun_animations": true,
+    "authored_right_hand": true,
+    "inspect_clips": [
+      "inspect"
+    ],
+    "animation_source": "ScCsgoKnives native per-weapon clips, original geometry and anatomical arm retarget"
   },
   "weapons/v_fiveseven": {
     "sequences": [
-      "idle",
-      "shoot1",
-      "reload",
       "draw",
-      "inspect"
+      "idle",
+      "idle_empty",
+      "shoot1",
+      "shootlast",
+      "reload",
+      "reload_empty",
+      "inspect",
+      "shoot",
+      "shoot2",
+      "shoot3",
+      "shoot_empty",
+      "fire",
+      "draw_unsil",
+      "idle_unsil",
+      "reload_unsil",
+      "inspect_unsil",
+      "shoot1_unsil",
+      "shoot2_unsil",
+      "shoot3_unsil",
+      "shootlast_unsil"
     ],
     "seq_durations": {
-      "idle": 0.033,
-      "shoot1": 0.4,
-      "reload": 2.7,
       "draw": 1.0,
-      "inspect": 6.467
+      "idle": 1.0,
+      "idle_empty": 1.0,
+      "shoot1": 0.3999,
+      "shootlast": 0.3999,
+      "reload": 2.2667,
+      "reload_empty": 2.2667,
+      "inspect": 6.4333,
+      "shoot": 0.3999,
+      "shoot2": 0.3999,
+      "shoot3": 0.3999,
+      "shoot_empty": 0.3999,
+      "fire": 0.3999,
+      "draw_unsil": 1.0,
+      "idle_unsil": 1.0,
+      "reload_unsil": 2.2667,
+      "inspect_unsil": 6.4333,
+      "shoot1_unsil": 0.3999,
+      "shoot2_unsil": 0.3999,
+      "shoot3_unsil": 0.3999,
+      "shootlast_unsil": 0.3999
     },
     "seq_events": {
-      "reload": [
-        {
-          "t": 0.476,
-          "wav": "weapons/archi/cs2_fiveseven/clipout.wav"
-        },
-        {
-          "t": 1.033,
-          "wav": "weapons/archi/cs2_fiveseven/clipin.wav"
-        },
-        {
-          "t": 1.747,
-          "wav": "weapons/archi/cs2_fiveseven/slideback.wav"
-        },
-        {
-          "t": 1.945,
-          "wav": "weapons/archi/cs2_fiveseven/sliderelease.wav"
-        }
-      ],
       "draw": [
         {
           "t": 0.0,
           "wav": "weapons/archi/cs2_fiveseven/draw.wav"
+        }
+      ],
+      "reload": [
+        {
+          "t": 0.466674,
+          "wav": "weapons/archi/cs2_fiveseven/clipout.wav"
         },
         {
-          "t": 0.3,
+          "t": 0.900013,
+          "wav": "weapons/archi/cs2_fiveseven/clipin.wav"
+        },
+        {
+          "t": 1.500022,
           "wav": "weapons/archi/cs2_fiveseven/slideback.wav"
         },
         {
-          "t": 0.433,
+          "t": 1.666691,
           "wav": "weapons/archi/cs2_fiveseven/sliderelease.wav"
         }
-      ]
+      ],
+      "reload_empty": [
+        {
+          "t": 0.466674,
+          "wav": "weapons/archi/cs2_fiveseven/clipout.wav"
+        },
+        {
+          "t": 1.13335,
+          "wav": "weapons/archi/cs2_fiveseven/clipin.wav"
+        },
+        {
+          "t": 1.633357,
+          "wav": "weapons/archi/cs2_fiveseven/slideback.wav"
+        },
+        {
+          "t": 1.633357,
+          "wav": "weapons/archi/cs2_fiveseven/sliderelease.wav"
+        }
+      ],
+      "shoot": [],
+      "shoot2": [],
+      "shoot3": [],
+      "shoot_empty": [],
+      "fire": [],
+      "draw_unsil": [
+        {
+          "t": 0.0,
+          "wav": "weapons/archi/cs2_fiveseven/draw.wav"
+        }
+      ],
+      "idle_unsil": [],
+      "reload_unsil": [
+        {
+          "t": 0.466674,
+          "wav": "weapons/archi/cs2_fiveseven/clipout.wav"
+        },
+        {
+          "t": 0.900013,
+          "wav": "weapons/archi/cs2_fiveseven/clipin.wav"
+        },
+        {
+          "t": 1.500022,
+          "wav": "weapons/archi/cs2_fiveseven/slideback.wav"
+        },
+        {
+          "t": 1.666691,
+          "wav": "weapons/archi/cs2_fiveseven/sliderelease.wav"
+        }
+      ],
+      "inspect_unsil": [],
+      "shoot1_unsil": [],
+      "shoot2_unsil": [],
+      "shoot3_unsil": [],
+      "shootlast_unsil": []
     },
     "bones": 60,
     "offset": [
@@ -5742,14 +6234,14 @@
     ],
     "vertices": 29549,
     "muzzle": [
-      -0.0881,
-      -0.0529,
-      -0.6316
+      0.1351077,
+      -0.0810971,
+      -0.5641645
     ],
     "eject": [
-      -0.0939,
-      -0.0448,
-      -0.4887
+      0.1398219,
+      -0.0745134,
+      -0.4480154
     ],
     "world": {
       "source_model": "w_pist_fiveseven",
@@ -5762,44 +6254,84 @@
         "residual_m": 0.00886,
         "deg_from_seed": 57.72
       }
-    }
+    },
+    "gameplay_seq_durations": {
+      "idle": 0.033,
+      "shoot1": 0.4,
+      "reload": 2.7,
+      "draw": 1.0,
+      "inspect": 6.467
+    },
+    "native_cs2_animation": true,
+    "native_gun_animations": true,
+    "authored_right_hand": true,
+    "inspect_clips": [
+      "inspect"
+    ],
+    "animation_source": "ScCsgoKnives native per-weapon clips, original geometry and anatomical arm retarget"
   },
   "weapons/v_flashbang": {
     "sequences": [
+      "draw",
       "idle",
-      "pullpin",
-      "throw",
-      "deploy",
-      "underhand",
       "inspect",
-      "inspect_2"
+      "inspect_2",
+      "pullpin",
+      "hold_high",
+      "hold_low",
+      "throw",
+      "underhand",
+      "draw_unsil",
+      "idle_unsil",
+      "inspect_unsil"
     ],
     "seq_durations": {
-      "idle": 0.267,
-      "pullpin": 0.967,
-      "throw": 0.733,
-      "deploy": 1.0,
+      "draw": 1.0,
+      "idle": 0.3333,
+      "inspect": 5.7999,
+      "inspect_2": 4.4333,
+      "pullpin": 0.9666,
+      "hold_high": 1.0,
+      "hold_low": 1.0,
+      "throw": 0.7666,
       "underhand": 0.5,
-      "inspect": 5.8,
-      "inspect_2": 4.433
+      "draw_unsil": 1.0,
+      "idle_unsil": 0.3333,
+      "inspect_unsil": 5.7999
     },
     "seq_events": {
+      "draw": [
+        {
+          "t": 0.066667,
+          "wav": "weapons/archi/cs2_flashbang/draw.wav"
+        }
+      ],
       "pullpin": [
         {
           "t": 0.0,
-          "wav": "weapons/archi/cs2_flashbang/pinpull_start.wav"
-        },
-        {
-          "t": 0.4,
           "wav": "weapons/archi/cs2_flashbang/pinpull.wav"
         }
       ],
-      "deploy": [
+      "throw": [
         {
-          "t": 0.0,
+          "t": 0.06667,
+          "wav": "weapons/archi/cs2_flashbang/throw.wav"
+        }
+      ],
+      "underhand": [
+        {
+          "t": 0.133333,
+          "wav": "weapons/archi/cs2_flashbang/throw.wav"
+        }
+      ],
+      "draw_unsil": [
+        {
+          "t": 0.066667,
           "wav": "weapons/archi/cs2_flashbang/draw.wav"
         }
-      ]
+      ],
+      "idle_unsil": [],
+      "inspect_unsil": []
     },
     "bones": 45,
     "offset": [
@@ -5833,56 +6365,132 @@
     "inspect_clips": [
       "inspect",
       "inspect_2"
-    ]
+    ],
+    "gameplay_seq_durations": {
+      "idle": 0.267,
+      "pullpin": 0.967,
+      "throw": 0.733,
+      "deploy": 1.0,
+      "underhand": 0.5,
+      "inspect": 5.8,
+      "inspect_2": 4.433
+    },
+    "native_cs2_animation": true,
+    "native_gun_animations": true,
+    "authored_right_hand": true,
+    "animation_source": "ScCsgoKnives native per-weapon clips, original geometry and anatomical arm retarget"
   },
   "weapons/v_g3sg1": {
     "sequences": [
+      "draw",
       "idle",
       "shoot1",
       "reload",
-      "draw",
-      "inspect"
+      "inspect",
+      "shoot",
+      "shoot2",
+      "shoot3",
+      "fire",
+      "draw_unsil",
+      "idle_unsil",
+      "reload_unsil",
+      "inspect_unsil",
+      "shoot1_unsil",
+      "shoot2_unsil",
+      "shoot3_unsil"
     ],
     "seq_durations": {
-      "idle": 0.125,
-      "shoot1": 0.733,
-      "reload": 3.5,
       "draw": 1.0,
-      "inspect": 4.433
+      "idle": 1.0,
+      "shoot1": 0.7332,
+      "reload": 4.6666,
+      "inspect": 4.4,
+      "shoot": 0.7332,
+      "shoot2": 0.7332,
+      "shoot3": 0.7332,
+      "fire": 0.7332,
+      "draw_unsil": 1.0,
+      "idle_unsil": 1.0,
+      "reload_unsil": 4.6666,
+      "inspect_unsil": 4.4,
+      "shoot1_unsil": 0.7332,
+      "shoot2_unsil": 0.7332,
+      "shoot3_unsil": 0.7332
     },
     "seq_events": {
-      "reload": [
-        {
-          "t": 0.4,
-          "wav": "weapons/archi/cs2_g3sg1/clipout.wav"
-        },
-        {
-          "t": 1.825,
-          "wav": "weapons/archi/cs2_g3sg1/clipin.wav"
-        },
-        {
-          "t": 2.425,
-          "wav": "weapons/archi/cs2_g3sg1/slideback.wav"
-        },
-        {
-          "t": 2.6,
-          "wav": "weapons/archi/cs2_g3sg1/slideforward.wav"
-        }
-      ],
       "draw": [
         {
           "t": 0.0,
+          "wav": "weapons/archi/cs2_famas/draw.wav"
+        }
+      ],
+      "reload": [
+        {
+          "t": 0.200001,
           "wav": "weapons/archi/cs2_g3sg1/draw.wav"
         },
         {
-          "t": 0.2,
+          "t": 0.533337,
           "wav": "weapons/archi/cs2_g3sg1/slideback.wav"
         },
         {
-          "t": 0.4,
+          "t": 1.366676,
+          "wav": "weapons/archi/cs2_g3sg1/clipout.wav"
+        },
+        {
+          "t": 2.566685,
+          "wav": "weapons/archi/cs2_g3sg1/clipin.wav"
+        },
+        {
+          "t": 3.300023,
           "wav": "weapons/archi/cs2_g3sg1/slideforward.wav"
+        },
+        {
+          "t": 3.73336,
+          "wav": "weapons/archi/cs2_g3sg1/draw.wav"
         }
-      ]
+      ],
+      "shoot": [],
+      "shoot2": [],
+      "shoot3": [],
+      "fire": [],
+      "draw_unsil": [
+        {
+          "t": 0.0,
+          "wav": "weapons/archi/cs2_famas/draw.wav"
+        }
+      ],
+      "idle_unsil": [],
+      "reload_unsil": [
+        {
+          "t": 0.200001,
+          "wav": "weapons/archi/cs2_g3sg1/draw.wav"
+        },
+        {
+          "t": 0.533337,
+          "wav": "weapons/archi/cs2_g3sg1/slideback.wav"
+        },
+        {
+          "t": 1.366676,
+          "wav": "weapons/archi/cs2_g3sg1/clipout.wav"
+        },
+        {
+          "t": 2.566685,
+          "wav": "weapons/archi/cs2_g3sg1/clipin.wav"
+        },
+        {
+          "t": 3.300023,
+          "wav": "weapons/archi/cs2_g3sg1/slideforward.wav"
+        },
+        {
+          "t": 3.73336,
+          "wav": "weapons/archi/cs2_g3sg1/draw.wav"
+        }
+      ],
+      "inspect_unsil": [],
+      "shoot1_unsil": [],
+      "shoot2_unsil": [],
+      "shoot3_unsil": []
     },
     "bones": 70,
     "offset": [
@@ -5900,14 +6508,14 @@
     ],
     "vertices": 48988,
     "muzzle": [
-      -0.1589,
-      -0.1291,
-      -1.3591
+      0.1926539,
+      -0.1430325,
+      -1.1554765
     ],
     "eject": [
-      -0.1651,
-      -0.1023,
-      -0.6263
+      0.1976933,
+      -0.1212494,
+      -0.5598566
     ],
     "world": {
       "source_model": "w_snip_g3sg1",
@@ -5920,62 +6528,143 @@
         "residual_m": 0.01103,
         "deg_from_seed": 38.72
       }
-    }
+    },
+    "gameplay_seq_durations": {
+      "idle": 0.125,
+      "shoot1": 0.733,
+      "reload": 3.5,
+      "draw": 1.0,
+      "inspect": 4.433
+    },
+    "native_cs2_animation": true,
+    "native_gun_animations": true,
+    "authored_right_hand": true,
+    "inspect_clips": [
+      "inspect"
+    ],
+    "animation_source": "ScCsgoKnives native per-weapon clips, original geometry and anatomical arm retarget"
   },
   "weapons/v_glock18": {
     "sequences": [
+      "draw",
       "idle",
+      "idle_empty",
+      "shoot1",
+      "shootlast",
+      "reload",
+      "reload_empty",
+      "inspect",
       "shoot",
       "shoot2",
       "shoot3",
       "shoot_empty",
-      "draw",
-      "reload",
-      "inspect"
+      "fire",
+      "draw_unsil",
+      "idle_unsil",
+      "reload_unsil",
+      "inspect_unsil",
+      "shoot1_unsil",
+      "shoot2_unsil",
+      "shoot3_unsil",
+      "shootlast_unsil"
     ],
     "seq_durations": {
-      "idle": 0.033,
-      "shoot": 0.4,
-      "shoot2": 0.4,
-      "shoot3": 0.4,
-      "shoot_empty": 0.4,
-      "draw": 1.133,
-      "reload": 2.267,
-      "inspect": 6.467
+      "draw": 1.0,
+      "idle": 0.0332,
+      "idle_empty": 0.0332,
+      "shoot1": 0.3999,
+      "shootlast": 0.3999,
+      "reload": 2.2667,
+      "reload_empty": 2.2667,
+      "inspect": 6.4333,
+      "shoot": 0.3999,
+      "shoot2": 0.3999,
+      "shoot3": 0.3999,
+      "shoot_empty": 0.3999,
+      "fire": 0.3999,
+      "draw_unsil": 1.0,
+      "idle_unsil": 0.0332,
+      "reload_unsil": 2.2667,
+      "inspect_unsil": 6.4333,
+      "shoot1_unsil": 0.3999,
+      "shoot2_unsil": 0.3999,
+      "shoot3_unsil": 0.3999,
+      "shootlast_unsil": 0.3999
     },
     "seq_events": {
       "draw": [
         {
           "t": 0.0,
           "wav": "weapons/archi/cs2_glock18/draw.wav"
-        },
-        {
-          "t": 0.4,
-          "wav": "weapons/archi/cs2_glock18/slideback.wav"
-        },
-        {
-          "t": 0.567,
-          "wav": "weapons/archi/cs2_glock18/sliderelease.wav"
         }
       ],
       "reload": [
         {
-          "t": 0.4,
+          "t": 0.466674,
           "wav": "weapons/archi/cs2_glock18/clipout.wav"
         },
         {
-          "t": 0.833,
+          "t": 0.833346,
           "wav": "weapons/archi/cs2_glock18/clipin.wav"
         },
         {
-          "t": 1.467,
+          "t": 1.466688,
           "wav": "weapons/archi/cs2_glock18/slideback.wav"
         },
         {
-          "t": 1.667,
+          "t": 1.666691,
           "wav": "weapons/archi/cs2_glock18/sliderelease.wav"
         }
-      ]
+      ],
+      "reload_empty": [
+        {
+          "t": 0.466674,
+          "wav": "weapons/archi/cs2_glock18/clipout.wav"
+        },
+        {
+          "t": 1.13335,
+          "wav": "weapons/archi/cs2_glock18/clipin.wav"
+        },
+        {
+          "t": 1.533356,
+          "wav": "weapons/archi/cs2_glock18/sliderelease.wav"
+        }
+      ],
+      "shoot": [],
+      "shoot2": [],
+      "shoot3": [],
+      "shoot_empty": [],
+      "fire": [],
+      "draw_unsil": [
+        {
+          "t": 0.0,
+          "wav": "weapons/archi/cs2_glock18/draw.wav"
+        }
+      ],
+      "idle_unsil": [],
+      "reload_unsil": [
+        {
+          "t": 0.466674,
+          "wav": "weapons/archi/cs2_glock18/clipout.wav"
+        },
+        {
+          "t": 0.833346,
+          "wav": "weapons/archi/cs2_glock18/clipin.wav"
+        },
+        {
+          "t": 1.466688,
+          "wav": "weapons/archi/cs2_glock18/slideback.wav"
+        },
+        {
+          "t": 1.666691,
+          "wav": "weapons/archi/cs2_glock18/sliderelease.wav"
+        }
+      ],
+      "inspect_unsil": [],
+      "shoot1_unsil": [],
+      "shoot2_unsil": [],
+      "shoot3_unsil": [],
+      "shootlast_unsil": []
     },
     "bones": 66,
     "offset": [
@@ -5992,14 +6681,14 @@
     ],
     "vertices": 23221,
     "muzzle": [
-      -0.0875,
-      -0.0617,
-      -0.6179
+      0.13462,
+      -0.0882498,
+      -0.5530291
     ],
     "eject": [
-      -0.1036,
-      -0.0495,
-      -0.4712
+      0.1477061,
+      -0.0783336,
+      -0.4337914
     ],
     "world": {
       "source_model": "w_pist_glock18",
@@ -6012,44 +6701,75 @@
         "residual_m": 0.01387,
         "deg_from_seed": 60.09
       }
-    }
+    },
+    "gameplay_seq_durations": {
+      "idle": 0.033,
+      "shoot": 0.4,
+      "shoot2": 0.4,
+      "shoot3": 0.4,
+      "shoot_empty": 0.4,
+      "draw": 1.133,
+      "reload": 2.267,
+      "inspect": 6.467
+    },
+    "native_cs2_animation": true,
+    "native_gun_animations": true,
+    "authored_right_hand": true,
+    "inspect_clips": [
+      "inspect"
+    ],
+    "animation_source": "ScCsgoKnives native per-weapon clips, original geometry and anatomical arm retarget"
   },
   "weapons/v_hegrenade": {
     "sequences": [
+      "draw",
       "idle",
-      "pullpin",
-      "throw",
-      "deploy",
-      "underhand",
       "inspect",
-      "inspect_2"
+      "inspect_2",
+      "pullpin",
+      "hold_high",
+      "hold_low",
+      "throw",
+      "underhand",
+      "draw_unsil",
+      "idle_unsil",
+      "inspect_unsil"
     ],
     "seq_durations": {
+      "draw": 1.0,
       "idle": 1.0,
-      "pullpin": 0.967,
-      "throw": 0.5,
-      "deploy": 1.0,
+      "inspect": 5.7999,
+      "inspect_2": 3.0,
+      "pullpin": 0.9666,
+      "hold_high": 1.0,
+      "hold_low": 1.0,
+      "throw": 0.7666,
       "underhand": 0.5,
-      "inspect": 5.8,
-      "inspect_2": 3.0
+      "draw_unsil": 1.0,
+      "idle_unsil": 1.0,
+      "inspect_unsil": 5.7999
     },
     "seq_events": {
+      "draw": [
+        {
+          "t": 0.066667,
+          "wav": "weapons/archi/cs2_hegren/he_draw.wav"
+        }
+      ],
       "pullpin": [
         {
           "t": 0.0,
-          "wav": "weapons/archi/cs2_hegren/pinpull_start.wav"
-        },
-        {
-          "t": 0.4,
           "wav": "weapons/archi/cs2_hegren/pinpull.wav"
         }
       ],
-      "deploy": [
+      "draw_unsil": [
         {
-          "t": 0.0,
+          "t": 0.066667,
           "wav": "weapons/archi/cs2_hegren/he_draw.wav"
         }
-      ]
+      ],
+      "idle_unsil": [],
+      "inspect_unsil": []
     },
     "bones": 41,
     "offset": [
@@ -6083,7 +6803,20 @@
     "inspect_clips": [
       "inspect",
       "inspect_2"
-    ]
+    ],
+    "gameplay_seq_durations": {
+      "idle": 1.0,
+      "pullpin": 0.967,
+      "throw": 0.5,
+      "deploy": 1.0,
+      "underhand": 0.5,
+      "inspect": 5.8,
+      "inspect_2": 3.0
+    },
+    "native_cs2_animation": true,
+    "native_gun_animations": true,
+    "authored_right_hand": true,
+    "animation_source": "ScCsgoKnives native per-weapon clips, original geometry and anatomical arm retarget"
   },
   "weapons/v_knife": {
     "sequences": [
@@ -6138,62 +6871,131 @@
   },
   "weapons/v_m249": {
     "sequences": [
+      "draw",
       "idle",
       "shoot1",
-      "shoot2",
       "reload",
-      "draw",
-      "inspect"
+      "inspect",
+      "shoot",
+      "shoot2",
+      "shoot3",
+      "fire",
+      "draw_unsil",
+      "idle_unsil",
+      "reload_unsil",
+      "inspect_unsil",
+      "shoot1_unsil",
+      "shoot2_unsil",
+      "shoot3_unsil"
     ],
     "seq_durations": {
-      "idle": 0.033,
-      "shoot1": 1.333,
-      "shoot2": 1.333,
-      "reload": 4.7,
       "draw": 1.1,
-      "inspect": 6.867
+      "idle": 1.0,
+      "shoot1": 1.7332,
+      "reload": 5.6999,
+      "inspect": 6.8666,
+      "shoot": 1.7332,
+      "shoot2": 1.7332,
+      "shoot3": 1.7332,
+      "fire": 1.7332,
+      "draw_unsil": 1.1,
+      "idle_unsil": 1.0,
+      "reload_unsil": 5.6999,
+      "inspect_unsil": 6.8666,
+      "shoot1_unsil": 1.7332,
+      "shoot2_unsil": 1.7332,
+      "shoot3_unsil": 1.7332
     },
     "seq_events": {
-      "reload": [
-        {
-          "t": 0.439,
-          "wav": "weapons/archi/cs2_m249/coverup.wav"
-        },
-        {
-          "t": 0.632,
-          "wav": "weapons/archi/cs2_m249/chain.wav"
-        },
-        {
-          "t": 1.099,
-          "wav": "weapons/archi/cs2_m249/boxout.wav"
-        },
-        {
-          "t": 2.061,
-          "wav": "weapons/archi/cs2_m249/boxin.wav"
-        },
-        {
-          "t": 2.336,
-          "wav": "weapons/archi/cs2_m249/chain.wav"
-        },
-        {
-          "t": 3.051,
-          "wav": "weapons/archi/cs2_m249/coverdown.wav"
-        },
-        {
-          "t": 3.655,
-          "wav": "weapons/archi/cs2_m249/pump.wav"
-        }
-      ],
       "draw": [
         {
           "t": 0.0,
           "wav": "weapons/archi/cs2_m249/draw.wav"
+        }
+      ],
+      "reload": [
+        {
+          "t": 0.566667,
+          "wav": "weapons/archi/cs2_m249/coverup.wav"
         },
         {
-          "t": 0.233,
+          "t": 0.783333,
+          "wav": "weapons/archi/cs2_m249/chain.wav"
+        },
+        {
+          "t": 1.333333,
+          "wav": "weapons/archi/cs2_m249/boxout.wav"
+        },
+        {
+          "t": 2.283333,
+          "wav": "weapons/archi/cs2_m249/chain.wav"
+        },
+        {
+          "t": 2.65,
+          "wav": "weapons/archi/cs2_m249/boxin.wav"
+        },
+        {
+          "t": 2.95,
+          "wav": "weapons/archi/cs2_m249/chain.wav"
+        },
+        {
+          "t": 3.733333,
+          "wav": "weapons/archi/cs2_m249/coverdown.wav"
+        },
+        {
+          "t": 4.433333,
           "wav": "weapons/archi/cs2_m249/pump.wav"
         }
-      ]
+      ],
+      "shoot": [],
+      "shoot2": [],
+      "shoot3": [],
+      "fire": [],
+      "draw_unsil": [
+        {
+          "t": 0.0,
+          "wav": "weapons/archi/cs2_m249/draw.wav"
+        }
+      ],
+      "idle_unsil": [],
+      "reload_unsil": [
+        {
+          "t": 0.566667,
+          "wav": "weapons/archi/cs2_m249/coverup.wav"
+        },
+        {
+          "t": 0.783333,
+          "wav": "weapons/archi/cs2_m249/chain.wav"
+        },
+        {
+          "t": 1.333333,
+          "wav": "weapons/archi/cs2_m249/boxout.wav"
+        },
+        {
+          "t": 2.283333,
+          "wav": "weapons/archi/cs2_m249/chain.wav"
+        },
+        {
+          "t": 2.65,
+          "wav": "weapons/archi/cs2_m249/boxin.wav"
+        },
+        {
+          "t": 2.95,
+          "wav": "weapons/archi/cs2_m249/chain.wav"
+        },
+        {
+          "t": 3.733333,
+          "wav": "weapons/archi/cs2_m249/coverdown.wav"
+        },
+        {
+          "t": 4.433333,
+          "wav": "weapons/archi/cs2_m249/pump.wav"
+        }
+      ],
+      "inspect_unsil": [],
+      "shoot1_unsil": [],
+      "shoot2_unsil": [],
+      "shoot3_unsil": []
     },
     "bones": 88,
     "offset": [
@@ -6210,14 +7012,14 @@
     ],
     "vertices": 63845,
     "muzzle": [
-      -0.2321,
-      -0.1226,
-      -1.5913
+      0.2521509,
+      -0.1377493,
+      -1.3442086
     ],
     "eject": [
-      -0.2675,
-      -0.1113,
-      -0.7632
+      0.280924,
+      -0.1285646,
+      -0.671129
     ],
     "world": {
       "source_model": "w_mach_m249",
@@ -6230,58 +7032,120 @@
         "residual_m": 0.01883,
         "deg_from_seed": 4.29
       }
-    }
+    },
+    "gameplay_seq_durations": {
+      "idle": 0.033,
+      "shoot1": 1.333,
+      "shoot2": 1.333,
+      "reload": 4.7,
+      "draw": 1.1,
+      "inspect": 6.867
+    },
+    "native_cs2_animation": true,
+    "native_gun_animations": true,
+    "authored_right_hand": true,
+    "inspect_clips": [
+      "inspect"
+    ],
+    "animation_source": "ScCsgoKnives native per-weapon clips, original geometry and anatomical arm retarget"
   },
   "weapons/v_m3": {
     "sequences": [
+      "draw",
       "idle",
       "shoot1",
+      "reload",
       "start_reload",
       "insert",
       "after_reload",
-      "draw",
       "inspect",
-      "inv_inspect"
+      "shoot",
+      "shoot2",
+      "shoot3",
+      "fire",
+      "draw_unsil",
+      "idle_unsil",
+      "reload_unsil",
+      "inspect_unsil",
+      "shoot1_unsil",
+      "shoot2_unsil",
+      "shoot3_unsil"
     ],
     "seq_durations": {
+      "draw": 1.0,
       "idle": 1.0,
-      "shoot1": 0.8,
-      "start_reload": 0.4,
-      "insert": 0.467,
-      "after_reload": 0.8,
-      "draw": 0.967,
-      "inspect": 5.567,
-      "inv_inspect": 1.0
+      "shoot1": 0.7999,
+      "reload": 1.6332,
+      "start_reload": 0.366659,
+      "insert": 0.433324,
+      "after_reload": 0.833216,
+      "inspect": 5.6,
+      "shoot": 0.7999,
+      "shoot2": 0.7999,
+      "shoot3": 0.7999,
+      "fire": 0.7999,
+      "draw_unsil": 1.0,
+      "idle_unsil": 1.0,
+      "reload_unsil": 1.6332,
+      "inspect_unsil": 5.6,
+      "shoot1_unsil": 0.7999,
+      "shoot2_unsil": 0.7999,
+      "shoot3_unsil": 0.7999
     },
     "seq_events": {
-      "shoot1": [
+      "draw": [
         {
-          "t": 0.333,
+          "t": 0.0,
+          "wav": "weapons/archi/cs2_nova/draw.wav"
+        }
+      ],
+      "reload": [
+        {
+          "t": 0.366659,
+          "wav": "weapons/archi/cs2_nova/insertshell_01.wav"
+        },
+        {
+          "t": 1.166643,
           "wav": "weapons/archi/cs2_nova/pump.wav"
         }
       ],
       "insert": [
         {
-          "t": 0.167,
+          "t": 0.0,
           "wav": "weapons/archi/cs2_nova/insertshell_01.wav"
         }
       ],
       "after_reload": [
         {
-          "t": 0.433,
+          "t": 0.36665900000000007,
           "wav": "weapons/archi/cs2_nova/pump.wav"
         }
       ],
-      "draw": [
+      "shoot": [],
+      "shoot2": [],
+      "shoot3": [],
+      "fire": [],
+      "draw_unsil": [
         {
           "t": 0.0,
           "wav": "weapons/archi/cs2_nova/draw.wav"
+        }
+      ],
+      "idle_unsil": [],
+      "reload_unsil": [
+        {
+          "t": 0.366659,
+          "wav": "weapons/archi/cs2_nova/insertshell_01.wav"
         },
         {
-          "t": 0.633,
+          "t": 1.166643,
           "wav": "weapons/archi/cs2_nova/pump.wav"
         }
-      ]
+      ],
+      "inspect_unsil": [],
+      "shoot1_unsil": [],
+      "shoot2_unsil": [],
+      "shoot3_unsil": []
     },
     "bones": 47,
     "offset": [
@@ -6298,14 +7162,14 @@
     ],
     "vertices": 28733,
     "muzzle": [
-      -0.1336,
-      -0.1159,
-      -1.2402
+      0.1720901,
+      -0.1323035,
+      -1.0588346
     ],
     "eject": [
-      -0.2885,
-      -0.3398,
-      -1.0559
+      0.2979928,
+      -0.3142894,
+      -0.9090355
     ],
     "world": {
       "source_model": "w_shot_nova",
@@ -6318,28 +7182,275 @@
         "residual_m": 0.02001,
         "deg_from_seed": 60.56
       }
-    }
+    },
+    "gameplay_seq_durations": {
+      "idle": 1.0,
+      "shoot1": 0.8,
+      "start_reload": 0.4,
+      "insert": 0.467,
+      "after_reload": 0.8,
+      "draw": 0.967,
+      "inspect": 5.567,
+      "inv_inspect": 1.0
+    },
+    "native_cs2_animation": true,
+    "native_gun_animations": true,
+    "authored_right_hand": true,
+    "inspect_clips": [
+      "inspect"
+    ],
+    "animation_source": "ScCsgoKnives native per-weapon clips, original geometry and anatomical arm retarget"
   },
   "weapons/v_m4a1": {
     "sequences": [
+      "draw",
       "idle",
-      "idle_unsil",
+      "shoot1",
+      "reload",
+      "inspect",
+      "attach",
+      "detach",
+      "shoot",
+      "shoot2",
+      "shoot3",
+      "fire",
       "add_silencer",
       "detach_silencer",
-      "shoot1",
-      "shoot1_unsil",
-      "shoot2",
-      "shoot2_unsil",
-      "shoot3",
-      "shoot3_unsil",
-      "reload",
-      "reload_unsil",
-      "draw",
       "draw_unsil",
-      "inspect",
-      "inspect_unsil"
+      "idle_unsil",
+      "reload_unsil",
+      "inspect_unsil",
+      "shoot1_unsil",
+      "shoot2_unsil",
+      "shoot3_unsil"
     ],
     "seq_durations": {
+      "draw": 1.1332,
+      "idle": 1.0,
+      "shoot1": 0.3999,
+      "reload": 3.0667,
+      "inspect": 5.2999,
+      "attach": 4.8333,
+      "detach": 4.8333,
+      "shoot": 0.3999,
+      "shoot2": 0.3999,
+      "shoot3": 0.3999,
+      "fire": 0.3999,
+      "add_silencer": 4.8333,
+      "detach_silencer": 4.8333,
+      "draw_unsil": 1.1332,
+      "idle_unsil": 1.0,
+      "reload_unsil": 3.0667,
+      "inspect_unsil": 5.2999,
+      "shoot1_unsil": 0.3999,
+      "shoot2_unsil": 0.3999,
+      "shoot3_unsil": 0.3999
+    },
+    "seq_events": {
+      "draw": [
+        {
+          "t": 0.0,
+          "wav": "weapons/archi/cs2_m4a1s/draw.wav"
+        }
+      ],
+      "reload": [
+        {
+          "t": 0.433338,
+          "wav": "weapons/archi/cs2_m4a1s/clipout.wav"
+        },
+        {
+          "t": 1.166679,
+          "wav": "weapons/archi/cs2_m4a1s/clipin.wav"
+        },
+        {
+          "t": 2.000022,
+          "wav": "weapons/archi/cs2_m4a1s/cliphit.wav"
+        }
+      ],
+      "attach": [
+        {
+          "t": 1.099992,
+          "wav": "weapons/archi/cs2_m4a1s/sil_screw_on_start.wav"
+        },
+        {
+          "t": 1.566656,
+          "wav": "weapons/archi/cs2_m4a1s/sil_screw_1.wav"
+        },
+        {
+          "t": 2.166652,
+          "wav": "weapons/archi/cs2_m4a1s/sil_screw_2.wav"
+        },
+        {
+          "t": 2.566649,
+          "wav": "weapons/archi/cs2_m4a1s/sil_screw_3.wav"
+        },
+        {
+          "t": 2.966646,
+          "wav": "weapons/archi/cs2_m4a1s/sil_screw_4.wav"
+        },
+        {
+          "t": 3.266644,
+          "wav": "weapons/archi/cs2_m4a1s/sil_screw_5.wav"
+        }
+      ],
+      "detach": [
+        {
+          "t": 0.799995,
+          "wav": "weapons/archi/cs2_m4a1s/sil_screw_1.wav"
+        },
+        {
+          "t": 1.433323,
+          "wav": "weapons/archi/cs2_m4a1s/sil_screw_2.wav"
+        },
+        {
+          "t": 1.799988,
+          "wav": "weapons/archi/cs2_m4a1s/sil_screw_3.wav"
+        },
+        {
+          "t": 2.199985,
+          "wav": "weapons/archi/cs2_m4a1s/sil_screw_4.wav"
+        },
+        {
+          "t": 2.533316,
+          "wav": "weapons/archi/cs2_m4a1s/sil_screw_5.wav"
+        },
+        {
+          "t": 2.933313,
+          "wav": "weapons/archi/cs2_m4a1s/sil_screw_1.wav"
+        },
+        {
+          "t": 3.033313,
+          "wav": "weapons/archi/cs2_m4a1s/sil_screw_off_end.wav"
+        }
+      ],
+      "shoot": [],
+      "shoot2": [],
+      "shoot3": [],
+      "fire": [],
+      "add_silencer": [
+        {
+          "t": 1.099992,
+          "wav": "weapons/archi/cs2_m4a1s/sil_screw_on_start.wav"
+        },
+        {
+          "t": 1.566656,
+          "wav": "weapons/archi/cs2_m4a1s/sil_screw_1.wav"
+        },
+        {
+          "t": 2.166652,
+          "wav": "weapons/archi/cs2_m4a1s/sil_screw_2.wav"
+        },
+        {
+          "t": 2.566649,
+          "wav": "weapons/archi/cs2_m4a1s/sil_screw_3.wav"
+        },
+        {
+          "t": 2.966646,
+          "wav": "weapons/archi/cs2_m4a1s/sil_screw_4.wav"
+        },
+        {
+          "t": 3.266644,
+          "wav": "weapons/archi/cs2_m4a1s/sil_screw_5.wav"
+        }
+      ],
+      "detach_silencer": [
+        {
+          "t": 0.799995,
+          "wav": "weapons/archi/cs2_m4a1s/sil_screw_1.wav"
+        },
+        {
+          "t": 1.433323,
+          "wav": "weapons/archi/cs2_m4a1s/sil_screw_2.wav"
+        },
+        {
+          "t": 1.799988,
+          "wav": "weapons/archi/cs2_m4a1s/sil_screw_3.wav"
+        },
+        {
+          "t": 2.199985,
+          "wav": "weapons/archi/cs2_m4a1s/sil_screw_4.wav"
+        },
+        {
+          "t": 2.533316,
+          "wav": "weapons/archi/cs2_m4a1s/sil_screw_5.wav"
+        },
+        {
+          "t": 2.933313,
+          "wav": "weapons/archi/cs2_m4a1s/sil_screw_1.wav"
+        },
+        {
+          "t": 3.033313,
+          "wav": "weapons/archi/cs2_m4a1s/sil_screw_off_end.wav"
+        }
+      ],
+      "draw_unsil": [
+        {
+          "t": 0.0,
+          "wav": "weapons/archi/cs2_m4a1s/draw.wav"
+        }
+      ],
+      "idle_unsil": [],
+      "reload_unsil": [
+        {
+          "t": 0.433338,
+          "wav": "weapons/archi/cs2_m4a1s/clipout.wav"
+        },
+        {
+          "t": 1.166679,
+          "wav": "weapons/archi/cs2_m4a1s/clipin.wav"
+        },
+        {
+          "t": 2.000022,
+          "wav": "weapons/archi/cs2_m4a1s/cliphit.wav"
+        }
+      ],
+      "inspect_unsil": [],
+      "shoot1_unsil": [],
+      "shoot2_unsil": [],
+      "shoot3_unsil": []
+    },
+    "bones": 70,
+    "offset": [
+      0.0,
+      0.0,
+      0.0625
+    ],
+    "source": "ShadowNigth/archi",
+    "source_model": "v_rif_m4a1_s",
+    "materials": [
+      "weapon_rif_m4a1_silencer",
+      "ct_base_glove.bmp",
+      "ct_arms.bmp"
+    ],
+    "vertices": 45569,
+    "muzzle": [
+      0.1972056,
+      -0.125476,
+      -1.2115597
+    ],
+    "muzzle_unsil": [
+      0.1984248,
+      -0.1246632,
+      -0.9702394
+    ],
+    "eject": [
+      0.2105355,
+      -0.1222248,
+      -0.4824781
+    ],
+    "world": {
+      "source_model": "w_rif_m4a1_s",
+      "reference": "m4a1",
+      "p_fit": {
+        "residual_m": 0.01281,
+        "deg_from_seed": 0.6
+      },
+      "w_fit": {
+        "residual_m": 0.01281,
+        "deg_from_seed": 0.66
+      }
+    },
+    "gameplay_seq_durations": {
       "idle": 0.017,
       "idle_unsil": 0.017,
       "add_silencer": 4.833,
@@ -6357,198 +7468,109 @@
       "inspect": 5.3,
       "inspect_unsil": 5.3
     },
-    "seq_events": {
-      "add_silencer": [
-        {
-          "t": 1.1,
-          "wav": "weapons/archi/cs2_m4a1s/sil_screw_on_start.wav"
-        },
-        {
-          "t": 1.567,
-          "wav": "weapons/archi/cs2_m4a1s/sil_screw_1.wav"
-        },
-        {
-          "t": 2.167,
-          "wav": "weapons/archi/cs2_m4a1s/sil_screw_2.wav"
-        },
-        {
-          "t": 2.567,
-          "wav": "weapons/archi/cs2_m4a1s/sil_screw_3.wav"
-        },
-        {
-          "t": 2.967,
-          "wav": "weapons/archi/cs2_m4a1s/sil_screw_4.wav"
-        },
-        {
-          "t": 3.267,
-          "wav": "weapons/archi/cs2_m4a1s/sil_screw_5.wav"
-        }
-      ],
-      "detach_silencer": [
-        {
-          "t": 0.8,
-          "wav": "weapons/archi/cs2_m4a1s/sil_screw_1.wav"
-        },
-        {
-          "t": 1.433,
-          "wav": "weapons/archi/cs2_m4a1s/sil_screw_2.wav"
-        },
-        {
-          "t": 1.8,
-          "wav": "weapons/archi/cs2_m4a1s/sil_screw_3.wav"
-        },
-        {
-          "t": 2.2,
-          "wav": "weapons/archi/cs2_m4a1s/sil_screw_4.wav"
-        },
-        {
-          "t": 2.533,
-          "wav": "weapons/archi/cs2_m4a1s/sil_screw_5.wav"
-        },
-        {
-          "t": 2.933,
-          "wav": "weapons/archi/cs2_m4a1s/sil_screw_1.wav"
-        },
-        {
-          "t": 3.033,
-          "wav": "weapons/archi/cs2_m4a1s/sil_screw_off_end.wav"
-        }
-      ],
-      "reload": [
-        {
-          "t": 0.367,
-          "wav": "weapons/archi/cs2_m4a1s/clipout.wav"
-        },
-        {
-          "t": 1.167,
-          "wav": "weapons/archi/cs2_m4a1s/clipin.wav"
-        },
-        {
-          "t": 1.9,
-          "wav": "weapons/archi/cs2_m4a1s/cliphit.wav"
-        }
-      ],
-      "reload_unsil": [
-        {
-          "t": 0.367,
-          "wav": "weapons/archi/cs2_m4a1s/clipout.wav"
-        },
-        {
-          "t": 1.167,
-          "wav": "weapons/archi/cs2_m4a1s/clipin.wav"
-        },
-        {
-          "t": 1.9,
-          "wav": "weapons/archi/cs2_m4a1s/cliphit.wav"
-        }
-      ],
-      "draw": [
-        {
-          "t": 0.0,
-          "wav": "weapons/archi/cs2_m4a1s/draw.wav"
-        }
-      ],
-      "draw_unsil": [
-        {
-          "t": 0.0,
-          "wav": "weapons/archi/cs2_m4a1s/draw.wav"
-        }
-      ]
-    },
-    "bones": 70,
-    "offset": [
-      0.0,
-      0.0,
-      0.0625
+    "native_cs2_animation": true,
+    "native_gun_animations": true,
+    "authored_right_hand": true,
+    "inspect_clips": [
+      "inspect"
     ],
-    "source": "ShadowNigth/archi",
-    "source_model": "v_rif_m4a1_s",
-    "materials": [
-      "weapon_rif_m4a1_silencer",
-      "ct_base_glove.bmp",
-      "ct_arms.bmp"
-    ],
-    "vertices": 45569,
-    "muzzle": [
-      -0.1645,
-      -0.1075,
-      -1.4281
-    ],
-    "muzzle_unsil": [
-      -0.166,
-      -0.1065,
-      -1.1312
-    ],
-    "eject": [
-      -0.1809,
-      -0.1035,
-      -0.5311
-    ],
-    "world": {
-      "source_model": "w_rif_m4a1_s",
-      "reference": "m4a1",
-      "p_fit": {
-        "residual_m": 0.01281,
-        "deg_from_seed": 0.6
-      },
-      "w_fit": {
-        "residual_m": 0.01281,
-        "deg_from_seed": 0.66
-      }
-    }
+    "animation_source": "ScCsgoKnives native per-weapon clips, original geometry and anatomical arm retarget"
   },
   "weapons/v_mac10": {
     "sequences": [
+      "draw",
       "idle",
-      "reload",
       "shoot1",
+      "reload",
+      "inspect",
+      "shoot",
       "shoot2",
       "shoot3",
-      "draw",
-      "inspect"
+      "fire",
+      "draw_unsil",
+      "idle_unsil",
+      "reload_unsil",
+      "inspect_unsil",
+      "shoot1_unsil",
+      "shoot2_unsil",
+      "shoot3_unsil"
     ],
     "seq_durations": {
-      "idle": 0.033,
-      "reload": 3.15,
-      "shoot1": 0.8,
-      "shoot2": 0.833,
-      "shoot3": 0.8,
       "draw": 1.0,
-      "inspect": 5.267
+      "idle": 1.0,
+      "shoot1": 0.7999,
+      "reload": 2.5666,
+      "inspect": 5.2666,
+      "shoot": 0.7999,
+      "shoot2": 0.7999,
+      "shoot3": 0.7999,
+      "fire": 0.7999,
+      "draw_unsil": 1.0,
+      "idle_unsil": 1.0,
+      "reload_unsil": 2.5666,
+      "inspect_unsil": 5.2666,
+      "shoot1_unsil": 0.7999,
+      "shoot2_unsil": 0.7999,
+      "shoot3_unsil": 0.7999
     },
     "seq_events": {
+      "draw": [
+        {
+          "t": 0.066667,
+          "wav": "weapons/archi/cs2_mac10/draw.wav"
+        }
+      ],
       "reload": [
         {
-          "t": 0.368,
+          "t": 0.433339,
           "wav": "weapons/archi/cs2_mac10/clipout.wav"
         },
         {
-          "t": 1.227,
+          "t": 1.033347,
           "wav": "weapons/archi/cs2_mac10/clipin.wav"
         },
         {
-          "t": 2.046,
+          "t": 1.800023,
           "wav": "weapons/archi/cs2_mac10/boltback.wav"
         },
         {
-          "t": 2.454,
+          "t": 2.000026,
           "wav": "weapons/archi/cs2_mac10/boltforward.wav"
         }
       ],
-      "draw": [
+      "shoot": [],
+      "shoot2": [],
+      "shoot3": [],
+      "fire": [],
+      "draw_unsil": [
         {
-          "t": 0.0,
+          "t": 0.066667,
           "wav": "weapons/archi/cs2_mac10/draw.wav"
+        }
+      ],
+      "idle_unsil": [],
+      "reload_unsil": [
+        {
+          "t": 0.433339,
+          "wav": "weapons/archi/cs2_mac10/clipout.wav"
         },
         {
-          "t": 0.333,
+          "t": 1.033347,
+          "wav": "weapons/archi/cs2_mac10/clipin.wav"
+        },
+        {
+          "t": 1.800023,
           "wav": "weapons/archi/cs2_mac10/boltback.wav"
         },
         {
-          "t": 0.533,
+          "t": 2.000026,
           "wav": "weapons/archi/cs2_mac10/boltforward.wav"
         }
-      ]
+      ],
+      "inspect_unsil": [],
+      "shoot1_unsil": [],
+      "shoot2_unsil": [],
+      "shoot3_unsil": []
     },
     "bones": 72,
     "offset": [
@@ -6565,14 +7587,14 @@
     ],
     "vertices": 30093,
     "muzzle": [
-      -0.1926,
-      -0.1077,
-      -0.8215
+      0.2200453,
+      -0.1256386,
+      -0.7185152
     ],
     "eject": [
-      -0.2193,
-      -0.0963,
-      -0.5773
+      0.241747,
+      -0.1163726,
+      -0.5200294
     ],
     "world": {
       "source_model": "w_smg_mac10",
@@ -6585,74 +7607,138 @@
         "residual_m": 0.00849,
         "deg_from_seed": 87.24
       }
-    }
+    },
+    "gameplay_seq_durations": {
+      "idle": 0.033,
+      "reload": 3.15,
+      "shoot1": 0.8,
+      "shoot2": 0.833,
+      "shoot3": 0.8,
+      "draw": 1.0,
+      "inspect": 5.267
+    },
+    "native_cs2_animation": true,
+    "native_gun_animations": true,
+    "authored_right_hand": true,
+    "inspect_clips": [
+      "inspect"
+    ],
+    "animation_source": "ScCsgoKnives native per-weapon clips, original geometry and anatomical arm retarget"
   },
   "weapons/v_mp5": {
     "sequences": [
-      "idle",
-      "reload",
-      "shoot1",
       "draw",
-      "draw2",
-      "inspect"
+      "draw_2",
+      "idle",
+      "shoot1",
+      "reload",
+      "inspect",
+      "shoot",
+      "shoot2",
+      "shoot3",
+      "fire",
+      "draw_unsil",
+      "idle_unsil",
+      "reload_unsil",
+      "inspect_unsil",
+      "shoot1_unsil",
+      "shoot2_unsil",
+      "shoot3_unsil"
     ],
     "seq_durations": {
-      "idle": 0.033,
-      "reload": 2.63,
-      "shoot1": 0.433,
       "draw": 1.0,
-      "draw2": 1.0,
-      "inspect": 7.667
+      "draw_2": 1.0,
+      "idle": 1.0,
+      "shoot1": 0.3999,
+      "reload": 2.9666,
+      "inspect": 7.6666,
+      "shoot": 0.3999,
+      "shoot2": 0.3999,
+      "shoot3": 0.3999,
+      "fire": 0.3999,
+      "draw_unsil": 1.0,
+      "idle_unsil": 1.0,
+      "reload_unsil": 2.9666,
+      "inspect_unsil": 7.6666,
+      "shoot1_unsil": 0.3999,
+      "shoot2_unsil": 0.3999,
+      "shoot3_unsil": 0.3999
     },
     "seq_events": {
+      "draw": [
+        {
+          "t": 0.033333,
+          "wav": "weapons/archi/cs2_mp5sd/draw.wav"
+        }
+      ],
+      "draw_2": [
+        {
+          "t": 0.133333,
+          "wav": "weapons/archi/cs2_mp5sd/draw.wav"
+        }
+      ],
       "reload": [
         {
-          "t": 0.148,
+          "t": 0.200002,
           "wav": "weapons/archi/cs2_mp5sd/slideback.wav"
         },
         {
-          "t": 0.65,
+          "t": 0.700008,
           "wav": "weapons/archi/cs2_mp5sd/clipout.wav"
         },
         {
-          "t": 1.655,
+          "t": 1.833354,
           "wav": "weapons/archi/cs2_mp5sd/clipin.wav"
-        },
-        {
-          "t": 2.157,
-          "wav": "weapons/archi/cs2_mp5sd/slideforward.wav"
-        }
-      ],
-      "draw": [
-        {
-          "t": 0.233,
-          "wav": "weapons/archi/cs2_mp5sd/draw.wav"
-        },
-        {
-          "t": 0.667,
-          "wav": "weapons/archi/cs2_mp5sd/slideforward.wav"
-        }
-      ],
-      "draw2": [
-        {
-          "t": 0.233,
-          "wav": "weapons/archi/cs2_mp5sd/draw.wav"
-        },
-        {
-          "t": 0.6,
-          "wav": "weapons/archi/cs2_mp5sd/slideforward.wav"
         }
       ],
       "inspect": [
         {
-          "t": 0.067,
+          "t": 0.066667,
           "wav": "weapons/archi/cs2_mp5sd/draw.wav"
         },
         {
-          "t": 7.0,
+          "t": 7.00003,
           "wav": "weapons/archi/cs2_mp5sd/draw.wav"
         }
-      ]
+      ],
+      "shoot": [],
+      "shoot2": [],
+      "shoot3": [],
+      "fire": [],
+      "draw_unsil": [
+        {
+          "t": 0.033333,
+          "wav": "weapons/archi/cs2_mp5sd/draw.wav"
+        }
+      ],
+      "idle_unsil": [],
+      "reload_unsil": [
+        {
+          "t": 0.200002,
+          "wav": "weapons/archi/cs2_mp5sd/slideback.wav"
+        },
+        {
+          "t": 0.700008,
+          "wav": "weapons/archi/cs2_mp5sd/clipout.wav"
+        },
+        {
+          "t": 1.833354,
+          "wav": "weapons/archi/cs2_mp5sd/clipin.wav"
+        }
+      ],
+      "inspect_unsil": [
+        {
+          "t": 0.066667,
+          "wav": "weapons/archi/cs2_mp5sd/draw.wav"
+        },
+        {
+          "t": 7.00003,
+          "wav": "weapons/archi/cs2_mp5sd/draw.wav"
+        }
+      ],
+      "shoot1_unsil": [],
+      "shoot2_unsil": [],
+      "shoot3_unsil": []
     },
     "bones": 58,
     "offset": [
@@ -6669,14 +7755,14 @@
     ],
     "vertices": 38243,
     "muzzle": [
-      -0.1614,
-      -0.1352,
-      -1.1532
+      0.1946859,
+      -0.1479906,
+      -0.988121
     ],
     "eject": [
-      -0.1746,
-      -0.1104,
-      -0.5976
+      0.2054149,
+      -0.1278331,
+      -0.5365293
     ],
     "world": {
       "source_model": "w_smg_mp5sd",
@@ -6689,62 +7775,144 @@
         "residual_m": 0.02102,
         "deg_from_seed": 59.67
       }
-    }
+    },
+    "gameplay_seq_durations": {
+      "idle": 0.033,
+      "reload": 2.63,
+      "shoot1": 0.433,
+      "draw": 1.0,
+      "draw2": 1.0,
+      "inspect": 7.667
+    },
+    "native_cs2_animation": true,
+    "native_gun_animations": true,
+    "authored_right_hand": true,
+    "inspect_clips": [
+      "inspect"
+    ],
+    "animation_source": "ScCsgoKnives native per-weapon clips, original geometry and anatomical arm retarget"
   },
   "weapons/v_p228": {
     "sequences": [
+      "draw",
       "idle",
+      "idle_empty",
       "shoot1",
-      "shoot2",
-      "shoot3",
       "shootlast",
       "reload",
-      "draw",
-      "inspect"
+      "reload_empty",
+      "inspect",
+      "shoot",
+      "shoot2",
+      "shoot3",
+      "shoot_empty",
+      "fire",
+      "draw_unsil",
+      "idle_unsil",
+      "reload_unsil",
+      "inspect_unsil",
+      "shoot1_unsil",
+      "shoot2_unsil",
+      "shoot3_unsil",
+      "shootlast_unsil"
     ],
     "seq_durations": {
-      "idle": 0.033,
-      "shoot1": 0.767,
-      "shoot2": 0.767,
-      "shoot3": 0.767,
-      "shootlast": 0.767,
-      "reload": 2.7,
       "draw": 1.0,
-      "inspect": 6.467
+      "idle": 1.0,
+      "idle_empty": 1.0,
+      "shoot1": 0.3999,
+      "shootlast": 0.3999,
+      "reload": 2.2667,
+      "reload_empty": 2.2667,
+      "inspect": 6.4333,
+      "shoot": 0.3999,
+      "shoot2": 0.3999,
+      "shoot3": 0.3999,
+      "shoot_empty": 0.3999,
+      "fire": 0.3999,
+      "draw_unsil": 1.0,
+      "idle_unsil": 1.0,
+      "reload_unsil": 2.2667,
+      "inspect_unsil": 6.4333,
+      "shoot1_unsil": 0.3999,
+      "shoot2_unsil": 0.3999,
+      "shoot3_unsil": 0.3999,
+      "shootlast_unsil": 0.3999
     },
     "seq_events": {
-      "reload": [
-        {
-          "t": 0.437,
-          "wav": "weapons/archi/cs2_p250/clipout.wav"
-        },
-        {
-          "t": 0.953,
-          "wav": "weapons/archi/cs2_p250/clipin.wav"
-        },
-        {
-          "t": 1.747,
-          "wav": "weapons/archi/cs2_p250/slideback.wav"
-        },
-        {
-          "t": 1.985,
-          "wav": "weapons/archi/cs2_p250/sliderelease.wav"
-        }
-      ],
       "draw": [
         {
           "t": 0.0,
           "wav": "weapons/archi/cs2_p250/draw.wav"
+        }
+      ],
+      "reload": [
+        {
+          "t": 0.400006,
+          "wav": "weapons/archi/cs2_p250/clipout.wav"
         },
         {
-          "t": 0.267,
+          "t": 0.833346,
+          "wav": "weapons/archi/cs2_p250/clipin.wav"
+        },
+        {
+          "t": 1.500022,
           "wav": "weapons/archi/cs2_p250/slideback.wav"
         },
         {
-          "t": 0.467,
+          "t": 1.666691,
           "wav": "weapons/archi/cs2_p250/sliderelease.wav"
         }
-      ]
+      ],
+      "reload_empty": [
+        {
+          "t": 0.466674,
+          "wav": "weapons/archi/cs2_p250/clipout.wav"
+        },
+        {
+          "t": 1.100016,
+          "wav": "weapons/archi/cs2_p250/clipin.wav"
+        },
+        {
+          "t": 1.533356,
+          "wav": "weapons/archi/cs2_p250/sliderelease.wav"
+        }
+      ],
+      "shoot": [],
+      "shoot2": [],
+      "shoot3": [],
+      "shoot_empty": [],
+      "fire": [],
+      "draw_unsil": [
+        {
+          "t": 0.0,
+          "wav": "weapons/archi/cs2_p250/draw.wav"
+        }
+      ],
+      "idle_unsil": [],
+      "reload_unsil": [
+        {
+          "t": 0.400006,
+          "wav": "weapons/archi/cs2_p250/clipout.wav"
+        },
+        {
+          "t": 0.833346,
+          "wav": "weapons/archi/cs2_p250/clipin.wav"
+        },
+        {
+          "t": 1.500022,
+          "wav": "weapons/archi/cs2_p250/slideback.wav"
+        },
+        {
+          "t": 1.666691,
+          "wav": "weapons/archi/cs2_p250/sliderelease.wav"
+        }
+      ],
+      "inspect_unsil": [],
+      "shoot1_unsil": [],
+      "shoot2_unsil": [],
+      "shoot3_unsil": [],
+      "shootlast_unsil": []
     },
     "bones": 70,
     "offset": [
@@ -6761,14 +7929,14 @@
     ],
     "vertices": 23990,
     "muzzle": [
-      -0.0879,
-      -0.0507,
-      -0.6165
+      0.1349451,
+      -0.079309,
+      -0.5518912
     ],
     "eject": [
-      -0.1007,
-      -0.037,
-      -0.4887
+      0.145349,
+      -0.0681736,
+      -0.4480154
     ],
     "world": {
       "source_model": "w_pist_p250",
@@ -6781,64 +7949,136 @@
         "residual_m": 0.01653,
         "deg_from_seed": 63.51
       }
-    }
+    },
+    "gameplay_seq_durations": {
+      "idle": 0.033,
+      "shoot1": 0.767,
+      "shoot2": 0.767,
+      "shoot3": 0.767,
+      "shootlast": 0.767,
+      "reload": 2.7,
+      "draw": 1.0,
+      "inspect": 6.467
+    },
+    "native_cs2_animation": true,
+    "native_gun_animations": true,
+    "authored_right_hand": true,
+    "inspect_clips": [
+      "inspect"
+    ],
+    "animation_source": "ScCsgoKnives native per-weapon clips, original geometry and anatomical arm retarget"
   },
   "weapons/v_p90": {
     "sequences": [
-      "idle",
-      "reload",
       "draw",
+      "idle",
       "shoot1",
-      "inspect"
+      "reload",
+      "inspect",
+      "shoot",
+      "shoot2",
+      "shoot3",
+      "fire",
+      "draw_unsil",
+      "idle_unsil",
+      "reload_unsil",
+      "inspect_unsil",
+      "shoot1_unsil",
+      "shoot2_unsil",
+      "shoot3_unsil"
     ],
     "seq_durations": {
-      "idle": 0.033,
-      "reload": 3.367,
       "draw": 1.0,
-      "shoot1": 0.833,
-      "inspect": 5.367
+      "idle": 1.0,
+      "shoot1": 0.8333,
+      "reload": 3.3666,
+      "inspect": 5.3332,
+      "shoot": 0.8333,
+      "shoot2": 0.8333,
+      "shoot3": 0.8333,
+      "fire": 0.8333,
+      "draw_unsil": 1.0,
+      "idle_unsil": 1.0,
+      "reload_unsil": 3.3666,
+      "inspect_unsil": 5.3332,
+      "shoot1_unsil": 0.8333,
+      "shoot2_unsil": 0.8333,
+      "shoot3_unsil": 0.8333
     },
     "seq_events": {
-      "reload": [
-        {
-          "t": 0.3,
-          "wav": "weapons/archi/cs2_p90/cliprelease.wav"
-        },
-        {
-          "t": 0.367,
-          "wav": "weapons/archi/cs2_p90/clipout.wav"
-        },
-        {
-          "t": 1.367,
-          "wav": "weapons/archi/cs2_p90/clipin.wav"
-        },
-        {
-          "t": 1.933,
-          "wav": "weapons/archi/cs2_p90/cliphit.wav"
-        },
-        {
-          "t": 2.7,
-          "wav": "weapons/archi/cs2_p90/boltback.wav"
-        },
-        {
-          "t": 2.9,
-          "wav": "weapons/archi/cs2_p90/boltforward.wav"
-        }
-      ],
       "draw": [
         {
           "t": 0.0,
           "wav": "weapons/archi/cs2_p90/draw.wav"
+        }
+      ],
+      "reload": [
+        {
+          "t": 0.36667,
+          "wav": "weapons/archi/cs2_p90/cliprelease.wav"
         },
         {
-          "t": 0.367,
+          "t": 0.466671,
+          "wav": "weapons/archi/cs2_p90/clipout.wav"
+        },
+        {
+          "t": 1.433347,
+          "wav": "weapons/archi/cs2_p90/clipin.wav"
+        },
+        {
+          "t": 2.00002,
+          "wav": "weapons/archi/cs2_p90/cliphit.wav"
+        },
+        {
+          "t": 2.800028,
           "wav": "weapons/archi/cs2_p90/boltback.wav"
         },
         {
-          "t": 0.533,
+          "t": 3.033363,
           "wav": "weapons/archi/cs2_p90/boltforward.wav"
         }
-      ]
+      ],
+      "shoot": [],
+      "shoot2": [],
+      "shoot3": [],
+      "fire": [],
+      "draw_unsil": [
+        {
+          "t": 0.0,
+          "wav": "weapons/archi/cs2_p90/draw.wav"
+        }
+      ],
+      "idle_unsil": [],
+      "reload_unsil": [
+        {
+          "t": 0.36667,
+          "wav": "weapons/archi/cs2_p90/cliprelease.wav"
+        },
+        {
+          "t": 0.466671,
+          "wav": "weapons/archi/cs2_p90/clipout.wav"
+        },
+        {
+          "t": 1.433347,
+          "wav": "weapons/archi/cs2_p90/clipin.wav"
+        },
+        {
+          "t": 2.00002,
+          "wav": "weapons/archi/cs2_p90/cliphit.wav"
+        },
+        {
+          "t": 2.800028,
+          "wav": "weapons/archi/cs2_p90/boltback.wav"
+        },
+        {
+          "t": 3.033363,
+          "wav": "weapons/archi/cs2_p90/boltforward.wav"
+        }
+      ],
+      "inspect_unsil": [],
+      "shoot1_unsil": [],
+      "shoot2_unsil": [],
+      "shoot3_unsil": []
     },
     "bones": 110,
     "offset": [
@@ -6857,14 +8097,14 @@
     ],
     "vertices": 53440,
     "muzzle": [
-      -0.1637,
-      -0.0992,
-      -0.6892
+      0.1965554,
+      -0.1187298,
+      -0.6109818
     ],
     "eject": [
-      -0.1643,
-      -0.2045,
-      -0.2605
+      0.197043,
+      -0.2043176,
+      -0.2625344
     ],
     "world": {
       "source_model": "w_smg_p90",
@@ -6877,67 +8117,195 @@
         "residual_m": 0.00915,
         "deg_from_seed": 60.35
       }
-    }
+    },
+    "gameplay_seq_durations": {
+      "idle": 0.033,
+      "reload": 3.367,
+      "draw": 1.0,
+      "shoot1": 0.833,
+      "inspect": 5.367
+    },
+    "native_cs2_animation": true,
+    "native_gun_animations": true,
+    "authored_right_hand": true,
+    "inspect_clips": [
+      "inspect"
+    ],
+    "animation_source": "ScCsgoKnives native per-weapon clips, original geometry and anatomical arm retarget"
   },
   "weapons/v_scout": {
     "sequences": [
+      "draw",
       "idle",
       "shoot1",
       "reload",
-      "draw",
-      "inspect"
+      "inspect",
+      "shoot",
+      "shoot2",
+      "shoot3",
+      "fire",
+      "draw_unsil",
+      "idle_unsil",
+      "reload_unsil",
+      "inspect_unsil",
+      "shoot1_unsil",
+      "shoot2_unsil",
+      "shoot3_unsil"
     ],
     "seq_durations": {
-      "idle": 0.033,
-      "shoot1": 1.667,
-      "reload": 2.0,
       "draw": 1.0,
-      "inspect": 5.333
+      "idle": 1.0,
+      "shoot1": 1.6667,
+      "reload": 3.6999,
+      "inspect": 5.2999,
+      "shoot": 1.6667,
+      "shoot2": 1.6667,
+      "shoot3": 1.6667,
+      "fire": 1.6667,
+      "draw_unsil": 1.0,
+      "idle_unsil": 1.0,
+      "reload_unsil": 3.6999,
+      "inspect_unsil": 5.2999,
+      "shoot1_unsil": 1.6667,
+      "shoot2_unsil": 1.6667,
+      "shoot3_unsil": 1.6667
     },
     "seq_events": {
+      "draw": [
+        {
+          "t": 0.0,
+          "wav": "weapons/archi/cs2_ssg08/draw.wav"
+        }
+      ],
       "shoot1": [
         {
-          "t": 0.633,
+          "t": 0.700014,
           "wav": "weapons/archi/cs2_ssg08/boltback.wav"
         },
         {
-          "t": 0.967,
+          "t": 0.966686,
           "wav": "weapons/archi/cs2_ssg08/boltforward.wav"
         }
       ],
       "reload": [
         {
-          "t": 0.161,
+          "t": 0.3,
           "wav": "weapons/archi/cs2_ssg08/clipout.wav"
         },
         {
-          "t": 0.786,
+          "t": 1.5,
           "wav": "weapons/archi/cs2_ssg08/clipin.wav"
         },
         {
-          "t": 1.054,
+          "t": 1.933333,
           "wav": "weapons/archi/cs2_ssg08/cliphit.wav"
         },
         {
-          "t": 1.393,
+          "t": 2.733333,
           "wav": "weapons/archi/cs2_ssg08/boltback.wav"
         },
         {
-          "t": 1.607,
+          "t": 2.966666,
           "wav": "weapons/archi/cs2_ssg08/boltforward.wav"
         }
       ],
-      "draw": [
+      "shoot": [
         {
-          "t": 0.0,
-          "wav": "weapons/archi/cs2_ssg08/draw.wav"
-        },
-        {
-          "t": 0.2,
+          "t": 0.700014,
           "wav": "weapons/archi/cs2_ssg08/boltback.wav"
         },
         {
-          "t": 0.433,
+          "t": 0.966686,
+          "wav": "weapons/archi/cs2_ssg08/boltforward.wav"
+        }
+      ],
+      "shoot2": [
+        {
+          "t": 0.700014,
+          "wav": "weapons/archi/cs2_ssg08/boltback.wav"
+        },
+        {
+          "t": 0.966686,
+          "wav": "weapons/archi/cs2_ssg08/boltforward.wav"
+        }
+      ],
+      "shoot3": [
+        {
+          "t": 0.700014,
+          "wav": "weapons/archi/cs2_ssg08/boltback.wav"
+        },
+        {
+          "t": 0.966686,
+          "wav": "weapons/archi/cs2_ssg08/boltforward.wav"
+        }
+      ],
+      "fire": [
+        {
+          "t": 0.700014,
+          "wav": "weapons/archi/cs2_ssg08/boltback.wav"
+        },
+        {
+          "t": 0.966686,
+          "wav": "weapons/archi/cs2_ssg08/boltforward.wav"
+        }
+      ],
+      "draw_unsil": [
+        {
+          "t": 0.0,
+          "wav": "weapons/archi/cs2_ssg08/draw.wav"
+        }
+      ],
+      "idle_unsil": [],
+      "reload_unsil": [
+        {
+          "t": 0.3,
+          "wav": "weapons/archi/cs2_ssg08/clipout.wav"
+        },
+        {
+          "t": 1.5,
+          "wav": "weapons/archi/cs2_ssg08/clipin.wav"
+        },
+        {
+          "t": 1.933333,
+          "wav": "weapons/archi/cs2_ssg08/cliphit.wav"
+        },
+        {
+          "t": 2.733333,
+          "wav": "weapons/archi/cs2_ssg08/boltback.wav"
+        },
+        {
+          "t": 2.966666,
+          "wav": "weapons/archi/cs2_ssg08/boltforward.wav"
+        }
+      ],
+      "inspect_unsil": [],
+      "shoot1_unsil": [
+        {
+          "t": 0.700014,
+          "wav": "weapons/archi/cs2_ssg08/boltback.wav"
+        },
+        {
+          "t": 0.966686,
+          "wav": "weapons/archi/cs2_ssg08/boltforward.wav"
+        }
+      ],
+      "shoot2_unsil": [
+        {
+          "t": 0.700014,
+          "wav": "weapons/archi/cs2_ssg08/boltback.wav"
+        },
+        {
+          "t": 0.966686,
+          "wav": "weapons/archi/cs2_ssg08/boltforward.wav"
+        }
+      ],
+      "shoot3_unsil": [
+        {
+          "t": 0.700014,
+          "wav": "weapons/archi/cs2_ssg08/boltback.wav"
+        },
+        {
+          "t": 0.966686,
           "wav": "weapons/archi/cs2_ssg08/boltforward.wav"
         }
       ]
@@ -6958,14 +8326,14 @@
     ],
     "vertices": 50907,
     "muzzle": [
-      -0.1782,
-      -0.1154,
-      -1.707
+      0.208341,
+      -0.1318971,
+      -1.4382496
     ],
     "eject": [
-      -0.1983,
-      -0.1058,
-      -0.562
+      0.2246782,
+      -0.1240942,
+      -0.5075936
     ],
     "world": {
       "source_model": "w_snip_ssg08",
@@ -6978,52 +8346,131 @@
         "residual_m": 0.02812,
         "deg_from_seed": 83.13
       }
-    }
-  },
-  "weapons/v_sg550": {
-    "sequences": [
-      "idle",
-      "shoot1",
-      "reload",
-      "draw",
-      "inspect"
-    ],
-    "seq_durations": {
-      "idle": 0.083,
-      "shoot1": 0.9,
-      "reload": 3.35,
+    },
+    "gameplay_seq_durations": {
+      "idle": 0.033,
+      "shoot1": 1.667,
+      "reload": 2.0,
       "draw": 1.0,
       "inspect": 5.333
     },
+    "native_cs2_animation": true,
+    "native_gun_animations": true,
+    "authored_right_hand": true,
+    "inspect_clips": [
+      "inspect"
+    ],
+    "animation_source": "ScCsgoKnives native per-weapon clips, original geometry and anatomical arm retarget"
+  },
+  "weapons/v_sg550": {
+    "sequences": [
+      "draw",
+      "idle",
+      "idle_empty",
+      "shoot1",
+      "shootlast",
+      "reload",
+      "reload_empty",
+      "inspect",
+      "shoot",
+      "shoot2",
+      "shoot3",
+      "shoot_empty",
+      "fire",
+      "draw_unsil",
+      "idle_unsil",
+      "reload_unsil",
+      "inspect_unsil",
+      "shoot1_unsil",
+      "shoot2_unsil",
+      "shoot3_unsil",
+      "shootlast_unsil"
+    ],
+    "seq_durations": {
+      "draw": 1.0,
+      "idle": 1.0,
+      "idle_empty": 1.0,
+      "shoot1": 0.8333,
+      "shootlast": 0.8333,
+      "reload": 3.0667,
+      "reload_empty": 3.0667,
+      "inspect": 5.2999,
+      "shoot": 0.8333,
+      "shoot2": 0.8333,
+      "shoot3": 0.8333,
+      "shoot_empty": 0.8333,
+      "fire": 0.8333,
+      "draw_unsil": 1.0,
+      "idle_unsil": 1.0,
+      "reload_unsil": 3.0667,
+      "inspect_unsil": 5.2999,
+      "shoot1_unsil": 0.8333,
+      "shoot2_unsil": 0.8333,
+      "shoot3_unsil": 0.8333,
+      "shootlast_unsil": 0.8333
+    },
     "seq_events": {
-      "reload": [
-        {
-          "t": 0.328,
-          "wav": "weapons/archi/cs2_scar20/clipout.wav"
-        },
-        {
-          "t": 1.311,
-          "wav": "weapons/archi/cs2_scar20/clipin.wav"
-        },
-        {
-          "t": 2.075,
-          "wav": "weapons/archi/cs2_scar20/boltforward.wav"
-        }
-      ],
       "draw": [
         {
           "t": 0.0,
           "wav": "weapons/archi/cs2_scar20/draw.wav"
-        },
-        {
-          "t": 0.4,
-          "wav": "weapons/archi/cs2_scar20/boltback.wav"
-        },
-        {
-          "t": 0.567,
-          "wav": "weapons/archi/cs2_scar20/boltforward.wav"
         }
-      ]
+      ],
+      "reload": [
+        {
+          "t": 0.333337,
+          "wav": "weapons/archi/cs2_scar20/clipout.wav"
+        },
+        {
+          "t": 1.26668,
+          "wav": "weapons/archi/cs2_scar20/clipin.wav"
+        }
+      ],
+      "reload_empty": [
+        {
+          "t": 0.0,
+          "wav": "weapons/archi/cs2_scar20/boltforward.wav"
+        },
+        {
+          "t": 0.500005,
+          "wav": "weapons/archi/cs2_scar20/clipout.wav"
+        },
+        {
+          "t": 1.26668,
+          "wav": "weapons/archi/cs2_scar20/clipin.wav"
+        },
+        {
+          "t": 2.000022,
+          "wav": "weapons/archi/cs2_scar20/boltback.wav"
+        }
+      ],
+      "shoot": [],
+      "shoot2": [],
+      "shoot3": [],
+      "shoot_empty": [],
+      "fire": [],
+      "draw_unsil": [
+        {
+          "t": 0.0,
+          "wav": "weapons/archi/cs2_scar20/draw.wav"
+        }
+      ],
+      "idle_unsil": [],
+      "reload_unsil": [
+        {
+          "t": 0.333337,
+          "wav": "weapons/archi/cs2_scar20/clipout.wav"
+        },
+        {
+          "t": 1.26668,
+          "wav": "weapons/archi/cs2_scar20/clipin.wav"
+        }
+      ],
+      "inspect_unsil": [],
+      "shoot1_unsil": [],
+      "shoot2_unsil": [],
+      "shoot3_unsil": [],
+      "shootlast_unsil": []
     },
     "bones": 69,
     "offset": [
@@ -7041,14 +8488,14 @@
     ],
     "vertices": 57582,
     "muzzle": [
-      -0.1776,
-      -0.1362,
-      -1.3272
+      0.2078533,
+      -0.1488034,
+      -1.1295482
     ],
     "eject": [
-      -0.1802,
-      -0.1411,
-      -0.5496
+      0.2099666,
+      -0.1527861,
+      -0.4975149
     ],
     "world": {
       "source_model": "w_snip_scar20",
@@ -7061,56 +8508,121 @@
         "residual_m": 0.02366,
         "deg_from_seed": 105.19
       }
-    }
+    },
+    "gameplay_seq_durations": {
+      "idle": 0.083,
+      "shoot1": 0.9,
+      "reload": 3.35,
+      "draw": 1.0,
+      "inspect": 5.333
+    },
+    "native_cs2_animation": true,
+    "native_gun_animations": true,
+    "authored_right_hand": true,
+    "inspect_clips": [
+      "inspect"
+    ],
+    "animation_source": "ScCsgoKnives native per-weapon clips, original geometry and anatomical arm retarget"
   },
   "weapons/v_sg552": {
     "sequences": [
-      "idle",
-      "reload",
       "draw",
+      "idle",
       "shoot1",
-      "inspect"
+      "reload",
+      "inspect",
+      "ironsightIdle",
+      "ironsightShoot",
+      "shoot",
+      "shoot2",
+      "shoot3",
+      "fire",
+      "draw_unsil",
+      "idle_unsil",
+      "reload_unsil",
+      "inspect_unsil",
+      "shoot1_unsil",
+      "shoot2_unsil",
+      "shoot3_unsil"
     ],
     "seq_durations": {
-      "idle": 0.033,
-      "reload": 3.0,
       "draw": 1.0,
+      "idle": 1.0,
       "shoot1": 0.7,
-      "inspect": 4.333
+      "reload": 2.7667,
+      "inspect": 4.3332,
+      "ironsightIdle": 1.0,
+      "ironsightShoot": 0.2667,
+      "shoot": 0.7,
+      "shoot2": 0.7,
+      "shoot3": 0.7,
+      "fire": 0.7,
+      "draw_unsil": 1.0,
+      "idle_unsil": 1.0,
+      "reload_unsil": 2.7667,
+      "inspect_unsil": 4.3332,
+      "shoot1_unsil": 0.7,
+      "shoot2_unsil": 0.7,
+      "shoot3_unsil": 0.7
     },
     "seq_events": {
-      "reload": [
-        {
-          "t": 0.325,
-          "wav": "weapons/archi/cs2_sg553/clipout.wav"
-        },
-        {
-          "t": 1.048,
-          "wav": "weapons/archi/cs2_sg553/clipin.wav"
-        },
-        {
-          "t": 2.096,
-          "wav": "weapons/archi/cs2_sg553/boltback.wav"
-        },
-        {
-          "t": 2.385,
-          "wav": "weapons/archi/cs2_sg553/boltforward.wav"
-        }
-      ],
       "draw": [
         {
           "t": 0.0,
           "wav": "weapons/archi/cs2_sg553/draw.wav"
+        }
+      ],
+      "reload": [
+        {
+          "t": 0.300004,
+          "wav": "weapons/archi/cs2_sg553/clipout.wav"
         },
         {
-          "t": 0.3,
+          "t": 0.966678,
+          "wav": "weapons/archi/cs2_sg553/clipin.wav"
+        },
+        {
+          "t": 1.866689,
           "wav": "weapons/archi/cs2_sg553/boltback.wav"
         },
         {
-          "t": 0.567,
+          "t": 2.100025,
           "wav": "weapons/archi/cs2_sg553/boltforward.wav"
         }
-      ]
+      ],
+      "shoot": [],
+      "shoot2": [],
+      "shoot3": [],
+      "fire": [],
+      "draw_unsil": [
+        {
+          "t": 0.0,
+          "wav": "weapons/archi/cs2_sg553/draw.wav"
+        }
+      ],
+      "idle_unsil": [],
+      "reload_unsil": [
+        {
+          "t": 0.300004,
+          "wav": "weapons/archi/cs2_sg553/clipout.wav"
+        },
+        {
+          "t": 0.966678,
+          "wav": "weapons/archi/cs2_sg553/clipin.wav"
+        },
+        {
+          "t": 1.866689,
+          "wav": "weapons/archi/cs2_sg553/boltback.wav"
+        },
+        {
+          "t": 2.100025,
+          "wav": "weapons/archi/cs2_sg553/boltforward.wav"
+        }
+      ],
+      "inspect_unsil": [],
+      "shoot1_unsil": [],
+      "shoot2_unsil": [],
+      "shoot3_unsil": []
     },
     "bones": 67,
     "offset": [
@@ -7128,14 +8640,14 @@
     ],
     "vertices": 55898,
     "muzzle": [
-      -0.1634,
-      -0.1257,
-      -1.2016
+      0.1963115,
+      -0.140269,
+      -1.0274605
     ],
     "eject": [
-      -0.1601,
-      -0.1116,
-      -0.5758
+      0.1936293,
+      -0.1288085,
+      -0.5188102
     ],
     "world": {
       "source_model": "w_rif_sg556",
@@ -7148,44 +8660,72 @@
         "residual_m": 0.01843,
         "deg_from_seed": 91.62
       }
-    }
+    },
+    "gameplay_seq_durations": {
+      "idle": 0.033,
+      "reload": 3.0,
+      "draw": 1.0,
+      "shoot1": 0.7,
+      "inspect": 4.333
+    },
+    "native_cs2_animation": true,
+    "native_gun_animations": true,
+    "authored_right_hand": true,
+    "inspect_clips": [
+      "inspect"
+    ],
+    "animation_source": "ScCsgoKnives native per-weapon clips, original geometry and anatomical arm retarget"
   },
   "weapons/v_smokegrenade": {
     "sequences": [
+      "draw",
       "idle",
-      "pullpin",
-      "throw",
-      "deploy",
-      "underhand",
       "inspect",
-      "inspect_2"
+      "inspect_2",
+      "pullpin",
+      "hold_high",
+      "hold_low",
+      "throw",
+      "underhand",
+      "draw_unsil",
+      "idle_unsil",
+      "inspect_unsil"
     ],
     "seq_durations": {
+      "draw": 1.0,
       "idle": 1.0,
-      "pullpin": 0.967,
-      "throw": 0.733,
-      "deploy": 1.0,
+      "inspect": 7.0666,
+      "inspect_2": 3.0667,
+      "pullpin": 0.9666,
+      "hold_high": 1.0,
+      "hold_low": 1.0,
+      "throw": 0.7666,
       "underhand": 0.5,
-      "inspect": 7.067,
-      "inspect_2": 3.067
+      "draw_unsil": 1.0,
+      "idle_unsil": 1.0,
+      "inspect_unsil": 7.0666
     },
     "seq_events": {
+      "draw": [
+        {
+          "t": 0.1,
+          "wav": "weapons/archi/cs2_smokegren/s_draw.wav"
+        }
+      ],
       "pullpin": [
         {
           "t": 0.0,
-          "wav": "weapons/archi/cs2_smokegren/pinpull_start.wav"
-        },
-        {
-          "t": 0.4,
           "wav": "weapons/archi/cs2_smokegren/pinpull.wav"
         }
       ],
-      "deploy": [
+      "draw_unsil": [
         {
-          "t": 0.0,
+          "t": 0.1,
           "wav": "weapons/archi/cs2_smokegren/s_draw.wav"
         }
-      ]
+      ],
+      "idle_unsil": [],
+      "inspect_unsil": []
     },
     "bones": 41,
     "offset": [
@@ -7219,60 +8759,116 @@
     "inspect_clips": [
       "inspect",
       "inspect_2"
-    ]
+    ],
+    "gameplay_seq_durations": {
+      "idle": 1.0,
+      "pullpin": 0.967,
+      "throw": 0.733,
+      "deploy": 1.0,
+      "underhand": 0.5,
+      "inspect": 7.067,
+      "inspect_2": 3.067
+    },
+    "native_cs2_animation": true,
+    "native_gun_animations": true,
+    "authored_right_hand": true,
+    "animation_source": "ScCsgoKnives native per-weapon clips, original geometry and anatomical arm retarget"
   },
   "weapons/v_tmp": {
     "sequences": [
-      "idle",
-      "reload",
       "draw",
+      "idle",
       "shoot1",
+      "reload",
+      "inspect",
+      "shoot",
       "shoot2",
       "shoot3",
-      "inspect"
+      "fire",
+      "draw_unsil",
+      "idle_unsil",
+      "reload_unsil",
+      "inspect_unsil",
+      "shoot1_unsil",
+      "shoot2_unsil",
+      "shoot3_unsil"
     ],
     "seq_durations": {
-      "idle": 0.033,
-      "reload": 2.167,
-      "draw": 1.233,
-      "shoot1": 0.833,
-      "shoot2": 0.833,
-      "shoot3": 0.833,
-      "inspect": 7.367
+      "draw": 1.1999,
+      "idle": 1.0,
+      "shoot1": 0.8333,
+      "reload": 2.1332,
+      "inspect": 7.3332,
+      "shoot": 0.8333,
+      "shoot2": 0.8333,
+      "shoot3": 0.8333,
+      "fire": 0.8333,
+      "draw_unsil": 1.1999,
+      "idle_unsil": 1.0,
+      "reload_unsil": 2.1332,
+      "inspect_unsil": 7.3332,
+      "shoot1_unsil": 0.8333,
+      "shoot2_unsil": 0.8333,
+      "shoot3_unsil": 0.8333
     },
     "seq_events": {
+      "draw": [
+        {
+          "t": 0.0,
+          "wav": "weapons/archi/cs2_mp9/draw.wav"
+        }
+      ],
       "reload": [
         {
-          "t": 0.233,
+          "t": 0.23333,
           "wav": "weapons/archi/cs2_mp9/clipout.wav"
         },
         {
-          "t": 0.767,
+          "t": 0.766655,
           "wav": "weapons/archi/cs2_mp9/clipin.wav"
         },
         {
-          "t": 1.333,
+          "t": 1.333312,
           "wav": "weapons/archi/cs2_mp9/boltback.wav"
         },
         {
-          "t": 1.5,
+          "t": 1.566642,
           "wav": "weapons/archi/cs2_mp9/boltforward.wav"
         }
       ],
-      "draw": [
+      "shoot": [],
+      "shoot2": [],
+      "shoot3": [],
+      "fire": [],
+      "draw_unsil": [
         {
-          "t": 0.067,
+          "t": 0.0,
           "wav": "weapons/archi/cs2_mp9/draw.wav"
+        }
+      ],
+      "idle_unsil": [],
+      "reload_unsil": [
+        {
+          "t": 0.23333,
+          "wav": "weapons/archi/cs2_mp9/clipout.wav"
         },
         {
-          "t": 0.367,
+          "t": 0.766655,
+          "wav": "weapons/archi/cs2_mp9/clipin.wav"
+        },
+        {
+          "t": 1.333312,
           "wav": "weapons/archi/cs2_mp9/boltback.wav"
         },
         {
-          "t": 0.5,
+          "t": 1.566642,
           "wav": "weapons/archi/cs2_mp9/boltforward.wav"
         }
-      ]
+      ],
+      "inspect_unsil": [],
+      "shoot1_unsil": [],
+      "shoot2_unsil": [],
+      "shoot3_unsil": []
     },
     "bones": 56,
     "offset": [
@@ -7289,14 +8885,14 @@
     ],
     "vertices": 31656,
     "muzzle": [
-      -0.1486,
-      -0.0788,
-      -0.6493
+      0.1842821,
+      -0.1021486,
+      -0.578551
     ],
     "eject": [
-      -0.1657,
-      -0.0642,
-      -0.4015
+      0.198181,
+      -0.0902818,
+      -0.3771392
     ],
     "world": {
       "source_model": "w_smg_mp9",
@@ -7309,60 +8905,119 @@
         "residual_m": 0.02087,
         "deg_from_seed": 76.69
       }
-    }
+    },
+    "gameplay_seq_durations": {
+      "idle": 0.033,
+      "reload": 2.167,
+      "draw": 1.233,
+      "shoot1": 0.833,
+      "shoot2": 0.833,
+      "shoot3": 0.833,
+      "inspect": 7.367
+    },
+    "native_cs2_animation": true,
+    "native_gun_animations": true,
+    "authored_right_hand": true,
+    "inspect_clips": [
+      "inspect"
+    ],
+    "animation_source": "ScCsgoKnives native per-weapon clips, original geometry and anatomical arm retarget"
   },
   "weapons/v_ump45": {
     "sequences": [
-      "idle",
-      "reload",
       "draw",
+      "idle",
       "shoot1",
+      "reload",
+      "inspect",
+      "shoot",
       "shoot2",
       "shoot3",
-      "inspect"
+      "fire",
+      "draw_unsil",
+      "idle_unsil",
+      "reload_unsil",
+      "inspect_unsil",
+      "shoot1_unsil",
+      "shoot2_unsil",
+      "shoot3_unsil"
     ],
     "seq_durations": {
-      "idle": 0.083,
-      "reload": 3.433,
       "draw": 1.0,
+      "idle": 1.0,
       "shoot1": 1.0,
+      "reload": 3.4332,
+      "inspect": 6.8332,
+      "shoot": 1.0,
       "shoot2": 1.0,
       "shoot3": 1.0,
-      "inspect": 6.867
+      "fire": 1.0,
+      "draw_unsil": 1.0,
+      "idle_unsil": 1.0,
+      "reload_unsil": 3.4332,
+      "inspect_unsil": 6.8332,
+      "shoot1_unsil": 1.0,
+      "shoot2_unsil": 1.0,
+      "shoot3_unsil": 1.0
     },
     "seq_events": {
-      "reload": [
-        {
-          "t": 0.333,
-          "wav": "weapons/archi/cs2_ump45/clipout.wav"
-        },
-        {
-          "t": 1.367,
-          "wav": "weapons/archi/cs2_ump45/clipin.wav"
-        },
-        {
-          "t": 2.1,
-          "wav": "weapons/archi/cs2_ump45/boltback.wav"
-        },
-        {
-          "t": 2.4,
-          "wav": "weapons/archi/cs2_ump45/boltforward.wav"
-        }
-      ],
       "draw": [
         {
           "t": 0.0,
           "wav": "weapons/archi/cs2_ump45/draw.wav"
+        }
+      ],
+      "reload": [
+        {
+          "t": 0.466662,
+          "wav": "weapons/archi/cs2_ump45/clipout.wav"
         },
         {
-          "t": 0.267,
+          "t": 1.433319,
+          "wav": "weapons/archi/cs2_ump45/clipin.wav"
+        },
+        {
+          "t": 2.166646,
           "wav": "weapons/archi/cs2_ump45/boltback.wav"
         },
         {
-          "t": 0.467,
+          "t": 2.399977,
           "wav": "weapons/archi/cs2_ump45/boltforward.wav"
         }
-      ]
+      ],
+      "shoot": [],
+      "shoot2": [],
+      "shoot3": [],
+      "fire": [],
+      "draw_unsil": [
+        {
+          "t": 0.0,
+          "wav": "weapons/archi/cs2_ump45/draw.wav"
+        }
+      ],
+      "idle_unsil": [],
+      "reload_unsil": [
+        {
+          "t": 0.466662,
+          "wav": "weapons/archi/cs2_ump45/clipout.wav"
+        },
+        {
+          "t": 1.433319,
+          "wav": "weapons/archi/cs2_ump45/clipin.wav"
+        },
+        {
+          "t": 2.166646,
+          "wav": "weapons/archi/cs2_ump45/boltback.wav"
+        },
+        {
+          "t": 2.399977,
+          "wav": "weapons/archi/cs2_ump45/boltforward.wav"
+        }
+      ],
+      "inspect_unsil": [],
+      "shoot1_unsil": [],
+      "shoot2_unsil": [],
+      "shoot3_unsil": []
     },
     "bones": 70,
     "offset": [
@@ -7380,14 +9035,14 @@
     ],
     "vertices": 39893,
     "muzzle": [
-      -0.1609,
-      -0.1291,
-      -1.0208
+      0.1942795,
+      -0.1430325,
+      -0.8805062
     ],
     "eject": [
-      -0.1823,
-      -0.1259,
-      -0.6851
+      0.2116734,
+      -0.1404315,
+      -0.6076493
     ],
     "world": {
       "source_model": "w_smg_ump45",
@@ -7400,30 +9055,308 @@
         "residual_m": 0.01451,
         "deg_from_seed": 0.12
       }
-    }
+    },
+    "gameplay_seq_durations": {
+      "idle": 0.083,
+      "reload": 3.433,
+      "draw": 1.0,
+      "shoot1": 1.0,
+      "shoot2": 1.0,
+      "shoot3": 1.0,
+      "inspect": 6.867
+    },
+    "native_cs2_animation": true,
+    "native_gun_animations": true,
+    "authored_right_hand": true,
+    "inspect_clips": [
+      "inspect"
+    ],
+    "animation_source": "ScCsgoKnives native per-weapon clips, original geometry and anatomical arm retarget"
   },
   "weapons/v_usp": {
     "sequences": [
+      "draw",
+      "draw_silenced",
       "idle",
-      "idle_unsil",
+      "idle_empty",
+      "shoot1",
+      "shootlast",
+      "reload",
+      "reload_empty",
+      "inspect",
+      "attach",
+      "detach",
+      "shoot",
+      "shoot2",
+      "shoot3",
+      "shoot_empty",
+      "fire",
       "add_silencer",
       "detach_silencer",
-      "shoot1",
-      "shoot1_unsil",
-      "shoot2",
-      "shoot2_unsil",
-      "shoot3",
-      "shoot3_unsil",
-      "shootlast",
-      "shootlast_unsil",
-      "reload",
-      "reload_unsil",
-      "draw",
       "draw_unsil",
-      "inspect",
-      "inspect_unsil"
+      "idle_unsil",
+      "reload_unsil",
+      "inspect_unsil",
+      "shoot1_unsil",
+      "shoot2_unsil",
+      "shoot3_unsil",
+      "shootlast_unsil"
     ],
     "seq_durations": {
+      "draw": 1.0,
+      "draw_silenced": 1.0,
+      "idle": 1.0,
+      "idle_empty": 1.0,
+      "shoot1": 0.3999,
+      "shootlast": 0.3999,
+      "reload": 2.1666,
+      "reload_empty": 2.1666,
+      "inspect": 6.4333,
+      "attach": 4.8333,
+      "detach": 4.8333,
+      "shoot": 0.3999,
+      "shoot2": 0.3999,
+      "shoot3": 0.3999,
+      "shoot_empty": 0.3999,
+      "fire": 0.3999,
+      "add_silencer": 4.8333,
+      "detach_silencer": 4.8333,
+      "draw_unsil": 1.0,
+      "idle_unsil": 1.0,
+      "reload_unsil": 2.1666,
+      "inspect_unsil": 6.4333,
+      "shoot1_unsil": 0.3999,
+      "shoot2_unsil": 0.3999,
+      "shoot3_unsil": 0.3999,
+      "shootlast_unsil": 0.3999
+    },
+    "seq_events": {
+      "draw": [
+        {
+          "t": 0.1,
+          "wav": "weapons/archi/cs2_usps/draw.wav"
+        }
+      ],
+      "draw_silenced": [
+        {
+          "t": 0.1,
+          "wav": "weapons/archi/cs2_usps/draw.wav"
+        }
+      ],
+      "reload": [
+        {
+          "t": 0.233337,
+          "wav": "weapons/archi/cs2_usps/clipout.wav"
+        },
+        {
+          "t": 0.700011,
+          "wav": "weapons/archi/cs2_usps/clipin.wav"
+        },
+        {
+          "t": 1.366688,
+          "wav": "weapons/archi/cs2_usps/slideback.wav"
+        },
+        {
+          "t": 1.533357,
+          "wav": "weapons/archi/cs2_usps/sliderelease.wav"
+        }
+      ],
+      "reload_empty": [
+        {
+          "t": 0.233337,
+          "wav": "weapons/archi/cs2_usps/clipout.wav"
+        },
+        {
+          "t": 0.800012,
+          "wav": "weapons/archi/cs2_usps/clipin.wav"
+        },
+        {
+          "t": 1.433355,
+          "wav": "weapons/archi/cs2_usps/sliderelease.wav"
+        }
+      ],
+      "attach": [
+        {
+          "t": 1.066659,
+          "wav": "weapons/archi/cs2_usps/sil_screw_on_start.wav"
+        },
+        {
+          "t": 1.833321,
+          "wav": "weapons/archi/cs2_usps/sil_screw1.wav"
+        },
+        {
+          "t": 2.299984,
+          "wav": "weapons/archi/cs2_usps/sil_screw2.wav"
+        },
+        {
+          "t": 2.666648,
+          "wav": "weapons/archi/cs2_usps/sil_screw3.wav"
+        },
+        {
+          "t": 3.033313,
+          "wav": "weapons/archi/cs2_usps/sil_screw4.wav"
+        },
+        {
+          "t": 3.299977,
+          "wav": "weapons/archi/cs2_usps/sil_screw5.wav"
+        }
+      ],
+      "detach": [
+        {
+          "t": 0.933327,
+          "wav": "weapons/archi/cs2_usps/sil_screw1.wav"
+        },
+        {
+          "t": 1.599989,
+          "wav": "weapons/archi/cs2_usps/sil_screw2.wav"
+        },
+        {
+          "t": 1.999986,
+          "wav": "weapons/archi/cs2_usps/sil_screw3.wav"
+        },
+        {
+          "t": 2.333317,
+          "wav": "weapons/archi/cs2_usps/sil_screw4.wav"
+        },
+        {
+          "t": 2.666648,
+          "wav": "weapons/archi/cs2_usps/sil_screw5.wav"
+        },
+        {
+          "t": 3.099979,
+          "wav": "weapons/archi/cs2_usps/sil_screw1.wav"
+        }
+      ],
+      "shoot": [],
+      "shoot2": [],
+      "shoot3": [],
+      "shoot_empty": [],
+      "fire": [],
+      "add_silencer": [
+        {
+          "t": 1.066659,
+          "wav": "weapons/archi/cs2_usps/sil_screw_on_start.wav"
+        },
+        {
+          "t": 1.833321,
+          "wav": "weapons/archi/cs2_usps/sil_screw1.wav"
+        },
+        {
+          "t": 2.299984,
+          "wav": "weapons/archi/cs2_usps/sil_screw2.wav"
+        },
+        {
+          "t": 2.666648,
+          "wav": "weapons/archi/cs2_usps/sil_screw3.wav"
+        },
+        {
+          "t": 3.033313,
+          "wav": "weapons/archi/cs2_usps/sil_screw4.wav"
+        },
+        {
+          "t": 3.299977,
+          "wav": "weapons/archi/cs2_usps/sil_screw5.wav"
+        }
+      ],
+      "detach_silencer": [
+        {
+          "t": 0.933327,
+          "wav": "weapons/archi/cs2_usps/sil_screw1.wav"
+        },
+        {
+          "t": 1.599989,
+          "wav": "weapons/archi/cs2_usps/sil_screw2.wav"
+        },
+        {
+          "t": 1.999986,
+          "wav": "weapons/archi/cs2_usps/sil_screw3.wav"
+        },
+        {
+          "t": 2.333317,
+          "wav": "weapons/archi/cs2_usps/sil_screw4.wav"
+        },
+        {
+          "t": 2.666648,
+          "wav": "weapons/archi/cs2_usps/sil_screw5.wav"
+        },
+        {
+          "t": 3.099979,
+          "wav": "weapons/archi/cs2_usps/sil_screw1.wav"
+        }
+      ],
+      "draw_unsil": [
+        {
+          "t": 0.1,
+          "wav": "weapons/archi/cs2_usps/draw.wav"
+        }
+      ],
+      "idle_unsil": [],
+      "reload_unsil": [
+        {
+          "t": 0.233337,
+          "wav": "weapons/archi/cs2_usps/clipout.wav"
+        },
+        {
+          "t": 0.700011,
+          "wav": "weapons/archi/cs2_usps/clipin.wav"
+        },
+        {
+          "t": 1.366688,
+          "wav": "weapons/archi/cs2_usps/slideback.wav"
+        },
+        {
+          "t": 1.533357,
+          "wav": "weapons/archi/cs2_usps/sliderelease.wav"
+        }
+      ],
+      "inspect_unsil": [],
+      "shoot1_unsil": [],
+      "shoot2_unsil": [],
+      "shoot3_unsil": [],
+      "shootlast_unsil": []
+    },
+    "bones": 63,
+    "offset": [
+      0.0,
+      0.0,
+      0.0625
+    ],
+    "source": "ShadowNigth/archi",
+    "source_model": "v_pist_223",
+    "materials": [
+      "weapon_pist_usp_silencer",
+      "ct_base_glove.bmp",
+      "ct_arms.bmp"
+    ],
+    "vertices": 25705,
+    "muzzle": [
+      0.1344574,
+      -0.0980034,
+      -0.7771181
+    ],
+    "muzzle_unsil": [
+      0.1345387,
+      -0.0939394,
+      -0.5795264
+    ],
+    "eject": [
+      0.1445362,
+      -0.0831291,
+      -0.4613453
+    ],
+    "world": {
+      "source_model": "w_pist_223",
+      "reference": "usp",
+      "p_fit": {
+        "residual_m": 0.0181,
+        "deg_from_seed": 97.25
+      },
+      "w_fit": {
+        "residual_m": 0.01833,
+        "deg_from_seed": 91.34
+      }
+    },
+    "gameplay_seq_durations": {
       "idle": 1.0,
       "idle_unsil": 1.0,
       "add_silencer": 4.867,
@@ -7443,200 +9376,105 @@
       "inspect": 6.467,
       "inspect_unsil": 6.467
     },
+    "native_cs2_animation": true,
+    "native_gun_animations": true,
+    "authored_right_hand": true,
+    "inspect_clips": [
+      "inspect"
+    ],
+    "animation_source": "ScCsgoKnives native per-weapon clips, original geometry and anatomical arm retarget"
+  },
+  "weapons/v_xm1014": {
+    "sequences": [
+      "draw",
+      "idle",
+      "shoot1",
+      "reload",
+      "start_reload",
+      "insert",
+      "after_reload",
+      "inspect",
+      "shoot",
+      "shoot2",
+      "shoot3",
+      "fire",
+      "draw_unsil",
+      "idle_unsil",
+      "reload_unsil",
+      "inspect_unsil",
+      "shoot1_unsil",
+      "shoot2_unsil",
+      "shoot3_unsil"
+    ],
+    "seq_durations": {
+      "draw": 1.0,
+      "idle": 1.0,
+      "shoot1": 0.8667,
+      "reload": 1.7332,
+      "start_reload": 0.699987,
+      "insert": 0.5999879999999999,
+      "after_reload": 0.43322499999999997,
+      "inspect": 4.6,
+      "shoot": 0.8667,
+      "shoot2": 0.8667,
+      "shoot3": 0.8667,
+      "fire": 0.8667,
+      "draw_unsil": 1.0,
+      "idle_unsil": 1.0,
+      "reload_unsil": 1.7332,
+      "inspect_unsil": 4.6,
+      "shoot1_unsil": 0.8667,
+      "shoot2_unsil": 0.8667,
+      "shoot3_unsil": 0.8667
+    },
     "seq_events": {
-      "add_silencer": [
+      "draw": [
         {
-          "t": 1.067,
-          "wav": "weapons/archi/cs2_usps/sil_screw_on_start.wav"
+          "t": 0.233333,
+          "wav": "weapons/archi/cs2_xm1014/draw.wav"
         },
         {
-          "t": 1.833,
-          "wav": "weapons/archi/cs2_usps/sil_screw1.wav"
-        },
-        {
-          "t": 2.3,
-          "wav": "weapons/archi/cs2_usps/sil_screw2.wav"
-        },
-        {
-          "t": 2.667,
-          "wav": "weapons/archi/cs2_usps/sil_screw3.wav"
-        },
-        {
-          "t": 3.033,
-          "wav": "weapons/archi/cs2_usps/sil_screw4.wav"
-        },
-        {
-          "t": 3.3,
-          "wav": "weapons/archi/cs2_usps/sil_screw5.wav"
-        }
-      ],
-      "detach_silencer": [
-        {
-          "t": 0.933,
-          "wav": "weapons/archi/cs2_usps/sil_screw1.wav"
-        },
-        {
-          "t": 1.6,
-          "wav": "weapons/archi/cs2_usps/sil_screw2.wav"
-        },
-        {
-          "t": 2.0,
-          "wav": "weapons/archi/cs2_usps/sil_screw3.wav"
-        },
-        {
-          "t": 2.333,
-          "wav": "weapons/archi/cs2_usps/sil_screw4.wav"
-        },
-        {
-          "t": 2.667,
-          "wav": "weapons/archi/cs2_usps/sil_screw5.wav"
-        },
-        {
-          "t": 3.1,
-          "wav": "weapons/archi/cs2_usps/sil_screw1.wav"
+          "t": 0.6,
+          "wav": "weapons/archi/cs2_xm1014/draw.wav"
         }
       ],
       "reload": [
         {
-          "t": 0.286,
-          "wav": "weapons/archi/cs2_p2000/clipout.wav"
-        },
-        {
-          "t": 0.819,
-          "wav": "weapons/archi/cs2_p2000/clipin.wav"
-        },
-        {
-          "t": 1.678,
-          "wav": "weapons/archi/cs2_p2000/slideback.wav"
-        },
-        {
-          "t": 1.923,
-          "wav": "weapons/archi/cs2_p2000/sliderelease.wav"
-        }
-      ],
-      "reload_unsil": [
-        {
-          "t": 0.286,
-          "wav": "weapons/archi/cs2_p2000/clipout.wav"
-        },
-        {
-          "t": 0.819,
-          "wav": "weapons/archi/cs2_p2000/clipin.wav"
-        },
-        {
-          "t": 1.678,
-          "wav": "weapons/archi/cs2_p2000/slideback.wav"
-        },
-        {
-          "t": 1.923,
-          "wav": "weapons/archi/cs2_p2000/sliderelease.wav"
-        }
-      ],
-      "draw": [
-        {
-          "t": 0.0,
-          "wav": "weapons/archi/cs2_p2000/draw.wav"
-        },
-        {
-          "t": 0.267,
-          "wav": "weapons/archi/cs2_p2000/slideback.wav"
-        },
-        {
-          "t": 0.467,
-          "wav": "weapons/archi/cs2_p2000/sliderelease.wav"
-        }
-      ],
-      "draw_unsil": [
-        {
-          "t": 0.0,
-          "wav": "weapons/archi/cs2_p2000/draw.wav"
-        },
-        {
-          "t": 0.267,
-          "wav": "weapons/archi/cs2_p2000/slideback.wav"
-        },
-        {
-          "t": 0.467,
-          "wav": "weapons/archi/cs2_p2000/sliderelease.wav"
-        }
-      ]
-    },
-    "bones": 63,
-    "offset": [
-      0.0,
-      0.0,
-      0.0625
-    ],
-    "source": "ShadowNigth/archi",
-    "source_model": "v_pist_223",
-    "materials": [
-      "weapon_pist_usp_silencer",
-      "ct_base_glove.bmp",
-      "ct_arms.bmp"
-    ],
-    "vertices": 25705,
-    "muzzle": [
-      -0.0873,
-      -0.0737,
-      -0.8936
-    ],
-    "muzzle_unsil": [
-      -0.0874,
-      -0.0687,
-      -0.6505
-    ],
-    "eject": [
-      -0.0997,
-      -0.0554,
-      -0.5051
-    ],
-    "world": {
-      "source_model": "w_pist_223",
-      "reference": "usp",
-      "p_fit": {
-        "residual_m": 0.0181,
-        "deg_from_seed": 97.25
-      },
-      "w_fit": {
-        "residual_m": 0.01833,
-        "deg_from_seed": 91.34
-      }
-    }
-  },
-  "weapons/v_xm1014": {
-    "sequences": [
-      "idle",
-      "shoot1",
-      "start_reload",
-      "insert",
-      "after_reload",
-      "draw",
-      "inspect",
-      "inv_inspect"
-    ],
-    "seq_durations": {
-      "idle": 1.0,
-      "shoot1": 0.8,
-      "start_reload": 0.7,
-      "insert": 0.633,
-      "after_reload": 0.462,
-      "draw": 1.0,
-      "inspect": 4.567,
-      "inv_inspect": 1.0
-    },
-    "seq_events": {
-      "insert": [
-        {
-          "t": 0.033,
+          "t": 0.733319,
           "wav": "weapons/archi/cs2_xm1014/insertshell_01.wav"
         }
       ],
-      "draw": [
+      "insert": [
         {
-          "t": 0.0,
+          "t": 0.03333200000000003,
+          "wav": "weapons/archi/cs2_xm1014/insertshell_01.wav"
+        }
+      ],
+      "shoot": [],
+      "shoot2": [],
+      "shoot3": [],
+      "fire": [],
+      "draw_unsil": [
+        {
+          "t": 0.233333,
+          "wav": "weapons/archi/cs2_xm1014/draw.wav"
+        },
+        {
+          "t": 0.6,
           "wav": "weapons/archi/cs2_xm1014/draw.wav"
         }
-      ]
+      ],
+      "idle_unsil": [],
+      "reload_unsil": [
+        {
+          "t": 0.733319,
+          "wav": "weapons/archi/cs2_xm1014/insertshell_01.wav"
+        }
+      ],
+      "inspect_unsil": [],
+      "shoot1_unsil": [],
+      "shoot2_unsil": [],
+      "shoot3_unsil": []
     },
     "bones": 47,
     "offset": [
@@ -7653,14 +9491,14 @@
     ],
     "vertices": 34393,
     "muzzle": [
-      -0.1331,
-      -0.1304,
-      -1.179
+      0.1716837,
+      -0.1440891,
+      -1.0090912
     ],
     "eject": [
-      -0.1494,
-      -0.1289,
-      -0.6177
+      0.1849323,
+      -0.1428699,
+      -0.5528666
     ],
     "world": {
       "source_model": "w_shot_xm1014",
@@ -7673,7 +9511,24 @@
         "residual_m": 0.00984,
         "deg_from_seed": 89.49
       }
-    }
+    },
+    "gameplay_seq_durations": {
+      "idle": 1.0,
+      "shoot1": 0.8,
+      "start_reload": 0.7,
+      "insert": 0.633,
+      "after_reload": 0.462,
+      "draw": 1.0,
+      "inspect": 4.567,
+      "inv_inspect": 1.0
+    },
+    "native_cs2_animation": true,
+    "native_gun_animations": true,
+    "authored_right_hand": true,
+    "inspect_clips": [
+      "inspect"
+    ],
+    "animation_source": "ScCsgoKnives native per-weapon clips, original geometry and anatomical arm retarget"
   },
   "weapons/w_ak47": {
     "sequences": [],
@@ -7991,58 +9846,125 @@
   },
   "weapons/v_p2000": {
     "sequences": [
+      "draw",
       "idle",
+      "idle_empty",
       "shoot1",
-      "shoot2",
-      "shoot3",
       "shootlast",
       "reload",
-      "draw",
-      "inspect"
+      "reload_empty",
+      "inspect",
+      "shoot",
+      "shoot2",
+      "shoot3",
+      "shoot_empty",
+      "fire",
+      "draw_unsil",
+      "idle_unsil",
+      "reload_unsil",
+      "inspect_unsil",
+      "shoot1_unsil",
+      "shoot2_unsil",
+      "shoot3_unsil",
+      "shootlast_unsil"
     ],
     "seq_durations": {
-      "idle": 0.033,
-      "shoot1": 0.4,
-      "shoot2": 0.4,
-      "shoot3": 0.4,
-      "shootlast": 0.4,
-      "reload": 2.267,
       "draw": 1.0,
-      "inspect": 6.467
+      "idle": 1.0,
+      "idle_empty": 1.0,
+      "shoot1": 0.3999,
+      "shootlast": 0.3999,
+      "reload": 2.2667,
+      "reload_empty": 2.2667,
+      "inspect": 6.4333,
+      "shoot": 0.3999,
+      "shoot2": 0.3999,
+      "shoot3": 0.3999,
+      "shoot_empty": 0.3999,
+      "fire": 0.3999,
+      "draw_unsil": 1.0,
+      "idle_unsil": 1.0,
+      "reload_unsil": 2.2667,
+      "inspect_unsil": 6.4333,
+      "shoot1_unsil": 0.3999,
+      "shoot2_unsil": 0.3999,
+      "shoot3_unsil": 0.3999,
+      "shootlast_unsil": 0.3999
     },
     "seq_events": {
-      "reload": [
-        {
-          "t": 0.4,
-          "wav": "weapons/archi/cs2_p2000/clipout.wav"
-        },
-        {
-          "t": 0.833,
-          "wav": "weapons/archi/cs2_p2000/clipin.wav"
-        },
-        {
-          "t": 1.467,
-          "wav": "weapons/archi/cs2_p2000/slideback.wav"
-        },
-        {
-          "t": 1.667,
-          "wav": "weapons/archi/cs2_p2000/sliderelease.wav"
-        }
-      ],
       "draw": [
         {
           "t": 0.0,
           "wav": "weapons/archi/cs2_p2000/draw.wav"
+        }
+      ],
+      "reload": [
+        {
+          "t": 0.366672,
+          "wav": "weapons/archi/cs2_p2000/clipout.wav"
         },
         {
-          "t": 0.267,
+          "t": 0.833346,
+          "wav": "weapons/archi/cs2_p2000/clipin.wav"
+        },
+        {
+          "t": 1.433354,
           "wav": "weapons/archi/cs2_p2000/slideback.wav"
         },
         {
-          "t": 0.467,
+          "t": 1.633357,
           "wav": "weapons/archi/cs2_p2000/sliderelease.wav"
         }
-      ]
+      ],
+      "reload_empty": [
+        {
+          "t": 0.43334,
+          "wav": "weapons/archi/cs2_p2000/clipout.wav"
+        },
+        {
+          "t": 1.13335,
+          "wav": "weapons/archi/cs2_p2000/clipin.wav"
+        },
+        {
+          "t": 1.600024,
+          "wav": "weapons/archi/cs2_p2000/sliderelease.wav"
+        }
+      ],
+      "shoot": [],
+      "shoot2": [],
+      "shoot3": [],
+      "shoot_empty": [],
+      "fire": [],
+      "draw_unsil": [
+        {
+          "t": 0.0,
+          "wav": "weapons/archi/cs2_p2000/draw.wav"
+        }
+      ],
+      "idle_unsil": [],
+      "reload_unsil": [
+        {
+          "t": 0.366672,
+          "wav": "weapons/archi/cs2_p2000/clipout.wav"
+        },
+        {
+          "t": 0.833346,
+          "wav": "weapons/archi/cs2_p2000/clipin.wav"
+        },
+        {
+          "t": 1.433354,
+          "wav": "weapons/archi/cs2_p2000/slideback.wav"
+        },
+        {
+          "t": 1.633357,
+          "wav": "weapons/archi/cs2_p2000/sliderelease.wav"
+        }
+      ],
+      "inspect_unsil": [],
+      "shoot1_unsil": [],
+      "shoot2_unsil": [],
+      "shoot3_unsil": [],
+      "shootlast_unsil": []
     },
     "bones": 55,
     "offset": [
@@ -8059,14 +9981,14 @@
     ],
     "vertices": 23760,
     "muzzle": [
-      -0.0875,
-      -0.0532,
-      -0.6037
+      0.13462,
+      -0.081341,
+      -0.5414874
     ],
     "eject": [
-      -0.1008,
-      -0.0424,
-      -0.4863
+      0.1454302,
+      -0.0725627,
+      -0.4460646
     ],
     "world": {
       "source_model": "w_pist_hkp2000",
@@ -8079,102 +10001,92 @@
         "residual_m": 0.00704,
         "deg_from_seed": 1.69
       }
-    }
+    },
+    "gameplay_seq_durations": {
+      "idle": 0.033,
+      "shoot1": 0.4,
+      "shoot2": 0.4,
+      "shoot3": 0.4,
+      "shootlast": 0.4,
+      "reload": 2.267,
+      "draw": 1.0,
+      "inspect": 6.467
+    },
+    "native_cs2_animation": true,
+    "native_gun_animations": true,
+    "authored_right_hand": true,
+    "inspect_clips": [
+      "inspect"
+    ],
+    "animation_source": "ScCsgoKnives native per-weapon clips, original geometry and anatomical arm retarget"
   },
   "weapons/v_cz75": {
     "sequences": [
+      "draw",
+      "draw_2",
       "idle",
+      "idle_empty",
       "shoot1",
       "shootlast",
       "reload",
-      "draw",
+      "reload_empty",
       "inspect",
-      "reload2",
-      "draw2"
+      "reloadFollowup",
+      "reloadFollowupEmpty",
+      "shoot",
+      "shoot2",
+      "shoot3",
+      "shoot_empty",
+      "fire",
+      "draw_unsil",
+      "idle_unsil",
+      "reload_unsil",
+      "inspect_unsil",
+      "shoot1_unsil",
+      "shoot2_unsil",
+      "shoot3_unsil",
+      "shootlast_unsil"
     ],
     "seq_durations": {
-      "idle": 0.033,
-      "shoot1": 0.4,
-      "shootlast": 0.4,
-      "reload": 2.767,
-      "draw": 1.867,
-      "inspect": 6.433,
-      "reload2": 2.833,
-      "draw2": 1.867
+      "draw": 1.8332,
+      "draw_2": 1.8332,
+      "idle": 1.0,
+      "idle_empty": 1.0,
+      "shoot1": 0.3999,
+      "shootlast": 0.3999,
+      "reload": 2.7332,
+      "reload_empty": 2.7332,
+      "inspect": 6.4333,
+      "reloadFollowup": 2.7332,
+      "reloadFollowupEmpty": 2.7332,
+      "shoot": 0.3999,
+      "shoot2": 0.3999,
+      "shoot3": 0.3999,
+      "shoot_empty": 0.3999,
+      "fire": 0.3999,
+      "draw_unsil": 1.8332,
+      "idle_unsil": 1.0,
+      "reload_unsil": 2.7332,
+      "inspect_unsil": 6.4333,
+      "shoot1_unsil": 0.3999,
+      "shoot2_unsil": 0.3999,
+      "shoot3_unsil": 0.3999,
+      "shootlast_unsil": 0.3999
     },
     "seq_events": {
-      "reload": [
-        {
-          "t": 0.3,
-          "wav": "weapons/archi/cs2_p250/clipout.wav"
-        },
-        {
-          "t": 0.767,
-          "wav": "weapons/archi/cs2_deagle/clipout.wav"
-        },
-        {
-          "t": 1.533,
-          "wav": "weapons/cs2/cz75a/cz75_clipin_01.wav"
-        },
-        {
-          "t": 2.133,
-          "wav": "weapons/archi/cs2_p250/slideback.wav"
-        },
-        {
-          "t": 2.267,
-          "wav": "weapons/archi/cs2_p250/sliderelease.wav"
-        }
-      ],
-      "draw": [
-        {
-          "t": 0.033,
-          "wav": "weapons/archi/cs2_p250/draw.wav"
-        },
-        {
-          "t": 0.667,
-          "wav": "weapons/cs2/cz75a/cz75_clipin_01.wav"
-        },
-        {
-          "t": 1.0,
-          "wav": "weapons/archi/cs2_p250/slideback.wav"
-        },
-        {
-          "t": 1.2,
-          "wav": "weapons/archi/cs2_p250/sliderelease.wav"
-        }
-      ],
-      "reload2": [
-        {
-          "t": 0.467,
-          "wav": "weapons/archi/cs2_p250/clipout.wav"
-        },
-        {
-          "t": 1.067,
-          "wav": "weapons/cs2/cz75a/cz75_clipin_01.wav"
-        },
-        {
-          "t": 1.8,
-          "wav": "weapons/archi/cs2_p250/slideback.wav"
-        },
-        {
-          "t": 2.067,
-          "wav": "weapons/archi/cs2_p250/sliderelease.wav"
-        }
-      ],
-      "draw2": [
-        {
-          "t": 0.033,
-          "wav": "weapons/archi/cs2_p250/draw.wav"
-        },
-        {
-          "t": 0.833,
-          "wav": "weapons/archi/cs2_p250/slideback.wav"
-        },
-        {
-          "t": 1.033,
-          "wav": "weapons/archi/cs2_p250/sliderelease.wav"
-        }
-      ]
+      "shoot": [],
+      "shoot2": [],
+      "shoot3": [],
+      "shoot_empty": [],
+      "fire": [],
+      "draw_unsil": [],
+      "idle_unsil": [],
+      "reload_unsil": [],
+      "inspect_unsil": [],
+      "shoot1_unsil": [],
+      "shoot2_unsil": [],
+      "shoot3_unsil": [],
+      "shootlast_unsil": []
     },
     "bones": 67,
     "offset": [
@@ -8191,14 +10103,14 @@
     ],
     "vertices": 28485,
     "muzzle": [
-      -0.0876,
-      -0.0549,
-      -0.6727
+      0.1347013,
+      -0.0827227,
+      -0.5975706
     ],
     "eject": [
-      -0.0905,
-      -0.0451,
-      -0.4806
+      0.1370584,
+      -0.0747573,
+      -0.4414317
     ],
     "world": {
       "source_model": "w_pist_cz_75",
@@ -8211,67 +10123,106 @@
         "residual_m": 0.02595,
         "deg_from_seed": 97.91
       }
-    }
+    },
+    "gameplay_seq_durations": {
+      "idle": 0.033,
+      "shoot1": 0.4,
+      "shootlast": 0.4,
+      "reload": 2.767,
+      "draw": 1.867,
+      "inspect": 6.433,
+      "reload2": 2.833,
+      "draw2": 1.867
+    },
+    "native_cs2_animation": true,
+    "native_gun_animations": true,
+    "authored_right_hand": true,
+    "inspect_clips": [
+      "inspect"
+    ],
+    "animation_source": "ScCsgoKnives native per-weapon clips, original geometry and anatomical arm retarget"
   },
   "weapons/v_revolver": {
     "sequences": [
-      "idle",
       "draw",
-      "draw_alt",
-      "prepare",
-      "fire",
+      "draw_2",
+      "idle",
       "shoot1",
-      "dryfire",
+      "reload",
+      "inspect",
+      "prepare",
       "alt1",
+      "dryfire",
+      "shoot",
+      "shoot2",
+      "shoot3",
+      "fire",
       "alt2",
       "alt3",
-      "inspect",
-      "reload"
+      "draw_unsil",
+      "idle_unsil",
+      "reload_unsil",
+      "inspect_unsil",
+      "shoot1_unsil",
+      "shoot2_unsil",
+      "shoot3_unsil"
     ],
     "seq_durations": {
+      "draw": 1.1666,
+      "draw_2": 1.1666,
       "idle": 7.5,
-      "draw": 1.167,
-      "draw_alt": 1.167,
-      "prepare": 0.967,
-      "fire": 0.7,
       "shoot1": 0.7,
-      "dryfire": 0.3,
+      "reload": 2.2667,
+      "inspect": 5.8332,
+      "prepare": 0.9666,
       "alt1": 1.0,
+      "dryfire": 0.2999,
+      "shoot": 0.7,
+      "shoot2": 0.7,
+      "shoot3": 0.7,
+      "fire": 0.7,
       "alt2": 1.0,
       "alt3": 1.0,
-      "inspect": 5.833,
-      "reload": 2.267
+      "draw_unsil": 1.1666,
+      "idle_unsil": 7.5,
+      "reload_unsil": 2.2667,
+      "inspect_unsil": 5.8332,
+      "shoot1_unsil": 0.7,
+      "shoot2_unsil": 0.7,
+      "shoot3_unsil": 0.7
     },
     "seq_events": {
       "draw": [
         {
-          "t": 0.1,
+          "t": 0.100003,
           "wav": "weapons/archi/cs2_revolver/draw.wav"
-        },
+        }
+      ],
+      "draw_2": [
         {
-          "t": 0.433,
+          "t": 0.133337,
+          "wav": "weapons/archi/cs2_revolver/draw.wav"
+        }
+      ],
+      "reload": [
+        {
+          "t": 0.100001,
           "wav": "weapons/archi/cs2_revolver/siderelease.wav"
         },
         {
-          "t": 0.733,
+          "t": 0.633343,
+          "wav": "weapons/archi/cs2_revolver/siderelease.wav"
+        },
+        {
+          "t": 0.70001,
+          "wav": "weapons/archi/cs2_revolver/clipout.wav"
+        },
+        {
+          "t": 1.200018,
           "wav": "weapons/archi/cs2_revolver/clipin.wav"
         },
         {
-          "t": 0.9,
-          "wav": "weapons/archi/cs2_revolver/sideback.wav"
-        }
-      ],
-      "draw_alt": [
-        {
-          "t": 0.133,
-          "wav": "weapons/archi/cs2_revolver/draw.wav"
-        },
-        {
-          "t": 0.667,
-          "wav": "weapons/archi/cs2_revolver/clipin.wav"
-        },
-        {
-          "t": 0.733,
+          "t": 1.966696,
           "wav": "weapons/archi/cs2_revolver/sideback.wav"
         }
       ],
@@ -8283,32 +10234,49 @@
       ],
       "dryfire": [
         {
-          "t": 0.033,
+          "t": 0.033333,
           "wav": "weapons/archi/cs2_revolver/sideback.wav"
         }
       ],
-      "reload": [
+      "shoot": [],
+      "shoot2": [],
+      "shoot3": [],
+      "fire": [],
+      "alt2": [],
+      "alt3": [],
+      "draw_unsil": [
         {
-          "t": 0.1,
+          "t": 0.100003,
+          "wav": "weapons/archi/cs2_revolver/draw.wav"
+        }
+      ],
+      "idle_unsil": [],
+      "reload_unsil": [
+        {
+          "t": 0.100001,
           "wav": "weapons/archi/cs2_revolver/siderelease.wav"
         },
         {
-          "t": 0.433,
+          "t": 0.633343,
           "wav": "weapons/archi/cs2_revolver/siderelease.wav"
         },
         {
-          "t": 0.5,
+          "t": 0.70001,
           "wav": "weapons/archi/cs2_revolver/clipout.wav"
         },
         {
-          "t": 1.067,
+          "t": 1.200018,
           "wav": "weapons/archi/cs2_revolver/clipin.wav"
         },
         {
-          "t": 1.567,
+          "t": 1.966696,
           "wav": "weapons/archi/cs2_revolver/sideback.wav"
         }
-      ]
+      ],
+      "inspect_unsil": [],
+      "shoot1_unsil": [],
+      "shoot2_unsil": [],
+      "shoot3_unsil": []
     },
     "bones": 60,
     "offset": [
@@ -8325,9 +10293,9 @@
     ],
     "vertices": 29385,
     "muzzle": [
-      -0.1115,
-      -0.0227,
-      -0.6868
+      0.1541272,
+      -0.0565506,
+      -0.609031
     ],
     "world": {
       "source_model": "w_pist_revolver",
@@ -8340,60 +10308,132 @@
         "residual_m": 0.01147,
         "deg_from_seed": 112.11
       }
-    }
+    },
+    "gameplay_seq_durations": {
+      "idle": 7.5,
+      "draw": 1.167,
+      "draw_alt": 1.167,
+      "prepare": 0.967,
+      "fire": 0.7,
+      "shoot1": 0.7,
+      "dryfire": 0.3,
+      "alt1": 1.0,
+      "alt2": 1.0,
+      "alt3": 1.0,
+      "inspect": 5.833,
+      "reload": 2.267
+    },
+    "native_cs2_animation": true,
+    "native_gun_animations": true,
+    "authored_right_hand": true,
+    "inspect_clips": [
+      "inspect"
+    ],
+    "animation_source": "ScCsgoKnives native per-weapon clips, original geometry and anatomical arm retarget"
   },
   "weapons/v_tec9": {
     "sequences": [
+      "draw",
       "idle",
       "shoot1",
-      "shoot2",
       "shootlast",
       "reload",
-      "draw",
-      "inspect"
+      "inspect",
+      "shoot",
+      "shoot2",
+      "shoot3",
+      "shoot_empty",
+      "fire",
+      "draw_unsil",
+      "idle_unsil",
+      "reload_unsil",
+      "inspect_unsil",
+      "shoot1_unsil",
+      "shoot2_unsil",
+      "shoot3_unsil",
+      "shootlast_unsil"
     ],
     "seq_durations": {
-      "idle": 0.033,
-      "shoot1": 0.4,
-      "shoot2": 0.4,
-      "shootlast": 0.4,
-      "reload": 2.567,
       "draw": 1.0,
-      "inspect": 4.867
+      "idle": 1.0,
+      "shoot1": 0.3999,
+      "shootlast": 0.3999,
+      "reload": 2.5666,
+      "inspect": 4.8333,
+      "shoot": 0.3999,
+      "shoot2": 0.3999,
+      "shoot3": 0.3999,
+      "shoot_empty": 0.3999,
+      "fire": 0.3999,
+      "draw_unsil": 1.0,
+      "idle_unsil": 1.0,
+      "reload_unsil": 2.5666,
+      "inspect_unsil": 4.8333,
+      "shoot1_unsil": 0.3999,
+      "shoot2_unsil": 0.3999,
+      "shoot3_unsil": 0.3999,
+      "shootlast_unsil": 0.3999
     },
     "seq_events": {
-      "reload": [
-        {
-          "t": 0.333,
-          "wav": "weapons/cs2/tec9/tec9_clipout.wav"
-        },
-        {
-          "t": 1.167,
-          "wav": "weapons/cs2/tec9/tec9_clipin.wav"
-        },
-        {
-          "t": 1.8,
-          "wav": "weapons/cs2/tec9/tec9_boltpull.wav"
-        },
-        {
-          "t": 2.033,
-          "wav": "weapons/cs2/tec9/tec9_boltrelease.wav"
-        }
-      ],
       "draw": [
         {
           "t": 0.0,
-          "wav": "weapons/cs2/tec9/tec9_draw.wav"
-        },
-        {
-          "t": 0.333,
-          "wav": "weapons/cs2/tec9/tec9_boltpull.wav"
-        },
-        {
-          "t": 0.533,
-          "wav": "weapons/cs2/tec9/tec9_boltrelease.wav"
+          "wav": "weapons/archi/cs2_mac10/draw.wav"
         }
-      ]
+      ],
+      "reload": [
+        {
+          "t": 0.466673,
+          "wav": "weapons/archi/cs2_mac10/clipout.wav"
+        },
+        {
+          "t": 1.300017,
+          "wav": "weapons/archi/cs2_mac10/clipin.wav"
+        },
+        {
+          "t": 1.866691,
+          "wav": "weapons/archi/cs2_mac10/boltback.wav"
+        },
+        {
+          "t": 2.000026,
+          "wav": "weapons/archi/cs2_mac10/boltforward.wav"
+        }
+      ],
+      "shoot": [],
+      "shoot2": [],
+      "shoot3": [],
+      "shoot_empty": [],
+      "fire": [],
+      "draw_unsil": [
+        {
+          "t": 0.0,
+          "wav": "weapons/archi/cs2_mac10/draw.wav"
+        }
+      ],
+      "idle_unsil": [],
+      "reload_unsil": [
+        {
+          "t": 0.466673,
+          "wav": "weapons/archi/cs2_mac10/clipout.wav"
+        },
+        {
+          "t": 1.300017,
+          "wav": "weapons/archi/cs2_mac10/clipin.wav"
+        },
+        {
+          "t": 1.866691,
+          "wav": "weapons/archi/cs2_mac10/boltback.wav"
+        },
+        {
+          "t": 2.000026,
+          "wav": "weapons/archi/cs2_mac10/boltforward.wav"
+        }
+      ],
+      "inspect_unsil": [],
+      "shoot1_unsil": [],
+      "shoot2_unsil": [],
+      "shoot3_unsil": [],
+      "shootlast_unsil": []
     },
     "bones": 61,
     "offset": [
@@ -8410,14 +10450,14 @@
     ],
     "vertices": 27984,
     "muzzle": [
-      -0.1598,
-      -0.1152,
-      -0.8102
+      0.1933854,
+      -0.1317346,
+      -0.7093306
     ],
     "eject": [
-      -0.1824,
-      -0.1024,
-      -0.5817
+      0.2117547,
+      -0.1213307,
+      -0.5236058
     ],
     "world": {
       "source_model": "w_pist_tec9",
@@ -8430,64 +10470,127 @@
         "residual_m": 0.01583,
         "deg_from_seed": 56.94
       }
-    }
+    },
+    "gameplay_seq_durations": {
+      "idle": 0.033,
+      "shoot1": 0.4,
+      "shoot2": 0.4,
+      "shootlast": 0.4,
+      "reload": 2.567,
+      "draw": 1.0,
+      "inspect": 4.867
+    },
+    "native_cs2_animation": true,
+    "native_gun_animations": true,
+    "authored_right_hand": true,
+    "inspect_clips": [
+      "inspect"
+    ],
+    "animation_source": "ScCsgoKnives native per-weapon clips, original geometry and anatomical arm retarget"
   },
   "weapons/v_famas": {
     "sequences": [
-      "idle",
-      "reload",
       "draw",
+      "idle",
       "shoot1",
+      "reload",
+      "inspect",
+      "shoot",
       "shoot2",
       "shoot3",
-      "inspect"
+      "fire",
+      "draw_unsil",
+      "idle_unsil",
+      "reload_unsil",
+      "inspect_unsil",
+      "shoot1_unsil",
+      "shoot2_unsil",
+      "shoot3_unsil"
     ],
     "seq_durations": {
-      "idle": 0.033,
-      "reload": 3.3,
       "draw": 1.0,
-      "shoot1": 0.9,
-      "shoot2": 0.9,
-      "shoot3": 0.9,
-      "inspect": 4.367
+      "idle": 1.0,
+      "shoot1": 0.8667,
+      "reload": 3.3,
+      "inspect": 4.3332,
+      "shoot": 0.8667,
+      "shoot2": 0.8667,
+      "shoot3": 0.8667,
+      "fire": 0.8667,
+      "draw_unsil": 1.0,
+      "idle_unsil": 1.0,
+      "reload_unsil": 3.3,
+      "inspect_unsil": 4.3332,
+      "shoot1_unsil": 0.8667,
+      "shoot2_unsil": 0.8667,
+      "shoot3_unsil": 0.8667
     },
     "seq_events": {
-      "reload": [
-        {
-          "t": 0.633,
-          "wav": "weapons/archi/cs2_famas/clipout.wav"
-        },
-        {
-          "t": 1.533,
-          "wav": "weapons/archi/cs2_famas/clipin.wav"
-        },
-        {
-          "t": 2.1,
-          "wav": "weapons/archi/cs2_famas/cliphit.wav"
-        },
-        {
-          "t": 2.733,
-          "wav": "weapons/archi/cs2_famas/boltback.wav"
-        },
-        {
-          "t": 2.933,
-          "wav": "weapons/archi/cs2_famas/boltforward.wav"
-        }
-      ],
       "draw": [
         {
           "t": 0.0,
           "wav": "weapons/archi/cs2_famas/draw.wav"
+        }
+      ],
+      "reload": [
+        {
+          "t": 0.6,
+          "wav": "weapons/archi/cs2_famas/clipout.wav"
         },
         {
-          "t": 0.3,
+          "t": 1.566667,
+          "wav": "weapons/archi/cs2_famas/clipin.wav"
+        },
+        {
+          "t": 2.133333,
+          "wav": "weapons/archi/cs2_famas/cliphit.wav"
+        },
+        {
+          "t": 2.6,
           "wav": "weapons/archi/cs2_famas/boltback.wav"
         },
         {
-          "t": 0.4,
+          "t": 2.666667,
           "wav": "weapons/archi/cs2_famas/boltforward.wav"
         }
-      ]
+      ],
+      "shoot": [],
+      "shoot2": [],
+      "shoot3": [],
+      "fire": [],
+      "draw_unsil": [
+        {
+          "t": 0.0,
+          "wav": "weapons/archi/cs2_famas/draw.wav"
+        }
+      ],
+      "idle_unsil": [],
+      "reload_unsil": [
+        {
+          "t": 0.6,
+          "wav": "weapons/archi/cs2_famas/clipout.wav"
+        },
+        {
+          "t": 1.566667,
+          "wav": "weapons/archi/cs2_famas/clipin.wav"
+        },
+        {
+          "t": 2.133333,
+          "wav": "weapons/archi/cs2_famas/cliphit.wav"
+        },
+        {
+          "t": 2.6,
+          "wav": "weapons/archi/cs2_famas/boltback.wav"
+        },
+        {
+          "t": 2.666667,
+          "wav": "weapons/archi/cs2_famas/boltforward.wav"
+        }
+      ],
+      "inspect_unsil": [],
+      "shoot1_unsil": [],
+      "shoot2_unsil": [],
+      "shoot3_unsil": []
     },
     "bones": 67,
     "offset": [
@@ -8504,14 +10607,14 @@
     ],
     "vertices": 35927,
     "muzzle": [
-      -0.1881,
-      -0.1493,
-      -1.0769
+      0.2163877,
+      -0.159451,
+      -0.9261043
     ],
     "eject": [
-      -0.2085,
-      -0.1394,
-      -0.315
+      0.2329688,
+      -0.1514043,
+      -0.306832
     ],
     "world": {
       "source_model": "w_rif_famas",
@@ -8524,60 +10627,119 @@
         "residual_m": 0.02867,
         "deg_from_seed": 85.76
       }
-    }
+    },
+    "gameplay_seq_durations": {
+      "idle": 0.033,
+      "reload": 3.3,
+      "draw": 1.0,
+      "shoot1": 0.9,
+      "shoot2": 0.9,
+      "shoot3": 0.9,
+      "inspect": 4.367
+    },
+    "native_cs2_animation": true,
+    "native_gun_animations": true,
+    "authored_right_hand": true,
+    "inspect_clips": [
+      "inspect"
+    ],
+    "animation_source": "ScCsgoKnives native per-weapon clips, original geometry and anatomical arm retarget"
   },
   "weapons/v_galil": {
     "sequences": [
-      "idle",
-      "reload",
       "draw",
+      "idle",
       "shoot1",
+      "reload",
+      "inspect",
+      "shoot",
       "shoot2",
       "shoot3",
-      "inspect"
+      "fire",
+      "draw_unsil",
+      "idle_unsil",
+      "reload_unsil",
+      "inspect_unsil",
+      "shoot1_unsil",
+      "shoot2_unsil",
+      "shoot3_unsil"
     ],
     "seq_durations": {
-      "idle": 0.033,
-      "reload": 3.033,
       "draw": 1.1,
-      "shoot1": 0.8,
-      "shoot2": 0.8,
-      "shoot3": 0.8,
-      "inspect": 4.567
+      "idle": 1.0,
+      "shoot1": 0.7999,
+      "reload": 3.0332,
+      "inspect": 4.5667,
+      "shoot": 0.7999,
+      "shoot2": 0.7999,
+      "shoot3": 0.7999,
+      "fire": 0.7999,
+      "draw_unsil": 1.1,
+      "idle_unsil": 1.0,
+      "reload_unsil": 3.0332,
+      "inspect_unsil": 4.5667,
+      "shoot1_unsil": 0.7999,
+      "shoot2_unsil": 0.7999,
+      "shoot3_unsil": 0.7999
     },
     "seq_events": {
-      "reload": [
-        {
-          "t": 0.433,
-          "wav": "weapons/archi/cs2_galilar/clipout.wav"
-        },
-        {
-          "t": 1.067,
-          "wav": "weapons/archi/cs2_galilar/clipin.wav"
-        },
-        {
-          "t": 1.833,
-          "wav": "weapons/archi/cs2_galilar/boltback.wav"
-        },
-        {
-          "t": 2.067,
-          "wav": "weapons/archi/cs2_galilar/boltforward.wav"
-        }
-      ],
       "draw": [
         {
           "t": 0.0,
           "wav": "weapons/archi/cs2_galilar/draw.wav"
+        }
+      ],
+      "reload": [
+        {
+          "t": 0.466662,
+          "wav": "weapons/archi/cs2_galilar/clipout.wav"
         },
         {
-          "t": 0.3,
+          "t": 1.166654,
+          "wav": "weapons/archi/cs2_galilar/clipin.wav"
+        },
+        {
+          "t": 1.866646,
           "wav": "weapons/archi/cs2_galilar/boltback.wav"
         },
         {
-          "t": 0.4,
+          "t": 2.066644,
           "wav": "weapons/archi/cs2_galilar/boltforward.wav"
         }
-      ]
+      ],
+      "shoot": [],
+      "shoot2": [],
+      "shoot3": [],
+      "fire": [],
+      "draw_unsil": [
+        {
+          "t": 0.0,
+          "wav": "weapons/archi/cs2_galilar/draw.wav"
+        }
+      ],
+      "idle_unsil": [],
+      "reload_unsil": [
+        {
+          "t": 0.466662,
+          "wav": "weapons/archi/cs2_galilar/clipout.wav"
+        },
+        {
+          "t": 1.166654,
+          "wav": "weapons/archi/cs2_galilar/clipin.wav"
+        },
+        {
+          "t": 1.866646,
+          "wav": "weapons/archi/cs2_galilar/boltback.wav"
+        },
+        {
+          "t": 2.066644,
+          "wav": "weapons/archi/cs2_galilar/boltforward.wav"
+        }
+      ],
+      "inspect_unsil": [],
+      "shoot1_unsil": [],
+      "shoot2_unsil": [],
+      "shoot3_unsil": []
     },
     "bones": 76,
     "offset": [
@@ -8594,14 +10756,14 @@
     ],
     "vertices": 45242,
     "muzzle": [
-      -0.1666,
-      -0.1169,
-      -1.0759
+      0.1989125,
+      -0.1331163,
+      -0.9252915
     ],
     "eject": [
-      -0.1806,
-      -0.0898,
-      -0.5507
+      0.2102917,
+      -0.1110894,
+      -0.498409
     ],
     "world": {
       "source_model": "w_rif_galilar",
@@ -8614,56 +10776,111 @@
         "residual_m": 0.01587,
         "deg_from_seed": 86.53
       }
-    }
+    },
+    "gameplay_seq_durations": {
+      "idle": 0.033,
+      "reload": 3.033,
+      "draw": 1.1,
+      "shoot1": 0.8,
+      "shoot2": 0.8,
+      "shoot3": 0.8,
+      "inspect": 4.567
+    },
+    "native_cs2_animation": true,
+    "native_gun_animations": true,
+    "authored_right_hand": true,
+    "inspect_clips": [
+      "inspect"
+    ],
+    "animation_source": "ScCsgoKnives native per-weapon clips, original geometry and anatomical arm retarget"
   },
   "weapons/v_m4a4": {
     "sequences": [
+      "draw",
       "idle",
       "shoot1",
+      "reload",
+      "inspect",
+      "shoot",
       "shoot2",
       "shoot3",
-      "reload",
-      "draw",
-      "inspect"
+      "fire",
+      "draw_unsil",
+      "idle_unsil",
+      "reload_unsil",
+      "inspect_unsil",
+      "shoot1_unsil",
+      "shoot2_unsil",
+      "shoot3_unsil"
     ],
     "seq_durations": {
-      "idle": 0.033,
-      "shoot1": 0.4,
-      "shoot2": 0.4,
-      "shoot3": 0.4,
-      "reload": 3.067,
-      "draw": 1.1,
-      "inspect": 5.333
+      "draw": 1.1332,
+      "idle": 1.0,
+      "shoot1": 0.3999,
+      "reload": 3.0667,
+      "inspect": 5.2999,
+      "shoot": 0.3999,
+      "shoot2": 0.3999,
+      "shoot3": 0.3999,
+      "fire": 0.3999,
+      "draw_unsil": 1.1332,
+      "idle_unsil": 1.0,
+      "reload_unsil": 3.0667,
+      "inspect_unsil": 5.2999,
+      "shoot1_unsil": 0.3999,
+      "shoot2_unsil": 0.3999,
+      "shoot3_unsil": 0.3999
     },
     "seq_events": {
-      "reload": [
-        {
-          "t": 0.367,
-          "wav": "weapons/cs2/m4a1/m4a1_clipout.wav"
-        },
-        {
-          "t": 1.167,
-          "wav": "weapons/cs2/m4a1/m4a1_clipin.wav"
-        },
-        {
-          "t": 1.9,
-          "wav": "weapons/cs2/m4a1/m4a1_cliphit.wav"
-        }
-      ],
       "draw": [
         {
           "t": 0.0,
-          "wav": "weapons/cs2/m4a1/m4a1_draw.wav"
-        },
-        {
-          "t": 0.333,
-          "wav": "weapons/cs2/m4a1/m4a1_boltforward.wav"
-        },
-        {
-          "t": 0.567,
-          "wav": "weapons/cs2/m4a1/m4a1_boltback.wav"
+          "wav": "weapons/archi/cs2_m4a1s/draw.wav"
         }
-      ]
+      ],
+      "reload": [
+        {
+          "t": 0.433338,
+          "wav": "weapons/archi/cs2_m4a1s/clipout.wav"
+        },
+        {
+          "t": 1.166679,
+          "wav": "weapons/archi/cs2_m4a1s/clipin.wav"
+        },
+        {
+          "t": 2.000022,
+          "wav": "weapons/archi/cs2_m4a1s/cliphit.wav"
+        }
+      ],
+      "shoot": [],
+      "shoot2": [],
+      "shoot3": [],
+      "fire": [],
+      "draw_unsil": [
+        {
+          "t": 0.0,
+          "wav": "weapons/archi/cs2_m4a1s/draw.wav"
+        }
+      ],
+      "idle_unsil": [],
+      "reload_unsil": [
+        {
+          "t": 0.433338,
+          "wav": "weapons/archi/cs2_m4a1s/clipout.wav"
+        },
+        {
+          "t": 1.166679,
+          "wav": "weapons/archi/cs2_m4a1s/clipin.wav"
+        },
+        {
+          "t": 2.000022,
+          "wav": "weapons/archi/cs2_m4a1s/cliphit.wav"
+        }
+      ],
+      "inspect_unsil": [],
+      "shoot1_unsil": [],
+      "shoot2_unsil": [],
+      "shoot3_unsil": []
     },
     "bones": 75,
     "offset": [
@@ -8680,14 +10897,14 @@
     ],
     "vertices": 48844,
     "muzzle": [
-      -0.1553,
-      -0.1155,
-      -1.0505
+      0.1897278,
+      -0.1319784,
+      -0.9046464
     ],
     "eject": [
-      -0.1872,
-      -0.1005,
-      -0.5301
+      0.2156562,
+      -0.1197864,
+      -0.4816653
     ],
     "world": {
       "source_model": "w_rif_m4a1",
@@ -8700,78 +10917,206 @@
         "residual_m": 0.01149,
         "deg_from_seed": 0.31
       }
-    }
+    },
+    "gameplay_seq_durations": {
+      "idle": 0.033,
+      "shoot1": 0.4,
+      "shoot2": 0.4,
+      "shoot3": 0.4,
+      "reload": 3.067,
+      "draw": 1.1,
+      "inspect": 5.333
+    },
+    "native_cs2_animation": true,
+    "native_gun_animations": true,
+    "authored_right_hand": true,
+    "inspect_clips": [
+      "inspect"
+    ],
+    "animation_source": "ScCsgoKnives native per-weapon clips, original geometry and anatomical arm retarget"
   },
   "weapons/v_mag7": {
     "sequences": [
+      "draw",
       "idle",
       "shoot1",
-      "shoot2",
-      "draw",
       "reload",
       "inspect",
-      "lookat01_inventory"
+      "shoot",
+      "shoot2",
+      "shoot3",
+      "fire",
+      "draw_unsil",
+      "idle_unsil",
+      "reload_unsil",
+      "inspect_unsil",
+      "shoot1_unsil",
+      "shoot2_unsil",
+      "shoot3_unsil"
     ],
     "seq_durations": {
+      "draw": 1.0,
       "idle": 1.0,
-      "shoot1": 1.233,
-      "shoot2": 1.233,
-      "draw": 1.2,
-      "reload": 2.5,
-      "inspect": 4.233,
-      "lookat01_inventory": 1.0
+      "shoot1": 1.1999,
+      "reload": 2.4666,
+      "inspect": 4.2332,
+      "shoot": 1.1999,
+      "shoot2": 1.1999,
+      "shoot3": 1.1999,
+      "fire": 1.1999,
+      "draw_unsil": 1.0,
+      "idle_unsil": 1.0,
+      "reload_unsil": 2.4666,
+      "inspect_unsil": 4.2332,
+      "shoot1_unsil": 1.1999,
+      "shoot2_unsil": 1.1999,
+      "shoot3_unsil": 1.1999
     },
     "seq_events": {
-      "shoot1": [
-        {
-          "t": 0.033,
-          "wav": "weapons/cs2/mag7/mag7_pump_back.wav"
-        },
-        {
-          "t": 0.2,
-          "wav": "weapons/cs2/mag7/mag7_pump_forward.wav"
-        }
-      ],
-      "shoot2": [
-        {
-          "t": 0.033,
-          "wav": "weapons/cs2/mag7/mag7_pump_back.wav"
-        },
-        {
-          "t": 0.2,
-          "wav": "weapons/cs2/mag7/mag7_pump_forward.wav"
-        }
-      ],
       "draw": [
         {
           "t": 0.0,
-          "wav": "weapons/cs2/mag7/mag7_draw.wav"
+          "wav": "weapons/archi/cs2_ump45/draw.wav"
+        },
+        {
+          "t": 0.5,
+          "wav": "weapons/archi/cs2_nova/pump.wav"
+        },
+        {
+          "t": 0.6,
+          "wav": "weapons/archi/cs2_nova/pump.wav"
+        }
+      ],
+      "shoot1": [
+        {
+          "t": 0.133333,
+          "wav": "weapons/archi/cs2_ump45/boltback.wav"
         },
         {
           "t": 0.4,
-          "wav": "weapons/cs2/mag7/mag7_pump_back.wav"
-        },
-        {
-          "t": 0.52,
-          "wav": "weapons/cs2/mag7/mag7_pump_forward.wav"
+          "wav": "weapons/archi/cs2_ump45/boltforward.wav"
         }
       ],
       "reload": [
         {
-          "t": 0.233,
-          "wav": "weapons/cs2/mag7/mag7_clipout.wav"
+          "t": 0.300004,
+          "wav": "weapons/archi/cs2_ump45/clipout.wav"
         },
         {
-          "t": 0.867,
-          "wav": "weapons/cs2/mag7/mag7_clipin.wav"
+          "t": 0.96668,
+          "wav": "weapons/archi/cs2_ump45/clipin.wav"
         },
         {
-          "t": 1.767,
-          "wav": "weapons/cs2/mag7/mag7_pump_back.wav"
+          "t": 1.666689,
+          "wav": "weapons/archi/cs2_ump45/boltback.wav"
         },
         {
-          "t": 1.967,
-          "wav": "weapons/cs2/mag7/mag7_pump_forward.wav"
+          "t": 1.900026,
+          "wav": "weapons/archi/cs2_ump45/boltforward.wav"
+        }
+      ],
+      "shoot": [
+        {
+          "t": 0.133333,
+          "wav": "weapons/archi/cs2_ump45/boltback.wav"
+        },
+        {
+          "t": 0.4,
+          "wav": "weapons/archi/cs2_ump45/boltforward.wav"
+        }
+      ],
+      "shoot2": [
+        {
+          "t": 0.133333,
+          "wav": "weapons/archi/cs2_ump45/boltback.wav"
+        },
+        {
+          "t": 0.4,
+          "wav": "weapons/archi/cs2_ump45/boltforward.wav"
+        }
+      ],
+      "shoot3": [
+        {
+          "t": 0.133333,
+          "wav": "weapons/archi/cs2_ump45/boltback.wav"
+        },
+        {
+          "t": 0.4,
+          "wav": "weapons/archi/cs2_ump45/boltforward.wav"
+        }
+      ],
+      "fire": [
+        {
+          "t": 0.133333,
+          "wav": "weapons/archi/cs2_ump45/boltback.wav"
+        },
+        {
+          "t": 0.4,
+          "wav": "weapons/archi/cs2_ump45/boltforward.wav"
+        }
+      ],
+      "draw_unsil": [
+        {
+          "t": 0.0,
+          "wav": "weapons/archi/cs2_ump45/draw.wav"
+        },
+        {
+          "t": 0.5,
+          "wav": "weapons/archi/cs2_nova/pump.wav"
+        },
+        {
+          "t": 0.6,
+          "wav": "weapons/archi/cs2_nova/pump.wav"
+        }
+      ],
+      "idle_unsil": [],
+      "reload_unsil": [
+        {
+          "t": 0.300004,
+          "wav": "weapons/archi/cs2_ump45/clipout.wav"
+        },
+        {
+          "t": 0.96668,
+          "wav": "weapons/archi/cs2_ump45/clipin.wav"
+        },
+        {
+          "t": 1.666689,
+          "wav": "weapons/archi/cs2_ump45/boltback.wav"
+        },
+        {
+          "t": 1.900026,
+          "wav": "weapons/archi/cs2_ump45/boltforward.wav"
+        }
+      ],
+      "inspect_unsil": [],
+      "shoot1_unsil": [
+        {
+          "t": 0.133333,
+          "wav": "weapons/archi/cs2_ump45/boltback.wav"
+        },
+        {
+          "t": 0.4,
+          "wav": "weapons/archi/cs2_ump45/boltforward.wav"
+        }
+      ],
+      "shoot2_unsil": [
+        {
+          "t": 0.133333,
+          "wav": "weapons/archi/cs2_ump45/boltback.wav"
+        },
+        {
+          "t": 0.4,
+          "wav": "weapons/archi/cs2_ump45/boltforward.wav"
+        }
+      ],
+      "shoot3_unsil": [
+        {
+          "t": 0.133333,
+          "wav": "weapons/archi/cs2_ump45/boltback.wav"
+        },
+        {
+          "t": 0.4,
+          "wav": "weapons/archi/cs2_ump45/boltforward.wav"
         }
       ]
     },
@@ -8790,14 +11135,14 @@
     ],
     "vertices": 28104,
     "muzzle": [
-      -0.1966,
-      -0.1571,
-      -1.181
+      0.2232965,
+      -0.1657909,
+      -1.0107168
     ],
     "eject": [
-      -0.2125,
-      -0.1927,
-      -0.8124
+      0.23622,
+      -0.1947266,
+      -0.7111187
     ],
     "world": {
       "source_model": "w_shot_mag7",
@@ -8810,58 +11155,107 @@
         "residual_m": 0.03972,
         "deg_from_seed": 60.9
       }
-    }
+    },
+    "gameplay_seq_durations": {
+      "idle": 1.0,
+      "shoot1": 1.233,
+      "shoot2": 1.233,
+      "draw": 1.2,
+      "reload": 2.5,
+      "inspect": 4.233,
+      "lookat01_inventory": 1.0
+    },
+    "native_cs2_animation": true,
+    "native_gun_animations": true,
+    "authored_right_hand": true,
+    "inspect_clips": [
+      "inspect"
+    ],
+    "animation_source": "ScCsgoKnives native per-weapon clips, original geometry and anatomical arm retarget"
   },
   "weapons/v_sawedoff": {
     "sequences": [
+      "draw",
       "idle",
       "shoot1",
+      "reload",
       "start_reload",
       "insert",
       "after_reload",
-      "draw",
       "inspect",
-      "inv_inspect"
+      "shoot",
+      "shoot2",
+      "shoot3",
+      "fire",
+      "draw_unsil",
+      "idle_unsil",
+      "reload_unsil",
+      "inspect_unsil",
+      "shoot1_unsil",
+      "shoot2_unsil",
+      "shoot3_unsil"
     ],
     "seq_durations": {
-      "idle": 1.0,
-      "shoot1": 0.833,
-      "start_reload": 0.4,
-      "insert": 0.467,
-      "after_reload": 0.8,
       "draw": 1.0,
-      "inspect": 5.8,
-      "inv_inspect": 1.0
+      "idle": 1.0,
+      "shoot1": 0.7999,
+      "reload": 1.7332,
+      "start_reload": 0.399992,
+      "insert": 0.533323,
+      "after_reload": 0.7998850000000001,
+      "inspect": 5.7666,
+      "shoot": 0.7999,
+      "shoot2": 0.7999,
+      "shoot3": 0.7999,
+      "fire": 0.7999,
+      "draw_unsil": 1.0,
+      "idle_unsil": 1.0,
+      "reload_unsil": 1.7332,
+      "inspect_unsil": 5.7666,
+      "shoot1_unsil": 0.7999,
+      "shoot2_unsil": 0.7999,
+      "shoot3_unsil": 0.7999
     },
     "seq_events": {
-      "shoot1": [
-        {
-          "t": 0.033,
-          "wav": "weapons/archi/cs2_sawedoff/pump.wav"
-        }
-      ],
-      "insert": [
-        {
-          "t": 0.1,
-          "wav": "weapons/archi/cs2_sawedoff/insertshell_01.wav"
-        }
-      ],
-      "after_reload": [
-        {
-          "t": 0.433,
-          "wav": "weapons/archi/cs2_sawedoff/pump.wav"
-        }
-      ],
       "draw": [
         {
           "t": 0.0,
           "wav": "weapons/archi/cs2_sawedoff/draw.wav"
-        },
-        {
-          "t": 0.6,
-          "wav": "weapons/archi/cs2_sawedoff/pump.wav"
         }
-      ]
+      ],
+      "reload": [
+        {
+          "t": 0.433325,
+          "wav": "weapons/archi/cs2_sawedoff/insertshell_01.wav"
+        }
+      ],
+      "insert": [
+        {
+          "t": 0.033333,
+          "wav": "weapons/archi/cs2_sawedoff/insertshell_01.wav"
+        }
+      ],
+      "shoot": [],
+      "shoot2": [],
+      "shoot3": [],
+      "fire": [],
+      "draw_unsil": [
+        {
+          "t": 0.0,
+          "wav": "weapons/archi/cs2_sawedoff/draw.wav"
+        }
+      ],
+      "idle_unsil": [],
+      "reload_unsil": [
+        {
+          "t": 0.433325,
+          "wav": "weapons/archi/cs2_sawedoff/insertshell_01.wav"
+        }
+      ],
+      "inspect_unsil": [],
+      "shoot1_unsil": [],
+      "shoot2_unsil": [],
+      "shoot3_unsil": []
     },
     "bones": 47,
     "offset": [
@@ -8878,14 +11272,14 @@
     ],
     "vertices": 21612,
     "muzzle": [
-      -0.1343,
-      -0.0855,
-      -1.0411
+      0.172659,
+      -0.1075944,
+      -0.8970061
     ],
     "eject": [
-      -0.1346,
-      -0.0906,
-      -0.564
+      0.1729029,
+      -0.1117397,
+      -0.5092192
     ],
     "world": {
       "source_model": "w_shot_sawedoff",
@@ -8901,41 +11295,86 @@
       "missing_materials": [
         "shell_shotgun"
       ]
-    }
+    },
+    "gameplay_seq_durations": {
+      "idle": 1.0,
+      "shoot1": 0.833,
+      "start_reload": 0.4,
+      "insert": 0.467,
+      "after_reload": 0.8,
+      "draw": 1.0,
+      "inspect": 5.8,
+      "inv_inspect": 1.0
+    },
+    "native_cs2_animation": true,
+    "native_gun_animations": true,
+    "authored_right_hand": true,
+    "inspect_clips": [
+      "inspect"
+    ],
+    "animation_source": "ScCsgoKnives native per-weapon clips, original geometry and anatomical arm retarget"
   },
   "weapons/v_negev": {
     "sequences": [
+      "draw",
       "idle",
       "shoot1",
-      "shoot2",
+      "shootlast",
       "reload",
-      "draw",
-      "inspect"
+      "inspect",
+      "shoot",
+      "shoot2",
+      "shoot3",
+      "shoot_empty",
+      "fire",
+      "draw_unsil",
+      "idle_unsil",
+      "reload_unsil",
+      "inspect_unsil",
+      "shoot1_unsil",
+      "shoot2_unsil",
+      "shoot3_unsil",
+      "shootlast_unsil"
     ],
     "seq_durations": {
-      "idle": 0.967,
-      "shoot1": 0.867,
-      "shoot2": 0.667,
-      "reload": 5.7,
       "draw": 1.1,
-      "inspect": 6.867
+      "idle": 1.0,
+      "shoot1": 0.8667,
+      "shootlast": 0.8667,
+      "reload": 5.6999,
+      "inspect": 6.8666,
+      "shoot": 0.8667,
+      "shoot2": 0.8667,
+      "shoot3": 0.8667,
+      "shoot_empty": 0.8667,
+      "fire": 0.8667,
+      "draw_unsil": 1.1,
+      "idle_unsil": 1.0,
+      "reload_unsil": 5.6999,
+      "inspect_unsil": 6.8666,
+      "shoot1_unsil": 0.8667,
+      "shoot2_unsil": 0.8667,
+      "shoot3_unsil": 0.8667,
+      "shootlast_unsil": 0.8667
     },
     "seq_events": {
+      "draw": [
+        {
+          "t": 0.0,
+          "wav": "weapons/archi/cs2_negev/draw.wav"
+        }
+      ],
       "reload": [
         {
           "t": 0.6,
           "wav": "weapons/archi/cs2_negev/coverup.wav"
         },
         {
-          "t": 0.733,
-          "wav": "weapons/archi/cs2_negev/chain.wav"
-        },
-        {
-          "t": 1.3,
+          "t": 1.366667,
           "wav": "weapons/archi/cs2_negev/boxout.wav"
         },
         {
-          "t": 2.633,
+          "t": 2.7,
           "wav": "weapons/archi/cs2_negev/boxin.wav"
         },
         {
@@ -8943,24 +11382,57 @@
           "wav": "weapons/archi/cs2_negev/chain.wav"
         },
         {
-          "t": 3.8,
+          "t": 3.833333,
           "wav": "weapons/archi/cs2_negev/coverdown.wav"
         },
         {
-          "t": 4.5,
+          "t": 4.566666,
           "wav": "weapons/archi/cs2_negev/pump.wav"
         }
       ],
-      "draw": [
+      "shoot": [],
+      "shoot2": [],
+      "shoot3": [],
+      "shoot_empty": [],
+      "fire": [],
+      "draw_unsil": [
         {
           "t": 0.0,
           "wav": "weapons/archi/cs2_negev/draw.wav"
+        }
+      ],
+      "idle_unsil": [],
+      "reload_unsil": [
+        {
+          "t": 0.6,
+          "wav": "weapons/archi/cs2_negev/coverup.wav"
         },
         {
-          "t": 0.333,
+          "t": 1.366667,
+          "wav": "weapons/archi/cs2_negev/boxout.wav"
+        },
+        {
+          "t": 2.7,
+          "wav": "weapons/archi/cs2_negev/boxin.wav"
+        },
+        {
+          "t": 3.0,
+          "wav": "weapons/archi/cs2_negev/chain.wav"
+        },
+        {
+          "t": 3.833333,
+          "wav": "weapons/archi/cs2_negev/coverdown.wav"
+        },
+        {
+          "t": 4.566666,
           "wav": "weapons/archi/cs2_negev/pump.wav"
         }
-      ]
+      ],
+      "inspect_unsil": [],
+      "shoot1_unsil": [],
+      "shoot2_unsil": [],
+      "shoot3_unsil": [],
+      "shootlast_unsil": []
     },
     "bones": 90,
     "offset": [
@@ -8977,14 +11449,14 @@
     ],
     "vertices": 62000,
     "muzzle": [
-      -0.2344,
-      -0.1208,
-      -1.3551
+      0.2540203,
+      -0.1362862,
+      -1.1522253
     ],
     "eject": [
-      -0.2803,
-      -0.0926,
-      -0.783
+      0.2913278,
+      -0.1133653,
+      -0.6872224
     ],
     "world": {
       "source_model": "w_mach_negev",
@@ -8997,56 +11469,118 @@
         "residual_m": 0.02968,
         "deg_from_seed": 75.49
       }
-    }
+    },
+    "gameplay_seq_durations": {
+      "idle": 0.967,
+      "shoot1": 0.867,
+      "shoot2": 0.667,
+      "reload": 5.7,
+      "draw": 1.1,
+      "inspect": 6.867
+    },
+    "native_cs2_animation": true,
+    "native_gun_animations": true,
+    "authored_right_hand": true,
+    "inspect_clips": [
+      "inspect"
+    ],
+    "animation_source": "ScCsgoKnives native per-weapon clips, original geometry and anatomical arm retarget"
   },
   "weapons/v_bizon": {
     "sequences": [
+      "draw",
       "idle",
       "shoot1",
-      "draw",
       "reload",
-      "inspect"
+      "inspect",
+      "shoot",
+      "shoot2",
+      "shoot3",
+      "fire",
+      "draw_unsil",
+      "idle_unsil",
+      "reload_unsil",
+      "inspect_unsil",
+      "shoot1_unsil",
+      "shoot2_unsil",
+      "shoot3_unsil"
     ],
     "seq_durations": {
-      "idle": 0.033,
-      "shoot1": 0.867,
-      "draw": 1.133,
-      "reload": 2.467,
-      "inspect": 4.367
+      "draw": 1.1,
+      "idle": 1.0,
+      "shoot1": 0.8667,
+      "reload": 2.4333,
+      "inspect": 4.3332,
+      "shoot": 0.8667,
+      "shoot2": 0.8667,
+      "shoot3": 0.8667,
+      "fire": 0.8667,
+      "draw_unsil": 1.1,
+      "idle_unsil": 1.0,
+      "reload_unsil": 2.4333,
+      "inspect_unsil": 4.3332,
+      "shoot1_unsil": 0.8667,
+      "shoot2_unsil": 0.8667,
+      "shoot3_unsil": 0.8667
     },
     "seq_events": {
       "draw": [
         {
           "t": 0.0,
-          "wav": "weapons/cs2/bizon/bizon_draw.wav"
-        },
-        {
-          "t": 0.267,
-          "wav": "weapons/cs2/bizon/bizon_boltback.wav"
-        },
-        {
-          "t": 0.567,
-          "wav": "weapons/cs2/bizon/bizon_boltforward.wav"
+          "wav": "weapons/archi/cs2_ump45/draw.wav"
         }
       ],
       "reload": [
         {
-          "t": 0.333,
-          "wav": "weapons/cs2/bizon/bizon_clipout.wav"
+          "t": 0.399995,
+          "wav": "weapons/archi/cs2_ump45/clipout.wav"
         },
         {
-          "t": 1.033,
-          "wav": "weapons/cs2/bizon/bizon_clipin.wav"
+          "t": 1.099985,
+          "wav": "weapons/archi/cs2_ump45/clipin.wav"
         },
         {
-          "t": 1.6,
-          "wav": "weapons/cs2/bizon/bizon_boltback.wav"
+          "t": 1.699977,
+          "wav": "weapons/archi/cs2_ump45/boltback.wav"
         },
         {
-          "t": 1.867,
-          "wav": "weapons/cs2/bizon/bizon_boltforward.wav"
+          "t": 1.833308,
+          "wav": "weapons/archi/cs2_ump45/boltforward.wav"
         }
-      ]
+      ],
+      "shoot": [],
+      "shoot2": [],
+      "shoot3": [],
+      "fire": [],
+      "draw_unsil": [
+        {
+          "t": 0.0,
+          "wav": "weapons/archi/cs2_ump45/draw.wav"
+        }
+      ],
+      "idle_unsil": [],
+      "reload_unsil": [
+        {
+          "t": 0.399995,
+          "wav": "weapons/archi/cs2_ump45/clipout.wav"
+        },
+        {
+          "t": 1.099985,
+          "wav": "weapons/archi/cs2_ump45/clipin.wav"
+        },
+        {
+          "t": 1.699977,
+          "wav": "weapons/archi/cs2_ump45/boltback.wav"
+        },
+        {
+          "t": 1.833308,
+          "wav": "weapons/archi/cs2_ump45/boltforward.wav"
+        }
+      ],
+      "inspect_unsil": [],
+      "shoot1_unsil": [],
+      "shoot2_unsil": [],
+      "shoot3_unsil": []
     },
     "bones": 58,
     "offset": [
@@ -9063,14 +11597,14 @@
     ],
     "vertices": 33428,
     "muzzle": [
-      -0.1593,
-      -0.0939,
-      -0.9825
+      0.192979,
+      -0.1144219,
+      -0.849376
     ],
     "eject": [
-      -0.1715,
-      -0.0711,
-      -0.5495
+      0.2028952,
+      -0.0958901,
+      -0.4974336
     ],
     "world": {
       "source_model": "w_smg_bizon",
@@ -9083,56 +11617,117 @@
         "residual_m": 0.02227,
         "deg_from_seed": 83.71
       }
-    }
+    },
+    "gameplay_seq_durations": {
+      "idle": 0.033,
+      "shoot1": 0.867,
+      "draw": 1.133,
+      "reload": 2.467,
+      "inspect": 4.367
+    },
+    "native_cs2_animation": true,
+    "native_gun_animations": true,
+    "authored_right_hand": true,
+    "inspect_clips": [
+      "inspect"
+    ],
+    "animation_source": "ScCsgoKnives native per-weapon clips, original geometry and anatomical arm retarget"
   },
   "weapons/v_mp7": {
     "sequences": [
-      "idle",
-      "reload",
       "draw",
+      "idle",
       "shoot1",
-      "inspect"
+      "reload",
+      "inspect",
+      "shoot",
+      "shoot2",
+      "shoot3",
+      "fire",
+      "draw_unsil",
+      "idle_unsil",
+      "reload_unsil",
+      "inspect_unsil",
+      "shoot1_unsil",
+      "shoot2_unsil",
+      "shoot3_unsil"
     ],
     "seq_durations": {
-      "idle": 0.033,
-      "reload": 3.167,
       "draw": 1.0,
-      "shoot1": 0.833,
-      "inspect": 6.667
+      "idle": 1.0,
+      "shoot1": 0.7999,
+      "reload": 3.1332,
+      "inspect": 6.6666,
+      "shoot": 0.7999,
+      "shoot2": 0.7999,
+      "shoot3": 0.7999,
+      "fire": 0.7999,
+      "draw_unsil": 1.0,
+      "idle_unsil": 1.0,
+      "reload_unsil": 3.1332,
+      "inspect_unsil": 6.6666,
+      "shoot1_unsil": 0.7999,
+      "shoot2_unsil": 0.7999,
+      "shoot3_unsil": 0.7999
     },
     "seq_events": {
-      "reload": [
-        {
-          "t": 0.3,
-          "wav": "weapons/archi/cs2_mp7/clipout.wav"
-        },
-        {
-          "t": 1.267,
-          "wav": "weapons/archi/cs2_mp7/clipin.wav"
-        },
-        {
-          "t": 2.1,
-          "wav": "weapons/archi/cs2_mp7/slideback.wav"
-        },
-        {
-          "t": 2.333,
-          "wav": "weapons/archi/cs2_mp7/slideforward.wav"
-        }
-      ],
       "draw": [
         {
           "t": 0.0,
           "wav": "weapons/archi/cs2_mp7/draw.wav"
+        }
+      ],
+      "reload": [
+        {
+          "t": 0.299997,
+          "wav": "weapons/archi/cs2_mp7/clipout.wav"
         },
         {
-          "t": 0.267,
+          "t": 1.299986,
+          "wav": "weapons/archi/cs2_mp7/clipin.wav"
+        },
+        {
+          "t": 2.099978,
           "wav": "weapons/archi/cs2_mp7/slideback.wav"
         },
         {
-          "t": 0.4,
+          "t": 2.366641,
           "wav": "weapons/archi/cs2_mp7/slideforward.wav"
         }
-      ]
+      ],
+      "shoot": [],
+      "shoot2": [],
+      "shoot3": [],
+      "fire": [],
+      "draw_unsil": [
+        {
+          "t": 0.0,
+          "wav": "weapons/archi/cs2_mp7/draw.wav"
+        }
+      ],
+      "idle_unsil": [],
+      "reload_unsil": [
+        {
+          "t": 0.299997,
+          "wav": "weapons/archi/cs2_mp7/clipout.wav"
+        },
+        {
+          "t": 1.299986,
+          "wav": "weapons/archi/cs2_mp7/clipin.wav"
+        },
+        {
+          "t": 2.099978,
+          "wav": "weapons/archi/cs2_mp7/slideback.wav"
+        },
+        {
+          "t": 2.366641,
+          "wav": "weapons/archi/cs2_mp7/slideforward.wav"
+        }
+      ],
+      "inspect_unsil": [],
+      "shoot1_unsil": [],
+      "shoot2_unsil": [],
+      "shoot3_unsil": []
     },
     "bones": 59,
     "offset": [
@@ -9149,14 +11744,14 @@
     ],
     "vertices": 36462,
     "muzzle": [
-      -0.1648,
-      -0.1235,
-      -0.7843
+      0.1974494,
+      -0.1384808,
+      -0.688279
     ],
     "eject": [
-      -0.1784,
-      -0.1255,
-      -0.448
+      0.2085035,
+      -0.1401064,
+      -0.4149344
     ],
     "world": {
       "source_model": "w_smg_mp7",
@@ -9169,34 +11764,77 @@
         "residual_m": 0.01977,
         "deg_from_seed": 42.66
       }
-    }
+    },
+    "gameplay_seq_durations": {
+      "idle": 0.033,
+      "reload": 3.167,
+      "draw": 1.0,
+      "shoot1": 0.833,
+      "inspect": 6.667
+    },
+    "native_cs2_animation": true,
+    "native_gun_animations": true,
+    "authored_right_hand": true,
+    "inspect_clips": [
+      "inspect"
+    ],
+    "animation_source": "ScCsgoKnives native per-weapon clips, original geometry and anatomical arm retarget"
   },
   "weapons/v_taser": {
     "sequences": [
+      "draw",
       "idle",
       "shoot1",
-      "draw",
-      "inspect"
+      "inspect",
+      "shoot",
+      "shoot2",
+      "shoot3",
+      "fire",
+      "draw_unsil",
+      "idle_unsil",
+      "inspect_unsil",
+      "shoot1_unsil",
+      "shoot2_unsil",
+      "shoot3_unsil"
     ],
     "seq_durations": {
-      "idle": 0.767,
-      "shoot1": 0.367,
-      "draw": 0.8,
-      "inspect": 5.133
+      "draw": 1.0,
+      "idle": 1.0,
+      "shoot1": 0.3999,
+      "inspect": 6.4333,
+      "shoot": 0.3999,
+      "shoot2": 0.3999,
+      "shoot3": 0.3999,
+      "fire": 0.3999,
+      "draw_unsil": 1.0,
+      "idle_unsil": 1.0,
+      "inspect_unsil": 6.4333,
+      "shoot1_unsil": 0.3999,
+      "shoot2_unsil": 0.3999,
+      "shoot3_unsil": 0.3999
     },
     "seq_events": {
-      "shoot1": [
+      "draw": [
         {
-          "t": 0.067,
+          "t": 0.1,
           "wav": "weapons/archi/cs2_taser/taser_charging.wav"
         }
       ],
-      "draw": [
+      "shoot": [],
+      "shoot2": [],
+      "shoot3": [],
+      "fire": [],
+      "draw_unsil": [
         {
-          "t": 0.0,
+          "t": 0.1,
           "wav": "weapons/archi/cs2_taser/taser_charging.wav"
         }
-      ]
+      ],
+      "idle_unsil": [],
+      "inspect_unsil": [],
+      "shoot1_unsil": [],
+      "shoot2_unsil": [],
+      "shoot3_unsil": []
     },
     "bones": 40,
     "offset": [
@@ -9214,9 +11852,9 @@
     ],
     "vertices": 17873,
     "muzzle": [
-      -0.089,
-      -0.0972,
-      -0.6617
+      0.1358392,
+      -0.1171042,
+      -0.5886298
     ],
     "world": {
       "source_model": "w_eq_taser",
@@ -9229,44 +11867,71 @@
         "residual_m": 0.01239,
         "deg_from_seed": 113.61
       }
-    }
+    },
+    "gameplay_seq_durations": {
+      "idle": 0.767,
+      "shoot1": 0.367,
+      "draw": 0.8,
+      "inspect": 5.133
+    },
+    "native_cs2_animation": true,
+    "native_gun_animations": true,
+    "authored_right_hand": true,
+    "inspect_clips": [
+      "inspect"
+    ],
+    "animation_source": "ScCsgoKnives native per-weapon clips, original geometry and anatomical arm retarget"
   },
   "weapons/v_decoy": {
     "sequences": [
+      "draw",
       "idle",
-      "pullpin",
-      "throw",
-      "deploy",
-      "underhand",
       "inspect",
-      "inspect_2"
+      "inspect_2",
+      "pullpin",
+      "hold_high",
+      "hold_low",
+      "throw",
+      "underhand",
+      "draw_unsil",
+      "idle_unsil",
+      "inspect_unsil"
     ],
     "seq_durations": {
-      "idle": 0.267,
-      "pullpin": 0.967,
-      "throw": 0.733,
-      "deploy": 1.0,
+      "draw": 1.0,
+      "idle": 1.0,
+      "inspect": 7.0332,
+      "inspect_2": 4.0332,
+      "pullpin": 0.9666,
+      "hold_high": 1.0,
+      "hold_low": 1.0,
+      "throw": 0.7666,
       "underhand": 0.5,
-      "inspect": 7.033,
-      "inspect_2": 4.033
+      "draw_unsil": 1.0,
+      "idle_unsil": 1.0,
+      "inspect_unsil": 7.0332
     },
     "seq_events": {
-      "pullpin": [
+      "draw": [
         {
-          "t": 0.0,
-          "wav": "weapons/cs2/decoy/pinpull_start.wav"
-        },
-        {
-          "t": 0.4,
-          "wav": "weapons/cs2/decoy/pinpull.wav"
+          "t": 0.6,
+          "wav": "weapons/archi/cs2_hegren/he_draw.wav"
         }
       ],
-      "deploy": [
+      "pullpin": [
         {
-          "t": 0.0,
-          "wav": "weapons/cs2/decoy/decoy_draw.wav"
+          "t": 0.166672,
+          "wav": "weapons/archi/cs2_hegren/pinpull.wav"
         }
-      ]
+      ],
+      "draw_unsil": [
+        {
+          "t": 0.6,
+          "wav": "weapons/archi/cs2_hegren/he_draw.wav"
+        }
+      ],
+      "idle_unsil": [],
+      "inspect_unsil": []
     },
     "bones": 41,
     "offset": [
@@ -9300,34 +11965,65 @@
     "inspect_clips": [
       "inspect",
       "inspect_2"
-    ]
+    ],
+    "gameplay_seq_durations": {
+      "idle": 0.267,
+      "pullpin": 0.967,
+      "throw": 0.733,
+      "deploy": 1.0,
+      "underhand": 0.5,
+      "inspect": 7.033,
+      "inspect_2": 4.033
+    },
+    "native_cs2_animation": true,
+    "native_gun_animations": true,
+    "authored_right_hand": true,
+    "animation_source": "ScCsgoKnives native per-weapon clips, original geometry and anatomical arm retarget"
   },
   "weapons/v_molotov": {
     "sequences": [
+      "draw",
       "idle",
-      "pullpin",
-      "throw",
-      "deploy",
-      "underhand",
       "inspect",
-      "inspect_2"
+      "inspect_2",
+      "pullpin",
+      "hold_high",
+      "hold_low",
+      "throw",
+      "underhand",
+      "draw_unsil",
+      "idle_unsil",
+      "inspect_unsil"
     ],
     "seq_durations": {
-      "idle": 0.967,
-      "pullpin": 1.133,
-      "throw": 0.55,
-      "deploy": 1.0,
-      "underhand": 0.4,
-      "inspect": 5.367,
-      "inspect_2": 4.767
+      "draw": 1.0,
+      "idle": 1.0,
+      "inspect": 5.3666,
+      "inspect_2": 4.7666,
+      "pullpin": 1.1332,
+      "hold_high": 1.0,
+      "hold_low": 1.0,
+      "throw": 0.7666,
+      "underhand": 0.5,
+      "draw_unsil": 1.0,
+      "idle_unsil": 1.0,
+      "inspect_unsil": 5.3666
     },
     "seq_events": {
-      "deploy": [
+      "draw": [
         {
-          "t": 0.0,
-          "wav": "weapons/cs2/molotov/molotov_draw.wav"
+          "t": 0.066667,
+          "wav": "weapons/archi/cs2_hegren/he_draw.wav"
         }
-      ]
+      ],
+      "draw_unsil": [
+        {
+          "t": 0.066667,
+          "wav": "weapons/archi/cs2_hegren/he_draw.wav"
+        }
+      ],
+      "idle_unsil": [],
+      "inspect_unsil": []
     },
     "bones": 45,
     "offset": [
@@ -9365,44 +12061,71 @@
     "inspect_clips": [
       "inspect",
       "inspect_2"
-    ]
+    ],
+    "gameplay_seq_durations": {
+      "idle": 0.967,
+      "pullpin": 1.133,
+      "throw": 0.55,
+      "deploy": 1.0,
+      "underhand": 0.4,
+      "inspect": 5.367,
+      "inspect_2": 4.767
+    },
+    "native_cs2_animation": true,
+    "native_gun_animations": true,
+    "authored_right_hand": true,
+    "animation_source": "ScCsgoKnives native per-weapon clips, original geometry and anatomical arm retarget"
   },
   "weapons/v_incendiary": {
     "sequences": [
+      "draw",
       "idle",
-      "pullpin",
-      "throw",
-      "deploy",
-      "underhand",
       "inspect",
-      "inspect_2"
+      "inspect_2",
+      "pullpin",
+      "hold_high",
+      "hold_low",
+      "throw",
+      "underhand",
+      "draw_unsil",
+      "idle_unsil",
+      "inspect_unsil"
     ],
     "seq_durations": {
-      "idle": 0.833,
-      "pullpin": 0.967,
-      "throw": 0.733,
-      "deploy": 1.0,
+      "draw": 1.0,
+      "idle": 1.0,
+      "inspect": 5.2666,
+      "inspect_2": 3.5332,
+      "pullpin": 0.9666,
+      "hold_high": 1.0,
+      "hold_low": 1.0,
+      "throw": 0.7666,
       "underhand": 0.5,
-      "inspect": 5.267,
-      "inspect_2": 3.533
+      "draw_unsil": 1.0,
+      "idle_unsil": 1.0,
+      "inspect_unsil": 5.2666
     },
     "seq_events": {
+      "draw": [
+        {
+          "t": 0.066667,
+          "wav": "weapons/archi/cs2_hegren/he_draw.wav"
+        }
+      ],
       "pullpin": [
         {
           "t": 0.0,
-          "wav": "weapons/cs2/incgrenade/pinpull_start.wav"
-        },
-        {
-          "t": 0.4,
-          "wav": "weapons/cs2/incgrenade/pinpull.wav"
+          "wav": "weapons/archi/cs2_hegren/pinpull.wav"
         }
       ],
-      "deploy": [
+      "draw_unsil": [
         {
-          "t": 0.0,
-          "wav": "weapons/cs2/incgrenade/inc_grenade_draw.wav"
+          "t": 0.066667,
+          "wav": "weapons/archi/cs2_hegren/he_draw.wav"
         }
-      ]
+      ],
+      "idle_unsil": [],
+      "inspect_unsil": []
     },
     "bones": 45,
     "offset": [
@@ -9436,7 +12159,20 @@
     "inspect_clips": [
       "inspect",
       "inspect_2"
-    ]
+    ],
+    "gameplay_seq_durations": {
+      "idle": 0.833,
+      "pullpin": 0.967,
+      "throw": 0.733,
+      "deploy": 1.0,
+      "underhand": 0.5,
+      "inspect": 5.267,
+      "inspect_2": 3.533
+    },
+    "native_cs2_animation": true,
+    "native_gun_animations": true,
+    "authored_right_hand": true,
+    "animation_source": "ScCsgoKnives native per-weapon clips, original geometry and anatomical arm retarget"
   },
   "weapons/v_knife_karambit": {
     "sequences": [

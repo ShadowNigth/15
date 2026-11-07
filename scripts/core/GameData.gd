@@ -7,6 +7,8 @@ const SCALE: float = 1.0 / 32.0
 ## larger scale so they remain easy to see without changing projectile behavior.
 const GRENADE_WORLD_SCALE: float = 0.90
 const GRENADE_DROP_SCALE: float = 1.0
+const MOLOTOV_GLASS_FLIP_SHADER: Shader = preload("res://assets/shaders/molotov_glass_flip.gdshader")
+const MOLOTOV_LIQUID_FLIP_SHADER: Shader = preload("res://assets/shaders/molotov_liquid_flip.gdshader")
 const MOLOTOV_GLASS_SHADER: Shader = preload("res://assets/shaders/molotov_glass.gdshader")
 const MOLOTOV_LIQUID_SHADER: Shader = preload("res://assets/shaders/molotov_liquid.gdshader")
 
@@ -325,7 +327,7 @@ func get_styled_model_material(orig: Material, mode: String) -> Material:
 			hd_albedo = skin_texture
 	if material_name in ["weapon_molotov", "weapon_molotov_liquid"]:
 		var glass := ShaderMaterial.new()
-		glass.shader = MOLOTOV_GLASS_SHADER
+		glass.shader = MOLOTOV_GLASS_FLIP_SHADER if mode == "vm_flip" else MOLOTOV_GLASS_SHADER
 		glass.set_shader_parameter("bottle_texture", hd_albedo)
 		glass.set_shader_parameter("bottle_tint", source.albedo_color)
 		glass.set_shader_parameter("glass_tint", Vector3(0.82, 1.04, 0.88))
@@ -339,7 +341,7 @@ func get_styled_model_material(orig: Material, mode: String) -> Material:
 		return glass
 	if material_name == "molotov_inside":
 		var liquid := ShaderMaterial.new()
-		liquid.shader = MOLOTOV_LIQUID_SHADER
+		liquid.shader = MOLOTOV_LIQUID_FLIP_SHADER if mode == "vm_flip" else MOLOTOV_LIQUID_SHADER
 		liquid.set_shader_parameter("liquid_texture", hd_albedo)
 		liquid.set_shader_parameter("liquid_tint", Color(source.albedo_color.r * 0.72, source.albedo_color.g * 0.94, source.albedo_color.b * 0.58, source.albedo_color.a))
 		liquid.set_shader_parameter("brightness", 1.16 if mode in ["vm", "vm_flip"] else 1.08)

@@ -662,7 +662,7 @@ func _rebuild_viewmodel(wid: String) -> void:
 			var low := aname.to_lower()
 			var anim_res := _vm_anim.get_animation(aname)
 			if anim_res:
-				anim_res.loop_mode = Animation.LOOP_LINEAR if low.begins_with("idle") else Animation.LOOP_NONE
+				anim_res.loop_mode = Animation.LOOP_LINEAR if low.begins_with("idle") or low in ["hold_high", "hold_low"] else Animation.LOOP_NONE
 		if not _vm_anim.animation_finished.is_connected(_on_vm_anim_finished):
 			_vm_anim.animation_finished.connect(_on_vm_anim_finished)
 
@@ -710,9 +710,14 @@ func _current_vm_muzzle() -> Vector3:
 ##2D container mirrors the rendered viewmodel, so world-space consumers
 ## (shells, tracers, muzzle light) must negate X to land where the mirrored
 ## gun appears on screen.
+func _is_viewmodel_mirrored() -> bool:
+	var mmeta: Dictionary = GameData.models_meta.get("weapons/" + _cur_vm_model_name, {})
+	return not GameData.right_hand if bool(mmeta.get("authored_right_hand", false)) else GameData.right_hand
+
+
 func get_vm_world_point(local_p: Vector3) -> Vector3:
 	var p := local_p
-	if GameData.right_hand:
+	if _is_viewmodel_mirrored():
 		p.x = -p.x
 	if _vm_camera != null:
 		return _vm_camera.global_transform * p
@@ -828,7 +833,8 @@ func _prepare_viewmodel_materials(n: Node, native_arms: bool = false) -> void:
 				var arm_surface := name_lower.contains("glove") or name_lower == "ct_arms.bmp"
 				# Only the original port's arm mesh requires parity conversion;
 				# the source knife mesh and its skin have positive parity already.
-				var material_mode := "vm_flip" if native_arms and arm_surface else "vm"
+				var native_gun := bool((GameData.models_meta.get("weapons/" + _cur_vm_model_name, {}) as Dictionary).get("native_gun_animations", false))
+				var material_mode := "vm_flip" if native_gun or (native_arms and arm_surface) else "vm"
 				var styled := GameData.get_styled_model_material(mat, material_mode)
 				if styled:
 					mi.set_surface_override_material(s, styled)
@@ -838,18 +844,34 @@ func _prepare_viewmodel_materials(n: Node, native_arms: bool = false) -> void:
 
 func _start_vm_clip(anim_name: String) -> void:
 	_vm_anim.stop()
+	_vm_anim.speed_scale = 1.0
 	_vm_anim.play(anim_name)
 	_vm_anim.advance(0.0)
 	_pending_vm_events.clear()
 	_vm_anim_elapsed = 0.0
 	if not _cur_vm_model_name.is_empty():
 		var mmeta: Dictionary = GameData.models_meta.get("weapons/" + _cur_vm_model_name, {})
+		var event_time_scale := 1.0
+		if bool(mmeta.get("native_gun_animations", false)):
+			var action_names := ["reload", "reload_unsil", "reload_empty", "start_reload", "insert", "after_reload", "add_silencer", "detach_silencer", "pullpin", "pressbutton", "prepare"]
+			if anim_name in action_names:
+				var gameplay: Dictionary = mmeta.get("gameplay_seq_durations", {})
+				var duration := float(gameplay.get(anim_name, _vm_anim.get_animation(anim_name).length))
+				if anim_name == "pressbutton":
+					duration = 3.0
+				elif anim_name == "pullpin":
+					duration = 0.36
+				elif anim_name == "prepare":
+					duration = float(weapon_ctrl.get_current_spec().get("primary_delay", 0.20))
+				event_time_scale = duration / maxf(_vm_anim.get_animation(anim_name).length, 0.001)
+				_vm_anim.speed_scale = 1.0 / maxf(event_time_scale, 0.001)
 		var ev_map: Dictionary = mmeta.get("seq_events", {})
 		if ev_map.has(anim_name):
 			var raw_evs: Array = ev_map[anim_name]
 			for item in raw_evs:
 				if item is Dictionary:
-					var d_ev := item as Dictionary
+					var d_ev := (item as Dictionary).duplicate()
+					d_ev["t"] = float(d_ev.get("t", 0.0)) * event_time_scale
 					if float(d_ev.get("t", 0.0)) <= 0.01:
 						var w0 := String(d_ev.get("wav", ""))
 						if not w0.is_empty():
@@ -895,8 +917,11 @@ func _on_vm_anim_finished(anim_name: String) -> void:
 	var low := anim_name.to_lower()
 	# Hold final frame while grenade pin is pulled or while actively throwing/planting
 	if low == "pullpin" and weapon_ctrl._grenade_pin_pulled:
+		var hold_clip := "hold_low" if weapon_ctrl._grenade_lob_mode else "hold_high"
+		if _vm_anim.has_animation(hold_clip):
+			play_viewmodel_sequence([hold_clip])
 		return
-	if low == "throw":
+	if low in ["throw", "underhand", "hold_high", "hold_low"]:
 		return
 	if low == "pressbutton" and weapon_ctrl.plant_progress > 0.0:
 		return
@@ -944,6 +969,9 @@ func _play_idle_viewmodel() -> void:
 	var wid := weapon_ctrl.current_weapon_id
 	var spec: Dictionary = GameData.weapons.get(wid, {})
 	var is_sil := bool(weapon_ctrl.silenced_state.get(wid, false)) and bool(spec.get("silencer", false))
+	if int(weapon_ctrl.clips.get(wid, 1)) == 0 and _vm_anim != null and _vm_anim.has_animation("idle_empty"):
+		play_viewmodel_sequence(["idle_empty"])
+		return
 	if bool(spec.get("silencer", false)) and not is_sil:
 		play_viewmodel_sequence(["idle_unsil", "idle", "idle1"])
 	else:
@@ -1020,7 +1048,7 @@ func _on_fired_shot(wid: String, silenced: bool) -> void:
 			_muzzle_sprite.scale = Vector3.ONE * mscale
 			_muzzle_sprite.visible = true
 			var mlp := _current_vm_muzzle()
-			if GameData.right_hand:
+			if _is_viewmodel_mirrored():
 				mlp.x = -mlp.x
 			_muzzle_light.position = mlp
 			_muzzle_light.light_energy = 2.2 + kick_scale * 1.15

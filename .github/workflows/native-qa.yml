@@ -59,6 +59,25 @@ jobs:
             exit 1
           fi
 
+      - name: Native gun and utility full skeletal regression
+        timeout-minutes: 8
+        run: |
+          set -o pipefail
+          timeout 420s godot --headless --path . --fixed-fps 60 res://tests/NativeGunAnimationTest.tscn 2>&1 | tee /tmp/native-guns.log
+          if grep -Eq 'SCRIPT ERROR:|Parse Error:|Compile Error:' /tmp/native-guns.log; then exit 1; fi
+          grep -q '\[NATIVE GUN TEST\] PASS:' /tmp/native-guns.log
+
+      - name: Publish native gun diagnostics
+        if: ${{ always() }}
+        run: |
+          python3 - <<'PYCODE'
+          from pathlib import Path
+          p = Path('/tmp/native-guns.log')
+          if p.exists():
+              text = p.read_text(errors='replace')[-3500:].replace('%','%25').replace('\n','%0A')
+              print('::notice title=Native guns::'+text)
+          PYCODE
+
       - name: Three-knife loadout gameplay regression
         timeout-minutes: 5
         run: |
@@ -98,6 +117,25 @@ jobs:
           timeout 480s xvfb-run -a godot --path . --audio-driver Dummy --rendering-method gl_compatibility --rendering-driver opengl3 --disable-render-loop --fixed-fps 60 --resolution 960x540 res://tests/CompleteCosmeticCatalogTest.tscn -- --capture 2>&1 | tee /tmp/catalog-render.log
           if grep -Eq 'SCRIPT ERROR:|Parse Error:|Compile Error:' /tmp/catalog-render.log; then exit 1; fi
           grep -q '\[CATALOG TEST\] PASS:' /tmp/catalog-render.log
+
+      - name: Render all native guns and utilities
+        timeout-minutes: 10
+        env:
+          LIBGL_ALWAYS_SOFTWARE: '1'
+        run: |
+          set -o pipefail
+          timeout 540s xvfb-run -a godot --path . --audio-driver Dummy --rendering-method gl_compatibility --rendering-driver opengl3 --disable-render-loop --fixed-fps 60 --resolution 960x540 res://tests/NativeGunAnimationTest.tscn -- --capture 2>&1 | tee /tmp/native-guns-render.log
+          if grep -Eq 'SCRIPT ERROR:|Parse Error:|Compile Error:' /tmp/native-guns-render.log; then exit 1; fi
+          grep -q '\[NATIVE GUN TEST\] PASS:' /tmp/native-guns-render.log
+
+      - name: Save native gun animation evidence
+        if: ${{ always() }}
+        uses: actions/upload-artifact@v4
+        with:
+          name: native-gun-animation-poses
+          path: /tmp/native-gun-captures/
+          if-no-files-found: warn
+          retention-days: 14
 
       - name: Publish complete catalog diagnostics
         if: ${{ always() }}

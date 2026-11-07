@@ -206,7 +206,7 @@ func _human_vm_has_events(spec: Dictionary, seq_prefix: String) -> bool:
 
 func _get_viewmodel_seq_duration(v_name: String, seq_name: String, fallback: float) -> float:
 	var mmeta: Dictionary = GameData.models_meta.get("weapons/" + v_name, {})
-	var durs: Dictionary = mmeta.get("seq_durations", {})
+	var durs: Dictionary = mmeta.get("gameplay_seq_durations", mmeta.get("seq_durations", {}))
 	if durs.has(seq_name):
 		return maxf(0.35, float(durs[seq_name]))
 	for k in durs.keys():
