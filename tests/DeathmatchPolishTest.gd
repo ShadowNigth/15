@@ -21,7 +21,10 @@ func _ready() -> void:
 func capture(label: String) -> void:
 	if output.is_empty() or DisplayServer.get_name() == "headless":
 		return
-	RenderingServer.force_draw(false)
+	# Nested viewmodel SubViewport must render before the root consumes its texture.
+	# No simulation advance here: preserve the actual short-lived muzzle event.
+	for render_pass in range(3):
+		RenderingServer.force_draw(false)
 	var image := get_viewport().get_texture().get_image()
 	expect(image.save_png(output.path_join(label + ".png")) == OK, "Rendered " + label)
 
