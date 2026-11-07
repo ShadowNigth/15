@@ -163,10 +163,12 @@ func _run() -> void:
 	var thrown := GrenadeProjectile.new()
 	add_child(thrown)
 	thrown.setup_grenade("molotov", shooter, Vector3.ZERO)
+	thrown.set_physics_process(false)
+	var throw_snapshot := thrown.attack_context.duplicate(true)
 	shooter.flash_alpha = 0.0
-	expect(thrown.attack_context["attacker_blind"], "Throw-time blindness survives delayed grenade/fire damage")
+	expect(throw_snapshot["attacker_blind"], "Throw-time blindness survives delayed grenade/fire damage")
 	await reset_victim()
-	victim.apply_explosion_damage(shooter, 500, "molotov", Vector3.ZERO, thrown.attack_context)
+	victim.apply_explosion_damage(shooter, 500, "molotov", Vector3.ZERO, throw_snapshot)
 	expect(events.back()["attacker_blind"] and not events.back()["no_scope"], "Delayed fire carries only its own throw context")
 	thrown.queue_free()
 	for flag in KillContext.FLAGS:
