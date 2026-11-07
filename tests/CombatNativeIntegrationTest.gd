@@ -9,6 +9,10 @@ func expect(value: bool, text: String) -> void:
 		push_error("[COMBAT NATIVE] " + text)
 
 func _ready() -> void:
+	get_tree().create_timer(45.0).timeout.connect(func():
+		push_error("[COMBAT NATIVE] Watchdog: test did not finish")
+		get_tree().quit(1)
+	)
 	_run.call_deferred()
 
 func block(position_value: Vector3, size_value: Vector3) -> StaticBody3D:
@@ -49,6 +53,7 @@ func _run() -> void:
 		actor.is_alive = true
 		actor.position.x = -0.75 if role == "CT" else 0.75
 		add_child(actor)
+		actor.set_team_and_class(role, "urban" if role == "CT" else "terror")
 		actor._prev_phys_pos = actor.global_position
 		actor.set_physics_process(false)
 		actor.weapon_ctrl.give_weapon("ak47", 30, 90)
@@ -72,6 +77,17 @@ func _run() -> void:
 		query.from.x += 0.34
 		query.to.x += 0.34
 		expect(get_world_3d().direct_space_state.intersect_ray(query).is_empty(), "Empty space beside head is not a hit")
+	var target := actors[1]
+	var target_head: Area3D = target._bullet_hitboxes.entries[0]["area"]
+	target.health = 1000
+	target.armor = 0
+	actors[0].weapon_ctrl._fire_penetrating_ray(target_head.global_position + Vector3.FORWARD * 2, Vector3.BACK, 4.0, 10.0, 1.0, 1.0, 0)
+	expect(target.health == 960, "Production bullet applies native head hitgroup multiplier")
+	for actor in actors:
+		var rows: Array = GameData.native_actor_sockets[actor.team.to_lower()]["ak47"]["classic_basis"]
+		var expected := Basis(Vector3(rows[0][0], rows[1][0], rows[2][0]), Vector3(rows[0][1], rows[1][1], rows[2][1]), Vector3(rows[0][2], rows[1][2], rows[2][2])).orthonormalized()
+		var actual := actor._held_weapon_model.global_basis.orthonormalized()
+		expect(actual.x.distance_to(expected.x) < 0.03 and actual.z.distance_to(expected.z) < 0.03, "Mixed gait/hold keeps rifle aimed forward " + actor.team)
 	if "--capture" in OS.get_cmdline_user_args():
 		await save_frame("live_ct_t")
 	for actor in actors:
@@ -117,6 +133,18 @@ func _run() -> void:
 	expect(bird._model.scale.is_equal_approx(Vector3.ONE * 1.85), "Adult chicken scale applies to model")
 	if "--capture" in OS.get_cmdline_user_args():
 		await save_frame("chicken_scale")
+	var paths := GameData.prepare_match_resources()
+	var progress := GameData.poll_match_resources(paths)
+	for frame in range(600):
+		if progress.x >= paths.size():
+			break
+		await get_tree().process_frame
+		progress = GameData.poll_match_resources(paths)
+	expect(progress.x == paths.size() and progress.y == 0, "Threaded match warmup completes without failed assets")
+	var hud := CSHud.new()
+	add_child(hud)
+	expect(hud._native_ammo_icon == null, "HUD has no magazine icon")
+	hud.queue_free()
 	expect(GameData._scene_cache.size() <= 48, "Bounded scene cache")
 	wall.queue_free()
 	AudioManager.stop_all()

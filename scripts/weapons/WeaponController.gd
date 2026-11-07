@@ -763,7 +763,11 @@ func _fire_penetrating_ray(
 			cur_from = hit_pos + dir * 0.08
 			continue
 
-		if col is Node3D and col.has_method("take_bullet_damage"):
+		if col is HostageNPC:
+		col.take_damage(actor, 65.0 if heavy_stab else 20.0)
+		AudioManager.play_3d(String(spec.get("stab_sound", "weapons/knife_stab.wav")), hpos, 0.0, 20.0)
+		return
+	if col is Node3D and col.has_method("take_bullet_damage"):
 			var hgroup: int = hit["collider"].get_meta("hitgroup", _determine_hitgroup(col, hit_pos))
 			var is_friendly := (String(col.get("team")) == String(actor.get("team"))) and not GameData.friendly_fire
 			var armored_hd := (hgroup == 1 and bool(col.get("has_helmet")) and int(col.get("armor")) > 0)
@@ -975,6 +979,10 @@ func _swing_knife(heavy_stab: bool) -> void:
 		return
 	if col is AmbientChicken:
 		col.take_damage(actor, 65.0 if heavy_stab else 20.0)
+		return
+	if col is HostageNPC:
+		col.take_damage(actor, 65.0 if heavy_stab else 20.0)
+		AudioManager.play_3d(String(spec.get("stab_sound", "weapons/knife_stab.wav")), hpos, 0.0, 20.0)
 		return
 	if col is Node3D and col.has_method("take_bullet_damage"):
 		var dmg := 65.0 if heavy_stab else 20.0

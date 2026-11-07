@@ -17,6 +17,7 @@ def main():
    ext='onehanded' if weapons[wid].get('slot')==2 else 'knife' if wid=='knife' else 'carbine'
    ca='ref_aim_'+ext
    n=original_pose(d,b,hold)[hand];old=original_pose(c,cb,ca)[ch]
-   rotate=np.diag([-1.,1.,-1.]);basis=np.linalg.inv(n[:3,:3])@rotate@old[:3,:3];out[role][wid]={'hold':hold,'basis':basis.round(8).tolist()}
+   rotate=np.diag([-1.,1.,-1.]);basis=np.linalg.inv(n[:3,:3])@rotate@old[:3,:3];pelvis=next(i for i,n in enumerate(d['nodes']) if n.get('name')=='pelvis')
+   out[role][wid]={'hold':hold,'basis':basis.round(8).tolist(),'pelvis_basis':original_pose(d,b,hold)[pelvis][:3,:3].round(8).tolist(),'classic_basis':old[:3,:3].round(8).tolist()}
  (ROOT/'data/native_actor_sockets.json').write_text(json.dumps(out,indent=2)+'\n')
 if __name__=='__main__':main()

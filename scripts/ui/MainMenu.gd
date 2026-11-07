@@ -432,11 +432,21 @@ func _start_selected_game() -> void:
 	if _money_opt:
 		GameData.start_money = _money_opt.get_selected_id()
 	AudioManager.play_ui("launch_select2.wav")
+	var selected_map := GameData.selected_map
+	var blocker := ColorRect.new()
+	blocker.color = Color(0.02, 0.03, 0.04, 0.97)
+	blocker.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
+	blocker.mouse_filter = Control.MOUSE_FILTER_STOP
+	add_child(blocker)
+	get_viewport().gui_release_focus()
 	var loading := Label.new()
 	loading.text = "Loading match resources..."
 	loading.set_anchors_and_offsets_preset(Control.PRESET_CENTER)
 	loading.add_theme_font_size_override("font_size", 24)
-	add_child(loading)
+	loading.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	loading.offset_left = -300
+	loading.offset_right = 300
+	blocker.add_child(loading)
 	var paths := GameData.prepare_match_resources()
 	var progress := GameData.poll_match_resources(paths)
 	while progress.x < paths.size():
@@ -445,8 +455,17 @@ func _start_selected_game() -> void:
 		progress = GameData.poll_match_resources(paths)
 	if progress.y > 0:
 		loading.text = "Resource load failed. Check project imports before starting."
-		_starting_match = false
+		var retry := Button.new()
+		retry.text = "Back"
+		retry.set_anchors_and_offsets_preset(Control.PRESET_CENTER)
+		retry.offset_top = 50
+		blocker.add_child(retry)
+		retry.pressed.connect(func():
+			blocker.queue_free()
+			_starting_match = false
+		)
 		return
+	GameData.selected_map = selected_map
 	get_tree().change_scene_to_file("res://scenes/GameWorld.tscn")
 
 

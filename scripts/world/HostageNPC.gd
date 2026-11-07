@@ -192,6 +192,10 @@ func take_damage(attacker: Node3D, dmg: float) -> void:
 			_col_shape.set_deferred("disabled", true)
 		AudioManager.play_radio("radio/hosdown.wav")
 		_play_anim("gutshot", 0.08)
+		if _anim_player != null:
+			_anim_player.pause()
+		if is_instance_valid(_bullet_hitboxes):
+			_bullet_hitboxes.sync_pose()
 		if is_instance_valid(RoundManager.game_world):
 			ImpactEffects.spawn_death_blood_pool(RoundManager.game_world, global_position, Vector3.UP)
 
@@ -405,7 +409,9 @@ func _physics_process(delta: float) -> void:
 func _process(_delta: float) -> void:
 	if is_instance_valid(_native_model):
 		_native_model.rotation.y = PI
-		if not is_alive:
+		if is_alive:
+			_native_model.rotation.z = 0.0
+		elif not is_alive:
 			_native_model.rotation.z = lerpf(_native_model.rotation.z, PI * 0.5, minf(1.0, _delta * 6.0))
 	if is_instance_valid(_bullet_hitboxes):
 		_bullet_hitboxes.sync_pose()

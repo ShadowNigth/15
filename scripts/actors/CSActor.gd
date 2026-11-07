@@ -62,6 +62,7 @@ var _skel: Skeleton3D = null
 var _native_character := false
 var _bullet_hitboxes: SkeletalHitboxes = null
 var _native_clock := 0.0
+var _native_strafe_yaw := 0.0
 var _hand_attachment: BoneAttachment3D = null
 var _held_weapon_model: Node3D = null
 var _held_weapon_rest_transform: Transform3D = Transform3D.IDENTITY
@@ -1633,7 +1634,15 @@ func _evaluate_native_pose(delta: float) -> void:
 	var speed := Vector2(velocity.x, velocity.z).length()
 	var gait := "run" if speed > 4.0 else "walk" if speed > 0.4 else "idle"
 	var anim: Animation = _anim_res_map.get(gait)
-	var phase := fposmod(_native_clock * (clampf(speed / 3.0, 0.5, 1.4) if speed > 0.4 else 1.0), maxf(0.05, anim.length))
+	var stride_direction := 1.0
+	var relative_yaw := 0.0
+	if speed > 0.4:
+		relative_yaw = wrapf(atan2(-velocity.x, -velocity.z) - look_yaw, -PI, PI)
+		if absf(relative_yaw) > 1.85:
+			relative_yaw = wrapf(relative_yaw + PI, -PI, PI)
+			stride_direction = -1.0
+	_native_strafe_yaw = lerp_angle(_native_strafe_yaw, relative_yaw, minf(1.0, delta * 12.0))
+	var phase := fposmod(_native_clock * stride_direction * (clampf(speed / 3.0, 0.5, 1.4) if speed > 0.4 else 1.0), maxf(0.05, anim.length))
 	_apply_anim_layer(gait, phase, 2)
 	var wid := weapon_ctrl.current_weapon_id if weapon_ctrl else "usp"
 	var hold: String = GameData.native_actor_sockets[team.to_lower()].get(wid, {}).get("hold", "hold_ak47")
@@ -1645,6 +1654,11 @@ func _evaluate_native_pose(delta: float) -> void:
 			_apply_anim_layer(_upper_action_key, _upper_action_time, 1)
 		else:
 			_upper_action_key = ""
+	if _pelvis_bone_idx >= 0:
+		var pelvis_pose := _skel.get_bone_global_pose(_pelvis_bone_idx)
+		pelvis_pose.basis = Basis(Vector3.UP, _native_strafe_yaw) * pelvis_pose.basis
+		_skel.set_bone_global_pose_override(_pelvis_bone_idx, pelvis_pose, 1.0, true)
+		_skel.force_update_all_bone_transforms()
 	# Two-bone leg IK preserves original proportions and ankle world heights.
 	var lowering := 0.70 * _visual_crouch_t
 	_body_root.position = Vector3(0, -lowering, 0) + get_visual_world_pos() - global_position
@@ -1653,8 +1667,10 @@ func _evaluate_native_pose(delta: float) -> void:
 			_native_crouch_leg(side, lowering)
 	if _spine_bone_idx >= 0:
 		var pose := _skel.get_bone_global_pose(_spine_bone_idx)
-		var pitch := clampf(look_pitch * 0.6 + _tp_recoil_pitch, -0.7, 0.7)
-		pose.basis = Basis(Vector3.RIGHT, -pitch) * pose.basis
+		var pitch := clampf(look_pitch + _tp_recoil_pitch, -1.22, 1.22)
+		var rows: Array = GameData.native_actor_sockets[team.to_lower()].get(wid, {}).get("pelvis_basis", [[1,0,0],[0,1,0],[0,0,1]])
+		var parent_basis := Basis(Vector3(rows[0][0], rows[1][0], rows[2][0]), Vector3(rows[0][1], rows[1][1], rows[2][1]), Vector3(rows[0][2], rows[1][2], rows[2][2]))
+		pose.basis = Basis(Vector3.RIGHT, -pitch) * parent_basis * Basis(_skel.get_bone_pose_rotation(_spine_bone_idx))
 		_skel.set_bone_global_pose_override(_spine_bone_idx, pose, 1.0, true)
 
 

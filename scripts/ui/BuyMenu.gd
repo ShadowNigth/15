@@ -1101,8 +1101,18 @@ func _animate_preview(delta: float) -> void:
 	if _pv_skel == null or _pv_anim == null:
 		return
 	_pv_anim_t += delta
+	_pv_skel.clear_bones_global_pose_override()
 	_apply_preview_clip(_pv_lower_name, 0)
 	_apply_preview_clip(_pv_upper_name, 1)
+	var spine := _pv_skel.find_bone("spine_0")
+	if spine >= 0 and is_instance_valid(player):
+		var socket: Dictionary = GameData.native_actor_sockets[player.team.to_lower()].get(_pv_weapon, {})
+		var rows: Array = socket.get("pelvis_basis", [[1,0,0],[0,1,0],[0,0,1]])
+		var parent_basis := Basis(Vector3(rows[0][0], rows[1][0], rows[2][0]), Vector3(rows[0][1], rows[1][1], rows[2][1]), Vector3(rows[0][2], rows[1][2], rows[2][2]))
+		var pose := _pv_skel.get_bone_global_pose(spine)
+		pose.basis = parent_basis * Basis(_pv_skel.get_bone_pose_rotation(spine))
+		_pv_skel.set_bone_global_pose_override(spine, pose, 1.0, true)
+
 
 
 ## Upper body = Bip01 Spine and everything below it in the hierarchy.
