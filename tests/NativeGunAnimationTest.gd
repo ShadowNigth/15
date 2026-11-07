@@ -86,7 +86,7 @@ func _run() -> void:
 				_expect(absf(anim.get_animation(clip).length / anim.speed_scale - float(meta["gameplay_seq_durations"][clip])) < 0.003, wid + " preserves action timing " + clip)
 		for hand in [true, false]:
 			GameData.right_hand = hand
-			_expect(player._is_viewmodel_mirrored() == not hand, wid + " native handedness")
+			_expect(player._is_viewmodel_mirrored() == (not hand), wid + " native handedness")
 		GameData.right_hand = true
 		if _capture:
 			for clip in ["idle", "shoot1", "reload", "inspect", "inspect_2", "add_silencer", "pullpin", "throw", "underhand", "pressbutton"]:
