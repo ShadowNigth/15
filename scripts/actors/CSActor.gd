@@ -1620,7 +1620,8 @@ func _set_native_mesh_layers(root: Node) -> void:
 func _evaluate_native_pose(delta: float) -> void:
 	if _skel == null or _anim_res_map.is_empty():
 		return
-	_skel.clear_bones_global_pose_override()
+	if is_alive:
+		_skel.clear_bones_global_pose_override()
 	_native_clock += delta
 	_body_root.rotation.y = look_yaw + PI
 	_body_root.rotation.z = 0.0
@@ -1628,7 +1629,7 @@ func _evaluate_native_pose(delta: float) -> void:
 		_death_anim_time += delta
 		# Upstream does not supply deaths: bounded authored collapse, not fake clips.
 		var fall := smoothstep(0.0, 0.65, _death_anim_time)
-		_body_root.position = Vector3(0, lerpf(0.0, 0.22, fall), 0)
+		_body_root.position = Vector3(0, lerpf(-0.70 * _visual_crouch_t, 0.22, fall), 0)
 		_body_root.rotation.z = fall * PI * 0.5
 		return
 	var speed := Vector2(velocity.x, velocity.z).length()
