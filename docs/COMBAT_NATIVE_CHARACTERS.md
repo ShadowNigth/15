@@ -1,3 +1,5 @@
+> Character/resource/chicken decisions below are superseded by [CLASSIC_CHARACTER_ROLLBACK.md](CLASSIC_CHARACTER_ROLLBACK.md).
+
 # Combat, native characters and loading — November 2026
 
 Supersedes the review-only CT/T/hostage decision in NATIVE_WORLD_ASSETS.md.

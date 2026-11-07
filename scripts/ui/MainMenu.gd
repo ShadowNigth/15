@@ -432,40 +432,6 @@ func _start_selected_game() -> void:
 	if _money_opt:
 		GameData.start_money = _money_opt.get_selected_id()
 	AudioManager.play_ui("launch_select2.wav")
-	var selected_map := GameData.selected_map
-	var blocker := ColorRect.new()
-	blocker.color = Color(0.02, 0.03, 0.04, 0.97)
-	blocker.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
-	blocker.mouse_filter = Control.MOUSE_FILTER_STOP
-	add_child(blocker)
-	get_viewport().gui_release_focus()
-	var loading := Label.new()
-	loading.text = "Loading match resources..."
-	loading.set_anchors_and_offsets_preset(Control.PRESET_CENTER)
-	loading.add_theme_font_size_override("font_size", 24)
-	loading.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
-	loading.offset_left = -300
-	loading.offset_right = 300
-	blocker.add_child(loading)
-	var paths := GameData.prepare_match_resources()
-	var progress := GameData.poll_match_resources(paths)
-	while progress.x < paths.size():
-		loading.text = "Loading match resources: %d / %d" % [progress.x, paths.size()]
-		await get_tree().process_frame
-		progress = GameData.poll_match_resources(paths)
-	if progress.y > 0:
-		loading.text = "Resource load failed. Check project imports before starting."
-		var retry := Button.new()
-		retry.text = "Back"
-		retry.set_anchors_and_offsets_preset(Control.PRESET_CENTER)
-		retry.offset_top = 50
-		blocker.add_child(retry)
-		retry.pressed.connect(func():
-			blocker.queue_free()
-			_starting_match = false
-		)
-		return
-	GameData.selected_map = selected_map
 	get_tree().change_scene_to_file("res://scenes/GameWorld.tscn")
 
 
@@ -506,7 +472,7 @@ func _build_arsenal_dialog() -> void:
 		var idx3 := wlist.add_item("[Gloves] %s — %s" % [String(option.get("family", "Sport")), String(option.get("wear_code", ""))])
 		wlist.set_item_metadata(idx3, "glove:" + String(option.get("id", "")))
 
-	for resource in ["ct", "t", "hostage", "defuser_item", "chicken"]:
+	for resource in ["defuser_item"]:
 		var native_idx := wlist.add_item("[Native review] " + resource)
 		wlist.set_item_metadata(native_idx, "native:" + resource)
 
@@ -874,9 +840,10 @@ func _build_options_dialog() -> void:
 	grid.add_theme_constant_override("v_separation", 8)
 	content.add_child(grid)
 
-	var cosmetic_labels := ["Original casings + native ejection timing", "Low-ammunition warning colors", "Ambient chickens (Italy / Inferno / Cobble)", "Native dropped defuse-kit model"]
+	var cosmetic_labels := ["Original casings + native ejection timing", "Low-ammunition warning colors", "Native dropped defuse-kit model"]
 	var keys: Array = GameData.COSMETIC_KEYS.duplicate()
 	keys.erase("native_ammo_icons")
+	keys.erase("ambient_chickens_enabled")
 	for index in range(keys.size()):
 		var label := Label.new()
 		label.text = cosmetic_labels[index]
@@ -962,6 +929,8 @@ func _build_options_dialog() -> void:
 
 
 func _load_viewer_native(resource: String) -> void:
+	if resource != "defuser_item":
+		return
 	_viewer_current_wid = ""
 	_populate_viewer_skin_options("")
 	_clear_viewer_pivot()
@@ -982,11 +951,4 @@ func _load_viewer_native(resource: String) -> void:
 			_viewer_anim.play("walk")
 	GameData.apply_native_world_material(instance, resource)
 	_viewer_stats_lbl.text = "ScCsgoKnives native review: " + resource + "\n"
-	if resource in ["ct", "t"]:
-		_viewer_stats_lbl.text += "170 restored clips. Live CT/T use native gait + weapon poses; VIP keeps its distinct classic identity."
-	elif resource == "hostage":
-		_viewer_stats_lbl.text += "7 upstream adapted clips. Live hostage appearance replaced; physical rescue logic preserved."
-	elif resource == "defuser_item":
-		_viewer_stats_lbl.text += "CS2 waist tool pouch. Used for dropped kits; CT pickup, price and 5s / 10s defuse unchanged."
-	else:
-		_viewer_stats_lbl.text += "Native idle / walk / run. Ambient animals do not count as enemies or objectives."
+	_viewer_stats_lbl.text += "Original dropped defuse-kit model; animated character entries removed."

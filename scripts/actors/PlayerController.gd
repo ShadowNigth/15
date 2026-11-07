@@ -1265,3 +1265,17 @@ func _update_spectator_camera(delta: float) -> void:
 	else:
 		camera.global_position = camera.global_position.lerp(desired_pos, minf(1.0, 16.0 * delta))
 	camera.look_at(focus_pt, Vector3.UP)
+
+
+# The camera sits at 1.66 m (and interpolates duck/steps), not the generic
+# bot eye at 1.85 m. Use its actual optical ray for every human attack.
+func get_eye_position() -> Vector3:
+	if is_instance_valid(camera):
+		return camera.global_position
+	return super.get_eye_position()
+
+
+func get_aim_basis(punch_deg: Vector2) -> Basis:
+	if is_instance_valid(camera):
+		return camera.global_basis.orthonormalized()
+	return super.get_aim_basis(punch_deg)

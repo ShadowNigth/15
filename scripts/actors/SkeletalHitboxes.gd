@@ -12,13 +12,20 @@ const REGIONS := [
 	["leg_upper_L", "leg_lower_L", 0.10, 6], ["leg_lower_L", "ankle_L", 0.085, 6],
 	["leg_upper_R", "leg_lower_R", 0.10, 7], ["leg_lower_R", "ankle_R", 0.085, 7]]
 
+const CLASSIC_BONES := {
+	"head_0": "Bip01 Head", "pelvis": "Bip01 Pelvis", "spine_1": "Bip01 Spine1", "spine_3": "Bip01 Spine3",
+	"arm_upper_L": "Bip01 L UpperArm", "arm_lower_L": "Bip01 L Forearm", "hand_L": "Bip01 L Hand",
+	"arm_upper_R": "Bip01 R UpperArm", "arm_lower_R": "Bip01 R Forearm", "hand_R": "Bip01 R Hand",
+	"leg_upper_L": "Bip01 L Thigh", "leg_lower_L": "Bip01 L Calf", "ankle_L": "Bip01 L Foot",
+	"leg_upper_R": "Bip01 R Thigh", "leg_lower_R": "Bip01 R Calf", "ankle_R": "Bip01 R Foot"}
+
 func setup(owner_actor: Node3D, rig: Skeleton3D) -> void:
 	actor = owner_actor
 	skeleton = rig
 	actor.add_to_group("skeletal_bullet_actors")
 	for region in REGIONS:
-		var first := rig.find_bone(region[0])
-		var second := rig.find_bone(region[1])
+		var first := rig.find_bone(CLASSIC_BONES.get(region[0], region[0]) if rig.find_bone("Bip01 Pelvis") >= 0 else region[0])
+		var second := rig.find_bone(CLASSIC_BONES.get(region[1], region[1]) if rig.find_bone("Bip01 Pelvis") >= 0 else region[1])
 		if first < 0 or second < 0:
 			continue
 		var area := Area3D.new()

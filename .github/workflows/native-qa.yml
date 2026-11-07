@@ -613,7 +613,7 @@ jobs:
               text=p.read_text(errors='replace')[-6500:].replace('%','%25').replace('\n','%0A')
               print('::notice title=Native Estate rescue::'+text)
           PYCODE
-      - name: Render production ejection, HUD, chickens and animated candidates
+      - name: Render production ejection, HUD and restored classic characters
         if: ${{ !cancelled() && steps.world_import.outcome == 'success' }}
         env:
           LIBGL_ALWAYS_SOFTWARE: '1'
@@ -644,9 +644,6 @@ jobs:
       - name: Publish combat live_hostage
         if: ${{ always() }}
         run: python3 tools/publish_native_world_capture.py live_hostage
-      - name: Publish combat chicken_scale
-        if: ${{ always() }}
-        run: python3 tools/publish_native_world_capture.py chicken_scale
       - name: Publish CT review
         if: ${{ always() }}
         run: python3 tools/publish_native_world_capture.py ct_0
@@ -656,9 +653,6 @@ jobs:
       - name: Publish hostage review
         if: ${{ always() }}
         run: python3 tools/publish_native_world_capture.py hostage_0
-      - name: Publish chicken review
-        if: ${{ always() }}
-        run: python3 tools/publish_native_world_capture.py chicken_0
       - name: Publish native kit review
         if: ${{ always() }}
         run: python3 tools/publish_native_world_capture.py defuser_item_0

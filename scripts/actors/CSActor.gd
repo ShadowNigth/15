@@ -56,13 +56,10 @@ var flash_alpha: float = 0.0
 var weapon_ctrl: WeaponController = null
 var _col_shape: CollisionShape3D = null
 var _capsule: CapsuleShape3D = null
+var _bullet_hitboxes: SkeletalHitboxes = null
 var _body_root: Node3D = null
 var _body_anim: AnimationPlayer = null
 var _skel: Skeleton3D = null
-var _native_character := false
-var _bullet_hitboxes: SkeletalHitboxes = null
-var _native_clock := 0.0
-var _native_strafe_yaw := 0.0
 var _hand_attachment: BoneAttachment3D = null
 var _held_weapon_model: Node3D = null
 var _held_weapon_rest_transform: Transform3D = Transform3D.IDENTITY
@@ -145,6 +142,13 @@ func set_team_and_class(new_team: String, new_class: String) -> void:
 
 
 func _rebuild_character_model() -> void:
+	remove_from_group("skeletal_bullet_actors")
+	if is_instance_valid(_bullet_hitboxes):
+		for entry in _bullet_hitboxes.entries:
+			entry["area"].collision_layer = 0
+		remove_child(_bullet_hitboxes)
+		_bullet_hitboxes.queue_free()
+		_bullet_hitboxes = null
 	var old_children := _body_root.get_children()
 	for c in old_children:
 		_body_root.remove_child(c)
@@ -159,41 +163,30 @@ func _rebuild_character_model() -> void:
 	_pelvis_bone_idx = -1
 	_spine_bone_idx = -1
 	_is_upper_bone = PackedByteArray()
-	_anim_tracks_cache = {}
-	_anim_res_map = {}
+	_anim_tracks_cache.clear()
+	_anim_res_map.clear()
 	_upper_action_key = ""
 	_upper_action_time = 0.0
 	_death_anim_key = ""
 	_death_anim_time = 0.0
 	_gait_yaw = look_yaw
 
-	remove_from_group("skeletal_bullet_actors")
-	if is_instance_valid(_bullet_hitboxes):
-		for entry in _bullet_hitboxes.entries:
-			entry["area"].collision_layer = 0
-		remove_child(_bullet_hitboxes)
-		_bullet_hitboxes.queue_free()
-		_bullet_hitboxes = null
 	var mdl_id := "vip" if is_vip else class_id
-	_native_character = not is_vip and team in ["CT", "T"]
-	var sc := GameData.get_model_scene("native/" + team.to_lower()) if _native_character else GameData.get_model_scene("players/" + mdl_id)
+	var sc := GameData.get_model_scene("players/" + mdl_id)
 	if sc:
 		var inst := sc.instantiate()
-		if _native_character:
-			_set_native_mesh_layers(inst)
-		else:
-			_configure_character_meshes(inst)
+		_configure_character_meshes(inst)
 		_body_root.add_child(inst)
 		_body_anim = _find_anim(inst)
 		_skel = _find_skeleton(inst)
 		if _body_anim and _skel:
 			_body_anim.active = false  # Driven directly by GoldSrc 2-layer Gait + Upper-Body blender!
 			_build_skeleton_blend_tables()
-			var rhand_idx := _skel.find_bone("hand_R" if _native_character else "Bip01 R Hand")
+			var rhand_idx := _skel.find_bone("Bip01 R Hand")
 			if rhand_idx >= 0:
 				_hand_attachment = BoneAttachment3D.new()
 				_hand_attachment.name = "RightHandAttachment"
-				_hand_attachment.bone_name = "hand_R" if _native_character else "Bip01 R Hand"
+				_hand_attachment.bone_name = "Bip01 R Hand"
 				_skel.add_child(_hand_attachment)
 
 				_tp_muzzle_sprite = Sprite3D.new()
@@ -219,31 +212,23 @@ func _rebuild_character_model() -> void:
 		if weapon_ctrl:
 			_update_held_weapon_model(weapon_ctrl.current_weapon_id)
 		_evaluate_character_pose(0.0)
-	if _native_character and _skel != null:
+	_body_root.position.y = MODEL_CROUCH_OFFSET_Y if is_crouching else MODEL_STAND_OFFSET_Y
+	_body_root.visible = not is_human
+	if _skel != null:
 		_bullet_hitboxes = SkeletalHitboxes.new()
 		_bullet_hitboxes.name = "SkeletalHitboxes"
 		add_child(_bullet_hitboxes)
 		_bullet_hitboxes.setup(self, _skel)
-	_body_root.position.y = 0.0 if _native_character else (MODEL_CROUCH_OFFSET_Y if is_crouching else MODEL_STAND_OFFSET_Y)
-	_body_root.visible = not is_human
 
 
 func _build_skeleton_blend_tables() -> void:
 	if _skel == null or _body_anim == null:
 		return
-	if _native_character and GameData.native_actor_pose_cache.has(team):
-		var cached: Dictionary = GameData.native_actor_pose_cache[team]
-		_anim_tracks_cache = cached["tracks"]
-		_anim_res_map = cached["animations"]
-		_is_upper_bone = cached["upper"]
-		_pelvis_bone_idx = cached["pelvis"]
-		_spine_bone_idx = cached["spine"]
-		return
 	var nb := _skel.get_bone_count()
 	_is_upper_bone.resize(nb)
 	_is_upper_bone.fill(0)
-	_pelvis_bone_idx = _skel.find_bone("pelvis" if _native_character else "Bip01 Pelvis")
-	_spine_bone_idx = _skel.find_bone("spine_0" if _native_character else "Bip01 Spine")
+	_pelvis_bone_idx = _skel.find_bone("Bip01 Pelvis")
+	_spine_bone_idx = _skel.find_bone("Bip01 Spine")
 	if _spine_bone_idx >= 0:
 		_is_upper_bone[_spine_bone_idx] = 1
 		for bi in range(nb):
@@ -269,14 +254,10 @@ func _build_skeleton_blend_tables() -> void:
 			if ttype != Animation.TYPE_POSITION_3D and ttype != Animation.TYPE_ROTATION_3D:
 				continue
 			var bname := String(anim_res.track_get_path(ti).get_concatenated_subnames())
-			if _native_character and bname.begins_with("cswp_"):
-				continue
 			var bidx := _skel.find_bone(bname)
 			if bidx >= 0:
 				entries.append([ti, bidx, ttype == Animation.TYPE_POSITION_3D])
 		_anim_tracks_cache[low] = entries
-	if _native_character:
-		GameData.native_actor_pose_cache[team] = {"tracks": _anim_tracks_cache, "animations": _anim_res_map, "upper": _is_upper_bone, "pelvis": _pelvis_bone_idx, "spine": _spine_bone_idx}
 
 
 func _get_weapon_anim_ext(wid: String) -> String:
@@ -310,10 +291,6 @@ func trigger_upper_body_action(action_kind: String) -> void:
 	if not is_alive or _anim_res_map.is_empty():
 		return
 	var wid := weapon_ctrl.current_weapon_id if weapon_ctrl else "usp"
-	if _native_character and action_kind == "reload":
-		var hold: String = GameData.native_actor_sockets[team.to_lower()].get(wid, {}).get("hold", "hold_ak47")
-		_upper_action_key = hold.replace("hold_", "reload_")
-		_upper_action_time = 0.0
 	var ext := _get_weapon_anim_ext(wid)
 	var pref := "crouch_" if is_crouching else "ref_"
 
@@ -415,7 +392,7 @@ func _process(delta: float) -> void:
 				_tp_muzzle_sprite.visible = false
 			if _tp_muzzle_light:
 				_tp_muzzle_light.visible = false
-	if _body_root and (_body_root.visible or _native_character):
+	if _body_root and (_body_root.visible or is_instance_valid(_bullet_hitboxes)):
 		_evaluate_character_pose(delta)
 	if is_instance_valid(_bullet_hitboxes):
 		_bullet_hitboxes.sync_pose()
@@ -466,9 +443,6 @@ func _tick_corpse_grounding(delta: float) -> void:
 
 
 func _evaluate_character_pose(delta: float) -> void:
-	if _native_character:
-		_evaluate_native_pose(delta)
-		return
 	if _skel == null or _anim_res_map.is_empty():
 		return
 
@@ -651,15 +625,6 @@ func _update_held_weapon_model(wid: String) -> void:
 		p_inst.scale = Vector3.ONE * GameData.get_world_model_scale(wid)
 		_hand_attachment.add_child(p_inst)
 		_held_weapon_model = p_inst
-		if _native_character:
-			var socket: Dictionary = GameData.native_actor_sockets[team.to_lower()].get(wid, {})
-			var rows: Array = socket.get("basis", [[1,0,0],[0,1,0],[0,0,1]])
-			var basis := Basis(Vector3(rows[0][0], rows[1][0], rows[2][0]), Vector3(rows[0][1], rows[1][1], rows[2][1]), Vector3(rows[0][2], rows[1][2], rows[2][2]))
-			p_inst.basis = basis.scaled(Vector3.ONE * GameData.get_world_model_scale(wid))
-			if _tp_muzzle_sprite:
-				_tp_muzzle_sprite.position = basis * Vector3(-0.04, 0.06, -0.58)
-			if _tp_muzzle_light:
-				_tp_muzzle_light.position = basis * Vector3(-0.04, 0.08, -0.62)
 		_held_weapon_rest_transform = p_inst.transform
 
 
@@ -823,7 +788,7 @@ func _update_hull_height(crouch_want: bool) -> void:
 		global_position.y += air_tuck_lift
 		_prev_phys_pos.y += air_tuck_lift
 		_step_smooth_y = clampf(_step_smooth_y - air_tuck_lift, -0.68, 0.68)
-	if _body_root and not _native_character:
+	if _body_root:
 		_body_root.position.y = MODEL_CROUCH_OFFSET_Y if is_crouching else MODEL_STAND_OFFSET_Y
 
 
@@ -1611,96 +1576,3 @@ func buy_ammo_for_slot(slot_num: int, fill_all: bool = false) -> bool:
 		AudioManager.play_3d("weapons/archi/cs2_ak47/clipin.wav", global_position, -3.0, 14.0)
 		weapon_ctrl._emit_ammo()
 	return bought
-
-
-func _set_native_mesh_layers(root: Node) -> void:
-	for mesh in root.find_children("*", "MeshInstance3D", true, false):
-		mesh.layers = 2
-
-func _evaluate_native_pose(delta: float) -> void:
-	if _skel == null or _anim_res_map.is_empty():
-		return
-	if is_alive:
-		_skel.clear_bones_global_pose_override()
-	_native_clock += delta
-	_body_root.rotation.y = look_yaw + PI
-	_body_root.rotation.z = 0.0
-	if not is_alive:
-		_death_anim_time += delta
-		# Upstream does not supply deaths: bounded authored collapse, not fake clips.
-		var fall := smoothstep(0.0, 0.65, _death_anim_time)
-		_body_root.position = Vector3(0, lerpf(-0.70 * _visual_crouch_t, 0.22, fall), 0)
-		_body_root.rotation.z = fall * PI * 0.5
-		return
-	var speed := Vector2(velocity.x, velocity.z).length()
-	var gait := "run" if speed > 4.0 else "walk" if speed > 0.4 else "idle"
-	var anim: Animation = _anim_res_map.get(gait)
-	var stride_direction := 1.0
-	var relative_yaw := 0.0
-	if speed > 0.4:
-		relative_yaw = wrapf(atan2(-velocity.x, -velocity.z) - look_yaw, -PI, PI)
-		if absf(relative_yaw) > 1.85:
-			relative_yaw = wrapf(relative_yaw + PI, -PI, PI)
-			stride_direction = -1.0
-	_native_strafe_yaw = lerp_angle(_native_strafe_yaw, relative_yaw, minf(1.0, delta * 12.0))
-	var phase := fposmod(_native_clock * stride_direction * (clampf(speed / 3.0, 0.5, 1.4) if speed > 0.4 else 1.0), maxf(0.05, anim.length))
-	_apply_anim_layer(gait, phase, 2)
-	var wid := weapon_ctrl.current_weapon_id if weapon_ctrl else "usp"
-	var hold: String = GameData.native_actor_sockets[team.to_lower()].get(wid, {}).get("hold", "hold_ak47")
-	_apply_anim_layer(hold, fposmod(_native_clock, maxf(0.05, (_anim_res_map[hold] as Animation).length)), 1)
-	if not _upper_action_key.is_empty() and _anim_res_map.has(_upper_action_key):
-		_upper_action_time += delta
-		var action: Animation = _anim_res_map[_upper_action_key]
-		if _upper_action_time < action.length and weapon_ctrl.is_reloading:
-			_apply_anim_layer(_upper_action_key, _upper_action_time, 1)
-		else:
-			_upper_action_key = ""
-	if _pelvis_bone_idx >= 0:
-		var pelvis_pose := _skel.get_bone_global_pose(_pelvis_bone_idx)
-		pelvis_pose.basis = Basis(Vector3.UP, _native_strafe_yaw) * pelvis_pose.basis
-		_skel.set_bone_global_pose_override(_pelvis_bone_idx, pelvis_pose, 1.0, true)
-		_skel.force_update_all_bone_transforms()
-	# Two-bone leg IK preserves original proportions and ankle world heights.
-	var lowering := 0.70 * _visual_crouch_t
-	_body_root.position = Vector3(0, -lowering, 0) + get_visual_world_pos() - global_position
-	if lowering > 0.001:
-		for side in ["L", "R"]:
-			_native_crouch_leg(side, lowering)
-	if _spine_bone_idx >= 0:
-		var pose := _skel.get_bone_global_pose(_spine_bone_idx)
-		var pitch := clampf(look_pitch + _tp_recoil_pitch, -1.22, 1.22)
-		var rows: Array = GameData.native_actor_sockets[team.to_lower()].get(wid, {}).get("pelvis_basis", [[1,0,0],[0,1,0],[0,0,1]])
-		var parent_basis := Basis(Vector3(rows[0][0], rows[1][0], rows[2][0]), Vector3(rows[0][1], rows[1][1], rows[2][1]), Vector3(rows[0][2], rows[1][2], rows[2][2]))
-		pose.basis = Basis(Vector3.RIGHT, -pitch) * parent_basis * Basis(_skel.get_bone_pose_rotation(_spine_bone_idx))
-		_skel.set_bone_global_pose_override(_spine_bone_idx, pose, 1.0, true)
-
-
-func _native_crouch_leg(side: String, lowering: float) -> void:
-	var hip := _skel.find_bone("leg_upper_" + side)
-	var knee := _skel.find_bone("leg_lower_" + side)
-	var ankle := _skel.find_bone("ankle_" + side)
-	if hip < 0 or knee < 0 or ankle < 0:
-		return
-	_skel.force_update_all_bone_transforms()
-	var h := _skel.get_bone_global_pose(hip)
-	var k := _skel.get_bone_global_pose(knee)
-	var foot := _skel.get_bone_global_pose(ankle)
-	var target := foot.origin + Vector3.UP * lowering
-	var first := h.origin.distance_to(k.origin)
-	var second := k.origin.distance_to(foot.origin)
-	var axis := target - h.origin
-	var distance := clampf(axis.length(), 0.025, first + second - 0.001)
-	axis = axis.normalized()
-	var bend := (Vector3.BACK - axis * Vector3.BACK.dot(axis)).normalized()
-	var cosine := clampf((first * first + distance * distance - second * second) / (2.0 * first * distance), -1.0, 1.0)
-	var knee_target := h.origin + axis * first * cosine + bend * first * sqrt(maxf(0.0, 1.0 - cosine * cosine))
-	h.basis = Basis(Quaternion((k.origin - h.origin).normalized(), (knee_target - h.origin).normalized())) * h.basis
-	_skel.set_bone_global_pose_override(hip, h, 1.0, true)
-	_skel.force_update_all_bone_transforms()
-	k = _skel.get_bone_global_pose(knee)
-	var current_foot := _skel.get_bone_global_pose(ankle)
-	k.basis = Basis(Quaternion((current_foot.origin - k.origin).normalized(), (target - k.origin).normalized())) * k.basis
-	_skel.set_bone_global_pose_override(knee, k, 1.0, true)
-	_skel.force_update_all_bone_transforms()
-	foot.origin = target
-	_skel.set_bone_global_pose_override(ankle, foot, 1.0, true)

@@ -54,7 +54,7 @@ func _run() -> void:
 	await get_tree().physics_frame
 	await get_tree().physics_frame
 	await get_tree().physics_frame
-	expect(world.ambient_chickens.size() == 4, "Italy gets exactly four floor-validated chickens")
+	expect(world.ambient_chickens.is_empty(), "Chicken without native death animation has been removed")
 	var actor_count := RoundManager.actors.size()
 	var system := world.native_casing_system
 	system.set_physics_process(false)
@@ -100,16 +100,6 @@ func _run() -> void:
 			expect(frame.origin.distance_to(player.get_eye_position()) < 2.0, "Animated port has metre-scale placement: " + wid)
 		expect(system.pending.size() == expected, "Production shot ejection count " + wid)
 		system._physics_process(1.0)
-	if not world.ambient_chickens.is_empty():
-		var chicken := world.ambient_chickens[0]
-		expect(chicken._anim != null and chicken._anim.has_animation("walk") and chicken._anim.has_animation("run"), "Chicken has native skeletal locomotion")
-		chicken._on_world_sound(chicken.global_position + Vector3.RIGHT, 20.0, "CT")
-		expect(chicken._panic > 0.0, "Gunfire startles ambient chicken")
-		chicken.take_damage(player, 30.0)
-		expect(not chicken.is_alive and chicken.collision_layer == 0, "Killed ambient animal no longer blocks bullets")
-		expect(RoundManager.actors.size() == actor_count, "Chickens never enter teams/objective actor list")
-		chicken.reset_for_round()
-		expect(chicken.is_alive, "Round reset restores chicken")
 	var kit := DroppedWeapon.new()
 	world.add_child(kit)
 	kit.position = player.position + Vector3.RIGHT
@@ -163,37 +153,7 @@ func _capture_gameplay(world: GameWorld, player: PlayerController) -> void:
 	player.weapon_ctrl.equip_weapon_by_id("ak47")
 	player.look_pitch = deg_to_rad(-20.0)
 	player.camera.current = true
-	var space := world.get_world_3d().direct_space_state
-	var positioned := false
-	for chicken in world.ambient_chickens:
-		for angle in range(12):
-			var offset := Vector3(sin(angle * TAU / 12.0), 0, cos(angle * TAU / 12.0)) * 2.8
-			var floor_query := PhysicsRayQueryParameters3D.create(chicken.home + offset + Vector3.UP * 2, chicken.home + offset - Vector3.UP * 3, 1)
-			var floor_hit := space.intersect_ray(floor_query)
-			if floor_hit.is_empty() or floor_hit["normal"].y < 0.75:
-				continue
-			var position: Vector3 = floor_hit["position"] + Vector3.UP * 0.03
-			var body_query := PhysicsShapeQueryParameters3D.new()
-			body_query.shape = player._capsule
-			body_query.collision_mask = 1
-			body_query.transform = Transform3D(Basis.IDENTITY, position + Vector3.UP * player.STAND_HEIGHT * 0.5)
-			if not space.intersect_shape(body_query, 1).is_empty():
-				continue
-			var eye := position + Vector3.UP * 1.66
-			var target := chicken.global_position + Vector3.UP * 0.20
-			if not space.intersect_ray(PhysicsRayQueryParameters3D.create(eye, target, 1)).is_empty():
-				continue
-			player.global_position = position
-			player._prev_phys_pos = position
-			player.velocity = Vector3.ZERO
-			var direction := target - eye
-			player.look_yaw = atan2(-direction.x, -direction.z)
-			player.look_pitch = atan2(direction.y, Vector2(direction.x, direction.z).length())
-			positioned = true
-			break
-		if positioned:
-			break
-	expect(positioned, "Gameplay review has free player capsule and unobstructed chicken view")
+	player.velocity = Vector3.ZERO
 	player.viewmodel_pivot.visible = true
 	player._vm_container.visible = true
 	player._vm_layer.visible = true
@@ -228,10 +188,12 @@ func _capture_gameplay(world: GameWorld, player: PlayerController) -> void:
 	light.rotation_degrees = Vector3(-35, -25, 0)
 	light.light_energy = 1.5
 	add_child(light)
-	for resource in ["ct", "t", "hostage", "defuser_item", "chicken"]:
-		var instance := GameData.get_model_scene("native/" + resource).instantiate() as Node3D
+	for resource in ["ct", "t", "hostage", "defuser_item"]:
+		var path: String = {"ct": "players/urban", "t": "players/terror", "hostage": "players/hostage"}.get(resource, "native/" + resource)
+		var instance := GameData.get_model_scene(path).instantiate() as Node3D
 		add_child(instance)
-		GameData.apply_native_world_material(instance, resource)
+		if resource == "defuser_item":
+			GameData.apply_native_world_material(instance, resource)
 		if resource in ["defuser_item", "chicken"]:
 			instance.scale = Vector3.ONE * 2.2
 			instance.position.y = 0.65

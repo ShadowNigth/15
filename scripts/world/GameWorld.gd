@@ -480,47 +480,12 @@ func _physics_process(_delta: float) -> void:
 
 
 func _reset_ambient_chickens() -> void:
-	if not ambient_chickens.is_empty():
-		for chicken in ambient_chickens:
-			if is_instance_valid(chicken):
-				chicken.reset_for_round()
-		return
-	# Deliberate map allowlist: no chickens on OilRig, snow, offices or aircraft.
-	var counts := {"cs_italy": 4, "de_inferno": 3, "de_cbble": 3}
-	var count: int = counts.get(String(map_data.get("name", "")), 0)
-	if count == 0:
-		return
-	var points: Array = map_data.get("waypoints", [])
-	var space := get_world_3d().direct_space_state
-	for index in range(points.size()):
-		if ambient_chickens.size() >= count:
-			break
-		# Spread candidates deterministically, validate actual floor and headroom.
-		var p: Array = points[(index * 37 + 11) % points.size()]
-		var candidate := Vector3(p[0], p[1], p[2])
-		var hit := space.intersect_ray(PhysicsRayQueryParameters3D.create(candidate + Vector3.UP * 0.5, candidate - Vector3.UP * 2.5, 1))
-		if hit.is_empty() or hit["normal"].y < 0.85:
-			continue
-		candidate = hit["position"] + Vector3.UP * 0.03
-		var valid := true
-		for zone in water_zones + bombsites + rescue_zones + escape_zones + ladders:
-			if zone.grow(1.0).has_point(candidate):
-				valid = false
-		for chicken in ambient_chickens:
-			if chicken.home.distance_to(candidate) < 9.0:
-				valid = false
-		for spawn in map_data.get("ct_spawns", []) + map_data.get("t_spawns", []) + map_data.get("hostages", []):
-			var pos: Array = spawn["pos"]
-			if candidate.distance_to(Vector3(pos[0], pos[1], pos[2])) < 5.0:
-				valid = false
-		if not space.intersect_ray(PhysicsRayQueryParameters3D.create(candidate + Vector3.UP * 0.05, candidate + Vector3.UP * 0.75, 1)).is_empty():
-			valid = false
-		if valid:
-			var chicken := AmbientChicken.new()
-			chicken.name = "AmbientChicken%d" % ambient_chickens.size()
-			chicken.home = candidate
-			add_child(chicken)
-			ambient_chickens.append(chicken)
+	# Source chicken has idle/walk/run only, no authored skeletal death.
+	# Explicit user request: remove it rather than substitute a rotated corpse.
+	for chicken in ambient_chickens:
+		if is_instance_valid(chicken):
+			chicken.queue_free()
+	ambient_chickens.clear()
 
 
 func _initialize_ambient_chickens() -> void:

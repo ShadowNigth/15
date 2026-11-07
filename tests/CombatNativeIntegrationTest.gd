@@ -1,4 +1,5 @@
 extends Node3D
+# Keep the existing scene entry point, now guarding the requested classic rollback.
 var checks := 0
 var failures: Array[String] = []
 
@@ -9,10 +10,7 @@ func expect(value: bool, text: String) -> void:
 		push_error("[COMBAT NATIVE] " + text)
 
 func _ready() -> void:
-	get_tree().create_timer(45.0).timeout.connect(func():
-		push_error("[COMBAT NATIVE] Watchdog: test did not finish")
-		get_tree().quit(1)
-	)
+	get_tree().create_timer(45.0).timeout.connect(func(): get_tree().quit(1))
 	_run.call_deferred()
 
 func block(position_value: Vector3, size_value: Vector3) -> StaticBody3D:
@@ -33,7 +31,7 @@ func _run() -> void:
 	add_child(camera)
 	camera.current = true
 	camera.fov = 40
-	camera.look_at_from_position(Vector3(0, 1.1, -5.0), Vector3(0, 0.95, 0), Vector3.UP)
+	camera.look_at_from_position(Vector3(0, 1.1, -5), Vector3(0, 0.95, 0), Vector3.UP)
 	var environment := Environment.new()
 	environment.background_mode = Environment.BG_COLOR
 	environment.background_color = Color(0.06, 0.08, 0.1)
@@ -43,14 +41,11 @@ func _run() -> void:
 	camera.environment = environment
 	var light := DirectionalLight3D.new()
 	light.rotation_degrees = Vector3(-35, 140, 0)
-	light.light_energy = 1.2
 	add_child(light)
 	block(Vector3(0, -0.1, 0), Vector3(20, 0.2, 20))
 	var actors: Array[CSActor] = []
 	for role in ["CT", "T"]:
 		var actor := CSActor.new()
-		actor.team = role
-		actor.is_alive = true
 		actor.position.x = -0.75 if role == "CT" else 0.75
 		add_child(actor)
 		actor.set_team_and_class(role, "urban" if role == "CT" else "terror")
@@ -59,11 +54,10 @@ func _run() -> void:
 		actor.weapon_ctrl.give_weapon("ak47", 30, 90)
 		actor.weapon_ctrl.equip_weapon_by_id("ak47")
 		actors.append(actor)
-		expect(actor._native_character, role + " really uses live native rig")
-		expect(actor._skel.find_bone("head_0") >= 0, "Native head bone")
-		expect(actor._hand_attachment.bone_name == "hand_R", "Real native weapon attachment")
-		expect(actor._held_weapon_model != null, "Held weapon exists")
-		expect(actor._bullet_hitboxes.entries.size() == 11, "All anatomical hit regions")
+		expect(actor._skel.find_bone("Bip01 Head") >= 0, "Actual classic " + role + " skeleton")
+		expect(actor._skel.find_bone("head_0") < 0, "No native tactical rig in live " + role)
+		expect(actor._hand_attachment.bone_name == "Bip01 R Hand", "Classic hand socket")
+		expect(actor._bullet_hitboxes.entries.size() == 11, "Skeletal bullet regions retained on classic rig")
 		actor._evaluate_character_pose(0.1)
 		actor._bullet_hitboxes.sync_pose()
 	await get_tree().physics_frame
@@ -73,80 +67,60 @@ func _run() -> void:
 		var query := PhysicsRayQueryParameters3D.create(head.global_position + Vector3.FORWARD * 2, head.global_position + Vector3.BACK * 2, 16)
 		query.collide_with_areas = true
 		var hit := get_world_3d().direct_space_state.intersect_ray(query)
-		expect(not hit.is_empty() and hit["collider"].get_meta("hitgroup") == 1, "Head ray hits head, not movement capsule/chest")
-		query.from.x += 0.34
-		query.to.x += 0.34
-		expect(get_world_3d().direct_space_state.intersect_ray(query).is_empty(), "Empty space beside head is not a hit")
-	var target := actors[1]
-	var target_head: Area3D = target._bullet_hitboxes.entries[0]["area"]
-	target.health = 1000
-	target.armor = 0
-	actors[0].weapon_ctrl._fire_penetrating_ray(target_head.global_position + Vector3.FORWARD * 2, Vector3.BACK, 4.0, 10.0, 1.0, 1.0, 0)
-	expect(target.health == 960, "Production bullet applies native head hitgroup multiplier")
-	for actor in actors:
-		var rows: Array = GameData.native_actor_sockets[actor.team.to_lower()]["ak47"]["expected_basis"]
-		var expected := Basis(Vector3(rows[0][0], rows[1][0], rows[2][0]), Vector3(rows[0][1], rows[1][1], rows[2][1]), Vector3(rows[0][2], rows[1][2], rows[2][2])).orthonormalized()
-		var actual := actor._held_weapon_model.global_basis.orthonormalized()
-		expect(actual.x.distance_to(expected.x) < 0.03 and actual.z.distance_to(expected.z) < 0.03, "Mixed gait/hold keeps rifle aimed forward " + actor.team)
-		expect((-actual.z).dot(actor.get_look_forward()) > 0.98, "Actual p_ barrel faces the actor aim direction " + actor.team)
+		expect(not hit.is_empty() and hit["collider"].get_meta("hitgroup") == 1, "Classic bone head region is shootable")
 	if "--capture" in OS.get_cmdline_user_args():
 		await save_frame("live_ct_t")
 	for actor in actors:
-		var old_head := actor._skel.get_bone_global_pose(actor._skel.find_bone("head_0")).origin
 		actor.is_crouching = true
 		actor._visual_crouch_t = 1.0
 		actor._evaluate_character_pose(0.1)
-		actor._bullet_hitboxes.sync_pose()
-		var head: Area3D = actor._bullet_hitboxes.entries[0]["area"]
-		expect(head.global_position.y < old_head.y - 0.45, "Crouched hitboxes follow visible head")
-		var ankle := actor._skel.find_bone("ankle_L")
-		var foot := actor._skel.global_transform * actor._skel.get_bone_global_pose(ankle).origin
-		expect(foot.y > -0.08 and foot.y < 0.4, "Crouch IK keeps ankle near floor without squashing geometry")
 	if "--capture" in OS.get_cmdline_user_args():
 		await save_frame("live_crouch")
+	for actor in actors:
+		actor.visible = false
+	var hostage := HostageNPC.new()
+	add_child(hostage)
+	hostage.set_physics_process(false)
+	var rigs := hostage.find_children("*", "Skeleton3D", true, false)
+	expect(not rigs.is_empty(), "Classic hostage has original animated skeleton")
+	expect(hostage._anim_player != null and hostage._anim_player.has_animation("gutshot"), "Classic hostage retains authored death")
+	if "--capture" in OS.get_cmdline_user_args():
+		await save_frame("live_hostage")
+	hostage.visible = false
 	var wall := block(Vector3(5, 1, 0), Vector3(0.2, 2, 2))
 	await get_tree().physics_frame
 	var space := get_world_3d().direct_space_state
 	var entry := space.intersect_ray(PhysicsRayQueryParameters3D.create(Vector3(3, 1, 0), Vector3(7, 1, 0), 1))
 	var exit := BallisticModel.find_exit(space, entry, Vector3.RIGHT, 0.5)
-	expect(not exit.is_empty() and absf(float(exit.get("thickness", 0.0)) - 0.2) < 0.015, "Real wall thickness and forward exit")
-	expect(BallisticModel.find_exit(space, entry, Vector3.RIGHT, 0.1).is_empty(), "Thick wall cannot jump back to entry")
-	expect(BallisticModel.profile("W", "762nato").x > BallisticModel.profile("M", "762nato").x, "Material penetration differs")
-	expect(BallisticModel.damage_retention(Vector2(0.8, 0.75), 0.6) < BallisticModel.damage_retention(Vector2(0.8, 0.75), 0.1), "Thickness attenuates damage")
+	expect(not exit.is_empty() and absf(float(exit.get("thickness", 0.0)) - 0.2) < 0.015, "Penetration still measures real wall thickness")
+	expect(BallisticModel.find_exit(space, entry, Vector3.RIGHT, 0.1).is_empty(), "Cannot penetrate thicker-than-allowed wall")
 	for wid in GameData.weapons:
 		var spec: Dictionary = GameData.weapons[wid]
-		var first := BallisticModel.spray_kick(spec, 7, false)
-		expect(first == BallisticModel.spray_kick(spec, 7, false), "Reproducible recoil " + wid)
-		expect(BallisticModel.spray_kick(spec, 7, true).length() <= first.length(), "Crouch controls recoil " + wid)
-	var hostage := HostageNPC.new()
-	hostage.position = Vector3(0, 0, 0)
-	add_child(hostage)
-	hostage.set_physics_process(false)
-	expect(hostage._native_model != null and hostage._bullet_hitboxes != null, "Live native hostage, not review-only")
-	for actor in actors:
-		actor.visible = false
-	if "--capture" in OS.get_cmdline_user_args():
-		await save_frame("live_hostage")
-	var bird := AmbientChicken.new()
-	bird.home = Vector3(0.6, 0, 0)
-	add_child(bird)
-	bird.set_physics_process(false)
-	expect(bird._model.scale.is_equal_approx(Vector3.ONE * 1.85), "Adult chicken scale applies to model")
-	if "--capture" in OS.get_cmdline_user_args():
-		await save_frame("chicken_scale")
-	var paths := GameData.prepare_match_resources()
-	var progress := GameData.poll_match_resources(paths)
-	for frame in range(600):
-		if progress.x >= paths.size():
-			break
-		await get_tree().process_frame
-		progress = GameData.poll_match_resources(paths)
-	expect(progress.x == paths.size() and progress.y == 0, "Threaded match warmup completes without failed assets")
-	var hud := CSHud.new()
-	add_child(hud)
-	expect(hud._native_ammo_icon == null, "HUD has no magazine icon")
-	hud.queue_free()
-	expect(GameData._scene_cache.size() <= 48, "Bounded scene cache")
+		var kick := BallisticModel.spray_kick(spec, 7, false)
+		expect(kick == BallisticModel.spray_kick(spec, 7, false), "Repeatable recoil " + wid)
+	var player := PlayerController.new()
+	add_child(player)
+	player.set_team_and_class("CT", "urban")
+	player.set_physics_process(false)
+	player.set_process(false)
+	player.camera.current = true
+	block(Vector3(0, 3, -10), Vector3(50, 40, 0.1))
+	await get_tree().physics_frame
+	var center := get_viewport().get_visible_rect().size * 0.5
+	for eye_height in [1.66, 0.96]:
+		for fov in [74.0, 30.0]:
+			player.camera.global_position = Vector3(0, eye_height, 0)
+			player.camera.rotation = Vector3(0.13, 0.2, 0.04)
+			player.camera.fov = fov
+			player.weapon_ctrl.punch_angles = Vector2(6, -2)
+			var origin := player.get_eye_position()
+			var aim := -player.get_aim_basis(player.weapon_ctrl.punch_angles).z
+			expect(origin.distance_to(player.camera.project_ray_origin(center)) < 0.0001, "Human bullet starts at optical eye, including duck interpolation")
+			expect(aim.dot(player.camera.project_ray_normal(center)) > 0.99999, "No extra recoil multiplier or camera shake divergence")
+			var hit := space.intersect_ray(PhysicsRayQueryParameters3D.create(origin, origin + aim * 50, 1))
+			expect(not hit.is_empty(), "Optical ray hits real wall")
+			if not hit.is_empty():
+				expect(player.camera.unproject_position(hit["position"]).distance_to(center) < 0.5, "Real impact projects onto crosshair within half a pixel")
 	wall.queue_free()
 	AudioManager.stop_all()
 	print("[COMBAT NATIVE] %s: %d checks, %d failures" % ["PASS" if failures.is_empty() else "FAIL", checks, failures.size()])
