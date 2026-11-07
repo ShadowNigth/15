@@ -1203,6 +1203,8 @@ func _on_taken_damage_from(_attacker: Node3D, _hit_pos: Vector3) -> void:
 
 
 func _apply_raw_hp_loss(attacker: Node3D, dmg_int: int, weapon_id: String, headshot: bool) -> void:
+	if RoundManager.map_mode == "dm" and (dm_protection > 0.0 or RoundManager.state != RoundManager.State.LIVE):
+		return
 	health = maxi(0, health - dmg_int)
 	health_armor_changed.emit(health, armor, has_helmet)
 	if health <= 0:

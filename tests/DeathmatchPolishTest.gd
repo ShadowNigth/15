@@ -64,6 +64,8 @@ func _run() -> void:
 	expect(enemy.health == hp, "Spawn protection blocks bullets")
 	enemy.apply_explosion_damage(world.player, 250.0, "hegrenade")
 	expect(enemy.health == hp, "Spawn protection blocks HE/fire")
+	enemy._apply_raw_hp_loss(null, 25, "world", false)
+	expect(enemy.health == hp, "Protection also covers raw world/fall damage")
 	var spawn := enemy.global_position
 	for frame in range(180):
 		await get_tree().physics_frame

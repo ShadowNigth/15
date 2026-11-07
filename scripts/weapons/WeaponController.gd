@@ -617,7 +617,7 @@ func _finish_reload_step() -> void:
 
 
 func _execute_bullet_shot(spec: Dictionary, is_burst_subshot: bool) -> void:
-	actor.dm_protection = 0.0
+	_cancel_spawn_protection()
 	var cur_clip := int(clips.get(current_weapon_id, 0))
 	if cur_clip <= 0:
 		return
@@ -934,7 +934,7 @@ func _spawn_surface_hit_fx(
 
 
 func _swing_knife(heavy_stab: bool) -> void:
-	actor.dm_protection = 0.0
+	_cancel_spawn_protection()
 	var spec := get_current_spec()
 	fire_cooldown = float(spec.get("alt_cycle_time", 1.1)) if heavy_stab else float(spec.get("cycle_time", 0.4))
 	var reach := (float(spec.get("alt_range", 36.0)) if heavy_stab else float(spec.get("range", 52.0))) * GameData.SCALE
@@ -1045,8 +1045,7 @@ func drop_pulled_grenade_on_death() -> void:
 
 
 func _throw_grenade(gid: String) -> void:
-	if is_instance_valid(actor):
-		actor.dm_protection = 0.0
+	_cancel_spawn_protection()
 	var spec: Dictionary = GameData.weapons.get(gid, {})
 	AudioManager.play_3d(String(spec.get("pinpull_sound", "weapons/archi/cs2_hegren/pinpull.wav")), actor.global_position, -3.0, 14.0)
 	_launch_grenade_now(gid)
@@ -1155,3 +1154,9 @@ func _complete_c4_plant() -> void:
 	if not equip_slot(1):
 		if not equip_slot(2):
 			equip_slot(3)
+
+
+func _cancel_spawn_protection() -> void:
+	# The controller also supports non-CSActor tools/fixtures; classic callers need no DM fields.
+	if RoundManager.map_mode == "dm" and actor is CSActor:
+		(actor as CSActor).dm_protection = 0.0
