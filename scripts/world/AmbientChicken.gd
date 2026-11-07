@@ -52,6 +52,7 @@ func reset_for_round() -> void:
 	_voice = _rng.randf_range(4.0, 12.0)
 	if _model:
 		_model.rotation = Vector3.ZERO
+		_model.position = Vector3.ZERO
 	_play("idle")
 
 func _play(clip: String) -> void:
@@ -75,6 +76,7 @@ func take_damage(_attacker: Node3D, damage: float) -> void:
 	if _anim:
 		_anim.pause()
 	if _model:
+		_model.position.y = 0.10 * MODEL_SCALE
 		_model.rotation.z = PI * 0.5  # Authored fall, not a native death clip/ragdoll.
 	AudioManager.play_3d("native/sccsgoknives/Chicken/death/chicken_death_%02d.wav" % _rng.randi_range(1, 3), global_position, -9.0, 14.0)
 

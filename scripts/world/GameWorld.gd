@@ -513,7 +513,7 @@ func _reset_ambient_chickens() -> void:
 			var pos: Array = spawn["pos"]
 			if candidate.distance_to(Vector3(pos[0], pos[1], pos[2])) < 5.0:
 				valid = false
-		if not space.intersect_ray(PhysicsRayQueryParameters3D.create(candidate + Vector3.UP * 0.05, candidate + Vector3.UP * 0.55, 1)).is_empty():
+		if not space.intersect_ray(PhysicsRayQueryParameters3D.create(candidate + Vector3.UP * 0.05, candidate + Vector3.UP * 0.75, 1)).is_empty():
 			valid = false
 		if valid:
 			var chicken := AmbientChicken.new()

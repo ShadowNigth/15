@@ -822,13 +822,8 @@ func _update_hull_height(crouch_want: bool) -> void:
 		global_position.y += air_tuck_lift
 		_prev_phys_pos.y += air_tuck_lift
 		_step_smooth_y = clampf(_step_smooth_y - air_tuck_lift, -0.68, 0.68)
-	if _body_root:
-		if _native_character and _skel != null:
-		_bullet_hitboxes = SkeletalHitboxes.new()
-		_bullet_hitboxes.name = "SkeletalHitboxes"
-		add_child(_bullet_hitboxes)
-		_bullet_hitboxes.setup(self, _skel)
-	_body_root.position.y = 0.0 if _native_character else (MODEL_CROUCH_OFFSET_Y if is_crouching else MODEL_STAND_OFFSET_Y)
+	if _body_root and not _native_character:
+		_body_root.position.y = MODEL_CROUCH_OFFSET_Y if is_crouching else MODEL_STAND_OFFSET_Y
 
 
 func apply_goldsrc_movement(wish_dir_world: Vector3, want_jump: bool, want_crouch: bool, want_walk: bool, delta: float) -> void:
@@ -1246,6 +1241,8 @@ func _die(killer: Node3D, weapon_id: String, headshot: bool) -> void:
 		_gait_yaw = look_yaw
 		_evaluate_character_pose(0.016)
 	is_alive = false
+	if is_instance_valid(_bullet_hitboxes):
+		_bullet_hitboxes.sync_pose()
 	if is_instance_valid(killer) and killer != self and bool(killer.get("is_human")) and String(killer.get("team")) != team:
 		AudioManager.play_2d(AudioManager.cue_path("kill_confirm"), -8.0)
 	_col_shape.set_deferred("disabled", true)

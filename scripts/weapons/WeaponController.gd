@@ -753,6 +753,9 @@ func _fire_penetrating_ray(
 			(col as DroppedWeapon).apply_bullet_impulse(hit_pos, dir, dmg_at_dist)
 			if is_instance_valid(RoundManager.game_world):
 				ImpactEffects.spawn_surface_impact(RoundManager.game_world, hit_pos, hit_nrm, dir, "M", 0.85, col as Node3D)
+			if pen_left <= 0 or current_weapon_id == "taser":
+				break
+			pen_left -= 1
 			exclude_rids.append((col as CollisionObject3D).get_rid())
 			cur_dmg *= 0.82
 			var step_dw := origin.distance_to(hit_pos)
@@ -792,6 +795,9 @@ func _fire_penetrating_ray(
 
 		# Layer 8 visual metal ladder / grate brush: spark & clank on metal rung, and let bullet pass through gaps!
 		if col is StaticBody3D and (col as StaticBody3D).collision_layer == 8:
+			if pen_left <= 0 or current_weapon_id == "taser":
+				break
+			pen_left -= 1
 			var sb_col := col as StaticBody3D
 			var lmat := String(sb_col.get_meta("surface_mat")) if sb_col.has_meta("surface_mat") else "L"
 			_spawn_surface_hit_fx(hit_pos, hit_nrm, dir, sb_col, lmat, cal_scale)

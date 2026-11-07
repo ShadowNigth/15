@@ -945,6 +945,8 @@ func poll_match_resources(paths: Array[String]) -> Vector2i:
 			_match_warm_resources[path] = resource
 			if path.begins_with("res://assets/models/"):
 				_scene_cache[path] = resource
+				while _scene_cache.size() > 48:
+					_scene_cache.erase(_scene_cache.keys()[0])
 			completed += 1
 		elif state in [ResourceLoader.THREAD_LOAD_FAILED, ResourceLoader.THREAD_LOAD_INVALID_RESOURCE]:
 			completed += 1

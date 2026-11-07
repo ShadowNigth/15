@@ -630,7 +630,9 @@ jobs:
           for name in ['world-import', 'native-world']:
               path=Path('/tmp/'+name+'.log')
               if path.exists():
-                  text=path.read_text(errors='replace')[-5500:].replace('%','%25').replace('\n','%0A')
+                  raw=path.read_text(errors='replace')
+                  start=raw.find('SCRIPT ERROR:') if name=='world-import' else -1
+                  text=(raw[start:start+5500] if start>=0 else raw[-5500:]).replace('%','%25').replace('\n','%0A')
                   print('::notice title='+name+'::'+text)
           PYCODE
       - name: Publish combat live_ct_t

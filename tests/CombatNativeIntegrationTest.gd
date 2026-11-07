@@ -49,6 +49,7 @@ func _run() -> void:
 		actor.is_alive = true
 		actor.position.x = -0.75 if role == "CT" else 0.75
 		add_child(actor)
+		actor._prev_phys_pos = actor.global_position
 		actor.set_physics_process(false)
 		actor.weapon_ctrl.give_weapon("ak47", 30, 90)
 		actor.weapon_ctrl.equip_weapon_by_id("ak47")
