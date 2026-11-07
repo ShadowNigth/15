@@ -194,7 +194,9 @@ func _viewmodel_has_events(v_name: String, seq_prefix: String) -> bool:
 	var evs: Dictionary = mmeta.get("seq_events", {})
 	for k in evs.keys():
 		if String(k).to_lower().begins_with(seq_prefix.to_lower()):
-			return true
+			for event in evs[k]:
+				if event is Dictionary and not String(event.get("wav", "")).is_empty():
+					return true
 	return false
 
 

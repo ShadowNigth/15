@@ -101,3 +101,15 @@ For real framebuffer captures, run the same scene with an OpenGL display,
 `--rendering-method gl_compatibility --resolution 960x540 -- --capture`.
 Upstream code/asset notices remain in `KNIFE_ASSET_NOTICES.md`; conversion is not
 a claim of permission to redistribute third-party game assets.
+
+### Rebuilding the conversion (optional)
+
+The project ZIP already contains the animated GLBs, so no downloads or Python
+packages are needed to play. For conversion development, install NumPy/SciPy,
+use `python -m tools.source.fetch_native_gun_animations [OUTPUT_DIRECTORY]`
+(with GitHub CLI installed), then run the importer module against that directory.
+The downloader verifies both pinned Git blob IDs and report SHA-256 values.
+Start with the original gun GLBs and `models_meta.json` from pre-conversion commit
+`e0360c636ab40cb36761dc0ef2189030f922fa33`; the importer deliberately refuses to
+stack a second conversion on an already retargeted model. Do not restore knives,
+skin artwork, weapon statistics or unrelated game files for this operation.

@@ -103,6 +103,36 @@ func _run() -> void:
 			GameData.right_hand = hand
 			_expect(player._is_viewmodel_mirrored() == (not hand), wid + " native handedness")
 		GameData.right_hand = true
+		if wid == "cz75":
+			_expect(not player.weapon_ctrl._viewmodel_has_events(String(spec["v_model"]), "draw"), "Empty CZ draw event alias does not suppress its fallback sound")
+			var detach: Variant = meta["cz_spare_detach_times"].get("reload")
+			_expect(detach != null, "CZ spare has native detach marker")
+			if detach != null:
+				player.play_viewmodel_sequence(["reload"])
+				anim.seek(float(detach) + 0.01, true)
+				player._apply_native_prop_visibility()
+				_expect(player._native_cz_spare_removed, "CZ spare is removed at native clip-out")
+				player.play_viewmodel_sequence(["reload"])
+				_expect(String(anim.current_animation) == "reloadFollowup", "CZ subsequent reload uses native follow-up")
+				player._native_cz_spare_removed = false
+		if bool(spec.get("silencer", false)):
+			player._vm_silencer_visible = false
+			player.weapon_ctrl.is_attaching_silencer = true
+			player._apply_vm_silencer_visibility()
+			_expect(player._vm_silencer_skeleton.get_bone_pose_scale(player._vm_silencer_bone).length() > 1.0, wid + " suppressor visible throughout transition")
+			player.weapon_ctrl.is_attaching_silencer = false
+			player._apply_vm_silencer_visibility()
+			_expect(player._vm_silencer_skeleton.get_bone_pose_scale(player._vm_silencer_bone).length() < 0.001, wid + " suppressor hidden in unsilenced state")
+			player._vm_silencer_visible = true
+			player._apply_vm_silencer_visibility()
+		if bool(spec.get("grenade", false)):
+			player.weapon_ctrl._grenade_pin_pulled = true
+			for low in [false,true]:
+				player.weapon_ctrl._grenade_lob_mode = low
+				player._on_vm_anim_finished("pullpin")
+				_expect(String(anim.current_animation) == ("hold_low" if low else "hold_high"), wid + " enters native hold after pin pull")
+			player.weapon_ctrl._grenade_pin_pulled = false
+			player.weapon_ctrl._grenade_lob_mode = false
 		if _capture:
 			for clip in ["idle", "shoot1", "reload", "inspect", "inspect_2", "add_silencer", "pullpin", "throw", "underhand", "pressbutton", "prepare"]:
 				if not anim.has_animation(clip):
