@@ -46,6 +46,7 @@ func _run() -> void:
 	var actors: Array[CSActor] = []
 	for role in ["CT", "T"]:
 		var actor := CSActor.new()
+		actor.is_alive = true
 		actor.position.x = -0.75 if role == "CT" else 0.75
 		add_child(actor)
 		actor.set_team_and_class(role, "urban" if role == "CT" else "terror")
