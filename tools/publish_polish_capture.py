@@ -15,7 +15,11 @@ for name in ['deathmatch_firing', 'deathmatch_frag', 'he_animated_burst', 'smoke
         text = base64.b64encode(data.getvalue()).decode()
         if len(text) <= 28000:
             break
-    assert len(text) <= 28000
+    while len(text) > 28000:
+        image = image.resize((int(image.width * 0.85), int(image.height * 0.85)))
+        data = io.BytesIO()
+        image.save(data, 'JPEG', quality=40)
+        text = base64.b64encode(data.getvalue()).decode()
     chunks = [text[i:i+3500] for i in range(0, len(text), 3500)]
     for i, chunk in enumerate(chunks):
         print(f'::notice title=Polish JPEG {name} {i+1}/{len(chunks)}::{chunk}')
