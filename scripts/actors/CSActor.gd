@@ -1095,7 +1095,8 @@ func take_bullet_damage(
 	armor_ratio: float,
 	hitgroup: int,
 	weapon_id: String,
-	hit_pos: Vector3
+	hit_pos: Vector3,
+	kill_context: Dictionary = {}
 ) -> void:
 	if not is_alive or (RoundManager.map_mode == "dm" and (dm_protection > 0.0 or RoundManager.state != RoundManager.State.LIVE)):
 		return
@@ -1160,7 +1161,7 @@ func take_bullet_damage(
 		AudioManager.play_3d("player/pl_pain%d.wav" % pid, global_position, -2.5, 22.0, randf_range(0.96, 1.05))
 
 	damaged_from.emit(src_pos, final_hp_loss, has_src)
-	_apply_raw_hp_loss(attacker, final_hp_loss, weapon_id, hitgroup == 1)
+	_apply_raw_hp_loss(attacker, final_hp_loss, weapon_id, hitgroup == 1, kill_context)
 	if is_alive:
 		_on_taken_damage_from(attacker, hit_pos)
 
@@ -1202,16 +1203,16 @@ func _on_taken_damage_from(_attacker: Node3D, _hit_pos: Vector3) -> void:
 	pass
 
 
-func _apply_raw_hp_loss(attacker: Node3D, dmg_int: int, weapon_id: String, headshot: bool) -> void:
+func _apply_raw_hp_loss(attacker: Node3D, dmg_int: int, weapon_id: String, headshot: bool, kill_context: Dictionary = {}) -> void:
 	if RoundManager.map_mode == "dm" and (dm_protection > 0.0 or RoundManager.state != RoundManager.State.LIVE):
 		return
 	health = maxi(0, health - dmg_int)
 	health_armor_changed.emit(health, armor, has_helmet)
 	if health <= 0:
-		_die(attacker, weapon_id, headshot)
+		_die(attacker, weapon_id, headshot, kill_context)
 
 
-func _die(killer: Node3D, weapon_id: String, headshot: bool) -> void:
+func _die(killer: Node3D, weapon_id: String, headshot: bool, kill_context: Dictionary = {}) -> void:
 	if is_human and _body_root != null:
 		_gait_yaw = look_yaw
 		_evaluate_character_pose(0.016)
@@ -1303,7 +1304,7 @@ func _die(killer: Node3D, weapon_id: String, headshot: bool) -> void:
 		_death_anim_key = "death%d" % randi_range(1, 3)
 	_evaluate_character_pose(0.0)
 
-	RoundManager.notify_actor_killed(self, killer, weapon_id, headshot)
+	RoundManager.notify_actor_killed(self, killer, weapon_id, headshot, kill_context)
 	actor_died.emit(self, killer)
 
 

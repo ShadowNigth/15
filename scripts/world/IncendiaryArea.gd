@@ -209,6 +209,8 @@ func _add_patch(local_pos: Vector3, parent_pos: Vector3) -> void:
 	flame.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
 	var material := ShaderMaterial.new()
 	material.shader = FLAME_SHADER
+	material.set_shader_parameter("original_fire_atlas", GameData.get_texture("res://assets/polish/grenade_fire_atlas.png"))
+	material.set_shader_parameter("atlas_mix", 0.42)
 	material.render_priority = 4
 	material.set_shader_parameter(
 		"seed", float(simulation_seed % 4096) * 0.013 + float(patch_index) * 7.17 + _rng.randf()

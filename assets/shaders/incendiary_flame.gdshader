@@ -3,6 +3,9 @@ render_mode unshaded, blend_mix, cull_disabled, depth_draw_never, shadows_disabl
 
 // Procedural crossed-ribbon fire. UV.y is zero at the fuel root and one at
 // the tip. Geometry is unique per patch; these uniforms animate it independently.
+// Original 16-frame upstream flames, blended on the same surface-fitted ribbons.
+uniform sampler2D original_fire_atlas : source_color, filter_linear, repeat_disable;
+uniform float atlas_mix : hint_range(0.0, 1.0) = 0.42;
 uniform float seed = 0.0;
 uniform float ignition = 1.0;
 uniform float fade = 1.0;
@@ -71,7 +74,16 @@ void fragment() {
 	colour = mix(colour, vec3(1.0, 0.68, 0.035), smoothstep(0.46, 0.72, heat));
 	colour = mix(colour, vec3(1.0, 0.98, 0.74), smoothstep(0.72, 0.98, heat));
 
-	float alpha = shape * mix(0.38, 0.74, core) * ignition * fade;
+	float phase = fract(clock * 0.83 + seed * 0.137) * 16.0;
+	float first = floor(phase);
+	float second = mod(first + 1.0, 16.0);
+	vec2 tile_uv = mix(vec2(0.0005), vec2(0.2495), vec2(clamp(UV.x, 0.0, 1.0), 1.0 - h));
+	vec2 cell_a = vec2(mod(first, 4.0), floor(first / 4.0)) * 0.25;
+	vec2 cell_b = vec2(mod(second, 4.0), floor(second / 4.0)) * 0.25;
+	vec4 authored = mix(texture(original_fire_atlas, cell_a + tile_uv), texture(original_fire_atlas, cell_b + tile_uv), smoothstep(0.0, 1.0, fract(phase)));
+	float authored_shape = authored.a * body * root * tip;
+	colour = mix(colour, authored.rgb, atlas_mix * authored.a * (1.0 - core * 0.5));
+	float alpha = mix(shape * mix(0.38, 0.74, core), authored_shape * 0.74, atlas_mix) * ignition * fade;
 	ALBEDO = colour * intensity * mix(0.82, 1.22, core);
 	ALPHA = clamp(alpha, 0.0, 1.0);
 }

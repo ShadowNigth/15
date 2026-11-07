@@ -5,6 +5,7 @@ extends Node
 signal round_started(round_num: int)
 signal freeze_ended()
 signal round_ended(winner_team: String, reason_text: String)
+signal kill_detailed(killer_name: String, killer_team: String, victim_name: String, victim_team: String, weapon_id: String, headshot: bool, context: Dictionary)
 signal kill_logged(killer_name: String, killer_team: String, victim_name: String, victim_team: String, weapon_id: String, headshot: bool)
 signal center_message(msg: String, duration: float)
 signal chat_radio_message(sender_name: String, sender_team: String, text: String)
@@ -263,7 +264,7 @@ func is_line_blocked_by_smoke(a: Vector3, b: Vector3) -> bool:
 	return false
 
 
-func notify_actor_killed(victim: Node3D, killer: Node3D, weapon_id: String, headshot: bool) -> void:
+func notify_actor_killed(victim: Node3D, killer: Node3D, weapon_id: String, headshot: bool, context: Dictionary = {}) -> void:
 	var v_name := String(victim.get("actor_name"))
 	var v_team := String(victim.get("team"))
 	var k_name := v_name
@@ -283,6 +284,7 @@ func notify_actor_killed(victim: Node3D, killer: Node3D, weapon_id: String, head
 
 	victim.set("deaths", int(victim.get("deaths")) + 1)
 	kill_logged.emit(k_name, k_team, v_name, v_team, weapon_id, headshot)
+	kill_detailed.emit(k_name, k_team, v_name, v_team, weapon_id, headshot, KillContext.confirmed(context, headshot))
 
 	if state != State.LIVE and state != State.FREEZE:
 		return

@@ -621,6 +621,7 @@ func _execute_bullet_shot(spec: Dictionary, is_burst_subshot: bool) -> void:
 	var cur_clip := int(clips.get(current_weapon_id, 0))
 	if cur_clip <= 0:
 		return
+	var shot_context := KillContext.capture(actor, spec, zoom_index)
 	clips[current_weapon_id] = cur_clip - 1
 	shots_fired += 1
 	decay_timer = 0.0
@@ -687,7 +688,7 @@ func _execute_bullet_shot(spec: Dictionary, is_burst_subshot: bool) -> void:
 		var rx := randfn(0.0, spread)
 		var ry := randfn(0.0, spread)
 		var dir := (-aim_basis.z + aim_basis.x * rx + aim_basis.y * ry).normalized()
-		_fire_penetrating_ray(eye_pos, dir, max_range_m, base_dmg, armor_ratio, range_mod, pen)
+		_fire_penetrating_ray(eye_pos, dir, max_range_m, base_dmg, armor_ratio, range_mod, pen, shot_context)
 
 	# Reproducible spray and stance response, separate from random spread.
 	var kick := BallisticModel.spray_kick(spec, shots_fired, bool(actor.get("is_crouching")), is_revolver_alt)
@@ -706,9 +707,11 @@ func _fire_penetrating_ray(
 	base_dmg: float,
 	armor_ratio: float,
 	range_mod: float,
-	pen_left: int
+	pen_left: int,
+	shot_context: Dictionary = {}
 ) -> void:
 	var space: PhysicsDirectSpaceState3D = (actor as Node3D).get_world_3d().direct_space_state
+	var context := shot_context.duplicate(false) if not shot_context.is_empty() else KillContext.capture(actor, get_current_spec(), zoom_index)
 	var cur_from: Vector3 = origin
 	var cur_dmg: float = base_dmg
 	var rem_dist: float = max_dist
@@ -727,6 +730,7 @@ func _fire_penetrating_ray(
 		q.exclude = exclude_rids
 		var hit: Dictionary = space.intersect_ray(q)
 		var water_end: Vector3 = ray_end if hit.is_empty() else hit["position"]
+		context["through_smoke"] = bool(context.get("through_smoke", false)) or KillContext.crosses_smoke(context, cur_from, water_end)
 		if is_instance_valid(RoundManager.game_world) \
 			and RoundManager.game_world.has_method("spawn_water_ray_impact"):
 			RoundManager.game_world.call("spawn_water_ray_impact", cur_from, water_end, cal_scale)
@@ -770,7 +774,10 @@ func _fire_penetrating_ray(
 			var armored_hd := (hgroup == 1 and bool(col.get("has_helmet")) and int(col.get("armor")) > 0)
 			if not is_friendly and is_instance_valid(RoundManager.game_world):
 				ImpactEffects.spawn_blood_impact(RoundManager.game_world, space, hit_pos, dir, hgroup, armored_hd, dmg_at_dist)
-			col.call("take_bullet_damage", actor, dmg_at_dist, armor_ratio, hgroup, current_weapon_id, hit_pos)
+			if col is CSActor:
+				(col as CSActor).take_bullet_damage(actor, dmg_at_dist, armor_ratio, hgroup, current_weapon_id, hit_pos, KillContext.confirmed(context, hgroup == 1))
+			else:
+				col.call("take_bullet_damage", actor, dmg_at_dist, armor_ratio, hgroup, current_weapon_id, hit_pos)
 			if current_weapon_id == "taser":
 				# Zeus is a single-target electroshock hit, never a penetrating bullet.
 				break
@@ -799,6 +806,7 @@ func _fire_penetrating_ray(
 			if pen_left <= 0 or current_weapon_id == "taser":
 				break
 			pen_left -= 1
+			context["penetration"] = true
 			var sb_col := col as StaticBody3D
 			var lmat := String(sb_col.get_meta("surface_mat")) if sb_col.has_meta("surface_mat") else "L"
 			_spawn_surface_hit_fx(hit_pos, hit_nrm, dir, sb_col, lmat, cal_scale)
@@ -830,6 +838,7 @@ func _fire_penetrating_ray(
 		if not shattered_now:
 			_spawn_surface_hit_fx(hit_pos, hit_nrm, dir, attach_target, surf_char, cal_scale)
 		else:
+			context["penetration"] = true
 			# Bullet smashed right through fragile glass window / crate panel and continues!
 			exclude_rids.append((col as CollisionObject3D).get_rid())
 			cur_dmg *= 0.85
@@ -846,6 +855,7 @@ func _fire_penetrating_ray(
 		if is_instance_valid(RoundManager.game_world):
 			ImpactEffects.spawn_surface_impact(RoundManager.game_world, exit_hit["position"], exit_hit["normal"], dir, surf_char, cal_scale * 0.85, attach_target)
 		pen_left -= 1
+		context["penetration"] = true
 		cur_dmg *= BallisticModel.damage_retention(material_profile, exit_hit["thickness"])
 		cur_from = exit_hit["position"] + dir * 0.008
 		rem_dist = max_dist - origin.distance_to(cur_from)

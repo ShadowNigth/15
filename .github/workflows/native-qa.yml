@@ -584,6 +584,25 @@ jobs:
           set -o pipefail
           godot --headless --path . --import 2>&1 | tee /tmp/world-import.log
           if grep -Eq 'SCRIPT ERROR:|Parse Error:|Compile Error:' /tmp/world-import.log; then exit 1; fi
+      - name: Hybrid fire and confirmed kill context regression
+        run: |
+          set -o pipefail
+          mkdir -p /tmp/dm-polish-review
+          POLISH_CAPTURE_DIR=/tmp/dm-polish-review timeout 180s xvfb-run -a godot --path . --audio-driver Dummy --rendering-method gl_compatibility --disable-render-loop --fixed-fps 60 --resolution 1280x720 res://tests/KillFirePolishTest.tscn 2>&1 | tee /tmp/kill-fire.log
+          if grep -Eq 'SCRIPT ERROR:|Parse Error:|Compile Error:|Shader compilation failed' /tmp/kill-fire.log; then exit 1; fi
+          grep -q '\[KILL FIRE\] PASS:' /tmp/kill-fire.log
+      - name: Hybrid fire and kill diagnostics
+        if: ${{ always() }}
+        run: |
+          python3 - <<'PYCODE'
+          from pathlib import Path
+          p = Path('/tmp/kill-fire.log')
+          if p.exists():
+              lines = p.read_text(errors='replace').splitlines()
+              selected = [line for line in lines if 'FAIL' in line or 'ERROR' in line or 'SCRIPT' in line or 'PASS:' in line]
+              text = '\n'.join(selected)[-6500:].replace('%','%25').replace('\n','%0A')
+              print('::notice title=Hybrid fire kill context::'+text)
+          PYCODE
       - name: Deathmatch, smoke interaction and effects runtime regression
         run: |
           set -o pipefail
@@ -604,6 +623,18 @@ jobs:
       - name: Install framebuffer transport
         if: ${{ always() }}
         run: python3 -m pip install pillow
+      - name: Publish kill_double framebuffer
+        if: ${{ always() }}
+        run: python3 tools/publish_polish_capture.py kill_double
+      - name: Publish kill_triple framebuffer
+        if: ${{ always() }}
+        run: python3 tools/publish_polish_capture.py kill_triple
+      - name: Publish fire_hybrid_a framebuffer
+        if: ${{ always() }}
+        run: python3 tools/publish_polish_capture.py fire_hybrid_a
+      - name: Publish fire_hybrid_b framebuffer
+        if: ${{ always() }}
+        run: python3 tools/publish_polish_capture.py fire_hybrid_b
       - name: Publish deathmatch_firing framebuffer
         if: ${{ always() }}
         run: python3 tools/publish_polish_capture.py deathmatch_firing
@@ -702,6 +733,7 @@ jobs:
             /tmp/native-estate.log
             /tmp/combat-native.log
             /tmp/combat-native-review/
+            /tmp/kill-fire.log
             /tmp/dm-polish.log
             /tmp/dm-polish-review/
           retention-days: 14

@@ -1,0 +1,42 @@
+{
+  "repository": "zh667/ScCsgoKnives",
+  "tree": "1eb8067fd0b7214df5bccf3ac3807fbaa3aee70d",
+  "assets": [
+    {
+      "source": "src/ScCsgoKnives/Assets/Textures/ScCsgoKnives/grenade_fire_atlas.png",
+      "git_blob": "817dbb4f389f816f9bf5076d752c0bab228cceba",
+      "target": "assets/polish/grenade_fire_atlas.png",
+      "sha256": "fd7cec44106a9b8b0e203f90a2ea0777baac4a7065367da62d02428a7fd29aab"
+    },
+    {
+      "source": "src/ScCsgoDeathmatch/Assets/Textures/ScCsgoDeathmatch/hud/kill_headshot.png",
+      "git_blob": "9e9345774bd07d929d2b321c93e1c649c3c51203",
+      "target": "assets/polish/kill_headshot.png",
+      "sha256": "bf8fdb2fc518572a10b2a77157c6c4f862c0b07574f0f88c483ca3d0ce382b94"
+    },
+    {
+      "source": "src/ScCsgoDeathmatch/Assets/Textures/ScCsgoDeathmatch/hud/kill_smoke.png",
+      "git_blob": "766e65d6d8096b1d2970b068808b91807819a4d6",
+      "target": "assets/polish/kill_smoke.png",
+      "sha256": "dcb01ef45851d3717d4bde7c23897a3cce031c4803382d95c492094d6a80d703"
+    },
+    {
+      "source": "src/ScCsgoDeathmatch/Assets/Textures/ScCsgoDeathmatch/hud/kill_noscope.png",
+      "git_blob": "84d8d3dd5a23143586674e8b343243f316af0799",
+      "target": "assets/polish/kill_noscope.png",
+      "sha256": "bf755b1a24878487eaded51cdfe2084c1bb8326241a57bbb1031db8676f7fffa"
+    },
+    {
+      "source": "src/ScCsgoDeathmatch/Assets/Textures/ScCsgoDeathmatch/hud/kill_blind.png",
+      "git_blob": "6a276a8704369e90ecb578a9077a97a15e9ba699",
+      "target": "assets/polish/kill_blind.png",
+      "sha256": "6402578c3f9bedeae43f92555e79e4cd652fe6e91168c3ca27857eff8788a213"
+    },
+    {
+      "source": "src/ScCsgoDeathmatch/Assets/Textures/ScCsgoDeathmatch/hud/kill_penetrate.png",
+      "git_blob": "6e15ffaaf4ba8b8383c3b6b3bd750fe42a56281c",
+      "target": "assets/polish/kill_penetrate.png",
+      "sha256": "161116a4b09a23a4c520642b4e4c473089927773bedd0fcd91a762ff6a117e07"
+    }
+  ]
+}

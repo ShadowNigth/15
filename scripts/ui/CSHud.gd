@@ -105,24 +105,41 @@ class KillCardDisplay extends Control:
 	var team: String = ""
 	var kills: int = 0
 	var cards: Array[Dictionary] = []
+	const COMBO_WINDOW := 4.0
+	var combo_left := 0.0
+	var combo_age := 0.0
+	var combo_count := 0
+	var combo_label := ""
+	var latest_flags: Dictionary = {}
 	var flash_age: float = FLASH_DUR
 
 
 	func reset_round() -> void:
 		kills = 0
+		combo_count = 0
+		combo_left = 0.0
+		combo_label = ""
+		latest_flags.clear()
 		cards.clear()
 		flash_age = FLASH_DUR
 		queue_redraw()
 
 
 	## Counts one enemy kill for the local player this round and fires the flash.
-	func register_kill(icon: Texture2D) -> void:
+	func register_kill(icon: Texture2D, flags: Dictionary = {}) -> void:
+		combo_count = combo_count + 1 if combo_left > 0.0 else 1
+		combo_left = COMBO_WINDOW
+		combo_age = 0.0
+		latest_flags = flags.duplicate(true)
+		combo_label = "DOUBLE KILL" if combo_count == 2 else "TRIPLE KILL" if combo_count == 3 else "QUADRA KILL" if combo_count == 4 else "%dX MULTI KILL" % combo_count if combo_count >= 5 else ""
 		kills += 1
 		var new_card: Dictionary = {
 			"num": kills, "icon": icon, "pop": 0.0,
 			"pos": Vector2(0.0, 8.0), "rot": 0.0,
 		}
-		if kills > 5:
+		if RoundManager.map_mode == "dm" and cards.size() >= 5:
+			cards.pop_front()
+		if kills > 5 and RoundManager.map_mode != "dm":
 			# Past the ace, CS2 collapses the fan into one counter card
 			cards.clear()
 			new_card["counter"] = true
@@ -133,6 +150,10 @@ class KillCardDisplay extends Control:
 
 	func _process(delta: float) -> void:
 		var dirty := false
+		if combo_left > 0.0:
+			combo_left = maxf(0.0, combo_left - delta)
+			combo_age += delta
+			dirty = true
 		if flash_age < FLASH_DUR + 0.05:
 			flash_age += delta
 			dirty = true
@@ -206,6 +227,26 @@ class KillCardDisplay extends Control:
 			draw_arc(Vector2(cx, cy), EMBLEM_R + 15.0 * fp, 0.0, TAU, 44, Color(hot.r, hot.g, hot.b, 0.9 * fade), 2.5 * fade + 0.5, true)
 			flare = pow(1.0 - fp, 1.8) * 0.9
 
+		# Distinct multikill headline: short impact, stable hold, then a readable fade.
+		if combo_label != "" and combo_left > 0.0:
+			var title_alpha := minf(1.0, combo_left / 0.65)
+			var punch := 1.0 + 0.22 * exp(-combo_age * 9.0) * sin(combo_age * 23.0)
+			var title_size := int(24.0 * punch)
+			var title_pos := Vector2(cx - 180, cy - 112 - 5.0 * exp(-combo_age * 8.0))
+			draw_string(font, title_pos + Vector2(1, 2), combo_label, HORIZONTAL_ALIGNMENT_CENTER, 360, title_size, Color(0, 0, 0, title_alpha))
+			draw_string(font, title_pos, combo_label, HORIZONTAL_ALIGNMENT_CENTER, 360, title_size, Color(hot.r, hot.g, hot.b, title_alpha))
+		if combo_left > 0.0:
+			var badges: Array[String] = []
+			for flag in KillContext.FLAGS:
+				if bool(latest_flags.get(flag, false)):
+					badges.append(flag)
+			var bx := cx - float(badges.size()) * 13.0
+			for flag in badges:
+				var badge_texture := KillContext.icon(flag)
+				if badge_texture != null:
+					draw_texture_rect(badge_texture, Rect2(bx, cy - 99, 21, 16), false, Color(1, 1, 1, minf(1.0, combo_left / 0.65)))
+				bx += 26
+
 		# Team emblem: dark disc, bright flare on kill, team ring, team letters
 		draw_circle(Vector2(cx, cy), EMBLEM_R, Color(0.04, 0.04, 0.055, 0.9))
 		if flare > 0.01:
@@ -223,7 +264,7 @@ class KillCardDisplay extends Control:
 			var pop := float(card["pop"])
 			var back := pop - 1.0
 			var eb := 1.0 + 2.70158 * back * back * back + 1.70158 * back * back
-			var scl: float = 0.45 + 0.55 * maxf(0.0, eb)
+			var scl: float = (0.45 + 0.55 * maxf(0.0, eb)) * (1.18 if i == n - 1 and flash_age < FLASH_DUR else 1.0)
 			var counter: bool = card.get("counter", false) == true
 			var cw: float = 26.0 if counter else CARD_W
 			var off_pos: Vector2 = card["pos"]
@@ -231,7 +272,7 @@ class KillCardDisplay extends Control:
 			var rot: float = card["rot"]
 			draw_set_transform(pivot, rot, Vector2(scl, scl))
 			var card_rect := Rect2(-cw * 0.5, -CARD_H, cw, CARD_H)
-			var is_ace := (not counter) and n == 5 and i == 4
+			var is_ace := RoundManager.map_mode != "dm" and (not counter) and n == 5 and i == 4
 			var csb := StyleBoxFlat.new()
 			csb.set_corner_radius_all(3)
 			csb.set_border_width_all(1)
@@ -264,7 +305,7 @@ func _ready() -> void:
 	_load_radar_overview()
 
 	RoundManager.center_message.connect(_on_center_message)
-	RoundManager.kill_logged.connect(_on_kill_logged)
+	RoundManager.kill_detailed.connect(_on_kill_logged)
 	RoundManager.chat_radio_message.connect(_on_radio_chat)
 	RoundManager.bomb_state_changed.connect(_on_bomb_state_changed)
 	RoundManager.round_started.connect(_on_round_started)
@@ -1140,7 +1181,7 @@ func _on_round_started(_round_num: int) -> void:
 ##   YOUR kill   -> black plate @0.72 + red #e10000 ring, lingers 7.5s
 ##   YOUR death  -> dark red plate, lingers 7.5s
 ##   rows are ~31px tall, first row right under the scoreboard, max 5, 1s fade
-func _on_kill_logged(kname: String, kteam: String, vname: String, vteam: String, wid: String, hs: bool) -> void:
+func _on_kill_logged(kname: String, kteam: String, vname: String, vteam: String, wid: String, hs: bool, context: Dictionary = {}) -> void:
 	while _killfeed_vbox.get_child_count() >= 5:
 		var oldest := _killfeed_vbox.get_child(0)
 		_killfeed_vbox.remove_child(oldest)
@@ -1194,19 +1235,18 @@ func _on_kill_logged(kname: String, kteam: String, vname: String, vteam: String,
 	else:
 		row.add_child(_make_label(wid.to_upper(), 13, HUD_DIM))
 
-	if hs:
-		var hs_tex := GameData.get_hud_atlas("d_headshot", 320)
-		if hs_tex:
-			var htr := TextureRect.new()
-			htr.texture = hs_tex
-			htr.custom_minimum_size = Vector2(16, 16)
-			htr.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
-			htr.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
-			htr.modulate = Color(0.95, 0.95, 0.97, 0.98)
-			htr.mouse_filter = Control.MOUSE_FILTER_IGNORE
-			row.add_child(htr)
-		else:
-			row.add_child(_make_label("HS", 13, HUD_DIM))
+	# One authoritative badge per confirmed fact; no guessed flags at HUD time.
+	var flags := KillContext.confirmed(context, hs)
+	for flag in KillContext.FLAGS:
+		if not flags[flag]:
+			continue
+		var badge := TextureRect.new()
+		badge.texture = KillContext.icon(flag)
+		badge.custom_minimum_size = Vector2(20, 18)
+		badge.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
+		badge.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
+		badge.tooltip_text = KillContext.BADGES[flag][2]
+		row.add_child(badge)
 
 	var vcol := CT_COLOR if vteam == "CT" else T_COLOR
 	var vl := _make_label(vname, 16, vcol)
@@ -1216,7 +1256,7 @@ func _on_kill_logged(kname: String, kteam: String, vname: String, vteam: String,
 
 	# Bottom-center kill card: only real enemy kills count (no suicides/TKs)
 	if _killcards != null and is_my_kill and kname != vname and vteam != kteam:
-		_killcards.register_kill(_killfeed_weapon_icon(wid))
+		_killcards.register_kill(_killfeed_weapon_icon(wid), flags)
 
 	# Appear at once (CS2), linger 5s (7.5s for your own rows), fade over 1s
 	var hold: float = 7.5 if (is_my_kill or is_my_death) else 5.0
