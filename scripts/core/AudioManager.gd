@@ -68,7 +68,7 @@ func play_radio(rel_path: String, speaker_team: String = "") -> void:
 		"radio/ct_backup.wav": "radio.needbackup", "radio/fireassis.wav": "radio.takingfire",
 		"radio/roger.wav": "affirmative", "radio/negative.wav": "negative",
 		"radio/enemydown.wav": "enemydown", "radio/position.wav": "waitinghere",
-		"radio/inpos.wav": "inposition"
+		"radio/inpos.wav": "inposition", "radio/ct_inpos.wav": "inposition"
 	}
 	var command := String(commands.get(rel_path, ""))
 	if not command.is_empty() and play_voice(command, speaker_team):

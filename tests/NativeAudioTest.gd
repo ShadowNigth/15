@@ -47,6 +47,13 @@ func _run() -> void:
 		for team in ["CT", "T"]:
 			expect(AudioManager.play_voice("radio.letsgo", team), "Language/team route " + language + ":" + team)
 	GameData.voice_language = "en"
+	var radio_index := AudioManager._idx_2d
+	AudioManager.play_radio("radio/ct_inpos.wav", "T")
+	var radio_stream := AudioManager._players_2d[radio_index].stream
+	var native_position_voice := false
+	for path in GameData.native_audio["voices"]["en"]["t"]["inposition"]:
+		native_position_voice = native_position_voice or radio_stream == GameData.get_sound(String(path))
+	expect(native_position_voice, "Classic in-position menu command routes to the speaking team's native voice")
 	for cue in GameData.native_audio.get("cues", {}):
 		var path := AudioManager.cue_path(cue)
 		expect(not path.is_empty() and GameData.get_sound(path) != null, "Playable world cue " + cue)
