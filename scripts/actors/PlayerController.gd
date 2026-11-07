@@ -458,14 +458,16 @@ func _process(delta: float) -> void:
 	var bob_y := absf(cos(_bob_phase)) * (-0.0072 * move_fac) + sin(_bob_phase * 0.5) * 0.0008 - _land_dip * 0.68 + _vm_vert_lag
 	var crouch_ofs := Vector3(-0.005, -0.007, 0.005) * _visual_crouch_t
 	var strafe_roll := -_last_in_x * deg_to_rad(0.85) * move_fac - _sway_offset.x * 0.85 + deg_to_rad(1.2) * _visual_crouch_t + _vm_kick_roll
+	var native_vm := bool((GameData.models_meta.get("weapons/" + _cur_vm_model_name, {}) as Dictionary).get("native_cs2_animation", false))
+	var draw_dip := 0.0 if native_vm else _vm_draw_offset
 	viewmodel_holder.scale = Vector3.ONE
 	viewmodel_holder.position = Vector3(
 		bob_x + _sway_offset.x + crouch_ofs.x,
-		bob_y + _sway_offset.y + crouch_ofs.y - _vm_draw_offset * 0.065,
-		_vm_kick_z + crouch_ofs.z + _vm_draw_offset * 0.025
+		bob_y + _sway_offset.y + crouch_ofs.y - draw_dip * 0.065,
+		_vm_kick_z + crouch_ofs.z + draw_dip * 0.025
 	)
 	viewmodel_holder.rotation = Vector3(
-		_vm_kick_pitch - _vm_draw_offset * 0.22 + _sway_offset.y * 0.6,
+		_vm_kick_pitch - draw_dip * 0.22 + _sway_offset.y * 0.6,
 		-_sway_offset.x * 1.05,
 		strafe_roll
 	)
@@ -641,6 +643,8 @@ func _rebuild_viewmodel(wid: String) -> void:
 	# old Kukri placement or mirror their right-hand choreography a second time.
 	inst.position = Vector3(0.0635, -0.0381, 0.0) if native_knife else Vector3(0.0, -0.015, -0.03)
 	_vm_camera.fov = 53.668 if native_knife else 65.0
+	var mirror := (not GameData.right_hand) if native_knife else GameData.right_hand
+	_vm_container.scale = Vector2(-1.0 if mirror else 1.0, 1.0)
 	viewmodel_holder.add_child(inst)
 	SportGloves.apply(inst, v_name)
 	_prepare_viewmodel_materials(inst)

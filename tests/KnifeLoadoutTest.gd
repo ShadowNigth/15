@@ -66,7 +66,7 @@ func _run() -> void:
 			_expect(player._vm_anim.has_animation(clip), key + " retains animation " + clip)
 		_expect(_surface_count(player._vm_model_root, "ct_arms.bmp") > 0, key + " preserves original arms")
 		_expect(_surface_count(player._vm_model_root, "ct_base_glove.bmp") > 0, key + " preserves original gloves")
-		for frame in range(65):
+		for frame in range(int(ceil(player._vm_anim.get_animation("draw").length * 60.0)) + 5):
 			await get_tree().physics_frame
 		_expect(String(player._vm_anim.current_animation) == "idle", key + " draw returns to idle")
 		if _capture:
