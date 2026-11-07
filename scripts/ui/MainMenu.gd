@@ -10,6 +10,7 @@ const AMBER := Color(1.0, 0.72, 0.16)
 const AMBER_DIM := Color(0.88, 0.60, 0.15)
 const PANEL_BG := Color(0.04, 0.04, 0.04, 0.92)
 
+var _starting_match := false
 var _play_panel: PanelContainer = null
 var _arsenal_panel: PanelContainer = null
 var _options_panel: PanelContainer = null
@@ -417,6 +418,9 @@ func _sync_glove_option() -> void:
 
 
 func _start_selected_game() -> void:
+	if _starting_match:
+		return
+	_starting_match = true
 	if _knife_opt and _knife_opt.selected >= 0:
 		GameData.select_knife(String(_knife_opt.get_item_metadata(_knife_opt.selected)))
 	if _glove_opt and _glove_opt.selected >= 0:
@@ -428,6 +432,21 @@ func _start_selected_game() -> void:
 	if _money_opt:
 		GameData.start_money = _money_opt.get_selected_id()
 	AudioManager.play_ui("launch_select2.wav")
+	var loading := Label.new()
+	loading.text = "Loading match resources..."
+	loading.set_anchors_and_offsets_preset(Control.PRESET_CENTER)
+	loading.add_theme_font_size_override("font_size", 24)
+	add_child(loading)
+	var paths := GameData.prepare_match_resources()
+	var progress := GameData.poll_match_resources(paths)
+	while progress.x < paths.size():
+		loading.text = "Loading match resources: %d / %d" % [progress.x, paths.size()]
+		await get_tree().process_frame
+		progress = GameData.poll_match_resources(paths)
+	if progress.y > 0:
+		loading.text = "Resource load failed. Check project imports before starting."
+		_starting_match = false
+		return
 	get_tree().change_scene_to_file("res://scenes/GameWorld.tscn")
 
 
@@ -836,13 +855,15 @@ func _build_options_dialog() -> void:
 	grid.add_theme_constant_override("v_separation", 8)
 	content.add_child(grid)
 
-	var cosmetic_labels := ["Original casings + native ejection timing", "Native ammunition HUD icons", "Low-ammunition warning colors", "Ambient chickens (Italy / Inferno / Cobble)", "Native dropped defuse-kit model"]
-	for index in range(GameData.COSMETIC_KEYS.size()):
+	var cosmetic_labels := ["Original casings + native ejection timing", "Low-ammunition warning colors", "Ambient chickens (Italy / Inferno / Cobble)", "Native dropped defuse-kit model"]
+	var keys: Array = GameData.COSMETIC_KEYS.duplicate()
+	keys.erase("native_ammo_icons")
+	for index in range(keys.size()):
 		var label := Label.new()
 		label.text = cosmetic_labels[index]
 		grid.add_child(label)
 		var check := CheckBox.new()
-		var key: String = GameData.COSMETIC_KEYS[index]
+		var key: String = keys[index]
 		check.button_pressed = GameData.get(key)
 		check.toggled.connect(GameData.set_cosmetic_preference.bind(key))
 		grid.add_child(check)
@@ -943,9 +964,9 @@ func _load_viewer_native(resource: String) -> void:
 	GameData.apply_native_world_material(instance, resource)
 	_viewer_stats_lbl.text = "ScCsgoKnives native review: " + resource + "\n"
 	if resource in ["ct", "t"]:
-		_viewer_stats_lbl.text += "170 restored external clips. Review only: classic bots, classes and VIP remain unchanged. No GoldSrc/CS2 skeleton mix."
+		_viewer_stats_lbl.text += "170 restored clips. Live CT/T use native gait + weapon poses; VIP keeps its distinct classic identity."
 	elif resource == "hostage":
-		_viewer_stats_lbl.text += "7 clips, adapted upstream rifle/knife poses; not a full native hostage animation set. Classic rescue NPC preserved."
+		_viewer_stats_lbl.text += "7 upstream adapted clips. Live hostage appearance replaced; physical rescue logic preserved."
 	elif resource == "defuser_item":
 		_viewer_stats_lbl.text += "CS2 waist tool pouch. Used for dropped kits; CT pickup, price and 5s / 10s defuse unchanged."
 	else:

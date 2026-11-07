@@ -2,6 +2,7 @@ class_name AmbientChicken
 extends CharacterBody3D
 ## Non-objective, non-blocking ambient animal. World movement owns translation;
 ## the upstream GLB already removes root_motion travel from native walk/run.
+const MODEL_SCALE := 1.85  # Native 0.35 m -> adult bird about 0.65 m.
 var home: Vector3 = Vector3.ZERO
 var is_alive: bool = true
 var _anim: AnimationPlayer = null
@@ -19,14 +20,15 @@ func _ready() -> void:
 	_rng.seed = int(home.x * 701.0 + home.z * 1907.0) + 7907
 	var shape := CollisionShape3D.new()
 	var capsule := CapsuleShape3D.new()
-	capsule.radius = 0.14
-	capsule.height = 0.42
+	capsule.radius = 0.14 * MODEL_SCALE
+	capsule.height = 0.36 * MODEL_SCALE
 	shape.shape = capsule
-	shape.position.y = 0.22
+	shape.position.y = 0.18 * MODEL_SCALE
 	add_child(shape)
 	var scene := GameData.get_model_scene("native/chicken")
 	if scene:
 		_model = scene.instantiate()
+		_model.scale = Vector3.ONE * MODEL_SCALE
 		add_child(_model)
 		for mesh in _model.find_children("*", "MeshInstance3D", true, false):
 			mesh.layers = 2

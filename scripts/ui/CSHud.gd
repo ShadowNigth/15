@@ -615,13 +615,6 @@ func _build_hud_tree() -> void:
 
 	_ammo_label = _make_label("12", 40, HUD_WHITE)
 	ammo_row.add_child(_ammo_label)
-	_native_ammo_icon = TextureRect.new()
-	_native_ammo_icon.custom_minimum_size = Vector2(26, 26)
-	_native_ammo_icon.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
-	_native_ammo_icon.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
-	_native_ammo_icon.size_flags_vertical = Control.SIZE_SHRINK_CENTER
-	_native_ammo_icon.tooltip_text = "Reserve ammunition (rounds, not magazines)"
-	ammo_row.add_child(_native_ammo_icon)
 	_ammo_reserve_label = _make_label("| 24", 22, HUD_DIM)
 	ammo_row.add_child(_ammo_reserve_label)
 
@@ -701,8 +694,6 @@ func _process(delta: float) -> void:
 	_score_ctrl.queue_redraw()
 
 	if is_instance_valid(player):
-		_native_ammo_icon.texture = GameData.ammo_icon_for(player.weapon_ctrl.current_weapon_id)
-		_native_ammo_icon.visible = GameData.native_ammo_icons and _native_ammo_icon.texture != null and player.is_alive
 		if not GameData.low_ammo_warning:
 			_ammo_label.add_theme_color_override("font_color", HUD_WHITE)
 		var smoke_d := RoundManager.get_smoke_density_at(player.get_eye_position()) if player.is_alive else 0.0

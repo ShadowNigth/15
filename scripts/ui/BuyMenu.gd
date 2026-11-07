@@ -988,7 +988,7 @@ func _ensure_preview_model() -> void:
 	_pv_lower_name = ""
 	_pv_weapon = "?"
 	_pv_class = cid
-	var sc := GameData.get_model_scene("players/" + cid)
+	var sc := GameData.get_model_scene("native/" + player.team.to_lower())
 	if sc == null:
 		sc = GameData.get_model_scene("players/" + ("urban" if player.team == "CT" else "terror"))
 	if sc == null:
@@ -997,7 +997,8 @@ func _ensure_preview_model() -> void:
 	if inst == null:
 		return
 	_pv_model = inst
-	_style_meshes(inst)
+	inst.position.y = -0.92
+	inst.rotation.y = PI
 	_pv_pivot.add_child(inst)
 	_pv_anim = _find_node_of(inst, "AnimationPlayer") as AnimationPlayer
 	_pv_skel = _find_node_of(inst, "Skeleton3D") as Skeleton3D
@@ -1008,10 +1009,10 @@ func _ensure_preview_model() -> void:
 		_pv_anim.active = false
 	if _pv_skel != null:
 		_build_preview_mask()
-		_pv_lower_name = _anim_named(_pv_anim, "idle1")
-		if _pv_skel.find_bone("Bip01 R Hand") >= 0:
+		_pv_lower_name = _anim_named(_pv_anim, "idle")
+		if _pv_skel.find_bone("hand_R") >= 0:
 			_pv_hand = BoneAttachment3D.new()
-			_pv_hand.bone_name = "Bip01 R Hand"
+			_pv_hand.bone_name = "hand_R"
 			_pv_skel.add_child(_pv_hand)
 		_animate_preview(0.0)
 
@@ -1077,12 +1078,16 @@ func _set_preview_weapon(wid: String) -> void:
 			var p_name := ("p_" + v_name.substr(2)) if v_name.begins_with("v_") else ("p_" + wid)
 			var p_sc := GameData.get_model_scene("weapons/" + p_name)
 			if p_sc != null:
-				var p_inst := p_sc.instantiate()
+				var p_inst := p_sc.instantiate() as Node3D
 				_style_meshes(p_inst)
 				_pv_hand.add_child(p_inst)
+				var socket: Dictionary = GameData.native_actor_sockets[player.team.to_lower()].get(wid, {})
+				var rows: Array = socket.get("basis", [[1,0,0],[0,1,0],[0,0,1]])
+				p_inst.basis = Basis(Vector3(rows[0][0], rows[1][0], rows[2][0]), Vector3(rows[0][1], rows[1][1], rows[2][1]), Vector3(rows[0][2], rows[1][2], rows[2][2])).scaled(Vector3.ONE * GameData.get_world_model_scale(wid))
 	if _pv_anim != null and is_instance_valid(player):
 		var ext := String(player.call("_get_weapon_anim_ext", wid)) if not wid.is_empty() else "carbine"
-		var an := _anim_named(_pv_anim, "ref_aim_" + ext)
+		var hold: String = GameData.native_actor_sockets[player.team.to_lower()].get(wid, {}).get("hold", "hold_ak47")
+		var an := _anim_named(_pv_anim, hold)
 		if an.is_empty():
 			an = _anim_named(_pv_anim, "ref_aim_carbine")
 		_pv_upper_name = an
@@ -1105,7 +1110,7 @@ func _build_preview_mask() -> void:
 	var nb := _pv_skel.get_bone_count()
 	_pv_upper_mask.resize(nb)
 	_pv_upper_mask.fill(0)
-	var spine := _pv_skel.find_bone("Bip01 Spine")
+	var spine := _pv_skel.find_bone("spine_0")
 	if spine < 0:
 		return
 	_pv_upper_mask[spine] = 1

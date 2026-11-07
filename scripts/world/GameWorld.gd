@@ -72,6 +72,7 @@ func _ready() -> void:
 		var p: Array = hinfo["pos"]
 		h.spawn_pos = Vector3(float(p[0]), float(p[1]), float(p[2]))
 		h.spawn_yaw = float(hinfo.get("yaw", 0.0))
+		h._avoid_side = 1.0 if RoundManager.hostages.size() % 2 == 0 else -1.0
 		add_child(h)
 		RoundManager.hostages.append(h)
 

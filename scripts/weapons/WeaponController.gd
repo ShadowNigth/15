@@ -249,7 +249,10 @@ func _process(delta: float) -> void:
 		return
 
 	# Smooth recoil punch recovery
-	punch_angles = punch_angles.move_toward(Vector2.ZERO, 22.0 * delta)
+	if fire_cooldown <= 0.0:
+		punch_angles *= exp(-11.0 * delta)
+		if punch_angles.length_squared() < 0.00001:
+			punch_angles = Vector2.ZERO
 
 	if fire_cooldown > 0.0:
 		fire_cooldown -= delta
@@ -685,11 +688,10 @@ func _execute_bullet_shot(spec: Dictionary, is_burst_subshot: bool) -> void:
 		var dir := (-aim_basis.z + aim_basis.x * rx + aim_basis.y * ry).normalized()
 		_fire_penetrating_ray(eye_pos, dir, max_range_m, base_dmg, armor_ratio, range_mod, pen)
 
-	# Apply KickBack view punch
-	var up_kick := float(spec.get("alt_recoil", spec.get("recoil_up", 1.8))) if is_revolver_alt else float(spec.get("recoil_up", 1.8))
-	var lat_kick := float(spec.get("recoil_lat", 0.5))
-	punch_angles.x = clampf(punch_angles.x + up_kick, -14.0, 16.0)
-	punch_angles.y = clampf(punch_angles.y + randf_range(-lat_kick, lat_kick), -7.0, 7.0)
+	# Reproducible spray and stance response, separate from random spread.
+	var kick := BallisticModel.spray_kick(spec, shots_fired, bool(actor.get("is_crouching")), is_revolver_alt)
+	punch_angles.x = clampf(punch_angles.x + kick.x, 0.0, 16.0)
+	punch_angles.y = clampf(punch_angles.y + kick.y, -7.0, 7.0)
 
 	# Bolt-action sniper unzooms briefly after shot just like CS 1.5!
 	if current_weapon_id in ["awp", "scout"] and zoom_index >= 0:
@@ -709,7 +711,7 @@ func _fire_penetrating_ray(
 	var cur_from: Vector3 = origin
 	var cur_dmg: float = base_dmg
 	var rem_dist: float = max_dist
-	var exclude_rids: Array[RID] = [(actor as CollisionObject3D).get_rid()]
+	var exclude_rids: Array[RID] = SkeletalHitboxes.exclusions(get_tree(), actor)
 	var tracer_spawned := false
 	var is_heavy_cal: bool = (base_dmg >= 48.0 or current_weapon_id in ["awp", "scout", "g3sg1", "sg550", "deagle", "m249"])
 	var cal_scale: float = clampf(base_dmg / 30.0, 0.78, 1.45)
@@ -719,7 +721,8 @@ func _fire_penetrating_ray(
 			break
 		var ray_end: Vector3 = cur_from + dir * rem_dist
 		var q := PhysicsRayQueryParameters3D.create(cur_from, ray_end)
-		q.collision_mask = 1 | 2 | 4 | 8  # World (1) + Actors/Hostages (2) + Dropped Weapons (4) + Metal Ladders/Grates (8)
+		q.collision_mask = 1 | 2 | 4 | 8 | 16
+		q.collide_with_areas = true  # World (1) + Actors/Hostages (2) + Dropped Weapons (4) + Metal Ladders/Grates (8)
 		q.exclude = exclude_rids
 		var hit: Dictionary = space.intersect_ray(q)
 		var water_end: Vector3 = ray_end if hit.is_empty() else hit["position"]
@@ -743,6 +746,8 @@ func _fire_penetrating_ray(
 		var traveled_gs := origin.distance_to(hit_pos) / GameData.SCALE
 		var dmg_at_dist := cur_dmg * pow(range_mod, traveled_gs / 500.0)
 		var col = hit["collider"]
+		if col is Area3D and col.has_meta("bullet_actor"):
+			col = col.get_meta("bullet_actor")
 
 		if col is DroppedWeapon:
 			(col as DroppedWeapon).apply_bullet_impulse(hit_pos, dir, dmg_at_dist)
@@ -756,7 +761,7 @@ func _fire_penetrating_ray(
 			continue
 
 		if col is Node3D and col.has_method("take_bullet_damage"):
-			var hgroup := _determine_hitgroup(col, hit_pos)
+			var hgroup: int = hit["collider"].get_meta("hitgroup", _determine_hitgroup(col, hit_pos))
 			var is_friendly := (String(col.get("team")) == String(actor.get("team"))) and not GameData.friendly_fire
 			var armored_hd := (hgroup == 1 and bool(col.get("has_helmet")) and int(col.get("armor")) > 0)
 			if not is_friendly and is_instance_valid(RoundManager.game_world):
@@ -765,7 +770,10 @@ func _fire_penetrating_ray(
 			if current_weapon_id == "taser":
 				# Zeus is a single-target electroshock hit, never a penetrating bullet.
 				break
-			exclude_rids.append((col as CollisionObject3D).get_rid())
+			SkeletalHitboxes.exclude_target(exclude_rids, col)
+			if pen_left <= 0:
+				break
+			pen_left -= 1
 			cur_dmg *= 0.65
 			var step := origin.distance_to(hit_pos)
 			rem_dist = max_dist - step
@@ -822,21 +830,17 @@ func _fire_penetrating_ray(
 			rem_dist = max_dist - origin.distance_to(cur_from)
 			continue
 
-		# CS 1.5 Wallbanging: test thin wall exit within 0.65m (~21 GoldSrc units)
-		if pen_left <= 0:
+		if pen_left <= 0 or current_weapon_id == "taser" or (attach_target is BSPBreakable and attach_target.bulletproof):
 			break
-		var probe_start: Vector3 = hit_pos + dir * 0.62
-		var back_q := PhysicsRayQueryParameters3D.create(probe_start, hit_pos + dir * 0.02)
-		back_q.collision_mask = 1
-		var exit_hit: Dictionary = space.intersect_ray(back_q)
+		var material_profile := BallisticModel.profile(surf_char, String(get_current_spec().get("ammo_type", "")))
+		var exit_hit := BallisticModel.find_exit(space, hit, dir, material_profile.x)
 		if exit_hit.is_empty():
-			break  # Wall thicker than penetration depth
-		# Spawn exit bullet hole & puff on the back side of thin wall/door/crate!
+			break
 		if is_instance_valid(RoundManager.game_world):
 			ImpactEffects.spawn_surface_impact(RoundManager.game_world, exit_hit["position"], exit_hit["normal"], dir, surf_char, cal_scale * 0.85, attach_target)
 		pen_left -= 1
-		cur_dmg *= 0.55
-		cur_from = exit_hit["position"] + dir * 0.05
+		cur_dmg *= BallisticModel.damage_retention(material_profile, exit_hit["thickness"])
+		cur_from = exit_hit["position"] + dir * 0.008
 		rem_dist = max_dist - origin.distance_to(cur_from)
 
 
@@ -850,7 +854,7 @@ func _determine_hitgroup(target: Node3D, hit_pos: Vector3) -> int:
 		return 2  # Chest / Arms
 	elif ratio >= 0.34:
 		return 3  # Stomach
-	return 4  # Legs
+	return 6  # Legs
 
 
 func _spawn_weapon_tracer(eye_pos: Vector3, shot_dir: Vector3, end_pos: Vector3, heavy: bool) -> void:
@@ -932,8 +936,9 @@ func _swing_knife(heavy_stab: bool) -> void:
 	var dir: Vector3 = -aim_b.z
 	var space: PhysicsDirectSpaceState3D = (actor as Node3D).get_world_3d().direct_space_state
 	var q := PhysicsRayQueryParameters3D.create(eye, eye + dir * reach)
-	q.collision_mask = 1 | 2 | 4 | 8
-	q.exclude = [(actor as CollisionObject3D).get_rid()]
+	q.collision_mask = 1 | 2 | 4 | 8 | 16
+	q.collide_with_areas = true
+	q.exclude = SkeletalHitboxes.exclusions(get_tree(), actor)
 	var hit: Dictionary = space.intersect_ray(q)
 	var did_hit := not hit.is_empty()
 
@@ -956,6 +961,8 @@ func _swing_knife(heavy_stab: bool) -> void:
 		return
 
 	var col = hit["collider"]
+	if col is Area3D and col.has_meta("bullet_actor"):
+		col = col.get_meta("bullet_actor")
 	var hpos: Vector3 = hit["position"]
 	if col is DroppedWeapon:
 		(col as DroppedWeapon).apply_bullet_impulse(hpos, dir, 55.0 if heavy_stab else 28.0)

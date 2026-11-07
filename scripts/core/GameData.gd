@@ -54,8 +54,10 @@ var friendly_fire: bool = false
 
 # Cosmetic world resources (no weapon/economy changes).
 var native_casings: Dictionary = {}
+var native_actor_sockets: Dictionary = {}
+var native_actor_pose_cache: Dictionary = {}
 var native_casings_enabled: bool = true
-var native_ammo_icons: bool = true
+var native_ammo_icons: bool = false
 var low_ammo_warning: bool = true
 var ambient_chickens_enabled: bool = true
 var native_defuser_model: bool = true
@@ -82,6 +84,7 @@ func _ready() -> void:
 	_ensure_input_map()
 	_load_all_databases()
 	_load_cosmetic_preferences()
+	native_actor_sockets = _load_json("res://data/native_actor_sockets.json")
 
 
 func _load_json(path: String) -> Variant:
@@ -311,18 +314,25 @@ func get_texture(res_path: String) -> Texture2D:
 	var tex := load(res_path) as Texture2D
 	if tex:
 		_tex_cache[res_path] = tex
+		while _tex_cache.size() > 256:
+			_tex_cache.erase(_tex_cache.keys()[0])
 	return tex
 
 
 func get_model_scene(rel_path: String) -> PackedScene:
 	var full := rel_path if rel_path.begins_with("res://") else ("res://assets/models/%s.glb" % rel_path)
 	if _scene_cache.has(full):
-		return _scene_cache[full]
+		var cached: PackedScene = _scene_cache[full]
+		_scene_cache.erase(full)
+		_scene_cache[full] = cached
+		return cached
 	if not ResourceLoader.exists(full):
 		return null
 	var sc := load(full) as PackedScene
 	if sc:
 		_scene_cache[full] = sc
+		while _scene_cache.size() > 48:
+			_scene_cache.erase(_scene_cache.keys()[0])
 	return sc
 
 
@@ -905,3 +915,38 @@ func apply_native_world_material(instance: Node3D, resource: String) -> void:
 		if child.mesh != null:
 			for surface in range(child.mesh.get_surface_count()):
 				child.set_surface_override_material(surface, material)
+
+
+var _match_warm_resources: Dictionary = {}
+
+func prepare_match_resources() -> Array[String]:
+	_match_warm_resources.clear()
+	var paths: Array[String] = ["res://assets/models/native/ct.glb", "res://assets/models/native/t.glb"]
+	if selected_map.begins_with("cs_"):
+		paths.append("res://assets/models/native/hostage.glb")
+	paths.append("res://assets/maps/%s.glb" % selected_map)
+	if selected_map in ["cs_italy", "de_inferno", "de_cbble"]:
+		paths.append("res://assets/models/native/chicken.glb")
+	for path in paths:
+		if ResourceLoader.exists(path):
+			ResourceLoader.load_threaded_request(path, "PackedScene", true)
+	return paths
+
+func poll_match_resources(paths: Array[String]) -> Vector2i:
+	var completed := 0
+	var failed := 0
+	for path in paths:
+		if _match_warm_resources.has(path):
+			completed += 1
+			continue
+		var state := ResourceLoader.load_threaded_get_status(path)
+		if state == ResourceLoader.THREAD_LOAD_LOADED:
+			var resource := ResourceLoader.load_threaded_get(path)
+			_match_warm_resources[path] = resource
+			if path.begins_with("res://assets/models/"):
+				_scene_cache[path] = resource
+			completed += 1
+		elif state in [ResourceLoader.THREAD_LOAD_FAILED, ResourceLoader.THREAD_LOAD_INVALID_RESOURCE]:
+			completed += 1
+			failed += 1
+	return Vector2i(completed, failed)

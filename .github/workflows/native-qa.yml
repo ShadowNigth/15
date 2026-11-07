@@ -584,6 +584,20 @@ jobs:
           set -o pipefail
           godot --headless --path . --import 2>&1 | tee /tmp/world-import.log
           if grep -Eq 'SCRIPT ERROR:|Parse Error:|Compile Error:' /tmp/world-import.log; then exit 1; fi
+      - name: Combat and live native character integration
+        run: |
+          set -o pipefail
+          timeout 300s xvfb-run -a godot --path . --audio-driver Dummy --rendering-method gl_compatibility --disable-render-loop --fixed-fps 60 --resolution 1280x720 res://tests/CombatNativeIntegrationTest.tscn -- --capture 2>&1 | tee /tmp/combat-native.log
+      - name: Combat diagnostics
+        if: ${{ always() }}
+        run: |
+          python3 - <<'PYCODE'
+          from pathlib import Path
+          p=Path('/tmp/combat-native.log')
+          if p.exists():
+              text=p.read_text(errors='replace')[-7000:].replace('%','%25').replace('\n','%0A')
+              print('::notice title=Combat native integration::'+text)
+          PYCODE
       - name: Preserve physical Estate hostage rescue after cosmetic additions
         id: estate_review
         run: |
@@ -619,6 +633,18 @@ jobs:
                   text=path.read_text(errors='replace')[-5500:].replace('%','%25').replace('\n','%0A')
                   print('::notice title='+name+'::'+text)
           PYCODE
+      - name: Publish combat live_ct_t
+        if: ${{ always() }}
+        run: python3 tools/publish_native_world_capture.py live_ct_t
+      - name: Publish combat live_crouch
+        if: ${{ always() }}
+        run: python3 tools/publish_native_world_capture.py live_crouch
+      - name: Publish combat live_hostage
+        if: ${{ always() }}
+        run: python3 tools/publish_native_world_capture.py live_hostage
+      - name: Publish combat chicken_scale
+        if: ${{ always() }}
+        run: python3 tools/publish_native_world_capture.py chicken_scale
       - name: Publish CT review
         if: ${{ always() }}
         run: python3 tools/publish_native_world_capture.py ct_0
@@ -646,4 +672,6 @@ jobs:
             /tmp/native-world.log
             /tmp/world-import.log
             /tmp/native-estate.log
+            /tmp/combat-native.log
+            /tmp/combat-native-review/
           retention-days: 14

@@ -436,8 +436,8 @@ func _process(delta: float) -> void:
 	var punch := weapon_ctrl.punch_angles
 	_dmg_punch = _dmg_punch.lerp(Vector3.ZERO, minf(1.0, 13.0 * delta))
 	camera.rotation = Vector3(
-		look_pitch + deg_to_rad(punch.x * 1.15) + shake_rot.x + _dmg_punch.x,
-		look_yaw + deg_to_rad(punch.y * 0.85) + shake_rot.y + _dmg_punch.y,
+		look_pitch + deg_to_rad(punch.x) + shake_rot.x + _dmg_punch.x,
+		look_yaw + deg_to_rad(punch.y) + shake_rot.y + _dmg_punch.y,
 		shake_rot.z + _dmg_punch.z
 	)
 	if _vm_camera:

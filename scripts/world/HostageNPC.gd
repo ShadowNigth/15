@@ -15,6 +15,8 @@ var spawn_pos: Vector3 = Vector3.ZERO
 var spawn_yaw: float = 0.0
 
 var _col_shape: CollisionShape3D = null
+var _native_model: Node3D = null
+var _bullet_hitboxes: SkeletalHitboxes = null
 var _anim_player: AnimationPlayer = null
 var _touched_once: bool = false
 var _nav_path: Array[Vector3] = []
@@ -34,7 +36,7 @@ func _ready() -> void:
 	floor_snap_length = 0.35
 	floor_max_angle = deg_to_rad(46.0)
 	_last_pos = global_position
-	_avoid_side = 1.0 if get_instance_id() % 2 == 0 else -1.0
+	# Set by authored spawn order, never resource-dependent ObjectIDs.
 
 	_col_shape = CollisionShape3D.new()
 	var cap := CapsuleShape3D.new()
@@ -44,10 +46,12 @@ func _ready() -> void:
 	_col_shape.position = Vector3(0.0, 0.95, 0.0)
 	add_child(_col_shape)
 
-	var sc := GameData.get_model_scene("players/hostage")
+	var sc := GameData.get_model_scene("native/hostage")
 	if sc:
 		var mdl := sc.instantiate()
-		_configure_hostage_meshes(mdl)
+		_native_model = mdl
+		for mesh in mdl.find_children("*", "MeshInstance3D", true, false):
+			mesh.layers = 2
 		add_child(mdl)
 		_anim_player = _find_anim_player(mdl)
 		GameData.ensure_looping_animations(_anim_player)
@@ -58,6 +62,12 @@ func _ready() -> void:
 					if ga != null:
 						ga.loop_mode = Animation.LOOP_NONE
 		_play_anim("idle1", 0.0)
+		var skeletons := mdl.find_children("*", "Skeleton3D", true, false)
+		if not skeletons.is_empty():
+			_bullet_hitboxes = SkeletalHitboxes.new()
+			_bullet_hitboxes.name = "SkeletalHitboxes"
+			add_child(_bullet_hitboxes)
+			_bullet_hitboxes.setup(self, skeletons[0])
 
 
 func _configure_hostage_meshes(n: Node) -> void:
@@ -87,7 +97,7 @@ func _find_anim_player(n: Node) -> AnimationPlayer:
 func _play_anim(substr: String, blend_sec: float = 0.18) -> void:
 	if not _anim_player:
 		return
-	var kw := substr.to_lower()
+	var kw: String = {"idle1": "idle", "walk_scared": "walk", "crouch_idle": "idle", "gutshot": "idle"}.get(substr.to_lower(), substr.to_lower())
 	for aname in _anim_player.get_animation_list():
 		var low := aname.to_lower()
 		if low == kw:
@@ -390,3 +400,12 @@ func _physics_process(delta: float) -> void:
 			_col_shape.set_deferred("disabled", true)
 		RoundManager.notify_hostage_rescued(leader)
 		leader = null
+
+
+func _process(_delta: float) -> void:
+	if is_instance_valid(_native_model):
+		_native_model.rotation.y = PI
+		if not is_alive:
+			_native_model.rotation.z = lerpf(_native_model.rotation.z, PI * 0.5, minf(1.0, _delta * 6.0))
+	if is_instance_valid(_bullet_hitboxes):
+		_bullet_hitboxes.sync_pose()
