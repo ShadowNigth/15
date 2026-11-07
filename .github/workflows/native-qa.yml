@@ -584,6 +584,23 @@ jobs:
           set -o pipefail
           godot --headless --path . --import 2>&1 | tee /tmp/world-import.log
           if grep -Eq 'SCRIPT ERROR:|Parse Error:|Compile Error:' /tmp/world-import.log; then exit 1; fi
+      - name: Deathmatch, smoke interaction and effects runtime regression
+        run: |
+          set -o pipefail
+          mkdir -p /tmp/dm-polish-review
+          POLISH_CAPTURE_DIR=/tmp/dm-polish-review timeout 180s xvfb-run -a godot --path . --audio-driver Dummy --rendering-method gl_compatibility --disable-render-loop --fixed-fps 60 --resolution 1280x720 res://tests/DeathmatchPolishTest.tscn 2>&1 | tee /tmp/dm-polish.log
+          if grep -Eq 'SCRIPT ERROR:|Parse Error:|Compile Error:' /tmp/dm-polish.log; then exit 1; fi
+          grep -q '\[DM POLISH\] PASS:' /tmp/dm-polish.log
+      - name: Deathmatch diagnostics
+        if: ${{ always() }}
+        run: |
+          python3 - <<'PYCODE'
+          from pathlib import Path
+          p = Path('/tmp/dm-polish.log')
+          if p.exists():
+              text = p.read_text(errors='replace')[-11000:].replace('%','%25').replace('\n','%0A')
+              print('::notice title=Deathmatch smoke FX::'+text)
+          PYCODE
       - name: Combat and live native character integration
         run: |
           set -o pipefail
@@ -670,4 +687,6 @@ jobs:
             /tmp/native-estate.log
             /tmp/combat-native.log
             /tmp/combat-native-review/
+            /tmp/dm-polish.log
+            /tmp/dm-polish-review/
           retention-days: 14

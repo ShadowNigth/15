@@ -1781,6 +1781,11 @@ func _update_tactical_objective() -> void:
 		_plan_to_world_pos(nav, _sound_investigate_pos, false, BotNavigator.PATH_OPTIMAL)
 		return
 
+	if RoundManager.map_mode == "dm":
+		if _node_path.is_empty() or not _has_goal:
+			_plan_to_node(nav, nav.pick_roam_node(global_position, team), false, BotNavigator.PATH_FAST)
+		return
+
 	# DE Mode CT Bombsite Defense & Sniper Nest Selection + T Split-Push!
 	if _node_path.is_empty() or not _has_goal:
 		var bsites2: Array = gw.get("bombsites")

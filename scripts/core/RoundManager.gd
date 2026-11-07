@@ -13,6 +13,8 @@ signal radio_order_issued(sender: Node3D, team: String, action: String, pos: Vec
 
 enum State { WAITING, FREEZE, LIVE, ROUND_OVER }
 
+var dm_respawns: Dictionary = {}
+
 var state: State = State.WAITING
 var round_number: int = 0
 var ct_score: int = 0
@@ -41,7 +43,8 @@ var total_hostages_in_round: int = 0
 func reset_match(map_data: Dictionary, world_node: Node3D) -> void:
 	game_world = world_node
 	current_map_data = map_data
-	map_mode = String(map_data.get("mode", "de"))
+	map_mode = "dm" if GameData.game_mode == "deathmatch" else String(map_data.get("mode", "de"))
+	dm_respawns.clear()
 	round_number = 0
 	ct_score = 0
 	t_score = 0
@@ -64,6 +67,7 @@ func register_actor(actor: Node3D) -> void:
 
 func unregister_actor(actor: Node3D) -> void:
 	actors.erase(actor)
+	dm_respawns.erase(actor)
 
 
 func register_incendiary(area: Node3D) -> void:
@@ -101,28 +105,14 @@ func _clear_stale_planted_c4() -> void:
 
 
 func start_new_round() -> void:
+	if map_mode == "dm":
+		start_deathmatch()
+		return
 	if not is_instance_valid(game_world):
 		return
 	round_number += 1
 	hostages_rescued_this_round = 0
-	smoke_clouds.clear()
-	for sv in smoke_volumes.duplicate():
-		if is_instance_valid(sv):
-			var sv_node := sv as Node
-			if sv_node.get_parent():
-				sv_node.get_parent().remove_child(sv_node)
-			sv_node.queue_free()
-	smoke_volumes.clear()
-	for area in incendiary_areas.duplicate():
-		if is_instance_valid(area):
-			var area_node := area as Node
-			if area_node.get_parent():
-				area_node.get_parent().remove_child(area_node)
-			area_node.queue_free()
-	incendiary_areas.clear()
-	_clear_stale_planted_c4()
-	planted_c4 = null
-	bomb_state_changed.emit(false, Vector3.ZERO)
+	_clear_round_hazards()
 
 	if game_world.has_method("prepare_round_entities"):
 		game_world.call("prepare_round_entities", round_number == 1)
@@ -137,6 +127,10 @@ func start_new_round() -> void:
 
 func _process(delta: float) -> void:
 	if state == State.WAITING or not is_instance_valid(game_world):
+		return
+
+	if map_mode == "dm":
+		_tick_deathmatch(delta)
 		return
 
 	# Expire smoke clouds
@@ -166,7 +160,7 @@ func _process(delta: float) -> void:
 
 
 func is_movement_frozen() -> bool:
-	return state == State.FREEZE
+	return state == State.FREEZE or (map_mode == "dm" and state == State.ROUND_OVER)
 
 
 func can_buy_now() -> bool:
@@ -291,6 +285,17 @@ func notify_actor_killed(victim: Node3D, killer: Node3D, weapon_id: String, head
 	kill_logged.emit(k_name, k_team, v_name, v_team, weapon_id, headshot)
 
 	if state != State.LIVE and state != State.FREEZE:
+		return
+
+	if map_mode == "dm":
+		dm_respawns[victim] = 3.0
+		if is_instance_valid(killer) and killer != victim and k_team != v_team:
+			if k_team == "CT":
+				ct_score += 1
+			else:
+				t_score += 1
+		if maxi(ct_score, t_score) >= GameData.dm_frag_limit:
+			finish_deathmatch()
 		return
 
 	# VIP assassination check
@@ -440,3 +445,78 @@ func send_radio_command(sender: Node3D, label: String, sound_rel: String, action
 	AudioManager.play_radio(sound_rel, tm)
 	chat_radio_message.emit(sname, tm, "(RADIO): " + label)
 	radio_order_issued.emit(sender, tm, action, sender.global_position)
+
+
+func start_deathmatch() -> void:
+	if not is_instance_valid(game_world):
+		return
+	_clear_round_hazards()
+	dm_respawns.clear()
+	ct_score = 0
+	t_score = 0
+	round_number = 1
+	state = State.LIVE
+	state_timer = GameData.dm_time_limit
+	buy_time_left = 0.0
+	for actor in actors:
+		if is_instance_valid(actor):
+			actor.kills = 0
+			actor.deaths = 0
+	game_world.prepare_round_entities(true)
+	round_started.emit(1)
+	freeze_ended.emit()
+	center_message.emit("TEAM DEATHMATCH — %d kills / %d minutes" % [GameData.dm_frag_limit, int(GameData.dm_time_limit / 60)], 4.0)
+
+func _tick_deathmatch(delta: float) -> void:
+	state_timer = maxf(0.0, state_timer - delta)
+	if state == State.ROUND_OVER:
+		if state_timer <= 0.0:
+			start_deathmatch()
+		return
+	if state != State.LIVE:
+		return
+	if state_timer <= 0.0:
+		finish_deathmatch()
+		return
+	for actor in dm_respawns.keys():
+		if not is_instance_valid(actor):
+			dm_respawns.erase(actor)
+			continue
+		dm_respawns[actor] = float(dm_respawns[actor]) - delta
+		if dm_respawns[actor] <= 0.0:
+			dm_respawns.erase(actor)
+			game_world.respawn_deathmatch_actor(actor)
+
+func finish_deathmatch() -> void:
+	state = State.ROUND_OVER
+	state_timer = 8.0
+	dm_respawns.clear()
+	var winner := "CT" if ct_score > t_score else "T" if t_score > ct_score else "DRAW"
+	var message := "TEAM DEATHMATCH: %s — CT %d / T %d" % [winner, ct_score, t_score]
+	center_message.emit(message, 7.5)
+	round_ended.emit(winner, message)
+
+
+func _clear_round_hazards() -> void:
+	smoke_clouds.clear()
+	for sv in smoke_volumes.duplicate():
+		if is_instance_valid(sv):
+			var sv_node := sv as Node
+			if sv_node.get_parent():
+				sv_node.get_parent().remove_child(sv_node)
+			sv_node.queue_free()
+	smoke_volumes.clear()
+	for area in incendiary_areas.duplicate():
+		if is_instance_valid(area):
+			var area_node := area as Node
+			if area_node.get_parent():
+				area_node.get_parent().remove_child(area_node)
+			area_node.queue_free()
+	incendiary_areas.clear()
+	_clear_stale_planted_c4()
+	planted_c4 = null
+	bomb_state_changed.emit(false, Vector3.ZERO)
+
+	if is_inside_tree():
+		for grenade in get_tree().get_nodes_in_group("live_grenade_projectiles"):
+			grenade.queue_free()

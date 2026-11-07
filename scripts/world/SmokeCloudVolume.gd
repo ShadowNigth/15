@@ -333,7 +333,7 @@ func apply_explosion_impulse(blast_pos: Vector3, blast_radius: float, strength: 
 		var wp: Vector3 = global_position + _v_pos[i]
 		var diff: Vector3 = wp - blast_pos
 		var d: float = diff.length()
-		if d < eff_r:
+		if d < eff_r and interaction_visible(blast_pos, wp):
 			any_carved = true
 			var dir: Vector3 = diff / maxf(0.12, d)
 			var falloff: float = pow(clampf(1.0 - d / eff_r, 0.0, 1.0), 0.65)
@@ -362,6 +362,10 @@ func apply_explosion_impulse(blast_pos: Vector3, blast_radius: float, strength: 
 
 
 func apply_bullet_wake(seg_a: Vector3, seg_b: Vector3, strength: float = 1.0) -> void:
+	if is_inside_tree() and get_world_3d() != null:
+		var obstruction := get_world_3d().direct_space_state.intersect_ray(PhysicsRayQueryParameters3D.create(seg_a, seg_b, 1))
+		if not obstruction.is_empty():
+			seg_b = obstruction["position"]
 	var ab: Vector3 = seg_b - seg_a
 	var len_sq: float = ab.length_squared()
 	if len_sq < 0.001 or _v_count <= 0:
@@ -471,23 +475,23 @@ func get_density_at(pt: Vector3) -> float:
 
 	var fade: float = clampf((DURATION - age) / 2.6, 0.0, 1.0)
 	var accum: float = 0.0
-	var sense_r_sq: float = 2.45 * 2.45
+	var sense_r_sq: float = 1.75 * 1.75
 	for i in range(_v_count):
 		var c_val: float = _v_carve[i]
-		if c_val >= 0.92:
+		if voxel_opacity(i) <= 0.008:
 			continue
 		var dsq: float = local_pt.distance_squared_to(_v_pos[i])
 		if dsq < sense_r_sq:
 			var bloom_i: float = clampf((age - _v_hop_norm[i] * 0.36) / 0.26, 0.0, 1.0)
-			var w: float = (1.0 - sqrt(dsq) / 2.45) * (1.0 - c_val) * bloom_i
+			var w: float = (1.0 - sqrt(dsq) / 1.75) * voxel_opacity(i)
 			accum += w * 0.58
 			if accum >= 1.0:
-				return fade
-	return clampf(accum * fade, 0.0, 1.0)
+				return 1.0
+	return clampf(accum, 0.0, 1.0)
 
 
 func blocks_segment(a: Vector3, b: Vector3) -> bool:
-	if _v_count <= 0 or age < 0.32 or (DURATION - age) < 0.85:
+	if _v_count <= 0 or age < 0.12:
 		return false
 	var ab: Vector3 = b - a
 	var len_sq: float = ab.length_squared()
@@ -502,16 +506,16 @@ func blocks_segment(a: Vector3, b: Vector3) -> bool:
 	var la: Vector3 = a - global_position
 	var lab: Vector3 = b - a
 	var optical_depth: float = 0.0
-	var hit_r_sq: float = 1.46 * 1.46
+	var hit_r_sq: float = 1.75 * 1.75
 	for i in range(_v_count):
 		var c_val: float = _v_carve[i]
-		if c_val >= 0.80:
+		if voxel_opacity(i) <= 0.008:
 			continue
 		var t_seg: float = clampf((_v_pos[i] - la).dot(lab) / len_sq, 0.0, 1.0)
 		var dsq: float = _v_pos[i].distance_squared_to(la + lab * t_seg)
 		if dsq < hit_r_sq:
 			var bloom_i: float = clampf((age - _v_hop_norm[i] * 0.36) / 0.26, 0.0, 1.0)
-			optical_depth += (1.0 - sqrt(dsq) / 1.46) * (1.0 - c_val) * bloom_i
+			optical_depth += (1.0 - sqrt(dsq) / 1.75) * voxel_opacity(i)
 			if optical_depth >= 1.32:
 				return true
 	return false
@@ -570,13 +574,13 @@ func _physics_process(delta: float) -> void:
 		for i in range(_v_count):
 			var diff_a: Vector3 = _v_pos[i] - a_local
 			var dsq_a: float = diff_a.length_squared()
-			if dsq_a < 2.85:
+			if dsq_a < 2.85 and interaction_visible(global_position + a_local, global_position + _v_pos[i]):
 				var d_a: float = sqrt(dsq_a)
 				var push_dir: Vector3 = diff_a / maxf(0.10, d_a)
 				var fac: float = (1.0 - d_a / 1.69) * delta * 8.5
 				_v_vel[i] += (a_vel * 0.55 + push_dir * 3.8) * fac
 				_v_agitate[i] = clampf(_v_agitate[i] + fac * 0.45, 0.0, 0.85)
-				_v_carve[i] = clampf(_v_carve[i] + fac * 0.25, 0.0, 0.55)
+				_v_carve[i] = maxf(_v_carve[i], minf(0.55, _v_carve[i] + fac * 0.25))
 
 	# 1. Update all 3D Flood-Filled Voxels & upload to MultiMesh
 	var spring_k: float = 4.2
@@ -605,6 +609,11 @@ func _physics_process(delta: float) -> void:
 			next_p.y = 0.38
 			if _v_vel[i].y < 0.0:
 				_v_vel[i].y *= -0.25
+		if next_p.distance_squared_to(_v_pos[i]) > 0.0004:
+			var motion_hit := get_world_3d().direct_space_state.intersect_ray(PhysicsRayQueryParameters3D.create(global_position + _v_pos[i], global_position + next_p, 1))
+			if not motion_hit.is_empty():
+				next_p = (motion_hit["position"] as Vector3) - global_position + (motion_hit["normal"] as Vector3) * 0.08
+				_v_vel[i] = Vector3.ZERO
 		_v_pos[i] = next_p
 
 		# Refill carved bullet tunnels & HE cavities with natural pressurized delay
@@ -620,7 +629,7 @@ func _physics_process(delta: float) -> void:
 		var hop_delay: float = _v_hop_norm[i] * 0.36
 		var v_bloom: float = clampf((age - hop_delay) / 0.26, 0.0, 1.0)
 		var carve_cur: float = _v_carve[i]
-		var alpha_v: float = clampf(0.96 * v_bloom * fade * (1.0 - carve_cur), 0.0, 0.98)
+		var alpha_v: float = voxel_opacity(i)
 
 		if alpha_v <= 0.008:
 			_mm.set_instance_transform(i, Transform3D(Basis.from_scale(Vector3(0.001, 0.001, 0.001)), _v_pos[i]))
@@ -664,3 +673,16 @@ func _physics_process(delta: float) -> void:
 		_mm.set_instance_transform(mm_idx, Transform3D(Basis.from_scale(Vector3(sz_w, sz_w, 1.0)), _w_pos[wi]))
 		_mm.set_instance_color(mm_idx, Color(_env_tint.r, _env_tint.g, _env_tint.b, alpha_w))
 		_mm.set_instance_custom_data(mm_idx, Color(_w_seed[wi], prog * 0.72, h_w, _w_angle[wi]))
+
+
+func voxel_opacity(index: int) -> float:
+	var bloom := clampf((age - _v_hop_norm[index] * 0.36) / 0.26, 0.0, 1.0)
+	var fade := clampf((DURATION - age) / 2.6, 0.0, 1.0)
+	return clampf(0.96 * bloom * fade * (1.0 - _v_carve[index]), 0.0, 0.98)
+
+func interaction_visible(from: Vector3, to: Vector3) -> bool:
+	if from.distance_squared_to(to) < 0.0025:
+		return true
+	var direction := (to - from).normalized()
+	var query := PhysicsRayQueryParameters3D.create(from + direction * 0.025, to, 1)
+	return get_world_3d().direct_space_state.intersect_ray(query).is_empty()

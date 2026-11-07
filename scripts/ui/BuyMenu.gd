@@ -447,6 +447,10 @@ func _draw_glyph(ci: Control, kind: String, box: Rect2, col: Color) -> void:
 
 
 func _draw_entry_icon(ci: Control, e: Dictionary, box: Rect2, col: Color) -> void:
+	var native_icon := GameData.equipment_icon(String(e["id"]))
+	if native_icon != null:
+		ci.draw_texture_rect(native_icon, _fit_rect(native_icon, box), false, col)
+		return
 	var sil := _silhouette(String(e["vgui"]))
 	if sil != null:
 		ci.draw_texture_rect(sil, _fit_rect(sil, box), false, col)

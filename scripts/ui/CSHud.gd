@@ -720,6 +720,14 @@ func _process(delta: float) -> void:
 				target_gap *= 0.72
 		_crosshair_gap_cur = lerpf(_crosshair_gap_cur, target_gap, minf(1.0, 22.0 * delta))
 
+	if RoundManager.map_mode == "dm" and is_instance_valid(player):
+		if not player.is_alive and RoundManager.dm_respawns.has(player):
+			_weapon_name_label.text = "Respawn in %.1fs" % float(RoundManager.dm_respawns[player])
+		elif player.dm_protection > 0.0:
+			_weapon_name_label.text = "Spawn protection %.1fs — fire to cancel" % player.dm_protection
+		else:
+			_weapon_name_label.text = String(player.weapon_ctrl.get_current_spec().get("name", ""))
+
 	# Team alive pips + inventory refresh (cheap periodic)
 	_score_refresh_timer -= delta
 	if _score_refresh_timer <= 0.0:
@@ -776,6 +784,9 @@ func _refresh_inventory_icons() -> void:
 func _draw_scoreboard() -> void:
 	var fnt := _score_ctrl.get_theme_default_font()
 	var sz := _score_ctrl.size
+
+	if RoundManager.map_mode == "dm":
+		_score_ctrl.draw_string(fnt, Vector2(65, 13), "TEAM DM / %d" % GameData.dm_frag_limit, HORIZONTAL_ALIGNMENT_LEFT, -1, 11, HUD_WHITE)
 
 	# --- CT block (left): number, caption, alive pips ---
 	_score_ctrl.draw_string(fnt, Vector2(18, 36), str(RoundManager.ct_score), HORIZONTAL_ALIGNMENT_LEFT, -1, 24, CT_COLOR)
@@ -986,7 +997,9 @@ func _apply_vitals(hp: int, ap: int, helmet: bool) -> void:
 	_armor_label.text = str(ap)
 	_armor_label.add_theme_color_override("font_color", HUD_WHITE if ap > 0 else HUD_DIM)
 	var ap_entry := "suithelmet_full" if helmet else "suit_full"
-	var ap_tex := GameData.get_hud_atlas(ap_entry, 320)
+	var ap_tex := GameData.equipment_icon("vesthelm" if helmet else "vest")
+	if ap_tex == null:
+		ap_tex = GameData.get_hud_atlas(ap_entry, 320)
 	if ap_tex:
 		_ap_icon.texture = ap_tex
 	_ap_icon.modulate = HUD_WHITE if ap > 0 else Color(1, 1, 1, 0.35)
@@ -1001,6 +1014,9 @@ func _on_money(amount: int, delta_amt: int) -> void:
 
 
 func _archi_weapon_texture(wid: String) -> Texture2D:
+	var native_icon := GameData.equipment_icon(wid)
+	if native_icon != null:
+		return native_icon
 	var spec: Dictionary = GameData.weapons.get(wid, {})
 	var vgui := String(spec.get("vgui", ""))
 	if vgui.is_empty():

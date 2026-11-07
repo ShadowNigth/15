@@ -378,45 +378,8 @@ static func spawn_barrel_smoke(
 ) -> void:
 	if parent_node == null or not is_instance_valid(parent_node):
 		return
-	ensure_init()
-	var pool: Array = _rifle_smoke_sets if is_rifle else _pistol_smoke_sets
-	if pool.is_empty():
-		pool = _wall_puff_sets
-	if pool.is_empty():
-		return
-	var frames: Array = pool[randi() % pool.size()]
-	if frames.is_empty():
-		return
-
-	var sp := Sprite3D.new()
-	sp.layers = layer_mask
-	sp.texture = frames[0] as Texture2D
-	sp.billboard = BaseMaterial3D.BILLBOARD_ENABLED
-	sp.shaded = false
-	var base_px: float = (0.0021 if layer_mask == 4 else 0.0038) * (1.22 if is_rifle else 0.92)
-	sp.pixel_size = base_px
-	sp.modulate = Color(0.84, 0.85, 0.88, 0.42 if is_rifle else 0.34)
-	parent_node.add_child(sp)
-	if use_world_pos:
-		sp.global_position = local_pos
-	else:
-		sp.position = local_pos
-
-	var dur: float = 0.32 if is_rifle else 0.25
-	var drift := Vector3(randf_range(-0.025, 0.035), 0.14 if layer_mask == 4 else 0.28, -0.04 if layer_mask == 4 else 0.0)
-	var tw := parent_node.create_tween()
-	tw.set_parallel(true)
-	if use_world_pos:
-		tw.tween_property(sp, "global_position", local_pos + drift, dur).set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_OUT)
-	else:
-		tw.tween_property(sp, "position", local_pos + drift, dur).set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_OUT)
-	tw.tween_property(sp, "pixel_size", base_px * 2.15, dur)
-	tw.tween_property(sp, "modulate:a", 0.0, dur)
-	var fcnt: int = frames.size()
-	for fi in range(1, fcnt):
-		var tex_f: Texture2D = frames[fi] as Texture2D
-		tw.tween_callback(_set_sprite_tex.bind(sp, tex_f)).set_delay((dur * 0.92) * float(fi) / float(fcnt))
-	tw.chain().tween_callback(_safe_retire_node.bind(sp))
+	var point := parent_node.to_local(local_pos) if use_world_pos else local_pos
+	PolishFx.emit(parent_node, point, "muzzle_smoke", Vector2i(8, 4), 26, 0.62 if is_rifle else 0.45, 0.08, 0.42 if is_rifle else 0.25, layer_mask, Color(0.62, 0.65, 0.68, 0.32))
 
 
 static func spawn_bullet_tracer(world_root: Node3D, from_pos: Vector3, to_pos: Vector3, is_heavy: bool = false) -> void:

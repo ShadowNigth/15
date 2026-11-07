@@ -190,11 +190,14 @@ func _ready() -> void:
 
 	_muzzle_sprite = Sprite3D.new()
 	_muzzle_sprite.layers = 4
-	_muzzle_sprite.texture = GameData.get_texture("res://assets/sprites/muzzleflash1.png")
+	_muzzle_sprite.texture = GameData.get_texture("res://assets/polish/muzzle_fire.png")
 	_muzzle_sprite.billboard = BaseMaterial3D.BILLBOARD_ENABLED
 	_muzzle_sprite.shaded = false
-	_muzzle_sprite.pixel_size = 0.0028
-	_muzzle_sprite.modulate = Color(1.0, 0.90, 0.56, 0.95)
+	_muzzle_sprite.pixel_size = 0.0010
+	_muzzle_sprite.hframes = 8
+	_muzzle_sprite.vframes = 4
+	_muzzle_sprite.frame = 3
+	_muzzle_sprite.modulate = Color(1.0, 1.0, 1.0, 0.95)
 	_muzzle_sprite.position = Vector3(0.18, -0.11, -0.68)
 	_muzzle_sprite.visible = false
 	viewmodel_pivot.add_child(_muzzle_sprite)
@@ -388,6 +391,7 @@ func _process(delta: float) -> void:
 
 	if _muzzle_timer > 0.0:
 		_muzzle_timer -= delta
+		_muzzle_sprite.frame = mini(20, 3 + int((0.045 - _muzzle_timer) * 350.0))
 		if _muzzle_timer <= 0.0:
 			_muzzle_sprite.visible = false
 			_muzzle_light.visible = false
@@ -1096,7 +1100,8 @@ func _on_fired_shot(wid: String, silenced: bool) -> void:
 		if viewmodel_pivot != null:
 			ImpactEffects.spawn_barrel_smoke(viewmodel_pivot, muz_ofs + Vector3(0.0, 0.0, 0.02), is_rifle_w, 4, false)
 		if not silenced:
-			_muzzle_sprite.texture = GameData.get_texture("res://assets/sprites/muzzleflash%d.png" % randi_range(1, 4))
+			_muzzle_sprite.texture = GameData.get_texture("res://assets/polish/muzzle_fire.png")
+			_muzzle_sprite.frame = randi_range(2, 5)
 			_muzzle_sprite.rotation.z = randf() * TAU
 			var mscale: float = clampf(0.86 + kick_scale * 0.28, 0.85, 1.38) * randf_range(0.92, 1.08)
 			_muzzle_sprite.scale = Vector3.ONE * mscale

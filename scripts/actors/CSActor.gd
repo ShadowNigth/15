@@ -26,6 +26,7 @@ var actor_name: String = "Player"
 var team: String = "CT"  # "CT" or "T"
 var class_id: String = "urban"
 var is_human: bool = false
+var dm_protection: float = 0.0
 var is_alive: bool = false
 var is_vip: bool = false
 
@@ -191,12 +192,14 @@ func _rebuild_character_model() -> void:
 
 				_tp_muzzle_sprite = Sprite3D.new()
 				_tp_muzzle_sprite.layers = 2
-				var mtex := GameData.get_texture("res://assets/sprites/muzzleflash1.png")
+				var mtex := GameData.get_texture("res://assets/polish/muzzle_fire.png")
 				_tp_muzzle_sprite.texture = mtex
 				_tp_muzzle_sprite.billboard = BaseMaterial3D.BILLBOARD_ENABLED
 				_tp_muzzle_sprite.shaded = false
-				_tp_muzzle_sprite.pixel_size = 0.0048
-				_tp_muzzle_sprite.modulate = Color(1.0, 0.90, 0.56, 0.96)
+				_tp_muzzle_sprite.pixel_size = 0.0011
+				_tp_muzzle_sprite.hframes = 8
+				_tp_muzzle_sprite.vframes = 4
+				_tp_muzzle_sprite.modulate = Color(1.0, 1.0, 1.0, 0.96)
 				_tp_muzzle_sprite.position = Vector3(-0.04, 0.06, -0.58)
 				_tp_muzzle_sprite.visible = false
 				_hand_attachment.add_child(_tp_muzzle_sprite)
@@ -312,7 +315,8 @@ func trigger_upper_body_action(action_kind: String) -> void:
 					var mpos: Vector3 = _tp_muzzle_sprite.global_position
 					ImpactEffects.spawn_barrel_smoke(RoundManager.game_world, mpos, is_rifle_w, 2, true)
 				if not is_sil:
-					_tp_muzzle_sprite.texture = GameData.get_texture("res://assets/sprites/muzzleflash%d.png" % randi_range(1, 4))
+					_tp_muzzle_sprite.texture = GameData.get_texture("res://assets/polish/muzzle_fire.png")
+					_tp_muzzle_sprite.frame = randi_range(2, 5)
 					_tp_muzzle_sprite.rotation.z = randf() * TAU
 					var mscale: float = clampf(0.82 + rec_u * 0.14, 0.80, 1.35) * randf_range(0.92, 1.10)
 					_tp_muzzle_sprite.scale = Vector3.ONE * mscale
@@ -377,6 +381,7 @@ func get_visual_world_pos() -> Vector3:
 
 
 func _process(delta: float) -> void:
+	dm_protection = maxf(0.0, dm_protection - delta)
 	if _pain_sound_cd > 0.0:
 		_pain_sound_cd = maxf(0.0, _pain_sound_cd - delta)
 	_step_smooth_y = lerpf(_step_smooth_y, 0.0, minf(1.0, 22.0 * delta))
@@ -1090,7 +1095,7 @@ func take_bullet_damage(
 	weapon_id: String,
 	hit_pos: Vector3
 ) -> void:
-	if not is_alive:
+	if not is_alive or (RoundManager.map_mode == "dm" and (dm_protection > 0.0 or RoundManager.state != RoundManager.State.LIVE)):
 		return
 	if is_instance_valid(attacker) and attacker != self and String(attacker.get("team")) == team and not GameData.friendly_fire:
 		return
@@ -1159,7 +1164,7 @@ func take_bullet_damage(
 
 
 func apply_explosion_damage(attacker: Node3D, raw_dmg: float, weapon_id: String, blast_origin: Vector3 = Vector3.INF) -> void:
-	if not is_alive:
+	if not is_alive or (RoundManager.map_mode == "dm" and (dm_protection > 0.0 or RoundManager.state != RoundManager.State.LIVE)):
 		return
 	var dmg := raw_dmg
 	if armor > 0:
@@ -1299,6 +1304,8 @@ func _die(killer: Node3D, weapon_id: String, headshot: bool) -> void:
 
 
 func drop_current_weapon() -> void:
+	if RoundManager.map_mode == "dm":
+		return
 	if not is_alive:
 		return
 	var wid := weapon_ctrl.current_weapon_id
@@ -1329,6 +1336,8 @@ func drop_current_weapon() -> void:
 
 
 func _spawn_drop_entity(item_id: String, spread_idx: int = 0) -> void:
+	if RoundManager.map_mode == "dm":
+		return
 	if not is_instance_valid(RoundManager.game_world):
 		return
 	var drop := DroppedWeapon.new()

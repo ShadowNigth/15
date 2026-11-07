@@ -31,6 +31,7 @@ var propagation_heading: float = 0.0
 
 var _fire_audio: AudioStreamPlayer3D = null
 var _audio_extinguished: bool = false
+var _smoke_tick := 0.0
 var _tick: float = 0.0
 var _age: float = 0.0
 var _visual_time: float = 0.0
@@ -228,6 +229,7 @@ func _add_patch(local_pos: Vector3, parent_pos: Vector3) -> void:
 				"node": flame,
 				"material": material,
 				"born": _age,
+				"patch": patch,
 				"ignition_span": _rng.randf_range(0.17, 0.34),
 				"fade_offset": fade_offset,
 				"phase": _rng.randf_range(0.0, TAU),
@@ -254,7 +256,7 @@ func _add_patch(local_pos: Vector3, parent_pos: Vector3) -> void:
 		add_child(heat)
 		heat.position = local_pos + Vector3.UP * heat_height
 		_heat.append(
-			{"node": heat, "material": heat_material, "born": _age, "fade_offset": fade_offset}
+			{"node": heat, "material": heat_material, "born": _age, "fade_offset": fade_offset, "patch": patch}
 		)
 	_refresh_particle_emission()
 
@@ -456,13 +458,21 @@ func _create_particle_systems() -> void:
 func _refresh_particle_emission() -> void:
 	if _ember_process == null or _smoke_process == null or _patches.is_empty():
 		return
-	var image := Image.create(_patches.size(), 1, false, Image.FORMAT_RGBF)
-	for index in range(_patches.size()):
-		var point: Vector3 = _patches[index].get("pos", Vector3.ZERO)
+	var points_active: Array[Vector3] = []
+	for patch in _patches:
+		if not patch.has("extinguished_at"):
+			points_active.append(patch.get("pos", Vector3.ZERO))
+	if points_active.is_empty():
+		_ember_particles.emitting = false
+		_smoke_particles.emitting = false
+		return
+	var image := Image.create(points_active.size(), 1, false, Image.FORMAT_RGBF)
+	for index in range(points_active.size()):
+		var point := points_active[index]
 		image.set_pixel(index, 0, Color(point.x, point.y, point.z, 1.0))
 	var points := ImageTexture.create_from_image(image)
 	for process in [_ember_process, _smoke_process]:
-		process.emission_point_count = _patches.size()
+		process.emission_point_count = points_active.size()
 		process.emission_point_texture = points
 
 
@@ -515,6 +525,8 @@ func _is_occupied(candidate: Vector3) -> bool:
 func _project_candidate(parent: Vector3, candidate: Vector3) -> Variant:
 	if get_world_3d() == null:
 		return null
+	if RoundManager.get_smoke_density_at(to_global(candidate + Vector3.UP * 0.25)) > 0.24:
+		return null
 	var space := get_world_3d().direct_space_state
 	var floor_query := PhysicsRayQueryParameters3D.create(
 		to_global(candidate + Vector3.UP * 0.62), to_global(candidate - Vector3.UP * 1.05)
@@ -548,6 +560,9 @@ func _expand_one() -> void:
 			var origin := Vector3.ZERO
 			if continuation or (_patches.size() > 6 and _rng.randf() < 0.42):
 				var parent_patch: Dictionary = _patches[_rng.randi_range(0, _patches.size() - 1)]
+				if parent_patch.has("extinguished_at"):
+					attempts += 1
+					continue
 				origin = parent_patch.get("pos", Vector3.ZERO)
 			# A finished primary arm does not extinguish unused fuel. Continue from
 			# an existing connected patch; walls and the fuel envelope still apply.
@@ -598,6 +613,10 @@ func _expand_one() -> void:
 
 
 func _physics_process(delta: float) -> void:
+	_smoke_tick -= delta
+	if _smoke_tick <= 0.0 and life_left > 0.0:
+		_smoke_tick = 0.20
+		_extinguish_smoked_patches()
 	life_left -= delta
 	if life_left <= 0.0 and not _audio_extinguished:
 		_audio_extinguished = true
@@ -650,6 +669,7 @@ func _process(delta: float) -> void:
 		var patch_fade := clampf(
 			(life_left - float(entry.get("fade_offset", 0.0))) / 1.05, 0.0, 1.0
 		)
+		patch_fade *= _patch_extinction_fade(entry.get("patch", {}))
 		flame.visible = ignition > 0.001 and patch_fade > 0.001
 		if not flame.visible:
 			continue
@@ -671,6 +691,7 @@ func _process(delta: float) -> void:
 		var material := entry.get("material") as ShaderMaterial
 		var ignition := clampf((_age - float(entry.get("born", 0.0))) / 0.38, 0.0, 1.0)
 		var fade := clampf((life_left - float(entry.get("fade_offset", 0.0))) / 1.2, 0.0, 1.0)
+		fade *= _patch_extinction_fade(entry.get("patch", {}))
 		heat.visible = ignition > 0.001 and fade > 0.001
 		if is_instance_valid(material):
 			material.set_shader_parameter("ignition", ignition)
@@ -683,6 +704,8 @@ func _nearest_patch(target: Vector3) -> Dictionary:
 		return best
 	var best_distance := INF
 	for patch in _patches:
+		if patch.has("extinguished_at"):
+			continue
 		# Let the short ignition flare become visible before this patch can hurt.
 		if _age - float(patch.get("born", 0.0)) < 0.12:
 			continue
@@ -753,3 +776,39 @@ func _damage_tick() -> void:
 			)
 			if not _nearest_patch(centre).is_empty():
 				breakable.call("apply_damage", 2.0, centre, true)
+
+
+func burns_at(point: Vector3) -> bool:
+	return not _nearest_patch(point).is_empty()
+
+func _patch_extinction_fade(patch: Dictionary) -> float:
+	return clampf(1.0 - (_age - float(patch["extinguished_at"])) / 0.38, 0.0, 1.0) if patch.has("extinguished_at") else 1.0
+
+func _extinguish_smoked_patches() -> void:
+	if RoundManager.smoke_volumes.is_empty():
+		return
+	var active := 0
+	var changed := false
+	for patch in _patches:
+		if patch.has("extinguished_at"):
+			continue
+		var point := to_global(patch["pos"] as Vector3) + Vector3.UP * 0.25
+		for cloud in RoundManager.smoke_volumes:
+			if is_instance_valid(cloud) and cloud.get_density_at(point) > 0.24 and cloud.interaction_visible(cloud.global_position, point):
+				patch["extinguished_at"] = _age
+				changed = true
+				break
+		if not patch.has("extinguished_at"):
+			active += 1
+	if changed:
+		# Stop propagation from covered fuel; untouched branches can continue.
+		for i in range(_walkers.size() - 1, -1, -1):
+			var parent: Vector3 = _walkers[i].get("pos", Vector3.ZERO)
+			for patch in _patches:
+				if patch.has("extinguished_at") and parent.distance_squared_to(patch["pos"]) < 0.04:
+					_walkers.remove_at(i)
+					break
+		_refresh_particle_emission()
+	if active == 0:
+		_walkers.clear()
+		life_left = minf(life_left, 0.18)

@@ -43,6 +43,10 @@ var selected_knife_id: String = "original"
 var _original_knife_spec: Dictionary = {}
 
 # Match / User settings
+var game_mode: String = "classic" # classic / deathmatch (team DM)
+var dm_frag_limit: int = 40
+var dm_time_limit: float = 600.0
+var dm_primary: String = "ak47"
 var selected_map: String = "de_dust2"
 var bot_count: int = 9  # 9 bots + 1 player = 5v5 classic match
 var bot_difficulty: int = 1  # 0=Easy, 1=Normal, 2=Hard, 3=Expert
@@ -905,3 +909,17 @@ func apply_native_world_material(instance: Node3D, resource: String) -> void:
 		if child.mesh != null:
 			for surface in range(child.mesh.get_surface_count()):
 				child.set_surface_override_material(surface, material)
+
+
+func equipment_icon(wid: String) -> Texture2D:
+	# Tiny explicit aliases: do not parse the multi-megabyte animation report for HUD icons.
+	const ALIASES := {"usp": "usp_silencer", "p228": "p250", "m3": "nova", "mp5navy": "mp5sd", "tmp": "mp9", "m4a1": "m4a1s", "galil": "galilar", "sg552": "sg556", "scout": "ssg08", "sg550": "scar20"}
+	var path := "res://assets/polish/hud_weapon_%s.png" % String(ALIASES.get(wid, wid))
+	if ResourceLoader.exists(path):
+		return get_texture(path)
+	path = "res://assets/polish/grenade_%s_slot.png" % wid
+	if ResourceLoader.exists(path):
+		return get_texture(path)
+	if wid in ["vest", "vesthelm"]:
+		return get_texture("res://assets/polish/hud_%s.png" % ("helmet" if wid == "vesthelm" else "armor"))
+	return null

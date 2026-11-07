@@ -67,7 +67,7 @@ func _ready() -> void:
 	bot_navigator.setup_from_map(map_data)
 
 	# 3. Spawn Hostage NPCs on cs_* maps
-	for hinfo in map_data.get("hostages", []):
+	for hinfo in ([] if RoundManager.map_mode == "dm" else map_data.get("hostages", [])):
 		var h := HostageNPC.new()
 		var p: Array = hinfo["pos"]
 		h.spawn_pos = Vector3(float(p[0]), float(p[1]), float(p[2]))
@@ -181,6 +181,8 @@ func _on_player_team_chosen(tm: String, cid: String, capture_mouse: bool = true)
 		_match_started = true
 		_populate_initial_bots(tm)
 		RoundManager.start_new_round()
+	elif RoundManager.map_mode == "dm":
+		respawn_deathmatch_actor(player)
 	elif RoundManager.state == RoundManager.State.FREEZE:
 		# Spawn immediately during freeze time
 		var sp := _pick_spawn_for_team(tm, 0)
@@ -216,6 +218,8 @@ func _spawn_single_bot(tm: String) -> void:
 	add_child(bot)
 	bot.set_team_and_class(tm, cid)
 	bots.append(bot)
+	if _match_started and RoundManager.map_mode == "dm" and RoundManager.state == RoundManager.State.LIVE:
+		respawn_deathmatch_actor(bot)
 
 
 func prepare_round_entities(reset_all_gear: bool) -> void:
@@ -251,6 +255,12 @@ func prepare_round_entities(reset_all_gear: bool) -> void:
 	# 3. Reset player camera top_level in case they were spectating
 	player.camera.top_level = false
 	player.camera.position = Vector3(0.0, 1.85, 0.0)
+
+	if RoundManager.map_mode == "dm":
+		for actor in RoundManager.actors:
+			if is_instance_valid(actor):
+				respawn_deathmatch_actor(actor)
+		return
 
 	# 4. Spawn all CT and T actors across distinct BSP spawn points
 	var ct_idx := 0
@@ -493,3 +503,46 @@ func _initialize_ambient_chickens() -> void:
 	await get_tree().physics_frame
 	_ambient_initialized = true
 	_reset_ambient_chickens()
+
+
+func respawn_deathmatch_actor(actor: CSActor) -> void:
+	# Score all authored spawn points, retaining the BSP floor snapping in spawn_for_round.
+	var candidates: Array = map_data.get("ct_spawns", []).duplicate()
+	candidates.append_array(map_data.get("t_spawns", []))
+	var best := _pick_spawn_for_team(actor.team, randi_range(0, 20))
+	var best_score := -INF
+	var space := get_world_3d().direct_space_state
+	candidates.shuffle()
+	for candidate in candidates:
+		var raw: Array = candidate["pos"]
+		var point := Vector3(raw[0], raw[1], raw[2])
+		var score := 1000.0
+		var occupied := false
+		for other in RoundManager.actors:
+			if other == actor or not is_instance_valid(other) or not other.is_alive:
+				continue
+			var distance: float = point.distance_to(other.global_position)
+			if distance < 2.0:
+				occupied = true
+			if other.team != actor.team:
+				var ray := PhysicsRayQueryParameters3D.create(point + Vector3.UP * 0.7, other.get_eye_position(), 1)
+				var hidden := not space.intersect_ray(ray).is_empty()
+				score = minf(score, distance + (25.0 if hidden else 0.0))
+		if occupied:
+			score -= 1000.0
+		if score > best_score:
+			best_score = score
+			best = {"pos": point, "yaw": float(candidate.get("yaw", 0.0))}
+	actor.is_vip = false
+	actor.spawn_for_round(best["pos"], best["yaw"], true)
+	actor.dm_protection = 2.0
+	actor.armor = 100
+	actor.has_helmet = true
+	var choices := ["ak47", "m4a1", "aug", "sg552", "mp5navy", "p90", "awp", "m3", "galil", "famas"]
+	var weapon: String = GameData.dm_primary if actor.is_human else choices[randi() % choices.size()]
+	if not GameData.weapons.has(weapon):
+		weapon = "ak47"
+	actor.weapon_ctrl.give_weapon(weapon, int(GameData.weapons[weapon].get("clip_size", 30)), 180)
+	actor.weapon_ctrl.give_weapon("deagle", 7, 70)
+	actor.weapon_ctrl.equip_weapon_by_id(weapon)
+	actor.health_armor_changed.emit(actor.health, actor.armor, actor.has_helmet)

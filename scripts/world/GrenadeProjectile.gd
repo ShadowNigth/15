@@ -1,7 +1,7 @@
 class_name GrenadeProjectile
 extends Node3D
 ## Thrown HE Grenade, Flashbang, and Smoke Grenade with GoldSrc bounce physics,
-## multi-layered animated CS 1.5 fireball/shockwave/spark/plume HE blasts,
+## authored sprite-sheet burst, dust, debris and pressure-wave HE blasts,
 ## and high-volume vision-blocking 3D smoke clouds.
 
 var grenade_type: String = "hegrenade"
@@ -87,19 +87,19 @@ static func spawn_explosion_fx(parent_node: Node, world_pos: Vector3, scale_mult
 	# 2. Intense Dynamic Fiery Blast OmniLight3D + Initial Flash Core
 	var blast_light := OmniLight3D.new()
 	blast_light.light_color = Color(1.0, 0.68, 0.24)
-	blast_light.light_energy = 8.5 * scale_mult
-	blast_light.omni_range = 17.5 * scale_mult
+	blast_light.light_energy = 4.5 * scale_mult
+	blast_light.omni_range = 9.0 * scale_mult
 	blast_light.light_cull_mask = 3
 	fx_root.add_child(blast_light)
 	blast_light.position = Vector3(0.0, 0.55, 0.0)
 	var ltw := blast_light.create_tween()
-	ltw.tween_property(blast_light, "light_energy", 0.0, 0.48 * sqrt(scale_mult)).set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_OUT)
+	ltw.tween_property(blast_light, "light_energy", 0.0, 0.20 * sqrt(scale_mult)).set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_OUT)
 
 	var flash_tex := GameData.get_texture("res://assets/sprites/ledglow.png")
 	if flash_tex:
 		var flare := MeshInstance3D.new()
 		var qm := QuadMesh.new()
-		qm.size = Vector2(4.4, 4.4) * scale_mult
+		qm.size = Vector2(1.2, 1.2) * scale_mult
 		flare.mesh = qm
 		flare.layers = 2
 		flare.material_override = _get_cached_fx_mat("__fx_flare_add", flash_tex, true, true, 0.95)
@@ -123,46 +123,10 @@ static func spawn_explosion_fx(parent_node: Node, world_pos: Vector3, scale_mult
 	rtw.tween_property(ring_mi, "scale", Vector3(6.8, 1.0, 6.8), 0.30 * sqrt(scale_mult)).set_trans(Tween.TRANS_CUBIC).set_ease(Tween.EASE_OUT)
 	rtw.tween_callback(func() -> void: ring_mi.visible = false)
 
-	# 4. Three Staggered Animated CS 1.5 Fireball Columns (fexplo, fexplo1, eexplo frames 0..7!)
-	var columns := [
-		{"prefix": "fexplo", "offset": Vector3(0.0, 0.95, 0.0) * scale_mult, "sz": 4.2 * scale_mult, "delay": 0.0, "dur": 0.50},
-		{"prefix": "fexplo1", "offset": Vector3(0.52, 1.25, -0.38) * scale_mult, "sz": 3.7 * scale_mult, "delay": 0.05, "dur": 0.54},
-		{"prefix": "eexplo", "offset": Vector3(-0.48, 0.82, 0.44) * scale_mult, "sz": 3.5 * scale_mult, "delay": 0.09, "dur": 0.52},
-	]
-	for col_info in columns:
-		var pref := String(col_info["prefix"])
-		var frames: Array[StandardMaterial3D] = []
-		for fi in range(8):
-			var spath := ("res://assets/sprites/%s.png" % pref) if fi == 0 else ("res://assets/sprites/%s_%d.png" % [pref, fi])
-			var t := GameData.get_texture(spath)
-			if t:
-				frames.append(_get_cached_fx_mat("__fx_add_%s_%d" % [pref, fi], t, true, true, 1.0))
-		if frames.is_empty():
-			continue
-		var fb_mi := MeshInstance3D.new()
-		var fb_q := QuadMesh.new()
-		var base_sz := float(col_info["sz"])
-		fb_q.size = Vector2(base_sz, base_sz * 1.12)
-		fb_mi.mesh = fb_q
-		fb_mi.layers = 2
-		fb_mi.material_override = frames[0]
-		fb_mi.position = col_info["offset"] as Vector3
-		fb_mi.scale = Vector3.ONE * 0.55
-		fb_mi.visible = false
-		fx_root.add_child(fb_mi)
-
-		var delay_t := float(col_info["delay"])
-		var step_dt := float(col_info["dur"]) / float(frames.size())
-		var ctw := fb_mi.create_tween()
-		if delay_t > 0.0:
-			ctw.tween_interval(delay_t)
-		ctw.tween_callback(func() -> void: fb_mi.visible = true)
-		for fi in range(frames.size()):
-			var fmat := frames[fi]
-			var target_s := lerpf(0.82, 1.48, float(fi + 1) / float(frames.size()))
-			ctw.tween_callback((func(m: StandardMaterial3D) -> void: fb_mi.material_override = m).bind(fmat))
-			ctw.tween_property(fb_mi, "scale", Vector3.ONE * target_s, step_dt)
-		ctw.tween_callback(func() -> void: fb_mi.visible = false)
+	# Authored upstream 16-frame burst: short core, then dust/smoke, not three oversized fireballs.
+	PolishFx.emit(fx_root, Vector3.UP * 0.65, "grenade_fireburst_atlas", Vector2i(4, 4), 16, 0.38, 1.0 * scale_mult, 2.8 * scale_mult)
+	PolishFx.emit(fx_root, Vector3.UP * 0.45, "grenade_blast_atlas", Vector2i(4, 4), 16, 0.95, 1.5 * scale_mult, 4.3 * scale_mult, 2, Color(0.68, 0.62, 0.53, 0.8))
+	PolishFx.emit(fx_root, Vector3.UP * 0.75, "grenade_smoke_atlas", Vector2i(4, 4), 16, 2.0, 1.4 * scale_mult, 5.0 * scale_mult, 2, Color(0.35, 0.36, 0.38, 0.5))
 
 	# 5. High-Velocity Fiery Sparks & Shrapnel Burst (CPUParticles3D - native gl_compatibility!)
 	var sparks := CPUParticles3D.new()
@@ -239,6 +203,7 @@ static func spawn_explosion_fx(parent_node: Node, world_pos: Vector3, scale_mult
 
 
 func setup_grenade(gtype: String, owner_actor: Node3D, start_vel: Vector3) -> void:
+	add_to_group("live_grenade_projectiles")
 	grenade_type = gtype
 	thrower = owner_actor
 	velocity = start_vel
@@ -273,6 +238,12 @@ func _physics_process(delta: float) -> void:
 	if _detonated:
 		return
 
+	# Deploy immediately on active fire; never trigger from the other side of a wall.
+	if grenade_type == "smokegrenade":
+		for area in RoundManager.incendiary_areas:
+			if is_instance_valid(area) and area.burns_at(global_position) and area._patch_visible_to_actor(area.global_position, global_position):
+				_detonate()
+				return
 	fuse_left -= delta
 	if fuse_left <= 0.0:
 		# Smoke and decoy wait until slow/near ground before activating.

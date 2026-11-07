@@ -20,6 +20,8 @@ var _filtered_maps: Array = []
 var _overview_tex_rect: TextureRect = null
 var _map_title_lbl: Label = null
 var _map_briefing_lbl: Label = null
+var _game_mode_opt: OptionButton
+var _dm_weapon_opt: OptionButton
 var _bot_spin: SpinBox = null
 var _diff_opt: OptionButton = null
 var _money_opt: OptionButton = null
@@ -282,6 +284,25 @@ func _build_play_dialog() -> void:
 	settings_grid.add_theme_constant_override("v_separation", 5)
 	right.add_child(settings_grid)
 
+	var mode_label := Label.new()
+	mode_label.text = "Game mode:"
+	settings_grid.add_child(mode_label)
+	_game_mode_opt = OptionButton.new()
+	_game_mode_opt.add_item("Classic rounds — Bomb / Hostage / VIP")
+	_game_mode_opt.add_item("Team Deathmatch — bots, respawn, 40 kills / 10 min")
+	_game_mode_opt.selected = 1 if GameData.game_mode == "deathmatch" else 0
+	settings_grid.add_child(_game_mode_opt)
+	var loadout_label := Label.new()
+	loadout_label.text = "Deathmatch primary (free on respawn):"
+	settings_grid.add_child(loadout_label)
+	_dm_weapon_opt = OptionButton.new()
+	for wid in ["ak47", "m4a1", "aug", "sg552", "mp5navy", "p90", "awp", "m3", "galil", "famas"]:
+		if GameData.weapons.has(wid):
+			var index := _dm_weapon_opt.item_count
+			_dm_weapon_opt.add_item(GameData.weapons[wid].get("name", wid))
+			_dm_weapon_opt.set_item_metadata(index, wid)
+	settings_grid.add_child(_dm_weapon_opt)
+
 	var bl := Label.new()
 	bl.text = "Number of Bots IA:"
 	bl.add_theme_font_size_override("font_size", 13)
@@ -418,6 +439,9 @@ func _sync_glove_option() -> void:
 
 
 func _start_selected_game() -> void:
+	GameData.game_mode = "deathmatch" if _game_mode_opt != null and _game_mode_opt.selected == 1 else "classic"
+	if _dm_weapon_opt != null:
+		GameData.dm_primary = String(_dm_weapon_opt.get_item_metadata(_dm_weapon_opt.selected))
 	if _starting_match:
 		return
 	_starting_match = true
