@@ -26,7 +26,7 @@ and legal caveats remain relevant to any further distribution:
 - https://github.com/zh667/ScCsgoKnives/blob/1eb8067fd0b7214df5bccf3ac3807fbaa3aee70d/THIRD_PARTY_NOTICES.md
 - https://github.com/zh667/ScCsgoKnives/blob/1eb8067fd0b7214df5bccf3ac3807fbaa3aee70d/docs/legal-assessment-2026-09-21.md
 
-No upstream C# gameplay code or other resource packs are included
+No upstream C# gameplay code is included
 by this knife conversion. Existing game assets retain their original provenance
 and rights; see the project README. This is an unofficial fan project, not a Valve
 product or an assertion that cross-game redistribution is authorized.

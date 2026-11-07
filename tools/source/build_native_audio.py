@@ -45,6 +45,8 @@ def build():
             for field, suffix in [('deploy_sound','draw'),('pinpull_sound','pin'),('throw_sound','throw'),('bounce_sound','bounce')]:
                 if cue(family+'_'+suffix): patch[field] = first(family+'_'+suffix)
             if cue(family+'_explode'): patch['explode_sounds'] = cue(family+'_explode')
+        if 'burst_sound' in weapons[wid] and patch.get('fire_sounds'):
+            patch['burst_sound'] = patch['fire_sounds'][0]
         specs[wid] = patch
         target = {}
         for name, source_clip in report['clips'].items():
@@ -91,6 +93,11 @@ def build():
             pin = patch['pinpull_sound']
             if not any(e.get('wav') == pin for e in target.get('pullpin', [])):
                 target.setdefault('pullpin', []).insert(0, dict(t=0.0, wav=pin, source_event='action:pullpin'))
+        for field, clip, marker in [('deploy_sound','draw','draw'), ('reload_sound','reload','out')]:
+            if field not in patch:
+                candidates = [e for e in target.get(clip, []) if e['wav'].startswith(BASE) and 'movement' not in e['wav']]
+                preferred = [e for e in candidates if marker in e.get('source_event','').lower()]
+                if preferred or candidates: patch[field] = (preferred or candidates)[0]['wav']
         events['weapons/'+weapons[wid]['v_model']] = target
     specs['knife'] = dict(fire_sounds=cue('knife_slash'), deploy_sound=first('knife_deploy'))
     knife_reports = json.loads((ROOT/'data/native_knife_animation_report.json').read_text())
@@ -98,14 +105,23 @@ def build():
         target = {}
         for clip in report['clips']:
             if clip.startswith('draw'):
-                target[clip] = [dict(t=0.0, wav=first('butterfly_draw' if knife == 'butterfly' else 'knife_deploy'))]
+                target[clip] = [dict(t=0.2 if knife == 'butterfly' and clip == 'draw' else 0.0, wav=first('butterfly_draw' if knife == 'butterfly' else 'knife_deploy'))]
             elif knife == 'butterfly' and clip.startswith('inspect'):
-                target[clip] = [dict(t=0.0, wav=first('butterfly_inspect'))]
+                # Exact lookXX_a / lookXX_b events in pinned butterfly.cs2.animation.json.
+                # The supplied inspection effect is 0.555s, NOT a whole multi-second
+                # inspection recording: trigger both authored flip phases.
+                phases = {'inspect': [(0.0,'look01_a'),(2.7,'look01_b')],
+                          'inspect_2': [(0.033333,'look02_a'),(3.133333,'look02_b')],
+                          'inspect_3': [(0.066667,'look03_a'),(3.466690,'look03_b')]}
+                target[clip] = [dict(t=t,wav=first('butterfly_inspect'),source_event='ButterflyKnife.'+name)
+                                for t,name in phases[clip]]
         # Compatibility aliases must carry the exact same sound schedule.
         for alias, native in [('deploy','draw'),('deploy2','draw_2'),('inspect2','inspect_2'),('inspect3','inspect_3')]:
             if native in target: target[alias] = target[native]
         events['weapons/v_knife_'+knife] = target
     replacements = {}
+    for i in range(1,8):
+        replacements[f'weapons/archi/cs2_c4/key_press{i}.wav'] = cue(f'c4_key_press{i}')
     for old, stem in [('player/bhit_helmet-1.wav','hits/helmet_dink'),('player/bhit_kevlar-1.wav','hits/kevlar')]:
         replacements[old] = cue(stem)
     for i in range(1,4):
@@ -128,7 +144,8 @@ def build():
             language,team,name = p.removeprefix('native/sccsgovoice/').split('/')
             command = name.rsplit('-',1)[0]
             voices.setdefault(language,{}).setdefault(team,{}).setdefault(command,[]).append(p)
-    catalog = dict(commit=manifest['commit'], weapons=specs, model_events=events,
+    levels = json.loads((ROOT/'data/native_audio_levels.json').read_text())
+    catalog = dict(commit=manifest['commit'], gains={p: v['gain_db'] for p,v in levels.items()}, weapons=specs, model_events=events,
                    replacements=replacements, cues=cues, voices=voices,
                    unresolved_events={k:sorted(v) for k,v in unresolved.items()})
     (ROOT/'data/native_audio.json').write_text(json.dumps(catalog, indent=2)+'\n')

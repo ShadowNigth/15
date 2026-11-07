@@ -23,6 +23,8 @@ func _run() -> void:
 		expect(stream != null, "Engine decodes " + path)
 		if stream:
 			expect(stream.get_length() > 0.01, "Nonempty decoded recording " + path)
+		expect(GameData.sound_gain_db(path) <= 0.0, "Playback headroom without boosting quiet foley " + path)
+	expect(String(GameData.weapons["glock18"]["burst_sound"]).begins_with("native/sccsgoknives/glock18_fire_"), "Burst subshots cannot use legacy gunfire")
 	var owners: Dictionary = {}
 	for wid in GameData.weapons:
 		var spec: Dictionary = GameData.weapons[wid]

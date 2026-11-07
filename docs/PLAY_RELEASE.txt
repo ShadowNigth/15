@@ -18,6 +18,15 @@ per-shell shotgun reload stages are handled explicitly. Auxiliary source graph
 clips remain available without replacing classic gameplay with CS2 mechanics.
 See NATIVE_WEAPON_ANIMATIONS.md for provenance and reproducible tests.
 
+NATIVE AUDIO
+649 original WAV/OGG recordings from the pinned source repository, with per-file
+hashes. Weapon/knife effects, synchronized mechanical cues, grenades, fire,
+smoke, C4, impacts and casings replace matching legacy routes. English/Chinese
+CT/T radio voices are selectable in Configuration -> Radio voices. The Arsenal
+includes an all-recordings selector with Listen/Stop, including assets for
+unimplemented chicken/shield/deathmatch mechanics without inventing those modes.
+See docs/NATIVE_AUDIO.md for routing, fallbacks, attribution and tests.
+
 KNIVES AND FINISHES
 Create Game -> Knife model: original Kukri + all 22 source knife models.
 The 3D Arsenal also lists the knives; selecting one sets the loadout.

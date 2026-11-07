@@ -9,11 +9,16 @@ manifest = json.loads((ROOT/'data/native_audio_manifest.json').read_text())
 catalog = json.loads((ROOT/'data/native_audio.json').read_text())
 assert manifest['commit'] == catalog['commit'] == '1eb8067fd0b7214df5bccf3ac3807fbaa3aee70d'
 assert len(manifest['files']) == 649
+levels = json.loads((ROOT/'data/native_audio_levels.json').read_text())
 paths = set()
 for entry in manifest['files']:
     path = entry['path']
     assert path not in paths and path.startswith('native/') and '..' not in path
     paths.add(path)
+    assert levels[path]['sha256'] == entry['sha256']
+    assert levels[path]['duration'] > 0.01
+    assert levels[path]['gain_db'] <= 0 and levels[path]['peak_dbfs'] + levels[path]['gain_db'] <= -5.999
+    assert catalog['gains'][path] == levels[path]['gain_db']
     raw = (ROOT/'assets/sounds'/path).read_bytes()
     assert len(raw) == entry['bytes']
     assert hashlib.sha256(raw).hexdigest() == entry['sha256'], path

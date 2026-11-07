@@ -879,7 +879,9 @@ func _start_vm_clip(anim_name: String) -> void:
 	_vm_anim.play(anim_name)
 	_vm_anim.advance(0.0)
 	_pending_vm_events.clear()
-	AudioManager.stop_viewmodel_audio(self)
+	# Natural idle/hold transitions let the last one-shot decay; new actions cancel it.
+	if not anim_name.to_lower().begins_with("idle") and anim_name not in ["hold_high", "hold_low"]:
+		AudioManager.stop_viewmodel_audio(self)
 	_vm_anim_elapsed = 0.0
 	if not _cur_vm_model_name.is_empty():
 		var mmeta: Dictionary = GameData.models_meta.get("weapons/" + _cur_vm_model_name, {})
@@ -1104,6 +1106,8 @@ func _on_zoom_changed(fov_deg: float, scoped_overlay: bool) -> void:
 
 
 func _die(killer: Node3D, weapon_id: String, headshot: bool) -> void:
+	_pending_vm_events.clear()
+	AudioManager.stop_viewmodel_audio(self)
 	var eye_xf: Transform3D = camera.global_transform
 	viewmodel_pivot.visible = false
 	if _vm_container:

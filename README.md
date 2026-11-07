@@ -31,6 +31,19 @@ Más detalles y reproducción de pruebas: [`docs/NATIVE_WEAPON_ANIMATIONS.md`](d
 
 ---
 
+## Sonidos nativos de ScCsgoKnives
+
+- **649 grabaciones originales** incorporadas sin recodificar, con hashes y procedencia por archivo.
+- Disparos por arma y variantes con/sin silenciador, ráfagas, mecanismos y foley sincronizado con las animaciones; cuchillos y sonido propio de Butterfly.
+- Granadas, fuego persistente/extinción, humo, C4 con cuenta atrás y desarmado, impactos, casquillos y confirmación de baja.
+- Voces **CT/T en inglés y chino**, seleccionables en Configuration → Radio voices.
+- El Arsenal permite escuchar cualquiera de los 649 archivos con Listen/Stop, incluidos gallinas, escudos y efectos de modos no implementados; no se asignan a acciones ajenas.
+- Los sonidos anteriores permanecen solamente como respaldo donde el origen no ofrece un equivalente; no se duplican los disparos.
+
+Detalles, límites y pruebas: [`docs/NATIVE_AUDIO.md`](docs/NATIVE_AUDIO.md).
+
+---
+
 ## Contenido extraído e incluido en el proyecto
 
 Todo el contenido de `cstrike/` fue procesado mediante la suite de ingeniería inversa GoldSrc en `tools/goldsrc/`:

@@ -143,6 +143,10 @@ func sound_variant(event: Dictionary) -> String:
 	return String(variants.pick_random()) if not variants.is_empty() else String(event.get("wav", ""))
 
 
+func sound_gain_db(path: String) -> float:
+	return float(native_audio.get("gains", {}).get(path.trim_prefix("res://assets/sounds/").to_lower(), 0.0))
+
+
 func resolve_sound_path(rel_path: String) -> String:
 	var key := rel_path.trim_prefix("res://assets/sounds/").to_lower()
 	var replacements: Array = native_audio.get("replacements", {}).get(key, [])

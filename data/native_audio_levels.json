@@ -1,0 +1,3896 @@
+{
+  "native/sccsgodeathmatch/match_end.ogg": {
+    "sha256": "142d22056978d6dc1432fa3303ae3c572919ecd0c296f8f192acc8b63eb38b5f",
+    "duration": 2.230476,
+    "peak_dbfs": -2.6245,
+    "gain_db": -3.3755
+  },
+  "native/sccsgodeathmatch/respawn.ogg": {
+    "sha256": "2981ff784abb90dc512b2774345733ade9bdab0721706619793f3238e651fc3f",
+    "duration": 1.816667,
+    "peak_dbfs": -1.7152,
+    "gain_db": -4.2848
+  },
+  "native/sccsgoknives/chicken/death/chicken_death_01.wav": {
+    "sha256": "3a63bf259b3078815e1f7f8ffa350c49061db8e56c65c1d479d1b4dca87c172c",
+    "duration": 0.70263,
+    "peak_dbfs": -0.5081,
+    "gain_db": -5.4919
+  },
+  "native/sccsgoknives/chicken/death/chicken_death_02.wav": {
+    "sha256": "9ac44295c66277083ee8fbb7a07ddec46762b5fc30888611e88895106f59750c",
+    "duration": 0.588322,
+    "peak_dbfs": 0.0,
+    "gain_db": -6.0
+  },
+  "native/sccsgoknives/chicken/death/chicken_death_03.wav": {
+    "sha256": "8faa2016569b460d9fcd2ee46fc4cf336d6832ec376a65bc7b73d64a3558135d",
+    "duration": 0.395896,
+    "peak_dbfs": -0.0231,
+    "gain_db": -5.9769
+  },
+  "native/sccsgoknives/chicken/idle/chicken_idle_01.wav": {
+    "sha256": "1d82cc0b544925e3a43489d5a9f76cce29c53a0be951a3590f869797f5f60b67",
+    "duration": 0.670091,
+    "peak_dbfs": -1.4144,
+    "gain_db": -4.5856
+  },
+  "native/sccsgoknives/chicken/idle/chicken_idle_02.wav": {
+    "sha256": "c5e02d157daa4cb89e4426984741382b54e2d1f3dc2e9bf7814cac716859de1d",
+    "duration": 2.39,
+    "peak_dbfs": -8.1872,
+    "gain_db": 0.0
+  },
+  "native/sccsgoknives/chicken/idle/chicken_idle_03.wav": {
+    "sha256": "54a7ee99ebab0c2e76130b1b8d4a2a92aea60eb954b4608ed508cbe7a767f6da",
+    "duration": 1.320113,
+    "peak_dbfs": -0.2684,
+    "gain_db": -5.7316
+  },
+  "native/sccsgoknives/chicken/idle/chicken_idle_04.wav": {
+    "sha256": "648d6d9ae0720d4371512b09ebfd046e252c09bd9f5852b8db3a80f2f26fd2ea",
+    "duration": 2.49712,
+    "peak_dbfs": -0.0003,
+    "gain_db": -5.9997
+  },
+  "native/sccsgoknives/chicken/idle/chicken_idle_05.wav": {
+    "sha256": "f372b932f7411887a30a30a1ea4154c6701b6cec25e9cb0d01dff95754bb1587",
+    "duration": 1.674875,
+    "peak_dbfs": -0.0111,
+    "gain_db": -5.9889
+  },
+  "native/sccsgoknives/hits/headshot_armor.ogg": {
+    "sha256": "34e8db4b6d9ab3e71a3c3acf31043219fdfe7d8ee5492336a3aeafe7d8e72f2d",
+    "duration": 0.959773,
+    "peak_dbfs": -25.2468,
+    "gain_db": 0.0
+  },
+  "native/sccsgoknives/hits/headshot_noarmor.ogg": {
+    "sha256": "4751b45755388acd6d84b405eb702658df11a50e31a6cce1676aaf99929dc028",
+    "duration": 1.05,
+    "peak_dbfs": 0.3161,
+    "gain_db": -6.3161
+  },
+  "native/sccsgoknives/hits/helmet_dink.ogg": {
+    "sha256": "d3b7185b71aa1a7e3f3c8693197913f215182570690ccdb641e5f89b0976d0a5",
+    "duration": 0.404444,
+    "peak_dbfs": -3.6056,
+    "gain_db": -2.3944
+  },
+  "native/sccsgoknives/hits/kevlar.ogg": {
+    "sha256": "5cb3a7a7abee5645a2aeb7a456366c9ddcbf4302729230811200e33c8664de44",
+    "duration": 0.236916,
+    "peak_dbfs": 1.6977,
+    "gain_db": -7.6977
+  },
+  "native/sccsgoknives/ak47_addammo.ogg": {
+    "sha256": "e7f846513e425632377301bdd4e1f8acc028bca2cc06788a088f96cf5ba01ab9",
+    "duration": 0.21415,
+    "peak_dbfs": -1.0892,
+    "gain_db": -4.9108
+  },
+  "native/sccsgoknives/ak47_boltpull.ogg": {
+    "sha256": "ba56b4a357049b11b0529da19ea36efc7dcccc8cecd5ed9d94041fa08218b801",
+    "duration": 0.310045,
+    "peak_dbfs": -0.0144,
+    "gain_db": -5.9856
+  },
+  "native/sccsgoknives/ak47_clipin.ogg": {
+    "sha256": "af2ab257c0f8b73e7a6b7adcb48e35ef67f3d4882ef4e3466f03f7709942af20",
+    "duration": 0.21415,
+    "peak_dbfs": -0.3794,
+    "gain_db": -5.6206
+  },
+  "native/sccsgoknives/ak47_clipout.ogg": {
+    "sha256": "234a9a5c743103824a950758a21b7b39d1ac184c36b485054cc256eccbdb86ad",
+    "duration": 0.727415,
+    "peak_dbfs": -0.675,
+    "gain_db": -5.325
+  },
+  "native/sccsgoknives/ak47_draw.ogg": {
+    "sha256": "fc18e3552c0994e78adf01335ec389d1de3f6ffff549a5cfc595bfa541b8b1d2",
+    "duration": 0.451701,
+    "peak_dbfs": 0.1348,
+    "gain_db": -6.1348
+  },
+  "native/sccsgoknives/ak47_fire_1.ogg": {
+    "sha256": "5a367bdd9d1f442d2857e851ed0ef2d70e705d25cca6e2826bfe2c322e61a35d",
+    "duration": 2.445578,
+    "peak_dbfs": 3.4784,
+    "gain_db": -9.4784
+  },
+  "native/sccsgoknives/ak47_fire_2.ogg": {
+    "sha256": "bfd03ba36b98ed916b17261f5a3383b821b1b54efd3a1b616ec5393eb156675e",
+    "duration": 1.942925,
+    "peak_dbfs": 3.159,
+    "gain_db": -9.159
+  },
+  "native/sccsgoknives/ak47_fire_3.ogg": {
+    "sha256": "143d3b1232d530cc7adfe60960cfe2b9db0349ae7b97c9f9590cc24e08035935",
+    "duration": 2.285533,
+    "peak_dbfs": 3.1456,
+    "gain_db": -9.1456
+  },
+  "native/sccsgoknives/ak47_inspect_f006.ogg": {
+    "sha256": "0ec6dca0cc9e4c26452b7b04aab84b16d632ff512d023fda40e3e84b5b56fa85",
+    "duration": 0.759569,
+    "peak_dbfs": -10.4789,
+    "gain_db": 0.0
+  },
+  "native/sccsgoknives/ak47_inspect_f013.ogg": {
+    "sha256": "fbcc0eb529399b30ee5a99ab4e2d71ea63cf2c5308e95781727d8e6409dffd46",
+    "duration": 0.142472,
+    "peak_dbfs": 2.8407,
+    "gain_db": -8.8407
+  },
+  "native/sccsgoknives/ak47_inspect_f100.ogg": {
+    "sha256": "e676f710163bda35a99d3c788d8f45531b7a131fdba56ab32712ae2ddcdd2882",
+    "duration": 0.68,
+    "peak_dbfs": 3.0418,
+    "gain_db": -9.0418
+  },
+  "native/sccsgoknives/ak47_inspect_f245.ogg": {
+    "sha256": "8481fc851975cc7d0492019ef0b405fd6a4fc66ef839029e73184b61ada531c8",
+    "duration": 0.49,
+    "peak_dbfs": -2.2052,
+    "gain_db": -3.7948
+  },
+  "native/sccsgoknives/aug_addammo.ogg": {
+    "sha256": "642bdbad9eddc527b03dc2c99b2a0485cb69b3ce4692db54f300e36238fc578f",
+    "duration": 0.316304,
+    "peak_dbfs": 0.3294,
+    "gain_db": -6.3294
+  },
+  "native/sccsgoknives/aug_boltpull.ogg": {
+    "sha256": "6eb364c46732dbab8e971dd4523d47460af9bc98909dcd0f5107c9627561f903",
+    "duration": 0.165669,
+    "peak_dbfs": 0.1531,
+    "gain_db": -6.1531
+  },
+  "native/sccsgoknives/aug_boltrelease.ogg": {
+    "sha256": "010e40d873575d8a8d669b22088d85fb39a3b256fac1a8ad037ad7a8b830f404",
+    "duration": 0.396735,
+    "peak_dbfs": -0.5173,
+    "gain_db": -5.4827
+  },
+  "native/sccsgoknives/aug_cliphit.ogg": {
+    "sha256": "080fd0fe5ca4892a8aca6cd684f6b95180511c36da6d48f24deaea1e9a1e9682",
+    "duration": 0.365374,
+    "peak_dbfs": -0.0307,
+    "gain_db": -5.9693
+  },
+  "native/sccsgoknives/aug_clipin.ogg": {
+    "sha256": "900760abb4443ed582ac8973635adc97a41f8e3f51a8efd5d3eaec4c4cde3b02",
+    "duration": 0.220431,
+    "peak_dbfs": -1.311,
+    "gain_db": -4.689
+  },
+  "native/sccsgoknives/aug_clipout.ogg": {
+    "sha256": "fe71fbf81af313741168e5c5345d143f5e486ead96eb202c0df66329ef19e917",
+    "duration": 0.160952,
+    "peak_dbfs": -1.228,
+    "gain_db": -4.772
+  },
+  "native/sccsgoknives/aug_draw.ogg": {
+    "sha256": "88ee0a34e6d5e1fc394c183e08a90928dfb7fd0ae09d72060f9028bc507538d7",
+    "duration": 0.736395,
+    "peak_dbfs": -0.2332,
+    "gain_db": -5.7668
+  },
+  "native/sccsgoknives/aug_fire_1.ogg": {
+    "sha256": "514d5ae346172bfcc9d00f62935dea67c38e07f40646a63a20886590b0f4b824",
+    "duration": 2.563878,
+    "peak_dbfs": 0.5808,
+    "gain_db": -6.5808
+  },
+  "native/sccsgoknives/aug_fire_2.ogg": {
+    "sha256": "ccd7d3e960c2508abd3bc71815ce78156383ada3670a98109bdd08a19952f699",
+    "duration": 2.22839,
+    "peak_dbfs": 1.1957,
+    "gain_db": -7.1957
+  },
+  "native/sccsgoknives/aug_fire_3.ogg": {
+    "sha256": "32ccd66c2aa5d89a32d8b2ab9a877ceaf54130e4f04c665890173e14fa5e0f26",
+    "duration": 1.960544,
+    "peak_dbfs": 0.8761,
+    "gain_db": -6.8761
+  },
+  "native/sccsgoknives/aug_fire_4.ogg": {
+    "sha256": "d1fbe93a4aff6013d4eebac7696fd2a3c0def00111394af9fbebc1f68f4761b9",
+    "duration": 1.735601,
+    "peak_dbfs": 0.8318,
+    "gain_db": -6.8318
+  },
+  "native/sccsgoknives/aug_zoom.ogg": {
+    "sha256": "e7153b13709f4a219304776e138169c4c22c6210e2312f7183c8b44290b9a895",
+    "duration": 0.301429,
+    "peak_dbfs": -0.7927,
+    "gain_db": -5.2073
+  },
+  "native/sccsgoknives/aug_zoom_out.ogg": {
+    "sha256": "519b1b9cebbe34108eb4ef199b06c23cd0cd246d702df40815fb7da4eede73d6",
+    "duration": 0.552472,
+    "peak_dbfs": -10.3774,
+    "gain_db": 0.0
+  },
+  "native/sccsgoknives/awp_boltback.ogg": {
+    "sha256": "5d2eedbce18a4b22f9a8687a603dd0b5fdb1ea3c51e8fa3ec1b115ea46d9d143",
+    "duration": 0.332925,
+    "peak_dbfs": -1.2645,
+    "gain_db": -4.7355
+  },
+  "native/sccsgoknives/awp_boltforward.ogg": {
+    "sha256": "cdc1119ded5053909da9fe644924cc6408853ffaf8bf1e9d848daa7ae24e4060",
+    "duration": 0.214671,
+    "peak_dbfs": -3.8397,
+    "gain_db": -2.1603
+  },
+  "native/sccsgoknives/awp_cliphit.ogg": {
+    "sha256": "eb2011a62137254432c9d9f4446344bb790009bd64be3793f9105d16084e8c75",
+    "duration": 0.26644,
+    "peak_dbfs": 2.1542,
+    "gain_db": -8.1542
+  },
+  "native/sccsgoknives/awp_clipin.ogg": {
+    "sha256": "8fa14a07d1b79c4256021f40772e8272544966936494d0f88faf744603cd00d8",
+    "duration": 0.300612,
+    "peak_dbfs": -0.4258,
+    "gain_db": -5.5742
+  },
+  "native/sccsgoknives/awp_clipout.ogg": {
+    "sha256": "a44a0d09bd32de879a3acedb0087d8f47ad783d209c0add6c00d2a2d2902961e",
+    "duration": 0.144082,
+    "peak_dbfs": -0.3516,
+    "gain_db": -5.6484
+  },
+  "native/sccsgoknives/awp_draw.ogg": {
+    "sha256": "b4d9e605acd0e512341eb84fadb6cfa86281294a023ae547e042fb8881268040",
+    "duration": 0.736395,
+    "peak_dbfs": 0.1206,
+    "gain_db": -6.1206
+  },
+  "native/sccsgoknives/awp_fire_1.ogg": {
+    "sha256": "08c9a47daf35026984cb490c7f993ee001d7b60c863d66edcf84927d140dcd7a",
+    "duration": 4.129048,
+    "peak_dbfs": 3.6439,
+    "gain_db": -9.6439
+  },
+  "native/sccsgoknives/awp_fire_2.ogg": {
+    "sha256": "12c72f9dcd6a9bf9e6d8ca3b76f84cc1fb8a8baffaf366851018949bccfa5391",
+    "duration": 4.129048,
+    "peak_dbfs": 3.6439,
+    "gain_db": -9.6439
+  },
+  "native/sccsgoknives/awp_zoom.ogg": {
+    "sha256": "748123560f8bd07e6b08aeaf0387b524692e1b4ca8cc3fcc55281000218b0bf5",
+    "duration": 0.232245,
+    "peak_dbfs": -3.1622,
+    "gain_db": -2.8378
+  },
+  "native/sccsgoknives/awp_zoom_out.ogg": {
+    "sha256": "e9f5231e0f8a6beaf8ff3221a4939c698f6bb3920a07723e373423177c1ca16f",
+    "duration": 0.232245,
+    "peak_dbfs": -3.1622,
+    "gain_db": -2.8378
+  },
+  "native/sccsgoknives/bf1_kill_confirm.ogg": {
+    "sha256": "974996d24dfe2c0cf418d71cf07945e4f9617c925547e62a7523e65eb31748ea",
+    "duration": 2.521021,
+    "peak_dbfs": 0.5568,
+    "gain_db": -6.5568
+  },
+  "native/sccsgoknives/bf1_kill_ding.wav": {
+    "sha256": "a6007c135180ed7a91d21566179cc5c18366e56f05de4864ba4849312bb134a6",
+    "duration": 0.95,
+    "peak_dbfs": -1.4116,
+    "gain_db": -4.5884
+  },
+  "native/sccsgoknives/bizon_addammo.ogg": {
+    "sha256": "c5319133d2e26294e970eb795ae9a45a88b33c35cf64968dab4979cf2afa96c2",
+    "duration": 0.478571,
+    "peak_dbfs": -0.5098,
+    "gain_db": -5.4902
+  },
+  "native/sccsgoknives/bizon_boltback.ogg": {
+    "sha256": "e396b80b5b3806ce7a5a050c0ec098bb16aa6ea25ef830586fbbca215ceb78ef",
+    "duration": 0.209615,
+    "peak_dbfs": 0.4723,
+    "gain_db": -6.4723
+  },
+  "native/sccsgoknives/bizon_boltforward.ogg": {
+    "sha256": "830929f7f9aee1f15f4cdcc7fccef18aefb3d2eca016a76498c6f14d63257ea4",
+    "duration": 0.42839,
+    "peak_dbfs": 0.2435,
+    "gain_db": -6.2435
+  },
+  "native/sccsgoknives/bizon_clipin.ogg": {
+    "sha256": "9c4aeaba8b776c42ac751d80aee36dec575d57003598779e9e06a63839d29206",
+    "duration": 0.109524,
+    "peak_dbfs": -0.1375,
+    "gain_db": -5.8625
+  },
+  "native/sccsgoknives/bizon_clipout.ogg": {
+    "sha256": "bb688efe13c4d1af3d0125fc62ad9016915a735dde041df199b68ff39cdfc5f0",
+    "duration": 0.24263,
+    "peak_dbfs": -0.3773,
+    "gain_db": -5.6227
+  },
+  "native/sccsgoknives/bizon_draw.ogg": {
+    "sha256": "94ad1abdfa125788e24e90cd9b7b62183b5f49b59e39aaf28396949431525004",
+    "duration": 0.740884,
+    "peak_dbfs": -0.7533,
+    "gain_db": -5.2467
+  },
+  "native/sccsgoknives/bizon_fire_1.ogg": {
+    "sha256": "a398d18befdaf0b7ce64a00c004cbf5a286c01e99cc45c821752fcacef2f808f",
+    "duration": 1.523016,
+    "peak_dbfs": 1.3013,
+    "gain_db": -7.3013
+  },
+  "native/sccsgoknives/bizon_fire_2.ogg": {
+    "sha256": "44666019d0096ac025122fa6cca225323d49a22c5ffdba35fdd815b4a0074afc",
+    "duration": 1.170567,
+    "peak_dbfs": 0.8671,
+    "gain_db": -6.8671
+  },
+  "native/sccsgoknives/butterfly_draw.ogg": {
+    "sha256": "9b9bd319b03e28a96fe064a34aa26df9476ea9e82a615defa032af3ee2a3b59d",
+    "duration": 0.704,
+    "peak_dbfs": 1.3634,
+    "gain_db": -7.3634
+  },
+  "native/sccsgoknives/butterfly_inspect.ogg": {
+    "sha256": "e96560a095fbbf644531f3874c9ef7e3629f1d472f771659a20d0cf9f188e7c0",
+    "duration": 0.554667,
+    "peak_dbfs": 1.5907,
+    "gain_db": -7.5907
+  },
+  "native/sccsgoknives/c4_beep2.ogg": {
+    "sha256": "0ca6101c0fd45ab3b22395b53491964f183ee15780d95dbd46b5c8ea421572a9",
+    "duration": 0.151383,
+    "peak_dbfs": -11.2338,
+    "gain_db": 0.0
+  },
+  "native/sccsgoknives/c4_beep2_10sec.ogg": {
+    "sha256": "c5866e8d88224604d88dcfeb7a1a16a2ab008cebc678b15970c5b0bce0f2269f",
+    "duration": 0.056463,
+    "peak_dbfs": -14.5009,
+    "gain_db": 0.0
+  },
+  "native/sccsgoknives/c4_beep3.ogg": {
+    "sha256": "03051d9a49fab5e2b8e7d8dcabb093c18981d441a9b8ba9dee19c69ab009121a",
+    "duration": 0.179048,
+    "peak_dbfs": -10.032,
+    "gain_db": 0.0
+  },
+  "native/sccsgoknives/c4_beep3_10sec.ogg": {
+    "sha256": "147a64feba057fb2724b36aa57156d340282caa5326d8a836858dde68ad5e45f",
+    "duration": 0.075556,
+    "peak_dbfs": -14.1246,
+    "gain_db": 0.0
+  },
+  "native/sccsgoknives/c4_click.ogg": {
+    "sha256": "36271af8eae9f93ea62ad39e2e81c545616d0c92039df0a05af6749f8705e96e",
+    "duration": 0.141633,
+    "peak_dbfs": -14.4438,
+    "gain_db": 0.0
+  },
+  "native/sccsgoknives/c4_disarmfinish.ogg": {
+    "sha256": "734cc949fefa95d7de19c3e2f40f8293ffd3de65a5276156509fcbfc0c716b7b",
+    "duration": 1.5,
+    "peak_dbfs": -0.2745,
+    "gain_db": -5.7255
+  },
+  "native/sccsgoknives/c4_disarmstart.ogg": {
+    "sha256": "64083f1cd77fd9add946c8af27e54ac3aa9c93da8607c2fd29df30fad6e38f17",
+    "duration": 1.25,
+    "peak_dbfs": -0.1012,
+    "gain_db": -5.8988
+  },
+  "native/sccsgoknives/c4_draw.ogg": {
+    "sha256": "187ff4ec40c72737c41bddf96bef674b778c98958621a6997e8bd2e758668887",
+    "duration": 0.407483,
+    "peak_dbfs": -7.9347,
+    "gain_db": 0.0
+  },
+  "native/sccsgoknives/c4_draw_01.ogg": {
+    "sha256": "1290991e85c299cec836e7a47520cc60e2d9f98ec908781ad5d917f89af30ac9",
+    "duration": 0.603537,
+    "peak_dbfs": -1.1046,
+    "gain_db": -4.8954
+  },
+  "native/sccsgoknives/c4_draw_02.ogg": {
+    "sha256": "36884d2e777899469bc05b345596942048b50fe4517d2136677b0abe5331f482",
+    "duration": 1.929342,
+    "peak_dbfs": -0.6322,
+    "gain_db": -5.3678
+  },
+  "native/sccsgoknives/c4_draw_03.ogg": {
+    "sha256": "a51ceaea39547d268df8f7925035a491b43eeb0ad14a3cc73a0c7af71a5946d6",
+    "duration": 1.929342,
+    "peak_dbfs": -0.2258,
+    "gain_db": -5.7742
+  },
+  "native/sccsgoknives/c4_draw_04.ogg": {
+    "sha256": "a2a6939ed482a7cd65c58b61cf0b867bc686b16ae9f64a0e80b5b3be24054e09",
+    "duration": 0.603424,
+    "peak_dbfs": -0.8871,
+    "gain_db": -5.1129
+  },
+  "native/sccsgoknives/c4_draw_05.ogg": {
+    "sha256": "e8da079008968778e7ac845bca91bfd09978a92efa76636dc541cf01e00d563a",
+    "duration": 1.929342,
+    "peak_dbfs": -1.3086,
+    "gain_db": -4.6914
+  },
+  "native/sccsgoknives/c4_draw_06.ogg": {
+    "sha256": "34f93210121e2dcf409df7fce37ae6f6e710a7fb9c170137568a939b21df5b65",
+    "duration": 0.603424,
+    "peak_dbfs": -1.7963,
+    "gain_db": -4.2037
+  },
+  "native/sccsgoknives/c4_draw_07.ogg": {
+    "sha256": "f3b2eacb0960f092a44766dd6f3cf4aaea5ea829272c782c8b8ebce94c98532a",
+    "duration": 0.603424,
+    "peak_dbfs": -1.8805,
+    "gain_db": -4.1195
+  },
+  "native/sccsgoknives/c4_draw_grab_01.ogg": {
+    "sha256": "6f567c937a2c4a810017018cd0afde4f86a01424e4f392c6170d666d0420dea9",
+    "duration": 1.325918,
+    "peak_dbfs": -13.0091,
+    "gain_db": 0.0
+  },
+  "native/sccsgoknives/c4_draw_grab_02.ogg": {
+    "sha256": "5e94b2468771458f277fd1b3c222ebd43e2a8a0d38292f271a8d6149eb8672d2",
+    "duration": 1.325918,
+    "peak_dbfs": -13.3846,
+    "gain_db": 0.0
+  },
+  "native/sccsgoknives/c4_draw_grab_03.ogg": {
+    "sha256": "4e95174cd9e8b8c9c0acf50fa21849a753091a32ca294414c1a7aa9bf4278221",
+    "duration": 1.325918,
+    "peak_dbfs": -9.0537,
+    "gain_db": 0.0
+  },
+  "native/sccsgoknives/c4_draw_grab_04.ogg": {
+    "sha256": "8fc60e78ce9cf58abeec498f7ae39dc1579812970809e9f0a0d3c149e841bfdb",
+    "duration": 1.259206,
+    "peak_dbfs": -16.7002,
+    "gain_db": 0.0
+  },
+  "native/sccsgoknives/c4_exp_deb1.ogg": {
+    "sha256": "37f9696ddc8402ef80c24b6a01ff63c8a8ff020265ef7ececd2e1c327a4beff8",
+    "duration": 3.246259,
+    "peak_dbfs": -0.4234,
+    "gain_db": -5.5766
+  },
+  "native/sccsgoknives/c4_exp_deb2.ogg": {
+    "sha256": "a7d4ee725304108705ac892168aedb33d81116368038dc2d9c40689c6c04ca4c",
+    "duration": 4.204444,
+    "peak_dbfs": -0.7039,
+    "gain_db": -5.2961
+  },
+  "native/sccsgoknives/c4_explode1.ogg": {
+    "sha256": "26bea8bcccc4f862db9bbe7e1fa803299a3abdde07134ec6dd38067674a8406b",
+    "duration": 5.979161,
+    "peak_dbfs": 0.4448,
+    "gain_db": -6.4448
+  },
+  "native/sccsgoknives/c4_explode_close_01.ogg": {
+    "sha256": "c37d7b15803379eff4bdb880628696b47314e7ec219ccdc1b3d102f53368ace3",
+    "duration": 5.98,
+    "peak_dbfs": 1.1321,
+    "gain_db": -7.1321
+  },
+  "native/sccsgoknives/c4_initiate.ogg": {
+    "sha256": "dbb4cd3e87bc8ae071bf2f6ef2348572a33a368de1a490c826f16d187ca0588a",
+    "duration": 1.912834,
+    "peak_dbfs": 0.4277,
+    "gain_db": -6.4277
+  },
+  "native/sccsgoknives/c4_key_press1.ogg": {
+    "sha256": "ee6cd4652b6cd6254dcf010278f50755c4d4d60ce214d75a0d1e46bd0ba1ec1a",
+    "duration": 0.142698,
+    "peak_dbfs": -0.0976,
+    "gain_db": -5.9024
+  },
+  "native/sccsgoknives/c4_key_press2.ogg": {
+    "sha256": "69cea1f62ca92527ad113d59395c66e1a2688302b89d2941eccbb1ffd897a8e3",
+    "duration": 0.165374,
+    "peak_dbfs": -0.18,
+    "gain_db": -5.82
+  },
+  "native/sccsgoknives/c4_key_press3.ogg": {
+    "sha256": "3c9465946474d455cb66211eb124674ec17ed95c79dec84266ad90b3a2897915",
+    "duration": 0.172381,
+    "peak_dbfs": 0.2845,
+    "gain_db": -6.2845
+  },
+  "native/sccsgoknives/c4_key_press4.ogg": {
+    "sha256": "11aba2de83e05854845e7e612e79e9d8a30e4edb668559735184c7aef32d1537",
+    "duration": 0.246735,
+    "peak_dbfs": 0.2076,
+    "gain_db": -6.2076
+  },
+  "native/sccsgoknives/c4_key_press5.ogg": {
+    "sha256": "ddd7d093e361999fa323448dde42749f64733d0e5d1f462f167dd5451e415b3e",
+    "duration": 0.229932,
+    "peak_dbfs": -0.0786,
+    "gain_db": -5.9214
+  },
+  "native/sccsgoknives/c4_key_press6.ogg": {
+    "sha256": "b66b574a14541e75c465938693b99813a1e30ce9367e5d74ca3a0035eb08a27d",
+    "duration": 0.25,
+    "peak_dbfs": -2.7109,
+    "gain_db": -3.2891
+  },
+  "native/sccsgoknives/c4_key_press7.ogg": {
+    "sha256": "dc31f8b0d6702061ab18652e1c50345e606b622a75bcba764f19152ad5812dc5",
+    "duration": 0.172653,
+    "peak_dbfs": -2.7014,
+    "gain_db": -3.2986
+  },
+  "native/sccsgoknives/c4_plant.ogg": {
+    "sha256": "cf9f7c0c551cf524e8e0e2a0f0ce34139fd4f63679fb8919f16b9cbde8a7f890",
+    "duration": 0.544966,
+    "peak_dbfs": -0.0243,
+    "gain_db": -5.9757
+  },
+  "native/sccsgoknives/c4_plant_quiet.ogg": {
+    "sha256": "bacf28d6cd3376952cec228935c8d6a02e54498e5bba798d8e70592d8f44b8e4",
+    "duration": 0.687052,
+    "peak_dbfs": -3.1263,
+    "gain_db": -2.8737
+  },
+  "native/sccsgoknives/c4_shockwave_01.ogg": {
+    "sha256": "40c2acaab7b72fce0f9da630ca028128ebbfc0f56ceb06a3445adf824ad38ce1",
+    "duration": 4.747687,
+    "peak_dbfs": 0.7846,
+    "gain_db": -6.7846
+  },
+  "native/sccsgoknives/c4_shockwave_debris_01.ogg": {
+    "sha256": "e5a66b54bfdfc01d7795950ff3094bff1a86020c9b585ff0016bb9020bddc907",
+    "duration": 7.298209,
+    "peak_dbfs": -0.6077,
+    "gain_db": -5.3923
+  },
+  "native/sccsgoknives/c4_shockwave_debris_02.ogg": {
+    "sha256": "a45562aeab03b32a4c7e9c0a9e7a8fc76e26adfb15022a879cb33dabd567c36e",
+    "duration": 4.035306,
+    "peak_dbfs": -0.2907,
+    "gain_db": -5.7093
+  },
+  "native/sccsgoknives/c4_shockwave_debris_03.ogg": {
+    "sha256": "5b3c798fc9f8480f2a557615080b9e8026a2a3b391d27a82fe60bc6c6e91d1e0",
+    "duration": 4.834966,
+    "peak_dbfs": -0.4299,
+    "gain_db": -5.5701
+  },
+  "native/sccsgoknives/c4_shockwave_debris_04.ogg": {
+    "sha256": "2fa50adcbc48cc68a2291b51cc137fb3162ab4eea1ebd402dd1a28038a3d4234",
+    "duration": 6.962063,
+    "peak_dbfs": -0.4033,
+    "gain_db": -5.5967
+  },
+  "native/sccsgoknives/c4_shockwave_hit_01.ogg": {
+    "sha256": "c2e2f77cb8f264053a335ebf7ca0db891aa9acd8b5dfdb01627dea3db702a3ac",
+    "duration": 5.191542,
+    "peak_dbfs": 0.9728,
+    "gain_db": -6.9728
+  },
+  "native/sccsgoknives/c4_shockwave_hit_02.ogg": {
+    "sha256": "a59b4cebfb28cc7047f161fc488a40fb88f18692ed21dae37448e79c9c75e5ce",
+    "duration": 6.006168,
+    "peak_dbfs": 0.8957,
+    "gain_db": -6.8957
+  },
+  "native/sccsgoknives/c4_shockwave_hit_03.ogg": {
+    "sha256": "183f97c65452ef776a09fd35a45a6856ad41ce1dcb5ca80ded8e6b1ffdf6f4d9",
+    "duration": 6.006168,
+    "peak_dbfs": 1.1255,
+    "gain_db": -7.1255
+  },
+  "native/sccsgoknives/c4_thump_01.ogg": {
+    "sha256": "6b8c9dd90a84c1f3659811e510c7efc40d29f74104ba39a97e5558dc6f4d1a99",
+    "duration": 2.59263,
+    "peak_dbfs": 0.0575,
+    "gain_db": -6.0575
+  },
+  "native/sccsgoknives/c4_trigger_trip.ogg": {
+    "sha256": "5a142073a9513ab5c8bfbbe7eb15ac1c770ccb0d31a8f963366d55d97c8a47f2",
+    "duration": 1.757823,
+    "peak_dbfs": -0.8914,
+    "gain_db": -5.1086
+  },
+  "native/sccsgoknives/c4_warning.ogg": {
+    "sha256": "1baf3732687d65d9667da8b40a9f430b0e85d8a0329f2c25ea27b70d5d953b97",
+    "duration": 1.24,
+    "peak_dbfs": -4.9101,
+    "gain_db": -1.0899
+  },
+  "native/sccsgoknives/casing_metal.wav": {
+    "sha256": "484e5023e2d2a221aa34529600ca71a77243c7c2dc741620b5a5eda200db8489",
+    "duration": 0.222517,
+    "peak_dbfs": -0.7796,
+    "gain_db": -5.2204
+  },
+  "native/sccsgoknives/casing_shotgun.wav": {
+    "sha256": "38a5fb44cdbb1bf812edefb6e06b8134a8dc3f88f1288c52f1d305ca06934d9c",
+    "duration": 1.111111,
+    "peak_dbfs": -6.0005,
+    "gain_db": 0.0
+  },
+  "native/sccsgoknives/cz75a_addammo.ogg": {
+    "sha256": "9644470d5f2bf1ca96865193b1a3f2fb74caff95a72ba14ecec400855d07af70",
+    "duration": 0.157914,
+    "peak_dbfs": -1.2419,
+    "gain_db": -4.7581
+  },
+  "native/sccsgoknives/cz75a_clipin.ogg": {
+    "sha256": "6157ae4bff22cb6a70359668c07b2289311e182960e9b105cc02986c7201532f",
+    "duration": 0.144127,
+    "peak_dbfs": -1.0495,
+    "gain_db": -4.9505
+  },
+  "native/sccsgoknives/cz75a_clipinslide.ogg": {
+    "sha256": "9c209e212f97ec2ef0d816561a443cba508554308c40035ff9b2f7bb25f7e705",
+    "duration": 0.131769,
+    "peak_dbfs": -17.3511,
+    "gain_db": 0.0
+  },
+  "native/sccsgoknives/cz75a_clipout.ogg": {
+    "sha256": "544b60202f416ff0774d1fda4212037d42f3ac09eff739f2c459526b6855a5d4",
+    "duration": 0.435374,
+    "peak_dbfs": -1.33,
+    "gain_db": -4.67
+  },
+  "native/sccsgoknives/cz75a_clipout2.ogg": {
+    "sha256": "6489c6103843d2e5bff79e49b402267e6c50fce3d05d7fbe93e335b50c97b3b0",
+    "duration": 0.269705,
+    "peak_dbfs": -3.75,
+    "gain_db": -2.25
+  },
+  "native/sccsgoknives/cz75a_draw.ogg": {
+    "sha256": "6a5a6f02107be038bfc021d5cb95cf16b5bba643721b675663fe1b757e74be52",
+    "duration": 0.989864,
+    "peak_dbfs": -2.1738,
+    "gain_db": -3.8262
+  },
+  "native/sccsgoknives/cz75a_fire_1.ogg": {
+    "sha256": "221c2733c6bd5d24ea99547ec0a71d3d871a2718840e44c54f4b4d3cc8f85e19",
+    "duration": 1.70458,
+    "peak_dbfs": 1.0559,
+    "gain_db": -7.0559
+  },
+  "native/sccsgoknives/cz75a_fire_2.ogg": {
+    "sha256": "0a036592557709fd50e00f0bf196ff1d0f36c8a8ada8ca53d88a9a9a31e89283",
+    "duration": 1.70458,
+    "peak_dbfs": 1.4709,
+    "gain_db": -7.4709
+  },
+  "native/sccsgoknives/cz75a_fire_3.ogg": {
+    "sha256": "3f214c0ecab55d5856fdb5a0d54ffe8362728b4951a9c2a22255fa3df3afc7c0",
+    "duration": 1.70458,
+    "peak_dbfs": 1.2414,
+    "gain_db": -7.2414
+  },
+  "native/sccsgoknives/cz75a_slideback.ogg": {
+    "sha256": "3f08d09f471c24c449f7fc923c68446aa0156b1fe0c2b5007342e17e77865e5c",
+    "duration": 0.150363,
+    "peak_dbfs": -0.6991,
+    "gain_db": -5.3009
+  },
+  "native/sccsgoknives/cz75a_sliderelease.ogg": {
+    "sha256": "2e56b34e2713cd177c3a091a457eb4cc63807bf5498a84b606706f096dd3d56c",
+    "duration": 0.150363,
+    "peak_dbfs": -0.5805,
+    "gain_db": -5.4195
+  },
+  "native/sccsgoknives/deagle_addammo.ogg": {
+    "sha256": "c5fff75bfbbaabcf6c64c0a6dc8e1c35bba6b9822898667457e3fb4d5f98eab2",
+    "duration": 0.144172,
+    "peak_dbfs": -1.2422,
+    "gain_db": -4.7578
+  },
+  "native/sccsgoknives/deagle_clipin.ogg": {
+    "sha256": "09b3bb79f256e0d20bc0d3f33f6000784cec9714408ceb00a2565be244606eb4",
+    "duration": 0.131769,
+    "peak_dbfs": -17.3511,
+    "gain_db": 0.0
+  },
+  "native/sccsgoknives/deagle_clipout.ogg": {
+    "sha256": "bd43a4bf401e40a0421bf09bfc7e800f8db2dad2b2773d5c7c0ef6c3378d1de5",
+    "duration": 0.269705,
+    "peak_dbfs": -3.75,
+    "gain_db": -2.25
+  },
+  "native/sccsgoknives/deagle_draw.ogg": {
+    "sha256": "2b755153606442ff36334edaf49eeef053f0ad4a817f9eb170adbe3d88d29e2a",
+    "duration": 0.989864,
+    "peak_dbfs": -2.1738,
+    "gain_db": -3.8262
+  },
+  "native/sccsgoknives/deagle_fire_1.ogg": {
+    "sha256": "8e53bb58932e33ea8a20bd11a8af56768c4104f12b7cb51f74aca2b6ab562a4e",
+    "duration": 3.080227,
+    "peak_dbfs": 1.6271,
+    "gain_db": -7.6271
+  },
+  "native/sccsgoknives/deagle_fire_2.ogg": {
+    "sha256": "becf6d2918557faf8999a26acbb4e1e4222aecb4d1cab6177def9b9b02fb80ad",
+    "duration": 3.08,
+    "peak_dbfs": 0.7521,
+    "gain_db": -6.7521
+  },
+  "native/sccsgoknives/deagle_lookat009.ogg": {
+    "sha256": "05332ddb63d13a4a8f90d5348977fcf415fe733d8b87553f69fdfebd77dffb92",
+    "duration": 0.890635,
+    "peak_dbfs": -17.9355,
+    "gain_db": 0.0
+  },
+  "native/sccsgoknives/deagle_lookat036.ogg": {
+    "sha256": "2ade207ca5b13c5e125fbac5f808f315cb6187984c264fe4ddb43c5623ad83e0",
+    "duration": 0.690113,
+    "peak_dbfs": -13.9109,
+    "gain_db": 0.0
+  },
+  "native/sccsgoknives/deagle_lookat057.ogg": {
+    "sha256": "c224a75d6fe81019c40f61da516007b15a8133e5aae63658d49ab1c0e5e64d02",
+    "duration": 0.809887,
+    "peak_dbfs": -12.7208,
+    "gain_db": 0.0
+  },
+  "native/sccsgoknives/deagle_lookat081.ogg": {
+    "sha256": "a5284e2ccde21c44deda845ae9a32078029eeb4d3a0853fa4e54fa2d770c5528",
+    "duration": 1.024512,
+    "peak_dbfs": -18.8562,
+    "gain_db": 0.0
+  },
+  "native/sccsgoknives/deagle_lookat111.ogg": {
+    "sha256": "b9dcbb308f73bf9307ba8db9b3b305b771ebcef7373fd2bf1ace45431a684ab8",
+    "duration": 0.225488,
+    "peak_dbfs": -6.9923,
+    "gain_db": 0.0
+  },
+  "native/sccsgoknives/deagle_lookat133.ogg": {
+    "sha256": "f63b23f4563befc276db1ab74f8cdc4e38e3a6066ea13692429427e579f1fdf9",
+    "duration": 1.100907,
+    "peak_dbfs": -10.0456,
+    "gain_db": 0.0
+  },
+  "native/sccsgoknives/deagle_lookat166.ogg": {
+    "sha256": "6111def458210961f091983f02dff9f9ea126e6c9d185a85d8ffad67cb2f6262",
+    "duration": 0.916667,
+    "peak_dbfs": -15.2356,
+    "gain_db": 0.0
+  },
+  "native/sccsgoknives/deagle_lookat193.ogg": {
+    "sha256": "bb2a8b51db3fcde9c9149b27d62c3165d3d03d1d572a1e89e1a4dc09c73eb76f",
+    "duration": 1.163084,
+    "peak_dbfs": -11.8141,
+    "gain_db": 0.0
+  },
+  "native/sccsgoknives/deagle_lookat228.ogg": {
+    "sha256": "06b5e157686f58c56bdb8a33176d3f5fdfad84c30c4e0564218d528fff754443",
+    "duration": 0.336916,
+    "peak_dbfs": -13.79,
+    "gain_db": 0.0
+  },
+  "native/sccsgoknives/deagle_slideback.ogg": {
+    "sha256": "e10aad8cad813917683b3a9807b66952890c25e2d2cd2f746e0ddb4300d52a89",
+    "duration": 0.186304,
+    "peak_dbfs": -2.0777,
+    "gain_db": -3.9223
+  },
+  "native/sccsgoknives/deagle_slideforward.ogg": {
+    "sha256": "5dfee13bdd277df6b2e7b2306de7d7805aa6558b256e749ca5ef75ad7a207b87",
+    "duration": 0.131633,
+    "peak_dbfs": -1.0624,
+    "gain_db": -4.9376
+  },
+  "native/sccsgoknives/deagle_weaponmove4.ogg": {
+    "sha256": "7e08893517a639a4a4d084f758db7610368f951159495b4316f146a0b2864f3e",
+    "duration": 0.989864,
+    "peak_dbfs": -2.1738,
+    "gain_db": -3.8262
+  },
+  "native/sccsgoknives/elite_addammo.ogg": {
+    "sha256": "b5d5ebb5394f6a851751d7b2f7520b52e5d5f3483f0d32d266e32b3967987042",
+    "duration": 0.5,
+    "peak_dbfs": 1.8615,
+    "gain_db": -7.8615
+  },
+  "native/sccsgoknives/elite_clipin.ogg": {
+    "sha256": "1d31e65f8829576c57d5b570fbe1debe8a492696b1065c2cdace8416af015db0",
+    "duration": 0.296304,
+    "peak_dbfs": -0.6522,
+    "gain_db": -5.3478
+  },
+  "native/sccsgoknives/elite_clipin_slide.ogg": {
+    "sha256": "827842772b822d411c1b34ead82ce4509dcebcdc599316581bc7d5a83ae70f06",
+    "duration": 0.131769,
+    "peak_dbfs": -17.3511,
+    "gain_db": 0.0
+  },
+  "native/sccsgoknives/elite_clipout.ogg": {
+    "sha256": "c1f71a22640c525f1b2560b4ce1e3f4eb4018093b02125f1fdb4ebafa3b23635",
+    "duration": 0.546689,
+    "peak_dbfs": -0.6548,
+    "gain_db": -5.3452
+  },
+  "native/sccsgoknives/elite_draw.ogg": {
+    "sha256": "85bf988a8b86a72fde9f65371fe993ed749a222346ee99d876023fc075ca9f47",
+    "duration": 1.25,
+    "peak_dbfs": -0.3615,
+    "gain_db": -5.6385
+  },
+  "native/sccsgoknives/elite_fire_1.ogg": {
+    "sha256": "7990b3139b7761f692342782d60f792b56f031e912da864f1a4a72db0dc139d9",
+    "duration": 3.375011,
+    "peak_dbfs": 0.8454,
+    "gain_db": -6.8454
+  },
+  "native/sccsgoknives/elite_fire_2.ogg": {
+    "sha256": "dd13e3242a135f0be7e3722d1e246ef9019828b559e76ba3ee7e62f26106d9b7",
+    "duration": 3.375011,
+    "peak_dbfs": 0.7631,
+    "gain_db": -6.7631
+  },
+  "native/sccsgoknives/elite_fire_3.ogg": {
+    "sha256": "b7bbe038d916f722667d0eb26ac8db834167d3b531e1726bb3a538be6aac2d81",
+    "duration": 3.375011,
+    "peak_dbfs": 0.2867,
+    "gain_db": -6.2867
+  },
+  "native/sccsgoknives/elite_fire_4.ogg": {
+    "sha256": "95fa97e79869f09b6242aaf4719e1e388fe89c8f83110d7dc059a5b83f935582",
+    "duration": 3.345896,
+    "peak_dbfs": 0.6517,
+    "gain_db": -6.6517
+  },
+  "native/sccsgoknives/elite_lclipin.ogg": {
+    "sha256": "c233a8402af078db78939d00b7a2ef00581ff7586961802d9cef3724dc98ad1f",
+    "duration": 0.259116,
+    "peak_dbfs": -1.1466,
+    "gain_db": -4.8534
+  },
+  "native/sccsgoknives/elite_rclipin.ogg": {
+    "sha256": "1ca9188cde03c93425ed0ebe15126e1ad671a4bc08cfd9d35fc1c6a6eb96518f",
+    "duration": 0.275397,
+    "peak_dbfs": 0.3352,
+    "gain_db": -6.3352
+  },
+  "native/sccsgoknives/elite_sliderelease.ogg": {
+    "sha256": "ec5050177b075b012c61411ac8145d3086729653ddc79f2fcb757eded6099325",
+    "duration": 0.496327,
+    "peak_dbfs": -0.1939,
+    "gain_db": -5.8061
+  },
+  "native/sccsgoknives/elite_taunttap1.ogg": {
+    "sha256": "ff0535c4a24ee4ebfb5fefa341d25351f328cfae9a4ca1af7a37d06b6db169ec",
+    "duration": 0.5,
+    "peak_dbfs": 1.8615,
+    "gain_db": -7.8615
+  },
+  "native/sccsgoknives/elite_taunttap2.ogg": {
+    "sha256": "ffb4466caec9bd7df266697723bde940abda3bfa6977ee6d3ba12989656b3d3a",
+    "duration": 0.5,
+    "peak_dbfs": 1.8615,
+    "gain_db": -7.8615
+  },
+  "native/sccsgoknives/elite_taunttwirl.ogg": {
+    "sha256": "67e1cc0f030475e7cfb36d6448cb2e55d01ee3e0718264e4dbe2904686966554",
+    "duration": 1.25,
+    "peak_dbfs": -0.3615,
+    "gain_db": -5.6385
+  },
+  "native/sccsgoknives/famas_addammo.ogg": {
+    "sha256": "f7127bdbc2bd1ee573d4e3647742db0ed5a246bd41e05bd6659e5baaf38b8931",
+    "duration": 0.068844,
+    "peak_dbfs": -1.2815,
+    "gain_db": -4.7185
+  },
+  "native/sccsgoknives/famas_boltback.ogg": {
+    "sha256": "da520fb31f53296a00f9c8435907a8ab823eb88cc665638d57d0c2bbaf1bf560",
+    "duration": 0.195601,
+    "peak_dbfs": -3.7314,
+    "gain_db": -2.2686
+  },
+  "native/sccsgoknives/famas_boltforward.ogg": {
+    "sha256": "1469a8425061a001f9e0b466b3c4deb576f430c309e32d47967a3b0544ab0129",
+    "duration": 0.191973,
+    "peak_dbfs": 1.1304,
+    "gain_db": -7.1304
+  },
+  "native/sccsgoknives/famas_cliphit.ogg": {
+    "sha256": "d9c811ca154f5594e5f76827a5ff00639127a90a81a60c5bf0d4454e335ea334",
+    "duration": 0.309524,
+    "peak_dbfs": -4.0691,
+    "gain_db": -1.9309
+  },
+  "native/sccsgoknives/famas_clipin.ogg": {
+    "sha256": "bec465c1f4d45f12275e63979c977b706c67bd1443c5b3b16170de5f01c66229",
+    "duration": 0.398458,
+    "peak_dbfs": -0.5169,
+    "gain_db": -5.4831
+  },
+  "native/sccsgoknives/famas_clipout.ogg": {
+    "sha256": "ab65b3eb670eb4799326ff18b8b3ea2a7e0dd654bf519c61dc9074d9d54f65c5",
+    "duration": 0.471134,
+    "peak_dbfs": -1.116,
+    "gain_db": -4.884
+  },
+  "native/sccsgoknives/famas_draw.ogg": {
+    "sha256": "38f103bff23ac4e474b9eeb62809ab5fde9504c79a3eead6f057e7f5b4d93868",
+    "duration": 0.796168,
+    "peak_dbfs": -0.1103,
+    "gain_db": -5.8897
+  },
+  "native/sccsgoknives/famas_fire_1.ogg": {
+    "sha256": "a94f8c4f8860c200cb95838ef66801d440cd62f0c12ce37b6681f61c991fe149",
+    "duration": 2.339274,
+    "peak_dbfs": 2.1196,
+    "gain_db": -8.1196
+  },
+  "native/sccsgoknives/famas_fire_2.ogg": {
+    "sha256": "810db2c7301ed1bb24eb8ed2165346942cdc8de913a37720d36b19b20ec53c62",
+    "duration": 3.111814,
+    "peak_dbfs": 1.505,
+    "gain_db": -7.505
+  },
+  "native/sccsgoknives/famas_fire_3.ogg": {
+    "sha256": "ede0be0f750293a310421c0e1946883286e1ed0492210af6461b14246dcc0525",
+    "duration": 1.894875,
+    "peak_dbfs": 1.4373,
+    "gain_db": -7.4373
+  },
+  "native/sccsgoknives/fiveseven_addammo.ogg": {
+    "sha256": "1352f12c3f155330642d60deaf8b7b3d2988bfb51590f9b8add908217862ec6b",
+    "duration": 0.254535,
+    "peak_dbfs": -0.111,
+    "gain_db": -5.889
+  },
+  "native/sccsgoknives/fiveseven_clipin.ogg": {
+    "sha256": "6e94779a71d5ccff7a129f5bc61c112c21709a65fc111bc2897a31e65cf92f39",
+    "duration": 0.19424,
+    "peak_dbfs": -1.0772,
+    "gain_db": -4.9228
+  },
+  "native/sccsgoknives/fiveseven_clipout.ogg": {
+    "sha256": "77519d6398f5da05cdec4525943fbc1f93c25f91ae08cfa6e6ede57355da869f",
+    "duration": 0.162857,
+    "peak_dbfs": -0.7406,
+    "gain_db": -5.2594
+  },
+  "native/sccsgoknives/fiveseven_draw.ogg": {
+    "sha256": "9361f30b14478c3c2f6fa9681356146754df1e294bef1514ea68c68658248196",
+    "duration": 0.989864,
+    "peak_dbfs": -2.1738,
+    "gain_db": -3.8262
+  },
+  "native/sccsgoknives/fiveseven_fire_1.ogg": {
+    "sha256": "54d2dbbed20924e624e9b3baf9cb113a852657dc82cc85b2d21e94c961d2551f",
+    "duration": 1.604331,
+    "peak_dbfs": 1.0927,
+    "gain_db": -7.0927
+  },
+  "native/sccsgoknives/fiveseven_slideback.ogg": {
+    "sha256": "506edfa6887f9cff279aa39daf1b930a87b5f4a21a009b83e5f77e01a78b8e30",
+    "duration": 0.204195,
+    "peak_dbfs": -1.8053,
+    "gain_db": -4.1947
+  },
+  "native/sccsgoknives/fiveseven_sliderelease.ogg": {
+    "sha256": "048cc2b95f7726e8271da43066654ef3fb9f0660d0a60052c8e245b958a3927d",
+    "duration": 0.167778,
+    "peak_dbfs": -0.0434,
+    "gain_db": -5.9566
+  },
+  "native/sccsgoknives/g3sg1_addammo.ogg": {
+    "sha256": "5b74aad550ceb96de9cc0798ed341c810f8ce6b0f2d8f72241c6dc7cb750f73e",
+    "duration": 0.153787,
+    "peak_dbfs": -1.6292,
+    "gain_db": -4.3708
+  },
+  "native/sccsgoknives/g3sg1_clipin.ogg": {
+    "sha256": "d77d6ac81edc785bbd4e237307266a8a8eda93db5702cbbe200b879b9ff24d38",
+    "duration": 0.173243,
+    "peak_dbfs": -2.3866,
+    "gain_db": -3.6134
+  },
+  "native/sccsgoknives/g3sg1_clipout.ogg": {
+    "sha256": "edb1a425dc1676f54a07f1006a25bf8e8b9f035dd8f8828e949cf90c69d1b45e",
+    "duration": 0.360317,
+    "peak_dbfs": -0.7545,
+    "gain_db": -5.2455
+  },
+  "native/sccsgoknives/g3sg1_draw.ogg": {
+    "sha256": "0663df98d58d9ca6d12444b0ebfc18e8b2d1076606b8d82c5328ebb98737cc04",
+    "duration": 0.816417,
+    "peak_dbfs": -10.1624,
+    "gain_db": 0.0
+  },
+  "native/sccsgoknives/g3sg1_fire_1.ogg": {
+    "sha256": "7c1c55deeeee9a21c6c894f82cd92062233a5115991536b8465562cf01a06124",
+    "duration": 2.669274,
+    "peak_dbfs": 2.3968,
+    "gain_db": -8.3968
+  },
+  "native/sccsgoknives/g3sg1_fire_2.ogg": {
+    "sha256": "6a09c05cd62983228e00422933b79750b30d0d9177031365f4d3f8e3564d24f4",
+    "duration": 2.669274,
+    "peak_dbfs": 1.6828,
+    "gain_db": -7.6828
+  },
+  "native/sccsgoknives/g3sg1_fire_3.ogg": {
+    "sha256": "a7a668364da68f32ea906fea4a16f0d46557cdc7ccc9de20300b65dead8b9f70",
+    "duration": 2.669274,
+    "peak_dbfs": 1.3156,
+    "gain_db": -7.3156
+  },
+  "native/sccsgoknives/g3sg1_slideback.ogg": {
+    "sha256": "37ecbbc771ed818087cc0dab81fa03e1ea5e521c902f279793f6796632110677",
+    "duration": 0.187506,
+    "peak_dbfs": -1.5612,
+    "gain_db": -4.4388
+  },
+  "native/sccsgoknives/g3sg1_slideforward.ogg": {
+    "sha256": "6f3defbc6567b54442d71eb3ba4a559f794c5f9b8033d8a3d6b8372a813bbd72",
+    "duration": 0.578345,
+    "peak_dbfs": -0.1826,
+    "gain_db": -5.8174
+  },
+  "native/sccsgoknives/g3sg1_zoom.ogg": {
+    "sha256": "4622e64fd96a15309d722b21504e6904015a9c8f7595cacad546b76d95ee6efd",
+    "duration": 0.257392,
+    "peak_dbfs": -1.1451,
+    "gain_db": -4.8549
+  },
+  "native/sccsgoknives/g3sg1_zoom_out.ogg": {
+    "sha256": "bb2a96910fbf14616968192b8675cc9bb8a7cb1ec93ea7a0bdceb97e859277b7",
+    "duration": 0.53678,
+    "peak_dbfs": -8.561,
+    "gain_db": 0.0
+  },
+  "native/sccsgoknives/galilar_addammo.ogg": {
+    "sha256": "335a8170c84d52cd6b8ebe77fddd581475b20477c90b5ca133416596e00bc7fb",
+    "duration": 0.329229,
+    "peak_dbfs": -0.9098,
+    "gain_db": -5.0902
+  },
+  "native/sccsgoknives/galilar_boltback.ogg": {
+    "sha256": "23c08f9f29b68edd4f55d284f3b1f0431a3961650cc155fe960c9ba89c47e626",
+    "duration": 0.175034,
+    "peak_dbfs": -0.2328,
+    "gain_db": -5.7672
+  },
+  "native/sccsgoknives/galilar_boltforward.ogg": {
+    "sha256": "336e795f09df5acf572bf308da112300d9108d64c4c2e35c6b8c17db1a25e473",
+    "duration": 0.245283,
+    "peak_dbfs": 0.4318,
+    "gain_db": -6.4318
+  },
+  "native/sccsgoknives/galilar_clipin.ogg": {
+    "sha256": "dc849feae34d0cf5b46b1c955332309f098d2bef027de5f983ff84375eb31341",
+    "duration": 0.131769,
+    "peak_dbfs": -17.3511,
+    "gain_db": 0.0
+  },
+  "native/sccsgoknives/galilar_clipout.ogg": {
+    "sha256": "63027537e7383942e86bfd871ac8af8e94955f812da30555434e25194f92eabe",
+    "duration": 0.230816,
+    "peak_dbfs": -1.1669,
+    "gain_db": -4.8331
+  },
+  "native/sccsgoknives/galilar_draw.ogg": {
+    "sha256": "42d66f05f4dbc730767b1d07355fcd6043888f95e43ebd8a7616d30856312080",
+    "duration": 1.125011,
+    "peak_dbfs": -0.3914,
+    "gain_db": -5.6086
+  },
+  "native/sccsgoknives/galilar_fire_1.ogg": {
+    "sha256": "fd35ea90d7ca82116a4403ce78e5f9cc61b721f943f4e09d4781a53e7259d00b",
+    "duration": 3.156259,
+    "peak_dbfs": 0.7635,
+    "gain_db": -6.7635
+  },
+  "native/sccsgoknives/glock18_clipin.ogg": {
+    "sha256": "d523f23af84d5bbcbb433cf1dd3c93dc781c09191c8f74ee16f00ee01f92d030",
+    "duration": 0.30127,
+    "peak_dbfs": -0.1154,
+    "gain_db": -5.8846
+  },
+  "native/sccsgoknives/glock18_clipout.ogg": {
+    "sha256": "e06fb61f9a9754c3c45bd0fbcbf2a973d98fadabfece980f8f2c0822e613f4cc",
+    "duration": 0.30127,
+    "peak_dbfs": -0.4545,
+    "gain_db": -5.5455
+  },
+  "native/sccsgoknives/glock18_draw.ogg": {
+    "sha256": "cd1e2544111986dc4b40647e9522bd0f0ace1de1f1e5ad8b45cdc5707f21aa7d",
+    "duration": 0.989864,
+    "peak_dbfs": -2.1738,
+    "gain_db": -3.8262
+  },
+  "native/sccsgoknives/glock18_fire_1.ogg": {
+    "sha256": "0d19b0eb700113252f67888017572be6c65b21db650518936e2726b4d2afc937",
+    "duration": 1.910522,
+    "peak_dbfs": -0.248,
+    "gain_db": -5.752
+  },
+  "native/sccsgoknives/glock18_slideback.ogg": {
+    "sha256": "c90fe782960efc9183d3ead02e1f03e89fad79c19f446b45b22b97f0347fa61a",
+    "duration": 0.25,
+    "peak_dbfs": -0.5333,
+    "gain_db": -5.4667
+  },
+  "native/sccsgoknives/glock18_sliderelease.ogg": {
+    "sha256": "f2666b57631ba049f2736d4ebe401b2204946fec6c4a95a943db16c56ebf9119",
+    "duration": 0.335646,
+    "peak_dbfs": -0.4496,
+    "gain_db": -5.5504
+  },
+  "native/sccsgoknives/grenade_decoy_draw.wav": {
+    "sha256": "d4dee7723b6b79a66528784d1bc6d251c29b99603662611fb8f82496e8ce3107",
+    "duration": 0.437982,
+    "peak_dbfs": -6.955,
+    "gain_db": 0.0
+  },
+  "native/sccsgoknives/grenade_decoy_pin.wav": {
+    "sha256": "df7823339b8d6ba2bb98bb9ef2c2c3c08ce02013899a5dee0eea238c7505b32a",
+    "duration": 0.793605,
+    "peak_dbfs": -0.0003,
+    "gain_db": -5.9997
+  },
+  "native/sccsgoknives/grenade_decoy_throw.wav": {
+    "sha256": "f69bafba011129edf6cf822c7e1bb26448e8952671e18f31f498bf3563fe519e",
+    "duration": 0.763492,
+    "peak_dbfs": -8.2576,
+    "gain_db": 0.0
+  },
+  "native/sccsgoknives/grenade_fire_airburst.wav": {
+    "sha256": "42083aeb9f823a610983b2d7c199a3cb35791da1d9cbb972d09941bef48410cc",
+    "duration": 3.8,
+    "peak_dbfs": 0.0,
+    "gain_db": -6.0
+  },
+  "native/sccsgoknives/grenade_fire_extinguish.wav": {
+    "sha256": "b7a7a89d9a0bea82fce85716a1f68185d9069c1fa0635038f59d91619560f490",
+    "duration": 2.558617,
+    "peak_dbfs": -0.0088,
+    "gain_db": -5.9912
+  },
+  "native/sccsgoknives/grenade_fire_loop.wav": {
+    "sha256": "02e2d3b1136a28c95343aa9763b9e5c4e238c6163253cef54eeb009dd406c29d",
+    "duration": 2.394785,
+    "peak_dbfs": 0.0,
+    "gain_db": -6.0
+  },
+  "native/sccsgoknives/grenade_flashbang_bounce.wav": {
+    "sha256": "73ef3c2d10885a54d1c11ec5da16225614275413500094d468d42f3a9aa536f0",
+    "duration": 0.384263,
+    "peak_dbfs": -2.6112,
+    "gain_db": -3.3888
+  },
+  "native/sccsgoknives/grenade_flashbang_draw.wav": {
+    "sha256": "66ea68f782601cf6979fb37f465b79f7d91dab9aa809d51f3fb12157d5f7bf60",
+    "duration": 0.407483,
+    "peak_dbfs": -6.955,
+    "gain_db": 0.0
+  },
+  "native/sccsgoknives/grenade_flashbang_explode.wav": {
+    "sha256": "a94dfe03e67a18884dcf68e402e91ff68487b98dacff35399f5eccceeee9940b",
+    "duration": 2.412971,
+    "peak_dbfs": 0.0,
+    "gain_db": -6.0
+  },
+  "native/sccsgoknives/grenade_flashbang_pin.wav": {
+    "sha256": "df7823339b8d6ba2bb98bb9ef2c2c3c08ce02013899a5dee0eea238c7505b32a",
+    "duration": 0.793605,
+    "peak_dbfs": -0.0003,
+    "gain_db": -5.9997
+  },
+  "native/sccsgoknives/grenade_flashbang_throw.wav": {
+    "sha256": "f69bafba011129edf6cf822c7e1bb26448e8952671e18f31f498bf3563fe519e",
+    "duration": 0.763492,
+    "peak_dbfs": -8.2576,
+    "gain_db": 0.0
+  },
+  "native/sccsgoknives/grenade_hegrenade_bounce.wav": {
+    "sha256": "967974eacd15c529915c35e5756f79503589e39bf013252e17c6126356496bca",
+    "duration": 0.739909,
+    "peak_dbfs": 0.0,
+    "gain_db": -6.0
+  },
+  "native/sccsgoknives/grenade_hegrenade_draw.wav": {
+    "sha256": "d4dee7723b6b79a66528784d1bc6d251c29b99603662611fb8f82496e8ce3107",
+    "duration": 0.437982,
+    "peak_dbfs": -6.955,
+    "gain_db": 0.0
+  },
+  "native/sccsgoknives/grenade_hegrenade_explode.wav": {
+    "sha256": "774840d68641471d8fe21dfd37f49797689e0b96e067393f0c18d027bdb7c8b0",
+    "duration": 4.863311,
+    "peak_dbfs": 0.0,
+    "gain_db": -6.0
+  },
+  "native/sccsgoknives/grenade_hegrenade_pin.wav": {
+    "sha256": "df7823339b8d6ba2bb98bb9ef2c2c3c08ce02013899a5dee0eea238c7505b32a",
+    "duration": 0.793605,
+    "peak_dbfs": -0.0003,
+    "gain_db": -5.9997
+  },
+  "native/sccsgoknives/grenade_hegrenade_throw.wav": {
+    "sha256": "f69bafba011129edf6cf822c7e1bb26448e8952671e18f31f498bf3563fe519e",
+    "duration": 0.763492,
+    "peak_dbfs": -8.2576,
+    "gain_db": 0.0
+  },
+  "native/sccsgoknives/grenade_incendiary_draw.wav": {
+    "sha256": "8ca8f4c8708cae39db4975b5a532d5bc31e7db8b4a1e7962cdb6f17445686e97",
+    "duration": 0.441519,
+    "peak_dbfs": -1.3823,
+    "gain_db": -4.6177
+  },
+  "native/sccsgoknives/grenade_incendiary_explode.wav": {
+    "sha256": "057ed2948b8fd6f13341cb7e37eb90cc484f3794fc1b5bf9e1830ce63d2ae90b",
+    "duration": 3.538526,
+    "peak_dbfs": 0.0,
+    "gain_db": -6.0
+  },
+  "native/sccsgoknives/grenade_incendiary_pin.wav": {
+    "sha256": "df7823339b8d6ba2bb98bb9ef2c2c3c08ce02013899a5dee0eea238c7505b32a",
+    "duration": 0.793605,
+    "peak_dbfs": -0.0003,
+    "gain_db": -5.9997
+  },
+  "native/sccsgoknives/grenade_incendiary_throw.wav": {
+    "sha256": "f69bafba011129edf6cf822c7e1bb26448e8952671e18f31f498bf3563fe519e",
+    "duration": 0.763492,
+    "peak_dbfs": -8.2576,
+    "gain_db": 0.0
+  },
+  "native/sccsgoknives/grenade_molotov_draw.wav": {
+    "sha256": "8ca8f4c8708cae39db4975b5a532d5bc31e7db8b4a1e7962cdb6f17445686e97",
+    "duration": 0.441519,
+    "peak_dbfs": -1.3823,
+    "gain_db": -4.6177
+  },
+  "native/sccsgoknives/grenade_molotov_explode.wav": {
+    "sha256": "d43968fce809b9ef3f81a6d2379723b0b0e4d53811eec9c81a7ced522fbc0710",
+    "duration": 3.715193,
+    "peak_dbfs": -0.1735,
+    "gain_db": -5.8265
+  },
+  "native/sccsgoknives/grenade_molotov_pin.wav": {
+    "sha256": "61b84a711f4777df69b5a35c47eca9c51f7c406d218ca7dc5c8b2bdc2a0b2035",
+    "duration": 1.898231,
+    "peak_dbfs": -3.1789,
+    "gain_db": -2.8211
+  },
+  "native/sccsgoknives/grenade_molotov_throw.wav": {
+    "sha256": "f69bafba011129edf6cf822c7e1bb26448e8952671e18f31f498bf3563fe519e",
+    "duration": 0.763492,
+    "peak_dbfs": -8.2576,
+    "gain_db": 0.0
+  },
+  "native/sccsgoknives/grenade_smokegrenade_bounce.wav": {
+    "sha256": "73ef3c2d10885a54d1c11ec5da16225614275413500094d468d42f3a9aa536f0",
+    "duration": 0.384263,
+    "peak_dbfs": -2.6112,
+    "gain_db": -3.3888
+  },
+  "native/sccsgoknives/grenade_smokegrenade_clear.wav": {
+    "sha256": "de5d6124dad6a401730a1ab6202364ebaeca79ec23cdc97057dc3e998f2058c7",
+    "duration": 3.928821,
+    "peak_dbfs": -0.0088,
+    "gain_db": -5.9912
+  },
+  "native/sccsgoknives/grenade_smokegrenade_draw.wav": {
+    "sha256": "8673cb34b11cb65aa683bf5030dcba93ce2f8a856fa0efc21130b37815c53ddf",
+    "duration": 0.401701,
+    "peak_dbfs": -8.0375,
+    "gain_db": 0.0
+  },
+  "native/sccsgoknives/grenade_smokegrenade_emit.wav": {
+    "sha256": "36adf17c9a9aec93bb01d8f20127b8b94c749f07689076ddd840a27b3e5faacc",
+    "duration": 14.176735,
+    "peak_dbfs": 0.0,
+    "gain_db": -6.0
+  },
+  "native/sccsgoknives/grenade_smokegrenade_pin.wav": {
+    "sha256": "df7823339b8d6ba2bb98bb9ef2c2c3c08ce02013899a5dee0eea238c7505b32a",
+    "duration": 0.793605,
+    "peak_dbfs": -0.0003,
+    "gain_db": -5.9997
+  },
+  "native/sccsgoknives/grenade_smokegrenade_throw.wav": {
+    "sha256": "f69bafba011129edf6cf822c7e1bb26448e8952671e18f31f498bf3563fe519e",
+    "duration": 0.763492,
+    "peak_dbfs": -8.2576,
+    "gain_db": 0.0
+  },
+  "native/sccsgoknives/hkp2000_addammo.ogg": {
+    "sha256": "e4c410287c0148f1a727c352408a8fbd1f8bffa54b35da5fb4726e712f402a0e",
+    "duration": 0.150091,
+    "peak_dbfs": -0.1407,
+    "gain_db": -5.8593
+  },
+  "native/sccsgoknives/hkp2000_clipin.ogg": {
+    "sha256": "df67ff8aee44c9e37362e4be8ce9d4e5c02ae10c2d34cd13c2ab9b4ec0563520",
+    "duration": 0.10966,
+    "peak_dbfs": -6.9493,
+    "gain_db": 0.0
+  },
+  "native/sccsgoknives/hkp2000_clipout.ogg": {
+    "sha256": "93bb709b85026601102be09a77b5996b1f0fca61339f7de47fb4c6bf40b24b99",
+    "duration": 0.257234,
+    "peak_dbfs": -0.7771,
+    "gain_db": -5.2229
+  },
+  "native/sccsgoknives/hkp2000_draw.ogg": {
+    "sha256": "1e843fead39e17f485fdb02e83738581328f505f5e14644b53b473daddc30cc5",
+    "duration": 0.989864,
+    "peak_dbfs": -2.1738,
+    "gain_db": -3.8262
+  },
+  "native/sccsgoknives/hkp2000_fire_1.ogg": {
+    "sha256": "c8940df96e90f010aadfb1134ebfcc6d682e780312047256e80839d927ccb0fd",
+    "duration": 2.187506,
+    "peak_dbfs": -0.6501,
+    "gain_db": -5.3499
+  },
+  "native/sccsgoknives/hkp2000_fire_2.ogg": {
+    "sha256": "09f2bd5e2c8bef6a34e07a33d14cc786def2626961fbae422ab6f561dcd28bd9",
+    "duration": 2.25,
+    "peak_dbfs": -0.6501,
+    "gain_db": -5.3499
+  },
+  "native/sccsgoknives/hkp2000_fire_3.ogg": {
+    "sha256": "c2ffe1aee1f5c531df6e446d7d0621a45314d428ab7650490b3935527b49416d",
+    "duration": 2.25,
+    "peak_dbfs": -0.6501,
+    "gain_db": -5.3499
+  },
+  "native/sccsgoknives/hkp2000_slideback.ogg": {
+    "sha256": "2916dbe83b214533268ecd351023a946c0a3578ced69da2096d8053492bb4a9c",
+    "duration": 0.326939,
+    "peak_dbfs": -0.6717,
+    "gain_db": -5.3283
+  },
+  "native/sccsgoknives/hkp2000_sliderelease.ogg": {
+    "sha256": "c027ddf939ffc9576e47305e782e3474a0cffab3d41eb529e3bcb905e4c5c500",
+    "duration": 0.155102,
+    "peak_dbfs": -1.1627,
+    "gain_db": -4.8373
+  },
+  "native/sccsgoknives/knife_deploy.ogg": {
+    "sha256": "115c004327de87a9f0856a497e92f7ea5bb4cb745a72aee2596caa7eb6bde97d",
+    "duration": 0.614667,
+    "peak_dbfs": -0.0532,
+    "gain_db": -5.9468
+  },
+  "native/sccsgoknives/knife_slash.ogg": {
+    "sha256": "c6e2c146262cc9c845f07418854597f32361ca01398e515a7460f8769fbbfbf5",
+    "duration": 0.166667,
+    "peak_dbfs": -10.1864,
+    "gain_db": 0.0
+  },
+  "native/sccsgoknives/m249_boxin.ogg": {
+    "sha256": "a59f801e2384f3e9d23e0da7b038046cea637dd75232819f5fce3d51e217b341",
+    "duration": 0.789116,
+    "peak_dbfs": -6.7851,
+    "gain_db": 0.0
+  },
+  "native/sccsgoknives/m249_boxout.ogg": {
+    "sha256": "3ca2e6bbbb71f39bf3d5d3804466e3627f17846f11306fdb953ebbb7dad01333",
+    "duration": 0.20254,
+    "peak_dbfs": -1.4391,
+    "gain_db": -4.5609
+  },
+  "native/sccsgoknives/m249_chain.ogg": {
+    "sha256": "e421a60abc262bfc507756f8746d3711deed1cc5724e7c231fef2ff42e7ca342",
+    "duration": 0.629206,
+    "peak_dbfs": -2.363,
+    "gain_db": -3.637
+  },
+  "native/sccsgoknives/m249_coverdown.ogg": {
+    "sha256": "c68995ec52c67251dc34a40bd1ed4e5959ffc4b859af5e68a856f2ac554f0dfb",
+    "duration": 0.23254,
+    "peak_dbfs": 0.8065,
+    "gain_db": -6.8065
+  },
+  "native/sccsgoknives/m249_coverup.ogg": {
+    "sha256": "7d7172337cf1f15f9b122ddca18035479a15fadbe3b548bf31fbcbc7435ec44b",
+    "duration": 0.267755,
+    "peak_dbfs": -2.6073,
+    "gain_db": -3.3927
+  },
+  "native/sccsgoknives/m249_draw.ogg": {
+    "sha256": "2e7604e669aaa03437337424cde70da1ac8b5428861d4d24cc51052fdfd4826d",
+    "duration": 0.293061,
+    "peak_dbfs": 0.8643,
+    "gain_db": -6.8643
+  },
+  "native/sccsgoknives/m249_fire_1.ogg": {
+    "sha256": "850d9a383fd7ed8f81797c12c893514c6e5cc8e390e27e9bd914d8e6c2f11c0d",
+    "duration": 1.488889,
+    "peak_dbfs": 0.3217,
+    "gain_db": -6.3217
+  },
+  "native/sccsgoknives/m249_fire_2.ogg": {
+    "sha256": "56e223cfa55c2b6753b04e10dcbee624a3862e9c50c67b389abdb368476f0238",
+    "duration": 1.533469,
+    "peak_dbfs": 0.5876,
+    "gain_db": -6.5876
+  },
+  "native/sccsgoknives/m249_fire_3.ogg": {
+    "sha256": "285bfca50a2a1d513b98f5406b7dc0ec17901314bc1f8492d70dddee06c14549",
+    "duration": 1.652698,
+    "peak_dbfs": 0.1263,
+    "gain_db": -6.1263
+  },
+  "native/sccsgoknives/m249_pump.ogg": {
+    "sha256": "aba75b2bdaa700f1180743ae942feea305880f0ec2fb05f2d1979b04eff684c3",
+    "duration": 0.424354,
+    "peak_dbfs": -0.1338,
+    "gain_db": -5.8662
+  },
+  "native/sccsgoknives/m4a1s_addammo.ogg": {
+    "sha256": "5046a9e3196f5137754e0c5110120f4fd977a8365d460ffa506628e31524cb3e",
+    "duration": 0.311406,
+    "peak_dbfs": 0.1538,
+    "gain_db": -6.1538
+  },
+  "native/sccsgoknives/m4a1s_boltback.ogg": {
+    "sha256": "b4e5a12895f6c2c60a9842615a5d344c8340ae88244931529ca236c12266ce89",
+    "duration": 0.375011,
+    "peak_dbfs": 0.7887,
+    "gain_db": -6.7887
+  },
+  "native/sccsgoknives/m4a1s_boltback_silenced.ogg": {
+    "sha256": "ea11b01edf22045e61e80d2138d0823c7123780a3945852cae6727510dd82225",
+    "duration": 0.625011,
+    "peak_dbfs": 0.0616,
+    "gain_db": -6.0616
+  },
+  "native/sccsgoknives/m4a1s_boltforward.ogg": {
+    "sha256": "01985c7093573379ee7a6ad2d25d432fb327db0231a3aecf26abfb67ea9386c1",
+    "duration": 0.375011,
+    "peak_dbfs": -0.0196,
+    "gain_db": -5.9804
+  },
+  "native/sccsgoknives/m4a1s_boltforward_silenced.ogg": {
+    "sha256": "fb15ce0a544ffcfe24adcaee4618651ab75f9422587e91067e64da24c70c65c4",
+    "duration": 0.346848,
+    "peak_dbfs": 0.0166,
+    "gain_db": -6.0166
+  },
+  "native/sccsgoknives/m4a1s_cliphit.ogg": {
+    "sha256": "536616a87be999e38281a3fa28b0a3aedff82cb97d3e445510390ae04e250d29",
+    "duration": 0.206871,
+    "peak_dbfs": 0.1387,
+    "gain_db": -6.1387
+  },
+  "native/sccsgoknives/m4a1s_clipin.ogg": {
+    "sha256": "b4a575245a6b878da00d29208f3ee76b4827c682cac8ff3ebbcec5b4c456fc9a",
+    "duration": 0.099773,
+    "peak_dbfs": -0.3989,
+    "gain_db": -5.6011
+  },
+  "native/sccsgoknives/m4a1s_clipout.ogg": {
+    "sha256": "f58835b8b53ea06a3b930cf81e78c1504f65e25ee0264b25650cd075d2d31bf4",
+    "duration": 0.375011,
+    "peak_dbfs": 0.2046,
+    "gain_db": -6.2046
+  },
+  "native/sccsgoknives/m4a1s_draw.ogg": {
+    "sha256": "08129bb38803c9dbde5b0da6c3f13b7157b588151744f87afc4570f7cc9718ff",
+    "duration": 1.023447,
+    "peak_dbfs": 1.0026,
+    "gain_db": -7.0026
+  },
+  "native/sccsgoknives/m4a1s_fire_1.ogg": {
+    "sha256": "8135623a45eeb830a9970d0b730e9183d4ddba7a02411ad94f93f27a2e6bb25a",
+    "duration": 3.191995,
+    "peak_dbfs": 3.2013,
+    "gain_db": -9.2013
+  },
+  "native/sccsgoknives/m4a1s_fire_2.ogg": {
+    "sha256": "3a074aa0222f58235ad0a05d34af2c67882040e27b8e30d9e597562f43eddd83",
+    "duration": 1.859841,
+    "peak_dbfs": 3.1419,
+    "gain_db": -9.1419
+  },
+  "native/sccsgoknives/m4a1s_fire_3.ogg": {
+    "sha256": "7060a6e57ccf1613139d0a58e7c1ed7d96b850806c2d131925599ea8547bcbf9",
+    "duration": 2.479161,
+    "peak_dbfs": 2.9655,
+    "gain_db": -8.9655
+  },
+  "native/sccsgoknives/m4a1s_fire_4.ogg": {
+    "sha256": "a4d0483b762bc43c7ccbbf3808123b68fe2663636d7a36a631ad739b5a41e68f",
+    "duration": 2.815986,
+    "peak_dbfs": 3.1391,
+    "gain_db": -9.1391
+  },
+  "native/sccsgoknives/m4a1s_fire_silenced_1.ogg": {
+    "sha256": "02bd99d62a96687843ca4fd954ce347fcc5554783f420374fdfed7c11505fa56",
+    "duration": 1.41034,
+    "peak_dbfs": 3.573,
+    "gain_db": -9.573
+  },
+  "native/sccsgoknives/m4a1s_silencer_off.ogg": {
+    "sha256": "9f2d113f23e890a753f0788d6b00809a883a633248c13d5055bc32db5c23b9a8",
+    "duration": 0.307619,
+    "peak_dbfs": -0.3613,
+    "gain_db": -5.6387
+  },
+  "native/sccsgoknives/m4a1s_silencer_on.ogg": {
+    "sha256": "b97a4b700c983fdcfa852a8b70b305f4b6b2aba4f40568074896441863063353",
+    "duration": 0.588571,
+    "peak_dbfs": 0.1336,
+    "gain_db": -6.1336
+  },
+  "native/sccsgoknives/m4a1s_silencer_screw_1.ogg": {
+    "sha256": "16f1e241d0373ce1e416ff74464214c60e68232ab23bae72167b37f4e52e2c04",
+    "duration": 0.314286,
+    "peak_dbfs": -5.3779,
+    "gain_db": -0.6221
+  },
+  "native/sccsgoknives/m4a1s_silencer_screw_2.ogg": {
+    "sha256": "4d927291b7b8fa959f7fc44eeaee7ca363d55e5e477186f9d9fa712d31166986",
+    "duration": 0.305442,
+    "peak_dbfs": -8.3266,
+    "gain_db": 0.0
+  },
+  "native/sccsgoknives/m4a1s_silencer_screw_3.ogg": {
+    "sha256": "991acd1a2d03c4da98efe34952fdf5f50cf07a250e5020bba1cbf6073d1db80e",
+    "duration": 0.347574,
+    "peak_dbfs": -12.9022,
+    "gain_db": 0.0
+  },
+  "native/sccsgoknives/m4a1s_silencer_screw_4.ogg": {
+    "sha256": "642d003c7f496ca645000bbc3698a3407b2ca29c019fbd1583cefcc6240d34c8",
+    "duration": 0.340408,
+    "peak_dbfs": -11.0745,
+    "gain_db": 0.0
+  },
+  "native/sccsgoknives/m4a1s_silencer_screw_5.ogg": {
+    "sha256": "877de3367bcbb58b5b9b4a31472bc038c8c8b4798a87dbec554f07bf2d69b04e",
+    "duration": 0.239887,
+    "peak_dbfs": -8.2542,
+    "gain_db": 0.0
+  },
+  "native/sccsgoknives/m4a1s_silencer_screw_off_end.ogg": {
+    "sha256": "39fcc61821cd7b5520fe4bd356870a4bf04c5d1faf5aa2779650faf4480815ce",
+    "duration": 0.23415,
+    "peak_dbfs": -1.671,
+    "gain_db": -4.329
+  },
+  "native/sccsgoknives/m4a1s_silencer_screw_on_start.ogg": {
+    "sha256": "0f1dd584b375352e3a117117fc82bcec3f15965c8134f21b54d26148830a70a0",
+    "duration": 0.382177,
+    "peak_dbfs": 0.0442,
+    "gain_db": -6.0442
+  },
+  "native/sccsgoknives/m4a4_fire_1.ogg": {
+    "sha256": "3ed415e9650aba8f8d1b2287505c6a8356a373fa83236196e50467ce3e4b3e86",
+    "duration": 3.191995,
+    "peak_dbfs": 0.3468,
+    "gain_db": -6.3468
+  },
+  "native/sccsgoknives/m4a4_fire_2.ogg": {
+    "sha256": "bfbf79cdbc3e1626aa98afd1f8a0f437199fc0ac30615d01295c8c61f380f6cd",
+    "duration": 1.859841,
+    "peak_dbfs": 0.4824,
+    "gain_db": -6.4824
+  },
+  "native/sccsgoknives/mac10_addammo.ogg": {
+    "sha256": "a0457fa61a92d846da93f8420c6264da3c55d1abe37bb6c6e388c26db98395c2",
+    "duration": 0.134422,
+    "peak_dbfs": -0.4644,
+    "gain_db": -5.5356
+  },
+  "native/sccsgoknives/mac10_boltback.ogg": {
+    "sha256": "4b4a94dbcc8af87d380709463be5c97c7085098b4676e2743ad282ac974cf91e",
+    "duration": 0.167166,
+    "peak_dbfs": -1.7904,
+    "gain_db": -4.2096
+  },
+  "native/sccsgoknives/mac10_boltforward.ogg": {
+    "sha256": "6ccb2e5b486e4d0c953781559d8d7fd025439a4c7af5758cda72810134633dfd",
+    "duration": 0.441406,
+    "peak_dbfs": -0.061,
+    "gain_db": -5.939
+  },
+  "native/sccsgoknives/mac10_clip_slide.ogg": {
+    "sha256": "0a3e9387c2823598477efb4b627ed9b0b02bcc37756dd7d2656783f94ff81b95",
+    "duration": 0.131769,
+    "peak_dbfs": -17.3511,
+    "gain_db": 0.0
+  },
+  "native/sccsgoknives/mac10_clipin.ogg": {
+    "sha256": "e105584699265e9306f19156a29ee0ba7d4acb471766f5fbe016828e5f13008b",
+    "duration": 0.064354,
+    "peak_dbfs": -0.9166,
+    "gain_db": -5.0834
+  },
+  "native/sccsgoknives/mac10_clipout.ogg": {
+    "sha256": "27091591134386f6a2b51fc075ae4ae37d7634360b7e27fa200431ebeaa087ca",
+    "duration": 0.301837,
+    "peak_dbfs": -0.2553,
+    "gain_db": -5.7447
+  },
+  "native/sccsgoknives/mac10_draw.ogg": {
+    "sha256": "fb9f6894a27463cf17d49e651c339030e22be44b806c4e67ea7b71928d3244ac",
+    "duration": 0.656259,
+    "peak_dbfs": -0.8805,
+    "gain_db": -5.1195
+  },
+  "native/sccsgoknives/mac10_fire_1.ogg": {
+    "sha256": "02f506770b8748547d1d0314bdba2dc57f4e25a9cbb6ca155a7a74969684b7a0",
+    "duration": 1.990476,
+    "peak_dbfs": 1.0322,
+    "gain_db": -7.0322
+  },
+  "native/sccsgoknives/mac10_fire_2.ogg": {
+    "sha256": "2d367f398381df03dbff8c94621828fb1f1c05fb3b2283d6d3fcf18fe5b02e21",
+    "duration": 2.0,
+    "peak_dbfs": 1.1805,
+    "gain_db": -7.1805
+  },
+  "native/sccsgoknives/mag7_addammo.ogg": {
+    "sha256": "99e5e254274121d33dcaf3b69b6cf1fdf2d793fa081535600748efd25bcc592a",
+    "duration": 0.454036,
+    "peak_dbfs": -0.1099,
+    "gain_db": -5.8901
+  },
+  "native/sccsgoknives/mag7_clipin.ogg": {
+    "sha256": "8c8b3863f45564500069ad9a333b7798ba451d4e942f9023e7504bfb7c3869a3",
+    "duration": 0.170975,
+    "peak_dbfs": -10.13,
+    "gain_db": 0.0
+  },
+  "native/sccsgoknives/mag7_clipout.ogg": {
+    "sha256": "181a3e3ea74d8fd38a08763210036e8e57960ccd1bbb993bc7ef3e9e942d8f0a",
+    "duration": 0.281247,
+    "peak_dbfs": -0.5431,
+    "gain_db": -5.4569
+  },
+  "native/sccsgoknives/mag7_draw.ogg": {
+    "sha256": "56abfe5ee807651374f38c88a148fcacc6a53f5b51e10bb8cd04c3bc27cbd88a",
+    "duration": 0.435102,
+    "peak_dbfs": -3.4532,
+    "gain_db": -2.5468
+  },
+  "native/sccsgoknives/mag7_fire_1.ogg": {
+    "sha256": "9a548044b12754b233d46b21b9f5d65a0f1c5ebedc9579d9874c059b223310d3",
+    "duration": 3.0,
+    "peak_dbfs": 2.9731,
+    "gain_db": -8.9731
+  },
+  "native/sccsgoknives/mag7_fire_2.ogg": {
+    "sha256": "c03c0d9353c31ef5396785d7faa6e5d90bd3df66bea523cc7ed833f8b3725309",
+    "duration": 2.692132,
+    "peak_dbfs": 2.8973,
+    "gain_db": -8.8973
+  },
+  "native/sccsgoknives/mag7_pumpback.ogg": {
+    "sha256": "30e3a40fd8b0b7c7627c6ae6090281946e387d1ce592c580d314e75850699a96",
+    "duration": 0.138322,
+    "peak_dbfs": -3.2763,
+    "gain_db": -2.7237
+  },
+  "native/sccsgoknives/mag7_pumpforward.ogg": {
+    "sha256": "dc0b34283128040971cd00c85d081be83bbd6fede1e52301cf1530e8aeeceb53",
+    "duration": 0.112086,
+    "peak_dbfs": -3.9368,
+    "gain_db": -2.0632
+  },
+  "native/sccsgoknives/movement1.ogg": {
+    "sha256": "b44aecd5fb3c5a67090a3dfc414cd4cca92a5a8dff5bcb57db538eb7c2bb5664",
+    "duration": 0.531156,
+    "peak_dbfs": -14.9893,
+    "gain_db": 0.0
+  },
+  "native/sccsgoknives/movement2.ogg": {
+    "sha256": "0e05a0bffa37e016182547113e78e6600f9ce830467830647e388a02460a6756",
+    "duration": 0.563084,
+    "peak_dbfs": -11.6027,
+    "gain_db": 0.0
+  },
+  "native/sccsgoknives/movement3.ogg": {
+    "sha256": "d92e633b8fb93779778345b205028fab934f9bb8352bc04fee1165067c22f196",
+    "duration": 0.783673,
+    "peak_dbfs": -15.9249,
+    "gain_db": 0.0
+  },
+  "native/sccsgoknives/mp5sd_addammo.ogg": {
+    "sha256": "f58a90a69d9bb39ff77b4b87b5d61d67f8a4029a38ff23847977f4feb0f7f751",
+    "duration": 0.071633,
+    "peak_dbfs": 0.6655,
+    "gain_db": -6.6655
+  },
+  "native/sccsgoknives/mp5sd_clipin.ogg": {
+    "sha256": "66084d1c14f60ebc9f8230aaa0a66395b47150ac364e1eed90300a4542d2a3b2",
+    "duration": 0.053061,
+    "peak_dbfs": -0.3222,
+    "gain_db": -5.6778
+  },
+  "native/sccsgoknives/mp5sd_clipout.ogg": {
+    "sha256": "dfe967150ae8bcff0f2bcecb7a555920b2b40938f8427509952723e27d827b45",
+    "duration": 0.2478,
+    "peak_dbfs": -0.6713,
+    "gain_db": -5.3287
+  },
+  "native/sccsgoknives/mp5sd_draw.ogg": {
+    "sha256": "62920e3f5d9a1db2f0c8236863599d258c3d3f56cbfdec7fb2e7695a7e57d309",
+    "duration": 0.633061,
+    "peak_dbfs": -0.2029,
+    "gain_db": -5.7971
+  },
+  "native/sccsgoknives/mp5sd_fire_1.ogg": {
+    "sha256": "04481a519141e6fbc05e49d60e5dbb9120aaad7a043ca9e26430bcb5d3369e9d",
+    "duration": 1.414717,
+    "peak_dbfs": 1.6504,
+    "gain_db": -7.6504
+  },
+  "native/sccsgoknives/mp5sd_fire_silenced_1.ogg": {
+    "sha256": "c21fdfc3d6f6b7c25f8ea4efa132355cdfcb90ab9b21babd113a84daf33b66cb",
+    "duration": 1.414717,
+    "peak_dbfs": 1.6504,
+    "gain_db": -7.6504
+  },
+  "native/sccsgoknives/mp5sd_grab.ogg": {
+    "sha256": "ff1c750c11c5a9f9302aea0ccf83f6c96b9dc55886d21904fe70682e904def6b",
+    "duration": 0.456553,
+    "peak_dbfs": 0.4275,
+    "gain_db": -6.4275
+  },
+  "native/sccsgoknives/mp5sd_handle.ogg": {
+    "sha256": "9582c2e0d6058318bbc0d776877a3963271d77fdf524bbe64802768065c4d586",
+    "duration": 0.633061,
+    "peak_dbfs": -0.2029,
+    "gain_db": -5.7971
+  },
+  "native/sccsgoknives/mp5sd_hit.ogg": {
+    "sha256": "ad11dc8d144651db026ed8d13c608594a938e72c63ee587bf196e44df55bc37c",
+    "duration": 0.211905,
+    "peak_dbfs": -0.5126,
+    "gain_db": -5.4874
+  },
+  "native/sccsgoknives/mp5sd_slideback.ogg": {
+    "sha256": "b375aa4cc2cc1e45448ff84cb8a67b2bad8257d98d5bf543d041c974f765da64",
+    "duration": 0.119274,
+    "peak_dbfs": -1.491,
+    "gain_db": -4.509
+  },
+  "native/sccsgoknives/mp5sd_slideforward.ogg": {
+    "sha256": "57896863456852a3111c23684a6c5a3210d99d2625c6ff13a962175105bfe1b5",
+    "duration": 0.456553,
+    "peak_dbfs": 0.4275,
+    "gain_db": -6.4275
+  },
+  "native/sccsgoknives/mp7_addammo.ogg": {
+    "sha256": "09f832423d88e160da171714a9ecc06437d06a5d7e4ba74f1b72b58a1c462954",
+    "duration": 0.372222,
+    "peak_dbfs": -0.2364,
+    "gain_db": -5.7636
+  },
+  "native/sccsgoknives/mp7_clipin.ogg": {
+    "sha256": "5a0e58ea1778ca026c57c51f808b2f7e420cc759f14891b276bcf8db3e2d5128",
+    "duration": 0.128299,
+    "peak_dbfs": -0.0146,
+    "gain_db": -5.9854
+  },
+  "native/sccsgoknives/mp7_clipout.ogg": {
+    "sha256": "371f4a0612a2c0e0bc78f0968e34e975de6295a2eb1da61a5f5b00d071b5bfc4",
+    "duration": 0.562494,
+    "peak_dbfs": 0.1713,
+    "gain_db": -6.1713
+  },
+  "native/sccsgoknives/mp7_draw.ogg": {
+    "sha256": "cdd802be599d00792cbb5eef2187c3a97ead37ad83cd3f6412f2daa5159799eb",
+    "duration": 0.736395,
+    "peak_dbfs": -0.2025,
+    "gain_db": -5.7975
+  },
+  "native/sccsgoknives/mp7_fire_1.ogg": {
+    "sha256": "766cab138f89f21cf688d45f66c7274f39090698770fac0fc4ed911ae2fb67d2",
+    "duration": 2.640839,
+    "peak_dbfs": -0.8725,
+    "gain_db": -5.1275
+  },
+  "native/sccsgoknives/mp7_fire_2.ogg": {
+    "sha256": "9932ae44ba586e82e6b1283b509c2ee4a63b927d4578860c59d677c2631eecc9",
+    "duration": 2.16737,
+    "peak_dbfs": -1.1171,
+    "gain_db": -4.8829
+  },
+  "native/sccsgoknives/mp7_fire_3.ogg": {
+    "sha256": "093aaad2a42de6b1c91fe5a7e5eb856b7d1458b74f4dbac5b8e54ec57a0b9e9b",
+    "duration": 2.493379,
+    "peak_dbfs": 0.2934,
+    "gain_db": -6.2934
+  },
+  "native/sccsgoknives/mp7_slideback.ogg": {
+    "sha256": "2c6916d52c73b30ef345ed31fd0ecadd2345e7151ef4ba2ad0b14d8698e1a62e",
+    "duration": 0.149252,
+    "peak_dbfs": -0.7237,
+    "gain_db": -5.2763
+  },
+  "native/sccsgoknives/mp7_slideforward.ogg": {
+    "sha256": "f5d0cdd0d89df5ff2f749da6483257fda4d9b194ca26899ad5ffe62c0184cb5c",
+    "duration": 0.167234,
+    "peak_dbfs": -0.2033,
+    "gain_db": -5.7967
+  },
+  "native/sccsgoknives/mp9_addammo.ogg": {
+    "sha256": "4e3c4304787ebee870811523c4f09214277fb6030f1be226ac687676c221afd5",
+    "duration": 0.100907,
+    "peak_dbfs": -1.5977,
+    "gain_db": -4.4023
+  },
+  "native/sccsgoknives/mp9_boltback.ogg": {
+    "sha256": "b8f8f02c3197131b8ce64f08c8d1b60fd0ab24f91f8b95b172845ad691698427",
+    "duration": 0.134286,
+    "peak_dbfs": 0.0577,
+    "gain_db": -6.0577
+  },
+  "native/sccsgoknives/mp9_boltforward.ogg": {
+    "sha256": "6f8bfe47f6aee510c8f194de58699b76d333d3a933d43d5d70b6acbe53b4ad2a",
+    "duration": 0.116372,
+    "peak_dbfs": -0.2863,
+    "gain_db": -5.7137
+  },
+  "native/sccsgoknives/mp9_clip_slide.ogg": {
+    "sha256": "5d9f68ad176f35c4674fa8fd03b310fc64b6b727d4e59f8dce85a1988631b178",
+    "duration": 0.131769,
+    "peak_dbfs": -17.3511,
+    "gain_db": 0.0
+  },
+  "native/sccsgoknives/mp9_clipin.ogg": {
+    "sha256": "8864b02b805a66f2fa1d88ed4bf7f46dac5b8df71c66f9e1264cfde71805faa9",
+    "duration": 0.094331,
+    "peak_dbfs": -1.2937,
+    "gain_db": -4.7063
+  },
+  "native/sccsgoknives/mp9_clipout.ogg": {
+    "sha256": "a63f22f5fc59de88665968ea4401ec155bf43f1e93992e0acd5fa9ab661198fb",
+    "duration": 0.312494,
+    "peak_dbfs": 0.0655,
+    "gain_db": -6.0655
+  },
+  "native/sccsgoknives/mp9_draw.ogg": {
+    "sha256": "01026e04ead5b1a492288ac919a08d3df33807e69ae75e340996b5c41f5867dd",
+    "duration": 0.5,
+    "peak_dbfs": -0.6386,
+    "gain_db": -5.3614
+  },
+  "native/sccsgoknives/mp9_fire_1.ogg": {
+    "sha256": "60aeb7408282f327614e69cc9b712c452fb22be5447604fa2efc708ce847e6f2",
+    "duration": 1.695215,
+    "peak_dbfs": 1.0083,
+    "gain_db": -7.0083
+  },
+  "native/sccsgoknives/mp9_fire_2.ogg": {
+    "sha256": "75ec221ef007f04aef9c90cab94565b00e6552a6917b67df28389a6081b2e73b",
+    "duration": 1.443515,
+    "peak_dbfs": 0.7379,
+    "gain_db": -6.7379
+  },
+  "native/sccsgoknives/mp9_fire_3.ogg": {
+    "sha256": "163bb206a985f68210dde34bbdcef9d57220ebee15b877ba2ed07f790093d199",
+    "duration": 1.681701,
+    "peak_dbfs": 0.9846,
+    "gain_db": -6.9846
+  },
+  "native/sccsgoknives/mp9_fire_4.ogg": {
+    "sha256": "6556f8efad1f09bc00c112bca30d7e9912bfcdf7c203e81b179e834c92a81f57",
+    "duration": 1.446259,
+    "peak_dbfs": 1.0972,
+    "gain_db": -7.0972
+  },
+  "native/sccsgoknives/negev_boxin.ogg": {
+    "sha256": "f86b4bc37486596c39759ea7e27b7b592e60a0c134aaf36140bdb59013736727",
+    "duration": 0.789116,
+    "peak_dbfs": -1.1179,
+    "gain_db": -4.8821
+  },
+  "native/sccsgoknives/negev_boxout.ogg": {
+    "sha256": "545b120635619d7416f96ba31b535b0c548842df54ae3be12819702efbd3bba5",
+    "duration": 0.20254,
+    "peak_dbfs": -1.4391,
+    "gain_db": -4.5609
+  },
+  "native/sccsgoknives/negev_chain.ogg": {
+    "sha256": "b6ded35fc433ec0aa1de7021d92235c7154f04f7fd8b8b45b9220435e40dfcfd",
+    "duration": 0.629206,
+    "peak_dbfs": -2.363,
+    "gain_db": -3.637
+  },
+  "native/sccsgoknives/negev_coverdown.ogg": {
+    "sha256": "3686ac865ef1785e4823f2ff2012a5f096632d93bdc7b67ab99bd52cf76cd747",
+    "duration": 0.23254,
+    "peak_dbfs": 0.8065,
+    "gain_db": -6.8065
+  },
+  "native/sccsgoknives/negev_coverup.ogg": {
+    "sha256": "6c8512ab60a9d1107bb6e77de6cf2e70724c74442f4d35c836c9fc986ed33efd",
+    "duration": 0.267755,
+    "peak_dbfs": -2.6073,
+    "gain_db": -3.3927
+  },
+  "native/sccsgoknives/negev_draw.ogg": {
+    "sha256": "7a8dbf64ff29651abce30bff8fc6366def423069245082d8ed2079eda03e7c2f",
+    "duration": 0.293061,
+    "peak_dbfs": 0.8643,
+    "gain_db": -6.8643
+  },
+  "native/sccsgoknives/negev_fire_1.ogg": {
+    "sha256": "8528c5a6bee3fe9c102fe0a613e6a47bdf0e8dbd2cb8ad7db984a27f9c743516",
+    "duration": 4.214512,
+    "peak_dbfs": 0.2097,
+    "gain_db": -6.2097
+  },
+  "native/sccsgoknives/negev_fire_2.ogg": {
+    "sha256": "a13b74ca44cbe305c54261db2b520d5902456b452e089c674ac952057ff0879d",
+    "duration": 3.717506,
+    "peak_dbfs": 0.0188,
+    "gain_db": -6.0188
+  },
+  "native/sccsgoknives/negev_pump.ogg": {
+    "sha256": "931ecdedc666c356d47eb91920881f71f0454334f059b37a18577cd4c51c8078",
+    "duration": 0.424354,
+    "peak_dbfs": -0.1338,
+    "gain_db": -5.8662
+  },
+  "native/sccsgoknives/nova_addammo.ogg": {
+    "sha256": "ca9df9611236380fc1dc2c4469f2bf0d993315ff5e5692f2ecad053a13a4cd6c",
+    "duration": 0.114717,
+    "peak_dbfs": -1.193,
+    "gain_db": -4.807
+  },
+  "native/sccsgoknives/nova_draw.ogg": {
+    "sha256": "64b484f5c11d51f02f8eaeb565697d95223733d0e701bb0a5658a9f0885c2873",
+    "duration": 0.736395,
+    "peak_dbfs": -0.0093,
+    "gain_db": -5.9907
+  },
+  "native/sccsgoknives/nova_fire_1.ogg": {
+    "sha256": "02ddb319218717420620489e22fa2c618fc23002b996a73ac72d917b2242952b",
+    "duration": 2.852698,
+    "peak_dbfs": 3.4554,
+    "gain_db": -9.4554
+  },
+  "native/sccsgoknives/nova_insertshell.ogg": {
+    "sha256": "ed747034e342145b696837f818640be6e6f7d8885d29861b476e4ea0c7ceb0a0",
+    "duration": 0.339796,
+    "peak_dbfs": -7.9441,
+    "gain_db": 0.0
+  },
+  "native/sccsgoknives/nova_pump.ogg": {
+    "sha256": "7a2ec7ff3a550366e845dce794c88a473198165584550d17c7d20267294fbe49",
+    "duration": 0.406689,
+    "peak_dbfs": -1.1371,
+    "gain_db": -4.8629
+  },
+  "native/sccsgoknives/p250_addammo.ogg": {
+    "sha256": "1348bc9bf0262bab7f6641f0ccb1f670fec1712a1943e6a39b2eddcbe2190997",
+    "duration": 0.157596,
+    "peak_dbfs": -0.4544,
+    "gain_db": -5.5456
+  },
+  "native/sccsgoknives/p250_clipin.ogg": {
+    "sha256": "07f9cfa6c3eb33e95c1f2ae9fcef0200c5a5819749c233daadf06e660edfa769",
+    "duration": 0.144127,
+    "peak_dbfs": -1.0495,
+    "gain_db": -4.9505
+  },
+  "native/sccsgoknives/p250_clipout.ogg": {
+    "sha256": "485b083c63a5b5c3fea28c27c123894bbf123b911e54082566e9ae296b27e5e1",
+    "duration": 0.435374,
+    "peak_dbfs": -1.33,
+    "gain_db": -4.67
+  },
+  "native/sccsgoknives/p250_draw.ogg": {
+    "sha256": "ce53ad686df4307924d2e2a755e280ab89b45786d2d803f5b685835b1e22ecc5",
+    "duration": 0.989864,
+    "peak_dbfs": -2.1738,
+    "gain_db": -3.8262
+  },
+  "native/sccsgoknives/p250_fire_1.ogg": {
+    "sha256": "3aefc04e24ed2a049f9d25ee42d39adeb7a1240da4a9af64cb3049cb4dfa47d7",
+    "duration": 1.842562,
+    "peak_dbfs": 1.2779,
+    "gain_db": -7.2779
+  },
+  "native/sccsgoknives/p250_slideback.ogg": {
+    "sha256": "9f2438909a1ab81f84cc380eb7629c50808fe3cf3e35ecade8bbf656d7f89cb3",
+    "duration": 0.150363,
+    "peak_dbfs": -0.6991,
+    "gain_db": -5.3009
+  },
+  "native/sccsgoknives/p250_sliderelease.ogg": {
+    "sha256": "a4fae6db049d543e9bb5ae2007147e4da98087ef02b580e6462d3a11cf048bf5",
+    "duration": 0.150363,
+    "peak_dbfs": -0.5805,
+    "gain_db": -5.4195
+  },
+  "native/sccsgoknives/p90_boltback.ogg": {
+    "sha256": "6bc033691f59e0a7f61b7a0aa41634555ecf1c7e17a6e64191dda0e765986af9",
+    "duration": 0.171111,
+    "peak_dbfs": -0.6706,
+    "gain_db": -5.3294
+  },
+  "native/sccsgoknives/p90_boltforward.ogg": {
+    "sha256": "89486ca79da75a699bd60067c6b63decc1cdf9b679cd8d11fe449c3e292ddf1b",
+    "duration": 0.174943,
+    "peak_dbfs": -0.7467,
+    "gain_db": -5.2533
+  },
+  "native/sccsgoknives/p90_cliphit.ogg": {
+    "sha256": "4999ff15c2dfbc0c9e353e557433207d98b8fa06bb73f0b442bf3641c79a17ac",
+    "duration": 0.117007,
+    "peak_dbfs": -0.2627,
+    "gain_db": -5.7373
+  },
+  "native/sccsgoknives/p90_clipin.ogg": {
+    "sha256": "b81d299a6414cc4be399489d45c893b76ea81ebf97aa0e427b129810769ccd8e",
+    "duration": 0.437506,
+    "peak_dbfs": -0.461,
+    "gain_db": -5.539
+  },
+  "native/sccsgoknives/p90_clipout.ogg": {
+    "sha256": "52dca0b7c69656ccac83c345b0a114828b6754ac840aba1fec8be14c27e988d0",
+    "duration": 0.234376,
+    "peak_dbfs": -0.5649,
+    "gain_db": -5.4351
+  },
+  "native/sccsgoknives/p90_cliprelease.ogg": {
+    "sha256": "d50cc38649f3cb292d10b33c48e679316a391320e833bd9d7e96fc6706803097",
+    "duration": 0.227937,
+    "peak_dbfs": -0.4242,
+    "gain_db": -5.5758
+  },
+  "native/sccsgoknives/p90_draw.ogg": {
+    "sha256": "4d74cda6f8fa0ca04564350d6ec57f619b35b59b8985cf9c060d745a35e29c3b",
+    "duration": 0.736395,
+    "peak_dbfs": -1.0067,
+    "gain_db": -4.9933
+  },
+  "native/sccsgoknives/p90_fire_1.ogg": {
+    "sha256": "2c439608501e653eeaa0dbc86cff81434a45b8f2eb1103b1fa65a15831cb3783",
+    "duration": 1.463855,
+    "peak_dbfs": -0.0938,
+    "gain_db": -5.9062
+  },
+  "native/sccsgoknives/p90_fire_2.ogg": {
+    "sha256": "fad47a0bd9d48eb20bbd90cf083db7f0ff7f14057c78834d93e9a40cb8db9b32",
+    "duration": 1.619252,
+    "peak_dbfs": 0.8233,
+    "gain_db": -6.8233
+  },
+  "native/sccsgoknives/revolver_barrelroll.ogg": {
+    "sha256": "1be9131bd85e1dd3ad6b6784b03f172c2f6683b3f14c75d8f86328f74834451f",
+    "duration": 0.259274,
+    "peak_dbfs": -5.6897,
+    "gain_db": -0.3103
+  },
+  "native/sccsgoknives/revolver_clipin.ogg": {
+    "sha256": "f19adf13fdbb63c75455c61c2c4f4fca3ff2e50ac48c418070ded605a87713c6",
+    "duration": 0.506349,
+    "peak_dbfs": -7.7281,
+    "gain_db": 0.0
+  },
+  "native/sccsgoknives/revolver_clipout.ogg": {
+    "sha256": "d57771e32664b56a6a9d0e1d3b998658545e8531041a0da9affaa2b1a9a496ff",
+    "duration": 0.506349,
+    "peak_dbfs": -3.0997,
+    "gain_db": -2.9003
+  },
+  "native/sccsgoknives/revolver_draw.ogg": {
+    "sha256": "84686e0b822d0bfa32cbb3f887c1a3f98b9dddc09e266a15c896208e5e9f1d6a",
+    "duration": 0.580726,
+    "peak_dbfs": -4.8494,
+    "gain_db": -1.1506
+  },
+  "native/sccsgoknives/revolver_fire_1.ogg": {
+    "sha256": "39137c3094de5ec8f83722cb78ba9c8c6d603ee05388219704af2fcb571eca5d",
+    "duration": 3.484943,
+    "peak_dbfs": 1.9532,
+    "gain_db": -7.9532
+  },
+  "native/sccsgoknives/revolver_prepare.ogg": {
+    "sha256": "a31c4ca932c4d116fa15ee18a78740ac0083bd96db17f2dc59f07141447e52e2",
+    "duration": 0.259274,
+    "peak_dbfs": -5.6897,
+    "gain_db": -0.3103
+  },
+  "native/sccsgoknives/revolver_sideback.ogg": {
+    "sha256": "82a77b01b3109c95d8718dc7262c49b927e8606470ea64ae38cb6f1489467876",
+    "duration": 0.779592,
+    "peak_dbfs": -1.7664,
+    "gain_db": -4.2336
+  },
+  "native/sccsgoknives/revolver_siderelease.ogg": {
+    "sha256": "caed296833a25d400282bb908958004a1999fda002ff0ab1b40bc49346f0b020",
+    "duration": 0.269615,
+    "peak_dbfs": -1.1389,
+    "gain_db": -4.8611
+  },
+  "native/sccsgoknives/sawedoff_addammo.ogg": {
+    "sha256": "f8aa4b19c30c4ffc9b9e9bdf5ed2d72aa7183e53238da2602c1b7de2673f2bd9",
+    "duration": 0.405986,
+    "peak_dbfs": -1.042,
+    "gain_db": -4.958
+  },
+  "native/sccsgoknives/sawedoff_draw.ogg": {
+    "sha256": "c09c233c03c04f0b39862d0a1274c28856e9fba8742d562a8c24897d447576de",
+    "duration": 0.454422,
+    "peak_dbfs": 0.288,
+    "gain_db": -6.288
+  },
+  "native/sccsgoknives/sawedoff_fire_1.ogg": {
+    "sha256": "00c0324053caeea3a14edb2e4d30ac04cde0468dca66bd5e5d624e7adb0e09c8",
+    "duration": 2.796871,
+    "peak_dbfs": 1.1455,
+    "gain_db": -7.1455
+  },
+  "native/sccsgoknives/sawedoff_insertshell.ogg": {
+    "sha256": "d616f9d0af1145a8f61eac7480a01f8587e89b1988ae285f9783935ac4c15d97",
+    "duration": 0.462041,
+    "peak_dbfs": -9.7793,
+    "gain_db": 0.0
+  },
+  "native/sccsgoknives/sawedoff_pump.ogg": {
+    "sha256": "a265a60c615018dc6d3229c2be6d0cb0852997ff335d8587fdf0d73bcead05c9",
+    "duration": 0.444331,
+    "peak_dbfs": -1.0567,
+    "gain_db": -4.9433
+  },
+  "native/sccsgoknives/scar20_addammo.ogg": {
+    "sha256": "591f29da7043b0836d6e2f5eee4150678a49aa1beef4514b8f26e791a964666e",
+    "duration": 0.636327,
+    "peak_dbfs": -0.1259,
+    "gain_db": -5.8741
+  },
+  "native/sccsgoknives/scar20_boltback.ogg": {
+    "sha256": "128ed7493c3092189378935ebc14e4c4e7fa15e7af597f4caa5efb6f7c2e0b7d",
+    "duration": 0.222653,
+    "peak_dbfs": -0.9523,
+    "gain_db": -5.0477
+  },
+  "native/sccsgoknives/scar20_boltforward.ogg": {
+    "sha256": "b7af11845f069cd16fd9feeb8f4c3398e2406e15879d28ccdae1c3ae189524e2",
+    "duration": 0.286644,
+    "peak_dbfs": -0.391,
+    "gain_db": -5.609
+  },
+  "native/sccsgoknives/scar20_clipin.ogg": {
+    "sha256": "d9094f2014b5411771db5d65d2c12563ca8237a6132834677dd4f859359bc35f",
+    "duration": 0.29449,
+    "peak_dbfs": -0.6123,
+    "gain_db": -5.3877
+  },
+  "native/sccsgoknives/scar20_clipout.ogg": {
+    "sha256": "dd01b044c57dbb359f69377c114192850eda5f969c11ed156a2bc9ced3d4db3d",
+    "duration": 0.709116,
+    "peak_dbfs": 0.2178,
+    "gain_db": -6.2178
+  },
+  "native/sccsgoknives/scar20_draw.ogg": {
+    "sha256": "5bfe749cea1f5a726992e081eefc9c3e77ab0611dfec183d7c883c61529f7cac",
+    "duration": 0.830567,
+    "peak_dbfs": -6.3836,
+    "gain_db": 0.0
+  },
+  "native/sccsgoknives/scar20_fire_1.ogg": {
+    "sha256": "e4edafc74c8ac868a0a5f804435455eee21d8e552c0fcccf1d20d36fc27a92b9",
+    "duration": 3.25,
+    "peak_dbfs": 1.2607,
+    "gain_db": -7.2607
+  },
+  "native/sccsgoknives/scar20_fire_2.ogg": {
+    "sha256": "dc64c42d59b607d3e5a6278fe2ca5b70bcbeb35381dae81cac8a6237a2855cd7",
+    "duration": 3.25,
+    "peak_dbfs": 2.1368,
+    "gain_db": -8.1368
+  },
+  "native/sccsgoknives/scar20_fire_3.ogg": {
+    "sha256": "3e875a403210e4afe91637d3affbd8c7597f4ba71f5babf802f0d236f0e5a510",
+    "duration": 3.25,
+    "peak_dbfs": 1.2977,
+    "gain_db": -7.2977
+  },
+  "native/sccsgoknives/scar20_handles.ogg": {
+    "sha256": "445b484c9d50014c00b8896846f3acb45fcaa1cfd805e4b66ebf0491881bebb1",
+    "duration": 0.907347,
+    "peak_dbfs": -1.8367,
+    "gain_db": -4.1633
+  },
+  "native/sccsgoknives/scar20_hit.ogg": {
+    "sha256": "68265eaa097399a79c7f3a91fd9a25348a9693d9df5a920ddd28aa4a67cda81a",
+    "duration": 0.281723,
+    "peak_dbfs": -1.332,
+    "gain_db": -4.668
+  },
+  "native/sccsgoknives/scar20_zoom.ogg": {
+    "sha256": "fabc9cd1c271dadc58cc14bd02ebddda807a1671cf77e0bfb00fb0a8d6e9e571",
+    "duration": 0.241746,
+    "peak_dbfs": -1.9069,
+    "gain_db": -4.0931
+  },
+  "native/sccsgoknives/scar20_zoom_out.ogg": {
+    "sha256": "752296348935ebd7c46a5f0343cfad27063fa94b91f144c5f0171460ca64b944",
+    "duration": 0.241746,
+    "peak_dbfs": -1.9069,
+    "gain_db": -4.0931
+  },
+  "native/sccsgoknives/sg556_addammo.ogg": {
+    "sha256": "17d85f33da691020579f0e73c6883894374cdda94b530db78672194b15ae37b9",
+    "duration": 0.5,
+    "peak_dbfs": 0.1737,
+    "gain_db": -6.1737
+  },
+  "native/sccsgoknives/sg556_boltback.ogg": {
+    "sha256": "6dbc12a0d4f6cdf93b874f846dd9df64ee48db04d4ac4a4c7a4962fdc35fa8e9",
+    "duration": 0.291088,
+    "peak_dbfs": -0.3617,
+    "gain_db": -5.6383
+  },
+  "native/sccsgoknives/sg556_boltforward.ogg": {
+    "sha256": "10833de16b7e27ae88474b689c529a340d571dbca055947c51b56e09257ef30c",
+    "duration": 0.346893,
+    "peak_dbfs": -0.2867,
+    "gain_db": -5.7133
+  },
+  "native/sccsgoknives/sg556_clipin.ogg": {
+    "sha256": "dce09db4494cf8b20f770805d741afaffdb2fbd7f6524ca58bab33a0fdf3f45b",
+    "duration": 0.406259,
+    "peak_dbfs": -1.0736,
+    "gain_db": -4.9264
+  },
+  "native/sccsgoknives/sg556_clipout.ogg": {
+    "sha256": "751212b9ec8b0efa38c37e0cd32329117131c23527bdf0bfe9987abfe0abe16f",
+    "duration": 0.317007,
+    "peak_dbfs": -0.3614,
+    "gain_db": -5.6386
+  },
+  "native/sccsgoknives/sg556_draw.ogg": {
+    "sha256": "587fc13b4c0fc884832964df246da1f51da1303472839c0931db2f4a20d01d67",
+    "duration": 0.521542,
+    "peak_dbfs": -1.8862,
+    "gain_db": -4.1138
+  },
+  "native/sccsgoknives/sg556_fire_1.ogg": {
+    "sha256": "b69f49c94fa0d48c8c19c3253dd68c99932f5c1b5948c06bebe92dff290254d2",
+    "duration": 2.265125,
+    "peak_dbfs": 0.7181,
+    "gain_db": -6.7181
+  },
+  "native/sccsgoknives/sg556_fire_2.ogg": {
+    "sha256": "0ba7928edcca4b72100fa6c240f70041244c44075f98cf4dd5aabb0fbaa9fc04",
+    "duration": 3.470136,
+    "peak_dbfs": 0.6994,
+    "gain_db": -6.6994
+  },
+  "native/sccsgoknives/sg556_fire_3.ogg": {
+    "sha256": "737bb353adcbfc8ca459fbb2af35213e1e07003cdc13cc714fc7261af89d547b",
+    "duration": 3.579161,
+    "peak_dbfs": 0.9033,
+    "gain_db": -6.9033
+  },
+  "native/sccsgoknives/sg556_fire_4.ogg": {
+    "sha256": "4803945dd07239e85f7eb2151eb55ab6d947cf488466d7112a9fb77553cd8f48",
+    "duration": 1.163968,
+    "peak_dbfs": 0.4452,
+    "gain_db": -6.4452
+  },
+  "native/sccsgoknives/sg556_zoom.ogg": {
+    "sha256": "9e409dfb42349aaf8a198c9b832e16eafed42d24d086cbb604c99d4b9d952949",
+    "duration": 0.301429,
+    "peak_dbfs": -0.7927,
+    "gain_db": -5.2073
+  },
+  "native/sccsgoknives/sg556_zoom_out.ogg": {
+    "sha256": "4d90fdf7937d9939cc94455457ee53bcae0f2f8eb5bf7c901f03404ec3bb4ca4",
+    "duration": 0.53678,
+    "peak_dbfs": -8.561,
+    "gain_db": 0.0
+  },
+  "native/sccsgoknives/ssg08_addammo.ogg": {
+    "sha256": "90ef4427a66e1c37ef168103e0760763aeecd98f510e1a2a909b47ab45ac0f23",
+    "duration": 0.62932,
+    "peak_dbfs": -0.7731,
+    "gain_db": -5.2269
+  },
+  "native/sccsgoknives/ssg08_boltback.ogg": {
+    "sha256": "20e4d0d080640b7cf1b4692f6c412db2eab0fdc7c496804192aaf970e626e3ca",
+    "duration": 0.332902,
+    "peak_dbfs": -0.2563,
+    "gain_db": -5.7437
+  },
+  "native/sccsgoknives/ssg08_boltforward.ogg": {
+    "sha256": "cfeb562c923af801b580be16bdde9006eb99b262f4b6127485dcac8d886f41fa",
+    "duration": 0.332902,
+    "peak_dbfs": -1.7545,
+    "gain_db": -4.2455
+  },
+  "native/sccsgoknives/ssg08_cliphit.ogg": {
+    "sha256": "1a40b181adf3f11e4a30374ffbe4cdb8e9a3b66ac90123618d4787d43a847aca",
+    "duration": 0.68941,
+    "peak_dbfs": -0.2544,
+    "gain_db": -5.7456
+  },
+  "native/sccsgoknives/ssg08_clipin.ogg": {
+    "sha256": "367222f4fdc1edcc16ebdef3befee018f568764a421f3bf421aaa9c35e9a64ce",
+    "duration": 0.089433,
+    "peak_dbfs": -0.8246,
+    "gain_db": -5.1754
+  },
+  "native/sccsgoknives/ssg08_clipin_slide.ogg": {
+    "sha256": "ed0694d938beaf30f4b0b3f1eaad1b197799d0ebb574d09bf41caee524f19b7f",
+    "duration": 0.131769,
+    "peak_dbfs": -17.3511,
+    "gain_db": 0.0
+  },
+  "native/sccsgoknives/ssg08_clipout.ogg": {
+    "sha256": "04a7eb2e56a7a062a0ee3c86ee11e73b2e9b8db989f44dcce5916111759defba",
+    "duration": 0.308231,
+    "peak_dbfs": -0.7879,
+    "gain_db": -5.2121
+  },
+  "native/sccsgoknives/ssg08_draw.ogg": {
+    "sha256": "b1e06c94f7471454ee46130c00c5c9a25951c3fc9d9a3052a9b48784e0e8561a",
+    "duration": 1.0,
+    "peak_dbfs": -0.1509,
+    "gain_db": -5.8491
+  },
+  "native/sccsgoknives/ssg08_fire_1.ogg": {
+    "sha256": "bd8f685d5f6592d6e5e57d8340042c7552b303ef81cad6ffddc052acdb008b8c",
+    "duration": 2.25,
+    "peak_dbfs": 2.0769,
+    "gain_db": -8.0769
+  },
+  "native/sccsgoknives/ssg08_zoom.ogg": {
+    "sha256": "54a29a81abaf9c9bb74d30e56610f3fb02d9a647820294273a4d9ac6cc62a576",
+    "duration": 0.235488,
+    "peak_dbfs": -2.0986,
+    "gain_db": -3.9014
+  },
+  "native/sccsgoknives/ssg08_zoom_out.ogg": {
+    "sha256": "db7f675b7262f5cc3f3aff3d6a7b513eac658ac20ad6a75843bde21a50b4f804",
+    "duration": 0.235488,
+    "peak_dbfs": -2.0986,
+    "gain_db": -3.9014
+  },
+  "native/sccsgoknives/taser_chargeready.ogg": {
+    "sha256": "646ed67aed13ec7c115a4c5993b02399dc7f51e33767cae15932a8b8c8d66b12",
+    "duration": 0.413492,
+    "peak_dbfs": -1.8908,
+    "gain_db": -4.1092
+  },
+  "native/sccsgoknives/taser_draw.ogg": {
+    "sha256": "ff7a70243cdd48083e1a5b99354e55b8ffe2d5bd79897d3462c36bd8833a3f8d",
+    "duration": 0.441519,
+    "peak_dbfs": -1.9161,
+    "gain_db": -4.0839
+  },
+  "native/sccsgoknives/taser_fire_1.ogg": {
+    "sha256": "ca274b31f6b9ad83061d0450a339cb4741bbef313f3e861530537809c824e7bc",
+    "duration": 1.459206,
+    "peak_dbfs": 2.0601,
+    "gain_db": -8.0601
+  },
+  "native/sccsgoknives/tec9_addammo.ogg": {
+    "sha256": "91c201361770c6a9d369a9a077e36ab625f3367135d11ee4b3540e4db2010276",
+    "duration": 0.232971,
+    "peak_dbfs": -0.4504,
+    "gain_db": -5.5496
+  },
+  "native/sccsgoknives/tec9_boltpull.ogg": {
+    "sha256": "859756c92ebca49bcdb7af80b180869722b529a2d065ec830bc3d57aa1bef7f7",
+    "duration": 0.25,
+    "peak_dbfs": -0.1127,
+    "gain_db": -5.8873
+  },
+  "native/sccsgoknives/tec9_boltrelease.ogg": {
+    "sha256": "44b74082be8fa4885e3c83e6f4831a21c0a692c05a177f1156da919a24dd01c0",
+    "duration": 0.5,
+    "peak_dbfs": -0.6465,
+    "gain_db": -5.3535
+  },
+  "native/sccsgoknives/tec9_clipin.ogg": {
+    "sha256": "922e8ef2426ef01707b6d760dfbb09e14672ce38523bd89be9e28c826dd2a926",
+    "duration": 0.142041,
+    "peak_dbfs": 0.1749,
+    "gain_db": -6.1749
+  },
+  "native/sccsgoknives/tec9_clipout.ogg": {
+    "sha256": "1637ba9de09ca3e64ce254bd663f4f50757af5e3d70f47e49949939bc62da406",
+    "duration": 0.343741,
+    "peak_dbfs": -0.7968,
+    "gain_db": -5.2032
+  },
+  "native/sccsgoknives/tec9_draw.ogg": {
+    "sha256": "df8ad8f2503ba2c7c7ca34510679caa4ab219bf5eeeb58724d7450f8f3b30505",
+    "duration": 1.0,
+    "peak_dbfs": -2.9747,
+    "gain_db": -3.0253
+  },
+  "native/sccsgoknives/tec9_fire_1.ogg": {
+    "sha256": "9c1728b195c535eda6e7a70606dbeb48b0077983049e945c94a6e434424e2568",
+    "duration": 2.532721,
+    "peak_dbfs": 1.9132,
+    "gain_db": -7.9132
+  },
+  "native/sccsgoknives/ump45_addammo.ogg": {
+    "sha256": "4a5469482f506e048e7a1a8852f38701e765811a6a034c4547d79d3a76c11d27",
+    "duration": 0.248844,
+    "peak_dbfs": -1.4998,
+    "gain_db": -4.5002
+  },
+  "native/sccsgoknives/ump45_boltback.ogg": {
+    "sha256": "c7e32ddf86e1f487e4761bca698139b2f72b968235769f589042c730c442a08c",
+    "duration": 0.179048,
+    "peak_dbfs": -0.4621,
+    "gain_db": -5.5379
+  },
+  "native/sccsgoknives/ump45_boltforward.ogg": {
+    "sha256": "df99039bcd254d467f32deab0b5095024f7d61e0203d58af2d8e94258d3fc72a",
+    "duration": 0.139773,
+    "peak_dbfs": -0.0738,
+    "gain_db": -5.9262
+  },
+  "native/sccsgoknives/ump45_clipin.ogg": {
+    "sha256": "d2fbd6dcfbf9e29fd36ffa2a9b82b6da89418d799492ba4f78175015559c1dcc",
+    "duration": 0.142245,
+    "peak_dbfs": -1.1577,
+    "gain_db": -4.8423
+  },
+  "native/sccsgoknives/ump45_clipout.ogg": {
+    "sha256": "1af5d435389e961436ac0c178d3ae9c97c17a888c56261bbbc98683f0b1a9c21",
+    "duration": 0.301973,
+    "peak_dbfs": -0.9615,
+    "gain_db": -5.0385
+  },
+  "native/sccsgoknives/ump45_draw.ogg": {
+    "sha256": "fa950e818c137d5f5a181ae9ed1ad9cebe405adeed02d8e2fa26b949453987b8",
+    "duration": 0.812494,
+    "peak_dbfs": 0.092,
+    "gain_db": -6.092
+  },
+  "native/sccsgoknives/ump45_fire_1.ogg": {
+    "sha256": "a831fddff405dde16458cfd852e5753bd2ea6cd5bdacb9c8afee0b3431424152",
+    "duration": 2.089751,
+    "peak_dbfs": 0.6644,
+    "gain_db": -6.6644
+  },
+  "native/sccsgoknives/usp_silencer_addammo.ogg": {
+    "sha256": "64b4bf656fb7e36a4fb2634675a7a2e1b96a21fb41316617ecb84e5fab4ed61e",
+    "duration": 0.343719,
+    "peak_dbfs": 0.5321,
+    "gain_db": -6.5321
+  },
+  "native/sccsgoknives/usp_silencer_clipin.ogg": {
+    "sha256": "c9a22a295fb32d0110c0a043bddbeb30e29ae5e777557892ddae9cfa7c31000e",
+    "duration": 0.23483,
+    "peak_dbfs": 0.432,
+    "gain_db": -6.432
+  },
+  "native/sccsgoknives/usp_silencer_clipout.ogg": {
+    "sha256": "7610d872d3ff0eeec48180b775404756dd98cb307d5fe13dc2af61371010f0bb",
+    "duration": 0.265397,
+    "peak_dbfs": -0.7782,
+    "gain_db": -5.2218
+  },
+  "native/sccsgoknives/usp_silencer_draw.ogg": {
+    "sha256": "5d6f755ccd30f88fef4795a8db9a97289715572379ed3b22bd3d2417e5d3bcb2",
+    "duration": 0.989864,
+    "peak_dbfs": -2.1738,
+    "gain_db": -3.8262
+  },
+  "native/sccsgoknives/usp_silencer_fire_1.ogg": {
+    "sha256": "24bba606c0001855ca121b84a2e8cef293909f5dea3765ba6920593a99f369c5",
+    "duration": 2.10068,
+    "peak_dbfs": 0.908,
+    "gain_db": -6.908
+  },
+  "native/sccsgoknives/usp_silencer_fire_2.ogg": {
+    "sha256": "87c48356173e5e807233c84b7b0c1cf241feb2eec8fe2eee0a3ac719a5b497c8",
+    "duration": 2.307483,
+    "peak_dbfs": 0.9794,
+    "gain_db": -6.9794
+  },
+  "native/sccsgoknives/usp_silencer_fire_3.ogg": {
+    "sha256": "21e04be398362f85ef3c3ca64199b67d1b0355b981559f96d43d1aefb85bfb3b",
+    "duration": 2.242177,
+    "peak_dbfs": 1.6404,
+    "gain_db": -7.6404
+  },
+  "native/sccsgoknives/usp_silencer_fire_silenced_1.ogg": {
+    "sha256": "3bb6ad698285c4a686773d124c3dc6c6dff1a8eb305a8a82cfa3477e02c7ab07",
+    "duration": 1.606939,
+    "peak_dbfs": 1.1659,
+    "gain_db": -7.1659
+  },
+  "native/sccsgoknives/usp_silencer_fire_silenced_2.ogg": {
+    "sha256": "2e7cefb79a52f8be405bfe2162caa79fb900c3991f63b9da49bd20edf1b9e6eb",
+    "duration": 1.611156,
+    "peak_dbfs": 1.1047,
+    "gain_db": -7.1047
+  },
+  "native/sccsgoknives/usp_silencer_fire_silenced_3.ogg": {
+    "sha256": "f298389f21218752ff895f7491bc491bfcaa5a8c11871335759d7894d251ade2",
+    "duration": 1.609048,
+    "peak_dbfs": 1.4925,
+    "gain_db": -7.4925
+  },
+  "native/sccsgoknives/usp_silencer_silencerscrew1.ogg": {
+    "sha256": "6fa9367d3ac789cd451f7c2fa5e1d354b9f8877bb2186cdf0b54bc14d358bb14",
+    "duration": 0.322449,
+    "peak_dbfs": -0.2732,
+    "gain_db": -5.7268
+  },
+  "native/sccsgoknives/usp_silencer_silencerscrew2.ogg": {
+    "sha256": "b839c60ae92079bf9da21b6dd1acc67a6b7db7ddc376ae49a8bb07ed266087ea",
+    "duration": 0.311701,
+    "peak_dbfs": -5.6982,
+    "gain_db": -0.3018
+  },
+  "native/sccsgoknives/usp_silencer_silencerscrew3.ogg": {
+    "sha256": "c9033d2b8b644b20e1120d08b8cc29fa95ae703135275848b4fbf3ddcb03a87f",
+    "duration": 0.333197,
+    "peak_dbfs": -8.7945,
+    "gain_db": 0.0
+  },
+  "native/sccsgoknives/usp_silencer_silencerscrew4.ogg": {
+    "sha256": "de536f47529f2b1061970d5e72ab048ed932fdc6d00e38825953b1e89288293a",
+    "duration": 0.361859,
+    "peak_dbfs": -11.2978,
+    "gain_db": 0.0
+  },
+  "native/sccsgoknives/usp_silencer_silencerscrew5.ogg": {
+    "sha256": "e2ff9141f729ab329383ce60753a53256d72756f51f7ebd9615bc50d4eca98a6",
+    "duration": 0.322358,
+    "peak_dbfs": -3.4689,
+    "gain_db": -2.5311
+  },
+  "native/sccsgoknives/usp_silencer_silencerscrewonstart.ogg": {
+    "sha256": "0d4cbb857114bff674718a6662a326f766bdaa3deac5a570a62f57f730e869aa",
+    "duration": 0.25805,
+    "peak_dbfs": -2.0301,
+    "gain_db": -3.9699
+  },
+  "native/sccsgoknives/usp_silencer_slideback.ogg": {
+    "sha256": "a976cfb6ffc6bdb27d6b9b1f6da03392c20cfa83cd8648d079768c1913205b17",
+    "duration": 0.132857,
+    "peak_dbfs": 0.2173,
+    "gain_db": -6.2173
+  },
+  "native/sccsgoknives/usp_silencer_sliderelease.ogg": {
+    "sha256": "a9a29acb0aa44ea25a66ff9bc1b48b6083c4839a6d96b9796d6233b7ae910dd9",
+    "duration": 0.199048,
+    "peak_dbfs": -0.5517,
+    "gain_db": -5.4483
+  },
+  "native/sccsgoknives/xm1014_addammo.ogg": {
+    "sha256": "1d66f2633398ec20adbcfb66f4286ca256269ba1677c0f6fc8548d6b518a96d9",
+    "duration": 0.188889,
+    "peak_dbfs": 0.0676,
+    "gain_db": -6.0676
+  },
+  "native/sccsgoknives/xm1014_draw.ogg": {
+    "sha256": "ce2f588b77a86c95fa6a447bf94bbd44418ea95120771319e4f802eb870a50f5",
+    "duration": 0.379864,
+    "peak_dbfs": -1.784,
+    "gain_db": -4.216
+  },
+  "native/sccsgoknives/xm1014_fire_1.ogg": {
+    "sha256": "43575a21568054f0534e83d0c40cebc3a100cec97a8ddaeb5b0ecf26b972d69f",
+    "duration": 3.194331,
+    "peak_dbfs": 1.7545,
+    "gain_db": -7.7545
+  },
+  "native/sccsgoknives/xm1014_grab.ogg": {
+    "sha256": "c47763b46285d6448a0c6989139d3885436aff17b74c41aa3b9ec1c81f084c81",
+    "duration": 0.242177,
+    "peak_dbfs": -0.7686,
+    "gain_db": -5.2314
+  },
+  "native/sccsgoknives/xm1014_insertshell.ogg": {
+    "sha256": "2345619b30c10a35355b68202f79003cdded50025cf5cc138c87bc9c0859c6e2",
+    "duration": 0.26424,
+    "peak_dbfs": -7.3965,
+    "gain_db": 0.0
+  },
+  "native/sccsgotactical/shieldhit/bullet_hit_shield_01.wav": {
+    "sha256": "00e6d55f745522f88539e8a26552ce7216f1c2859f3558bcf7489ae96fab66f0",
+    "duration": 1.335125,
+    "peak_dbfs": 0.0,
+    "gain_db": -6.0
+  },
+  "native/sccsgotactical/shieldhit/bullet_hit_shield_02.wav": {
+    "sha256": "986a2fb7b2d4cc92ddf9dd2742275981eefc5cec2c3db2ed94120cad809e7abb",
+    "duration": 1.429093,
+    "peak_dbfs": 0.0,
+    "gain_db": -6.0
+  },
+  "native/sccsgotactical/shieldhit/bullet_hit_shield_03.wav": {
+    "sha256": "123696a994fb7c44622ff732d957ce112afc7b6a4c5cd44e3034b4ea4a3c8539",
+    "duration": 1.599184,
+    "peak_dbfs": 0.0,
+    "gain_db": -6.0
+  },
+  "native/sccsgotactical/shieldhit/bullet_hit_shield_04.wav": {
+    "sha256": "2e224e4e08d4a3cae7835602252f4f2443a88f7f7aa8e0a159e8aaa8b19768e7",
+    "duration": 1.277415,
+    "peak_dbfs": 0.0,
+    "gain_db": -6.0
+  },
+  "native/sccsgotactical/shieldhit/bullet_hit_shield_05.wav": {
+    "sha256": "e1d78a5beaaf54947fa7a65b9a6c5748840cf174fdf990d01e4e78a5c860768d",
+    "duration": 0.887347,
+    "peak_dbfs": 0.0,
+    "gain_db": -6.0
+  },
+  "native/sccsgotactical/shieldhit/bullet_hit_shield_06.wav": {
+    "sha256": "864c2ea73780db665cd0b51b200efda528f7bb3573a2cb0527ba383cbfce9c41",
+    "duration": 1.009229,
+    "peak_dbfs": 0.0,
+    "gain_db": -6.0
+  },
+  "native/sccsgotactical/shieldhit/bullet_hit_shield_07.wav": {
+    "sha256": "7a4f7f52dac63892e89dc2e5a85fb2c2108ea352e1b96bfa46ea8340483faf71",
+    "duration": 0.999728,
+    "peak_dbfs": 0.0,
+    "gain_db": -6.0
+  },
+  "native/sccsgovoice/en/ct/affirmative-1.ogg": {
+    "sha256": "dd8aa203dffc124e476dab981bfef0a8a0c08a60ad4721ad5fe04d64fd35958e",
+    "duration": 0.494625,
+    "peak_dbfs": -6.3866,
+    "gain_db": 0.0
+  },
+  "native/sccsgovoice/en/ct/affirmative-2.ogg": {
+    "sha256": "237aa5cb7f74fa0a4fe29f404f0267e70ba7d793acce49c11ebf9e7e996783db",
+    "duration": 0.772062,
+    "peak_dbfs": -6.2271,
+    "gain_db": 0.0
+  },
+  "native/sccsgovoice/en/ct/affirmative-3.ogg": {
+    "sha256": "fdbf25273938a8c4d18eb0888f36c3218f31e69b6f232aa7df68d21d885f4ea7",
+    "duration": 0.639375,
+    "peak_dbfs": -6.0685,
+    "gain_db": 0.0
+  },
+  "native/sccsgovoice/en/ct/decoy-1.ogg": {
+    "sha256": "443687ba2539938b3d5e98fce57bec4cbf3bc0e700c540ec99dda71a1902f1c4",
+    "duration": 0.654625,
+    "peak_dbfs": -6.129,
+    "gain_db": 0.0
+  },
+  "native/sccsgovoice/en/ct/decoy-2.ogg": {
+    "sha256": "91380ae930acacbcc7393cc415ec7ae72bf173ed4f2a8d752c8e76c91786320b",
+    "duration": 0.881563,
+    "peak_dbfs": -6.6369,
+    "gain_db": 0.0
+  },
+  "native/sccsgovoice/en/ct/decoy-3.ogg": {
+    "sha256": "f6b3b3798742c0769cf38fb7fb3d3c6201fad038fcdc0459ad420ba0d86cc949",
+    "duration": 1.265625,
+    "peak_dbfs": -6.2426,
+    "gain_db": 0.0
+  },
+  "native/sccsgovoice/en/ct/enemydown-1.ogg": {
+    "sha256": "5069218031f2912830a3b750351bb7a39cac1a90365b7b2edf42d7984b6eb818",
+    "duration": 0.733187,
+    "peak_dbfs": -6.2983,
+    "gain_db": 0.0
+  },
+  "native/sccsgovoice/en/ct/enemydown-2.ogg": {
+    "sha256": "f2c3a1be0ec144c6020fc79dba899a689af251bd2bf93407ba95fc70967b9c99",
+    "duration": 0.593562,
+    "peak_dbfs": -6.239,
+    "gain_db": 0.0
+  },
+  "native/sccsgovoice/en/ct/enemydown-3.ogg": {
+    "sha256": "a7b65a16799a995354938170ac19117b5a8aef0ac46f1ade12bbed098e50518b",
+    "duration": 0.593562,
+    "peak_dbfs": -5.511,
+    "gain_db": -0.489
+  },
+  "native/sccsgovoice/en/ct/flashbang-1.ogg": {
+    "sha256": "7a3b659d5701a7df0a77322fc724fb696ec703d2f579c718df43fd97ebe5cb78",
+    "duration": 0.680813,
+    "peak_dbfs": -6.6403,
+    "gain_db": 0.0
+  },
+  "native/sccsgovoice/en/ct/flashbang-2.ogg": {
+    "sha256": "8d8dc552bd5ae62eec979e7646836e956818214517bc40153a48f5011e57a4af",
+    "duration": 1.073625,
+    "peak_dbfs": -6.8448,
+    "gain_db": 0.0
+  },
+  "native/sccsgovoice/en/ct/flashbang-3.ogg": {
+    "sha256": "a39087cca54a5b8eb25f3abe9c1814698bfd13f7e524be6975b182e030d88c24",
+    "duration": 1.038687,
+    "peak_dbfs": -6.6723,
+    "gain_db": 0.0
+  },
+  "native/sccsgovoice/en/ct/followingfriend-1.ogg": {
+    "sha256": "d39dc28eca73425534ae82b6797242ecf20b43c724ec0ad2ec012254a0b475b8",
+    "duration": 0.619719,
+    "peak_dbfs": -6.9447,
+    "gain_db": 0.0
+  },
+  "native/sccsgovoice/en/ct/followingfriend-2.ogg": {
+    "sha256": "c2aa72a5b48c388eb8e27b074a527bcd52b1db19696a5a182909b11a3f355eb2",
+    "duration": 0.663344,
+    "peak_dbfs": -6.5245,
+    "gain_db": 0.0
+  },
+  "native/sccsgovoice/en/ct/followingfriend-3.ogg": {
+    "sha256": "6edd2e355a1220b33305e6e49a1555494348968c88905383c0f33e7351b17c7a",
+    "duration": 0.872844,
+    "peak_dbfs": -7.4258,
+    "gain_db": 0.0
+  },
+  "native/sccsgovoice/en/ct/grenade-1.ogg": {
+    "sha256": "65208249215181d89bc1eee0fd88f2b11428083a23526ed08371c6d918dccf97",
+    "duration": 0.846656,
+    "peak_dbfs": -8.7691,
+    "gain_db": 0.0
+  },
+  "native/sccsgovoice/en/ct/grenade-2.ogg": {
+    "sha256": "b2a02e714046da8debb898a7e9b436a1dac33cf0ba5575e5c136404d6fe6395e",
+    "duration": 1.021219,
+    "peak_dbfs": -9.1276,
+    "gain_db": 0.0
+  },
+  "native/sccsgovoice/en/ct/grenade-3.ogg": {
+    "sha256": "3b30b076a693891b52d3d342379d9d083b7e2e765f15b8abdf8c3eadf7400957",
+    "duration": 0.628469,
+    "peak_dbfs": -8.5951,
+    "gain_db": 0.0
+  },
+  "native/sccsgovoice/en/ct/inposition-1.ogg": {
+    "sha256": "bb9b8b5fd08beef9d4042befdad55a5fc72fa18e3d315ea31e0e41ae6f2e091d",
+    "duration": 0.899,
+    "peak_dbfs": -6.4385,
+    "gain_db": 0.0
+  },
+  "native/sccsgovoice/en/ct/inposition-2.ogg": {
+    "sha256": "a5e8aa06df0d10093a10c5ccc29a9529527261ff1969f1cd8ca0f317522aa44d",
+    "duration": 0.541156,
+    "peak_dbfs": -7.5892,
+    "gain_db": 0.0
+  },
+  "native/sccsgovoice/en/ct/inposition-3.ogg": {
+    "sha256": "e6f163d882462814f8550b204ad976689f11abe5fc937e60b9dceb4f5dd1b52d",
+    "duration": 0.9165,
+    "peak_dbfs": -6.5114,
+    "gain_db": 0.0
+  },
+  "native/sccsgovoice/en/ct/molotov-1.ogg": {
+    "sha256": "d9b0752551c6b2b17423bdfe93cdc8442efca0ead7b4dc63df99a1b72ec4605e",
+    "duration": 1.143406,
+    "peak_dbfs": -6.6134,
+    "gain_db": 0.0
+  },
+  "native/sccsgovoice/en/ct/molotov-2.ogg": {
+    "sha256": "784c185399e35ae1ac3874556966d05d60ec8c61d2e78ce26b8e1b2b38c098d9",
+    "duration": 0.90775,
+    "peak_dbfs": -7.2223,
+    "gain_db": 0.0
+  },
+  "native/sccsgovoice/en/ct/molotov-3.ogg": {
+    "sha256": "40902c9cc0b00d2667c095e0af8e79387e09f60bceac9bae1d41582f0feb295a",
+    "duration": 0.785563,
+    "peak_dbfs": -7.5874,
+    "gain_db": 0.0
+  },
+  "native/sccsgovoice/en/ct/negative-1.ogg": {
+    "sha256": "d4a3b1563c91b0d53525367f8367116634028310a0a5e75208ea17e96c4a94a0",
+    "duration": 0.714125,
+    "peak_dbfs": -7.1618,
+    "gain_db": 0.0
+  },
+  "native/sccsgovoice/en/ct/negative-2.ogg": {
+    "sha256": "a4dd73ba5b1e4e86b980929bfbfd1ba8ede175a89c6575a19ebca147effb865e",
+    "duration": 0.951406,
+    "peak_dbfs": -6.5642,
+    "gain_db": 0.0
+  },
+  "native/sccsgovoice/en/ct/negative-3.ogg": {
+    "sha256": "8fc5ffd4aa011feebb75250790adb447586b1275d531028abe119373347fffe9",
+    "duration": 0.899,
+    "peak_dbfs": -6.9982,
+    "gain_db": 0.0
+  },
+  "native/sccsgovoice/en/ct/radio.enemyspotted-1.ogg": {
+    "sha256": "ab24346a3ad80408756465c85ceb558b25ff79f1ce19b4126462ac96a27ce336",
+    "duration": 1.012469,
+    "peak_dbfs": -6.1834,
+    "gain_db": 0.0
+  },
+  "native/sccsgovoice/en/ct/radio.enemyspotted-2.ogg": {
+    "sha256": "7876b7872ee577617e7aeec0165719f2b0000b8f68ffd93ade64d3e6ece174c6",
+    "duration": 1.134688,
+    "peak_dbfs": -5.9783,
+    "gain_db": -0.0217
+  },
+  "native/sccsgovoice/en/ct/radio.enemyspotted-3.ogg": {
+    "sha256": "92d6e0a0ce65420baa3ddd6ca4754c2ae9ee32f1365cacdf7cf86689794210bb",
+    "duration": 0.855375,
+    "peak_dbfs": -6.1918,
+    "gain_db": 0.0
+  },
+  "native/sccsgovoice/en/ct/radio.followme-1.ogg": {
+    "sha256": "177f442c8853c36597582a7000268a148114935c91404776a2e909755cd79214",
+    "duration": 0.558594,
+    "peak_dbfs": -7.2959,
+    "gain_db": 0.0
+  },
+  "native/sccsgovoice/en/ct/radio.followme-2.ogg": {
+    "sha256": "c535f463af400b7ed6f3fe5f0279f2f4d486db3a7220de70b7a62384f7de96c7",
+    "duration": 0.663344,
+    "peak_dbfs": -6.0596,
+    "gain_db": 0.0
+  },
+  "native/sccsgovoice/en/ct/radio.followme-3.ogg": {
+    "sha256": "2dc67cfb04eeddd10e995eb52ae4460edf50a59c94693b6a3f78163a40b35986",
+    "duration": 1.038687,
+    "peak_dbfs": -6.6727,
+    "gain_db": 0.0
+  },
+  "native/sccsgovoice/en/ct/radio.letsgo-1.ogg": {
+    "sha256": "8f2eb2376fb134548c14b2cb969a1e2e08e19cf1274f7d6951a1ab519150ee37",
+    "duration": 0.90775,
+    "peak_dbfs": -5.7884,
+    "gain_db": -0.2116
+  },
+  "native/sccsgovoice/en/ct/radio.letsgo-2.ogg": {
+    "sha256": "1ddbf35edaf9ebaa02f4afd81211bf1519ae41d07980e2352a2c17faa8d11089",
+    "duration": 0.637188,
+    "peak_dbfs": -6.2749,
+    "gain_db": 0.0
+  },
+  "native/sccsgovoice/en/ct/radio.letsgo-3.ogg": {
+    "sha256": "731dbd1eaa31b9ed35cc60e94a98d6e10d3abc7d7ac591c8d5d5b744469bbcb7",
+    "duration": 1.021219,
+    "peak_dbfs": -6.9011,
+    "gain_db": 0.0
+  },
+  "native/sccsgovoice/en/ct/radio.needbackup-1.ogg": {
+    "sha256": "302adbe249f4971340ada0faedde6ff5eb2d1a394fd4e95ca30d1bffd4fa8b82",
+    "duration": 0.864125,
+    "peak_dbfs": -4.524,
+    "gain_db": -1.476
+  },
+  "native/sccsgovoice/en/ct/radio.needbackup-2.ogg": {
+    "sha256": "07bee8c88dcb1129e86ad73d0783b0c181ff162d5726b113bd8c40033921fb12",
+    "duration": 0.846688,
+    "peak_dbfs": -5.9495,
+    "gain_db": -0.0505
+  },
+  "native/sccsgovoice/en/ct/radio.needbackup-3.ogg": {
+    "sha256": "45cc8016d1dafd388f0deb68812591bde0062bfa8abeb5236788c84f2c8aec58",
+    "duration": 1.064875,
+    "peak_dbfs": -5.2483,
+    "gain_db": -0.7517
+  },
+  "native/sccsgovoice/en/ct/radio.takingfire-1.ogg": {
+    "sha256": "59febed751ecbd2398874e9b1b66fcf6085f8d0f6f96338babd3a6c47a93318d",
+    "duration": 1.02125,
+    "peak_dbfs": -4.9715,
+    "gain_db": -1.0285
+  },
+  "native/sccsgovoice/en/ct/radio.takingfire-2.ogg": {
+    "sha256": "9abecd1a868afe9ea64631e8b93774941d0f0d0d998fb771a6382c6ca11fad34",
+    "duration": 1.187062,
+    "peak_dbfs": -5.5868,
+    "gain_db": -0.4132
+  },
+  "native/sccsgovoice/en/ct/radio.takingfire-3.ogg": {
+    "sha256": "8cf37496a337d81428edbac4ccd9c998c630166bb55a2ae6853cd7abd9be0d92",
+    "duration": 0.785563,
+    "peak_dbfs": -5.8252,
+    "gain_db": -0.1748
+  },
+  "native/sccsgovoice/en/ct/smoke-1.ogg": {
+    "sha256": "f1f1d6f076e6aa05226e7e63772cc1496a7cb5ba35aabe716378fb87d5a84a8a",
+    "duration": 0.602281,
+    "peak_dbfs": -6.4299,
+    "gain_db": 0.0
+  },
+  "native/sccsgovoice/en/ct/smoke-2.ogg": {
+    "sha256": "6cdac913b2583614da0c2f8ff86f21f2270834c4a1f15db2fc8599cfa6ac06b3",
+    "duration": 0.951406,
+    "peak_dbfs": -5.8005,
+    "gain_db": -0.1995
+  },
+  "native/sccsgovoice/en/ct/smoke-3.ogg": {
+    "sha256": "695357255e64b594fb555b130b3a7d41ca60169450224238b40cbab1da89df7e",
+    "duration": 1.117219,
+    "peak_dbfs": -6.7709,
+    "gain_db": 0.0
+  },
+  "native/sccsgovoice/en/ct/thanks-1.ogg": {
+    "sha256": "9ab5723ef5ae3f2328afcf9987ead3333872f005db1349facf9855e60a158c30",
+    "duration": 0.654625,
+    "peak_dbfs": -7.4769,
+    "gain_db": 0.0
+  },
+  "native/sccsgovoice/en/ct/thanks-2.ogg": {
+    "sha256": "c5cc5b729a772297a3c1cbe3b5f79d86da2d7f3e8790882adfb1d74643fa58cd",
+    "duration": 0.628437,
+    "peak_dbfs": -6.9601,
+    "gain_db": 0.0
+  },
+  "native/sccsgovoice/en/ct/thanks-3.ogg": {
+    "sha256": "83f4b7f9350aac5adfba47059c16fdd1b0d89bd18ebc36107065a0b8965c118b",
+    "duration": 1.012469,
+    "peak_dbfs": -6.0099,
+    "gain_db": 0.0
+  },
+  "native/sccsgovoice/en/ct/waitinghere-1.ogg": {
+    "sha256": "286259898713c0581f930a30524291e7f6b90cf689e6aaa5f8b1e2291a3ce831",
+    "duration": 0.951406,
+    "peak_dbfs": -6.914,
+    "gain_db": 0.0
+  },
+  "native/sccsgovoice/en/ct/waitinghere-2.ogg": {
+    "sha256": "4c440bbc75e5ae311c981819df8c63ec7994f7840f4230e66fa5c02b64ba3bd4",
+    "duration": 0.785563,
+    "peak_dbfs": -6.4631,
+    "gain_db": 0.0
+  },
+  "native/sccsgovoice/en/ct/waitinghere-3.ogg": {
+    "sha256": "828abeab8bce12112d125aa96afc2f55f0c0b93abdf410cea327cc0d38831a36",
+    "duration": 0.855375,
+    "peak_dbfs": -7.8666,
+    "gain_db": 0.0
+  },
+  "native/sccsgovoice/en/t/affirmative-1.ogg": {
+    "sha256": "3f9ace284b9e9493422c600801577a4ba7c061d2c8806ecc0db2dddec99c33b0",
+    "duration": 0.775531,
+    "peak_dbfs": -6.5217,
+    "gain_db": 0.0
+  },
+  "native/sccsgovoice/en/t/affirmative-2.ogg": {
+    "sha256": "66a60b0e3f6c623ac28e6b2ca02088c01f526e75ac1730a4c212c4b806e1ee36",
+    "duration": 0.471406,
+    "peak_dbfs": -4.4419,
+    "gain_db": -1.5581
+  },
+  "native/sccsgovoice/en/t/affirmative-3.ogg": {
+    "sha256": "8d1d7a55887c6c6095f9f1ff417785d4035709884b988f2dd6c585ca2777a55b",
+    "duration": 0.6,
+    "peak_dbfs": -5.1122,
+    "gain_db": -0.8878
+  },
+  "native/sccsgovoice/en/t/decoy-1.ogg": {
+    "sha256": "f678bccfd96b7f50e1e41c4692b2e1e28d393f09b108b949961953628c4c43f6",
+    "duration": 0.760281,
+    "peak_dbfs": -6.6434,
+    "gain_db": 0.0
+  },
+  "native/sccsgovoice/en/t/decoy-2.ogg": {
+    "sha256": "c84be9c5fc71045927cf311d9670185888a28f450ee80f9ff453210785f95e3f",
+    "duration": 0.927562,
+    "peak_dbfs": -7.8663,
+    "gain_db": 0.0
+  },
+  "native/sccsgovoice/en/t/decoy-3.ogg": {
+    "sha256": "4ed9987badf059da7b19c1a65b75d80e375fb61730b890d446ee7d9c686bc0ec",
+    "duration": 0.988406,
+    "peak_dbfs": -6.2015,
+    "gain_db": 0.0
+  },
+  "native/sccsgovoice/en/t/enemydown-1.ogg": {
+    "sha256": "366d115130138c517b3eeb6509bdf889e34e59945dcc1e0f777cbddc6fce193f",
+    "duration": 0.532219,
+    "peak_dbfs": -5.1661,
+    "gain_db": -0.8339
+  },
+  "native/sccsgovoice/en/t/enemydown-2.ogg": {
+    "sha256": "5ba44d1d0b69bbf2bc6c34984ee67976c31dbc698378dd0a045bc814014464ad",
+    "duration": 0.577844,
+    "peak_dbfs": -6.73,
+    "gain_db": 0.0
+  },
+  "native/sccsgovoice/en/t/enemydown-3.ogg": {
+    "sha256": "1c7e1eba6f5807ee7d7fdc9f6b2cbed1a383cbda04ed85757bf0aea69a31c9ca",
+    "duration": 0.457844,
+    "peak_dbfs": -4.3422,
+    "gain_db": -1.6578
+  },
+  "native/sccsgovoice/en/t/flashbang-1.ogg": {
+    "sha256": "4b1f7431488988a91fc7f108a0103a88d3677ea4f5e07d1887a63c2c1d30476e",
+    "duration": 0.72,
+    "peak_dbfs": -5.5,
+    "gain_db": -0.5
+  },
+  "native/sccsgovoice/en/t/flashbang-2.ogg": {
+    "sha256": "5834e845f5d3213fcb478ff78d3a63e62fdaccfc9dde18ea286d90dbada69b7a",
+    "duration": 1.049219,
+    "peak_dbfs": -6.0809,
+    "gain_db": 0.0
+  },
+  "native/sccsgovoice/en/t/flashbang-3.ogg": {
+    "sha256": "06a0c56526beb2e2e35ff6624f0d5c9c6109ccbe6c7d293f8b445b70d452d667",
+    "duration": 1.186094,
+    "peak_dbfs": -4.1512,
+    "gain_db": -1.8488
+  },
+  "native/sccsgovoice/en/t/followingfriend-1.ogg": {
+    "sha256": "19e174afc304ab05469834f33753fd810ae5c995e3c25ee1c47485cfbf9186fa",
+    "duration": 0.775531,
+    "peak_dbfs": -6.7104,
+    "gain_db": 0.0
+  },
+  "native/sccsgovoice/en/t/followingfriend-2.ogg": {
+    "sha256": "cbd89d0c566a7c7acdc1e705268ad1a3378a62bf2ee4cf1bbde675dfdc214b1c",
+    "duration": 0.821125,
+    "peak_dbfs": -5.9398,
+    "gain_db": -0.0602
+  },
+  "native/sccsgovoice/en/t/followingfriend-3.ogg": {
+    "sha256": "f13e07b79648f0a31d8a380882b2d84465df272b8061ecd1bb62ea8556c3e78b",
+    "duration": 0.6,
+    "peak_dbfs": -5.7879,
+    "gain_db": -0.2121
+  },
+  "native/sccsgovoice/en/t/grenade-1.ogg": {
+    "sha256": "54528be6206ab8c3235b7313fe5df2f85b1ee60397b9675a332e5fa36f60bcc2",
+    "duration": 0.821125,
+    "peak_dbfs": -9.288,
+    "gain_db": 0.0
+  },
+  "native/sccsgovoice/en/t/grenade-2.ogg": {
+    "sha256": "ddd880598f0fe6e8482bcc3cab2f22c815ef7c69703c6c8e757d400ab2e99466",
+    "duration": 0.722344,
+    "peak_dbfs": -8.659,
+    "gain_db": 0.0
+  },
+  "native/sccsgovoice/en/t/grenade-3.ogg": {
+    "sha256": "5f4802972ec01d186cb864cd0e771aa79cde2eaff132c2a0550b047db4117a88",
+    "duration": 1.129844,
+    "peak_dbfs": -6.3091,
+    "gain_db": 0.0
+  },
+  "native/sccsgovoice/en/t/inposition-1.ogg": {
+    "sha256": "79527aad7319a1991d1e7aed9364b1ad3e5d3a35d103bc061cbef49e088be1fe",
+    "duration": 0.8,
+    "peak_dbfs": -3.2483,
+    "gain_db": -2.7517
+  },
+  "native/sccsgovoice/en/t/inposition-2.ogg": {
+    "sha256": "561bb9af52511e73a9d84b98b8cee8e095b1b19f04045a67cfe7be5aae1366c2",
+    "duration": 0.6,
+    "peak_dbfs": -5.5332,
+    "gain_db": -0.4668
+  },
+  "native/sccsgovoice/en/t/inposition-3.ogg": {
+    "sha256": "50c8513d88e801dd2e379ec8a565f98653dbbeaa6abe12a1096516d9daeafa27",
+    "duration": 0.76575,
+    "peak_dbfs": -4.4063,
+    "gain_db": -1.5937
+  },
+  "native/sccsgovoice/en/t/molotov-1.ogg": {
+    "sha256": "0035bb08e8ecfb9b527c91fd78397d07421a6f35b193ee263450b19a9c780607",
+    "duration": 0.973187,
+    "peak_dbfs": -6.3269,
+    "gain_db": 0.0
+  },
+  "native/sccsgovoice/en/t/molotov-2.ogg": {
+    "sha256": "7308bff6802dd7525d258f9b235677c20f860c695a378978e4c2cc5ff7ea95c1",
+    "duration": 0.988406,
+    "peak_dbfs": -5.9539,
+    "gain_db": -0.0461
+  },
+  "native/sccsgovoice/en/t/molotov-3.ogg": {
+    "sha256": "e1e537c627c7a5b6e2dc03cf3e49714bcc55c0cfa978219979f2efc7459e81fb",
+    "duration": 0.72,
+    "peak_dbfs": -7.8423,
+    "gain_db": 0.0
+  },
+  "native/sccsgovoice/en/t/negative-1.ogg": {
+    "sha256": "7690cc322030ce6c717e9e4da37e942ac70877e75a2c058995af13cc24c44284",
+    "duration": 0.693937,
+    "peak_dbfs": -5.7379,
+    "gain_db": -0.2621
+  },
+  "native/sccsgovoice/en/t/negative-2.ogg": {
+    "sha256": "4b083cdbae85a67664905ed9ab9ee1a7e5c7c704ec7b0ba2f4461ed23064ee74",
+    "duration": 0.48,
+    "peak_dbfs": -5.783,
+    "gain_db": -0.217
+  },
+  "native/sccsgovoice/en/t/negative-3.ogg": {
+    "sha256": "8f9e4a580aab532a1476cfb4eb189ffd3031de8c2975948307031bc070ce43b0",
+    "duration": 1.005031,
+    "peak_dbfs": -5.6365,
+    "gain_db": -0.3635
+  },
+  "native/sccsgovoice/en/t/radio.enemyspotted-1.ogg": {
+    "sha256": "2e7ccc2005ba157557b97229e0613993b334ac849073a5c5cdbf16d402470317",
+    "duration": 0.693937,
+    "peak_dbfs": -5.6887,
+    "gain_db": -0.3113
+  },
+  "native/sccsgovoice/en/t/radio.enemyspotted-2.ogg": {
+    "sha256": "908656ddccd385f6be233378ef10ed1e1234ae9939ce1a534a83a334863bd98f",
+    "duration": 0.789656,
+    "peak_dbfs": -5.2885,
+    "gain_db": -0.7115
+  },
+  "native/sccsgovoice/en/t/radio.enemyspotted-3.ogg": {
+    "sha256": "f4c2c8e4066e0cb79e2161bc3c7aa0661dadeb48da349bbeed1098a56acf2cc1",
+    "duration": 0.861469,
+    "peak_dbfs": -4.4296,
+    "gain_db": -1.5704
+  },
+  "native/sccsgovoice/en/t/radio.followme-1.ogg": {
+    "sha256": "6ad089183e263ffe447a50f58aa35502020e28bbaf8786dd10fbf44e5d712a35",
+    "duration": 0.622156,
+    "peak_dbfs": -4.6153,
+    "gain_db": -1.3847
+  },
+  "native/sccsgovoice/en/t/radio.followme-2.ogg": {
+    "sha256": "602b54e39a344534f9538ba01ccafa47d9a0e230234108526dafa23560b58b94",
+    "duration": 0.574281,
+    "peak_dbfs": -5.6503,
+    "gain_db": -0.3497
+  },
+  "native/sccsgovoice/en/t/radio.followme-3.ogg": {
+    "sha256": "d7626bf7a384bd48ec1bcd7758b56d78c7cda047dce338b3b734ebc63fcec382",
+    "duration": 0.813594,
+    "peak_dbfs": -3.9624,
+    "gain_db": -2.0376
+  },
+  "native/sccsgovoice/en/t/radio.letsgo-1.ogg": {
+    "sha256": "ca1c877dbbb899d8ea9bb236f74b2412535fd69915bc16208f897c54bf853d24",
+    "duration": 0.789656,
+    "peak_dbfs": -7.0161,
+    "gain_db": 0.0
+  },
+  "native/sccsgovoice/en/t/radio.letsgo-2.ogg": {
+    "sha256": "fc0a008042c518700ee7c9b3aed2a555221c16fa1a0d9018d33331b398e9ef12",
+    "duration": 0.622156,
+    "peak_dbfs": -4.153,
+    "gain_db": -1.847
+  },
+  "native/sccsgovoice/en/t/radio.letsgo-3.ogg": {
+    "sha256": "0c6b2998ab76660bf3d8ee1391184ac2ba949fa956e447431c4c223122f6d178",
+    "duration": 1.172562,
+    "peak_dbfs": -6.0736,
+    "gain_db": 0.0
+  },
+  "native/sccsgovoice/en/t/radio.needbackup-1.ogg": {
+    "sha256": "431fd9ee5990062aba5e46c8a400d8856a82ca333cdf1cba4a51aa7f14716e2d",
+    "duration": 0.64825,
+    "peak_dbfs": -6.0147,
+    "gain_db": 0.0
+  },
+  "native/sccsgovoice/en/t/radio.needbackup-2.ogg": {
+    "sha256": "6a5a4f7ab9f7e916ec4b97bdd0e56ba1b2468c8736ba203ad3b32ab62edce913",
+    "duration": 0.740906,
+    "peak_dbfs": -8.0176,
+    "gain_db": 0.0
+  },
+  "native/sccsgovoice/en/t/radio.needbackup-3.ogg": {
+    "sha256": "b3d04b584d52670912f5a5cd356e53e83d1c0c4431259725539bad1b2463ffc3",
+    "duration": 0.944625,
+    "peak_dbfs": -6.402,
+    "gain_db": 0.0
+  },
+  "native/sccsgovoice/en/t/radio.takingfire-1.ogg": {
+    "sha256": "985ec16c977aa4589ca9bf630d43e3387818d26b9d5378380202698191755fb1",
+    "duration": 0.8,
+    "peak_dbfs": -5.7938,
+    "gain_db": -0.2062
+  },
+  "native/sccsgovoice/en/t/radio.takingfire-2.ogg": {
+    "sha256": "6311cccacea976f430b95954b8f196dc23985bdef504674199dd623ed786638d",
+    "duration": 0.926094,
+    "peak_dbfs": -5.2342,
+    "gain_db": -0.7658
+  },
+  "native/sccsgovoice/en/t/radio.takingfire-3.ogg": {
+    "sha256": "69536aa2d6cf8ec91eefbb9899ab2f1ffa0fe3c96903b1302b04c2dd56e46163",
+    "duration": 0.963156,
+    "peak_dbfs": -5.5153,
+    "gain_db": -0.4847
+  },
+  "native/sccsgovoice/en/t/smoke-1.ogg": {
+    "sha256": "24c285278246abfd416e1792c3190b586ad8b96dd05fbdde80a6d886d91c23a7",
+    "duration": 0.745094,
+    "peak_dbfs": -5.5014,
+    "gain_db": -0.4986
+  },
+  "native/sccsgovoice/en/t/smoke-2.ogg": {
+    "sha256": "35d71746b283444e939fb92da74be141924a8b1b922164958e11f51f15e8168a",
+    "duration": 0.684281,
+    "peak_dbfs": -5.6889,
+    "gain_db": -0.3111
+  },
+  "native/sccsgovoice/en/t/smoke-3.ogg": {
+    "sha256": "2ec24f29b736d12dda7ff5ef7e20da68571561e1b083dd5e7eb29d913b7ab0aa",
+    "duration": 0.927562,
+    "peak_dbfs": -6.4687,
+    "gain_db": 0.0
+  },
+  "native/sccsgovoice/en/t/thanks-1.ogg": {
+    "sha256": "c752dd0fb17955a481460d70477fc69fa51c98238b85ecd2dafea5d5cf733ec5",
+    "duration": 0.619281,
+    "peak_dbfs": -6.28,
+    "gain_db": 0.0
+  },
+  "native/sccsgovoice/en/t/thanks-2.ogg": {
+    "sha256": "115ed58048b1daa4079577ac506d141f3fcb6a4eca2566af92794f21bca15e84",
+    "duration": 0.817469,
+    "peak_dbfs": -5.746,
+    "gain_db": -0.254
+  },
+  "native/sccsgovoice/en/t/thanks-3.ogg": {
+    "sha256": "0e7af73e2f53f5d2dbe6208fc89aa79f6132dac9293f23f6beba4ed83dc68fef",
+    "duration": 0.507812,
+    "peak_dbfs": -4.2622,
+    "gain_db": -1.7378
+  },
+  "native/sccsgovoice/en/t/waitinghere-1.ogg": {
+    "sha256": "6014848f9f2c7c389f503dc5a1eb5963fe6b5b4e74397a76408644f28fd80e95",
+    "duration": 0.96,
+    "peak_dbfs": -6.7619,
+    "gain_db": 0.0
+  },
+  "native/sccsgovoice/en/t/waitinghere-2.ogg": {
+    "sha256": "cd7df9e3c28e34cd2b83bd3d8ae11c7d5abff9c517308255a6ecbcdb975cdb10",
+    "duration": 0.76,
+    "peak_dbfs": -4.4287,
+    "gain_db": -1.5713
+  },
+  "native/sccsgovoice/en/t/waitinghere-3.ogg": {
+    "sha256": "521f6566495c98bff0bebcd8ca224f1603eb7d427e8e6d97a37a4e2ae05b4ea1",
+    "duration": 0.854594,
+    "peak_dbfs": -5.9157,
+    "gain_db": -0.0843
+  },
+  "native/sccsgovoice/zh/ct/affirmative-1.ogg": {
+    "sha256": "587fba8875f86ab80dd4f15b1d52aa8f9d1689eea251f8308473707cac43579a",
+    "duration": 0.56,
+    "peak_dbfs": -6.529,
+    "gain_db": 0.0
+  },
+  "native/sccsgovoice/zh/ct/affirmative-2.ogg": {
+    "sha256": "fc5f4e2f222cab63d1adf978d69589393ea0e50696cbc514125ed3fa932c5241",
+    "duration": 0.362563,
+    "peak_dbfs": -1.174,
+    "gain_db": -4.826
+  },
+  "native/sccsgovoice/zh/ct/affirmative-3.ogg": {
+    "sha256": "9502f9260776b9d16f50c557d35020f44de6280d2cf06ef04dc6cc39f181d321",
+    "duration": 0.712781,
+    "peak_dbfs": -6.1773,
+    "gain_db": 0.0
+  },
+  "native/sccsgovoice/zh/ct/decoy-1.ogg": {
+    "sha256": "994bc937b0679ced19dba6e8df459ac695563c1522a241dc8ff1702d16a015e5",
+    "duration": 0.646031,
+    "peak_dbfs": -8.1088,
+    "gain_db": 0.0
+  },
+  "native/sccsgovoice/zh/ct/decoy-2.ogg": {
+    "sha256": "16fb9f982cc2ae87f2c727ef579eca7343b51eb6416851675f88bea24376e7ca",
+    "duration": 0.9,
+    "peak_dbfs": -5.0644,
+    "gain_db": -0.9356
+  },
+  "native/sccsgovoice/zh/ct/decoy-3.ogg": {
+    "sha256": "7301cea5a2ea9119c89a05e4ba684abfda9cbc2ef78a9854a1430a298c07cf0b",
+    "duration": 0.903625,
+    "peak_dbfs": -4.9225,
+    "gain_db": -1.0775
+  },
+  "native/sccsgovoice/zh/ct/enemydown-1.ogg": {
+    "sha256": "b40e02f54499ad1cb6c174305438dc374cd42ff588a04257217c348e42da0a4c",
+    "duration": 0.747812,
+    "peak_dbfs": -3.8289,
+    "gain_db": -2.1711
+  },
+  "native/sccsgovoice/zh/ct/enemydown-2.ogg": {
+    "sha256": "a707da833af370a5bb203960e760aa9a6dccc45c585da659fc03e30f3f54b1de",
+    "duration": 0.7345,
+    "peak_dbfs": -4.8965,
+    "gain_db": -1.1035
+  },
+  "native/sccsgovoice/zh/ct/enemydown-3.ogg": {
+    "sha256": "3a0309ef6a536137328679571935177c51fdd4ba212e00d733e08ab461ff759b",
+    "duration": 0.682813,
+    "peak_dbfs": -4.8944,
+    "gain_db": -1.1056
+  },
+  "native/sccsgovoice/zh/ct/flashbang-1.ogg": {
+    "sha256": "013764e31e7cd84ae6a85c387751a98cd138cf60b4b316d707d0dbec3ff0e3ab",
+    "duration": 0.714625,
+    "peak_dbfs": -6.0876,
+    "gain_db": 0.0
+  },
+  "native/sccsgovoice/zh/ct/flashbang-2.ogg": {
+    "sha256": "59c84301f2c8466e578ed7eb5fa15e88e46de1b18a88a7c46296cae0d0fabf8a",
+    "duration": 0.852812,
+    "peak_dbfs": -5.5902,
+    "gain_db": -0.4098
+  },
+  "native/sccsgovoice/zh/ct/flashbang-3.ogg": {
+    "sha256": "ee2f2bfee27b25e702d4914a4020827b180764c4bf163c154afb5a584747e99a",
+    "duration": 0.646875,
+    "peak_dbfs": -6.717,
+    "gain_db": 0.0
+  },
+  "native/sccsgovoice/zh/ct/followingfriend-1.ogg": {
+    "sha256": "6c64e504484da17a3692401642b08b7c477febb2dbdc4f331b15106530860d46",
+    "duration": 0.539844,
+    "peak_dbfs": -4.8753,
+    "gain_db": -1.1247
+  },
+  "native/sccsgovoice/zh/ct/followingfriend-2.ogg": {
+    "sha256": "5b9283d012c621a61d337c4b402802391ca791a7bf0f3b38505f368ce7c638b4",
+    "duration": 0.486406,
+    "peak_dbfs": -4.5109,
+    "gain_db": -1.4891
+  },
+  "native/sccsgovoice/zh/ct/followingfriend-3.ogg": {
+    "sha256": "afda518a0a96af052fa2d2a3cfd58afd38f5c6b8346d3474d9339dfd7c753bed",
+    "duration": 0.615625,
+    "peak_dbfs": -3.142,
+    "gain_db": -2.858
+  },
+  "native/sccsgovoice/zh/ct/grenade-1.ogg": {
+    "sha256": "3f247b8279f11098ab1603eb02ccae5e3c391d1a408b41e31eab130aa89ea1e9",
+    "duration": 0.925531,
+    "peak_dbfs": -5.2301,
+    "gain_db": -0.7699
+  },
+  "native/sccsgovoice/zh/ct/grenade-2.ogg": {
+    "sha256": "7addecb734be425fc2a2db0ca67135ae36893fbe0b4d9e41eb1b72b764ece69c",
+    "duration": 0.931344,
+    "peak_dbfs": -4.8371,
+    "gain_db": -1.1629
+  },
+  "native/sccsgovoice/zh/ct/grenade-3.ogg": {
+    "sha256": "ab5afcb981e4e2dda74c5e729520ca75b29ee119a73051b053f24395dc7bdec8",
+    "duration": 0.566375,
+    "peak_dbfs": -7.885,
+    "gain_db": 0.0
+  },
+  "native/sccsgovoice/zh/ct/inposition-1.ogg": {
+    "sha256": "24fe3170b645a78b735f0d28156eb6b954b2b6de31370006eead172cc73f970f",
+    "duration": 0.620062,
+    "peak_dbfs": -4.9571,
+    "gain_db": -1.0429
+  },
+  "native/sccsgovoice/zh/ct/inposition-2.ogg": {
+    "sha256": "6d07cd1e68054b81411298804a68f2f8ba81307326f248502ab9af00b7e31755",
+    "duration": 0.709219,
+    "peak_dbfs": -4.683,
+    "gain_db": -1.317
+  },
+  "native/sccsgovoice/zh/ct/inposition-3.ogg": {
+    "sha256": "bca292d6597405cf5669e99dd2a0810ed2532ff40808d4c42ce742b669d93689",
+    "duration": 0.511594,
+    "peak_dbfs": -4.2724,
+    "gain_db": -1.7276
+  },
+  "native/sccsgovoice/zh/ct/molotov-1.ogg": {
+    "sha256": "4c65438da281214025f0dcbcb56868be89c570059566882007e573d83d43210f",
+    "duration": 0.867594,
+    "peak_dbfs": -6.0491,
+    "gain_db": 0.0
+  },
+  "native/sccsgovoice/zh/ct/molotov-2.ogg": {
+    "sha256": "3f00c367bdc1e18fc1db4de835da22a3469e1484ec6afcc64f7ccc559b897f07",
+    "duration": 0.668813,
+    "peak_dbfs": -7.127,
+    "gain_db": 0.0
+  },
+  "native/sccsgovoice/zh/ct/molotov-3.ogg": {
+    "sha256": "ee1629ebc15d593cf0bee4a636e8d2ba5912cf820a35fb67ea459a7962711158",
+    "duration": 0.652281,
+    "peak_dbfs": -7.7927,
+    "gain_db": 0.0
+  },
+  "native/sccsgovoice/zh/ct/negative-1.ogg": {
+    "sha256": "91b6841444bd4b072168d6381274d512219fedebc1299da4826bd9dcc535af60",
+    "duration": 0.48,
+    "peak_dbfs": -1.3856,
+    "gain_db": -4.6144
+  },
+  "native/sccsgovoice/zh/ct/negative-2.ogg": {
+    "sha256": "952a0de1de011d5d51423146075be42fdc5b365068c59f376c9f5d6a98937762",
+    "duration": 0.368469,
+    "peak_dbfs": -0.1322,
+    "gain_db": -5.8678
+  },
+  "native/sccsgovoice/zh/ct/negative-3.ogg": {
+    "sha256": "e0e74b2bdb8bbd1b6d499d41c0dffb704aac52b25fb8eeb99e1279660ee37ba6",
+    "duration": 0.373344,
+    "peak_dbfs": -1.2328,
+    "gain_db": -4.7672
+  },
+  "native/sccsgovoice/zh/ct/radio.enemyspotted-1.ogg": {
+    "sha256": "afdced32952d698046561ad05fe2d91a76f95ec1b49a3a2eb45fce865f642491",
+    "duration": 0.640125,
+    "peak_dbfs": -6.2244,
+    "gain_db": 0.0
+  },
+  "native/sccsgovoice/zh/ct/radio.enemyspotted-2.ogg": {
+    "sha256": "8f7267da0ce23afab8f154e8ec8183211bdad464b02088da282e3ec4cd618a3c",
+    "duration": 0.7,
+    "peak_dbfs": -5.1073,
+    "gain_db": -0.8927
+  },
+  "native/sccsgovoice/zh/ct/radio.enemyspotted-3.ogg": {
+    "sha256": "4246ce7ab61fc89a5a5e23cd2b3b79c59ab7235eb4c216e1ce024602295e9b34",
+    "duration": 0.556094,
+    "peak_dbfs": -5.1526,
+    "gain_db": -0.8474
+  },
+  "native/sccsgovoice/zh/ct/radio.followme-1.ogg": {
+    "sha256": "24108374347576ed78be194c6101a6aac1548f5b50e1b92e91fe2d4f5ba5f372",
+    "duration": 0.377594,
+    "peak_dbfs": -1.4394,
+    "gain_db": -4.5606
+  },
+  "native/sccsgovoice/zh/ct/radio.followme-2.ogg": {
+    "sha256": "0bfbe7730e9b1135a97237ef25a6181c4ecc01c7d6a742386811246c20de89a9",
+    "duration": 0.6,
+    "peak_dbfs": -3.9155,
+    "gain_db": -2.0845
+  },
+  "native/sccsgovoice/zh/ct/radio.followme-3.ogg": {
+    "sha256": "d9bc9236c21dcfe5c1d6ac910ea07e205f987047fefd210571777b5cea1d15eb",
+    "duration": 0.411719,
+    "peak_dbfs": -6.8359,
+    "gain_db": 0.0
+  },
+  "native/sccsgovoice/zh/ct/radio.letsgo-1.ogg": {
+    "sha256": "b4e9aed96488cae6e8c67e79985deffea731704c5618b1795b4b0ad4fad74383",
+    "duration": 1.507844,
+    "peak_dbfs": -4.4837,
+    "gain_db": -1.5163
+  },
+  "native/sccsgovoice/zh/ct/radio.letsgo-2.ogg": {
+    "sha256": "4b96f5f2deb83d086829835e148e96990a8dbf6f12dacc2f35c86ac61ae6e344",
+    "duration": 0.484531,
+    "peak_dbfs": -5.8452,
+    "gain_db": -0.1548
+  },
+  "native/sccsgovoice/zh/ct/radio.letsgo-3.ogg": {
+    "sha256": "23fbe22b3a719eba24df051370484ce9955f9154fc8efbed6824e5adbc794921",
+    "duration": 0.785531,
+    "peak_dbfs": -4.0381,
+    "gain_db": -1.9619
+  },
+  "native/sccsgovoice/zh/ct/radio.needbackup-1.ogg": {
+    "sha256": "c4df64ce919b813812623e2e302113402129fc0fbb512c31b98b4ba6eb739472",
+    "duration": 0.665031,
+    "peak_dbfs": -6.5316,
+    "gain_db": 0.0
+  },
+  "native/sccsgovoice/zh/ct/radio.needbackup-2.ogg": {
+    "sha256": "684af33f9d11b941978164285b46da1b294ac06b8514bc561c7ad093268a6421",
+    "duration": 0.715844,
+    "peak_dbfs": -7.2796,
+    "gain_db": 0.0
+  },
+  "native/sccsgovoice/zh/ct/radio.needbackup-3.ogg": {
+    "sha256": "f8c2bd0b16a256d85de7a703b1b534607f68c0f6873b9efbcbc41b29a2a31f0c",
+    "duration": 0.927438,
+    "peak_dbfs": -6.5974,
+    "gain_db": 0.0
+  },
+  "native/sccsgovoice/zh/ct/radio.takingfire-1.ogg": {
+    "sha256": "8e8760389e19dac01158f0fcc2567181a5002f5ebef6b6c97a56005551db631b",
+    "duration": 0.75,
+    "peak_dbfs": -6.106,
+    "gain_db": 0.0
+  },
+  "native/sccsgovoice/zh/ct/radio.takingfire-2.ogg": {
+    "sha256": "62525ff35672a584d34f1eb8f8435549ee4da6e273e8cf283cb54b46ea236994",
+    "duration": 0.659656,
+    "peak_dbfs": -5.2696,
+    "gain_db": -0.7304
+  },
+  "native/sccsgovoice/zh/ct/radio.takingfire-3.ogg": {
+    "sha256": "67166a97dbae5c215c569f56b499096981e68318bdbd32c43128e7598fcab62a",
+    "duration": 0.42,
+    "peak_dbfs": -6.4952,
+    "gain_db": 0.0
+  },
+  "native/sccsgovoice/zh/ct/smoke-1.ogg": {
+    "sha256": "062bec5740524eaa0289d058de77e4c3f650e6ab2d26f30dbde40df17c3def67",
+    "duration": 0.644406,
+    "peak_dbfs": -6.8357,
+    "gain_db": 0.0
+  },
+  "native/sccsgovoice/zh/ct/smoke-2.ogg": {
+    "sha256": "2901bb217379cc4f54fb0c83b2cfbd237d2dd27238bfa4bb0d7450f540d1ee02",
+    "duration": 0.964969,
+    "peak_dbfs": -4.5311,
+    "gain_db": -1.4689
+  },
+  "native/sccsgovoice/zh/ct/smoke-3.ogg": {
+    "sha256": "2ca61dbe941349242a2a95d33aa6278233d2b27bfd623852380d31137db003ff",
+    "duration": 0.933937,
+    "peak_dbfs": -5.0663,
+    "gain_db": -0.9337
+  },
+  "native/sccsgovoice/zh/ct/thanks-1.ogg": {
+    "sha256": "e99f58bd061be6bb3eeb1dd16d0daa45b0e3acf1d5f0270414f5cc35c01fea76",
+    "duration": 0.442563,
+    "peak_dbfs": -4.4161,
+    "gain_db": -1.5839
+  },
+  "native/sccsgovoice/zh/ct/thanks-2.ogg": {
+    "sha256": "68962248facacb837a11ff2fcefc56cd1cb288d6b304bf5eb612f6408445d65d",
+    "duration": 0.27,
+    "peak_dbfs": -1.0136,
+    "gain_db": -4.9864
+  },
+  "native/sccsgovoice/zh/ct/thanks-3.ogg": {
+    "sha256": "272849650424c8a57767fd0ea5c8e6340cf3f7e1d250598b4a8dace545e2b0c1",
+    "duration": 0.78075,
+    "peak_dbfs": -5.5921,
+    "gain_db": -0.4079
+  },
+  "native/sccsgovoice/zh/ct/waitinghere-1.ogg": {
+    "sha256": "f1d9e50a9bc5415ddae13ea9be22ad8522a95444f362038c83406d206f1532ec",
+    "duration": 0.7,
+    "peak_dbfs": -6.1648,
+    "gain_db": 0.0
+  },
+  "native/sccsgovoice/zh/ct/waitinghere-2.ogg": {
+    "sha256": "f4724baeaad013c1aa0de33aacf671550912be1bc6a572be71a1d7f712548e95",
+    "duration": 0.751594,
+    "peak_dbfs": -3.6991,
+    "gain_db": -2.3009
+  },
+  "native/sccsgovoice/zh/ct/waitinghere-3.ogg": {
+    "sha256": "69a14e6df95428942ba18934f5c0c04b1e98dab41ff2fd097abbfd0b43b09294",
+    "duration": 0.8,
+    "peak_dbfs": -1.5645,
+    "gain_db": -4.4355
+  },
+  "native/sccsgovoice/zh/t/affirmative-1.ogg": {
+    "sha256": "5f8c93655a088fc53e2428ca37e744b27d258dcec68fe18f3238c5dda2ef1580",
+    "duration": 0.486438,
+    "peak_dbfs": -3.867,
+    "gain_db": -2.133
+  },
+  "native/sccsgovoice/zh/t/affirmative-2.ogg": {
+    "sha256": "bd662bc4b2004a5b3934088307d07636796b16ddbc56d83d614a845919e8736c",
+    "duration": 0.402094,
+    "peak_dbfs": -4.1741,
+    "gain_db": -1.8259
+  },
+  "native/sccsgovoice/zh/t/affirmative-3.ogg": {
+    "sha256": "ba1c76ff4c855f781b0e8468f23ddbe5fef9d063b35ac375c88424a0575007c4",
+    "duration": 0.502125,
+    "peak_dbfs": -4.7262,
+    "gain_db": -1.2738
+  },
+  "native/sccsgovoice/zh/t/decoy-1.ogg": {
+    "sha256": "de904ccf5115ead7849d6d6f4ac4441b4db425e4fd6e857e4d04b107f3006ff1",
+    "duration": 0.7185,
+    "peak_dbfs": -6.9132,
+    "gain_db": 0.0
+  },
+  "native/sccsgovoice/zh/t/decoy-2.ogg": {
+    "sha256": "9112ea9a4cf3a701977278d4bf7ef3ca140398b14d3d72521c30e0b9dc3fd3b8",
+    "duration": 1.162187,
+    "peak_dbfs": -4.7376,
+    "gain_db": -1.2624
+  },
+  "native/sccsgovoice/zh/t/decoy-3.ogg": {
+    "sha256": "85676dd94e2ace047a03e617ffff6dcf4410fac7b8d5d572463c9e5c867de2a5",
+    "duration": 0.964375,
+    "peak_dbfs": -5.5377,
+    "gain_db": -0.4623
+  },
+  "native/sccsgovoice/zh/t/enemydown-1.ogg": {
+    "sha256": "bc56eb08017161458ad7deb4eff882870ace5e783ee82647ddaafc556a13e930",
+    "duration": 0.677625,
+    "peak_dbfs": -4.6916,
+    "gain_db": -1.3084
+  },
+  "native/sccsgovoice/zh/t/enemydown-2.ogg": {
+    "sha256": "94e54168836d1978542d1b4831756144f86a13274de080774719f863c3efa0d4",
+    "duration": 0.644469,
+    "peak_dbfs": -3.3839,
+    "gain_db": -2.6161
+  },
+  "native/sccsgovoice/zh/t/enemydown-3.ogg": {
+    "sha256": "1d4d9c30af6fcc63153964b78d2c439b47c5334d2225a1854675326d2b5e6d91",
+    "duration": 0.620906,
+    "peak_dbfs": -3.9117,
+    "gain_db": -2.0883
+  },
+  "native/sccsgovoice/zh/t/flashbang-1.ogg": {
+    "sha256": "61a51671482f8463fac33c1c91162f43f8e208bd65a0fceb7dd2d81cc4d09e59",
+    "duration": 0.658594,
+    "peak_dbfs": -1.2732,
+    "gain_db": -4.7268
+  },
+  "native/sccsgovoice/zh/t/flashbang-2.ogg": {
+    "sha256": "146e2000e8b24747c4a63fc077084640fc84d4296355689e81d0c4e34ec32dad",
+    "duration": 1.084437,
+    "peak_dbfs": -2.4287,
+    "gain_db": -3.5713
+  },
+  "native/sccsgovoice/zh/t/flashbang-3.ogg": {
+    "sha256": "198a75c8004e49f78eaadf85fcf269194e01eeb64cd50790a17b9de57f5e868a",
+    "duration": 1.104375,
+    "peak_dbfs": -4.1885,
+    "gain_db": -1.8115
+  },
+  "native/sccsgovoice/zh/t/followingfriend-1.ogg": {
+    "sha256": "9cfa7bcfdca80094cf1b9075986e0dae173e82d7fc65eef877c34a1e9bac4ef1",
+    "duration": 0.562688,
+    "peak_dbfs": -5.2092,
+    "gain_db": -0.7908
+  },
+  "native/sccsgovoice/zh/t/followingfriend-2.ogg": {
+    "sha256": "0654c186399af98ceb9851e1bfaef8f1097cf8dd8fb2c3a23b74adbdf2df0f38",
+    "duration": 1.19775,
+    "peak_dbfs": -1.3774,
+    "gain_db": -4.6226
+  },
+  "native/sccsgovoice/zh/t/followingfriend-3.ogg": {
+    "sha256": "0ffc85026b32c399cdf0492189741cd0a4d02ab8fd854b8561cfd58de9c8f1de",
+    "duration": 0.438594,
+    "peak_dbfs": -3.9045,
+    "gain_db": -2.0955
+  },
+  "native/sccsgovoice/zh/t/grenade-1.ogg": {
+    "sha256": "5900c4fac5f26d06386df23d4cd6f93f1af7e00789c0246e7e922f51826b5452",
+    "duration": 0.935781,
+    "peak_dbfs": -4.2365,
+    "gain_db": -1.7635
+  },
+  "native/sccsgovoice/zh/t/grenade-2.ogg": {
+    "sha256": "6524e9e16df85fb371ddd44b43f53151b5d5f06db6a10c41d51004d13ae87303",
+    "duration": 0.625938,
+    "peak_dbfs": -6.6373,
+    "gain_db": 0.0
+  },
+  "native/sccsgovoice/zh/t/grenade-3.ogg": {
+    "sha256": "801e135e262a22283acc336158e73c924e52271d5b51668a80b3bc99b1c2cfcf",
+    "duration": 0.969844,
+    "peak_dbfs": -2.0214,
+    "gain_db": -3.9786
+  },
+  "native/sccsgovoice/zh/t/inposition-1.ogg": {
+    "sha256": "e76091cabe5c444e72b81e1ed8462c21e11752c6efcdfbaee3ed4dd9fb04ab9a",
+    "duration": 0.695344,
+    "peak_dbfs": -3.1032,
+    "gain_db": -2.8968
+  },
+  "native/sccsgovoice/zh/t/inposition-2.ogg": {
+    "sha256": "78fb2d62174b3e42a1b15f3b991d8ff352d93d3669af58bb86ac551ece5cf931",
+    "duration": 0.732719,
+    "peak_dbfs": -1.4532,
+    "gain_db": -4.5468
+  },
+  "native/sccsgovoice/zh/t/inposition-3.ogg": {
+    "sha256": "ac01697f1f3f242b83ea11d075747cdf427509041d8a971580cddf1bac649e8d",
+    "duration": 0.837688,
+    "peak_dbfs": -3.9372,
+    "gain_db": -2.0628
+  },
+  "native/sccsgovoice/zh/t/molotov-1.ogg": {
+    "sha256": "f97b2f88a4fecb988e9827caf0b046837c315963e6cddc4afcd6dc139b3e3a9f",
+    "duration": 1.040156,
+    "peak_dbfs": -4.4754,
+    "gain_db": -1.5246
+  },
+  "native/sccsgovoice/zh/t/molotov-2.ogg": {
+    "sha256": "bf257a5361b53009c8cc7a45ad9f28426e8ae850cc58db81cf8a3e2bbc162236",
+    "duration": 0.588063,
+    "peak_dbfs": -3.8012,
+    "gain_db": -2.1988
+  },
+  "native/sccsgovoice/zh/t/molotov-3.ogg": {
+    "sha256": "dea42f093e6f03ac9c8385c7004177e92848c463b966b0ed4822ca6c8efa5b89",
+    "duration": 0.65825,
+    "peak_dbfs": -3.0085,
+    "gain_db": -2.9915
+  },
+  "native/sccsgovoice/zh/t/negative-1.ogg": {
+    "sha256": "3677aa695051eb78bf21b6ac739d968008d5c18d9915f06d77daa3871ba09044",
+    "duration": 0.488781,
+    "peak_dbfs": -5.2771,
+    "gain_db": -0.7229
+  },
+  "native/sccsgovoice/zh/t/negative-2.ogg": {
+    "sha256": "e7724365db77e9ea8a5130c988bf7f68ae087a250f9cc4dd1c53249c0371d0e5",
+    "duration": 0.26625,
+    "peak_dbfs": -0.793,
+    "gain_db": -5.207
+  },
+  "native/sccsgovoice/zh/t/negative-3.ogg": {
+    "sha256": "64cf617448e26d5a937e55b92b21ea551e2d223f6b0d701c74015ab6e68a878c",
+    "duration": 1.583719,
+    "peak_dbfs": -1.3608,
+    "gain_db": -4.6392
+  },
+  "native/sccsgovoice/zh/t/radio.enemyspotted-1.ogg": {
+    "sha256": "d2babd275f0c616876da30714ddcba23c3c23e0e3c345cd3dc31584ba6a838ed",
+    "duration": 0.542625,
+    "peak_dbfs": -5.0401,
+    "gain_db": -0.9599
+  },
+  "native/sccsgovoice/zh/t/radio.enemyspotted-2.ogg": {
+    "sha256": "1369ae75519df40029c20a8c26b2a82f64229a9a1f64008269ef5c21d1eeaa9f",
+    "duration": 0.766938,
+    "peak_dbfs": -3.9519,
+    "gain_db": -2.0481
+  },
+  "native/sccsgovoice/zh/t/radio.enemyspotted-3.ogg": {
+    "sha256": "52ad8447f2080f6e98062234dfaa3d2b6df5d561608ba3a2ad9c688819c7bd93",
+    "duration": 1.117281,
+    "peak_dbfs": -5.5201,
+    "gain_db": -0.4799
+  },
+  "native/sccsgovoice/zh/t/radio.followme-1.ogg": {
+    "sha256": "559b40e6661b9303e3f2a66bc32dbf8a1867aba75a34f6fd016dcaf632444b6f",
+    "duration": 0.476313,
+    "peak_dbfs": -3.7566,
+    "gain_db": -2.2434
+  },
+  "native/sccsgovoice/zh/t/radio.followme-2.ogg": {
+    "sha256": "54f01b12b26c39d25f5dff9a1881746036277b7f307975ee7bd43634f32d5e48",
+    "duration": 0.347125,
+    "peak_dbfs": -0.6916,
+    "gain_db": -5.3084
+  },
+  "native/sccsgovoice/zh/t/radio.followme-3.ogg": {
+    "sha256": "c5dc68279da8b86cb06c0f5c7b02da16e7137c4528604d29f3c9db69a81d2a72",
+    "duration": 0.382844,
+    "peak_dbfs": -0.7025,
+    "gain_db": -5.2975
+  },
+  "native/sccsgovoice/zh/t/radio.letsgo-1.ogg": {
+    "sha256": "ebbdd56467882bedc5100b90d5b1880d350dcf4261a5befdc52e521130d3ca32",
+    "duration": 0.707656,
+    "peak_dbfs": -5.3127,
+    "gain_db": -0.6873
+  },
+  "native/sccsgovoice/zh/t/radio.letsgo-2.ogg": {
+    "sha256": "e9b6667b7f9c72f01e356f44ccdc0b92c7a1bccdc900a71cedb72a2965d59ede",
+    "duration": 0.576937,
+    "peak_dbfs": -4.5426,
+    "gain_db": -1.4574
+  },
+  "native/sccsgovoice/zh/t/radio.letsgo-3.ogg": {
+    "sha256": "054089a1f2db34a4bf97dcb3b37d5006d4f71206d6dd2464b25cbc390d35debf",
+    "duration": 0.637938,
+    "peak_dbfs": -4.3248,
+    "gain_db": -1.6752
+  },
+  "native/sccsgovoice/zh/t/radio.needbackup-1.ogg": {
+    "sha256": "6d316e51c8964393e3268988abbd5acec7ed01c1704ba81f7c488848421692d5",
+    "duration": 0.851812,
+    "peak_dbfs": -5.3201,
+    "gain_db": -0.6799
+  },
+  "native/sccsgovoice/zh/t/radio.needbackup-2.ogg": {
+    "sha256": "5bdc80ea1a8d378e2a55883b11086b4f0cf7cf523b3c4557f639c6d02494ee5b",
+    "duration": 0.833,
+    "peak_dbfs": -2.6517,
+    "gain_db": -3.3483
+  },
+  "native/sccsgovoice/zh/t/radio.needbackup-3.ogg": {
+    "sha256": "5b917130f8b4a73bef102a8ff7d84f07dde6d159befe697cfad109fab011f773",
+    "duration": 0.994,
+    "peak_dbfs": -4.9834,
+    "gain_db": -1.0166
+  },
+  "native/sccsgovoice/zh/t/radio.takingfire-1.ogg": {
+    "sha256": "0a2c0c5f713fabded84192aa917e2ec1d0d5c4b7c64e0de2d6c0f5776b0b2a6c",
+    "duration": 1.103687,
+    "peak_dbfs": -1.8379,
+    "gain_db": -4.1621
+  },
+  "native/sccsgovoice/zh/t/radio.takingfire-2.ogg": {
+    "sha256": "f856118ab966683106ced738b7d4f95b7d4bace886fc9f0bb3502dc270eecad6",
+    "duration": 1.618844,
+    "peak_dbfs": -4.5631,
+    "gain_db": -1.4369
+  },
+  "native/sccsgovoice/zh/t/radio.takingfire-3.ogg": {
+    "sha256": "fff21824973e5ba4062d791440c34a9ea7918fe3d28ae628a0e71c946b01501f",
+    "duration": 1.006031,
+    "peak_dbfs": -5.0309,
+    "gain_db": -0.9691
+  },
+  "native/sccsgovoice/zh/t/smoke-1.ogg": {
+    "sha256": "aee5d2432d51a2b2a0fc2837d1565a232c9b7691fe1c826ef89f411f16ec56d3",
+    "duration": 0.51,
+    "peak_dbfs": -3.1239,
+    "gain_db": -2.8761
+  },
+  "native/sccsgovoice/zh/t/smoke-2.ogg": {
+    "sha256": "dfbb3f68d9b22ade9d3afa73cd724913949a9781d2ce868810cd96f5dbccdbcf",
+    "duration": 0.520813,
+    "peak_dbfs": -2.9715,
+    "gain_db": -3.0285
+  },
+  "native/sccsgovoice/zh/t/smoke-3.ogg": {
+    "sha256": "dad3f16ed4f4ed623f45052d677de5d87a0edc63c14729cad58f73013d6271a0",
+    "duration": 1.005469,
+    "peak_dbfs": -2.4908,
+    "gain_db": -3.5092
+  },
+  "native/sccsgovoice/zh/t/thanks-1.ogg": {
+    "sha256": "317ab83adad1db9faf2d72938c324f7851b4be7115e2eb94ead5147f1a9d8f23",
+    "duration": 0.451875,
+    "peak_dbfs": -7.4374,
+    "gain_db": 0.0
+  },
+  "native/sccsgovoice/zh/t/thanks-2.ogg": {
+    "sha256": "683bae91ba7581f23f1a4f79ea3f8a4cd9868f14b633e23650a54caa4ba33eb7",
+    "duration": 0.714625,
+    "peak_dbfs": -4.7963,
+    "gain_db": -1.2037
+  },
+  "native/sccsgovoice/zh/t/thanks-3.ogg": {
+    "sha256": "fd6dcc827a7b2740ad2d929a441d0cf9b027cbf3e6fb998d639d5b1d1ee0eccf",
+    "duration": 0.733656,
+    "peak_dbfs": -5.2785,
+    "gain_db": -0.7215
+  },
+  "native/sccsgovoice/zh/t/waitinghere-1.ogg": {
+    "sha256": "26b134a0a9d066dd72c16dfdb489fb78deabe97f5fafdf526273dd05c0a861ba",
+    "duration": 0.837031,
+    "peak_dbfs": -1.1592,
+    "gain_db": -4.8408
+  },
+  "native/sccsgovoice/zh/t/waitinghere-2.ogg": {
+    "sha256": "334c232502448a679b8ddfa8bd98b6a6c2246f1bf45828306100f54213639695",
+    "duration": 0.881812,
+    "peak_dbfs": -0.9157,
+    "gain_db": -5.0843
+  },
+  "native/sccsgovoice/zh/t/waitinghere-3.ogg": {
+    "sha256": "fc75951e5dbb8d75e6e8613231075c52ed9da999499fd11c796300d6238f0074",
+    "duration": 0.705,
+    "peak_dbfs": -2.6704,
+    "gain_db": -3.3296
+  }
+}

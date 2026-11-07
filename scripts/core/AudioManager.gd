@@ -15,6 +15,11 @@ var _idx_3d: int = 0
 
 func _ready() -> void:
 	process_mode = Node.PROCESS_MODE_ALWAYS
+	# Preserve transient headroom when several guns/explosions overlap.
+	var limiter := AudioEffectLimiter.new()
+	limiter.ceiling_db = -0.5
+	limiter.threshold_db = -1.0
+	AudioServer.add_bus_effect(0, limiter)
 	for i in range(POOL_2D_SIZE):
 		var p := AudioStreamPlayer.new()
 		p.bus = "Master"
@@ -32,13 +37,14 @@ func _ready() -> void:
 
 
 func play_2d(rel_path: String, vol_db: float = 0.0, pitch: float = 1.0) -> void:
-	var st := GameData.get_sound(rel_path)
+	var sound_path := GameData.resolve_sound_path(rel_path)
+	var st := GameData.get_sound(sound_path)
 	if not st:
 		return
 	var p := _players_2d[_idx_2d]
 	_idx_2d = (_idx_2d + 1) % POOL_2D_SIZE
 	p.stream = st
-	p.volume_db = vol_db + GameData.master_volume_db
+	p.volume_db = vol_db + GameData.master_volume_db + GameData.sound_gain_db(sound_path)
 	p.pitch_scale = pitch
 	p.play()
 
@@ -47,7 +53,13 @@ func play_ui(sound_name: String) -> void:
 	play_2d("ui/%s" % sound_name, -3.0)
 
 
-func play_radio(rel_path: String, speaker_team: String = "CT") -> void:
+func play_radio(rel_path: String, speaker_team: String = "") -> void:
+	if speaker_team.is_empty():
+		speaker_team = "CT"
+		for actor in RoundManager.actors:
+			if is_instance_valid(actor) and bool(actor.get("is_human")):
+				speaker_team = String(actor.get("team"))
+				break
 	var commands := {
 		"radio/ct_fireinhole.wav": "grenade", "radio/ct_coverme.wav": "radio.needbackup",
 		"radio/com_go.wav": "radio.letsgo", "radio/letsgo.wav": "radio.letsgo",
@@ -92,14 +104,15 @@ func play_3d(
 	ai_hear_radius: float = 0.0,
 	team: String = ""
 ) -> void:
-	var st := GameData.get_sound(rel_path)
+	var sound_path := GameData.resolve_sound_path(rel_path)
+	var st := GameData.get_sound(sound_path)
 	if not st:
 		return
 	var p3 := _players_3d[_idx_3d]
 	_idx_3d = (_idx_3d + 1) % POOL_3D_SIZE
 	p3.global_position = world_pos
 	p3.stream = st
-	p3.volume_db = vol_db + GameData.master_volume_db
+	p3.volume_db = vol_db + GameData.master_volume_db + GameData.sound_gain_db(sound_path)
 	p3.max_distance = max_dist
 	p3.pitch_scale = pitch
 	p3.play()
@@ -171,7 +184,7 @@ func play_viewmodel_audio(owner_node: Node, path: String, pitch: float = 1.0) ->
 		owner_node.add_child(branch)
 	var player := AudioStreamPlayer.new()
 	player.stream = stream
-	player.volume_db = -2.2 + GameData.master_volume_db
+	player.volume_db = -2.2 + GameData.master_volume_db + GameData.sound_gain_db(path)
 	player.pitch_scale = pitch
 	branch.add_child(player)
 	player.finished.connect(player.queue_free)

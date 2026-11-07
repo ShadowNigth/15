@@ -553,6 +553,8 @@ func _build_arsenal_dialog() -> void:
 	var audio_options := OptionButton.new()
 	audio_options.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	audio_options.clip_text = true
+	audio_options.fit_to_longest_item = false
+	audio_options.get_popup().max_size = Vector2i(0, 500)
 	audio_options.tooltip_text = "All 649 pinned source recordings, including languages and effects without a current gameplay equivalent."
 	var manifest: Dictionary = GameData._load_json("res://data/native_audio_manifest.json")
 	for entry in manifest.get("files", []):
@@ -565,7 +567,7 @@ func _build_arsenal_dialog() -> void:
 	listen.pressed.connect(func():
 		audition.stop()
 		audition.stream = GameData.get_sound(String(audio_options.get_item_metadata(audio_options.selected)))
-		audition.volume_db = -5.0 + GameData.master_volume_db
+		audition.volume_db = -5.0 + GameData.master_volume_db + GameData.sound_gain_db(String(audio_options.get_item_metadata(audio_options.selected)))
 		audition.play()
 	)
 	var stop_audio := Button.new()
@@ -833,7 +835,7 @@ func _build_options_dialog() -> void:
 	grid.add_child(voice_label)
 	var voice_options := OptionButton.new()
 	voice_options.add_item("English (CT / T)")
-	voice_options.add_item("中文 (CT / T)")
+	voice_options.add_item("Chinese (CT / T)")
 	voice_options.select(1 if GameData.voice_language == "zh" else 0)
 	voice_options.item_selected.connect(func(index: int): GameData.voice_language = "zh" if index == 1 else "en")
 	grid.add_child(voice_options)

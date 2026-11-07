@@ -107,7 +107,7 @@ func setup_fire(owner_actor: Node3D, kind: String, seed_override: int = 0) -> vo
 	_audio_extinguished = false
 	_fire_audio = AudioStreamPlayer3D.new()
 	_fire_audio.stream = GameData.get_sound(AudioManager.cue_path("fire_loop"))
-	_fire_audio.volume_db = -8.0 + GameData.master_volume_db
+	_fire_audio.volume_db = -8.0 + GameData.master_volume_db + GameData.sound_gain_db(AudioManager.cue_path("fire_loop"))
 	_fire_audio.max_distance = 30.0
 	add_child(_fire_audio)
 	_fire_audio.finished.connect(func():
