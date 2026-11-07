@@ -113,3 +113,10 @@ Start with the original gun GLBs and `models_meta.json` from pre-conversion comm
 `e0360c636ab40cb36761dc0ef2189030f922fa33`; the importer deliberately refuses to
 stack a second conversion on an already retargeted model. Do not restore knives,
 skin artwork, weapon statistics or unrelated game files for this operation.
+
+Binary helper-visibility steps are checked on the 60-fps import grid: at a
+visibility event boundary the engine test compares normalized axes and position
+rather than demanding a visible/hidden distinction a few microseconds apart.
+Outside that one-frame boundary, complete signed bases/scales are checked. CZ
+spare removal, suppressor transitions and grenade high/low hold routing also
+have explicit production-controller lifecycle checks.
