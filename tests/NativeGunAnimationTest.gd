@@ -2,6 +2,8 @@ extends Node
 ## Production PlayerController, all 42 native gun/utility rigs and pose matrices.
 var _checks := 0
 var _failures: Array[String] = []
+var _max_position_error := 0.0
+var _max_basis_error := 0.0
 var _capture := false
 var _output := "/tmp/native-gun-captures"
 
@@ -59,6 +61,9 @@ func _run() -> void:
 		_expect(skeleton != null, wid + " original skeleton retained")
 		if skeleton == null:
 			continue
+		# Raw pose QA is independent of the player's current suppressor state.
+		player._vm_silencer_visible = true
+		player._apply_vm_silencer_visibility()
 		source_clips += int(report["source_clip_count"])
 		for clip in report["clips"]:
 			_expect(anim.has_animation(String(clip)), wid + " native clip " + String(clip))
@@ -77,9 +82,13 @@ func _run() -> void:
 					var expected: Array = point["bones"][bone_name]
 					var actual := skeleton.get_bone_global_pose(bone)
 					var position := Vector3(float(expected[0][3]),float(expected[1][3]),float(expected[2][3]))
-					_expect(actual.origin.distance_to(position) < 0.002, wid + " " + String(clip) + " native pivot " + String(bone_name) + " at " + str(point["t"]))
+					var position_error := actual.origin.distance_to(position)
+					_max_position_error = maxf(_max_position_error, position_error)
+					_expect(position_error < 0.002, wid + " " + String(clip) + " native pivot " + String(bone_name) + " at " + str(point["t"]) + " error_m=" + str(position_error))
 					var expected_basis := Basis(Vector3(expected[0][0],expected[1][0],expected[2][0]), Vector3(expected[0][1],expected[1][1],expected[2][1]), Vector3(expected[0][2],expected[1][2],expected[2][2]))
-					_expect(actual.basis.x.distance_to(expected_basis.x) + actual.basis.y.distance_to(expected_basis.y) + actual.basis.z.distance_to(expected_basis.z) < 0.015, wid + " " + String(clip) + " native axes/parity " + String(bone_name))
+					var basis_error := actual.basis.x.distance_to(expected_basis.x) + actual.basis.y.distance_to(expected_basis.y) + actual.basis.z.distance_to(expected_basis.z)
+					_max_basis_error = maxf(_max_basis_error, basis_error)
+					_expect(basis_error < 0.015, wid + " " + String(clip) + " native axes/parity " + String(bone_name) + " at " + str(point["t"]) + " basis_error=" + str(basis_error))
 		for clip in ["reload", "start_reload", "insert", "after_reload", "add_silencer", "detach_silencer"]:
 			if anim.has_animation(clip) and (meta["gameplay_seq_durations"] as Dictionary).has(clip):
 				player.play_viewmodel_sequence([clip])
@@ -89,7 +98,7 @@ func _run() -> void:
 			_expect(player._is_viewmodel_mirrored() == (not hand), wid + " native handedness")
 		GameData.right_hand = true
 		if _capture:
-			for clip in ["idle", "shoot1", "reload", "inspect", "inspect_2", "add_silencer", "pullpin", "throw", "underhand", "pressbutton"]:
+			for clip in ["idle", "shoot1", "reload", "inspect", "inspect_2", "add_silencer", "pullpin", "throw", "underhand", "pressbutton", "prepare"]:
 				if not anim.has_animation(clip):
 					continue
 				player.play_viewmodel_sequence([clip])
@@ -105,6 +114,7 @@ func _run() -> void:
 	world.queue_free()
 	AudioManager.stop_all()
 	await get_tree().process_frame
+	print("[NATIVE GUN TEST] max pivot error_m=", _max_position_error, " max basis error=", _max_basis_error)
 	print("[NATIVE GUN TEST] %s: %d checks, %d source clips, 42 rigs" % ["PASS" if _failures.is_empty() else "FAIL", _checks, source_clips])
 	get_tree().quit(0 if _failures.is_empty() else 1)
 

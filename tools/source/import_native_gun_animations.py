@@ -154,6 +154,20 @@ def sample_native(source, animation, clip, times):
     return result
 
 
+def configure_import(path):
+    """Keep native keys accurate: Godot's default lossy optimizer drops small
+    hand/part movements. Also retain constant scales for suppressor overrides.
+    """
+    resource = 'res://' + str(path.relative_to(base.ROOT))
+    cache = 'res://.godot/imported/' + path.name + '-' + hashlib.md5(resource.encode()).hexdigest() + '.scn'
+    settings = {key:{'optimizer/enabled':False,'compression/enabled':False}
+                for key in ['PATH:AnimationPlayer','AnimationPlayer','PATH:Armature/AnimationPlayer']}
+    text = '[remap]\nimporter="scene"\nimporter_version=1\ntype="PackedScene"\npath='+json.dumps(cache)+'\n\n[deps]\nsource_file='+json.dumps(resource)+'\ndest_files=['+json.dumps(cache)+']\n\n[params]\n'
+    text += 'nodes/root_type=""\nnodes/root_name=""\nnodes/apply_root_scale=true\nnodes/root_scale=1.0\nmeshes/ensure_tangents=true\nmeshes/generate_lods=false\nmeshes/create_shadow_meshes=false\nmeshes/light_baking=0\nskins/use_named_skins=true\nanimation/import=true\nanimation/fps=60\nanimation/trimming=false\nanimation/remove_immutable_tracks=false\nanimation/import_rest_as_RESET=false\nimport_script/path=""\n'
+    text += '_subresources=' + json.dumps({'nodes':settings}).replace('false','false')+'\n'
+    path.with_suffix(path.suffix+'.import').write_text(text)
+
+
 def main(folder, selected=None, analyze=False):
     folder = Path(folder)
     weapons = json.loads((base.ROOT / 'data/weapons.json').read_text())['weapons']
@@ -324,6 +338,7 @@ def main(folder, selected=None, analyze=False):
         sha = hashlib.sha256(srcfile.read_bytes()).hexdigest()
         doc['asset']['native_cs2_animation_sha256'] = sha
         base.write_glb(str(path),doc,binary)
+        configure_import(path)
         gameplay = copy.deepcopy(m['seq_durations'])
         # Source durations stay intact. Runtime retimes only gameplay actions
         # to their pre-conversion durations and retimes sound events identically.

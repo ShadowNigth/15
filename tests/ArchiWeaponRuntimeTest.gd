@@ -211,6 +211,14 @@ func _test_animation_refinements() -> void:
 		"weapons/v_usp": "weapon_hand_r",
 	}
 	for key in inspection_models:
+		var meta: Dictionary = GameData.models_meta.get(key, {})
+		if bool(meta.get("native_gun_animations", false)):
+			# Native CS2 hands and weapon roots are independently authored. The
+			# former legacy fix forced a constant local attachment, erasing those
+			# movements. NativeGunAnimationTest now validates their full global
+			# hand/weapon frames against the source at every review checkpoint.
+			_expect(not String(meta.get("animation_source", "")).is_empty(), String(key) + " uses source-authored attachment motion")
+			continue
 		var packed := GameData.get_model_scene(key)
 		_expect(packed != null, "%s inspection refinement model loads" % key)
 		if packed == null:
