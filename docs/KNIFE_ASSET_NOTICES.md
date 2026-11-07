@@ -115,3 +115,14 @@ Exact source paths, Git blob IDs and SHA-256 hashes are recorded in
 previous knife-only package. Valve/CS2 recordings and agent voices retain their
 respective owners' rights. Repository inclusion does not establish permission
 for cross-game redistribution. No blanket GPL/ownership claim is made for audio.
+
+## Native world cosmetics (ScCsgoKnives 1eb8067)
+
+Original casing geometry/colour maps, reserve-ammunition icons, CS2 chicken,
+CT SAS/T Phoenix, hostage and defuser pouch are sourced from the same pinned
+`zh667/ScCsgoKnives` repository. See `data/native_world_manifest.json` for per-file
+source paths/SHA-256 and `docs/NATIVE_WORLD_ASSETS.md` for derived conversion and
+runtime adaptations. CT/T external native animation caches are decoded into the
+review GLBs; no Survivalcraft DLL is required or shipped. Valve retains the rights
+to the underlying game assets; neither upstream GPL-3.0 code licensing nor this
+credit grants new permission to redistribute those assets across games.

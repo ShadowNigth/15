@@ -194,6 +194,11 @@ func apply_world_explosion_physics(blast_pos: Vector3, blast_radius: float, weap
 		for brk in brks:
 			if is_instance_valid(brk) and brk.has_method("apply_explosion_impulse"):
 				brk.call("apply_explosion_impulse", blast_pos, blast_radius * 0.92, 95.0 * smoke_strength)
+	for chicken in get_tree().get_nodes_in_group("ambient_chickens"):
+		if chicken.is_alive and chicken.global_position.distance_to(blast_pos) < minf(blast_radius, 8.0):
+			var ray := PhysicsRayQueryParameters3D.create(blast_pos + Vector3.UP * 0.1, chicken.global_position + Vector3.UP * 0.2, 1)
+			if chicken.get_world_3d().direct_space_state.intersect_ray(ray).is_empty():
+				chicken.take_damage(null, 30.0)
 	for h in hostages:
 		if is_instance_valid(h) and h.has_method("notify_nearby_danger"):
 			h.call("notify_nearby_danger", blast_pos, blast_radius * 1.35)

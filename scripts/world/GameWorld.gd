@@ -21,6 +21,7 @@ var water: WaterEffects = null
 
 var native_casing_system: NativeCasings = null
 var ambient_chickens: Array[AmbientChicken] = []
+var _ambient_initialized: bool = false
 
 var player: PlayerController = null
 var bots: Array[CSBot] = []
@@ -218,7 +219,8 @@ func prepare_round_entities(reset_all_gear: bool) -> void:
 	ImpactEffects.clear_decals()
 	if native_casing_system != null:
 		native_casing_system.clear_all()
-	_reset_ambient_chickens()
+	if _ambient_initialized:
+		_reset_ambient_chickens()
 	if bot_navigator != null:
 		bot_navigator.reset_round_weights()
 
@@ -521,4 +523,5 @@ func _reset_ambient_chickens() -> void:
 func _initialize_ambient_chickens() -> void:
 	await get_tree().physics_frame
 	await get_tree().physics_frame
+	_ambient_initialized = true
 	_reset_ambient_chickens()

@@ -889,4 +889,4 @@ func ammo_icon_for(wid: String) -> Texture2D:
 		icon = "shotgun_shell"
 	elif wid in ["awp", "scout"]:
 		icon = "generic_bullet"
-	return get_texture("res://assets/ui/native/hud_ammo_" + icon + ".png")
+	return get_texture("res://assets/ui/native/hud_ammo_%s.png" % icon)

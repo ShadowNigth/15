@@ -960,6 +960,9 @@ func _swing_knife(heavy_stab: bool) -> void:
 	if col is DroppedWeapon:
 		(col as DroppedWeapon).apply_bullet_impulse(hpos, dir, 55.0 if heavy_stab else 28.0)
 		return
+	if col is AmbientChicken:
+		col.take_damage(actor, 65.0 if heavy_stab else 20.0)
+		return
 	if col is Node3D and col.has_method("take_bullet_damage"):
 		var dmg := 65.0 if heavy_stab else 20.0
 		if heavy_stab:

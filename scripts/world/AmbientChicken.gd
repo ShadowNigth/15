@@ -84,6 +84,9 @@ func _physics_process(delta: float) -> void:
 	if not is_alive:
 		return
 	collision_layer = 2
+	if RoundManager.get_incendiary_danger_at(global_position) > 0.5:
+		take_damage(null, 30.0)
+		return
 	_panic = maxf(0.0, _panic - delta)
 	_decision -= delta
 	_voice -= delta

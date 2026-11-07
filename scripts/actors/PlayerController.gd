@@ -888,6 +888,8 @@ func _start_vm_clip(anim_name: String) -> void:
 			followup = "draw_2"
 		if not followup.is_empty() and _vm_anim.has_animation(followup):
 			anim_name = followup
+	if not anim_name.begins_with("shoot") and not anim_name.begins_with("idle") and anim_name != "fire":
+		weapon_ctrl.casing_epoch += 1
 	_vm_anim.stop()
 	_vm_anim.speed_scale = 1.0
 	_vm_anim.play(anim_name)

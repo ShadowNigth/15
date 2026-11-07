@@ -198,3 +198,17 @@ Validación de esta corrección: **3.185 comprobaciones headless y 3.782 con Ope
 Las compilaciones ejecutables anteriores no contienen esta corrección; el
 proyecto actualizado sí. Las advertencias del renderer dummy en headless no
 sustituyen la revisión de las capturas reales.
+
+### Casquillos nativos, HUD opcional y fauna ambiental
+
+- Ocho casquillos originales y expulsión por evento para 33 armas (AWP a 0,74 s),
+  con puerto animado del jugador, rebotes y limpieza limitada.
+- Ocho iconos de munición, advertencias de poca munición y kit de desactivación
+  caído original, con opciones independientes en **Configuration & Controls**.
+- Gallinas animadas ambientales en Italy, Inferno y Cobble, sin alterar equipos,
+  economía ni condiciones de victoria.
+- **Arsenal → [Native review]**: CT SAS/T Phoenix (170 clips cada uno), rehén,
+  gallina y kit. Los personajes clásicos se conservan hasta completar y validar
+  la adaptación de esqueletos/armas/acciones; no se sustituyen por modelos sin animar.
+
+Detalles, reconstrucción y límites: [docs/NATIVE_WORLD_ASSETS.md](docs/NATIVE_WORLD_ASSETS.md).

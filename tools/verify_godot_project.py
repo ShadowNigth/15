@@ -103,7 +103,7 @@ def main() -> int:
             bhdr = f.read(8)
             blen, btype = struct.unpack("<2I", bhdr)
             for bv in jdoc.get("bufferViews", []):
-                if bv["byteOffset"] + bv["byteLength"] > blen:
+                if bv.get("byteOffset", 0) + bv["byteLength"] > blen:
                     errors.append(f"[GLB bufferView out of bounds] {gp}")
                     break
             for img in jdoc.get("images", []):
