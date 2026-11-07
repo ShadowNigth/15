@@ -134,17 +134,20 @@ func _run() -> void:
 	system.clear_all()
 	expect(system.pending.is_empty(), "Round cleanup clears pending events")
 	print("[NATIVE WORLD TEST] %s: %d checks; %d failures" % ["PASS" if failures.is_empty() else "FAIL", checks, failures.size()])
+	AudioManager.stop_all()
 	get_tree().quit(0 if failures.is_empty() else 1)
 
 func _capture_gameplay(world: GameWorld, player: PlayerController) -> void:
 	DirAccess.make_dir_recursive_absolute("/tmp/native-world-review")
 	player.weapon_ctrl.equip_weapon_by_id("ak47")
-	player.look_pitch = 0.0
+	player.look_pitch = deg_to_rad(-20.0)
 	player.camera.current = true
 	if not world.ambient_chickens.is_empty():
 		var chicken := world.ambient_chickens[0]
 		player.global_position = chicken.home + Vector3(0, 0.1, 2.5)
 		player.look_yaw = 0.0
+	world.native_casing_system.set_physics_process(true)
+	shot(player, "ak47")
 	for i in range(8):
 		await get_tree().process_frame
 	RenderingServer.force_draw(false)
@@ -155,10 +158,18 @@ func _capture_gameplay(world: GameWorld, player: PlayerController) -> void:
 	image.save_jpg("/tmp/native-world-review/italy_hud_chicken.jpg", 0.55)
 	# Separate animated model review, never replace live bots with incompatible rigs.
 	world.hide()
-	world.hud.hide()
+	world.hud.visible = false
+	player._vm_layer.visible = false
 	var camera := Camera3D.new()
 	add_child(camera)
 	camera.current = true
+	var environment := Environment.new()
+	environment.background_mode = Environment.BG_COLOR
+	environment.background_color = Color(0.055, 0.075, 0.10)
+	environment.ambient_light_source = Environment.AMBIENT_SOURCE_COLOR
+	environment.ambient_light_color = Color(0.7, 0.75, 0.85)
+	environment.ambient_light_energy = 0.6
+	camera.environment = environment
 	camera.look_at_from_position(Vector3(0, 1.15, 3.6), Vector3(0, 0.95, 0), Vector3.UP)
 	var light := DirectionalLight3D.new()
 	light.rotation_degrees = Vector3(-35, -25, 0)

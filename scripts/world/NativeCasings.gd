@@ -48,7 +48,7 @@ func _physics_process(delta: float) -> void:
 		var lo: Array = cue["speed_min"]
 		var hi: Array = cue["speed_max"]
 		var speed := Vector3(randf_range(minf(lo[0], hi[0]), maxf(lo[0], hi[0])), randf_range(minf(lo[1], hi[1]), maxf(lo[1], hi[1])), randf_range(minf(lo[2], hi[2]), maxf(lo[2], hi[2])))
-		var launch := frame.basis * speed + a.velocity * 0.42
+		var launch: Vector3 = frame.basis * speed + a.velocity * 0.42
 		ImpactEffects.spawn_physical_shell(get_parent(), "native/casing_" + String(cue["model"]), frame.origin, launch)
 		emitted_count += 1
 		pending.remove_at(i)
