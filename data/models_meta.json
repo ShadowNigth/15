@@ -5852,7 +5852,8 @@
       "reload": 2.2,
       "draw": 1.0,
       "inspect": 5.667,
-      "inspect_2": 8.5
+      "inspect_2": 8.5,
+      "reload_empty": 2.2
     },
     "native_cs2_animation": true,
     "native_gun_animations": true,
@@ -6260,7 +6261,8 @@
       "shoot1": 0.4,
       "reload": 2.7,
       "draw": 1.0,
-      "inspect": 6.467
+      "inspect": 6.467,
+      "reload_empty": 2.7
     },
     "native_cs2_animation": true,
     "native_gun_animations": true,
@@ -6710,7 +6712,8 @@
       "shoot_empty": 0.4,
       "draw": 1.133,
       "reload": 2.267,
-      "inspect": 6.467
+      "inspect": 6.467,
+      "reload_empty": 2.267
     },
     "native_cs2_animation": true,
     "native_gun_animations": true,
@@ -7076,7 +7079,7 @@
       "idle": 1.0,
       "shoot1": 0.7999,
       "reload": 1.6332,
-      "start_reload": 0.366659,
+      "start_reload": 0.799983,
       "insert": 0.433324,
       "after_reload": 0.833216,
       "inspect": 5.6,
@@ -7107,6 +7110,12 @@
         {
           "t": 1.166643,
           "wav": "weapons/archi/cs2_nova/pump.wav"
+        }
+      ],
+      "start_reload": [
+        {
+          "t": 0.366659,
+          "wav": "weapons/archi/cs2_nova/insertshell_01.wav"
         }
       ],
       "insert": [
@@ -7183,6 +7192,7 @@
         "deg_from_seed": 60.56
       }
     },
+    "cz_spare_detach_times": {},
     "gameplay_seq_durations": {
       "idle": 1.0,
       "shoot1": 0.8,
@@ -7958,7 +7968,8 @@
       "shootlast": 0.767,
       "reload": 2.7,
       "draw": 1.0,
-      "inspect": 6.467
+      "inspect": 6.467,
+      "reload_empty": 2.7
     },
     "native_cs2_animation": true,
     "native_gun_animations": true,
@@ -8514,7 +8525,8 @@
       "shoot1": 0.9,
       "reload": 3.35,
       "draw": 1.0,
-      "inspect": 5.333
+      "inspect": 5.333,
+      "reload_empty": 3.35
     },
     "native_cs2_animation": true,
     "native_gun_animations": true,
@@ -9374,7 +9386,8 @@
       "draw": 1.0,
       "draw_unsil": 1.0,
       "inspect": 6.467,
-      "inspect_unsil": 6.467
+      "inspect_unsil": 6.467,
+      "reload_empty": 2.7
     },
     "native_cs2_animation": true,
     "native_gun_animations": true,
@@ -9411,7 +9424,7 @@
       "idle": 1.0,
       "shoot1": 0.8667,
       "reload": 1.7332,
-      "start_reload": 0.699987,
+      "start_reload": 1.2999749999999999,
       "insert": 0.5999879999999999,
       "after_reload": 0.43322499999999997,
       "inspect": 4.6,
@@ -9439,6 +9452,12 @@
         }
       ],
       "reload": [
+        {
+          "t": 0.733319,
+          "wav": "weapons/archi/cs2_xm1014/insertshell_01.wav"
+        }
+      ],
+      "start_reload": [
         {
           "t": 0.733319,
           "wav": "weapons/archi/cs2_xm1014/insertshell_01.wav"
@@ -9512,6 +9531,7 @@
         "deg_from_seed": 89.49
       }
     },
+    "cz_spare_detach_times": {},
     "gameplay_seq_durations": {
       "idle": 1.0,
       "shoot1": 0.8,
@@ -10010,7 +10030,8 @@
       "shootlast": 0.4,
       "reload": 2.267,
       "draw": 1.0,
-      "inspect": 6.467
+      "inspect": 6.467,
+      "reload_empty": 2.267
     },
     "native_cs2_animation": true,
     "native_gun_animations": true,
@@ -10124,6 +10145,32 @@
         "deg_from_seed": 97.91
       }
     },
+    "cz_spare_detach_times": {
+      "draw": null,
+      "draw_2": null,
+      "idle": null,
+      "idle_empty": null,
+      "shoot1": null,
+      "shootlast": null,
+      "reload": 0.733324,
+      "reload_empty": 0.866656,
+      "inspect": null,
+      "reloadFollowup": null,
+      "reloadFollowupEmpty": null,
+      "shoot": null,
+      "shoot2": null,
+      "shoot3": null,
+      "shoot_empty": null,
+      "fire": null,
+      "draw_unsil": null,
+      "idle_unsil": null,
+      "reload_unsil": 0.733324,
+      "inspect_unsil": null,
+      "shoot1_unsil": null,
+      "shoot2_unsil": null,
+      "shoot3_unsil": null,
+      "shootlast_unsil": null
+    },
     "gameplay_seq_durations": {
       "idle": 0.033,
       "shoot1": 0.4,
@@ -10132,7 +10179,8 @@
       "draw": 1.867,
       "inspect": 6.433,
       "reload2": 2.833,
-      "draw2": 1.867
+      "draw2": 1.867,
+      "reload_empty": 2.767
     },
     "native_cs2_animation": true,
     "native_gun_animations": true,
@@ -10309,6 +10357,7 @@
         "deg_from_seed": 112.11
       }
     },
+    "cz_spare_detach_times": {},
     "gameplay_seq_durations": {
       "idle": 7.5,
       "draw": 1.167,
@@ -11200,7 +11249,7 @@
       "idle": 1.0,
       "shoot1": 0.7999,
       "reload": 1.7332,
-      "start_reload": 0.399992,
+      "start_reload": 0.933315,
       "insert": 0.533323,
       "after_reload": 0.7998850000000001,
       "inspect": 5.7666,
@@ -11224,6 +11273,12 @@
         }
       ],
       "reload": [
+        {
+          "t": 0.433325,
+          "wav": "weapons/archi/cs2_sawedoff/insertshell_01.wav"
+        }
+      ],
+      "start_reload": [
         {
           "t": 0.433325,
           "wav": "weapons/archi/cs2_sawedoff/insertshell_01.wav"
@@ -11296,6 +11351,7 @@
         "shell_shotgun"
       ]
     },
+    "cz_spare_detach_times": {},
     "gameplay_seq_durations": {
       "idle": 1.0,
       "shoot1": 0.833,

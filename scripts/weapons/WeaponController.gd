@@ -364,7 +364,8 @@ func trigger_primary(holding: bool, delta: float) -> void:
 			_grenade_pin_timer = 0.36
 			_grenade_want_release = false
 			_grenade_lob_mode = false
-			AudioManager.play_3d(String(spec.get("pinpull_sound", "weapons/archi/cs2_hegren/pinpull.wav")), actor.global_position, -3.0, 14.0)
+			if not _human_vm_has_events(spec, "pullpin"):
+				AudioManager.play_3d(String(spec.get("pinpull_sound", "weapons/archi/cs2_hegren/pinpull.wav")), actor.global_position, -3.0, 14.0)
 			if actor.has_method("play_viewmodel_sequence"):
 				actor.call("play_viewmodel_sequence", ["pullpin"])
 		else:
@@ -457,7 +458,8 @@ func trigger_secondary() -> void:
 		_grenade_pin_timer = 0.32
 		_grenade_want_release = false
 		_grenade_lob_mode = true
-		AudioManager.play_3d(String(spec.get("pinpull_sound", "weapons/archi/cs2_hegren/pinpull.wav")), actor.global_position, -3.0, 14.0)
+		if not _human_vm_has_events(spec, "pullpin"):
+			AudioManager.play_3d(String(spec.get("pinpull_sound", "weapons/archi/cs2_hegren/pinpull.wav")), actor.global_position, -3.0, 14.0)
 		if actor.has_method("play_viewmodel_sequence"):
 			actor.call("play_viewmodel_sequence", ["pullpin"])
 		return
@@ -543,6 +545,9 @@ func start_reload() -> void:
 	var v_name := String(spec.get("v_model", "v_" + current_weapon_id))
 	var sil := bool(silenced_state.get(current_weapon_id, false))
 	var rel_anim := "reload" if (sil or not bool(spec.get("silencer", false))) else "reload_unsil"
+	var native_meta: Dictionary = GameData.models_meta.get("weapons/" + v_name, {})
+	if cur == 0 and bool(native_meta.get("native_gun_animations", false)) and (native_meta.get("seq_durations", {}) as Dictionary).has("reload_empty"):
+		rel_anim = "reload_empty"
 	if bool(spec.get("shotgun_reload", false)):
 		reload_timer = _get_viewmodel_seq_duration(v_name, "start_reload", 0.52)
 	else:
@@ -563,10 +568,7 @@ func start_reload() -> void:
 		if bool(spec.get("shotgun_reload", false)):
 			actor.call("play_viewmodel_sequence", ["start_reload", "reload"])
 		else:
-			if bool(spec.get("silencer", false)) and not sil:
-				actor.call("play_viewmodel_sequence", ["reload_unsil", "reload"])
-			else:
-				actor.call("play_viewmodel_sequence", ["reload"])
+			actor.call("play_viewmodel_sequence", [rel_anim, "reload"])
 
 
 func _finish_reload_step() -> void:

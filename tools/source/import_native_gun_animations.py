@@ -14,6 +14,7 @@ import sys
 from pathlib import Path
 
 import numpy as np
+from scipy.spatial.transform import Rotation
 
 from . import add_cs2_knives as base
 from . import import_native_knife_animations as native
@@ -125,6 +126,34 @@ def setup(wid, spec, folder):
     return path, doc, binary, srcfile, animation, source, idx, mapping, old_idle, idle, placement, landmarks
 
 
+def sample_native(source, animation, clip, times):
+    """CS2 RelativeToFrame/FirstFrame deltas belong over the moving idle pose.
+
+    Matches Cs2Rig.SampleAdditive, including subtraction of frame-zero root/wp n
+    rotations: treating the R8 layer as an absolute pose puts hands at the eye.
+    """
+    if not clip.get('Additive'):
+        return native.sample_poses(source, clip, times)
+    assert clip['Additive'] == 'RelativeToFrame' and clip['AdditiveBase'] == 'FirstFrame'
+    under = next(c for c in animation['Clips'].values() if c.get('Alias') == clip.get('AdditiveOver','idle'))
+    base_times = np.mod(times, float(under['Duration'])) if under['Duration'] else np.zeros(len(times))
+    bases = native.sample_poses(source, under, base_times)
+    layers = native.sample_poses(source, clip, np.r_[0.0,times])
+    parents = {c:i for i,n in enumerate(source) for c in n.get('children',[])}
+    result = []
+    for f,base_pose in enumerate(bases):
+        overrides = {}
+        for i,node in enumerate(source):
+            parent = parents.get(i)
+            def local(pose):
+                return np.linalg.inv(pose[parent]) @ pose[i] if parent is not None else pose[i]
+            b, first, now = local(base_pose),local(layers[0]),local(layers[f+1])
+            rotation = b[:3,:3] @ np.linalg.inv(first[:3,:3]) @ now[:3,:3]
+            overrides[i] = dict(translation=b[:3,3]+now[:3,3]-first[:3,3],rotation=Rotation.from_matrix(rotation).as_quat(),scale=node['scale'])
+        result.append(base.matrices(source,overrides))
+    return result
+
+
 def main(folder, selected=None, analyze=False):
     folder = Path(folder)
     weapons = json.loads((base.ROOT / 'data/weapons.json').read_text())['weapons']
@@ -164,7 +193,7 @@ def main(folder, selected=None, analyze=False):
                 parent = parents.get(parent)
             fallback[i] = parent
 
-        def target(pose):
+        def target(pose, clip=None, at=0.0):
             out = [x.copy() for x in old_idle]
             for i,n in mapping.items():
                 out[i] = native.C @ pose[idx[n]] @ native.CI @ factors[i]
@@ -178,6 +207,17 @@ def main(folder, selected=None, analyze=False):
                 elif i not in mapping:
                     parent = fallback[i]
                     out[i] = out[parent] @ np.linalg.inv(old_idle[parent]) @ old_idle[i] if parent is not None else placement @ old_idle[i]
+            # Native graph visibility for reload-only helper props. These rules
+            # are not present in absolute bone curves (ScGunPartVisibility.cs).
+            for i,n in mapping.items():
+                hidden = wid == 'revolver' and n in ['loader_handle','loader_holder'] and (clip is None or not clip['SourceName'].startswith('reload'))
+                if wid == 'sawedoff' and n == 'shell':
+                    marks = {e['Name']:float(e['At']) for e in (clip or {}).get('Events',[]) if e['Class'] == 'CNmClipDocEvent_ID'}
+                    hidden = not (marks.get('WPN_RELOAD_LOOP',float('inf')) <= at < marks.get('WPN_RELOAD_OUTRO',float('-inf')))
+                if wid == 'cz75' and n == 'magazine2':
+                    detach = next((float(e['At']) for e in (clip or {}).get('Events',[]) if e['Name'] == 'Weapon_CZ.Clipout2'),float('inf'))
+                    hidden = at >= detach or (clip is not None and clip.get('Alias','').startswith('reloadFollowup'))
+                if hidden: out[i][:3,:3] *= 0.0001
             return out
 
         idle_target = target(idle)
@@ -200,6 +240,12 @@ def main(folder, selected=None, analyze=False):
                 for alias, marker in [('start_reload','WPN_RELOAD_INTRO'),('insert','WPN_RELOAD_LOOP'),('after_reload','WPN_RELOAD_OUTRO')]:
                     e = marks[marker]
                     start, end = float(e['At']), min(float(clip['Duration']),float(e['At'])+float(e['Duration']))
+                    if alias == 'start_reload':
+                        # Classic controller credits the first shell when its
+                        # start timer ends. Include that first native insertion,
+                        # then repeat only the native loop for subsequent shells.
+                        loop = marks['WPN_RELOAD_LOOP']
+                        end = float(loop['At'])+float(loop['Duration'])
                     all_clips.append((alias,source_name,clip,start,end))
                     durations[alias] = end-start
                     segments[alias] = [start,end]
@@ -207,12 +253,17 @@ def main(folder, selected=None, analyze=False):
             duration = end-start
             samples = np.array(sorted({start,end} | {float(t) for tracks in clip['Bones'].values()
                 for field,tr in tracks.items() if field in ['Translation','Rotation','Scale'] for t in tr['Times'] if start < float(t) < end}))
-            poses = native.sample_poses(source, clip, samples)
-            targets = np.array([target(pose) for pose in poses])
+            extra = {float(e['At']) for e in clip.get('Events',[]) if start < float(e.get('At',0)) < end}
+            if clip.get('Additive'):
+                under = next(c for c in animation['Clips'].values() if c.get('Alias') == clip.get('AdditiveOver','idle'))
+                extra |= {float(t) for curves in under['Bones'].values() for field,tr in curves.items() if field in ['Translation','Rotation','Scale'] for t in tr['Times'] if start < float(t) < end}
+            samples = np.array(sorted(set(samples) | extra | {max(start,t-0.00001) for t in extra}))
+            poses = sample_native(source, animation, clip, samples)
+            targets = np.array([target(pose,clip,float(at)) for pose,at in zip(poses,samples)])
             times = samples-start
             if name in ['idle','draw','shoot1','reload','inspect','inspect_2','attach','detach','pullpin','throw','underhand','pressbutton','prepare','alt1','start_reload','insert','after_reload']:
                 chosen = sorted({0,len(times)//3,2*len(times)//3,len(times)-1})
-                tracked = [i for i in sorted(joints) if anatomical(doc['nodes'][i]['name']) in ['hand_L','hand_R'] or i in mapping and mapping[i] in ['clip','magazine','slide','bolt','pump','silencer','weapon_l','weapon_r','lighter','molotov','detonator_switch']]
+                tracked = [i for i in sorted(joints) if anatomical(doc['nodes'][i]['name']) in ['hand_L','hand_R'] or i in mapping and mapping[i] in ['clip','magazine','slide','bolt','pump','silencer','weapon_l','weapon_r','lighter','molotov','detonator_switch','loader_handle','loader_holder','shell','magazine2']]
                 checkpoints[name] = [dict(t=float(times[f]), bones={doc['nodes'][i]['name']:targets[f,i].round(7).tolist() for i in tracked}) for f in chosen]
             track = dict(name=name, samplers=[], channels=[], extras=dict(source_clip=source_name,source_interval=[start,end]))
             # Drop numerically constant channels to two keys; all changing source
@@ -276,7 +327,8 @@ def main(folder, selected=None, analyze=False):
         gameplay = copy.deepcopy(m['seq_durations'])
         # Source durations stay intact. Runtime retimes only gameplay actions
         # to their pre-conversion durations and retimes sound events identically.
-        m.update(gameplay_seq_durations=gameplay, sequences=list(durations),seq_durations=durations,seq_events=events,
+        if 'reload_empty' in durations: gameplay.setdefault('reload_empty',gameplay.get('reload',float(spec.get('reload_time',2.5))))
+        m.update(cz_spare_detach_times={n:next((float(e['At']) for e in animation['Clips'][sn].get('Events',[]) if e['Name']=='Weapon_CZ.Clipout2'),None) for n,sn in sources.items()} if wid=='cz75' else {},gameplay_seq_durations=gameplay, sequences=list(durations),seq_durations=durations,seq_events=events,
                  native_cs2_animation=True,native_gun_animations=True,authored_right_hand=True,
                  inspect_clips=[n for n in sources if n.startswith('inspect') and n != 'inspect_unsil'],
                  animation_source='ScCsgoKnives native per-weapon clips, original geometry and anatomical arm retarget')

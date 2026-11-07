@@ -39,6 +39,7 @@ jobs:
           python tools/verify_godot_project.py
           python tests/check_knife_assets.py
           python tests/check_complete_cosmetics.py
+          python tests/check_native_gun_animations.py
 
       - name: Install Godot 4.3
         run: |

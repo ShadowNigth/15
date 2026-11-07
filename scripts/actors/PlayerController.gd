@@ -58,6 +58,7 @@ var _vm_built_for: String = ""
 var _vm_silencer_skeleton: Skeleton3D = null
 var _vm_silencer_bone: int = -1
 var _vm_silencer_visible: bool = true
+var _native_cz_spare_removed := false
 var _pending_vm_events: Array = []
 var _vm_anim_elapsed: float = 0.0
 ## Last authentic inspection variant per weapon. The first press keeps the
@@ -273,6 +274,8 @@ func _create_chrome_studio_panorama() -> ImageTexture:
 
 func spawn_for_round(pos: Vector3, yaw_rad: float, reset_weapons: bool) -> void:
 	super.spawn_for_round(pos, yaw_rad, reset_weapons)
+	if reset_weapons:
+		_native_cz_spare_removed = false
 	camera.top_level = false
 	_eye_height_cur = 1.66
 	_vm_kick_z = 0.0
@@ -411,6 +414,7 @@ func _process(delta: float) -> void:
 		# calibration every frame so interrupted clips cannot accumulate offsets.
 		_vm_model_root.transform = _vm_model_rest_transform
 		_apply_vm_silencer_visibility()
+		_apply_native_prop_visibility()
 
 	# Full display-refresh-rate camera + sub-tick physics & stair interpolation!
 	_land_dip = lerpf(_land_dip, 0.0, minf(1.0, 12.0 * delta))
@@ -707,9 +711,8 @@ func _current_vm_muzzle() -> Vector3:
 
 
 ## World-space position of a viewmodel-local point. With cl_righthand=1 the
-##2D container mirrors the rendered viewmodel, so world-space consumers
-## (shells, tracers, muzzle light) must negate X to land where the mirrored
-## gun appears on screen.
+## Legacy rigs mirror for right-hand view; native rigs mirror for left-hand
+## view. World-space shells, tracers and lights must follow the same parity.
 func _is_viewmodel_mirrored() -> bool:
 	var mmeta: Dictionary = GameData.models_meta.get("weapons/" + _cur_vm_model_name, {})
 	return not GameData.right_hand if bool(mmeta.get("authored_right_hand", false)) else GameData.right_hand
@@ -821,6 +824,23 @@ func _apply_vm_silencer_visibility() -> void:
 	_vm_silencer_skeleton.set_bone_pose_scale(_vm_silencer_bone, target_scale)
 
 
+func _apply_native_prop_visibility() -> void:
+	if _vm_built_for != "cz75" or _vm_anim == null:
+		return
+	var meta: Dictionary = GameData.models_meta.get("weapons/" + _cur_vm_model_name, {})
+	var markers: Dictionary = meta.get("cz_spare_detach_times", {})
+	var marker: Variant = markers.get(String(_vm_anim.current_animation))
+	if marker != null and _vm_anim.current_animation_position >= float(marker):
+		_native_cz_spare_removed = true
+	if _native_cz_spare_removed:
+		var skeletons := _vm_model_root.find_children("*", "Skeleton3D", true, false)
+		if not skeletons.is_empty():
+			var skeleton := skeletons[0] as Skeleton3D
+			var bone := skeleton.find_bone("v_weapon_cz_magazine2")
+			if bone >= 0:
+				skeleton.set_bone_pose_scale(bone, Vector3.ONE * 0.0001)
+
+
 func _prepare_viewmodel_materials(n: Node, native_arms: bool = false) -> void:
 	if n is MeshInstance3D:
 		var mi := n as MeshInstance3D
@@ -831,8 +851,8 @@ func _prepare_viewmodel_materials(n: Node, native_arms: bool = false) -> void:
 				var mat := mi.get_active_material(s)
 				var name_lower := mat.resource_name.to_lower() if mat != null else ""
 				var arm_surface := name_lower.contains("glove") or name_lower == "ct_arms.bmp"
-				# Only the original port's arm mesh requires parity conversion;
-				# the source knife mesh and its skin have positive parity already.
+				# Native knives reflect only their original arms; native guns
+				# retain the original reflected geometry for every surface.
 				var native_gun := bool((GameData.models_meta.get("weapons/" + _cur_vm_model_name, {}) as Dictionary).get("native_gun_animations", false))
 				var material_mode := "vm_flip" if native_gun or (native_arms and arm_surface) else "vm"
 				var styled := GameData.get_styled_model_material(mat, material_mode)
@@ -843,6 +863,16 @@ func _prepare_viewmodel_materials(n: Node, native_arms: bool = false) -> void:
 
 
 func _start_vm_clip(anim_name: String) -> void:
+	if _vm_built_for == "cz75" and _native_cz_spare_removed:
+		var followup := ""
+		if anim_name in ["reload", "reload_unsil"]:
+			followup = "reloadFollowup"
+		elif anim_name == "reload_empty":
+			followup = "reloadFollowupEmpty"
+		elif anim_name == "draw":
+			followup = "draw_2"
+		if not followup.is_empty() and _vm_anim.has_animation(followup):
+			anim_name = followup
 	_vm_anim.stop()
 	_vm_anim.speed_scale = 1.0
 	_vm_anim.play(anim_name)
@@ -853,14 +883,15 @@ func _start_vm_clip(anim_name: String) -> void:
 		var mmeta: Dictionary = GameData.models_meta.get("weapons/" + _cur_vm_model_name, {})
 		var event_time_scale := 1.0
 		if bool(mmeta.get("native_gun_animations", false)):
-			var action_names := ["reload", "reload_unsil", "reload_empty", "start_reload", "insert", "after_reload", "add_silencer", "detach_silencer", "pullpin", "pressbutton", "prepare"]
+			var action_names := ["reload", "reload_unsil", "reload_empty", "start_reload", "insert", "after_reload", "add_silencer", "detach_silencer", "pullpin", "pressbutton", "prepare", "reloadFollowup", "reloadFollowupEmpty"]
 			if anim_name in action_names:
 				var gameplay: Dictionary = mmeta.get("gameplay_seq_durations", {})
-				var duration := float(gameplay.get(anim_name, _vm_anim.get_animation(anim_name).length))
+				var timing_name := "reload_empty" if anim_name == "reloadFollowupEmpty" else "reload" if anim_name == "reloadFollowup" else anim_name
+				var duration := float(gameplay.get(timing_name, _vm_anim.get_animation(anim_name).length))
 				if anim_name == "pressbutton":
 					duration = 3.0
 				elif anim_name == "pullpin":
-					duration = 0.36
+					duration = 0.32 if weapon_ctrl._grenade_lob_mode else 0.36
 				elif anim_name == "prepare":
 					duration = float(weapon_ctrl.get_current_spec().get("primary_delay", 0.20))
 				event_time_scale = duration / maxf(_vm_anim.get_animation(anim_name).length, 0.001)
@@ -969,6 +1000,9 @@ func _play_idle_viewmodel() -> void:
 	var wid := weapon_ctrl.current_weapon_id
 	var spec: Dictionary = GameData.weapons.get(wid, {})
 	var is_sil := bool(weapon_ctrl.silenced_state.get(wid, false)) and bool(spec.get("silencer", false))
+	if wid == "elite" and int(weapon_ctrl.clips.get(wid, 2)) <= 1:
+		play_viewmodel_sequence(["idle_bothempty" if int(weapon_ctrl.clips.get(wid, 2)) == 0 else "idle_leftempty", "idle"])
+		return
 	if int(weapon_ctrl.clips.get(wid, 1)) == 0 and _vm_anim != null and _vm_anim.has_animation("idle_empty"):
 		play_viewmodel_sequence(["idle_empty"])
 		return
