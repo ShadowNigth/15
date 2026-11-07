@@ -23,7 +23,8 @@ func capture(label: String) -> void:
 		return
 	# Nested viewmodel SubViewport must render before the root consumes its texture.
 	# No simulation advance here: preserve the actual short-lived muzzle event.
-	for render_pass in range(3):
+	for render_pass in range(2):
+		await get_tree().process_frame
 		RenderingServer.force_draw(false)
 	var image := get_viewport().get_texture().get_image()
 	expect(image.save_png(output.path_join(label + ".png")) == OK, "Rendered " + label)
@@ -86,7 +87,7 @@ func _run() -> void:
 	expect(world.player.dm_protection == 0.0, "Firing cancels protection immediately")
 	expect(world.player._muzzle_sprite.texture.resource_path.ends_with("polish/muzzle_fire.png"), "Actual first-person authored muzzle atlas")
 	expect(world.player._muzzle_sprite.hframes == 8 and world.player._muzzle_sprite.vframes == 4, "Correct muzzle sheet grid")
-	capture("deathmatch_firing")
+	await capture("deathmatch_firing")
 	for bot in world.bots:
 		bot.set_physics_process(false)
 	var previous := RoundManager.ct_score
@@ -95,7 +96,7 @@ func _run() -> void:
 	expect(not enemy.is_alive and RoundManager.ct_score == previous + 1, "Enemy frag increments team score")
 	expect(RoundManager.dm_respawns.has(enemy) and RoundManager.state == RoundManager.State.LIVE, "Dead bot queued; no elimination round end")
 	expect(RoundManager.dropped_items.is_empty(), "DM deaths do not litter weapons")
-	capture("deathmatch_frag")
+	await capture("deathmatch_frag")
 	RoundManager._process(3.1)
 	expect(enemy.is_alive and enemy.health == 100 and enemy.dm_protection > 0.0, "Timed respawn restores life and protection")
 	expect(enemy.weapon_ctrl.current_weapon_id != "knife", "Respawn gives bot a free firearm")
@@ -131,13 +132,13 @@ func _run() -> void:
 	he._detonate()
 	for frame in range(5):
 		await get_tree().physics_frame
-	capture("he_animated_burst")
+	await capture("he_animated_burst")
 	var cloud := SmokeCloudVolume.new()
 	world.add_child(cloud)
 	cloud.setup_cloud(ahead)
 	for frame in range(60):
 		await get_tree().physics_frame
-	capture("smoke_live_volume")
+	await capture("smoke_live_volume")
 	await free_world(world)
 	world = make_world("cs_estate", "deathmatch", 0)
 	expect(RoundManager.hostages.is_empty(), "DM on hostage map disables rescue objective")
