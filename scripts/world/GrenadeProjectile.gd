@@ -6,6 +6,7 @@ extends Node3D
 
 var grenade_type: String = "hegrenade"
 var thrower: Node3D = null
+var attack_context: Dictionary = {}
 var velocity: Vector3 = Vector3.ZERO
 var fuse_left: float = 1.65
 var _ang_vel: Vector3 = Vector3.ZERO
@@ -206,6 +207,7 @@ func setup_grenade(gtype: String, owner_actor: Node3D, start_vel: Vector3) -> vo
 	add_to_group("live_grenade_projectiles")
 	grenade_type = gtype
 	thrower = owner_actor
+	attack_context = {"attacker_blind": owner_actor is CSActor and (owner_actor as CSActor).flash_alpha > 0.2}
 	velocity = start_vel
 	_ang_vel = Vector3(randf_range(6.0, 11.0), randf_range(-5.5, 5.5), randf_range(-4.5, 4.5))
 	match gtype:
@@ -366,7 +368,10 @@ func _detonate_he() -> void:
 		var cover_mult := 0.45 if blocked else 1.0
 		var dmg := 98.0 * (1.0 - d / max_r) * cover_mult
 		if dmg > 1.0 and a.has_method("apply_explosion_damage"):
-			a.call("apply_explosion_damage", thrower, dmg, "hegrenade", global_position)
+			if a is CSActor:
+				(a as CSActor).apply_explosion_damage(thrower, dmg, "hegrenade", global_position, attack_context)
+			else:
+				a.call("apply_explosion_damage", thrower, dmg, "hegrenade", global_position)
 
 
 func _detonate_flash() -> void:
@@ -447,7 +452,7 @@ func _detonate_fire() -> void:
 	area.name = "MolotovFire" if grenade_type == "molotov" else "IncendiaryFire"
 	parent_node.add_child(area)
 	area.global_position = global_position
-	area.setup_fire(thrower, grenade_type)
+	area.setup_fire(thrower, grenade_type, 0, attack_context)
 
 
 func _activate_decoy() -> void:

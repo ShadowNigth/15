@@ -114,6 +114,14 @@ class KillCardDisplay extends Control:
 	var flash_age: float = FLASH_DUR
 
 
+	func end_chain() -> void:
+		combo_count = 0
+		combo_left = 0.0
+		combo_label = ""
+		latest_flags.clear()
+		queue_redraw()
+
+
 	func reset_round() -> void:
 		kills = 0
 		combo_count = 0
@@ -1193,6 +1201,8 @@ func _on_kill_logged(kname: String, kteam: String, vname: String, vteam: String,
 
 	var is_my_kill := is_instance_valid(player) and kname == String(player.actor_name)
 	var is_my_death := is_instance_valid(player) and vname == String(player.actor_name)
+	if is_my_death and _killcards != null:
+		_killcards.end_chain()
 	var sb := StyleBoxFlat.new()
 	sb.set_corner_radius_all(3)
 	if is_my_death:

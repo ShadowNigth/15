@@ -944,6 +944,7 @@ func _spawn_surface_hit_fx(
 
 
 func _swing_knife(heavy_stab: bool) -> void:
+	var attack_context := KillContext.capture(actor, get_current_spec(), zoom_index)
 	_cancel_spawn_protection()
 	var spec := get_current_spec()
 	fire_cooldown = float(spec.get("alt_cycle_time", 1.1)) if heavy_stab else float(spec.get("cycle_time", 0.4))
@@ -1003,7 +1004,10 @@ func _swing_knife(heavy_stab: bool) -> void:
 					dmg = 195.0  # Classic CS 1.5 Backstab!
 		if (String(col.get("team")) != String(actor.get("team")) or GameData.friendly_fire) and is_instance_valid(RoundManager.game_world):
 			ImpactEffects.spawn_blood_impact(RoundManager.game_world, space, hpos, dir, 2, false, dmg)
-		col.call("take_bullet_damage", actor, dmg, 1.7, 2, "knife", hpos)
+		if col is CSActor:
+			(col as CSActor).take_bullet_damage(actor, dmg, 1.7, 2, "knife", hpos, KillContext.confirmed(attack_context, false))
+		else:
+			col.call("take_bullet_damage", actor, dmg, 1.7, 2, "knife", hpos)
 		var kwav := String(spec.get("stab_sound", "weapons/archi/cs2_flashbang/hit1.wav"))
 		if not heavy_stab:
 			var hit_sounds: Array = spec.get("hit_sounds", [])

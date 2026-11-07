@@ -20,6 +20,7 @@ const HEAT_SHADER: Shader = preload("res://assets/shaders/incendiary_heat.gdshad
 static var _ember_texture: Texture2D = null
 
 var thrower: Node3D = null
+var attack_context: Dictionary = {}
 var area_type: String = "molotov"
 ## Maximum fuel travel, not an always-active damage sphere.
 var radius: float = 3.25
@@ -57,8 +58,9 @@ var _ember_process: ParticleProcessMaterial = null
 var _smoke_process: ParticleProcessMaterial = null
 
 
-func setup_fire(owner_actor: Node3D, kind: String, seed_override: int = 0) -> void:
+func setup_fire(owner_actor: Node3D, kind: String, seed_override: int = 0, context: Dictionary = {}) -> void:
 	thrower = owner_actor
+	attack_context = KillContext.confirmed(context, false)
 	area_type = kind
 	_initial_life = 7.0 if kind == "molotov" else 8.0
 	life_left = _initial_life
@@ -762,7 +764,10 @@ func _damage_tick() -> void:
 			)
 		)
 		if actor.has_method("apply_explosion_damage"):
-			actor.call("apply_explosion_damage", thrower, 5.5 * falloff, area_type, patch_pos)
+			if actor is CSActor:
+				(actor as CSActor).apply_explosion_damage(thrower, 5.5 * falloff, area_type, patch_pos, attack_context)
+			else:
+				actor.call("apply_explosion_damage", thrower, 5.5 * falloff, area_type, patch_pos)
 
 	# Bomb-site crates remain bulletproof, but fire damages them in repeated small
 	# ticks. One ignition can never delete a 250-HP crate.

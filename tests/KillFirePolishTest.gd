@@ -159,12 +159,26 @@ func _run() -> void:
 	victim.apply_explosion_damage(shooter, 500, "molotov")
 	if events.size() > count_before:
 		expect(not events.back()["no_scope"] and not events.back()["through_smoke"], "Fire death does not inherit previous bullet flags")
+	shooter.flash_alpha = 0.8
+	var thrown := GrenadeProjectile.new()
+	add_child(thrown)
+	thrown.setup_grenade("molotov", shooter, Vector3.ZERO)
+	shooter.flash_alpha = 0.0
+	expect(thrown.attack_context["attacker_blind"], "Throw-time blindness survives delayed grenade/fire damage")
+	await reset_victim()
+	victim.apply_explosion_damage(shooter, 500, "molotov", Vector3.ZERO, thrown.attack_context)
+	expect(events.back()["attacker_blind"] and not events.back()["no_scope"], "Delayed fire carries only its own throw context")
+	thrown.queue_free()
 	for flag in KillContext.FLAGS:
 		expect(KillContext.icon(flag) != null, "Pinned original icon " + flag)
 	var cards := hud._killcards
 	cards._process(4.1)
 	cards.register_kill(null)
 	expect(cards.combo_count == 1 and cards.combo_label == "", "Combo expires without erasing round kill total")
+	cards.end_chain()
+	var previous_total := cards.kills
+	cards.register_kill(null)
+	expect(cards.combo_count == 1 and cards.kills == previous_total + 1, "Death ends combo without losing earned cards")
 	cards.reset_round()
 	expect(cards.cards.is_empty() and cards.combo_count == 0 and cards.latest_flags.is_empty(), "Round reset clears cards and timing")
 	RoundManager.map_mode = "dm"

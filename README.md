@@ -25,6 +25,14 @@ Detalles, procedencia y pruebas: [`docs/DEATHMATCH_EFFECTS_SMOKE.md`](docs/DEATH
 
 ---
 
+## Llamas combinadas e indicadores de baja
+
+Molotov e incendiaria combinan el atlas original de llamas con las cintas procedurales que se adaptan al suelo y a las paredes, sin sustituir su propagación, daño o extinción. El killfeed y las cartas muestran headshot, humo, no-scope, atacante cegado y penetración **confirmados por el ataque letal**. Las cartas distinguen doble, triple y bajas sucesivas con un titular animado, ventana de 4 segundos y cinco cartas recientes en Deathmatch.
+
+Procedencia y reglas exactas: [`docs/HYBRID_FIRE_KILL_CONTEXT.md`](docs/HYBRID_FIRE_KILL_CONTEXT.md).
+
+---
+
 ## Animaciones nativas de armas y utilidades
 
 - **42 conjuntos / 289 clips originales:** 35 armas de fuego, seis granadas y C4.

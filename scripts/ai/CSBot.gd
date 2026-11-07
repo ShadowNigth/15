@@ -237,14 +237,14 @@ func _release_camp_spot() -> void:
 	_camp_timer = 0.0
 
 
-func _die(killer: Node3D, weapon_id: String, headshot: bool) -> void:
+func _die(killer: Node3D, weapon_id: String, headshot: bool, kill_context: Dictionary = {}) -> void:
 	if is_instance_valid(RoundManager.game_world):
 		var nav: BotNavigator = RoundManager.game_world.get("bot_navigator")
 		if nav != null:
 			nav.release_actor_claims(self)
 			nav.report_team_damage(team, global_position, 125.0)
 	_camping_node_idx = -1
-	super._die(killer, weapon_id, headshot)
+	super._die(killer, weapon_id, headshot, kill_context)
 
 
 func _primary_class(wid: String) -> String:

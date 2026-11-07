@@ -1166,7 +1166,7 @@ func take_bullet_damage(
 		_on_taken_damage_from(attacker, hit_pos)
 
 
-func apply_explosion_damage(attacker: Node3D, raw_dmg: float, weapon_id: String, blast_origin: Vector3 = Vector3.INF) -> void:
+func apply_explosion_damage(attacker: Node3D, raw_dmg: float, weapon_id: String, blast_origin: Vector3 = Vector3.INF, kill_context: Dictionary = {}) -> void:
 	if not is_alive or (RoundManager.map_mode == "dm" and (dm_protection > 0.0 or RoundManager.state != RoundManager.State.LIVE)):
 		return
 	var dmg := raw_dmg
@@ -1194,7 +1194,7 @@ func apply_explosion_damage(attacker: Node3D, raw_dmg: float, weapon_id: String,
 		AudioManager.play_3d("player/pl_pain%d.wav" % pid, global_position, -1.5, 24.0)
 
 	damaged_from.emit(src_pt, loss_i, src_pt.distance_squared_to(global_position) > 0.04)
-	_apply_raw_hp_loss(attacker, loss_i, weapon_id, false)
+	_apply_raw_hp_loss(attacker, loss_i, weapon_id, false, kill_context)
 	if is_alive:
 		_on_taken_damage_from(attacker, src_pt)
 

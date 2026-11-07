@@ -1126,7 +1126,7 @@ func _on_zoom_changed(fov_deg: float, scoped_overlay: bool) -> void:
 	scoped_overlay_changed.emit(scoped_overlay)
 
 
-func _die(killer: Node3D, weapon_id: String, headshot: bool) -> void:
+func _die(killer: Node3D, weapon_id: String, headshot: bool, kill_context: Dictionary = {}) -> void:
 	_pending_vm_events.clear()
 	AudioManager.stop_viewmodel_audio(self)
 	var eye_xf: Transform3D = camera.global_transform
@@ -1136,7 +1136,7 @@ func _die(killer: Node3D, weapon_id: String, headshot: bool) -> void:
 	scoped_overlay_changed.emit(false)
 	defuse_progress_changed.emit(0.0)
 	camera.fov = GameData.fov
-	super._die(killer, weapon_id, headshot)
+	super._die(killer, weapon_id, headshot, kill_context)
 
 	# Keep camera seamlessly at death eye transform & pull back into CS 1.5 3rd-person Deathcam!
 	camera.top_level = true
