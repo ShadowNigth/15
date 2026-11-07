@@ -1,8 +1,8 @@
 """Transport real OpenGL framebuffer samples via bounded check annotations."""
 from pathlib import Path
 from PIL import Image
-import base64, io
-for name in ['deathmatch_firing', 'deathmatch_frag', 'he_animated_burst', 'smoke_live_volume']:
+import base64, io, sys
+for name in sys.argv[1:]:
     path = Path('/tmp/dm-polish-review') / (name + '.png')
     if not path.exists():
         print('Missing framebuffer: ' + name)

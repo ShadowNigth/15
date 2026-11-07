@@ -604,9 +604,18 @@ jobs:
       - name: Install framebuffer transport
         if: ${{ always() }}
         run: python3 -m pip install pillow
-      - name: Publish Deathmatch and effects framebuffers
+      - name: Publish deathmatch_firing framebuffer
         if: ${{ always() }}
-        run: python3 tools/publish_polish_capture.py
+        run: python3 tools/publish_polish_capture.py deathmatch_firing
+      - name: Publish deathmatch_frag framebuffer
+        if: ${{ always() }}
+        run: python3 tools/publish_polish_capture.py deathmatch_frag
+      - name: Publish he_animated_burst framebuffer
+        if: ${{ always() }}
+        run: python3 tools/publish_polish_capture.py he_animated_burst
+      - name: Publish smoke_live_volume framebuffer
+        if: ${{ always() }}
+        run: python3 tools/publish_polish_capture.py smoke_live_volume
       - name: Combat and live native character integration
         run: |
           set -o pipefail

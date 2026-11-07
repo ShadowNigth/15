@@ -71,6 +71,11 @@ func _run() -> void:
 	expect(enemy.global_position.distance_to(spawn) > 0.5, "DM bot really navigates after spawning")
 	world.player.weapon_ctrl.give_weapon("ak47", 30, 90)
 	world.player.weapon_ctrl.equip_weapon_by_id("ak47")
+	# Wait for the real draw animation; do not photograph an unequipped frame.
+	for frame in range(60):
+		await get_tree().physics_frame
+	face_open_corridor(world.player)
+	await get_tree().physics_frame
 	world.player.dm_protection = 2.0
 	world.player.weapon_ctrl._execute_bullet_shot(world.player.weapon_ctrl.get_current_spec(), false)
 	expect(world.player.dm_protection == 0.0, "Firing cancels protection immediately")
@@ -108,6 +113,10 @@ func _run() -> void:
 	RoundManager.start_deathmatch()
 	for bot in world.bots:
 		bot.set_physics_process(false)
+	for frame in range(60):
+		await get_tree().physics_frame
+	face_open_corridor(world.player)
+	await get_tree().physics_frame
 	var ahead := world.player.global_position - world.player.camera.global_basis.z * 5.0
 	ahead.y = world.player.global_position.y + 0.2
 	var he := GrenadeProjectile.new()
@@ -145,6 +154,22 @@ func _run() -> void:
 		expect(GameData.equipment_icon(wid) != null, "Real source equipment icon: " + wid)
 	print("[DM POLISH] %s: %d checks; %d failures" % ["PASS" if failures.is_empty() else "FAIL", checks, failures.size()])
 	get_tree().quit(0 if failures.is_empty() else 1)
+
+func face_open_corridor(player: PlayerController) -> void:
+	# Stay at the real spawn; rotate toward the clearest sightline for effect evidence.
+	var eye := player.get_eye_position()
+	var best_distance := -1.0
+	var best_yaw := player.look_yaw
+	for step in range(24):
+		var angle := TAU * float(step) / 24.0
+		var direction := Vector3(-sin(angle), 0, -cos(angle))
+		var hit := get_world_3d().direct_space_state.intersect_ray(PhysicsRayQueryParameters3D.create(eye, eye + direction * 20.0, 1))
+		var distance: float = 20.0 if hit.is_empty() else eye.distance_to(hit["position"])
+		if distance > best_distance:
+			best_distance = distance
+			best_yaw = angle
+	player.look_yaw = best_yaw
+	player.camera.rotation.y = best_yaw
 
 func smoke_checks() -> void:
 	RoundManager.actors.clear()
