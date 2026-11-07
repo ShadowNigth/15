@@ -3,18 +3,16 @@
 Source: https://github.com/zh667/ScCsgoKnives
 Pinned revision: `1eb8067fd0b7214df5bccf3ac3807fbaa3aee70d`
 
-Three fixed-blade models and their matching UV-mapped finish textures:
+The first three appearances (historical geometry installer):
 - Karambit — Gamma Doppler Phase 4
 - M9 Bayonet — Gamma Doppler Phase 1
 - Bayonet — Ruby
 
-The source `.cs2.skin` meshes and PNG finish/normal/ORM images were converted to
-Godot-compatible GLBs with `tools/source/add_cs2_knives.py`. Source animation JSON
-is used offline only to recover the idle grip. **The installed archi knife's nine
-animations, original arm/glove geometry, Sport Glove choices and classic melee
-rules are retained**, not replaced by Survivalcraft code or CS2 animation clips.
-The three new models also have matching third-person/world meshes. The original
-Kukri remains available and is the default. Other weapon finishes/UVs are untouched.
+The initial geometry conversion used `tools/source/add_cs2_knives.py` and an
+idle-grip/Kukri-clip adapter. **That animation policy has been superseded** by
+the native knife animation correction below. Their third-person/world meshes,
+material artwork and UVs remain installed. The original Kukri remains available
+and is the default. Other weapon finishes/UVs are untouched.
 
 ## Third-party rights
 
@@ -40,10 +38,12 @@ revision (plus the original archi Kukri), all 20 shipped painted knife finishes,
 22 matching factory finishes, and all 44 shipped gun finishes. Existing 120
 BDS/CS:GO Ports finishes and their accepted UV placement are preserved.
 
-Original arm, glove and hand animation tracks are retained. Folding knives append
-source-derived mechanical blade/hinge tracks to those clips: this is not a claim
-of complete native CS2 hand choreography. Shadow Daggers bind one blade to each
-first-person hand; third-person/floor presentation uses the right-hand dagger.
+Each knife now uses its own native model-specific clips. Original arm/glove
+geometry is retargeted to those poses, including hand and finger motion;
+this does not replace the arm mesh with the upstream CS2 arm mesh. Folding
+parts keep their original skin weights and native trajectories. Shadow Daggers
+uses both source blades and their source motion in first person; third-person/
+floor presentation continues to use the right-hand dagger.
 
 Legacy gun artwork is adapted through the existing `nwm1-nearest-surface-v5`
 pipeline with bone boundaries and original hardware protection. Current-HD art

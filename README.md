@@ -11,7 +11,7 @@ Remake jugable de **Counter-Strike 1.5 Retail** construido íntegramente en **Go
 3. Pulsa **F5 (Run Project)**:
    - Se abrirá el **Menú Clásico WON de Counter-Strike 1.5** (`splash.png` original + sonidos `launch_glow1.wav` / `launch_select1.wav`).
    - Elige **Quick Launch: de_dust2** o **Play CS 1.5 (LAN / Bots)** para escoger cualquiera de los **26 mapas originales**, cantidad de **Bots IA**, nivel de habilidad y dinero inicial (`$800` / `$3500` / `$16000`).
-   - También puedes abrir **3D Arsenal, Skins & Models** para inspeccionar los modelos y animaciones, elegir entre **120 acabados auténticos en 20 familias de armas** y previsualizar los guantes para la próxima partida. **Original HD** siempre permanece disponible.
+   - También puedes abrir **3D Arsenal, Skins & Models** para inspeccionar los modelos y animaciones, elegir los **120 acabados anteriores más 44 incorporados al catálogo de armas**, además de los acabados de cuchillo y previsualizar los guantes para la próxima partida. **Original HD** siempre permanece disponible.
 
 ---
 
@@ -26,7 +26,7 @@ Todo el contenido de `cstrike/` fue procesado mediante la suite de ingeniería i
 | **Texturas de Mundo + Cielos** | `*.wad` (`de_aztec`, `cs_dust`, `halflife`…) + `gfx/env/*.tga` | PNG originales con mipmaps, sin overrides reescalados | **2,346 texturas originales + 109 caras skybox** |
 | **Materiales HD de armas** | VMT/VTF de `ShadowNigth/archi` | `assets/textures/archi/` + `data/archi_materials.json` | **54 materiales + 136 mapas compartidos de hasta 2K** |
 | **Skins UV auténticas** | Valve / CS:GO Ports / BDS, vía `cs16-skin-inventory` | `assets/textures/weapon_skins/` + `data/weapon_skins.json` | **120 acabados / 20 familias + Original HD** |
-| **Modelos 3D Animados** | StudioMDL GoldSrc + MDL/VTF de `ShadowNigth/archi` | `assets/models/**/*.glb` (esqueleto + animaciones + winding CCW) | **176 modelos `.glb`** |
+| **Modelos 3D Animados** | StudioMDL GoldSrc + MDL/VTF de `ShadowNigth/archi` | `assets/models/**/*.glb` (esqueleto + animaciones + winding CCW) | **293 modelos `.glb`** |
 | **Arsenal** | 27 slots clásicos reemplazados + 16 armas/utilidades de archi | `data/weapons.json` | **43 slots + equipamiento** |
 | **Audio Espacial & Radio** | `cs15_retail` + 299 WAV de archi + 130 WAV específicos de CS2 | `assets/sounds/**/*.wav` (PCM 16-bit limpio) | **973 archivos `.wav`** |
 | **Sprites HUD & VGUI** | `sprites/*.spr`, `hud.txt`, `gfx/vgui/*.tga`, `overviews/*.bmp` | `assets/sprites/*.png`, `assets/ui/**`, `data/hud_sprites.json` | **88 sprites + 42 VGUI + 26 radares** |
@@ -121,22 +121,18 @@ godot --headless --path . --fixed-fps 60 res://tests/TacticalAIRegressionTest.ts
 godot --headless --path . --fixed-fps 60 res://tests/MissionObjectiveRegressionTest.tscn
 ```
 
-## Tres cuchillos adicionales
+## Cuchillos y proyecto para Godot
 
-En **Create Game → Knife model** se puede elegir el Kukri original o uno de los
-nuevos **Karambit Gamma Doppler Phase 4**, **M9 Bayonet Gamma Doppler Phase 1** y
-**Bayonet Ruby**. También aparecen por separado en el Arsenal 3D; seleccionarlos
-configura el cuchillo de la siguiente partida. Se usa la ranura `3`, ataque ligero
-con clic izquierdo, puñalada con clic derecho e inspección con `T`.
+En **Create Game → Knife model** y en el Arsenal 3D se elige entre el Kukri
+original y los 22 modelos CS2. Los tres acabados integrados inicialmente
+(Karambit Gamma Doppler Phase 4, M9 Gamma Doppler Phase 1 y Bayonet Ruby)
+continúan disponibles, ahora con los clips propios de sus respectivos modelos.
+Ranura `3`: cuchillo; clic izquierdo: ataque ligero; clic derecho: puñalada;
+`T`: inspección y rotación de las variantes disponibles para ese modelo.
 
-Son tres geometrías y UV propias, no recoloreados del Kukri. Conservan los nueve
-clips existentes del cuchillo archi, los brazos originales, las opciones Sport
-Gloves, los modelos en tercera persona y las reglas clásicas de daño/velocidad.
-No se han sustituido las animaciones por las de CS2/Survivalcraft. Conversión y
-procedencia: [avisos de recursos](docs/KNIFE_ASSET_NOTICES.md).
-
-Las compilaciones PC de Releases incluyen ejecutable y `.pck`: extraer todo el
-ZIP y mantener ambos archivos juntos. No requieren instalar Godot.
+El proyecto se abre importando `project.godot` con Godot 4.3 y se ejecuta con
+**F5**. No requiere los ejecutables ni `.pck` de las descargas independientes.
+La primera importación de recursos puede tardar varios minutos.
 
 ### Catálogo completo de cuchillos y acabados
 
@@ -148,10 +144,11 @@ modelo y ofrece sus acabados de fábrica y pintados compatibles: **22 de fábric
 los **44 acabados de armas** disponibles en el mismo catálogo fuente.
 
 El chrome PBR de los cuchillos es discreto y queda subordinado a la textura;
-normal/ORM cambian junto al acabado, sin alterar brazos ni guantes. Los plegables
-incluyen articulación mecánica de hojas/bisagras, conservando las animaciones de
-brazos existentes. No se afirma reproducir toda la coreografía de manos de CS2.
-Los Shadow Daggers tienen geometría separada para ambas manos en primera persona.
+normal/ORM cambian junto al acabado. Las poses de manos, dedos, hojas y bisagras
+proceden de los clips propios de cada modelo. Se conserva y retargetea la
+geometría de brazos y guantes existente; no se instala la malla de brazos nativa
+del port. Los Shadow Daggers tienen geometría y movimiento separados para ambas
+manos en primera persona.
 Se conserva el daño, velocidad, ranura y economía del cuchillo clásico.
 
 
@@ -164,3 +161,11 @@ Sport Gloves existente; no se reemplazan sus texturas ni los rigs de armas de
 fuego. Se corrige la inversión doble de mano y se conserva el encuadre del origen.
 Los datos y limitaciones de conversión figuran en `docs/KNIFE_ASSET_NOTICES.md`
 y `data/native_knife_animation_report.json`.
+
+Validación de esta corrección: **3.185 comprobaciones headless y 3.782 con OpenGL**,
+235 clips importados, 33 variantes de inspección y 199 capturas del catálogo
+(reposo, múltiples fases de todas las inspecciones y acabados de armas).
+[QA completa y capturas](https://github.com/ShadowNigth/15/actions/runs/42323185698).
+Las compilaciones ejecutables anteriores no contienen esta corrección; el
+proyecto actualizado sí. Las advertencias del renderer dummy en headless no
+sustituyen la revisión de las capturas reales.

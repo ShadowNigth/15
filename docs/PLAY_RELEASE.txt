@@ -17,8 +17,10 @@ New gun entries are labelled '(CS2 catalog)' to distinguish alternate bakes of
 the same paint kit without replacing previously accepted artwork.
 3: equip knife. Left click: light slash. Right click: heavy stab. T: inspect.
 Knife chrome is subordinate to base-colour artwork; normal/ORM follow the finish.
-Original arms/gloves and gameplay balance are retained; folding knives append
-mechanical blade/hinge tracks, not complete native CS2 hand choreography.
+Current source project: 22 model-specific native animation sets (235 clips,
+33 inspection variants), retargeted to the original arm/glove geometry.
+Classic gameplay balance is retained. Earlier executable releases predate this
+animation correction; see VERSION.txt and the release notes for their scope.
 Sport Glove selection continues to work. Each knife remembers its own finish.
 
 WASD move; mouse aim; Space jump; Ctrl crouch; Shift walk; B buy;
