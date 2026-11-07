@@ -5173,6 +5173,7 @@
         "deg_from_seed": 75.94
       }
     },
+    "cz_spare_detach_times": {},
     "gameplay_seq_durations": {
       "idle": 0.033,
       "shoot1": 0.767,
@@ -5337,6 +5338,7 @@
         "deg_from_seed": 88.41
       }
     },
+    "cz_spare_detach_times": {},
     "gameplay_seq_durations": {
       "idle": 0.033,
       "shoot1": 0.933,
@@ -5493,6 +5495,7 @@
         "deg_from_seed": 77.69
       }
     },
+    "cz_spare_detach_times": {},
     "gameplay_seq_durations": {
       "idle": 0.033,
       "shoot1": 1.667,
@@ -5619,6 +5622,7 @@
       "inspect_2",
       "inspect_3"
     ],
+    "cz_spare_detach_times": {},
     "gameplay_seq_durations": {
       "idle": 2.5,
       "draw": 1.233,
@@ -5843,6 +5847,7 @@
       "inspect",
       "inspect_2"
     ],
+    "cz_spare_detach_times": {},
     "gameplay_seq_durations": {
       "idle": 0.033,
       "shoot1": 0.7,
@@ -6073,6 +6078,7 @@
         "deg_from_seed": 42.73
       }
     },
+    "cz_spare_detach_times": {},
     "gameplay_seq_durations": {
       "idle": 0.033,
       "idle_leftempty": 0.033,
@@ -6256,6 +6262,7 @@
         "deg_from_seed": 57.72
       }
     },
+    "cz_spare_detach_times": {},
     "gameplay_seq_durations": {
       "idle": 0.033,
       "shoot1": 0.4,
@@ -6368,6 +6375,7 @@
       "inspect",
       "inspect_2"
     ],
+    "cz_spare_detach_times": {},
     "gameplay_seq_durations": {
       "idle": 0.267,
       "pullpin": 0.967,
@@ -6531,6 +6539,7 @@
         "deg_from_seed": 38.72
       }
     },
+    "cz_spare_detach_times": {},
     "gameplay_seq_durations": {
       "idle": 0.125,
       "shoot1": 0.733,
@@ -6704,6 +6713,7 @@
         "deg_from_seed": 60.09
       }
     },
+    "cz_spare_detach_times": {},
     "gameplay_seq_durations": {
       "idle": 0.033,
       "shoot": 0.4,
@@ -6807,6 +6817,7 @@
       "inspect",
       "inspect_2"
     ],
+    "cz_spare_detach_times": {},
     "gameplay_seq_durations": {
       "idle": 1.0,
       "pullpin": 0.967,
@@ -7036,6 +7047,7 @@
         "deg_from_seed": 4.29
       }
     },
+    "cz_spare_detach_times": {},
     "gameplay_seq_durations": {
       "idle": 0.033,
       "shoot1": 1.333,
@@ -7460,6 +7472,7 @@
         "deg_from_seed": 0.66
       }
     },
+    "cz_spare_detach_times": {},
     "gameplay_seq_durations": {
       "idle": 0.017,
       "idle_unsil": 0.017,
@@ -7618,6 +7631,7 @@
         "deg_from_seed": 87.24
       }
     },
+    "cz_spare_detach_times": {},
     "gameplay_seq_durations": {
       "idle": 0.033,
       "reload": 3.15,
@@ -7786,6 +7800,7 @@
         "deg_from_seed": 59.67
       }
     },
+    "cz_spare_detach_times": {},
     "gameplay_seq_durations": {
       "idle": 0.033,
       "reload": 2.63,
@@ -7960,6 +7975,7 @@
         "deg_from_seed": 63.51
       }
     },
+    "cz_spare_detach_times": {},
     "gameplay_seq_durations": {
       "idle": 0.033,
       "shoot1": 0.767,
@@ -8129,6 +8145,7 @@
         "deg_from_seed": 60.35
       }
     },
+    "cz_spare_detach_times": {},
     "gameplay_seq_durations": {
       "idle": 0.033,
       "reload": 3.367,
@@ -8358,6 +8375,7 @@
         "deg_from_seed": 83.13
       }
     },
+    "cz_spare_detach_times": {},
     "gameplay_seq_durations": {
       "idle": 0.033,
       "shoot1": 1.667,
@@ -8520,6 +8538,7 @@
         "deg_from_seed": 105.19
       }
     },
+    "cz_spare_detach_times": {},
     "gameplay_seq_durations": {
       "idle": 0.083,
       "shoot1": 0.9,
@@ -8673,6 +8692,7 @@
         "deg_from_seed": 91.62
       }
     },
+    "cz_spare_detach_times": {},
     "gameplay_seq_durations": {
       "idle": 0.033,
       "reload": 3.0,
@@ -8772,6 +8792,7 @@
       "inspect",
       "inspect_2"
     ],
+    "cz_spare_detach_times": {},
     "gameplay_seq_durations": {
       "idle": 1.0,
       "pullpin": 0.967,
@@ -8918,6 +8939,7 @@
         "deg_from_seed": 76.69
       }
     },
+    "cz_spare_detach_times": {},
     "gameplay_seq_durations": {
       "idle": 0.033,
       "reload": 2.167,
@@ -9068,6 +9090,7 @@
         "deg_from_seed": 0.12
       }
     },
+    "cz_spare_detach_times": {},
     "gameplay_seq_durations": {
       "idle": 0.083,
       "reload": 3.433,
@@ -9368,6 +9391,7 @@
         "deg_from_seed": 91.34
       }
     },
+    "cz_spare_detach_times": {},
     "gameplay_seq_durations": {
       "idle": 1.0,
       "idle_unsil": 1.0,
@@ -10022,6 +10046,7 @@
         "deg_from_seed": 1.69
       }
     },
+    "cz_spare_detach_times": {},
     "gameplay_seq_durations": {
       "idle": 0.033,
       "shoot1": 0.4,
@@ -10520,6 +10545,7 @@
         "deg_from_seed": 56.94
       }
     },
+    "cz_spare_detach_times": {},
     "gameplay_seq_durations": {
       "idle": 0.033,
       "shoot1": 0.4,
@@ -10677,6 +10703,7 @@
         "deg_from_seed": 85.76
       }
     },
+    "cz_spare_detach_times": {},
     "gameplay_seq_durations": {
       "idle": 0.033,
       "reload": 3.3,
@@ -10826,6 +10853,7 @@
         "deg_from_seed": 86.53
       }
     },
+    "cz_spare_detach_times": {},
     "gameplay_seq_durations": {
       "idle": 0.033,
       "reload": 3.033,
@@ -10884,21 +10912,29 @@
       "draw": [
         {
           "t": 0.0,
-          "wav": "weapons/archi/cs2_m4a1s/draw.wav"
+          "wav": "weapons/cs2/m4a1/m4a1_draw.wav"
+        },
+        {
+          "t": 0.266659,
+          "wav": "weapons/cs2/m4a1/m4a1_boltforward.wav"
+        },
+        {
+          "t": 0.533318,
+          "wav": "weapons/cs2/m4a1/m4a1_boltback.wav"
         }
       ],
       "reload": [
         {
           "t": 0.433338,
-          "wav": "weapons/archi/cs2_m4a1s/clipout.wav"
+          "wav": "weapons/cs2/m4a1/m4a1_clipout.wav"
         },
         {
           "t": 1.166679,
-          "wav": "weapons/archi/cs2_m4a1s/clipin.wav"
+          "wav": "weapons/cs2/m4a1/m4a1_clipin.wav"
         },
         {
           "t": 2.000022,
-          "wav": "weapons/archi/cs2_m4a1s/cliphit.wav"
+          "wav": "weapons/cs2/m4a1/m4a1_cliphit.wav"
         }
       ],
       "shoot": [],
@@ -10908,22 +10944,30 @@
       "draw_unsil": [
         {
           "t": 0.0,
-          "wav": "weapons/archi/cs2_m4a1s/draw.wav"
+          "wav": "weapons/cs2/m4a1/m4a1_draw.wav"
+        },
+        {
+          "t": 0.266659,
+          "wav": "weapons/cs2/m4a1/m4a1_boltforward.wav"
+        },
+        {
+          "t": 0.533318,
+          "wav": "weapons/cs2/m4a1/m4a1_boltback.wav"
         }
       ],
       "idle_unsil": [],
       "reload_unsil": [
         {
           "t": 0.433338,
-          "wav": "weapons/archi/cs2_m4a1s/clipout.wav"
+          "wav": "weapons/cs2/m4a1/m4a1_clipout.wav"
         },
         {
           "t": 1.166679,
-          "wav": "weapons/archi/cs2_m4a1s/clipin.wav"
+          "wav": "weapons/cs2/m4a1/m4a1_clipin.wav"
         },
         {
           "t": 2.000022,
-          "wav": "weapons/archi/cs2_m4a1s/cliphit.wav"
+          "wav": "weapons/cs2/m4a1/m4a1_cliphit.wav"
         }
       ],
       "inspect_unsil": [],
@@ -10967,6 +11011,7 @@
         "deg_from_seed": 0.31
       }
     },
+    "cz_spare_detach_times": {},
     "gameplay_seq_durations": {
       "idle": 0.033,
       "shoot1": 0.4,
@@ -11025,147 +11070,147 @@
       "draw": [
         {
           "t": 0.0,
-          "wav": "weapons/archi/cs2_ump45/draw.wav"
+          "wav": "weapons/cs2/mag7/mag7_draw.wav"
         },
         {
           "t": 0.5,
-          "wav": "weapons/archi/cs2_nova/pump.wav"
+          "wav": "weapons/cs2/mag7/mag7_pump_back.wav"
         },
         {
           "t": 0.6,
-          "wav": "weapons/archi/cs2_nova/pump.wav"
+          "wav": "weapons/cs2/mag7/mag7_pump_forward.wav"
         }
       ],
       "shoot1": [
         {
           "t": 0.133333,
-          "wav": "weapons/archi/cs2_ump45/boltback.wav"
+          "wav": "weapons/cs2/mag7/mag7_pump_back.wav"
         },
         {
           "t": 0.4,
-          "wav": "weapons/archi/cs2_ump45/boltforward.wav"
+          "wav": "weapons/cs2/mag7/mag7_pump_forward.wav"
         }
       ],
       "reload": [
         {
           "t": 0.300004,
-          "wav": "weapons/archi/cs2_ump45/clipout.wav"
+          "wav": "weapons/cs2/mag7/mag7_clipout.wav"
         },
         {
           "t": 0.96668,
-          "wav": "weapons/archi/cs2_ump45/clipin.wav"
+          "wav": "weapons/cs2/mag7/mag7_clipin.wav"
         },
         {
           "t": 1.666689,
-          "wav": "weapons/archi/cs2_ump45/boltback.wav"
+          "wav": "weapons/cs2/mag7/mag7_pump_back.wav"
         },
         {
           "t": 1.900026,
-          "wav": "weapons/archi/cs2_ump45/boltforward.wav"
+          "wav": "weapons/cs2/mag7/mag7_pump_forward.wav"
         }
       ],
       "shoot": [
         {
           "t": 0.133333,
-          "wav": "weapons/archi/cs2_ump45/boltback.wav"
+          "wav": "weapons/cs2/mag7/mag7_pump_back.wav"
         },
         {
           "t": 0.4,
-          "wav": "weapons/archi/cs2_ump45/boltforward.wav"
+          "wav": "weapons/cs2/mag7/mag7_pump_forward.wav"
         }
       ],
       "shoot2": [
         {
           "t": 0.133333,
-          "wav": "weapons/archi/cs2_ump45/boltback.wav"
+          "wav": "weapons/cs2/mag7/mag7_pump_back.wav"
         },
         {
           "t": 0.4,
-          "wav": "weapons/archi/cs2_ump45/boltforward.wav"
+          "wav": "weapons/cs2/mag7/mag7_pump_forward.wav"
         }
       ],
       "shoot3": [
         {
           "t": 0.133333,
-          "wav": "weapons/archi/cs2_ump45/boltback.wav"
+          "wav": "weapons/cs2/mag7/mag7_pump_back.wav"
         },
         {
           "t": 0.4,
-          "wav": "weapons/archi/cs2_ump45/boltforward.wav"
+          "wav": "weapons/cs2/mag7/mag7_pump_forward.wav"
         }
       ],
       "fire": [
         {
           "t": 0.133333,
-          "wav": "weapons/archi/cs2_ump45/boltback.wav"
+          "wav": "weapons/cs2/mag7/mag7_pump_back.wav"
         },
         {
           "t": 0.4,
-          "wav": "weapons/archi/cs2_ump45/boltforward.wav"
+          "wav": "weapons/cs2/mag7/mag7_pump_forward.wav"
         }
       ],
       "draw_unsil": [
         {
           "t": 0.0,
-          "wav": "weapons/archi/cs2_ump45/draw.wav"
+          "wav": "weapons/cs2/mag7/mag7_draw.wav"
         },
         {
           "t": 0.5,
-          "wav": "weapons/archi/cs2_nova/pump.wav"
+          "wav": "weapons/cs2/mag7/mag7_pump_back.wav"
         },
         {
           "t": 0.6,
-          "wav": "weapons/archi/cs2_nova/pump.wav"
+          "wav": "weapons/cs2/mag7/mag7_pump_forward.wav"
         }
       ],
       "idle_unsil": [],
       "reload_unsil": [
         {
           "t": 0.300004,
-          "wav": "weapons/archi/cs2_ump45/clipout.wav"
+          "wav": "weapons/cs2/mag7/mag7_clipout.wav"
         },
         {
           "t": 0.96668,
-          "wav": "weapons/archi/cs2_ump45/clipin.wav"
+          "wav": "weapons/cs2/mag7/mag7_clipin.wav"
         },
         {
           "t": 1.666689,
-          "wav": "weapons/archi/cs2_ump45/boltback.wav"
+          "wav": "weapons/cs2/mag7/mag7_pump_back.wav"
         },
         {
           "t": 1.900026,
-          "wav": "weapons/archi/cs2_ump45/boltforward.wav"
+          "wav": "weapons/cs2/mag7/mag7_pump_forward.wav"
         }
       ],
       "inspect_unsil": [],
       "shoot1_unsil": [
         {
           "t": 0.133333,
-          "wav": "weapons/archi/cs2_ump45/boltback.wav"
+          "wav": "weapons/cs2/mag7/mag7_pump_back.wav"
         },
         {
           "t": 0.4,
-          "wav": "weapons/archi/cs2_ump45/boltforward.wav"
+          "wav": "weapons/cs2/mag7/mag7_pump_forward.wav"
         }
       ],
       "shoot2_unsil": [
         {
           "t": 0.133333,
-          "wav": "weapons/archi/cs2_ump45/boltback.wav"
+          "wav": "weapons/cs2/mag7/mag7_pump_back.wav"
         },
         {
           "t": 0.4,
-          "wav": "weapons/archi/cs2_ump45/boltforward.wav"
+          "wav": "weapons/cs2/mag7/mag7_pump_forward.wav"
         }
       ],
       "shoot3_unsil": [
         {
           "t": 0.133333,
-          "wav": "weapons/archi/cs2_ump45/boltback.wav"
+          "wav": "weapons/cs2/mag7/mag7_pump_back.wav"
         },
         {
           "t": 0.4,
-          "wav": "weapons/archi/cs2_ump45/boltforward.wav"
+          "wav": "weapons/cs2/mag7/mag7_pump_forward.wav"
         }
       ]
     },
@@ -11205,6 +11250,7 @@
         "deg_from_seed": 60.9
       }
     },
+    "cz_spare_detach_times": {},
     "gameplay_seq_durations": {
       "idle": 1.0,
       "shoot1": 1.233,
@@ -11526,6 +11572,7 @@
         "deg_from_seed": 75.49
       }
     },
+    "cz_spare_detach_times": {},
     "gameplay_seq_durations": {
       "idle": 0.967,
       "shoot1": 0.867,
@@ -11674,6 +11721,7 @@
         "deg_from_seed": 83.71
       }
     },
+    "cz_spare_detach_times": {},
     "gameplay_seq_durations": {
       "idle": 0.033,
       "shoot1": 0.867,
@@ -11821,6 +11869,7 @@
         "deg_from_seed": 42.66
       }
     },
+    "cz_spare_detach_times": {},
     "gameplay_seq_durations": {
       "idle": 0.033,
       "reload": 3.167,
@@ -11924,6 +11973,7 @@
         "deg_from_seed": 113.61
       }
     },
+    "cz_spare_detach_times": {},
     "gameplay_seq_durations": {
       "idle": 0.767,
       "shoot1": 0.367,
@@ -12022,6 +12072,7 @@
       "inspect",
       "inspect_2"
     ],
+    "cz_spare_detach_times": {},
     "gameplay_seq_durations": {
       "idle": 0.267,
       "pullpin": 0.967,
@@ -12118,6 +12169,7 @@
       "inspect",
       "inspect_2"
     ],
+    "cz_spare_detach_times": {},
     "gameplay_seq_durations": {
       "idle": 0.967,
       "pullpin": 1.133,
@@ -12216,6 +12268,7 @@
       "inspect",
       "inspect_2"
     ],
+    "cz_spare_detach_times": {},
     "gameplay_seq_durations": {
       "idle": 0.833,
       "pullpin": 0.967,

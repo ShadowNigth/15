@@ -1,6 +1,6 @@
 # Counter-Strike 1.5 Retail — Remake en Godot 4 (GDScript)
 
-Remake jugable de **Counter-Strike 1.5 Retail** construido íntegramente en **Godot 4.x (GDScript)**. Los mapas, texturas de mundo, personajes, HUD, radio y constantes clásicas proceden de [`Ch0wW/counterstrike-betas` (`cs15_retail`)](https://github.com/Ch0wW/counterstrike-betas/tree/cs15_retail). Los **43 slots de armas** usan modelos, texturas, iconos, animaciones y eventos convertidos desde [`ShadowNigth/archi`](https://github.com/ShadowNigth/archi), con audio específico complementado por [`Source2Sounds/cs2`](https://github.com/Source2Sounds/cs2).
+Remake jugable de **Counter-Strike 1.5 Retail** construido íntegramente en **Godot 4.x (GDScript)**. Los mapas, texturas de mundo, personajes, HUD, radio y constantes clásicas proceden de [`Ch0wW/counterstrike-betas` (`cs15_retail`)](https://github.com/Ch0wW/counterstrike-betas/tree/cs15_retail). Los **43 slots de armas** conservan modelos, texturas e iconos convertidos desde [`ShadowNigth/archi`](https://github.com/ShadowNigth/archi), con audio específico complementado por [`Source2Sounds/cs2`](https://github.com/Source2Sounds/cs2). Las armas/utilidades y los 22 cuchillos añadidos usan ahora animaciones nativas por modelo de [`zh667/ScCsgoKnives`](https://github.com/zh667/ScCsgoKnives), adaptadas a nuestros modelos y brazos originales.
 
 ---
 
@@ -12,6 +12,22 @@ Remake jugable de **Counter-Strike 1.5 Retail** construido íntegramente en **Go
    - Se abrirá el **Menú Clásico WON de Counter-Strike 1.5** (`splash.png` original + sonidos `launch_glow1.wav` / `launch_select1.wav`).
    - Elige **Quick Launch: de_dust2** o **Play CS 1.5 (LAN / Bots)** para escoger cualquiera de los **26 mapas originales**, cantidad de **Bots IA**, nivel de habilidad y dinero inicial (`$800` / `$3500` / `$16000`).
    - También puedes abrir **3D Arsenal, Skins & Models** para inspeccionar los modelos y animaciones, elegir los **120 acabados anteriores más 44 incorporados al catálogo de armas**, además de los acabados de cuchillo y previsualizar los guantes para la próxima partida. **Original HD** siempre permanece disponible.
+
+---
+
+## Animaciones nativas de armas y utilidades
+
+- **42 conjuntos / 289 clips originales:** 35 armas de fuego, seis granadas y C4.
+- Desenfunde, disparo, recarga, inspecciones y variantes disponibles de cada modelo; **52 inspecciones** de armas/utilidades. T recorre las inspecciones de ese modelo.
+- Se conservan todos los vértices, normales, UV, pesos, índices, materiales y matrices de enlace originales. Los cargadores, correderas, cerrojos y silenciadores siguen sus curvas nativas mediante calibración de sus pivotes.
+- El R8 compone correctamente su animación aditiva sobre idle; se ocultan los accesorios de recarga cuando no corresponden. La CZ75 recuerda la retirada de su cargador delantero y pasa a las variantes posteriores.
+- Se mantienen los tiempos de acción existentes: las recargas y sus sonidos se reproducen a la velocidad necesaria para terminar junto con el temporizador de juego. Las escopetas conservan la recarga interrumpible por cartucho y muestran la primera inserción antes de acreditarlo.
+- Los 22 cuchillos añadidos conservan sus **235 clips / 33 inspecciones nativas** ya corregidos. El cuchillo original no se sustituye.
+- Los clips auxiliares de transición y miras también están incluidos en los GLB; no se inventan estados de CS2 incompatibles con las reglas clásicas de este juego.
+
+El selector **Preview animation** del Arsenal permite reproducir cualquier clip importado, incluidas las variantes y transiciones auxiliares.
+
+Más detalles y reproducción de pruebas: [`docs/NATIVE_WEAPON_ANIMATIONS.md`](docs/NATIVE_WEAPON_ANIMATIONS.md). El ZIP de código es el proyecto editable: **no incluye Godot ni ejecutables**. Las publicaciones ejecutables anteriores no contienen necesariamente estas animaciones.
 
 ---
 

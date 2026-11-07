@@ -43,6 +43,12 @@ func _run() -> void:
 	world._on_player_team_chosen("CT", "urban")
 	world.team_menu.close_menu()
 	var player := world.player
+	var menu := (load("res://scenes/MainMenu.tscn") as PackedScene).instantiate() as MainMenu
+	add_child(menu)
+	menu._load_viewer_weapon("ak47")
+	_expect(menu._viewer_animation_opt != null and menu._viewer_animation_opt.item_count == menu._viewer_anim.get_animation_list().size(), "Arsenal exposes every imported native/compatibility clip")
+	menu.queue_free()
+	await get_tree().process_frame
 	var source_clips := 0
 	for raw_wid in reports:
 		var wid := String(raw_wid)

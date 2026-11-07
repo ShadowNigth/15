@@ -87,3 +87,18 @@ as signed bone scales rather than discarded by quaternion conversion. Only the
 retargeted arm/glove surfaces reverse their face-culling mode; the native knife
 geometry keeps positive parity and normal back-face culling. Both the match and
 Arsenal apply this distinction. Native clips also bypass the legacy equip dip.
+
+
+## Native firearm and utility motion conversion
+
+The source project also retargets 289 animation clips from the same pinned
+ScCsgoKnives commit (`1eb8067fd0b7214df5bccf3ac3807fbaa3aee70d`) onto the 42
+existing firearm/utility viewmodels (35 guns, six grenades, C4). The original
+archi/BDS geometry, UVs, artwork, arm/glove meshes and inverse binds remain in
+place. Per-file SHA-256, original source clip names, native events and pose
+checkpoints are in `data/native_gun_animation_report.json`. Native additive
+composition and helper-part visibility follow the upstream `Cs2Rig.cs` and
+`ScGunPartVisibility.cs` behavior, adapted to Godot and classic action timers.
+
+These conversions do not grant new rights to Valve or other third-party assets.
+The existing upstream GPL/code notices and separate asset-rights cautions apply.

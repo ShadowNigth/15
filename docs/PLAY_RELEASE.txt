@@ -1,11 +1,22 @@
 COUNTER-STRIKE 1.5 — GODOT FAN REMAKE
 COMPLETE SHIPPED COSMETIC CATALOG
 
-Windows: extract the entire ZIP and run CounterStrike15.exe.
-Linux: extract the entire ZIP, enable executable permission if necessary
-(chmod +x CounterStrike15.x86_64), then run CounterStrike15.x86_64.
-Keep the .pck file next to the executable. Godot installation is not required.
-64-bit PC and an OpenGL 3.3-compatible graphics driver are required.
+CURRENT DELIVERY: EDITABLE GODOT SOURCE PROJECT
+Extract the source ZIP into a new directory. Open Godot 4.3+, import
+project.godot, wait for the resource import, and press F5.
+This source ZIP does not include the engine, an executable, or a .pck export.
+Previously published executable releases predate the current animation work.
+An OpenGL 3.3-compatible graphics driver is required for GL Compatibility.
+
+NATIVE FIREARM AND UTILITY ANIMATIONS
+42 model-specific source sets: 35 guns, six grenades and C4; 289 native clips
+and 52 available inspections. Original geometry, skins, arms, gloves, weights
+and inverse binds are preserved. Action animation and sound playback is fitted
+to existing gameplay timers; weapon statistics and map/bot rules are unchanged.
+R8 additive preparation, CZ75 spare-magazine state, suppressor transitions and
+per-shell shotgun reload stages are handled explicitly. Auxiliary source graph
+clips remain available without replacing classic gameplay with CS2 mechanics.
+See NATIVE_WEAPON_ANIMATIONS.md for provenance and reproducible tests.
 
 KNIVES AND FINISHES
 Create Game -> Knife model: original Kukri + all 22 source knife models.

@@ -7,10 +7,23 @@ import sys
 from PIL import Image, ImageDraw
 
 batch = int(sys.argv[1])
+mode = sys.argv[2] if len(sys.argv)>2 else 'plate'
 root = Path('/tmp/native-gun-captures')
 reports = json.loads(Path('data/native_gun_animation_report.json').read_text())
 names = list(reports)[batch*6:(batch+1)*6]
 assert len(names) == 6
+def publish(image,name):
+    encoded = base64.b64encode(image.read_bytes()).decode('ascii')
+    chunks = [encoded[i:i+3500] for i in range(0,len(encoded),3500)]
+    assert len(chunks) <= 10
+    for i,chunk in enumerate(chunks):
+        print(f'::notice title=Native JPEG {name} {i+1}/{len(chunks)}::{chunk}')
+
+if mode != 'plate':
+    assert mode in ['revolver_prepare','m4a1_add_silencer','m4a1_inspect','elite_reload','cz75_reload','molotov_idle','molotov_pullpin','awp_reload','g3sg1_reload','m3_reload']
+    publish(root/(mode+'.jpg'),mode)
+    raise SystemExit(0)
+
 plate = Image.new('RGB',(1440,450),(12,15,19))
 draw = ImageDraw.Draw(plate)
 for col,wid in enumerate(names):
@@ -30,15 +43,5 @@ for quality in [35,28,22,16,10,5]:
 assert path.stat().st_size <= 26000
 
 
-def publish(image,name):
-    encoded = base64.b64encode(image.read_bytes()).decode('ascii')
-    chunks = [encoded[i:i+3500] for i in range(0,len(encoded),3500)]
-    assert len(chunks) <= 10
-    for i,chunk in enumerate(chunks):
-        print(f'::notice title=Native JPEG {name} {i+1}/{len(chunks)}::{chunk}')
-
 publish(path,f'native_batch_{batch}')
-# Additional full-frame detail on the mechanically difficult rigs.
-for wid,pose in [('revolver','prepare'),('m4a1','add_silencer'),('elite','reload'),('cz75','reload'),('molotov','throw'),('awp','reload'),('m3','reload')]:
-    if wid in names:
-        publish(root/(wid+'_'+pose+'.jpg'),wid+'_'+pose)
+# One image per workflow step: GitHub caps notice annotations at ten per step.

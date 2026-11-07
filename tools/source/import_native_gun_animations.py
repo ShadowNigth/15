@@ -196,6 +196,30 @@ def main(folder, selected=None, analyze=False):
             if not re.match(r'^v_weapon\.Bip01_[LR]_(Forearm|ForeTwist|Hand|Finger[0-4][12]?)$', node['name']):
                 node['name'] = '_' + node['name']
         axes, errors = native.axis_calibration(calibration, source, base.matrices(source), base.matrices(original['nodes']))
+        # A few legacy rigs give individual phalanges a different local axis
+        # (notably the R8 right ring finger). Correct those outliers individually
+        # instead of rotating the entire hand to accommodate one bent bind bone.
+        old_bind, source_bind = base.matrices(original['nodes']),base.matrices(source)
+        bone_axes, directional_errors = {},{'L':[],'R':[]}
+        for i,node in enumerate(calibration['nodes']):
+            mapped = native.correspondence(node['name'])
+            parent = parents.get(i)
+            if mapped is None or parent is None or node['name'].endswith('ForeTwist'): continue
+            mp = native.correspondence(calibration['nodes'][parent]['name'])
+            if mp is None: continue
+            side = node['name'].removeprefix('v_weapon.Bip01_')[0]
+            a = (np.linalg.inv(old_bind[parent]) @ old_bind[i])[:3,3]
+            b = (np.linalg.inv(source_bind[idx[mp]]) @ source_bind[idx[mapped]])[:3,3]
+            if min(np.linalg.norm(a),np.linalg.norm(b)) < 1e-6: continue
+            a,b = a/np.linalg.norm(a),b/np.linalg.norm(b)
+            k = axes[side]
+            error = float(np.degrees(np.arccos(np.clip(np.dot(k@a,b),-1,1))))
+            if error > 15 and 'Finger' in original['nodes'][parent]['name']:
+                correction = Rotation.align_vectors([b],[k@a])[0].as_matrix()
+                bone_axes[parent] = correction @ k
+                error = 0.0
+            directional_errors[side].append(error)
+        post_axis_errors = {side:max(values) for side,values in directional_errors.items()}
         # Right-side factors preserve each old part's pivot, local axes, scale,
         # and exact geometry at idle. The left factor supplies native motion.
         factors = {i:np.linalg.inv(native.C @ idle[idx[n]] @ native.CI) @ placement @ old_idle[i]
@@ -216,7 +240,7 @@ def main(folder, selected=None, analyze=False):
                 if anatomical_name:
                     side = doc['nodes'][i]['name'].removeprefix('v_weapon.Bip01_')[0]
                     out[i] = np.eye(4)
-                    out[i][:3,:3] = native.AXIS @ pose[idx[anatomical_name]][:3,:3] @ axes[side]
+                    out[i][:3,:3] = native.AXIS @ pose[idx[anatomical_name]][:3,:3] @ bone_axes.get(i,axes[side])
                     out[i][:3,3] = (native.C @ pose[idx[anatomical_name]])[:3,3]
                 elif i not in mapping:
                     parent = fallback[i]
@@ -275,7 +299,7 @@ def main(folder, selected=None, analyze=False):
             poses = sample_native(source, animation, clip, samples)
             targets = np.array([target(pose,clip,float(at)) for pose,at in zip(poses,samples)])
             times = samples-start
-            if name in ['idle','draw','shoot1','reload','inspect','inspect_2','attach','detach','pullpin','throw','underhand','pressbutton','prepare','alt1','start_reload','insert','after_reload']:
+            if True:  # Every source clip, including helpers and secondary variants.
                 chosen = sorted({0,len(times)//3,2*len(times)//3,len(times)-1})
                 tracked = [i for i in sorted(joints) if anatomical(doc['nodes'][i]['name']) in ['hand_L','hand_R'] or i in mapping and mapping[i] in ['clip','magazine','slide','bolt','pump','silencer','weapon_l','weapon_r','lighter','molotov','detonator_switch','loader_handle','loader_holder','shell','magazine2']]
                 checkpoints[name] = [dict(t=float(times[f]), bones={doc['nodes'][i]['name']:targets[f,i].round(7).tolist() for i in tracked}) for f in chosen]
@@ -300,15 +324,25 @@ def main(folder, selected=None, analyze=False):
                         time_accessors[key] = inp
                     out = base.append_array(doc,binary,used_values,kind)
                     track['channels'].append(dict(sampler=len(track['samplers']),target=dict(node=i,path=field)))
-                    track['samplers'].append(dict(input=time_accessors[key],output=out,interpolation='LINEAR'))
+                    visibility_scale = field == 'scale' and i in mapping and ((wid == 'revolver' and mapping[i] in ['loader_handle','loader_holder']) or (wid == 'sawedoff' and mapping[i] == 'shell') or (wid == 'cz75' and mapping[i] == 'magazine2'))
+                    track['samplers'].append(dict(input=time_accessors[key],output=out,interpolation='STEP' if visibility_scale else 'LINEAR'))
             doc['animations'].append(track)
             sources[name] = source_name
             raw_events[name] = [e for e in clip.get('Events',[]) if start <= float(e.get('At',0)) < end]
             for e in raw_events[name]:
                 if e.get('Class') != 'CNmClipDocEvent_Sound': continue
                 sound = sounds.find(e['Name'],wid)
-                if sound:
-                    events.setdefault(name,[]).append(dict(t=float(e['At'])-start,wav='weapons/archi/'+sound))
+                wav = 'weapons/archi/'+sound if sound else None
+                if wid in ['m4a4','mag7']:
+                    # Keep the dedicated recordings introduced before this
+                    # animation conversion; only their native event times change.
+                    family = 'm4a1' if wid == 'm4a4' else 'mag7'
+                    suffix = e['Name'].split('.',1)[-1].lower().removesuffix('_q')
+                    suffix = {'pumpback':'pump_back','pumpforward':'pump_forward'}.get(suffix,suffix) if wid=='mag7' else suffix
+                    candidate = 'weapons/cs2/'+family+'/'+family+'_'+suffix+'.wav'
+                    wav = candidate if (base.ROOT/'assets/sounds'/candidate).is_file() else None
+                if wav:
+                    events.setdefault(name,[]).append(dict(t=float(e['At'])-start,wav=wav))
         # Compatibility routes are aliases to native tracks, never old animation
         # data. Glock burst retriggers the same native slide cycle per shot.
         aliases = dict(shoot='shoot1',shoot2='shoot1',shoot3='shoot1',shoot_empty='shootlast',
@@ -352,7 +386,8 @@ def main(folder, selected=None, analyze=False):
         reports[wid] = dict(source_commit=base.SOURCE_COMMIT,source_weapon=SOURCE_IDS.get(wid,wid),animation_sha256=sha,
              source_clip_count=len(animation['Clips']),pose_checkpoints=checkpoints,clips=sources,durations=durations,shotgun_segments=segments,
              mechanical_bones={original['nodes'][i]['name']:n for i,n in mapping.items()},
-             idle_pivot_residual_m=landmarks,axis_max_error_deg=errors,source_events=raw_events,
+             idle_pivot_residual_m=landmarks,axis_max_error_deg=post_axis_errors,axis_global_fit_error_deg=errors,
+             per_bone_axis_overrides={original['nodes'][i]['name']:k.tolist() for i,k in bone_axes.items()},source_events=raw_events,
              original_geometry_uv_weights_indices_and_inverse_binds_preserved=True,
              mechanical_transfer='C N(t) N(idle)^-1 C^-1 D O(idle); per-bone frame calibration',
              placement_matrix=placement.tolist())

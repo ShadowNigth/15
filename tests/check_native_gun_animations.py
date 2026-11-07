@@ -61,8 +61,13 @@ for wid,r in report.items():
         for event in events:
             assert event['t'] <= m['seq_durations'][name]+0.0001
             assert (ROOT/'assets/sounds'/event['wav']).is_file(),event
+    assert len(r['pose_checkpoints']) >= r['source_clip_count'],wid
+    assert max(r['axis_max_error_deg'].values()) < 14,wid
     for phase in r['shotgun_segments']:
         assert phase in ['start_reload','insert','after_reload'] and phase in animations
+for wid,family in [('m4a4','m4a1'),('mag7','mag7')]:
+    events = meta['weapons/'+weapons[wid]['v_model']]['seq_events']
+    assert all(e['wav'].startswith('weapons/cs2/'+family+'/') for clip in events.values() for e in clip),wid
 # Additive R8 prepare must begin on idle, never put the hands at the camera.
 r = report['revolver']['pose_checkpoints']
 for name,pose in r['prepare'][0]['bones'].items():

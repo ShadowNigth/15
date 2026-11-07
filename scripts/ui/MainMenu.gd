@@ -29,6 +29,7 @@ var _knife_opt: OptionButton = null
 var _viewer_viewport: SubViewport = null
 var _viewer_pivot: Node3D = null
 var _viewer_anim: AnimationPlayer = null
+var _viewer_animation_opt: OptionButton = null
 var _viewer_stats_lbl: Label = null
 var _viewer_current_wid: String = "ak47"
 var _skin_opt: OptionButton = null
@@ -532,6 +533,22 @@ func _build_arsenal_dialog() -> void:
 	btn_row.add_child(rel_btn)
 	right.add_child(btn_row)
 
+	var animation_row := HBoxContainer.new()
+	var animation_label := Label.new()
+	animation_label.text = "Preview animation:"
+	animation_row.add_child(animation_label)
+	_viewer_animation_opt = OptionButton.new()
+	_viewer_animation_opt.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	_viewer_animation_opt.item_selected.connect(func(index: int):
+		if _viewer_anim != null and index >= 0:
+			_viewer_anim.stop()
+			_viewer_anim.speed_scale = 1.0
+			_viewer_anim.play(String(_viewer_animation_opt.get_item_metadata(index)))
+			_viewer_anim.advance(0.0)
+	)
+	animation_row.add_child(_viewer_animation_opt)
+	right.add_child(animation_row)
+
 	var skin_row := HBoxContainer.new()
 	skin_row.add_theme_constant_override("separation", 8)
 	var skin_label := Label.new()
@@ -578,6 +595,21 @@ func _clear_viewer_pivot() -> void:
 		_viewer_pivot.remove_child(c)
 		c.queue_free()
 	_viewer_anim = null
+	if _viewer_animation_opt != null:
+		_viewer_animation_opt.clear()
+
+
+func _populate_viewer_animations() -> void:
+	if _viewer_animation_opt == null:
+		return
+	_viewer_animation_opt.clear()
+	if _viewer_anim == null:
+		return
+	for clip in _viewer_anim.get_animation_list():
+		_viewer_animation_opt.add_item(clip)
+		_viewer_animation_opt.set_item_metadata(_viewer_animation_opt.item_count - 1, clip)
+		if clip == "idle":
+			_viewer_animation_opt.select(_viewer_animation_opt.item_count - 1)
 
 
 func _style_viewer_meshes(n: Node, mode: String = "char", native_arms: bool = false, native_gun: bool = false) -> void:
@@ -653,6 +685,7 @@ func _load_viewer_weapon(wid: String) -> void:
 		var vm_meta: Dictionary = GameData.models_meta.get("weapons/" + String(spec.get("v_model", "")), {})
 		_style_viewer_meshes(inst, "vm", bool(vm_meta.get("native_cs2_animation", false)), bool(vm_meta.get("native_gun_animations", false)))
 		_viewer_anim = _find_anim_recursive(inst)
+		_populate_viewer_animations()
 		if _viewer_anim and not _viewer_anim.get_animation_list().is_empty():
 			_viewer_anim.play("idle" if _viewer_anim.has_animation("idle") else _viewer_anim.get_animation_list()[0])
 
@@ -681,6 +714,7 @@ func _load_viewer_player(cid: String) -> void:
 		inst.position = Vector3(0.0, 0.12, 0.0)
 		_viewer_pivot.add_child(inst)
 		_viewer_anim = _find_anim_recursive(inst)
+		_populate_viewer_animations()
 		var skel_list := inst.find_children("*", "Skeleton3D", true, false)
 		if _viewer_anim:
 			GameData.ensure_looping_animations(_viewer_anim)

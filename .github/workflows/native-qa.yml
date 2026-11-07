@@ -513,9 +513,21 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        batch: [0, 1, 2, 3, 4, 5, 6]
+        include:
+          - {batch: 0, detail: elite_reload, extra: ''}
+          - {batch: 1, detail: m3_reload, extra: ''}
+          - {batch: 2, detail: m4a1_add_silencer, extra: m4a1_inspect}
+          - {batch: 3, detail: awp_reload, extra: g3sg1_reload}
+          - {batch: 4, detail: revolver_prepare, extra: cz75_reload}
+          - {batch: 5, detail: '', extra: ''}
+          - {batch: 6, detail: molotov_idle, extra: molotov_pullpin}
     steps:
       - uses: actions/checkout@v4
+        with:
+          sparse-checkout: |
+            tools/publish_native_gun_review.py
+            data/native_gun_animation_report.json
+          sparse-checkout-cone-mode: false
       - uses: actions/download-artifact@v4
         with:
           name: native-gun-review-frames
@@ -524,3 +536,9 @@ jobs:
         run: python3 -m pip install pillow
       - name: Publish real firearm and utility poses
         run: python3 tools/publish_native_gun_review.py ${{ matrix.batch }}
+      - name: Review native mechanical close-up
+        if: ${{ matrix.detail != '' }}
+        run: python3 tools/publish_native_gun_review.py ${{ matrix.batch }} ${{ matrix.detail }}
+      - name: Review additional native close-up
+        if: ${{ matrix.extra != '' }}
+        run: python3 tools/publish_native_gun_review.py ${{ matrix.batch }} ${{ matrix.extra }}

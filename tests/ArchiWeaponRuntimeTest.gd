@@ -298,9 +298,12 @@ func _test_animation_refinements() -> void:
 				var start := clip.position_track_interpolate(track, 0.0)
 				var rear := clip.position_track_interpolate(track, 2.0 / 30.0)
 				var finish := clip.position_track_interpolate(track, clip.length)
-				var cycle_ok := start.distance_to(rear) > 0.035
+				var native_clip := bool((GameData.models_meta.get("weapons/v_glock18", {}) as Dictionary).get("native_gun_animations", false))
+				var cycle_ok := start.distance_to(rear) > (0.025 if native_clip else 0.035)
 				if clip_name == "shoot_empty":
-					cycle_ok = cycle_ok and finish.distance_to(rear) < 0.0001
+					# Native CS2 settles slightly forward after recoil instead of
+					# freezing at the overshoot peak used by the old synthetic fix.
+					cycle_ok = cycle_ok and (finish.distance_to(start) > 0.025 if native_clip else finish.distance_to(rear) < 0.0001)
 				else:
 					cycle_ok = cycle_ok and finish.distance_to(start) < 0.0001
 				_expect(cycle_ok, "Glock %s performs the expected visible slide cycle" % clip_name)
