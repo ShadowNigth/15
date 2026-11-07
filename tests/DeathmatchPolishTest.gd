@@ -141,7 +141,7 @@ func _run() -> void:
 	expect(bombs == 1, "Exactly one classic C4")
 	await free_world(world)
 	await smoke_checks()
-	for wid in ["ak47", "m4a1", "mp5navy", "m3", "usp", "galil", "sg552", "scout", "hegrenade", "smokegrenade", "vest", "vesthelm"]:
+	for wid in ["ak47", "m4a1", "mp5navy", "m3", "usp", "galil", "sg552", "scout", "hegrenade", "smokegrenade", "vest", "vesthelm", "kevlar", "kevlar_helmet", "p2000", "cz75"]:
 		expect(GameData.equipment_icon(wid) != null, "Real source equipment icon: " + wid)
 	print("[DM POLISH] %s: %d checks; %d failures" % ["PASS" if failures.is_empty() else "FAIL", checks, failures.size()])
 	get_tree().quit(0 if failures.is_empty() else 1)
@@ -162,6 +162,7 @@ func smoke_checks() -> void:
 	add_child(smoke)
 	smoke.setup_cloud(Vector3(3002, 0.6, 0))
 	smoke.set_process(false)
+	smoke.set_physics_process(false)
 	smoke.age = 2.0
 	await get_tree().physics_frame
 	await get_tree().physics_frame
@@ -177,9 +178,27 @@ func smoke_checks() -> void:
 			break
 	smoke.apply_explosion_impulse(point, 5.0)
 	expect(smoke._v_carve[0] > 0.8 and smoke.voxel_opacity(0) < 0.2, "Visible-side HE clears opacity and sensing together")
+	var runner := CSActor.new()
+	add_child(runner)
+	runner.is_alive = true
+	runner.set_physics_process(false)
+	runner.global_position = point - Vector3.UP * 1.05
+	runner.velocity = Vector3.RIGHT * 3.0
+	smoke._v_carve[0] = 0.95
+	smoke._v_hold[0] = 10.0
+	smoke._physics_process(0.01)
+	expect(smoke._v_carve[0] >= 0.94, "Running actor cannot refill a stronger HE hole")
+	runner.queue_free()
+	RoundManager.actors.clear()
+	smoke._v_pos[0] = Vector3(-0.87, 1.0, 0.0)
+	smoke._v_home[0] = smoke._v_pos[0]
+	smoke._v_vel[0] = Vector3.LEFT * 15.0
+	smoke._physics_process(0.04)
+	expect(smoke.global_position.x + smoke._v_pos[0].x >= 3001.1, "Drifting voxel cannot cross a solid wall")
 	smoke._v_carve.fill(1.0)
 	expect(smoke.get_density_at(point) == 0.0 and not smoke.blocks_segment(point - Vector3.RIGHT, point + Vector3.RIGHT), "Fully carved cloud neither obscures view nor blinds bots")
 	smoke._v_carve.fill(0.0)
+	smoke._v_pos[0] = point - smoke.global_position
 	smoke.age = SmokeCloudVolume.DURATION - 0.05
 	expect(smoke.voxel_opacity(0) < 0.03 and smoke.get_density_at(point) < 0.1, "Visual and sensing fade use the same lifetime")
 	smoke.age = 2.0

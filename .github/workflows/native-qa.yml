@@ -601,6 +601,12 @@ jobs:
               text = p.read_text(errors='replace')[-11000:].replace('%','%25').replace('\n','%0A')
               print('::notice title=Deathmatch smoke FX::'+text)
           PYCODE
+      - name: Install framebuffer transport
+        if: ${{ always() }}
+        run: python3 -m pip install pillow
+      - name: Publish Deathmatch and effects framebuffers
+        if: ${{ always() }}
+        run: python3 tools/publish_polish_capture.py
       - name: Combat and live native character integration
         run: |
           set -o pipefail

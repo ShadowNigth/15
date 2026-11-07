@@ -288,12 +288,12 @@ func _build_play_dialog() -> void:
 	mode_label.text = "Game mode:"
 	settings_grid.add_child(mode_label)
 	_game_mode_opt = OptionButton.new()
-	_game_mode_opt.add_item("Classic rounds — Bomb / Hostage / VIP")
-	_game_mode_opt.add_item("Team Deathmatch — bots, respawn, 40 kills / 10 min")
+	_game_mode_opt.add_item("Classic — DE / CS / AS")
+	_game_mode_opt.add_item("Team Deathmatch (bots)")
 	_game_mode_opt.selected = 1 if GameData.game_mode == "deathmatch" else 0
 	settings_grid.add_child(_game_mode_opt)
 	var loadout_label := Label.new()
-	loadout_label.text = "Deathmatch primary (free on respawn):"
+	loadout_label.text = "DM primary (free):"
 	settings_grid.add_child(loadout_label)
 	_dm_weapon_opt = OptionButton.new()
 	for wid in ["ak47", "m4a1", "aug", "sg552", "mp5navy", "p90", "awp", "m3", "galil", "famas"]:
@@ -301,7 +301,12 @@ func _build_play_dialog() -> void:
 			var index := _dm_weapon_opt.item_count
 			_dm_weapon_opt.add_item(GameData.weapons[wid].get("name", wid))
 			_dm_weapon_opt.set_item_metadata(index, wid)
+			if wid == GameData.dm_primary:
+				_dm_weapon_opt.select(index)
 	settings_grid.add_child(_dm_weapon_opt)
+	_dm_weapon_opt.disabled = _game_mode_opt.selected != 1
+	_game_mode_opt.item_selected.connect(func(index: int): _dm_weapon_opt.disabled = index != 1)
+	_game_mode_opt.tooltip_text = "Team DM: 40 team frags or 10 minutes; respawn after 3 seconds, 2 seconds of protection."
 
 	var bl := Label.new()
 	bl.text = "Number of Bots IA:"

@@ -392,6 +392,8 @@ func _process(delta: float) -> void:
 		_tick_corpse_grounding(delta)
 	if _tp_muzzle_timer > 0.0:
 		_tp_muzzle_timer -= delta
+		if _tp_muzzle_sprite:
+			_tp_muzzle_sprite.frame = mini(20, 3 + int((0.048 - _tp_muzzle_timer) * 330.0))
 		if _tp_muzzle_timer <= 0.0:
 			if _tp_muzzle_sprite:
 				_tp_muzzle_sprite.visible = false

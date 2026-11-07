@@ -486,8 +486,9 @@ func get_density_at(pt: Vector3) -> float:
 			var w: float = (1.0 - sqrt(dsq) / 1.75) * voxel_opacity(i)
 			accum += w * 0.58
 			if accum >= 1.0:
-				return 1.0
-	return clampf(accum, 0.0, 1.0)
+				return fade
+	# Overlapping faint cells must not remain opaque to AI at the end of life.
+	return clampf(accum, 0.0, fade)
 
 
 func blocks_segment(a: Vector3, b: Vector3) -> bool:

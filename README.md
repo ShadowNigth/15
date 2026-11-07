@@ -15,6 +15,16 @@ Remake jugable de **Counter-Strike 1.5 Retail** construido íntegramente en **Go
 
 ---
 
+## Modo adicional: Team Deathmatch y pulido visual
+
+En **Play CS 1.5 → Game mode** puedes elegir las rondas **Classic** de siempre o **Team Deathmatch (bots)**: 40 bajas por equipo / 10 minutos, respawn a los 3 s, protección inicial de 2 s cancelada al atacar y equipamiento gratuito. Los modos clásicos DE/CS/AS no se sustituyen.
+
+Se incorporan atlas reales de fogonazo, humo de cañón y explosión, siluetas de armas/granadas y armadura/casco. El humo respeta mejor paredes, vaciado por HE, movimiento y extinción local del fuego. Se mantienen personajes clásicos, munición numérica, casquillos, skins y animaciones anteriores; sin gallinas ni pantalla de precarga.
+
+Detalles, procedencia y pruebas: [`docs/DEATHMATCH_EFFECTS_SMOKE.md`](docs/DEATHMATCH_EFFECTS_SMOKE.md).
+
+---
+
 ## Animaciones nativas de armas y utilidades
 
 - **42 conjuntos / 289 clips originales:** 35 armas de fuego, seis granadas y C4.
