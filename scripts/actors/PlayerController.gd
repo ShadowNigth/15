@@ -647,7 +647,7 @@ func _rebuild_viewmodel(wid: String) -> void:
 	_vm_container.scale = Vector2(-1.0 if mirror else 1.0, 1.0)
 	viewmodel_holder.add_child(inst)
 	SportGloves.apply(inst, v_name)
-	_prepare_viewmodel_materials(inst)
+	_prepare_viewmodel_materials(inst, native_knife)
 	_vm_model_root = inst as Node3D
 	if _vm_model_root != null:
 		_vm_model_rest_transform = _vm_model_root.transform
@@ -816,7 +816,7 @@ func _apply_vm_silencer_visibility() -> void:
 	_vm_silencer_skeleton.set_bone_pose_scale(_vm_silencer_bone, target_scale)
 
 
-func _prepare_viewmodel_materials(n: Node) -> void:
+func _prepare_viewmodel_materials(n: Node, native_arms: bool = false) -> void:
 	if n is MeshInstance3D:
 		var mi := n as MeshInstance3D
 		mi.layers = 4  # Visual Layer 3: rendered exclusively by _vm_camera!
@@ -824,11 +824,16 @@ func _prepare_viewmodel_materials(n: Node) -> void:
 		if mi.mesh:
 			for s in range(mi.mesh.get_surface_count()):
 				var mat := mi.get_active_material(s)
-				var styled := GameData.get_styled_model_material(mat, "vm")
+				var name_lower := mat.resource_name.to_lower() if mat != null else ""
+				var arm_surface := name_lower.contains("glove") or name_lower == "ct_arms.bmp"
+				# Only the original port's arm mesh requires parity conversion;
+				# the source knife mesh and its skin have positive parity already.
+				var material_mode := "vm_flip" if native_arms and arm_surface else "vm"
+				var styled := GameData.get_styled_model_material(mat, material_mode)
 				if styled:
 					mi.set_surface_override_material(s, styled)
 	for c in n.get_children():
-		_prepare_viewmodel_materials(c)
+		_prepare_viewmodel_materials(c, native_arms)
 
 
 func _start_vm_clip(anim_name: String) -> void:

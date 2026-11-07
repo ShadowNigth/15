@@ -14,7 +14,7 @@ on:
   push:
 
 concurrency:
-  group: native-qa-${{ github.ref }}${{ contains(github.event.head_commit.message, '[render-review]') && '-render-review' || contains(github.event.head_commit.message, '[package-only]') && '-package' || '' }}
+  group: native-qa-${{ github.ref }}${{ contains(github.event.head_commit.message, '[render-review]') && '-render-review' || contains(github.event.head_commit.message, '[package-only]') && '-package' || contains(github.event.head_commit.message, '[native-pose-review]') && '-native-pose-review' || '' }}
   cancel-in-progress: true
 
 jobs:

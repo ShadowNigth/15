@@ -80,3 +80,10 @@ Regeneration: after the geometry installer, run
 `python -m tools.source.import_native_knife_animations SOURCE_ANIMATION_DIRECTORY`
 with numpy/scipy installed and all pinned `.cs2.skin` / `.cs2.animation.json` files.
 The earlier fixed-grip installer alone does not reproduce this correction.
+
+The legacy arm mesh was authored through a reflected Source-to-port coordinate
+conversion. Its local-axis fit therefore includes **negative parity**, retained
+as signed bone scales rather than discarded by quaternion conversion. Only the
+retargeted arm/glove surfaces reverse their face-culling mode; the native knife
+geometry keeps positive parity and normal back-face culling. Both the match and
+Arsenal apply this distinction. Native clips also bypass the legacy equip dip.

@@ -580,16 +580,20 @@ func _clear_viewer_pivot() -> void:
 	_viewer_anim = null
 
 
-func _style_viewer_meshes(n: Node, mode: String = "char") -> void:
+func _style_viewer_meshes(n: Node, mode: String = "char", native_arms: bool = false) -> void:
 	if n is MeshInstance3D:
 		var mi := n as MeshInstance3D
 		if mi.mesh:
 			for s in range(mi.mesh.get_surface_count()):
-				var styled := GameData.get_styled_model_material(mi.get_active_material(s), mode)
+				var original := mi.get_active_material(s)
+				var name_lower := original.resource_name.to_lower() if original != null else ""
+				var arm_surface := name_lower.contains("glove") or name_lower == "ct_arms.bmp"
+				var material_mode := "vm_flip" if native_arms and arm_surface and mode == "vm" else mode
+				var styled := GameData.get_styled_model_material(original, material_mode)
 				if styled:
 					mi.set_surface_override_material(s, styled)
 	for c in n.get_children():
-		_style_viewer_meshes(c, mode)
+		_style_viewer_meshes(c, mode, native_arms)
 
 
 func _populate_viewer_skin_options(wid: String) -> void:
@@ -646,7 +650,7 @@ func _load_viewer_weapon(wid: String) -> void:
 		inst.rotation_degrees = Vector3(0.0, 25.0, 0.0)
 		_viewer_pivot.add_child(inst)
 		SportGloves.apply(inst, String(spec.get("v_model", "v_ak47")))
-		_style_viewer_meshes(inst, "vm")
+		_style_viewer_meshes(inst, "vm", bool((GameData.models_meta.get("weapons/" + String(spec.get("v_model", "")), {}) as Dictionary).get("native_cs2_animation", false)))
 		_viewer_anim = _find_anim_recursive(inst)
 		if _viewer_anim and not _viewer_anim.get_animation_list().is_empty():
 			_viewer_anim.play("idle" if _viewer_anim.has_animation("idle") else _viewer_anim.get_animation_list()[0])

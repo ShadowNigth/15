@@ -76,11 +76,22 @@ def axis_calibration(original, source, source_bind, old_bind):
             old.append(a / np.linalg.norm(a)); new.append(b / np.linalg.norm(b))
         assert len(old) >= 15
         u, _, vt = np.linalg.svd(np.array(old).T @ np.array(new))
-        if np.linalg.det(u @ vt) < 0:
-            u[:, -1] *= -1
+        # The original port reflected local mesh coordinates. Recover parity
+        # as well as axes; forcing det +1 turns an anatomical hand inside out.
         result[side] = (u @ vt).T
         errors[side] = float(np.degrees(np.arccos(np.clip(np.sum((np.array(old) @ result[side].T) * new, axis=1), -1, 1))).max())
     return result, errors
+
+
+def decompose(matrices):
+    matrices = np.asarray(matrices)
+    basis = matrices[:, :3, :3]
+    scales = np.linalg.norm(basis, axis=1)
+    scales[np.linalg.det(basis) < 0, 0] *= -1
+    rotations = basis / scales[:, None, :]
+    assert np.allclose(np.transpose(rotations, (0,2,1)) @ rotations, np.eye(3), atol=1e-5)
+    return matrices[:, :3, 3], Rotation.from_matrix(rotations).as_quat(), scales
+
 
 
 def sample_poses(nodes, clip, times):
@@ -153,7 +164,8 @@ def main(directory, selected=None):
     old_parents = {c:i for i,n in enumerate(original['nodes']) for c in n.get('children', [])}
     metadata_path = ROOT / 'data/models_meta.json'
     metadata = json.loads(metadata_path.read_text())
-    reports = {}
+    report_path = ROOT / 'data/native_knife_animation_report.json'
+    reports = json.loads(report_path.read_text()) if selected and report_path.exists() else {}
     for key in (selected or NAMES):
         animfile = folder / (key + '.cs2.animation.json')
         animation = json.loads(animfile.read_text())
@@ -198,8 +210,10 @@ def main(directory, selected=None):
             parent = old_parents.get(i)
             local = np.linalg.inv(idle_target[parent]) @ idle_target[i] if parent is not None else idle_target[i]
             doc['nodes'][i] = {k:v for k,v in doc['nodes'][i].items() if k not in ['translation','rotation','scale','matrix']}
-            doc['nodes'][i]['translation'] = local[:3, 3].tolist()
-            doc['nodes'][i]['rotation'] = Rotation.from_matrix(local[:3, :3]).as_quat().tolist()
+            t, r, scale = decompose([local])
+            doc['nodes'][i]['translation'] = t[0].tolist()
+            doc['nodes'][i]['rotation'] = r[0].tolist()
+            doc['nodes'][i]['scale'] = scale[0].tolist()
         for source_name, clip in animation['Clips'].items():
             alias = clip['Alias']
             name = ALIASES.get(alias, alias)
@@ -217,7 +231,8 @@ def main(directory, selected=None):
                 else:
                     parent = old_parents.get(i)
                     matrices = [np.linalg.inv(t[parent]) @ t[i] if parent is not None else t[i] for t in target]
-                for field, kind, values in [('translation','VEC3',np.array([m[:3,3] for m in matrices])),('rotation','VEC4',Rotation.from_matrix(np.array([m[:3,:3] for m in matrices])).as_quat())]:
+                t, r, scale = decompose(matrices)
+                for field, kind, values in [('translation','VEC3',t),('rotation','VEC4',r),('scale','VEC3',scale)]:
                     # Quaternion hemispheres must be continuous across 180 degrees.
                     if field == 'rotation':
                         for f in range(1, len(values)):

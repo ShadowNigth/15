@@ -91,6 +91,7 @@ func _run() -> void:
 			var length := player._vm_anim.get_animation(String(inspection)).length
 			var skeleton := SportGloves._find_skeleton(player._vm_model_root)
 			var hand := skeleton.find_bone("v_weapon.Bip01_R_Hand")
+			_expect(skeleton.get_bone_global_pose(hand).basis.determinant() < 0.0, key + " port hand parity survives native retarget")
 			player._vm_anim.seek(length * 0.1, true)
 			var before := skeleton.get_bone_global_pose(hand)
 			player._vm_anim.seek(length * 0.65, true)
