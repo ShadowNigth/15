@@ -84,10 +84,11 @@ func _run() -> void:
 	actors[0].weapon_ctrl._fire_penetrating_ray(target_head.global_position + Vector3.FORWARD * 2, Vector3.BACK, 4.0, 10.0, 1.0, 1.0, 0)
 	expect(target.health == 960, "Production bullet applies native head hitgroup multiplier")
 	for actor in actors:
-		var rows: Array = GameData.native_actor_sockets[actor.team.to_lower()]["ak47"]["classic_basis"]
+		var rows: Array = GameData.native_actor_sockets[actor.team.to_lower()]["ak47"]["expected_basis"]
 		var expected := Basis(Vector3(rows[0][0], rows[1][0], rows[2][0]), Vector3(rows[0][1], rows[1][1], rows[2][1]), Vector3(rows[0][2], rows[1][2], rows[2][2])).orthonormalized()
 		var actual := actor._held_weapon_model.global_basis.orthonormalized()
 		expect(actual.x.distance_to(expected.x) < 0.03 and actual.z.distance_to(expected.z) < 0.03, "Mixed gait/hold keeps rifle aimed forward " + actor.team)
+		expect((-actual.z).dot(actor.get_look_forward()) > 0.98, "Actual p_ barrel faces the actor aim direction " + actor.team)
 	if "--capture" in OS.get_cmdline_user_args():
 		await save_frame("live_ct_t")
 	for actor in actors:

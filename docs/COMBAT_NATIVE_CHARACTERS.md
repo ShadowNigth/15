@@ -7,8 +7,10 @@ Supersedes the review-only CT/T/hostage decision in NATIVE_WORLD_ASSETS.md.
   distinct protected-person model. Native original geometry/textures are unmodified.
 * Native gait and weapon-specific hold/reload tracks drive actual Skeleton3D
   bones. GoldSrc bone names are not fed to the native rig. Right-hand sockets
-  are calibrated from original classic aim and native hold transforms by
+  are calibrated from native muzzle forward/up axes and hold transforms by
   `python -m tools.source.build_native_actor_sockets` (numpy/scipy, development only).
+  Baked hold yaw/pitch/roll is removed at the upper spine; the unchanged p_
+  barrel must face actor aim, not merely reproduce the old hand orientation.
 * Crouching uses two-bone hip/knee IK to keep ankles at their animated ground
   height without shrinking/squashing the mesh. Death is an authored collapse:
   upstream has no native death/crouch clips. It is not a Source 2 ragdoll.
