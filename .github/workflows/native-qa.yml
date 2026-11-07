@@ -579,11 +579,28 @@ jobs:
       - name: Verify native world provenance
         run: python3 tests/check_native_world_assets.py
       - name: Import project
+        id: world_import
         run: |
           set -o pipefail
           godot --headless --path . --import 2>&1 | tee /tmp/world-import.log
           if grep -Eq 'SCRIPT ERROR:|Parse Error:|Compile Error:' /tmp/world-import.log; then exit 1; fi
+      - name: Preserve physical Estate hostage rescue after cosmetic additions
+        id: estate_review
+        run: |
+          set -o pipefail
+          godot --headless --path . --fixed-fps 60 res://tests/MissionObjectiveRegressionTest.tscn -- --scenario=estate 2>&1 | tee /tmp/native-estate.log
+      - name: Publish Estate rescue diagnostics before image annotations
+        if: ${{ always() }}
+        run: |
+          python3 - <<'PYCODE'
+          from pathlib import Path
+          p=Path('/tmp/native-estate.log')
+          if p.exists():
+              text=p.read_text(errors='replace')[-6500:].replace('%','%25').replace('\n','%0A')
+              print('::notice title=Native Estate rescue::'+text)
+          PYCODE
       - name: Render production ejection, HUD, chickens and animated candidates
+        if: ${{ !cancelled() && steps.world_import.outcome == 'success' }}
         env:
           LIBGL_ALWAYS_SOFTWARE: '1'
         run: |
@@ -628,4 +645,5 @@ jobs:
             /tmp/native-world-review/
             /tmp/native-world.log
             /tmp/world-import.log
+            /tmp/native-estate.log
           retention-days: 14

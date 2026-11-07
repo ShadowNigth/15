@@ -62,10 +62,6 @@ func _ready() -> void:
 	add_child(water)
 	water.setup(water_zones)
 
-	native_casing_system = NativeCasings.new()
-	native_casing_system.name = "NativeCasings"
-	add_child(native_casing_system)
-
 	# 2. Setup Bot A* Waypoint Graph
 	bot_navigator = BotNavigator.new()
 	bot_navigator.setup_from_map(map_data)
@@ -78,6 +74,12 @@ func _ready() -> void:
 		h.spawn_yaw = float(hinfo.get("yaw", 0.0))
 		add_child(h)
 		RoundManager.hostages.append(h)
+
+	# Objective NPCs use instance parity for their initial avoidance side. Keep
+	# their construction ahead of cosmetic-only nodes; do not perturb rescue AI.
+	native_casing_system = NativeCasings.new()
+	native_casing_system.name = "NativeCasings"
+	add_child(native_casing_system)
 
 	_initialize_ambient_chickens.call_deferred()
 
