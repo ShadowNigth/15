@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Dependency-free checks: never silently alter original rigs, UVs or animations."""
+"""Check native knife clips while preserving original arm/glove mesh data."""
 import hashlib
 import json
 from pathlib import Path
@@ -35,21 +35,23 @@ def main():
     geometry_hashes = set()
     for option in catalog['options'][1:]:
         document, binary = glb(folder / (option['v_model'] + '.glb'))
-        for index, old in enumerate(original['nodes']):
-            current = dict(document['nodes'][index])
-            if 'children' in old:
-                assert current.get('children', [])[:len(old['children'])] == old['children']
-                current['children'] = old['children']
-            assert current == old, (option['id'], index)
+        report = json.loads((ROOT / 'data/native_knife_animation_report.json').read_text())[option['id']]
+        assert document['asset']['native_cs2_animation_sha256'] == report['animation_sha256']
+        assert [n['name'] for n in document['nodes'][:len(original['nodes'])]] == [n['name'] for n in original['nodes']]
         assert document['skins'][0]['joints'][:len(original['skins'][0]['joints'])] == original['skins'][0]['joints']
         assert accessor(document, binary, document['skins'][0]['inverseBindMatrices'])[:len(original['skins'][0]['joints'])] == accessor(original, original_binary, original['skins'][0]['inverseBindMatrices'])
-        for old, new in zip(original['animations'], document['animations']):
-            assert new['name'] == old['name']
-            assert new['channels'][:len(old['channels'])] == old['channels']
-            assert new['samplers'][:len(old['samplers'])] == old['samplers']
-        # Existing binary prefix includes every animation and original arm accessor.
-        assert binary[:len(original_binary)] == original_binary
-        assert document['meshes'][0]['primitives'][1:] == original['meshes'][0]['primitives'][1:]
+        for old, new in zip(original['meshes'][0]['primitives'][1:], document['meshes'][0]['primitives'][1:]):
+            assert old['material'] == new['material']
+            assert accessor(original, original_binary, old['indices']) == accessor(document, binary, new['indices'])
+            for field in old['attributes']:
+                assert accessor(original, original_binary, old['attributes'][field]) == accessor(document, binary, new['attributes'][field]), (option['id'], field)
+        animations = {a['name']:a for a in document['animations']}
+        assert set(animations) == set(report['clips'])
+        for name, animation in animations.items():
+            assert animation['extras']['source_clip'] == report['clips'][name]
+            animated = {c['target']['node'] for c in animation['channels']}
+            assert {3, 8, 28, 12} <= animated, 'Both hands and fingers must use native motion'
+            assert max(accessor(document, binary, animation['samplers'][0]['input']))[0] >= report['durations'][name] - 0.0001
         assert document['materials'][:len(original['materials'])] == original['materials']
         primitive = document['meshes'][0]['primitives'][0]
         attributes = primitive['attributes']

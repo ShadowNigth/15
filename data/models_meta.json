@@ -9442,27 +9442,29 @@
     "sequences": [
       "draw",
       "idle",
+      "idle2",
+      "inspect",
       "slash1",
       "slash2",
-      "midslash1",
-      "midslash2",
       "stab_miss",
       "stab",
-      "inspect"
+      "midslash1",
+      "midslash2"
     ],
     "seq_durations": {
-      "draw": 0.8,
-      "idle": 1.6,
-      "slash1": 0.933,
-      "slash2": 0.933,
-      "midslash1": 0.933,
-      "midslash2": 0.933,
-      "stab_miss": 0.9,
-      "stab": 0.9,
-      "inspect": 6.033
+      "draw": 1.0,
+      "idle": 2.0,
+      "idle2": 2.0,
+      "inspect": 4.8666,
+      "slash1": 1.1666,
+      "slash2": 1.1666,
+      "stab_miss": 1.1666,
+      "stab": 1.1666,
+      "midslash1": 1.1666,
+      "midslash2": 1.1666
     },
     "seq_events": {},
-    "bones": 40,
+    "bones": 43,
     "offset": [
       0.0,
       0.0,
@@ -9477,33 +9479,40 @@
     ],
     "vertices": 23956,
     "source_commit": "1eb8067fd0b7214df5bccf3ac3807fbaa3aee70d",
-    "animation_source": "existing ShadowNigth/archi v_knife_kukri; retained without modification"
+    "animation_source": "native model-specific CS2 clips; original arm/glove geometry retargeted anatomically",
+    "inspect_clips": [
+      "inspect"
+    ],
+    "native_cs2_animation": true,
+    "authored_right_hand": true
   },
   "weapons/v_knife_m9": {
     "sequences": [
       "draw",
       "idle",
+      "idle2",
+      "inspect",
       "slash1",
       "slash2",
-      "midslash1",
-      "midslash2",
       "stab_miss",
       "stab",
-      "inspect"
+      "midslash1",
+      "midslash2"
     ],
     "seq_durations": {
-      "draw": 0.8,
-      "idle": 1.6,
-      "slash1": 0.933,
-      "slash2": 0.933,
-      "midslash1": 0.933,
-      "midslash2": 0.933,
-      "stab_miss": 0.9,
-      "stab": 0.9,
-      "inspect": 6.033
+      "draw": 1.0,
+      "idle": 2.0,
+      "idle2": 1.0,
+      "inspect": 6.2,
+      "slash1": 1.1666,
+      "slash2": 1.1666,
+      "stab_miss": 1.1666,
+      "stab": 1.1666,
+      "midslash1": 1.1666,
+      "midslash2": 1.1666
     },
     "seq_events": {},
-    "bones": 40,
+    "bones": 43,
     "offset": [
       0.0,
       0.0,
@@ -9518,33 +9527,40 @@
     ],
     "vertices": 20477,
     "source_commit": "1eb8067fd0b7214df5bccf3ac3807fbaa3aee70d",
-    "animation_source": "existing ShadowNigth/archi v_knife_kukri; retained without modification"
+    "animation_source": "native model-specific CS2 clips; original arm/glove geometry retargeted anatomically",
+    "inspect_clips": [
+      "inspect"
+    ],
+    "native_cs2_animation": true,
+    "authored_right_hand": true
   },
   "weapons/v_knife_bayonet": {
     "sequences": [
       "draw",
       "idle",
+      "idle2",
+      "inspect",
       "slash1",
       "slash2",
-      "midslash1",
-      "midslash2",
       "stab_miss",
       "stab",
-      "inspect"
+      "midslash1",
+      "midslash2"
     ],
     "seq_durations": {
-      "draw": 0.8,
-      "idle": 1.6,
-      "slash1": 0.933,
-      "slash2": 0.933,
-      "midslash1": 0.933,
-      "midslash2": 0.933,
-      "stab_miss": 0.9,
-      "stab": 0.9,
-      "inspect": 6.033
+      "draw": 1.1666,
+      "idle": 2.0,
+      "idle2": 1.0,
+      "inspect": 6.2,
+      "slash1": 1.1666,
+      "slash2": 1.1666,
+      "stab_miss": 1.1666,
+      "stab": 1.1666,
+      "midslash1": 1.1666,
+      "midslash2": 1.1666
     },
     "seq_events": {},
-    "bones": 40,
+    "bones": 43,
     "offset": [
       0.0,
       0.0,
@@ -9559,33 +9575,38 @@
     ],
     "vertices": 13882,
     "source_commit": "1eb8067fd0b7214df5bccf3ac3807fbaa3aee70d",
-    "animation_source": "existing ShadowNigth/archi v_knife_kukri; retained without modification"
+    "animation_source": "native model-specific CS2 clips; original arm/glove geometry retargeted anatomically",
+    "inspect_clips": [
+      "inspect"
+    ],
+    "native_cs2_animation": true,
+    "authored_right_hand": true
   },
   "weapons/v_knife_bowie": {
     "sequences": [
       "draw",
       "idle",
+      "inspect",
       "slash1",
       "slash2",
-      "midslash1",
-      "midslash2",
       "stab_miss",
       "stab",
-      "inspect"
+      "midslash1",
+      "midslash2"
     ],
     "seq_durations": {
-      "draw": 0.8,
-      "idle": 1.6,
-      "slash1": 0.933,
-      "slash2": 0.933,
-      "midslash1": 0.933,
-      "midslash2": 0.933,
-      "stab_miss": 0.9,
-      "stab": 0.9,
-      "inspect": 6.033
+      "draw": 1.1,
+      "idle": 4.0,
+      "inspect": 6.1666,
+      "slash1": 1.1332,
+      "slash2": 1.1332,
+      "stab_miss": 1.1332,
+      "stab": 1.1332,
+      "midslash1": 1.1332,
+      "midslash2": 1.1332
     },
     "seq_events": {},
-    "bones": 40,
+    "bones": 43,
     "offset": [
       0.0,
       0.0,
@@ -9612,34 +9633,47 @@
       }
     },
     "source_commit": "1eb8067fd0b7214df5bccf3ac3807fbaa3aee70d",
-    "animation_source": "original archi arm and knife clips retained without modification",
-    "mechanical_bones": []
+    "animation_source": "native model-specific CS2 clips; original arm/glove geometry retargeted anatomically",
+    "mechanical_bones": [],
+    "inspect_clips": [
+      "inspect"
+    ],
+    "native_cs2_animation": true,
+    "authored_right_hand": true
   },
   "weapons/v_knife_butterfly": {
     "sequences": [
       "draw",
+      "draw_2",
       "idle",
+      "idle2",
+      "inspect",
+      "inspect_2",
+      "inspect_3",
       "slash1",
       "slash2",
-      "midslash1",
-      "midslash2",
       "stab_miss",
       "stab",
-      "inspect"
+      "midslash1",
+      "midslash2"
     ],
     "seq_durations": {
-      "draw": 0.8,
-      "idle": 1.6,
-      "slash1": 0.933,
-      "slash2": 0.933,
-      "midslash1": 0.933,
-      "midslash2": 0.933,
-      "stab_miss": 0.9,
-      "stab": 0.9,
-      "inspect": 6.033
+      "draw": 1.0,
+      "draw_2": 1.0,
+      "idle": 2.0,
+      "idle2": 4.0,
+      "inspect": 4.1,
+      "inspect_2": 4.5,
+      "inspect_3": 4.8666,
+      "slash1": 1.1666,
+      "slash2": 1.1666,
+      "stab_miss": 1.1666,
+      "stab": 1.1666,
+      "midslash1": 1.1666,
+      "midslash2": 1.1666
     },
     "seq_events": {},
-    "bones": 43,
+    "bones": 47,
     "offset": [
       0.0,
       0.0,
@@ -9666,38 +9700,51 @@
       }
     },
     "source_commit": "1eb8067fd0b7214df5bccf3ac3807fbaa3aee70d",
-    "animation_source": "original archi arms; source mechanical folding tracks appended",
+    "animation_source": "native model-specific CS2 clips; original arm/glove geometry retargeted anatomically",
     "mechanical_bones": [
       "blade",
       "rear",
       "lock"
-    ]
+    ],
+    "inspect_clips": [
+      "inspect",
+      "inspect_2",
+      "inspect_3"
+    ],
+    "native_cs2_animation": true,
+    "authored_right_hand": true
   },
   "weapons/v_knife_canis": {
     "sequences": [
       "draw",
+      "draw_2",
       "idle",
+      "idle2",
+      "inspect",
+      "inspect_2",
       "slash1",
       "slash2",
-      "midslash1",
-      "midslash2",
       "stab_miss",
       "stab",
-      "inspect"
+      "midslash1",
+      "midslash2"
     ],
     "seq_durations": {
-      "draw": 0.8,
-      "idle": 1.6,
-      "slash1": 0.933,
-      "slash2": 0.933,
-      "midslash1": 0.933,
-      "midslash2": 0.933,
-      "stab_miss": 0.9,
-      "stab": 0.9,
-      "inspect": 6.033
+      "draw": 1.0,
+      "draw_2": 1.0,
+      "idle": 2.0,
+      "idle2": 1.0,
+      "inspect": 8.3332,
+      "inspect_2": 6.2,
+      "slash1": 1.1666,
+      "slash2": 1.1666,
+      "stab_miss": 1.1666,
+      "stab": 1.1666,
+      "midslash1": 1.1666,
+      "midslash2": 1.1666
     },
     "seq_events": {},
-    "bones": 40,
+    "bones": 43,
     "offset": [
       0.0,
       0.0,
@@ -9724,34 +9771,46 @@
       }
     },
     "source_commit": "1eb8067fd0b7214df5bccf3ac3807fbaa3aee70d",
-    "animation_source": "original archi arm and knife clips retained without modification",
-    "mechanical_bones": []
+    "animation_source": "native model-specific CS2 clips; original arm/glove geometry retargeted anatomically",
+    "mechanical_bones": [],
+    "inspect_clips": [
+      "inspect",
+      "inspect_2"
+    ],
+    "native_cs2_animation": true,
+    "authored_right_hand": true
   },
   "weapons/v_knife_cord": {
     "sequences": [
       "draw",
+      "draw_2",
       "idle",
+      "idle2",
+      "inspect",
+      "inspect_2",
       "slash1",
       "slash2",
-      "midslash1",
-      "midslash2",
       "stab_miss",
       "stab",
-      "inspect"
+      "midslash1",
+      "midslash2"
     ],
     "seq_durations": {
-      "draw": 0.8,
-      "idle": 1.6,
-      "slash1": 0.933,
-      "slash2": 0.933,
-      "midslash1": 0.933,
-      "midslash2": 0.933,
-      "stab_miss": 0.9,
-      "stab": 0.9,
-      "inspect": 6.033
+      "draw": 1.0,
+      "draw_2": 1.0,
+      "idle": 2.0,
+      "idle2": 1.0,
+      "inspect": 6.2,
+      "inspect_2": 4.5,
+      "slash1": 1.1666,
+      "slash2": 1.1666,
+      "stab_miss": 1.1666,
+      "stab": 1.1666,
+      "midslash1": 1.1666,
+      "midslash2": 1.1666
     },
     "seq_events": {},
-    "bones": 40,
+    "bones": 43,
     "offset": [
       0.0,
       0.0,
@@ -9778,34 +9837,44 @@
       }
     },
     "source_commit": "1eb8067fd0b7214df5bccf3ac3807fbaa3aee70d",
-    "animation_source": "original archi arm and knife clips retained without modification",
-    "mechanical_bones": []
+    "animation_source": "native model-specific CS2 clips; original arm/glove geometry retargeted anatomically",
+    "mechanical_bones": [],
+    "inspect_clips": [
+      "inspect",
+      "inspect_2"
+    ],
+    "native_cs2_animation": true,
+    "authored_right_hand": true
   },
   "weapons/v_knife_css": {
     "sequences": [
       "draw",
       "idle",
+      "idle2",
+      "inspect",
+      "inspect_2",
       "slash1",
       "slash2",
-      "midslash1",
-      "midslash2",
       "stab_miss",
       "stab",
-      "inspect"
+      "midslash1",
+      "midslash2"
     ],
     "seq_durations": {
-      "draw": 0.8,
-      "idle": 1.6,
-      "slash1": 0.933,
-      "slash2": 0.933,
-      "midslash1": 0.933,
-      "midslash2": 0.933,
-      "stab_miss": 0.9,
-      "stab": 0.9,
-      "inspect": 6.033
+      "draw": 1.0,
+      "idle": 2.0,
+      "idle2": 3.9666,
+      "inspect": 6.2,
+      "inspect_2": 3.9666,
+      "slash1": 1.1666,
+      "slash2": 1.1666,
+      "stab_miss": 1.1666,
+      "stab": 1.1666,
+      "midslash1": 1.1666,
+      "midslash2": 1.1666
     },
     "seq_events": {},
-    "bones": 40,
+    "bones": 43,
     "offset": [
       0.0,
       0.0,
@@ -9832,34 +9901,42 @@
       }
     },
     "source_commit": "1eb8067fd0b7214df5bccf3ac3807fbaa3aee70d",
-    "animation_source": "original archi arm and knife clips retained without modification",
-    "mechanical_bones": []
+    "animation_source": "native model-specific CS2 clips; original arm/glove geometry retargeted anatomically",
+    "mechanical_bones": [],
+    "inspect_clips": [
+      "inspect",
+      "inspect_2"
+    ],
+    "native_cs2_animation": true,
+    "authored_right_hand": true
   },
   "weapons/v_knife_default_ct": {
     "sequences": [
       "draw",
       "idle",
+      "idle2",
+      "inspect",
       "slash1",
       "slash2",
-      "midslash1",
-      "midslash2",
       "stab_miss",
       "stab",
-      "inspect"
+      "midslash1",
+      "midslash2"
     ],
     "seq_durations": {
-      "draw": 0.8,
-      "idle": 1.6,
-      "slash1": 0.933,
-      "slash2": 0.933,
-      "midslash1": 0.933,
-      "midslash2": 0.933,
-      "stab_miss": 0.9,
-      "stab": 0.9,
-      "inspect": 6.033
+      "draw": 1.0,
+      "idle": 2.0,
+      "idle2": 1.0,
+      "inspect": 6.2,
+      "slash1": 1.1666,
+      "slash2": 1.1666,
+      "stab_miss": 1.1666,
+      "stab": 1.1666,
+      "midslash1": 1.1666,
+      "midslash2": 1.1666
     },
     "seq_events": {},
-    "bones": 40,
+    "bones": 43,
     "offset": [
       0.0,
       0.0,
@@ -9886,34 +9963,41 @@
       }
     },
     "source_commit": "1eb8067fd0b7214df5bccf3ac3807fbaa3aee70d",
-    "animation_source": "original archi arm and knife clips retained without modification",
-    "mechanical_bones": []
+    "animation_source": "native model-specific CS2 clips; original arm/glove geometry retargeted anatomically",
+    "mechanical_bones": [],
+    "inspect_clips": [
+      "inspect"
+    ],
+    "native_cs2_animation": true,
+    "authored_right_hand": true
   },
   "weapons/v_knife_default_t": {
     "sequences": [
       "draw",
       "idle",
+      "idle2",
+      "inspect",
       "slash1",
       "slash2",
-      "midslash1",
-      "midslash2",
       "stab_miss",
       "stab",
-      "inspect"
+      "midslash1",
+      "midslash2"
     ],
     "seq_durations": {
-      "draw": 0.8,
-      "idle": 1.6,
-      "slash1": 0.933,
-      "slash2": 0.933,
-      "midslash1": 0.933,
-      "midslash2": 0.933,
-      "stab_miss": 0.9,
-      "stab": 0.9,
-      "inspect": 6.033
+      "draw": 1.0,
+      "idle": 2.0,
+      "idle2": 1.0,
+      "inspect": 6.2,
+      "slash1": 1.1666,
+      "slash2": 1.1666,
+      "stab_miss": 1.1666,
+      "stab": 1.1666,
+      "midslash1": 1.1666,
+      "midslash2": 1.1666
     },
     "seq_events": {},
-    "bones": 40,
+    "bones": 43,
     "offset": [
       0.0,
       0.0,
@@ -9940,34 +10024,41 @@
       }
     },
     "source_commit": "1eb8067fd0b7214df5bccf3ac3807fbaa3aee70d",
-    "animation_source": "original archi arm and knife clips retained without modification",
-    "mechanical_bones": []
+    "animation_source": "native model-specific CS2 clips; original arm/glove geometry retargeted anatomically",
+    "mechanical_bones": [],
+    "inspect_clips": [
+      "inspect"
+    ],
+    "native_cs2_animation": true,
+    "authored_right_hand": true
   },
   "weapons/v_knife_falchion": {
     "sequences": [
       "draw",
       "idle",
+      "inspect",
+      "inspect_2",
       "slash1",
       "slash2",
-      "midslash1",
-      "midslash2",
       "stab_miss",
       "stab",
-      "inspect"
+      "midslash1",
+      "midslash2"
     ],
     "seq_durations": {
-      "draw": 0.8,
-      "idle": 1.6,
-      "slash1": 0.933,
-      "slash2": 0.933,
-      "midslash1": 0.933,
-      "midslash2": 0.933,
-      "stab_miss": 0.9,
-      "stab": 0.9,
-      "inspect": 6.033
+      "draw": 0.9666,
+      "idle": 4.0,
+      "inspect": 5.9667,
+      "inspect_2": 5.9667,
+      "slash1": 1.1332,
+      "slash2": 1.1332,
+      "stab_miss": 1.1332,
+      "stab": 1.1332,
+      "midslash1": 1.1332,
+      "midslash2": 1.1332
     },
     "seq_events": {},
-    "bones": 41,
+    "bones": 44,
     "offset": [
       0.0,
       0.0,
@@ -9994,36 +10085,44 @@
       }
     },
     "source_commit": "1eb8067fd0b7214df5bccf3ac3807fbaa3aee70d",
-    "animation_source": "original archi arms; source mechanical folding tracks appended",
+    "animation_source": "native model-specific CS2 clips; original arm/glove geometry retargeted anatomically",
     "mechanical_bones": [
       "blade"
-    ]
+    ],
+    "inspect_clips": [
+      "inspect",
+      "inspect_2"
+    ],
+    "native_cs2_animation": true,
+    "authored_right_hand": true
   },
   "weapons/v_knife_flip": {
     "sequences": [
       "draw",
       "idle",
+      "idle2",
+      "inspect",
       "slash1",
       "slash2",
-      "midslash1",
-      "midslash2",
       "stab_miss",
       "stab",
-      "inspect"
+      "midslash1",
+      "midslash2"
     ],
     "seq_durations": {
-      "draw": 0.8,
-      "idle": 1.6,
-      "slash1": 0.933,
-      "slash2": 0.933,
-      "midslash1": 0.933,
-      "midslash2": 0.933,
-      "stab_miss": 0.9,
-      "stab": 0.9,
-      "inspect": 6.033
+      "draw": 1.0,
+      "idle": 2.0,
+      "idle2": 1.0,
+      "inspect": 6.2,
+      "slash1": 1.1666,
+      "slash2": 1.1666,
+      "stab_miss": 1.1666,
+      "stab": 1.1666,
+      "midslash1": 1.1666,
+      "midslash2": 1.1666
     },
     "seq_events": {},
-    "bones": 41,
+    "bones": 44,
     "offset": [
       0.0,
       0.0,
@@ -10050,36 +10149,43 @@
       }
     },
     "source_commit": "1eb8067fd0b7214df5bccf3ac3807fbaa3aee70d",
-    "animation_source": "original archi arms; source mechanical folding tracks appended",
+    "animation_source": "native model-specific CS2 clips; original arm/glove geometry retargeted anatomically",
     "mechanical_bones": [
       "blade"
-    ]
+    ],
+    "inspect_clips": [
+      "inspect"
+    ],
+    "native_cs2_animation": true,
+    "authored_right_hand": true
   },
   "weapons/v_knife_gut": {
     "sequences": [
       "draw",
       "idle",
+      "idle2",
+      "inspect",
       "slash1",
       "slash2",
-      "midslash1",
-      "midslash2",
       "stab_miss",
       "stab",
-      "inspect"
+      "midslash1",
+      "midslash2"
     ],
     "seq_durations": {
-      "draw": 0.8,
-      "idle": 1.6,
-      "slash1": 0.933,
-      "slash2": 0.933,
-      "midslash1": 0.933,
-      "midslash2": 0.933,
-      "stab_miss": 0.9,
-      "stab": 0.9,
-      "inspect": 6.033
+      "draw": 1.0,
+      "idle": 2.0,
+      "idle2": 1.0,
+      "inspect": 6.2,
+      "slash1": 1.1666,
+      "slash2": 1.1666,
+      "stab_miss": 1.1666,
+      "stab": 1.1666,
+      "midslash1": 1.1666,
+      "midslash2": 1.1666
     },
     "seq_events": {},
-    "bones": 40,
+    "bones": 43,
     "offset": [
       0.0,
       0.0,
@@ -10106,34 +10212,43 @@
       }
     },
     "source_commit": "1eb8067fd0b7214df5bccf3ac3807fbaa3aee70d",
-    "animation_source": "original archi arm and knife clips retained without modification",
-    "mechanical_bones": []
+    "animation_source": "native model-specific CS2 clips; original arm/glove geometry retargeted anatomically",
+    "mechanical_bones": [],
+    "inspect_clips": [
+      "inspect"
+    ],
+    "native_cs2_animation": true,
+    "authored_right_hand": true
   },
   "weapons/v_knife_kukri": {
     "sequences": [
       "draw",
+      "draw_2",
       "idle",
+      "idle2",
+      "inspect",
       "slash1",
       "slash2",
-      "midslash1",
-      "midslash2",
       "stab_miss",
       "stab",
-      "inspect"
+      "midslash1",
+      "midslash2"
     ],
     "seq_durations": {
-      "draw": 0.8,
-      "idle": 1.6,
-      "slash1": 0.933,
-      "slash2": 0.933,
-      "midslash1": 0.933,
-      "midslash2": 0.933,
-      "stab_miss": 0.9,
-      "stab": 0.9,
-      "inspect": 6.033
+      "draw": 1.0,
+      "draw_2": 1.0,
+      "idle": 2.0,
+      "idle2": 1.0,
+      "inspect": 7.5666,
+      "slash1": 1.1666,
+      "slash2": 1.1666,
+      "stab_miss": 1.1666,
+      "stab": 1.1666,
+      "midslash1": 1.1666,
+      "midslash2": 1.1666
     },
     "seq_events": {},
-    "bones": 40,
+    "bones": 43,
     "offset": [
       0.0,
       0.0,
@@ -10160,34 +10275,41 @@
       }
     },
     "source_commit": "1eb8067fd0b7214df5bccf3ac3807fbaa3aee70d",
-    "animation_source": "original archi arm and knife clips retained without modification",
-    "mechanical_bones": []
+    "animation_source": "native model-specific CS2 clips; original arm/glove geometry retargeted anatomically",
+    "mechanical_bones": [],
+    "inspect_clips": [
+      "inspect"
+    ],
+    "native_cs2_animation": true,
+    "authored_right_hand": true
   },
   "weapons/v_knife_navaja": {
     "sequences": [
       "draw",
       "idle",
+      "idle2",
+      "inspect",
       "slash1",
       "slash2",
+      "stab_miss",
       "midslash1",
       "midslash2",
-      "stab_miss",
-      "stab",
-      "inspect"
+      "stab"
     ],
     "seq_durations": {
-      "draw": 0.8,
-      "idle": 1.6,
-      "slash1": 0.933,
-      "slash2": 0.933,
-      "midslash1": 0.933,
-      "midslash2": 0.933,
-      "stab_miss": 0.9,
-      "stab": 0.9,
-      "inspect": 6.033
+      "draw": 1.0,
+      "idle": 2.0,
+      "idle2": 1.0,
+      "inspect": 6.2,
+      "slash1": 1.1666,
+      "slash2": 1.1666,
+      "stab_miss": 1.1666,
+      "midslash1": 1.1666,
+      "midslash2": 1.1666,
+      "stab": 1.1666
     },
     "seq_events": {},
-    "bones": 41,
+    "bones": 44,
     "offset": [
       0.0,
       0.0,
@@ -10214,36 +10336,47 @@
       }
     },
     "source_commit": "1eb8067fd0b7214df5bccf3ac3807fbaa3aee70d",
-    "animation_source": "original archi arms; source mechanical folding tracks appended",
+    "animation_source": "native model-specific CS2 clips; original arm/glove geometry retargeted anatomically",
     "mechanical_bones": [
       "blade"
-    ]
+    ],
+    "inspect_clips": [
+      "inspect"
+    ],
+    "native_cs2_animation": true,
+    "authored_right_hand": true
   },
   "weapons/v_knife_outdoor": {
     "sequences": [
       "draw",
+      "draw_2",
       "idle",
+      "idle2",
+      "inspect",
+      "inspect_2",
       "slash1",
       "slash2",
-      "midslash1",
-      "midslash2",
       "stab_miss",
       "stab",
-      "inspect"
+      "midslash1",
+      "midslash2"
     ],
     "seq_durations": {
-      "draw": 0.8,
-      "idle": 1.6,
-      "slash1": 0.933,
-      "slash2": 0.933,
-      "midslash1": 0.933,
-      "midslash2": 0.933,
-      "stab_miss": 0.9,
-      "stab": 0.9,
-      "inspect": 6.033
+      "draw": 2.2667,
+      "draw_2": 1.0,
+      "idle": 2.0,
+      "idle2": 1.0,
+      "inspect": 5.0,
+      "inspect_2": 6.2,
+      "slash1": 1.1666,
+      "slash2": 1.1666,
+      "stab_miss": 1.1666,
+      "stab": 1.1666,
+      "midslash1": 1.1666,
+      "midslash2": 1.1666
     },
     "seq_events": {},
-    "bones": 41,
+    "bones": 44,
     "offset": [
       0.0,
       0.0,
@@ -10270,36 +10403,42 @@
       }
     },
     "source_commit": "1eb8067fd0b7214df5bccf3ac3807fbaa3aee70d",
-    "animation_source": "original archi arms; source mechanical folding tracks appended",
+    "animation_source": "native model-specific CS2 clips; original arm/glove geometry retargeted anatomically",
     "mechanical_bones": [
       "blade"
-    ]
+    ],
+    "inspect_clips": [
+      "inspect",
+      "inspect_2"
+    ],
+    "native_cs2_animation": true,
+    "authored_right_hand": true
   },
   "weapons/v_knife_push": {
     "sequences": [
       "draw",
       "idle",
+      "inspect",
       "slash1",
       "slash2",
-      "midslash1",
-      "midslash2",
       "stab_miss",
       "stab",
-      "inspect"
+      "midslash1",
+      "midslash2"
     ],
     "seq_durations": {
-      "draw": 0.8,
-      "idle": 1.6,
-      "slash1": 0.933,
-      "slash2": 0.933,
-      "midslash1": 0.933,
-      "midslash2": 0.933,
-      "stab_miss": 0.9,
-      "stab": 0.9,
-      "inspect": 6.033
+      "draw": 1.0,
+      "idle": 2.6666,
+      "inspect": 3.7332,
+      "slash1": 1.1332,
+      "slash2": 1.1332,
+      "stab_miss": 0.7666,
+      "stab": 0.7666,
+      "midslash1": 1.1332,
+      "midslash2": 1.1332
     },
     "seq_events": {},
-    "bones": 40,
+    "bones": 45,
     "offset": [
       0.0,
       0.0,
@@ -10326,34 +10465,45 @@
       }
     },
     "source_commit": "1eb8067fd0b7214df5bccf3ac3807fbaa3aee70d",
-    "animation_source": "original archi arm and knife clips retained without modification",
-    "mechanical_bones": []
+    "animation_source": "native model-specific CS2 clips; original arm/glove geometry retargeted anatomically",
+    "mechanical_bones": [],
+    "inspect_clips": [
+      "inspect"
+    ],
+    "native_cs2_animation": true,
+    "authored_right_hand": true
   },
   "weapons/v_knife_skeleton": {
     "sequences": [
       "draw",
+      "draw_2",
       "idle",
+      "idle2",
+      "inspect",
+      "inspect_2",
       "slash1",
       "slash2",
-      "midslash1",
-      "midslash2",
       "stab_miss",
       "stab",
-      "inspect"
+      "midslash1",
+      "midslash2"
     ],
     "seq_durations": {
-      "draw": 0.8,
-      "idle": 1.6,
-      "slash1": 0.933,
-      "slash2": 0.933,
-      "midslash1": 0.933,
-      "midslash2": 0.933,
-      "stab_miss": 0.9,
-      "stab": 0.9,
-      "inspect": 6.033
+      "draw": 1.0,
+      "draw_2": 1.0,
+      "idle": 2.0,
+      "idle2": 1.0,
+      "inspect": 6.1332,
+      "inspect_2": 2.2667,
+      "slash1": 1.1666,
+      "slash2": 1.1666,
+      "stab_miss": 1.1666,
+      "stab": 1.1666,
+      "midslash1": 1.1666,
+      "midslash2": 1.1666
     },
     "seq_events": {},
-    "bones": 40,
+    "bones": 43,
     "offset": [
       0.0,
       0.0,
@@ -10380,34 +10530,44 @@
       }
     },
     "source_commit": "1eb8067fd0b7214df5bccf3ac3807fbaa3aee70d",
-    "animation_source": "original archi arm and knife clips retained without modification",
-    "mechanical_bones": []
+    "animation_source": "native model-specific CS2 clips; original arm/glove geometry retargeted anatomically",
+    "mechanical_bones": [],
+    "inspect_clips": [
+      "inspect",
+      "inspect_2"
+    ],
+    "native_cs2_animation": true,
+    "authored_right_hand": true
   },
   "weapons/v_knife_stiletto": {
     "sequences": [
       "draw",
       "idle",
+      "idle2",
+      "inspect",
+      "inspect_2",
       "slash1",
       "slash2",
-      "midslash1",
-      "midslash2",
       "stab_miss",
       "stab",
-      "inspect"
+      "midslash1",
+      "midslash2"
     ],
     "seq_durations": {
-      "draw": 0.8,
-      "idle": 1.6,
-      "slash1": 0.933,
-      "slash2": 0.933,
-      "midslash1": 0.933,
-      "midslash2": 0.933,
-      "stab_miss": 0.9,
-      "stab": 0.9,
-      "inspect": 6.033
+      "draw": 1.0,
+      "idle": 2.0,
+      "idle2": 1.0,
+      "inspect": 4.0,
+      "inspect_2": 5.0,
+      "slash1": 1.1666,
+      "slash2": 1.1666,
+      "stab_miss": 1.1666,
+      "stab": 1.1666,
+      "midslash1": 1.1666,
+      "midslash2": 1.1666
     },
     "seq_events": {},
-    "bones": 41,
+    "bones": 44,
     "offset": [
       0.0,
       0.0,
@@ -10434,36 +10594,44 @@
       }
     },
     "source_commit": "1eb8067fd0b7214df5bccf3ac3807fbaa3aee70d",
-    "animation_source": "original archi arms; source mechanical folding tracks appended",
+    "animation_source": "native model-specific CS2 clips; original arm/glove geometry retargeted anatomically",
     "mechanical_bones": [
       "blade"
-    ]
+    ],
+    "inspect_clips": [
+      "inspect",
+      "inspect_2"
+    ],
+    "native_cs2_animation": true,
+    "authored_right_hand": true
   },
   "weapons/v_knife_tactical": {
     "sequences": [
       "draw",
       "idle",
+      "idle2",
+      "inspect",
       "slash1",
       "slash2",
-      "midslash1",
-      "midslash2",
       "stab_miss",
       "stab",
-      "inspect"
+      "midslash1",
+      "midslash2"
     ],
     "seq_durations": {
-      "draw": 0.8,
-      "idle": 1.6,
-      "slash1": 0.933,
-      "slash2": 0.933,
-      "midslash1": 0.933,
-      "midslash2": 0.933,
-      "stab_miss": 0.9,
-      "stab": 0.9,
-      "inspect": 6.033
+      "draw": 1.0,
+      "idle": 2.0,
+      "idle2": 1.0,
+      "inspect": 6.2,
+      "slash1": 1.1666,
+      "slash2": 1.1666,
+      "stab_miss": 1.1666,
+      "stab": 1.1666,
+      "midslash1": 1.1666,
+      "midslash2": 1.1666
     },
     "seq_events": {},
-    "bones": 40,
+    "bones": 43,
     "offset": [
       0.0,
       0.0,
@@ -10490,34 +10658,43 @@
       }
     },
     "source_commit": "1eb8067fd0b7214df5bccf3ac3807fbaa3aee70d",
-    "animation_source": "original archi arm and knife clips retained without modification",
-    "mechanical_bones": []
+    "animation_source": "native model-specific CS2 clips; original arm/glove geometry retargeted anatomically",
+    "mechanical_bones": [],
+    "inspect_clips": [
+      "inspect"
+    ],
+    "native_cs2_animation": true,
+    "authored_right_hand": true
   },
   "weapons/v_knife_talon": {
     "sequences": [
       "draw",
       "idle",
+      "idle2",
+      "inspect",
+      "inspect_2",
       "slash1",
       "slash2",
-      "midslash1",
-      "midslash2",
       "stab_miss",
       "stab",
-      "inspect"
+      "midslash1",
+      "midslash2"
     ],
     "seq_durations": {
-      "draw": 0.8,
-      "idle": 1.6,
-      "slash1": 0.933,
-      "slash2": 0.933,
-      "midslash1": 0.933,
-      "midslash2": 0.933,
-      "stab_miss": 0.9,
-      "stab": 0.9,
-      "inspect": 6.033
+      "draw": 1.0,
+      "idle": 2.0,
+      "idle2": 2.0,
+      "inspect": 4.8666,
+      "inspect_2": 2.7,
+      "slash1": 1.1666,
+      "slash2": 1.1666,
+      "stab_miss": 1.1666,
+      "stab": 1.1666,
+      "midslash1": 1.1666,
+      "midslash2": 1.1666
     },
     "seq_events": {},
-    "bones": 40,
+    "bones": 43,
     "offset": [
       0.0,
       0.0,
@@ -10544,34 +10721,46 @@
       }
     },
     "source_commit": "1eb8067fd0b7214df5bccf3ac3807fbaa3aee70d",
-    "animation_source": "original archi arm and knife clips retained without modification",
-    "mechanical_bones": []
+    "animation_source": "native model-specific CS2 clips; original arm/glove geometry retargeted anatomically",
+    "mechanical_bones": [],
+    "inspect_clips": [
+      "inspect",
+      "inspect_2"
+    ],
+    "native_cs2_animation": true,
+    "authored_right_hand": true
   },
   "weapons/v_knife_ursus": {
     "sequences": [
       "draw",
+      "draw_2",
       "idle",
+      "idle2",
+      "inspect",
+      "inspect_2",
       "slash1",
       "slash2",
-      "midslash1",
-      "midslash2",
       "stab_miss",
       "stab",
-      "inspect"
+      "midslash1",
+      "midslash2"
     ],
     "seq_durations": {
-      "draw": 0.8,
-      "idle": 1.6,
-      "slash1": 0.933,
-      "slash2": 0.933,
-      "midslash1": 0.933,
-      "midslash2": 0.933,
-      "stab_miss": 0.9,
-      "stab": 0.9,
-      "inspect": 6.033
+      "draw": 1.0,
+      "draw_2": 1.0,
+      "idle": 2.0,
+      "idle2": 1.0,
+      "inspect": 6.2,
+      "inspect_2": 5.0,
+      "slash1": 1.1666,
+      "slash2": 1.1666,
+      "stab_miss": 1.1666,
+      "stab": 1.1666,
+      "midslash1": 1.1666,
+      "midslash2": 1.1666
     },
     "seq_events": {},
-    "bones": 40,
+    "bones": 43,
     "offset": [
       0.0,
       0.0,
@@ -10598,7 +10787,13 @@
       }
     },
     "source_commit": "1eb8067fd0b7214df5bccf3ac3807fbaa3aee70d",
-    "animation_source": "original archi arm and knife clips retained without modification",
-    "mechanical_bones": []
+    "animation_source": "native model-specific CS2 clips; original arm/glove geometry retargeted anatomically",
+    "mechanical_bones": [],
+    "inspect_clips": [
+      "inspect",
+      "inspect_2"
+    ],
+    "native_cs2_animation": true,
+    "authored_right_hand": true
   }
 }

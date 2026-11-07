@@ -2,7 +2,7 @@
 """Install the complete *shipped* ScCsgoKnives catalog at the pinned revision.
 
 python -m tools.source.expand_cs2_catalog SOURCE_ROOT
-Original arms/UVs/animations and the three installed knives are preserved.
+Legacy geometry installation stage. Finish with import_native_knife_animations.
 Textures are shared externally rather than duplicated in every V/P/W mesh.
 The folding-part adapter appends mechanical tracks, never replacing arm tracks.
 """

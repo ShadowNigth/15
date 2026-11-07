@@ -55,3 +55,28 @@ base-colour artwork unmodified; it does not whiten or recolour the finishes.
 This catalog is the resources actually shipped by that repository, NOT every
 Valve skin, random seed, wear state, StatTrak variation or Source 2 compositor.
 The third-party rights caveats above continue to apply.
+
+
+## Native knife animation correction
+
+The idle-grip/Kukri animation adapter is superseded by
+`tools/source/import_native_knife_animations.py`. Each of the 22 models now uses
+its own pinned `.cs2.animation.json` clips, durations and inspection variants.
+Knife geometry uses original source skin weights/inverse binds (both Shadow
+Daggers included); hand/finger motion is retargeted to the existing arm/glove
+geometry using anatomical joint correspondence and per-hand local-axis fits.
+Arm/glove vertex data, UVs, original weights, material artwork and original bind
+matrices remain unchanged. The original Kukri and all firearm rigs are untouched.
+This is native model-specific clip data with **retargeted existing arms**, not a
+claim that the original CS2 arm mesh has been installed. Local-axis calibration
+residuals and exact source clip names are recorded in
+`data/native_knife_animation_report.json`; visual review is still required.
+
+Source camera axes, inch conversion (0.0254), FOV and offsets follow pinned
+`Rendering/Cs2Placement.cs` and `Rendering/KnifeTuning.cs`. The native right-hand
+rig is not reflected again by the legacy left-authored viewmodel presentation.
+
+Regeneration: after the geometry installer, run
+`python -m tools.source.import_native_knife_animations SOURCE_ANIMATION_DIRECTORY`
+with numpy/scipy installed and all pinned `.cs2.skin` / `.cs2.animation.json` files.
+The earlier fixed-grip installer alone does not reproduce this correction.

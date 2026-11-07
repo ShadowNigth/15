@@ -153,3 +153,14 @@ incluyen articulación mecánica de hojas/bisagras, conservando las animaciones 
 brazos existentes. No se afirma reproducir toda la coreografía de manos de CS2.
 Los Shadow Daggers tienen geometría separada para ambas manos en primera persona.
 Se conserva el daño, velocidad, ranura y economía del cuchillo clásico.
+
+
+### Corrección de animaciones de los cuchillos
+
+Los 22 cuchillos CS2 usan ahora sus propios clips de equipar, reposo, ataques e
+inspección, incluidas variantes disponibles en el catálogo. Ya no comparten las
+poses del Kukri. Las poses nativas se retargetean a la geometría de brazos y
+Sport Gloves existente; no se reemplazan sus texturas ni los rigs de armas de
+fuego. Se corrige la inversión doble de mano y se conserva el encuadre del origen.
+Los datos y limitaciones de conversión figuran en `docs/KNIFE_ASSET_NOTICES.md`
+y `data/native_knife_animation_report.json`.

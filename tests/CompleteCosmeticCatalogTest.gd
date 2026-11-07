@@ -53,6 +53,13 @@ func _run() -> void:
 		_expect(player._cur_vm_model_name == String(option["v_model"]) and player._vm_anim != null, key + " real viewmodel")
 		_expect(_material(player._vm_model_root, "ct_arms.bmp") != null, key + " original arms")
 		_expect(_material(player._vm_model_root, "ct_base_glove.bmp") != null, key + " original gloves")
+		var native_meta: Dictionary = GameData.models_meta["weapons/" + String(option["v_model"])]
+		_expect(bool(native_meta.get("native_cs2_animation", false)), key + " model-specific native animation")
+		_expect(bool(native_meta.get("authored_right_hand", false)), key + " native right-handed camera coordinates")
+		for clip_name in native_meta["sequences"]:
+			_expect(player._vm_anim.has_animation(String(clip_name)), key + " native clip " + String(clip_name))
+			if player._vm_anim.has_animation(String(clip_name)):
+				_expect(absf(player._vm_anim.get_animation(String(clip_name)).length - float(native_meta["seq_durations"][clip_name])) < 0.002, key + " original duration " + String(clip_name))
 		var source := _material(player._vm_model_root, "sc_cs2_" + key)
 		_expect(source != null, key + " own material")
 		for clip in ["draw", "idle", "slash1", "slash2", "midslash1", "midslash2", "stab", "stab_miss", "inspect"]:
@@ -78,6 +85,24 @@ func _run() -> void:
 			await get_tree().physics_frame
 		if _capture:
 			await _save(key + "_idle")
+		# Inspect every available native variant, not an inherited Kukri clip.
+		for inspection in native_meta["inspect_clips"]:
+			player.play_viewmodel_sequence([String(inspection)])
+			var length := player._vm_anim.get_animation(String(inspection)).length
+			var skeleton := SportGloves._find_skeleton(player._vm_model_root)
+			var hand := skeleton.find_bone("v_weapon.Bip01_R_Hand")
+			player._vm_anim.seek(length * 0.1, true)
+			var before := skeleton.get_bone_global_pose(hand)
+			player._vm_anim.seek(length * 0.65, true)
+			_expect(not before.is_equal_approx(skeleton.get_bone_global_pose(hand)), key + " hands move during " + String(inspection))
+			if _capture:
+				var pose_index := 0
+				for fraction in [0.15, 0.35, 0.6, 0.85]:
+					pose_index += 1
+					player.play_viewmodel_sequence([String(inspection)])
+					player._vm_anim.seek(length * fraction, true)
+					await _save(key + "_" + String(inspection) + "_pose" + str(pose_index))
+		player._play_idle_viewmodel()
 		for skin_raw in GameData.get_weapon_skin_options("knife"):
 			var skin := skin_raw as Dictionary
 			knife_finishes += 1

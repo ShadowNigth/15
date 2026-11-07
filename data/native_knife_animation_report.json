@@ -1,0 +1,1693 @@
+{
+  "bayonet": {
+    "source_commit": "1eb8067fd0b7214df5bccf3ac3807fbaa3aee70d",
+    "animation_sha256": "af93bc73a270eaeb81afdc3084c2afc72a8b8cbc89b4e4b0bab9de41b4185b76",
+    "clips": {
+      "draw": "draw_bayonet",
+      "idle": "idle1_bayonet",
+      "idle2": "idle2_bayonet",
+      "inspect": "lookat01_bayonet",
+      "slash1": "light_miss1_bayonet",
+      "slash2": "light_miss2_bayonet",
+      "stab_miss": "heavy_miss1_bayonet",
+      "stab": "heavy_hit1_bayonet",
+      "midslash1": "light_hit1_bayonet",
+      "midslash2": "light_hit2_bayonet"
+    },
+    "durations": {
+      "draw": 1.1666,
+      "idle": 2.0,
+      "idle2": 1.0,
+      "inspect": 6.2,
+      "slash1": 1.1666,
+      "slash2": 1.1666,
+      "stab_miss": 1.1666,
+      "stab": 1.1666,
+      "midslash1": 1.1666,
+      "midslash2": 1.1666
+    },
+    "axis_max_error_deg": {
+      "L": 18.140876808977517,
+      "R": 18.141502759743027
+    },
+    "axis_matrices": {
+      "L": [
+        [
+          -0.017454903857176123,
+          0.006139729471093429,
+          0.9998288003720228
+        ],
+        [
+          0.9175587296838327,
+          -0.3971716192194897,
+          0.01845758563734239
+        ],
+        [
+          0.39721694816853903,
+          0.9177238193533994,
+          0.0012990300541763531
+        ]
+      ],
+      "R": [
+        [
+          0.017455148373401005,
+          0.006140209042555531,
+          -0.999828793158197
+        ],
+        [
+          -0.9175597529253695,
+          -0.397169235847404,
+          -0.018458003898701877
+        ],
+        [
+          -0.3972145737593194,
+          0.9177248476146338,
+          -0.0012986392490692519
+        ]
+      ]
+    },
+    "knife_joints": [
+      "weapon",
+      "weapon_offset",
+      "ag1_hand_r"
+    ],
+    "camera_axes": "x forward / y left / z up -> -z / -x / +y; 0.0254 m per inch",
+    "original_arm_primitives_preserved": true
+  },
+  "bowie": {
+    "source_commit": "1eb8067fd0b7214df5bccf3ac3807fbaa3aee70d",
+    "animation_sha256": "c968cb08bdfbad91fc0cd5c02cead75eefb92fa0d5714b7a13dab6504867ea05",
+    "clips": {
+      "draw": "draw_bowie",
+      "idle": "idle1_bowie",
+      "inspect": "lookat01_bowie",
+      "slash1": "light_miss1_bowie",
+      "slash2": "light_miss2_bowie",
+      "stab_miss": "heavy_miss1_bowie",
+      "stab": "heavy_hit1_bowie",
+      "midslash1": "light_hit1_bowie",
+      "midslash2": "light_hit2_bowie"
+    },
+    "durations": {
+      "draw": 1.1,
+      "idle": 4.0,
+      "inspect": 6.1666,
+      "slash1": 1.1332,
+      "slash2": 1.1332,
+      "stab_miss": 1.1332,
+      "stab": 1.1332,
+      "midslash1": 1.1332,
+      "midslash2": 1.1332
+    },
+    "axis_max_error_deg": {
+      "L": 18.140876808977517,
+      "R": 18.141502759743027
+    },
+    "axis_matrices": {
+      "L": [
+        [
+          -0.017454903857176123,
+          0.006139729471093429,
+          0.9998288003720228
+        ],
+        [
+          0.9175587296838327,
+          -0.3971716192194897,
+          0.01845758563734239
+        ],
+        [
+          0.39721694816853903,
+          0.9177238193533994,
+          0.0012990300541763531
+        ]
+      ],
+      "R": [
+        [
+          0.017455148373401005,
+          0.006140209042555531,
+          -0.999828793158197
+        ],
+        [
+          -0.9175597529253695,
+          -0.397169235847404,
+          -0.018458003898701877
+        ],
+        [
+          -0.3972145737593194,
+          0.9177248476146338,
+          -0.0012986392490692519
+        ]
+      ]
+    },
+    "knife_joints": [
+      "weapon",
+      "weapon_offset",
+      "ag1_hand_r"
+    ],
+    "camera_axes": "x forward / y left / z up -> -z / -x / +y; 0.0254 m per inch",
+    "original_arm_primitives_preserved": true
+  },
+  "butterfly": {
+    "source_commit": "1eb8067fd0b7214df5bccf3ac3807fbaa3aee70d",
+    "animation_sha256": "57493ce4fea65333d67057626c9a4c099a61f4d5782dd7861a41b8d77d3a810e",
+    "clips": {
+      "draw": "draw_butterfly",
+      "draw_2": "draw2_butterfly",
+      "idle": "idle1_butterfly",
+      "idle2": "idle2_butterfly",
+      "inspect": "lookat01_butterfly",
+      "inspect_2": "lookat02_butterfly",
+      "inspect_3": "lookat03_butterfly",
+      "slash1": "light_miss1_butterfly",
+      "slash2": "light_miss2_butterfly",
+      "stab_miss": "heavy_miss1_butterfly",
+      "stab": "heavy_hit1_butterfly",
+      "midslash1": "light_hit1_butterfly",
+      "midslash2": "light_hit2_butterfly"
+    },
+    "durations": {
+      "draw": 1.0,
+      "draw_2": 1.0,
+      "idle": 2.0,
+      "idle2": 4.0,
+      "inspect": 4.1,
+      "inspect_2": 4.5,
+      "inspect_3": 4.8666,
+      "slash1": 1.1666,
+      "slash2": 1.1666,
+      "stab_miss": 1.1666,
+      "stab": 1.1666,
+      "midslash1": 1.1666,
+      "midslash2": 1.1666
+    },
+    "axis_max_error_deg": {
+      "L": 18.140876808977517,
+      "R": 18.141502759743027
+    },
+    "axis_matrices": {
+      "L": [
+        [
+          -0.017454903857176123,
+          0.006139729471093429,
+          0.9998288003720228
+        ],
+        [
+          0.9175587296838327,
+          -0.3971716192194897,
+          0.01845758563734239
+        ],
+        [
+          0.39721694816853903,
+          0.9177238193533994,
+          0.0012990300541763531
+        ]
+      ],
+      "R": [
+        [
+          0.017455148373401005,
+          0.006140209042555531,
+          -0.999828793158197
+        ],
+        [
+          -0.9175597529253695,
+          -0.397169235847404,
+          -0.018458003898701877
+        ],
+        [
+          -0.3972145737593194,
+          0.9177248476146338,
+          -0.0012986392490692519
+        ]
+      ]
+    },
+    "knife_joints": [
+      "weapon",
+      "weapon_offset",
+      "front",
+      "blade",
+      "rear",
+      "lock",
+      "ag1_hand_r"
+    ],
+    "camera_axes": "x forward / y left / z up -> -z / -x / +y; 0.0254 m per inch",
+    "original_arm_primitives_preserved": true
+  },
+  "canis": {
+    "source_commit": "1eb8067fd0b7214df5bccf3ac3807fbaa3aee70d",
+    "animation_sha256": "634b151dd1f321b3fb451a1bf522fb91efc84878887f177f62a6633074183832",
+    "clips": {
+      "draw": "draw_canis",
+      "draw_2": "draw2_canis",
+      "idle": "idle1_canis",
+      "idle2": "idle2_canis",
+      "inspect": "lookat01_canis",
+      "inspect_2": "lookat02_canis",
+      "slash1": "light_miss1_canis",
+      "slash2": "light_miss2_canis",
+      "stab_miss": "heavy_miss1_canis",
+      "stab": "heavy_hit1_canis",
+      "midslash1": "light_hit1_canis",
+      "midslash2": "light_hit2_canis"
+    },
+    "durations": {
+      "draw": 1.0,
+      "draw_2": 1.0,
+      "idle": 2.0,
+      "idle2": 1.0,
+      "inspect": 8.3332,
+      "inspect_2": 6.2,
+      "slash1": 1.1666,
+      "slash2": 1.1666,
+      "stab_miss": 1.1666,
+      "stab": 1.1666,
+      "midslash1": 1.1666,
+      "midslash2": 1.1666
+    },
+    "axis_max_error_deg": {
+      "L": 18.140876808977517,
+      "R": 18.141502759743027
+    },
+    "axis_matrices": {
+      "L": [
+        [
+          -0.017454903857176123,
+          0.006139729471093429,
+          0.9998288003720228
+        ],
+        [
+          0.9175587296838327,
+          -0.3971716192194897,
+          0.01845758563734239
+        ],
+        [
+          0.39721694816853903,
+          0.9177238193533994,
+          0.0012990300541763531
+        ]
+      ],
+      "R": [
+        [
+          0.017455148373401005,
+          0.006140209042555531,
+          -0.999828793158197
+        ],
+        [
+          -0.9175597529253695,
+          -0.397169235847404,
+          -0.018458003898701877
+        ],
+        [
+          -0.3972145737593194,
+          0.9177248476146338,
+          -0.0012986392490692519
+        ]
+      ]
+    },
+    "knife_joints": [
+      "weapon",
+      "weapon_offset",
+      "ag1_hand_r"
+    ],
+    "camera_axes": "x forward / y left / z up -> -z / -x / +y; 0.0254 m per inch",
+    "original_arm_primitives_preserved": true
+  },
+  "cord": {
+    "source_commit": "1eb8067fd0b7214df5bccf3ac3807fbaa3aee70d",
+    "animation_sha256": "b82ebb8d7fc5125e8a4bd7cb5e21a21a6541d73bb8c3cc0161a92d72e26d6035",
+    "clips": {
+      "draw": "draw_cord",
+      "draw_2": "draw2_cord",
+      "idle": "idle1_cord",
+      "idle2": "idle2_cord",
+      "inspect": "lookat01_cord",
+      "inspect_2": "lookat02_cord",
+      "slash1": "light_miss1_cord",
+      "slash2": "light_miss2_cord",
+      "stab_miss": "heavy_miss1_cord",
+      "stab": "heavy_hit1_cord",
+      "midslash1": "light_hit1_cord",
+      "midslash2": "light_hit2_cord"
+    },
+    "durations": {
+      "draw": 1.0,
+      "draw_2": 1.0,
+      "idle": 2.0,
+      "idle2": 1.0,
+      "inspect": 6.2,
+      "inspect_2": 4.5,
+      "slash1": 1.1666,
+      "slash2": 1.1666,
+      "stab_miss": 1.1666,
+      "stab": 1.1666,
+      "midslash1": 1.1666,
+      "midslash2": 1.1666
+    },
+    "axis_max_error_deg": {
+      "L": 18.140876808977517,
+      "R": 18.141502759743027
+    },
+    "axis_matrices": {
+      "L": [
+        [
+          -0.017454903857176123,
+          0.006139729471093429,
+          0.9998288003720228
+        ],
+        [
+          0.9175587296838327,
+          -0.3971716192194897,
+          0.01845758563734239
+        ],
+        [
+          0.39721694816853903,
+          0.9177238193533994,
+          0.0012990300541763531
+        ]
+      ],
+      "R": [
+        [
+          0.017455148373401005,
+          0.006140209042555531,
+          -0.999828793158197
+        ],
+        [
+          -0.9175597529253695,
+          -0.397169235847404,
+          -0.018458003898701877
+        ],
+        [
+          -0.3972145737593194,
+          0.9177248476146338,
+          -0.0012986392490692519
+        ]
+      ]
+    },
+    "knife_joints": [
+      "weapon",
+      "weapon_offset",
+      "ag1_hand_r"
+    ],
+    "camera_axes": "x forward / y left / z up -> -z / -x / +y; 0.0254 m per inch",
+    "original_arm_primitives_preserved": true
+  },
+  "css": {
+    "source_commit": "1eb8067fd0b7214df5bccf3ac3807fbaa3aee70d",
+    "animation_sha256": "3d7e07a1483ab689338f421d895ff0dbdd73c414fb7788bab15c9e40685ffb47",
+    "clips": {
+      "draw": "draw_css",
+      "idle": "idle1_css",
+      "idle2": "idle2_css",
+      "inspect": "lookat01_css",
+      "inspect_2": "lookat02_css",
+      "slash1": "light_miss1_css",
+      "slash2": "light_miss2_css",
+      "stab_miss": "heavy_miss1_css",
+      "stab": "heavy_hit1_css",
+      "midslash1": "light_hit1_css",
+      "midslash2": "light_hit2_css"
+    },
+    "durations": {
+      "draw": 1.0,
+      "idle": 2.0,
+      "idle2": 3.9666,
+      "inspect": 6.2,
+      "inspect_2": 3.9666,
+      "slash1": 1.1666,
+      "slash2": 1.1666,
+      "stab_miss": 1.1666,
+      "stab": 1.1666,
+      "midslash1": 1.1666,
+      "midslash2": 1.1666
+    },
+    "axis_max_error_deg": {
+      "L": 18.140876808977517,
+      "R": 18.141502759743027
+    },
+    "axis_matrices": {
+      "L": [
+        [
+          -0.017454903857176123,
+          0.006139729471093429,
+          0.9998288003720228
+        ],
+        [
+          0.9175587296838327,
+          -0.3971716192194897,
+          0.01845758563734239
+        ],
+        [
+          0.39721694816853903,
+          0.9177238193533994,
+          0.0012990300541763531
+        ]
+      ],
+      "R": [
+        [
+          0.017455148373401005,
+          0.006140209042555531,
+          -0.999828793158197
+        ],
+        [
+          -0.9175597529253695,
+          -0.397169235847404,
+          -0.018458003898701877
+        ],
+        [
+          -0.3972145737593194,
+          0.9177248476146338,
+          -0.0012986392490692519
+        ]
+      ]
+    },
+    "knife_joints": [
+      "weapon",
+      "weapon_offset",
+      "ag1_hand_r"
+    ],
+    "camera_axes": "x forward / y left / z up -> -z / -x / +y; 0.0254 m per inch",
+    "original_arm_primitives_preserved": true
+  },
+  "default_ct": {
+    "source_commit": "1eb8067fd0b7214df5bccf3ac3807fbaa3aee70d",
+    "animation_sha256": "67bd670f815c9d99f1c04e4e903c0f16f5c9445516c6061c0ef6c0dac6b19783",
+    "clips": {
+      "draw": "draw_knife",
+      "idle": "idle_knife",
+      "idle2": "idle2_knife",
+      "inspect": "lookat01_knife",
+      "slash1": "light_miss1_knife",
+      "slash2": "light_miss2_knife",
+      "stab_miss": "heavy_miss1_knife",
+      "stab": "heavy_hit1_knife",
+      "midslash1": "light_hit1_knife",
+      "midslash2": "light_hit2_knife"
+    },
+    "durations": {
+      "draw": 1.0,
+      "idle": 2.0,
+      "idle2": 1.0,
+      "inspect": 6.2,
+      "slash1": 1.1666,
+      "slash2": 1.1666,
+      "stab_miss": 1.1666,
+      "stab": 1.1666,
+      "midslash1": 1.1666,
+      "midslash2": 1.1666
+    },
+    "axis_max_error_deg": {
+      "L": 18.140876808977517,
+      "R": 18.141502759743027
+    },
+    "axis_matrices": {
+      "L": [
+        [
+          -0.017454903857176123,
+          0.006139729471093429,
+          0.9998288003720228
+        ],
+        [
+          0.9175587296838327,
+          -0.3971716192194897,
+          0.01845758563734239
+        ],
+        [
+          0.39721694816853903,
+          0.9177238193533994,
+          0.0012990300541763531
+        ]
+      ],
+      "R": [
+        [
+          0.017455148373401005,
+          0.006140209042555531,
+          -0.999828793158197
+        ],
+        [
+          -0.9175597529253695,
+          -0.397169235847404,
+          -0.018458003898701877
+        ],
+        [
+          -0.3972145737593194,
+          0.9177248476146338,
+          -0.0012986392490692519
+        ]
+      ]
+    },
+    "knife_joints": [
+      "weapon",
+      "weapon_offset",
+      "ag1_hand_r"
+    ],
+    "camera_axes": "x forward / y left / z up -> -z / -x / +y; 0.0254 m per inch",
+    "original_arm_primitives_preserved": true
+  },
+  "default_t": {
+    "source_commit": "1eb8067fd0b7214df5bccf3ac3807fbaa3aee70d",
+    "animation_sha256": "3a037575c51accec599bf636b6f97c810341a3dc063bbf1b2cf2f3debc156c54",
+    "clips": {
+      "draw": "draw_default_t",
+      "idle": "idle_default_t",
+      "idle2": "idle2_default_t",
+      "inspect": "lookat01_default_t",
+      "slash1": "light_miss1_default_t",
+      "slash2": "light_miss2_default_t",
+      "stab_miss": "heavy_miss1_default_t",
+      "stab": "heavy_hit1_default_t",
+      "midslash1": "light_hit1_default_t",
+      "midslash2": "light_hit2_default_t"
+    },
+    "durations": {
+      "draw": 1.0,
+      "idle": 2.0,
+      "idle2": 1.0,
+      "inspect": 6.2,
+      "slash1": 1.1666,
+      "slash2": 1.1666,
+      "stab_miss": 1.1666,
+      "stab": 1.1666,
+      "midslash1": 1.1666,
+      "midslash2": 1.1666
+    },
+    "axis_max_error_deg": {
+      "L": 18.140876808977517,
+      "R": 18.141502759743027
+    },
+    "axis_matrices": {
+      "L": [
+        [
+          -0.017454903857176123,
+          0.006139729471093429,
+          0.9998288003720228
+        ],
+        [
+          0.9175587296838327,
+          -0.3971716192194897,
+          0.01845758563734239
+        ],
+        [
+          0.39721694816853903,
+          0.9177238193533994,
+          0.0012990300541763531
+        ]
+      ],
+      "R": [
+        [
+          0.017455148373401005,
+          0.006140209042555531,
+          -0.999828793158197
+        ],
+        [
+          -0.9175597529253695,
+          -0.397169235847404,
+          -0.018458003898701877
+        ],
+        [
+          -0.3972145737593194,
+          0.9177248476146338,
+          -0.0012986392490692519
+        ]
+      ]
+    },
+    "knife_joints": [
+      "weapon",
+      "weapon_offset",
+      "ag1_hand_r"
+    ],
+    "camera_axes": "x forward / y left / z up -> -z / -x / +y; 0.0254 m per inch",
+    "original_arm_primitives_preserved": true
+  },
+  "falchion": {
+    "source_commit": "1eb8067fd0b7214df5bccf3ac3807fbaa3aee70d",
+    "animation_sha256": "571ac2131581f6bd911d851fbf65d4a897813c006a20cd05e30fc1f4f6b6b13e",
+    "clips": {
+      "draw": "draw_falchion",
+      "idle": "idle1_falchion",
+      "inspect": "lookat01_falchion",
+      "inspect_2": "lookat02_falchion",
+      "slash1": "light_miss1_falchion",
+      "slash2": "light_miss2_falchion",
+      "stab_miss": "heavy_miss1_falchion",
+      "stab": "heavy_hit1_falchion",
+      "midslash1": "light_hit1_falchion",
+      "midslash2": "light_hit2_falchion"
+    },
+    "durations": {
+      "draw": 0.9666,
+      "idle": 4.0,
+      "inspect": 5.9667,
+      "inspect_2": 5.9667,
+      "slash1": 1.1332,
+      "slash2": 1.1332,
+      "stab_miss": 1.1332,
+      "stab": 1.1332,
+      "midslash1": 1.1332,
+      "midslash2": 1.1332
+    },
+    "axis_max_error_deg": {
+      "L": 18.140876808977517,
+      "R": 18.141502759743027
+    },
+    "axis_matrices": {
+      "L": [
+        [
+          -0.017454903857176123,
+          0.006139729471093429,
+          0.9998288003720228
+        ],
+        [
+          0.9175587296838327,
+          -0.3971716192194897,
+          0.01845758563734239
+        ],
+        [
+          0.39721694816853903,
+          0.9177238193533994,
+          0.0012990300541763531
+        ]
+      ],
+      "R": [
+        [
+          0.017455148373401005,
+          0.006140209042555531,
+          -0.999828793158197
+        ],
+        [
+          -0.9175597529253695,
+          -0.397169235847404,
+          -0.018458003898701877
+        ],
+        [
+          -0.3972145737593194,
+          0.9177248476146338,
+          -0.0012986392490692519
+        ]
+      ]
+    },
+    "knife_joints": [
+      "weapon",
+      "weapon_offset",
+      "blade",
+      "ag1_hand_r"
+    ],
+    "camera_axes": "x forward / y left / z up -> -z / -x / +y; 0.0254 m per inch",
+    "original_arm_primitives_preserved": true
+  },
+  "flip": {
+    "source_commit": "1eb8067fd0b7214df5bccf3ac3807fbaa3aee70d",
+    "animation_sha256": "88085de609f9175f9d5a5d2b4c84852a5e1ada5233eed3c808b89bf1a0bd9052",
+    "clips": {
+      "draw": "draw_flip",
+      "idle": "idle1_flip",
+      "idle2": "idle2_flip",
+      "inspect": "lookat01_flip",
+      "slash1": "light_miss1_flip",
+      "slash2": "light_miss2_flip",
+      "stab_miss": "heavy_miss1_flip",
+      "stab": "heavy_hit1_flip",
+      "midslash1": "light_hit1_flip",
+      "midslash2": "light_hit2_flip"
+    },
+    "durations": {
+      "draw": 1.0,
+      "idle": 2.0,
+      "idle2": 1.0,
+      "inspect": 6.2,
+      "slash1": 1.1666,
+      "slash2": 1.1666,
+      "stab_miss": 1.1666,
+      "stab": 1.1666,
+      "midslash1": 1.1666,
+      "midslash2": 1.1666
+    },
+    "axis_max_error_deg": {
+      "L": 18.140876808977517,
+      "R": 18.141502759743027
+    },
+    "axis_matrices": {
+      "L": [
+        [
+          -0.017454903857176123,
+          0.006139729471093429,
+          0.9998288003720228
+        ],
+        [
+          0.9175587296838327,
+          -0.3971716192194897,
+          0.01845758563734239
+        ],
+        [
+          0.39721694816853903,
+          0.9177238193533994,
+          0.0012990300541763531
+        ]
+      ],
+      "R": [
+        [
+          0.017455148373401005,
+          0.006140209042555531,
+          -0.999828793158197
+        ],
+        [
+          -0.9175597529253695,
+          -0.397169235847404,
+          -0.018458003898701877
+        ],
+        [
+          -0.3972145737593194,
+          0.9177248476146338,
+          -0.0012986392490692519
+        ]
+      ]
+    },
+    "knife_joints": [
+      "weapon",
+      "weapon_offset",
+      "blade",
+      "ag1_hand_r"
+    ],
+    "camera_axes": "x forward / y left / z up -> -z / -x / +y; 0.0254 m per inch",
+    "original_arm_primitives_preserved": true
+  },
+  "gut": {
+    "source_commit": "1eb8067fd0b7214df5bccf3ac3807fbaa3aee70d",
+    "animation_sha256": "016f8f8488e7647873987bab754161142978670c22fa6d7dfb9e5666d20f692a",
+    "clips": {
+      "draw": "draw_gut",
+      "idle": "idle1_gut",
+      "idle2": "idle2_gut",
+      "inspect": "lookat01_gut",
+      "slash1": "light_miss1_gut",
+      "slash2": "light_miss2_gut",
+      "stab_miss": "heavy_miss1_gut",
+      "stab": "heavy_hit1_gut",
+      "midslash1": "light_hit1_gut",
+      "midslash2": "light_hit2_gut"
+    },
+    "durations": {
+      "draw": 1.0,
+      "idle": 2.0,
+      "idle2": 1.0,
+      "inspect": 6.2,
+      "slash1": 1.1666,
+      "slash2": 1.1666,
+      "stab_miss": 1.1666,
+      "stab": 1.1666,
+      "midslash1": 1.1666,
+      "midslash2": 1.1666
+    },
+    "axis_max_error_deg": {
+      "L": 18.140876808977517,
+      "R": 18.141502759743027
+    },
+    "axis_matrices": {
+      "L": [
+        [
+          -0.017454903857176123,
+          0.006139729471093429,
+          0.9998288003720228
+        ],
+        [
+          0.9175587296838327,
+          -0.3971716192194897,
+          0.01845758563734239
+        ],
+        [
+          0.39721694816853903,
+          0.9177238193533994,
+          0.0012990300541763531
+        ]
+      ],
+      "R": [
+        [
+          0.017455148373401005,
+          0.006140209042555531,
+          -0.999828793158197
+        ],
+        [
+          -0.9175597529253695,
+          -0.397169235847404,
+          -0.018458003898701877
+        ],
+        [
+          -0.3972145737593194,
+          0.9177248476146338,
+          -0.0012986392490692519
+        ]
+      ]
+    },
+    "knife_joints": [
+      "weapon",
+      "weapon_offset",
+      "ag1_hand_r"
+    ],
+    "camera_axes": "x forward / y left / z up -> -z / -x / +y; 0.0254 m per inch",
+    "original_arm_primitives_preserved": true
+  },
+  "karambit": {
+    "source_commit": "1eb8067fd0b7214df5bccf3ac3807fbaa3aee70d",
+    "animation_sha256": "a104bb19e9768ef312fc930363e09dd697cedf22382172a189cfb931a6d28b2e",
+    "clips": {
+      "draw": "draw_karambit",
+      "idle": "idle1_karambit",
+      "idle2": "idle2_karambit",
+      "inspect": "lookat01_karambit",
+      "slash1": "light_miss1_karambit",
+      "slash2": "light_miss2_karambit",
+      "stab_miss": "heavy_miss1_karambit",
+      "stab": "heavy_hit1_karambit",
+      "midslash1": "light_hit1_karambit",
+      "midslash2": "light_hit2_karambit"
+    },
+    "durations": {
+      "draw": 1.0,
+      "idle": 2.0,
+      "idle2": 2.0,
+      "inspect": 4.8666,
+      "slash1": 1.1666,
+      "slash2": 1.1666,
+      "stab_miss": 1.1666,
+      "stab": 1.1666,
+      "midslash1": 1.1666,
+      "midslash2": 1.1666
+    },
+    "axis_max_error_deg": {
+      "L": 18.140876808977517,
+      "R": 18.141502759743027
+    },
+    "axis_matrices": {
+      "L": [
+        [
+          -0.017454903857176123,
+          0.006139729471093429,
+          0.9998288003720228
+        ],
+        [
+          0.9175587296838327,
+          -0.3971716192194897,
+          0.01845758563734239
+        ],
+        [
+          0.39721694816853903,
+          0.9177238193533994,
+          0.0012990300541763531
+        ]
+      ],
+      "R": [
+        [
+          0.017455148373401005,
+          0.006140209042555531,
+          -0.999828793158197
+        ],
+        [
+          -0.9175597529253695,
+          -0.397169235847404,
+          -0.018458003898701877
+        ],
+        [
+          -0.3972145737593194,
+          0.9177248476146338,
+          -0.0012986392490692519
+        ]
+      ]
+    },
+    "knife_joints": [
+      "weapon",
+      "weapon_offset",
+      "ag1_hand_r"
+    ],
+    "camera_axes": "x forward / y left / z up -> -z / -x / +y; 0.0254 m per inch",
+    "original_arm_primitives_preserved": true
+  },
+  "kukri": {
+    "source_commit": "1eb8067fd0b7214df5bccf3ac3807fbaa3aee70d",
+    "animation_sha256": "329927287233769e89cd986958d2e4a2a9fd134cb5deed1bca60dbc6fc3e5bb4",
+    "clips": {
+      "draw": "draw_kukri",
+      "draw_2": "draw2_kukri",
+      "idle": "idle1_kukri",
+      "idle2": "idle2_kukri",
+      "inspect": "lookat01_kukri",
+      "slash1": "light_miss1_kukri",
+      "slash2": "light_miss2_kukri",
+      "stab_miss": "heavy_miss1_kukri",
+      "stab": "heavy_hit1_kukri",
+      "midslash1": "light_hit1_kukri",
+      "midslash2": "light_hit2_kukri"
+    },
+    "durations": {
+      "draw": 1.0,
+      "draw_2": 1.0,
+      "idle": 2.0,
+      "idle2": 1.0,
+      "inspect": 7.5666,
+      "slash1": 1.1666,
+      "slash2": 1.1666,
+      "stab_miss": 1.1666,
+      "stab": 1.1666,
+      "midslash1": 1.1666,
+      "midslash2": 1.1666
+    },
+    "axis_max_error_deg": {
+      "L": 18.140876808977517,
+      "R": 18.141502759743027
+    },
+    "axis_matrices": {
+      "L": [
+        [
+          -0.017454903857176123,
+          0.006139729471093429,
+          0.9998288003720228
+        ],
+        [
+          0.9175587296838327,
+          -0.3971716192194897,
+          0.01845758563734239
+        ],
+        [
+          0.39721694816853903,
+          0.9177238193533994,
+          0.0012990300541763531
+        ]
+      ],
+      "R": [
+        [
+          0.017455148373401005,
+          0.006140209042555531,
+          -0.999828793158197
+        ],
+        [
+          -0.9175597529253695,
+          -0.397169235847404,
+          -0.018458003898701877
+        ],
+        [
+          -0.3972145737593194,
+          0.9177248476146338,
+          -0.0012986392490692519
+        ]
+      ]
+    },
+    "knife_joints": [
+      "weapon",
+      "weapon_offset",
+      "ag1_hand_r"
+    ],
+    "camera_axes": "x forward / y left / z up -> -z / -x / +y; 0.0254 m per inch",
+    "original_arm_primitives_preserved": true
+  },
+  "m9": {
+    "source_commit": "1eb8067fd0b7214df5bccf3ac3807fbaa3aee70d",
+    "animation_sha256": "98310156e5762aba464b54f473a9077d4e7e3a04d2a2b3cf7ab0811b1c5a9775",
+    "clips": {
+      "draw": "draw_m9",
+      "idle": "idle1_m9",
+      "idle2": "idle2_m9",
+      "inspect": "lookat01_m9",
+      "slash1": "light_miss1_m9",
+      "slash2": "light_miss2_m9",
+      "stab_miss": "heavy_miss1_m9",
+      "stab": "heavy_hit1_m9",
+      "midslash1": "light_hit1_m9",
+      "midslash2": "light_hit2_m9"
+    },
+    "durations": {
+      "draw": 1.0,
+      "idle": 2.0,
+      "idle2": 1.0,
+      "inspect": 6.2,
+      "slash1": 1.1666,
+      "slash2": 1.1666,
+      "stab_miss": 1.1666,
+      "stab": 1.1666,
+      "midslash1": 1.1666,
+      "midslash2": 1.1666
+    },
+    "axis_max_error_deg": {
+      "L": 18.140876808977517,
+      "R": 18.141502759743027
+    },
+    "axis_matrices": {
+      "L": [
+        [
+          -0.017454903857176123,
+          0.006139729471093429,
+          0.9998288003720228
+        ],
+        [
+          0.9175587296838327,
+          -0.3971716192194897,
+          0.01845758563734239
+        ],
+        [
+          0.39721694816853903,
+          0.9177238193533994,
+          0.0012990300541763531
+        ]
+      ],
+      "R": [
+        [
+          0.017455148373401005,
+          0.006140209042555531,
+          -0.999828793158197
+        ],
+        [
+          -0.9175597529253695,
+          -0.397169235847404,
+          -0.018458003898701877
+        ],
+        [
+          -0.3972145737593194,
+          0.9177248476146338,
+          -0.0012986392490692519
+        ]
+      ]
+    },
+    "knife_joints": [
+      "weapon",
+      "weapon_offset",
+      "ag1_hand_r"
+    ],
+    "camera_axes": "x forward / y left / z up -> -z / -x / +y; 0.0254 m per inch",
+    "original_arm_primitives_preserved": true
+  },
+  "navaja": {
+    "source_commit": "1eb8067fd0b7214df5bccf3ac3807fbaa3aee70d",
+    "animation_sha256": "25f294ebee72f3153cb357b13061a400681d5d608b5df1e824a372b8d51c866e",
+    "clips": {
+      "draw": "draw_navaja",
+      "idle": "idle1_navaja",
+      "idle2": "idle2_navaja",
+      "inspect": "lookat01_navaja",
+      "slash1": "light_miss1_navaja",
+      "slash2": "light_miss2_navaja",
+      "stab_miss": "heavy_miss1_navaja",
+      "midslash1": "light_hit1_navaja",
+      "midslash2": "light_hit2_navaja",
+      "stab": "heavy_miss1_navaja_hit_alias"
+    },
+    "durations": {
+      "draw": 1.0,
+      "idle": 2.0,
+      "idle2": 1.0,
+      "inspect": 6.2,
+      "slash1": 1.1666,
+      "slash2": 1.1666,
+      "stab_miss": 1.1666,
+      "midslash1": 1.1666,
+      "midslash2": 1.1666,
+      "stab": 1.1666
+    },
+    "axis_max_error_deg": {
+      "L": 18.140876808977517,
+      "R": 18.141502759743027
+    },
+    "axis_matrices": {
+      "L": [
+        [
+          -0.017454903857176123,
+          0.006139729471093429,
+          0.9998288003720228
+        ],
+        [
+          0.9175587296838327,
+          -0.3971716192194897,
+          0.01845758563734239
+        ],
+        [
+          0.39721694816853903,
+          0.9177238193533994,
+          0.0012990300541763531
+        ]
+      ],
+      "R": [
+        [
+          0.017455148373401005,
+          0.006140209042555531,
+          -0.999828793158197
+        ],
+        [
+          -0.9175597529253695,
+          -0.397169235847404,
+          -0.018458003898701877
+        ],
+        [
+          -0.3972145737593194,
+          0.9177248476146338,
+          -0.0012986392490692519
+        ]
+      ]
+    },
+    "knife_joints": [
+      "weapon",
+      "weapon_offset",
+      "blade",
+      "ag1_hand_r"
+    ],
+    "camera_axes": "x forward / y left / z up -> -z / -x / +y; 0.0254 m per inch",
+    "original_arm_primitives_preserved": true
+  },
+  "outdoor": {
+    "source_commit": "1eb8067fd0b7214df5bccf3ac3807fbaa3aee70d",
+    "animation_sha256": "ea46b0663747b472b6b4142cdf5d5c69d99f3c3110b9c12bd29c692876459ea7",
+    "clips": {
+      "draw": "draw_outdoor",
+      "draw_2": "draw2_outdoor",
+      "idle": "idle1_outdoor",
+      "idle2": "idle2_outdoor",
+      "inspect": "lookat01_outdoor",
+      "inspect_2": "lookat02_outdoor",
+      "slash1": "light_miss1_outdoor",
+      "slash2": "light_miss2_outdoor",
+      "stab_miss": "heavy_miss1_outdoor",
+      "stab": "heavy_hit1_outdoor",
+      "midslash1": "light_hit1_outdoor",
+      "midslash2": "light_hit2_outdoor"
+    },
+    "durations": {
+      "draw": 2.2667,
+      "draw_2": 1.0,
+      "idle": 2.0,
+      "idle2": 1.0,
+      "inspect": 5.0,
+      "inspect_2": 6.2,
+      "slash1": 1.1666,
+      "slash2": 1.1666,
+      "stab_miss": 1.1666,
+      "stab": 1.1666,
+      "midslash1": 1.1666,
+      "midslash2": 1.1666
+    },
+    "axis_max_error_deg": {
+      "L": 18.140876808977517,
+      "R": 18.141502759743027
+    },
+    "axis_matrices": {
+      "L": [
+        [
+          -0.017454903857176123,
+          0.006139729471093429,
+          0.9998288003720228
+        ],
+        [
+          0.9175587296838327,
+          -0.3971716192194897,
+          0.01845758563734239
+        ],
+        [
+          0.39721694816853903,
+          0.9177238193533994,
+          0.0012990300541763531
+        ]
+      ],
+      "R": [
+        [
+          0.017455148373401005,
+          0.006140209042555531,
+          -0.999828793158197
+        ],
+        [
+          -0.9175597529253695,
+          -0.397169235847404,
+          -0.018458003898701877
+        ],
+        [
+          -0.3972145737593194,
+          0.9177248476146338,
+          -0.0012986392490692519
+        ]
+      ]
+    },
+    "knife_joints": [
+      "weapon",
+      "weapon_offset",
+      "blade",
+      "ag1_hand_r"
+    ],
+    "camera_axes": "x forward / y left / z up -> -z / -x / +y; 0.0254 m per inch",
+    "original_arm_primitives_preserved": true
+  },
+  "push": {
+    "source_commit": "1eb8067fd0b7214df5bccf3ac3807fbaa3aee70d",
+    "animation_sha256": "e15a7fbf577ad199e76e67a16cb54886fc2ea1f3cd7efe04300feaa35f873480",
+    "clips": {
+      "draw": "draw_push",
+      "idle": "idle1_push",
+      "inspect": "lookat01_push",
+      "slash1": "light_miss1_push",
+      "slash2": "light_miss2_push",
+      "stab_miss": "heavy_miss1_push",
+      "stab": "heavy_hit1_push",
+      "midslash1": "light_hit1_push",
+      "midslash2": "light_hit2_push"
+    },
+    "durations": {
+      "draw": 1.0,
+      "idle": 2.6666,
+      "inspect": 3.7332,
+      "slash1": 1.1332,
+      "slash2": 1.1332,
+      "stab_miss": 0.7666,
+      "stab": 0.7666,
+      "midslash1": 1.1332,
+      "midslash2": 1.1332
+    },
+    "axis_max_error_deg": {
+      "L": 18.140876808977517,
+      "R": 18.141502759743027
+    },
+    "axis_matrices": {
+      "L": [
+        [
+          -0.017454903857176123,
+          0.006139729471093429,
+          0.9998288003720228
+        ],
+        [
+          0.9175587296838327,
+          -0.3971716192194897,
+          0.01845758563734239
+        ],
+        [
+          0.39721694816853903,
+          0.9177238193533994,
+          0.0012990300541763531
+        ]
+      ],
+      "R": [
+        [
+          0.017455148373401005,
+          0.006140209042555531,
+          -0.999828793158197
+        ],
+        [
+          -0.9175597529253695,
+          -0.397169235847404,
+          -0.018458003898701877
+        ],
+        [
+          -0.3972145737593194,
+          0.9177248476146338,
+          -0.0012986392490692519
+        ]
+      ]
+    },
+    "knife_joints": [
+      "weapon",
+      "weapon_hand_l",
+      "weapon_l",
+      "weapon_hand_r",
+      "weapon_r"
+    ],
+    "camera_axes": "x forward / y left / z up -> -z / -x / +y; 0.0254 m per inch",
+    "original_arm_primitives_preserved": true
+  },
+  "skeleton": {
+    "source_commit": "1eb8067fd0b7214df5bccf3ac3807fbaa3aee70d",
+    "animation_sha256": "2a7bb966e0612c6c94f3b732924dc79580e9fa791663fde296a4e5e0f5632988",
+    "clips": {
+      "draw": "draw_skeleton",
+      "draw_2": "draw2_skeleton",
+      "idle": "idle1_skeleton",
+      "idle2": "idle2_skeleton",
+      "inspect": "lookat01_skeleton",
+      "inspect_2": "lookat02_skeleton",
+      "slash1": "light_miss1_skeleton",
+      "slash2": "light_miss2_skeleton",
+      "stab_miss": "heavy_miss1_skeleton",
+      "stab": "heavy_hit1_skeleton",
+      "midslash1": "light_hit1_skeleton",
+      "midslash2": "light_hit2_skeleton"
+    },
+    "durations": {
+      "draw": 1.0,
+      "draw_2": 1.0,
+      "idle": 2.0,
+      "idle2": 1.0,
+      "inspect": 6.1332,
+      "inspect_2": 2.2667,
+      "slash1": 1.1666,
+      "slash2": 1.1666,
+      "stab_miss": 1.1666,
+      "stab": 1.1666,
+      "midslash1": 1.1666,
+      "midslash2": 1.1666
+    },
+    "axis_max_error_deg": {
+      "L": 18.140876808977517,
+      "R": 18.141502759743027
+    },
+    "axis_matrices": {
+      "L": [
+        [
+          -0.017454903857176123,
+          0.006139729471093429,
+          0.9998288003720228
+        ],
+        [
+          0.9175587296838327,
+          -0.3971716192194897,
+          0.01845758563734239
+        ],
+        [
+          0.39721694816853903,
+          0.9177238193533994,
+          0.0012990300541763531
+        ]
+      ],
+      "R": [
+        [
+          0.017455148373401005,
+          0.006140209042555531,
+          -0.999828793158197
+        ],
+        [
+          -0.9175597529253695,
+          -0.397169235847404,
+          -0.018458003898701877
+        ],
+        [
+          -0.3972145737593194,
+          0.9177248476146338,
+          -0.0012986392490692519
+        ]
+      ]
+    },
+    "knife_joints": [
+      "weapon",
+      "weapon_offset",
+      "ag1_hand_r"
+    ],
+    "camera_axes": "x forward / y left / z up -> -z / -x / +y; 0.0254 m per inch",
+    "original_arm_primitives_preserved": true
+  },
+  "stiletto": {
+    "source_commit": "1eb8067fd0b7214df5bccf3ac3807fbaa3aee70d",
+    "animation_sha256": "a062b4edf97e2d267c6b0b5da5a8e909116660e94ba24605470e4e680c8e1082",
+    "clips": {
+      "draw": "draw_stiletto",
+      "idle": "idle1_stiletto",
+      "idle2": "idle2_stiletto",
+      "inspect": "lookat01_stiletto",
+      "inspect_2": "lookat02_stiletto",
+      "slash1": "light_miss1_stiletto",
+      "slash2": "light_miss2_stiletto",
+      "stab_miss": "heavy_miss1_stiletto",
+      "stab": "heavy_hit1_stiletto",
+      "midslash1": "light_hit1_stiletto",
+      "midslash2": "light_hit2_stiletto"
+    },
+    "durations": {
+      "draw": 1.0,
+      "idle": 2.0,
+      "idle2": 1.0,
+      "inspect": 4.0,
+      "inspect_2": 5.0,
+      "slash1": 1.1666,
+      "slash2": 1.1666,
+      "stab_miss": 1.1666,
+      "stab": 1.1666,
+      "midslash1": 1.1666,
+      "midslash2": 1.1666
+    },
+    "axis_max_error_deg": {
+      "L": 18.140876808977517,
+      "R": 18.141502759743027
+    },
+    "axis_matrices": {
+      "L": [
+        [
+          -0.017454903857176123,
+          0.006139729471093429,
+          0.9998288003720228
+        ],
+        [
+          0.9175587296838327,
+          -0.3971716192194897,
+          0.01845758563734239
+        ],
+        [
+          0.39721694816853903,
+          0.9177238193533994,
+          0.0012990300541763531
+        ]
+      ],
+      "R": [
+        [
+          0.017455148373401005,
+          0.006140209042555531,
+          -0.999828793158197
+        ],
+        [
+          -0.9175597529253695,
+          -0.397169235847404,
+          -0.018458003898701877
+        ],
+        [
+          -0.3972145737593194,
+          0.9177248476146338,
+          -0.0012986392490692519
+        ]
+      ]
+    },
+    "knife_joints": [
+      "weapon",
+      "weapon_offset",
+      "blade",
+      "ag1_hand_r"
+    ],
+    "camera_axes": "x forward / y left / z up -> -z / -x / +y; 0.0254 m per inch",
+    "original_arm_primitives_preserved": true
+  },
+  "tactical": {
+    "source_commit": "1eb8067fd0b7214df5bccf3ac3807fbaa3aee70d",
+    "animation_sha256": "bada028f1bff558f3fc3e7e8eb790ec9f1dc0c0d3bad289e82aa076541c7c1c2",
+    "clips": {
+      "draw": "draw_tactical",
+      "idle": "idle1_tactical",
+      "idle2": "idle2_tactical",
+      "inspect": "lookat01_tactical",
+      "slash1": "light_miss1_tactical",
+      "slash2": "light_miss2_tactical",
+      "stab_miss": "heavy_miss1_tactical",
+      "stab": "heavy_hit1_tactical",
+      "midslash1": "light_hit1_tactical",
+      "midslash2": "light_hit2_tactical"
+    },
+    "durations": {
+      "draw": 1.0,
+      "idle": 2.0,
+      "idle2": 1.0,
+      "inspect": 6.2,
+      "slash1": 1.1666,
+      "slash2": 1.1666,
+      "stab_miss": 1.1666,
+      "stab": 1.1666,
+      "midslash1": 1.1666,
+      "midslash2": 1.1666
+    },
+    "axis_max_error_deg": {
+      "L": 18.140876808977517,
+      "R": 18.141502759743027
+    },
+    "axis_matrices": {
+      "L": [
+        [
+          -0.017454903857176123,
+          0.006139729471093429,
+          0.9998288003720228
+        ],
+        [
+          0.9175587296838327,
+          -0.3971716192194897,
+          0.01845758563734239
+        ],
+        [
+          0.39721694816853903,
+          0.9177238193533994,
+          0.0012990300541763531
+        ]
+      ],
+      "R": [
+        [
+          0.017455148373401005,
+          0.006140209042555531,
+          -0.999828793158197
+        ],
+        [
+          -0.9175597529253695,
+          -0.397169235847404,
+          -0.018458003898701877
+        ],
+        [
+          -0.3972145737593194,
+          0.9177248476146338,
+          -0.0012986392490692519
+        ]
+      ]
+    },
+    "knife_joints": [
+      "weapon",
+      "weapon_offset",
+      "ag1_hand_r"
+    ],
+    "camera_axes": "x forward / y left / z up -> -z / -x / +y; 0.0254 m per inch",
+    "original_arm_primitives_preserved": true
+  },
+  "talon": {
+    "source_commit": "1eb8067fd0b7214df5bccf3ac3807fbaa3aee70d",
+    "animation_sha256": "4a4e684ba087e54f4f83c57ec4de122e2055fc93e6b1d73005124e96b24821cd",
+    "clips": {
+      "draw": "draw_talon",
+      "idle": "idle1_talon",
+      "idle2": "idle2_talon",
+      "inspect": "lookat01_talon",
+      "inspect_2": "lookat02_talon",
+      "slash1": "light_miss1_talon",
+      "slash2": "light_miss2_talon",
+      "stab_miss": "heavy_miss1_talon",
+      "stab": "heavy_hit1_talon",
+      "midslash1": "light_hit1_talon",
+      "midslash2": "light_hit2_talon"
+    },
+    "durations": {
+      "draw": 1.0,
+      "idle": 2.0,
+      "idle2": 2.0,
+      "inspect": 4.8666,
+      "inspect_2": 2.7,
+      "slash1": 1.1666,
+      "slash2": 1.1666,
+      "stab_miss": 1.1666,
+      "stab": 1.1666,
+      "midslash1": 1.1666,
+      "midslash2": 1.1666
+    },
+    "axis_max_error_deg": {
+      "L": 18.140876808977517,
+      "R": 18.141502759743027
+    },
+    "axis_matrices": {
+      "L": [
+        [
+          -0.017454903857176123,
+          0.006139729471093429,
+          0.9998288003720228
+        ],
+        [
+          0.9175587296838327,
+          -0.3971716192194897,
+          0.01845758563734239
+        ],
+        [
+          0.39721694816853903,
+          0.9177238193533994,
+          0.0012990300541763531
+        ]
+      ],
+      "R": [
+        [
+          0.017455148373401005,
+          0.006140209042555531,
+          -0.999828793158197
+        ],
+        [
+          -0.9175597529253695,
+          -0.397169235847404,
+          -0.018458003898701877
+        ],
+        [
+          -0.3972145737593194,
+          0.9177248476146338,
+          -0.0012986392490692519
+        ]
+      ]
+    },
+    "knife_joints": [
+      "weapon",
+      "weapon_offset",
+      "ag1_hand_r"
+    ],
+    "camera_axes": "x forward / y left / z up -> -z / -x / +y; 0.0254 m per inch",
+    "original_arm_primitives_preserved": true
+  },
+  "ursus": {
+    "source_commit": "1eb8067fd0b7214df5bccf3ac3807fbaa3aee70d",
+    "animation_sha256": "6367eaac640b2def8d17092175a47e4220d5cacd6ad456097ede55844a6b2ee7",
+    "clips": {
+      "draw": "draw_ursus",
+      "draw_2": "draw2_ursus",
+      "idle": "idle1_ursus",
+      "idle2": "idle2_ursus",
+      "inspect": "lookat01_ursus",
+      "inspect_2": "lookat02_ursus",
+      "slash1": "light_miss1_ursus",
+      "slash2": "light_miss2_ursus",
+      "stab_miss": "heavy_miss1_ursus",
+      "stab": "heavy_hit1_ursus",
+      "midslash1": "light_hit1_ursus",
+      "midslash2": "light_hit2_ursus"
+    },
+    "durations": {
+      "draw": 1.0,
+      "draw_2": 1.0,
+      "idle": 2.0,
+      "idle2": 1.0,
+      "inspect": 6.2,
+      "inspect_2": 5.0,
+      "slash1": 1.1666,
+      "slash2": 1.1666,
+      "stab_miss": 1.1666,
+      "stab": 1.1666,
+      "midslash1": 1.1666,
+      "midslash2": 1.1666
+    },
+    "axis_max_error_deg": {
+      "L": 18.140876808977517,
+      "R": 18.141502759743027
+    },
+    "axis_matrices": {
+      "L": [
+        [
+          -0.017454903857176123,
+          0.006139729471093429,
+          0.9998288003720228
+        ],
+        [
+          0.9175587296838327,
+          -0.3971716192194897,
+          0.01845758563734239
+        ],
+        [
+          0.39721694816853903,
+          0.9177238193533994,
+          0.0012990300541763531
+        ]
+      ],
+      "R": [
+        [
+          0.017455148373401005,
+          0.006140209042555531,
+          -0.999828793158197
+        ],
+        [
+          -0.9175597529253695,
+          -0.397169235847404,
+          -0.018458003898701877
+        ],
+        [
+          -0.3972145737593194,
+          0.9177248476146338,
+          -0.0012986392490692519
+        ]
+      ]
+    },
+    "knife_joints": [
+      "weapon",
+      "weapon_offset",
+      "ag1_hand_r"
+    ],
+    "camera_axes": "x forward / y left / z up -> -z / -x / +y; 0.0254 m per inch",
+    "original_arm_primitives_preserved": true
+  }
+}

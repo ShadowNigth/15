@@ -474,7 +474,9 @@ func _process(delta: float) -> void:
 		# cl_righthand=1 must RENDER right-handed: the CS:GO-mod models are
 		# authored/animate left-handed (idle muzzle at x<0), so the mirrored
 		# scale is what places the weapon on the right side of the screen.
-		_vm_container.scale = Vector2(-1.0 if GameData.right_hand else 1.0, 1.0)
+		var native_right := bool((GameData.models_meta.get("weapons/" + _cur_vm_model_name, {}) as Dictionary).get("authored_right_hand", false))
+		var mirror := (not GameData.right_hand) if native_right else GameData.right_hand
+		_vm_container.scale = Vector2(-1.0 if mirror else 1.0, 1.0)
 	_muzzle_sprite.position = _current_vm_muzzle()
 
 
@@ -634,7 +636,11 @@ func _rebuild_viewmodel(wid: String) -> void:
 		return
 	var inst := sc.instantiate()
 	# Native GoldSrc camera-space framing (verified across rifles, pistols, knife, grenades & C4)
-	inst.position = Vector3(0.0, -0.015, -0.03)
+	var native_knife := bool((GameData.models_meta.get("weapons/" + v_name, {}) as Dictionary).get("native_cs2_animation", false))
+	# Native rigs already use eye-relative Source coordinates. Do not add the
+	# old Kukri placement or mirror their right-hand choreography a second time.
+	inst.position = Vector3(0.0635, -0.0381, 0.0) if native_knife else Vector3(0.0, -0.015, -0.03)
+	_vm_camera.fov = 53.668 if native_knife else 65.0
 	viewmodel_holder.add_child(inst)
 	SportGloves.apply(inst, v_name)
 	_prepare_viewmodel_materials(inst)
@@ -917,8 +923,9 @@ func _try_inspect_viewmodel() -> void:
 	if available.is_empty():
 		return
 	var wid := weapon_ctrl.current_weapon_id
-	var next_index := (int(_inspect_variant_indices.get(wid, -1)) + 1) % available.size()
-	_inspect_variant_indices[wid] = next_index
+	var inspection_key := wid + ":" + _cur_vm_model_name if wid == "knife" else wid
+	var next_index := (int(_inspect_variant_indices.get(inspection_key, -1)) + 1) % available.size()
+	_inspect_variant_indices[inspection_key] = next_index
 	play_viewmodel_sequence([available[next_index]])
 
 

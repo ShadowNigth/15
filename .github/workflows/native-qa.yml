@@ -112,29 +112,29 @@ jobs:
                   print(f'::notice title={name}::{text}')
           PY
 
-      - name: Review catalog butterfly_idle
+      - name: Review catalog butterfly_inspect_pose2
         if: ${{ !cancelled() }}
-        run: python3 tools/publish_rendered_capture.py butterfly_idle
+        run: python3 tools/publish_rendered_capture.py butterfly_inspect_pose2
 
       - name: Review catalog push_idle
         if: ${{ !cancelled() }}
         run: python3 tools/publish_rendered_capture.py push_idle
 
-      - name: Review catalog talon_idle
+      - name: Review catalog talon_inspect_pose2
         if: ${{ !cancelled() }}
-        run: python3 tools/publish_rendered_capture.py talon_idle
+        run: python3 tools/publish_rendered_capture.py talon_inspect_pose2
 
-      - name: Review catalog awp_sc_gs_awp_gungnir
+      - name: Review catalog push_inspect_pose2
         if: ${{ !cancelled() }}
-        run: python3 tools/publish_rendered_capture.py awp_sc_gs_awp_gungnir
+        run: python3 tools/publish_rendered_capture.py push_inspect_pose2
 
-      - name: Review catalog m4a1_sc_cu_m4a1s_printstream
+      - name: Review catalog karambit_inspect_pose2
         if: ${{ !cancelled() }}
-        run: python3 tools/publish_rendered_capture.py m4a1_sc_cu_m4a1s_printstream
+        run: python3 tools/publish_rendered_capture.py karambit_inspect_pose2
 
-      - name: Review catalog ak47_sc_cu_ak_island_floral
+      - name: Review catalog m9_inspect_pose2
         if: ${{ !cancelled() }}
-        run: python3 tools/publish_rendered_capture.py ak47_sc_cu_ak_island_floral
+        run: python3 tools/publish_rendered_capture.py m9_inspect_pose2
 
       - name: Save all rendered catalog views
         if: ${{ !cancelled() }}
