@@ -10,7 +10,7 @@ def api(path):return json.loads(subprocess.check_output(['gh','api',f'repos/{REP
 def main():
  parser=argparse.ArgumentParser(description=__doc__);parser.add_argument('directory',nargs='?',type=Path,default=Path.home()/'.cache/cs15-native-world-source');args=parser.parse_args()
  tree=api('git/trees/'+PIN+'?recursive=1');assert not tree.get('truncated')
- exact={'src/ScCsgoKnives/AnimationData/cs2_casings.json'}
+ exact={'src/ScCsgoKnives/AnimationData/cs2_casings.json','src/ScCsgoTactical/Assets/Textures/ScCsgoTactical/defuser_item.png'}
  for role in ['ct','t']:
   exact.add(f'src/ScCsgoTactical/Assets/Animations/ScCsgoTactical/{role}.scanim')
  for name in ['ct','t','hostage','defuser_item']:

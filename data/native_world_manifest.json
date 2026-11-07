@@ -205,6 +205,13 @@
       "path": "res://data/native_casings.json",
       "sha256": "9962174241de2a18d28d2b75a10fc3988f763fe0b97b903d92e0cceca3c015c9",
       "operation": "Source timing/attachment/velocity preserved; per-bone idle frame calibration onto existing native viewmodels"
+    },
+    {
+      "source": "src/ScCsgoTactical/Assets/Textures/ScCsgoTactical/defuser_item.png",
+      "path": "res://assets/models/native/defuser_item.png",
+      "source_sha256": "cc5a6d105beaec04bb8c64333310326ba450dd00870665fd1453b171b898340e",
+      "sha256": "cc5a6d105beaec04bb8c64333310326ba450dd00870665fd1453b171b898340e",
+      "operation": "unchanged bytes"
     }
   ]
 }

@@ -60,7 +60,8 @@ En el Arsenal aparecen `[Native review] ct`, `t`, `hostage`, `defuser_item` y
   continúan usando los esqueletos y reglas probados. Los modelos candidatos aún
   requieren esa integración específica antes de sustituirlos en partidas.
 - El kit sí se integra: `defuser_item.glb`, la bolsa de herramientas de cintura
-  de CS2, sustituye opcionalmente la apariencia del kit caído. Conserva el
+  de CS2, junto a su textura externa original `defuser_item.png` (el GLB fuente
+  no contiene materiales), sustituye opcionalmente la apariencia del kit caído. Conserva el
   sistema de física/AABB, compra y recogida por CT y 5/10 segundos de desactivación.
   Existe fallback al thighpack clásico si se desactiva o falta el candidato.
 

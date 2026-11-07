@@ -94,6 +94,8 @@ func setup_drop(id: String, clip: int, reserve: int, throw_vel: Vector3, is_sile
 	if sc != null:
 		var inst := sc.instantiate() as Node3D
 		_style_meshes_recursive(inst)
+		if id == "defuser" and GameData.native_defuser_model and sc.resource_path.ends_with("/defuser_item.glb"):
+			GameData.apply_native_world_material(inst, "defuser_item")
 		var raw_aabb := _compute_local_mesh_aabb(inst, Transform3D.IDENTITY)
 		if raw_aabb.size.length_squared() > 0.0001:
 			var center_local: Vector3 = raw_aabb.position + raw_aabb.size * 0.5

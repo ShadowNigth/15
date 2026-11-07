@@ -890,3 +890,18 @@ func ammo_icon_for(wid: String) -> Texture2D:
 	elif wid in ["awp", "scout"]:
 		icon = "generic_bullet"
 	return get_texture("res://assets/ui/native/hud_ammo_%s.png" % icon)
+
+
+func apply_native_world_material(instance: Node3D, resource: String) -> void:
+	# Upstream kit GLB deliberately has no materials; TacticalItemMesh binds
+	# the separate same-named PNG. Preserve both original files, bind at runtime.
+	if resource != "defuser_item":
+		return
+	var material := StandardMaterial3D.new()
+	material.resource_name = "Original tactical defuser pouch"
+	material.albedo_texture = get_texture("res://assets/models/native/defuser_item.png")
+	material.roughness = 0.85
+	for child in instance.find_children("*", "MeshInstance3D", true, false):
+		if child.mesh != null:
+			for surface in range(child.mesh.get_surface_count()):
+				child.set_surface_override_material(surface, material)

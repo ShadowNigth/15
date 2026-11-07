@@ -940,6 +940,7 @@ func _load_viewer_native(resource: String) -> void:
 				_viewer_anim.get_animation(clip).loop_mode = Animation.LOOP_LINEAR
 		if _viewer_anim.has_animation("walk"):
 			_viewer_anim.play("walk")
+	GameData.apply_native_world_material(instance, resource)
 	_viewer_stats_lbl.text = "ScCsgoKnives native review: " + resource + "\n"
 	if resource in ["ct", "t"]:
 		_viewer_stats_lbl.text += "170 restored external clips. Review only: classic bots, classes and VIP remain unchanged. No GoldSrc/CS2 skeleton mix."

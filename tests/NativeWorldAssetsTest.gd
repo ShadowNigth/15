@@ -86,10 +86,18 @@ func _run() -> void:
 	system.queue_shot(player, "awp", "shoot1")
 	expect(system.pending.is_empty(), "Option disables native queue")
 	GameData.native_casings_enabled = true
-	for wid in ["ak47", "m3", "p90", "elite", "glock18", "revolver", "taser"]:
+	for wid in GameData.native_casings["weapons"].keys() + ["revolver", "taser"]:
 		system.clear_all()
 		shot(player, wid)
 		var expected := 0 if wid in ["revolver", "taser"] else 1
+		if not system.pending.is_empty():
+			var cue: Dictionary = system.pending[0]["cue"]
+			var bound := false
+			for skeleton in player._vm_model_root.find_children("*", "Skeleton3D", true, false):
+				bound = bound or skeleton.find_bone(String(cue["bone"])) >= 0
+			expect(bound, "Source port resolves an animated bone, not fallback: " + wid)
+			var frame: Transform3D = player.native_casing_frame(cue)
+			expect(frame.origin.distance_to(player.get_eye_position()) < 2.0, "Animated port has metre-scale placement: " + wid)
 		expect(system.pending.size() == expected, "Production shot ejection count " + wid)
 		system._physics_process(1.0)
 	if not world.ambient_chickens.is_empty():
@@ -125,8 +133,21 @@ func _run() -> void:
 			expect(anim.get_animation_list().size() >= expected, "Native clip count " + resource)
 			for clip in ["walk", "run", "idle"]:
 				if anim.has_animation(clip):
+					anim.get_animation(clip).loop_mode = Animation.LOOP_LINEAR
 					anim.play(clip)
+					anim.advance(0.0)
+					var skeletons := instance.find_children("*", "Skeleton3D", true, false)
+					var before: Array[Transform3D] = []
+					if not skeletons.is_empty():
+						for bone in range(skeletons[0].get_bone_count()):
+							before.append(skeletons[0].get_bone_pose(bone))
 					anim.advance(0.35)
+					if clip != "idle" and not skeletons.is_empty():
+						var moving := 0
+						for bone in range(before.size()):
+							if not before[bone].is_equal_approx(skeletons[0].get_bone_pose(bone)):
+								moving += 1
+						expect(moving >= 3, "Native skeletal motion, not frozen bind pose: " + resource + ":" + clip)
 					expect(anim.current_animation == clip, "Real playback " + resource + ":" + clip)
 		instance.queue_free()
 	if capture:
@@ -142,20 +163,51 @@ func _capture_gameplay(world: GameWorld, player: PlayerController) -> void:
 	player.weapon_ctrl.equip_weapon_by_id("ak47")
 	player.look_pitch = deg_to_rad(-20.0)
 	player.camera.current = true
-	if not world.ambient_chickens.is_empty():
-		var chicken := world.ambient_chickens[0]
-		player.global_position = chicken.home + Vector3(0, 0.1, 2.5)
-		player.look_yaw = 0.0
+	var space := world.get_world_3d().direct_space_state
+	var positioned := false
+	for chicken in world.ambient_chickens:
+		for angle in range(12):
+			var offset := Vector3(sin(angle * TAU / 12.0), 0, cos(angle * TAU / 12.0)) * 2.8
+			var floor_query := PhysicsRayQueryParameters3D.create(chicken.home + offset + Vector3.UP * 2, chicken.home + offset - Vector3.UP * 3, 1)
+			var floor_hit := space.intersect_ray(floor_query)
+			if floor_hit.is_empty() or floor_hit["normal"].y < 0.75:
+				continue
+			var position: Vector3 = floor_hit["position"] + Vector3.UP * 0.03
+			var body_query := PhysicsShapeQueryParameters3D.new()
+			body_query.shape = player._capsule
+			body_query.collision_mask = 1
+			body_query.transform = Transform3D(Basis.IDENTITY, position + Vector3.UP * player.STAND_HEIGHT * 0.5)
+			if not space.intersect_shape(body_query, 1).is_empty():
+				continue
+			var eye := position + Vector3.UP * 1.66
+			var target := chicken.global_position + Vector3.UP * 0.20
+			if not space.intersect_ray(PhysicsRayQueryParameters3D.create(eye, target, 1)).is_empty():
+				continue
+			player.global_position = position
+			player._prev_phys_pos = position
+			player.velocity = Vector3.ZERO
+			var direction := target - eye
+			player.look_yaw = atan2(-direction.x, -direction.z)
+			player.look_pitch = atan2(direction.y, Vector2(direction.x, direction.z).length())
+			positioned = true
+			break
+		if positioned:
+			break
+	expect(positioned, "Gameplay review has free player capsule and unobstructed chicken view")
+	player.viewmodel_pivot.visible = true
+	player._vm_container.visible = true
+	player._vm_layer.visible = true
 	world.native_casing_system.set_physics_process(true)
 	shot(player, "ak47")
 	for i in range(8):
 		await get_tree().process_frame
+		RenderingServer.force_draw(false)
 	RenderingServer.force_draw(false)
 	var image := get_viewport().get_texture().get_image()
 	expect(not image.is_empty(), "Real OpenGL gameplay render")
 	image.save_png("/tmp/native-world-review/italy_hud_chicken.png")
-	image.resize(640, 360)
-	image.save_jpg("/tmp/native-world-review/italy_hud_chicken.jpg", 0.55)
+	image.resize(480, 270)
+	image.save_jpg("/tmp/native-world-review/italy_hud_chicken.jpg", 0.35)
 	# Separate animated model review, never replace live bots with incompatible rigs.
 	world.hide()
 	world.hud.visible = false
@@ -163,6 +215,7 @@ func _capture_gameplay(world: GameWorld, player: PlayerController) -> void:
 	var camera := Camera3D.new()
 	add_child(camera)
 	camera.current = true
+	camera.fov = 40.0
 	var environment := Environment.new()
 	environment.background_mode = Environment.BG_COLOR
 	environment.background_color = Color(0.055, 0.075, 0.10)
@@ -178,11 +231,13 @@ func _capture_gameplay(world: GameWorld, player: PlayerController) -> void:
 	for resource in ["ct", "t", "hostage", "defuser_item", "chicken"]:
 		var instance := GameData.get_model_scene("native/" + resource).instantiate() as Node3D
 		add_child(instance)
+		GameData.apply_native_world_material(instance, resource)
 		if resource in ["defuser_item", "chicken"]:
 			instance.scale = Vector3.ONE * 2.2
 			instance.position.y = 0.65
 		var players := instance.find_children("*", "AnimationPlayer", true, false)
 		if not players.is_empty():
+			players[0].get_animation("walk").loop_mode = Animation.LOOP_LINEAR
 			players[0].play("walk")
 			players[0].advance(0.2)
 		for phase in range(2):
@@ -192,7 +247,7 @@ func _capture_gameplay(world: GameWorld, player: PlayerController) -> void:
 			RenderingServer.force_draw(false)
 			var rendered := get_viewport().get_texture().get_image()
 			rendered.save_png("/tmp/native-world-review/%s_%d.png" % [resource, phase])
-			rendered.resize(640, 360)
-			rendered.save_jpg("/tmp/native-world-review/%s_%d.jpg" % [resource, phase], 0.55)
+			rendered.resize(480, 270)
+			rendered.save_jpg("/tmp/native-world-review/%s_%d.jpg" % [resource, phase], 0.35)
 		instance.queue_free()
 		await get_tree().process_frame

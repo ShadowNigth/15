@@ -45,6 +45,7 @@ def main(source,guns):
         copy(assets+'Models/ScCsgoKnives/'+name+'.glb','assets/models/native/'+name+'.glb')
     for name in ['hostage','defuser_item']:
         copy('src/ScCsgoTactical/Assets/Models/ScCsgoTactical/'+name+'.glb','assets/models/native/'+name+'.glb')
+    copy('src/ScCsgoTactical/Assets/Textures/ScCsgoTactical/defuser_item.png','assets/models/native/defuser_item.png')
     # Restore native cached local TRS samples to the original node names, not a fabricated idle.
     for role in ['ct','t']:
         src=source/f'src/ScCsgoTactical/Assets/Models/ScCsgoTactical/{role}.glb';d,blob=gl.read_glb(str(src));d['animations']=[]
