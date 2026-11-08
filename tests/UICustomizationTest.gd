@@ -79,6 +79,11 @@ func run() -> void:
 	editor.populate_inspector()
 	await capture("editor_hud")
 	preview_resize(editor)
+	editor.show_tab(false)
+	editor.set_crosshair("dot", true)
+	editor.show_tab(true)
+	await get_tree().process_frame
+	expect(is_instance_valid(editor.hud_preview), "Rapid tab changes preserve a usable preview")
 	var saved := UICustomization.snapshot()
 	expect(UICustomization.save_preferences("user://ui_test.cfg") == OK, "Config file saved")
 	UICustomization.reset_crosshair()

@@ -266,6 +266,8 @@ func reset_tab() -> void:
 	populate_inspector()
 
 func save_and_close() -> void:
+	if closing:
+		return
 	var result := UICustomization.save_preferences(preference_path)
 	if result != OK:
 		message.text = "No se pudo guardar (%s). Los cambios siguen en vista previa." % error_string(result)
@@ -274,6 +276,8 @@ func save_and_close() -> void:
 	queue_free()
 
 func cancel() -> void:
+	if closing:
+		return
 	UICustomization.restore(before)
 	closing = true
 	queue_free()
@@ -284,6 +288,8 @@ func _exit_tree() -> void:
 	Input.mouse_mode = old_mouse_mode
 
 func _input(event: InputEvent) -> void:
+	if closing:
+		return
 	if event is InputEventKey and event.pressed:
 		if event.keycode == KEY_ESCAPE:
 			get_viewport().set_input_as_handled()

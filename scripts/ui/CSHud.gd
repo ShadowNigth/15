@@ -1345,6 +1345,8 @@ func register_layout_element(id: String, control: Control) -> void:
 
 
 func apply_custom_layout() -> void:
+	if not is_inside_tree():
+		return
 	var area := get_viewport().get_visible_rect().size
 	for id in layout_elements:
 		var control: Control = layout_elements[id]
