@@ -3,6 +3,10 @@ on:
   push:
     paths:
       - 'scripts/ui/**'
+      - 'scripts/actors/CSActor.gd'
+      - 'scripts/actors/ClassicPoseFit.gd'
+      - 'scripts/actors/PlayerController.gd'
+      - 'scripts/weapons/WeaponController.gd'
       - 'tests/UICustomization*'
       - 'project.godot'
       - '.github/workflows/ui-editor-qa.yml'

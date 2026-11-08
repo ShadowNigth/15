@@ -2695,11 +2695,13 @@ func _maybe_share_loadout() -> void:
 
 
 func apply_goldsrc_movement(wish_dir_world: Vector3, want_jump: bool, want_crouch: bool, want_walk: bool, delta: float) -> void:
-	var negotiated := traffic.steer(self, wish_dir_world, RoundManager.actors)
+	var negotiated := traffic.steer(self, wish_dir_world, RoundManager.actors, delta)
 	if traffic.mode in ["wait", "yield", "follow", "sidestep"]:
 		want_jump = false
 		_stuck_timer = 0.0
 		_cur_node_elapsed = 0.0
+	if traffic.mode == "retry":
+		want_jump = false
 	super.apply_goldsrc_movement(negotiated, want_jump, want_crouch, want_walk, delta)
 
 func get_traffic_intent() -> Vector3:

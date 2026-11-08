@@ -6,6 +6,8 @@ var peer: WeakRef
 var intent := Vector3.ZERO
 var retreat := Vector3.ZERO
 var _side := Vector3.ZERO
+var _stalled_time: float = 0.0
+var _retry_time: float = 0.0
 
 func reset() -> void:
 	mode = "clear"
@@ -13,6 +15,8 @@ func reset() -> void:
 	intent = Vector3.ZERO
 	retreat = Vector3.ZERO
 	_side = Vector3.ZERO
+	_stalled_time = 0.0
+	_retry_time = 0.0
 
 static func priority(actor: CSActor) -> int:
 	if actor.is_human:
@@ -22,6 +26,8 @@ static func priority(actor: CSActor) -> int:
 	var planted := RoundManager.planted_c4 as PlantedC4
 	if planted != null and planted.defuser_actor == actor:
 		return 90
+	if actor.has_method("_is_leading_hostage") and bool(actor.call("_is_leading_hostage")):
+		return 70
 	if actor.weapon_ctrl != null and String(actor.weapon_ctrl.slots.get(5, "")) == "c4":
 		return 60
 	return 0
@@ -35,8 +41,12 @@ func safe_motion(actor: CSActor, direction: Vector3, distance: float = 0.95) -> 
 	var floor_hit := actor.get_world_3d().direct_space_state.intersect_ray(query)
 	return not floor_hit.is_empty() and (floor_hit.normal as Vector3).y >= 0.7
 
-func steer(actor: CSActor, desired: Vector3, actors: Array) -> Vector3:
+func steer(actor: CSActor, desired: Vector3, actors: Array, delta: float = 1.0/60.0) -> Vector3:
 	intent = desired
+	if _retry_time > 0.0:
+		_retry_time = maxf(0.0, _retry_time-delta)
+		mode = "retry"
+		return desired
 	mode = "clear"
 	if actor.on_ladder or not actor.is_on_floor() or desired.length_squared() < 0.01:
 		peer = null
@@ -61,7 +71,21 @@ func steer(actor: CSActor, desired: Vector3, actors: Array) -> Vector3:
 		if relative.dot(retreat) < 0.2 and absf(relative.y) < 0.65:
 			other = retained
 	if other == null:
+		_stalled_time = 0.0
 		peer = null
+		return desired
+	# A virtual encounter must never deadlock a mission. After sustained lack
+	# of progress between bots, hand intent briefly back to native navigation.
+	# This does not move/teleport actors, change their masks or force a human back.
+	if Vector2(actor.velocity.x, actor.velocity.z).length() < 0.15:
+		_stalled_time += delta
+	else:
+		_stalled_time = maxf(0.0, _stalled_time-delta*0.5)
+	if _stalled_time > 2.5 and not other.is_human:
+		_stalled_time = 0.0
+		_retry_time = 0.9
+		peer = null
+		mode = "retry"
 		return desired
 	var gap := other.global_position-actor.global_position
 	gap.y = 0
@@ -80,7 +104,7 @@ func steer(actor: CSActor, desired: Vector3, actors: Array) -> Vector3:
 	if peer == null or peer.get_ref() != other:
 		peer = weakref(other)
 		_side = Vector3.ZERO
-		retreat = -gap.normalized() if gap.length_squared() > 0.01 else -heading
+		retreat = -heading
 	# Step to the actor's right, then left; keep the side until there is clearance.
 	if _side.length_squared() > 0.01 and safe_motion(actor, _side):
 		mode = "sidestep"

@@ -1197,6 +1197,7 @@ func _cancel_spawn_protection() -> void:
 		(actor as CSActor).dm_protection = 0.0
 
 func suspend_input() -> void:
+	_input_gate_generation = GameplayInputGate.generation
 	# Cancel queued gameplay without throwing a primed grenade into an open menu.
 	burst_remaining = 0
 	_revolver_windup = 0.0

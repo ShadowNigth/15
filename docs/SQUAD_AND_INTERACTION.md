@@ -10,7 +10,10 @@ audio, materiales y renderer `gl_compatibility` existentes.
 - `TeammateTraffic`: negociación virtual de encuentros, prioridad humana/VIP/
   defusor/portador, seguimiento, espera, desplazamiento lateral y retroceso.
   Comprueba cápsula y apoyo antes de escapar lateralmente. Mantiene dirección
-  durante el encuentro. La espera no consume los temporizadores que saltan o
+  durante el encuentro. Prioriza también al rescatador que ya lleva un rehén.
+  Si varios bots quedan sin progreso, un reintento acotado devuelve el control
+  a su navegación original sin teletransportes ni saltos forzados.
+  La espera no consume los temporizadores que saltan o
   descartan nodos de navegación. No modifica las máscaras 2/1 ni la función
   GoldSrc de `CSActor`.
 - `BombSquad`: elección compartida con kit, tiempo disponible, recorrido y nodos
