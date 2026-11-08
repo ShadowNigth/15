@@ -7,7 +7,7 @@ spawn points, bombsite volumes, prices, navigation links, or loading systems.
 
 `tools/polish_dust2.py` reads the pinned pre-polish GLB from commit
 `511be65e61447fd5801e00898a76a369b8d043ff`. It removes zero-area triangles,
-splits affected world triangles at T-junctions, and groups the world into 48 m
+splits affected world triangles at T-junctions, and groups the world into 32 m
 sectors for ordinary renderer frustum culling. It does not move the exterior
 boundary or add invisible collision hulls. Render and collision use the same
 repaired mesh. Extremely thin triangles retain their original corners.
@@ -16,7 +16,7 @@ Dust2 import explicitly disables lossy attribute compression, automatic LOD
 simplification and unused shadow meshes. This avoids re-quantizing the repaired
 sector boundaries/UVs and avoids generating shadow data for an unshadowed BSP.
 
-Original albedo UVs and lightmap UVs are retained; new edge/center vertices
+Original albedo UVs and lightmap UVs are retained; new edge vertices
 interpolate those coordinates. Texture alignment/scale is not globally changed:
 blind reprojection would destroy authored wall/door alignment. The static test
 checks reproducibility, both UV sets, map extents, area per material, texture

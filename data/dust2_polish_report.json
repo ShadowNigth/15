@@ -1,11 +1,11 @@
 {
   "input_triangles": 9932,
   "degenerate_triangles_removed": 665,
-  "t_junction_triangles_repaired": 632,
-  "output_triangles": 11351,
-  "world_chunks": 14,
+  "t_junction_triangles_repaired": 626,
+  "output_triangles": 10074,
+  "world_chunks": 27,
   "source_sha256": "a584a7669e4984af4044341b8f49c665f1c66854af7214beb4d4dba83542e5e0",
-  "output_sha256": "a6d52a5a1e35708ade0433020e6ad1d5b041e805312f3eaa1d4e66af01cddb32",
+  "output_sha256": "23cc06abbeffabbc39db2af4544aefc1e0022df5d7c05967a166096768bfdaab",
   "source_commit": "511be65e61447fd5801e00898a76a369b8d043ff",
-  "chunk_size_m": 48.0
+  "chunk_size_m": 32.0
 }

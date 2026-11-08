@@ -15,7 +15,7 @@ import subprocess
 
 BASE = '511be65e61447fd5801e00898a76a369b8d043ff'
 PATH = 'assets/maps/de_dust2.glb'
-CELL = 48.0
+CELL = 32.0
 EPS = 0.00016  # Below 0.006 original GoldSrc units; not a gameplay geometry weld.
 
 
@@ -114,12 +114,30 @@ def polish(source):
                             split = {k: tuple(x+(y-x)*t for x, y in zip(a[k], b[k])) for k in a}
                             split['POSITION'] = p
                             polygon.append(split)
-                if len(polygon) > 3:
-                    center = {k: tuple(sum(v[k][i] for v in tri)/3 for i in range(len(tri[0][k]))) for k in tri[0]}
-                    triangles = [[center, polygon[i], polygon[(i+1)%len(polygon)]] for i in range(len(polygon))]
+                triangles = [tri]
+                # Split only boundary edges: n cuts need n+1 triangles, not a
+                # centroid fan's n+3. Preserve winding and authored UV seams.
+                for split in polygon:
+                    if split in tri:
+                        continue
+                    inserted = False
+                    for index, current in enumerate(triangles):
+                        for edge in range(3):
+                            a, b, c = current[edge], current[(edge+1)%3], current[(edge+2)%3]
+                            d = tuple(b['POSITION'][i]-a['POSITION'][i] for i in range(3))
+                            length2 = sum(x*x for x in d)
+                            if length2 < EPS*EPS:
+                                continue
+                            offset = tuple(split['POSITION'][i]-a['POSITION'][i] for i in range(3))
+                            t = sum(offset[i]*d[i] for i in range(3))/length2
+                            if .00001 < t < .99999 and sum((offset[i]-t*d[i])**2 for i in range(3)) < EPS*EPS:
+                                triangles[index:index+1] = [[a, split, c], [split, b, c]]
+                                inserted = True
+                                break
+                        if inserted:
+                            break
+                if len(triangles) > 1:
                     report['t_junction_triangles_repaired'] += 1
-                else:
-                    triangles = [tri]
                 centroid = [sum(v['POSITION'][i] for v in tri)/3 for i in range(3)]
                 cell = (math.floor(centroid[0]/CELL), math.floor(centroid[2]/CELL)) if world else (0, 0)
                 valid_triangles = []
@@ -131,7 +149,7 @@ def polish(source):
                         valid_triangles.append(repaired)
                 if any(not any(v == original for t in valid_triangles for v in t) for original in tri):
                     valid_triangles = [tri]  # Do not lose an authored corner on an extremely thin face.
-                    if len(polygon) > 3:
+                    if len(triangles) > 1:
                         report['t_junction_triangles_repaired'] -= 1
                 buckets[(cell, prim['material'])].extend(valid_triangles)
         cells = sorted(set(cell for cell, _ in buckets))
