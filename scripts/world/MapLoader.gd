@@ -188,6 +188,9 @@ static func build_map(parent: Node3D, map_data: Dictionary) -> Dictionary:
 					elif has_grate_tex:
 						sc.set_meta("surface_mat", "G")
 
+		if String(map_data.get("name", "")) == "de_aztec" and sub_idx == 1 and cname == "func_illusionary":
+			AztecPolish.restore_bridge_floor(mi)
+
 		# Wrap interactive breakables, buttons, and doors
 		if cname == "func_breakable":
 			var brk := BSPBreakable.new()

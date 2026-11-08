@@ -132,11 +132,23 @@ func run() -> void:
 	validate_map(built)
 	await get_tree().physics_frame
 	await get_tree().physics_frame
+	var restored_bridge_hits := 0
 	for i in range(rays.size()):
 		var hit := ray(rays[i][0], rays[i][1])
 		var expected: Vector3 = reference[i].position
 		var actual: Vector3 = hit.get("position", Vector3.INF)
-		expect((not actual.is_finite() and not expected.is_finite()) or (actual.is_finite() and expected.is_finite() and actual.distance_to(expected) < 0.003), "Collision equivalence probe %d expected %s actual %s" % [i, expected, actual])
+		var is_bridge_fix: bool = not hit.is_empty() and (hit.collider as Node).has_meta("aztec_bridge_floor")
+		if is_bridge_fix:
+			restored_bridge_hits += 1
+			expect(actual.x >= -24.001 and actual.x <= -19.999 and actual.z >= -28.001 and actual.z <= -3.499 and actual.y >= -7.05 and actual.y <= -5.99 and (not expected.is_finite() or expected.y < actual.y - 1), "Only the missing bridge support may change baseline probes")
+		else:
+			expect((not actual.is_finite() and not expected.is_finite()) or (actual.is_finite() and expected.is_finite() and actual.distance_to(expected) < 0.003), "Collision equivalence probe %d expected %s actual %s" % [i, expected, actual])
+	expect(restored_bridge_hits > 0, "Physical comparison detects and bounds the restored bridge support")
+	var bridge_nodes := repaired.find_children("AztecBridgeWalkSurface", "StaticBody3D", true, false)
+	expect(bridge_nodes.size() == 1, "Exactly one targeted bridge support, no blanket illusionary collision")
+	for z in [-26.0, -22.0, -17.0, -12.0, -5.0]:
+		var bridge_hit := ray(Vector3(-22, -4.5, z), Vector3(-22, -12, z))
+		expect(not bridge_hit.is_empty() and (bridge_hit.collider as Node).has_meta("aztec_bridge_floor"), "Visible deck has physical support along its length")
 	var materials: Dictionary = repaired.get_meta("world_materials")
 	var waters := 0
 	var glass := 0
@@ -145,6 +157,8 @@ func run() -> void:
 		var kind: String = material.shader.resource_path.get_file()
 		if kind == "goldsrc_world.gdshader":
 			expect(float(material.get_shader_parameter("relief_depth")) <= 0.0201, "Controlled stone/wood/metal relief")
+			if material.resource_name in ["generic035", "generic039"]:
+				expect(float(material.get_shader_parameter("material_roughness")) >= 0.95, "Concrete tile is not treated as metal")
 		elif kind == "water.gdshader":
 			waters += 1
 			expect(is_equal_approx(float(material.get_shader_parameter("water_roughness")), 0.48), "Matte water, not a chrome surface")

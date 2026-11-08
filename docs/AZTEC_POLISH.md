@@ -17,8 +17,12 @@ intentional gaps in planks, invent missing walls or change gameplay JSON.
 Lossy mesh compression, automatic LOD and unused shadow meshes are disabled for
 Aztec so repaired boundaries/UVs are not re-quantized. Visible and collision meshes
 share the repaired geometry; water primitives remain excluded from solid collision.
-Original glass/rope/foliage brush behavior remains intentional, not indiscriminately
-removed as an "invisible wall". Thin triangles that cannot safely split retain
+Original glass/rope/foliage brush behavior is not indiscriminately removed as an
+"invisible wall". One specific gameplay repair restores the missing support of
+submodel 1: the visible bridge net was imported as func_illusionary without its
+player clip hull. A surface-only collider follows its existing upward-facing net
+triangles; no side walls, river-spanning box or new visual geometry is added.
+Baseline ray differences are permitted only on this bounded bridge support. Thin triangles that cannot safely split retain
 original corners. Report: `data/aztec_polish_report.json`.
 
 ## Lighting and material profile
