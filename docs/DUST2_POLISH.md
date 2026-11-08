@@ -12,6 +12,10 @@ sectors for ordinary renderer frustum culling. It does not move the exterior
 boundary or add invisible collision hulls. Render and collision use the same
 repaired mesh. Extremely thin triangles retain their original corners.
 
+Dust2 import explicitly disables lossy attribute compression, automatic LOD
+simplification and unused shadow meshes. This avoids re-quantizing the repaired
+sector boundaries/UVs and avoids generating shadow data for an unshadowed BSP.
+
 Original albedo UVs and lightmap UVs are retained; new edge/center vertices
 interpolate those coordinates. Texture alignment/scale is not globally changed:
 blind reprojection would destroy authored wall/door alignment. The static test

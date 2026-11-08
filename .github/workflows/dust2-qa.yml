@@ -6,6 +6,7 @@ on:
       - 'scripts/world/Dust2Polish.gd'
       - 'scripts/world/MapLoader.gd'
       - 'assets/maps/de_dust2.glb'
+      - 'assets/maps/de_dust2.glb.import'
       - 'assets/shaders/goldsrc_world.gdshader'
       - 'tools/polish_dust2.py'
       - 'tests/*Dust2*'

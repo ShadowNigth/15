@@ -41,7 +41,7 @@ func screenshots(root: Node3D, suffix: String) -> void:
 		for frame in range(3):
 			await get_tree().process_frame
 			RenderingServer.force_draw(false)
-		primitives += int(RenderingServer.viewport_get_render_info(get_viewport().get_viewport_rid(), RenderingServer.VIEWPORT_RENDER_INFO_PRIMITIVES_IN_FRAME))
+		primitives += int(RenderingServer.viewport_get_render_info(get_viewport().get_viewport_rid(), RenderingServer.VIEWPORT_RENDER_INFO_TYPE_VISIBLE, RenderingServer.VIEWPORT_RENDER_INFO_PRIMITIVES_IN_FRAME))
 		DirAccess.make_dir_recursive_absolute("/tmp/dm-polish-review")
 		expect(get_viewport().get_texture().get_image().save_png("/tmp/dm-polish-review/dust2_" + view[0] + "_" + suffix + ".png") == OK, "Capture " + view[0] + suffix)
 	print("[DUST2] rendered primitives over four identical views ", suffix, "=", primitives)
