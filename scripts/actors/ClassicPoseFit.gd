@@ -68,7 +68,7 @@ func fit(actor, skeleton: Skeleton3D, native_action: bool) -> void:
 				continue
 			var ankle := skeleton.global_transform*skeleton.get_bone_global_pose(foot).origin
 			var query := PhysicsRayQueryParameters3D.create(ankle+Vector3.UP*0.18, ankle-Vector3.UP*0.28, 1)
-			var hit := actor.get_world_3d().direct_space_state.intersect_ray(query)
+			var hit: Dictionary = actor.get_world_3d().direct_space_state.intersect_ray(query)
 			if hit.is_empty() or (hit.normal as Vector3).y < 0.8:
 				continue
 			var offset := clampf((hit.position as Vector3).y+0.055-ankle.y, -0.10, 0.10)

@@ -31,6 +31,24 @@ func _run() -> void:
 	block(Vector3(0, 3, 0), Vector3(0.3, 6, 30))
 	await get_tree().physics_frame
 	await get_tree().physics_frame
+	# Repeat the real seeded expansion on identical support, with automatic ticks
+	# disabled. This compares simulation output, not merely stored seed numbers.
+	var replay: Array[IncendiaryArea] = []
+	for pass_index in range(2):
+		var same := IncendiaryArea.new()
+		add_child(same)
+		same.position = Vector3(-6, 0.02, -6)
+		same.setup_fire(null, "incendiary", 4193)
+		same.set_physics_process(false)
+		same.set_process(false)
+		for expansion in range(12):
+			same._expand_one()
+		replay.append(same)
+	expect(replay[0]._patches.size() == replay[1]._patches.size(), "same seed and geometry reproduce patch count")
+	for i in range(mini(replay[0]._patches.size(), replay[1]._patches.size())):
+		expect((replay[0]._patches[i].pos as Vector3).is_equal_approx(replay[1]._patches[i].pos as Vector3), "same seed reproduces connected patch positions")
+	for same in replay:
+		same.queue_free()
 	var fire := IncendiaryArea.new()
 	add_child(fire)
 	fire.position = Vector3(-2, 0.02, 0)
@@ -78,6 +96,10 @@ func _run() -> void:
 	expect(grenade.velocity.x < 0, "wall bounce reverses incoming normal velocity")
 	expect(grenade.global_position.x < -0.15, "sweep prevents wall tunneling")
 	expect(grenade._bounces >= 1, "bounce passes through native impact/audio path")
+	for frame in range(35):
+		await get_tree().physics_frame
+	expect(grenade._bounces >= 2, "floor impact also uses the actual bounce path")
+	expect(grenade.global_position.y > -0.01 and grenade.velocity.length() < 9.0, "floor bounce remains above support and dissipates energy")
 	grenade.queue_free()
 	fire.queue_free()
 	cloud.queue_free()

@@ -39,28 +39,41 @@ static func elect_defuser(bomb: PlantedC4, actors: Array, nav: BotNavigator = nu
 	return best
 
 static func objective_node(actor: CSActor, center: Vector3, nav: BotNavigator, actors: Array) -> int:
-	# Rank teammates once by identity; allocate different real, reachable graph nodes.
+	var defuser := elect_defuser(RoundManager.planted_c4 as PlantedC4, actors) if actor.team == "CT" and is_instance_valid(RoundManager.planted_c4) else null
 	var rank := 0
+	var count := 0
 	for raw in actors:
 		var mate := raw as CSActor
-		if is_instance_valid(mate) and mate.is_alive and not mate.is_human and mate.team == actor.team and mate.get_instance_id() < actor.get_instance_id():
-			rank += 1
-	var candidates: Array[int] = []
+		if is_instance_valid(mate) and mate.is_alive and not mate.is_human and mate.team == actor.team and mate != defuser:
+			count += 1
+			if mate.get_instance_id() < actor.get_instance_id():
+				rank += 1
+	var angle := TAU * float(rank) / maxf(1.0, float(count))
+	var ideal := center + Vector3(cos(angle), 0, sin(angle))*6.0
+	var best := -1
+	var best_score := INF
+	var banned: Dictionary = actor.call("get_bomb_banned_nodes") if actor.has_method("get_bomb_banned_nodes") else {}
 	for i in range(nav.waypoints.size()):
 		var p := nav.get_node_pos(i)
 		var d := p.distance_to(center)
-		if d < 3.0 or d > 11.0 or absf(p.y-center.y) > 2.0 or (nav.get_node_flags(i) & BotNavigator.ACTION_FLAGS) != 0:
+		if d < 3.0 or d > 11.0 or absf(p.y-center.y) > 2.0 or (nav.get_node_flags(i) & BotNavigator.ACTION_FLAGS) != 0 or banned.has(i):
 			continue
-		if nav.is_node_occupied(i, actor):
+		var score := p.distance_squared_to(ideal)
+		if score >= best_score or nav.is_node_occupied(i, actor):
 			continue
-		if nav.plan_node_path(actor.global_position, i, actor.team, BotNavigator.PATH_SAFE).is_empty():
+		var crowded := false
+		for raw in actors:
+			var mate := raw as CSActor
+			if is_instance_valid(mate) and mate != actor and mate.is_alive and mate.team == actor.team and mate.has_method("get_bomb_guard_position"):
+				var occupied: Vector3 = mate.call("get_bomb_guard_position", nav)
+				if occupied.distance_squared_to(p) < 6.25:
+					crowded = true
+					break
+		if crowded or nav.plan_node_path(actor.global_position, i, actor.team, BotNavigator.PATH_SAFE, false, null, 0, banned).is_empty():
 			continue
-		candidates.append(i)
-		if candidates.size() >= 12:
-			break
-	if candidates.is_empty():
-		return -1
-	return candidates[rank % candidates.size()]
+		best = i
+		best_score = score
+	return best
 
 static func escort_slot(actor: CSActor, actors: Array) -> Dictionary:
 	var carrier: CSActor = null

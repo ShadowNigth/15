@@ -556,7 +556,8 @@ func _physics_process(delta: float) -> void:
 	# Priority 1: CT Defusing Planted C4 when clear (YaPB TaskId::DefuseBomb)!
 	if team == "CT" and target_enemy == null and is_instance_valid(RoundManager.planted_c4):
 		var c4 := RoundManager.planted_c4 as PlantedC4
-		if c4 and global_position.distance_to(c4.global_position) <= 2.35 and BombSquad.elect_defuser(c4, RoundManager.actors) == self:
+		var defuse_nav: BotNavigator = RoundManager.game_world.get("bot_navigator") if is_instance_valid(RoundManager.game_world) else null
+		if c4 and global_position.distance_to(c4.global_position) <= 2.35 and UseSelection.visible(self, c4.global_position+Vector3.UP*0.15) and BombSquad.elect_defuser(c4, RoundManager.actors, defuse_nav) == self:
 			if c4.defuser_actor == null or c4.defuser_actor == self:
 				_release_camp_spot()
 				_defusing_ref = c4
@@ -1745,12 +1746,16 @@ func _update_tactical_objective() -> void:
 			_release_camp_spot()
 			_bomb_role_node = -1
 			_has_goal = false
+			_node_path.clear()
 			_bomb_role_epoch = epoch
 		bomb_role = role
 		if role == "defuse":
 			if not _has_goal or _node_path.is_empty() or _goal_pos.distance_to(bomb.global_position) > 2.4:
 				_plan_to_world_pos(nav, bomb.global_position, false, BotNavigator.PATH_FAST)
 		else:
+			if _bomb_role_node >= 0 and _banned_nodes.has(_bomb_role_node):
+				_release_camp_spot()
+				_bomb_role_node = -1
 			if _bomb_role_node < 0:
 				_bomb_role_node = BombSquad.objective_node(self, bomb.global_position, nav, RoundManager.actors)
 				if _bomb_role_node >= 0:
@@ -2700,3 +2705,6 @@ func get_traffic_intent() -> Vector3:
 
 func get_bomb_banned_nodes() -> Dictionary:
 	return _banned_nodes
+
+func get_bomb_guard_position(nav: BotNavigator) -> Vector3:
+	return nav.get_node_pos(_bomb_role_node) if bomb_role in ["cover", "guard"] and _bomb_role_node >= 0 else Vector3.INF

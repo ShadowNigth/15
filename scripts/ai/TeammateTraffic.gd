@@ -19,7 +19,8 @@ static func priority(actor: CSActor) -> int:
 		return 100
 	if actor.is_vip:
 		return 80
-	if is_instance_valid(RoundManager.planted_c4) and RoundManager.planted_c4.defuser_actor == actor:
+	var planted := RoundManager.planted_c4 as PlantedC4
+	if planted != null and planted.defuser_actor == actor:
 		return 90
 	if actor.weapon_ctrl != null and String(actor.weapon_ctrl.slots.get(5, "")) == "c4":
 		return 60
