@@ -2696,6 +2696,11 @@ func _maybe_share_loadout() -> void:
 
 func apply_goldsrc_movement(wish_dir_world: Vector3, want_jump: bool, want_crouch: bool, want_walk: bool, delta: float) -> void:
 	var negotiated := traffic.steer(self, wish_dir_world, RoundManager.actors, delta)
+	# Authored hostage/VIP approaches may negotiate a wait, never a lateral or
+	# reverse detour off their precise staircase, doorway or extraction route.
+	var precision_route := is_vip or _hostage_target_idx >= 0 or _is_leading_hostage() or _hostage_direct_active or _vip_escort_direct_active
+	if precision_route and traffic.mode in ["sidestep", "yield"]:
+		negotiated = Vector3.ZERO
 	if traffic.mode in ["wait", "yield", "follow", "sidestep"]:
 		want_jump = false
 		_stuck_timer = 0.0

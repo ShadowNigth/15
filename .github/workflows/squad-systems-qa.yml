@@ -18,6 +18,8 @@ jobs:
     timeout-minutes: 25
     steps:
       - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
       - uses: actions/setup-python@v5
         with:
           python-version: '3.11'
@@ -44,6 +46,7 @@ jobs:
           godot --headless --path . --import 2>&1 | tee /tmp/squad-import.log
           ! grep -Eq 'SCRIPT ERROR:|Parse Error:|Compile Error:' /tmp/squad-import.log
       - name: Real physics, input, native animation and audio regressions
+        id: regressions
         shell: bash
         run: |
           set -o pipefail
@@ -81,6 +84,23 @@ jobs:
       - name: Publish classic_pose_and_weapon framebuffer
         if: always()
         run: python tools/publish_squad_capture.py classic_pose_and_weapon
+      - name: Compare baseline Estate if a mission regresses
+        if: ${{ failure() && steps.regressions.outcome == 'failure' }}
+        continue-on-error: true
+        shell: bash
+        run: |
+          python - <<'PY'
+          import subprocess
+          from pathlib import Path
+          paths = subprocess.check_output(['git', 'diff', '194a540e', 'HEAD', '--name-only', '--', 'scripts'], text=True).splitlines()
+          for path in paths:
+              old = subprocess.run(['git', 'show', '194a540e:'+path], capture_output=True)
+              if old.returncode == 0:
+                  Path(path).write_bytes(old.stdout)
+          PY
+          set -o pipefail
+          timeout 210s godot --headless --path . --fixed-fps 60 res://tests/MissionObjectiveRegressionTest.tscn -- --scenario=estate 2>&1 | tee /tmp/BaselineEstateTest.log
+          grep -q 'PASS:' /tmp/BaselineEstateTest.log
       - name: Diagnostic logs
         if: always()
         run: |

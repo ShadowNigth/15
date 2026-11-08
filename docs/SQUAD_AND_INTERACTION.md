@@ -12,7 +12,9 @@ audio, materiales y renderer `gl_compatibility` existentes.
   Comprueba cápsula y apoyo antes de escapar lateralmente. Mantiene dirección
   durante el encuentro. Prioriza también al rescatador que ya lleva un rehén.
   Si varios bots quedan sin progreso, un reintento acotado devuelve el control
-  a su navegación original sin teletransportes ni saltos forzados.
+  a su navegación original sin teletransportes ni saltos forzados. Los tramos
+  precisos de VIP/rehenes sólo aceptan espera: no se desvían lateralmente ni
+  retroceden fuera de sus escaleras, accesos o aproximaciones de extracción.
   La espera no consume los temporizadores que saltan o
   descartan nodos de navegación. No modifica las máscaras 2/1 ni la función
   GoldSrc de `CSActor`.
