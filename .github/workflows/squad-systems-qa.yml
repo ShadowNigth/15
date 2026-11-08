@@ -48,7 +48,7 @@ jobs:
         run: |
           set -o pipefail
           status=0
-          for suite in SquadInteractionTest SquadGameplayTest UtilityPropagationTest NativeGunAnimationTest NativeAudioTest KillFirePolishTest; do
+          for suite in SquadInteractionTest SquadGameplayTest UtilityPropagationTest NativeGunAnimationTest NativeAudioTest KillFirePolishTest IncendiaryProceduralTest TacticalAIRegressionTest MissionObjectiveRegressionTest; do
             if ! timeout 420s godot --headless --path . --fixed-fps 60 "res://tests/$suite.tscn" 2>&1 | tee "/tmp/$suite.log"; then status=1; fi
             if grep -Eq 'SCRIPT ERROR:|Parse Error:|Compile Error:' "/tmp/$suite.log"; then status=1; fi
             if ! grep -q 'PASS:' "/tmp/$suite.log"; then status=1; fi

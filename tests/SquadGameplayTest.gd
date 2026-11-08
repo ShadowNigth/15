@@ -142,13 +142,14 @@ func _run() -> void:
 		player.weapon_ctrl.equip_weapon_by_id(wid)
 		player.weapon_ctrl.punch_angles = Vector2.ZERO
 		var before := shots.size()
+		var reticle_direction := -player.camera.global_basis.orthonormalized().z
 		player.weapon_ctrl._execute_bullet_shot(GameData.weapons[wid], false)
 		expect(shots.size() == before+1, "one audited event per actual shot " + wid)
 		if shots.size() > before:
 			var shot: Dictionary = shots.back()
 			expect(shot.clip_before-shot.clip_after == 1, "one cartridge per shot " + wid)
 			expect(not String(shot.sound).is_empty(), "native sound path selected " + wid)
-			expect((shot.aim as Vector3).dot(player.get_look_forward()) > 0.999, "ballistic aim remains on reticle before recoil " + wid)
+			expect((shot.aim as Vector3).dot(reticle_direction) > 0.99999, "ballistic aim remains on reticle before recoil " + wid)
 			expect(not player._vm_anim.current_animation.is_empty(), "native firing animation triggered " + wid)
 			expect(not traces.is_empty() and int(traces.back().serial) == int(shot.serial), "tracer and shot share identity " + wid)
 			if not traces.is_empty():
@@ -177,6 +178,11 @@ func _run() -> void:
 		if is_instance_valid(raw) and raw.item_id == "m4a1":
 			outgoing = raw
 	expect(outgoing != null and outgoing.clip_ammo == 17 and outgoing.silenced, "outgoing native weapon state retained")
+	player.queue_free()
+	await get_tree().process_frame
+	camera.current = true
+	camera.position = first.global_position+Vector3(2.4, 1.6, 2.8)
+	camera.look_at(first.global_position+Vector3.UP*0.9)
 	await capture("classic_pose_and_weapon")
 	print("[SQUAD GAMEPLAY] %s: %d checks, %d failures" % ["PASS" if failures == 0 else "FAIL", checks, failures])
 	get_tree().quit(0 if failures == 0 else 1)

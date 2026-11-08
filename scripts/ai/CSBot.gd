@@ -1681,13 +1681,13 @@ func _update_tactical_objective() -> void:
 			_banned_nodes.erase(ek)
 
 	# Radio order follow (the VIP never abandons extraction to become a follower)
-	if not is_vip and is_instance_valid(_follow_target) and bool(_follow_target.get("is_alive")):
+	if not is_vip and not is_instance_valid(RoundManager.planted_c4) and is_instance_valid(_follow_target) and bool(_follow_target.get("is_alive")):
 		if global_position.distance_to(_follow_target.global_position) > 3.8:
 			_plan_to_world_pos(nav, _follow_target.global_position, false)
 		return
 
 	# Weapon-share pickup task: fetch a teammate's gifted primary before rolling out!
-	if is_instance_valid(_pending_share_drop):
+	if is_instance_valid(_pending_share_drop) and not is_instance_valid(RoundManager.planted_c4):
 		var gift_pos: Vector3 = _pending_share_drop.global_position
 		if global_position.distance_to(gift_pos) <= 1.65:
 			var gift_take := _pending_share_drop
@@ -1739,6 +1739,8 @@ func _update_tactical_objective() -> void:
 	# One reachable CT takes the keypad; the rest hold separate graph positions.
 	if is_instance_valid(RoundManager.planted_c4):
 		var bomb := RoundManager.planted_c4 as PlantedC4
+		_hold_pos_timer = 0.0
+		_camp_timer = 0.0
 		var epoch := bomb.get_instance_id()
 		var selected := BombSquad.elect_defuser(bomb, RoundManager.actors, nav) if team == "CT" else null
 		var role := "defuse" if selected == self else ("cover" if team == "CT" else "guard")

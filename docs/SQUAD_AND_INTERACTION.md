@@ -57,5 +57,10 @@ rebote mediante el barrido real de `GrenadeProjectile`. No reemplaza el algoritm
 de fuego/humo/rebote.
 
 El workflow `squad-systems-qa.yml` importa con Godot 4.3 y ejecuta estas pruebas
-además de `NativeGunAnimationTest`, `NativeAudioTest` y `KillFirePolishTest`.
+además de `NativeGunAnimationTest`, `NativeAudioTest`, `KillFirePolishTest`,
+`IncendiaryProceduralTest`, `TacticalAIRegressionTest` y `MissionObjectiveRegressionTest`.
+La caché de recursos importados del workflow es exclusivamente de compilación en
+CI: no agrega precarga, pantallas de progreso ni cachés nuevas al juego.
+El test de apuntado compara la dirección con la cámara visible (incluido recoil),
+no con el ángulo lógico sin recoil.
 La validación AST no equivale a una prueba de juego ni a validación visual.
