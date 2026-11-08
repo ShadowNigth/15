@@ -5,7 +5,7 @@ var failures := 0
 var rays: Array[Array] = []
 var reference: Array[Dictionary] = []
 const VIEWS := [
-	["b", Vector3(-84, 6.5, 32), Vector3(-84, 2, 48)],
+	["b", Vector3(-84, 6, 48), Vector3(-72, 1.5, 46)],
 	["a", Vector3(-95, 9.5, -49), Vector3(-77, 4.5, -36)],
 	["ct", Vector3(-77, -1.5, -14), Vector3(-65, -1, -5)],
 	["t", Vector3(22, 6.5, 26), Vector3(0, 3, 25)],
@@ -45,6 +45,31 @@ func screenshots(root: Node3D, suffix: String) -> void:
 		DirAccess.make_dir_recursive_absolute("/tmp/dm-polish-review")
 		expect(get_viewport().get_texture().get_image().save_png("/tmp/dm-polish-review/dust2_" + view[0] + "_" + suffix + ".png") == OK, "Capture " + view[0] + suffix)
 	print("[DUST2] rendered primitives over four identical views ", suffix, "=", primitives)
+	camera.queue_free()
+
+func capture_bots(world: GameWorld, name: String) -> void:
+	if DisplayServer.get_name() == "headless":
+		return
+	var subject: CSBot = null
+	for bot in world.bots:
+		if bot.is_alive:
+			subject = bot
+			break
+	expect(subject != null, "Living bot available for gameplay framebuffer")
+	if subject == null:
+		return
+	var camera := Camera3D.new()
+	world.add_child(camera)
+	var focus := subject.global_position + Vector3.UP
+	var desired := focus + Vector3(3, 1.5, 4)
+	var obstruction := ray(focus, desired)
+	camera.global_position = desired if obstruction.is_empty() else (obstruction.position as Vector3) + (obstruction.normal as Vector3) * 0.25
+	camera.look_at(focus)
+	camera.make_current()
+	for frame in range(3):
+		await get_tree().process_frame
+		RenderingServer.force_draw(false)
+	expect(get_viewport().get_texture().get_image().save_png("/tmp/dm-polish-review/" + name + ".png") == OK, "Live bot gameplay " + name)
 	camera.queue_free()
 
 func run() -> void:
@@ -109,6 +134,15 @@ func run() -> void:
 			var pos := vec(spawn.pos)
 			var floor_hit := ray(pos + Vector3.UP * 2, pos - Vector3.UP * 10)
 			expect(not floor_hit.is_empty(), "Solid floor at " + team + " spawn")
+			if not floor_hit.is_empty():
+				var capsule := CapsuleShape3D.new()
+				capsule.radius = 0.36
+				capsule.height = 1.72
+				var query := PhysicsShapeQueryParameters3D.new()
+				query.shape = capsule
+				query.collision_mask = 1
+				query.transform = Transform3D(Basis.IDENTITY, (floor_hit.position as Vector3) + Vector3.UP * 0.92)
+				expect(get_world_3d().direct_space_state.intersect_shape(query, 1).is_empty(), "Standing capsule fits at " + team + " spawn")
 			for site in world.bombsites:
 				var goal := world.bot_navigator.get_nearest_node(site.get_center())
 				var path := world.bot_navigator.plan_node_path(pos, goal, team, BotNavigator.PATH_FAST)
@@ -121,6 +155,9 @@ func run() -> void:
 	RoundManager.freeze_ended.emit()
 	for frame in range(900):
 		await get_tree().physics_frame
+		if frame == 450:
+			await capture_bots(world, "dust2_gameplay_a")
+	await capture_bots(world, "dust2_gameplay_b")
 	var moving := 0
 	for i in range(world.bots.size()):
 		if world.bots[i].global_position.distance_to(starts[i]) > 3:

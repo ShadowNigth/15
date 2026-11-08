@@ -9,6 +9,7 @@ on:
       - 'assets/maps/de_dust2.glb.import'
       - 'assets/shaders/goldsrc_world.gdshader'
       - 'tools/polish_dust2.py'
+      - 'tools/publish_dust2_capture.py'
       - 'tests/*Dust2*'
       - 'tests/check_dust2_polish.py'
       - '.github/workflows/dust2-qa.yml'
@@ -56,28 +57,34 @@ jobs:
           PY
       - name: Site B before
         if: always()
-        run: python tools/publish_polish_capture.py dust2_b_before
+        run: python tools/publish_dust2_capture.py dust2_b_before
       - name: Site B after
         if: always()
-        run: python tools/publish_polish_capture.py dust2_b_after
+        run: python tools/publish_dust2_capture.py dust2_b_after
       - name: Site A before
         if: always()
-        run: python tools/publish_polish_capture.py dust2_a_before
+        run: python tools/publish_dust2_capture.py dust2_a_before
       - name: Site A after
         if: always()
-        run: python tools/publish_polish_capture.py dust2_a_after
+        run: python tools/publish_dust2_capture.py dust2_a_after
       - name: CT interior before
         if: always()
-        run: python tools/publish_polish_capture.py dust2_ct_before
+        run: python tools/publish_dust2_capture.py dust2_ct_before
       - name: CT interior after
         if: always()
-        run: python tools/publish_polish_capture.py dust2_ct_after
+        run: python tools/publish_dust2_capture.py dust2_ct_after
       - name: T exterior before
         if: always()
-        run: python tools/publish_polish_capture.py dust2_t_before
+        run: python tools/publish_dust2_capture.py dust2_t_before
       - name: T exterior after
         if: always()
-        run: python tools/publish_polish_capture.py dust2_t_after
+        run: python tools/publish_dust2_capture.py dust2_t_after
+      - name: Live bots first sample
+        if: always()
+        run: python tools/publish_dust2_capture.py dust2_gameplay_a
+      - name: Live bots second sample
+        if: always()
+        run: python tools/publish_dust2_capture.py dust2_gameplay_b
       - uses: actions/upload-artifact@v4
         if: always()
         with:
