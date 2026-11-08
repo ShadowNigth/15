@@ -64,7 +64,7 @@ class Builder:
         self.features = []
         self.anchor = (0, 0, False)
 
-    def quad(self, points, mat, tint=(1, 1, 1), repeat=(1, 1)):
+    def quad(self, points, mat, tint=(1, 1, 1)):
         a, b, c = points[:3]
         u, v = [b[i]-a[i] for i in range(3)], [c[i]-a[i] for i in range(3)]
         n = (u[1]*v[2]-u[2]*v[1], u[2]*v[0]-u[0]*v[2], u[0]*v[1]-u[1]*v[0])
@@ -74,7 +74,13 @@ class Builder:
         n = tuple(x/length for x in n)
         shade = .69 + .27*max(0, sum(n[i]*(-.38, .82, .42)[i] for i in range(3)))
         color = tuple(min(1, x*shade) for x in tint)+(1,)
-        uv = [(0, 0), (repeat[0], 0), (repeat[0], repeat[1]), (0, repeat[1])]
+        # World-aligned metric UVs: trim never stretches across a whole facade.
+        scale_u, scale_v = (2.0, .5) if mat == 'stone' else ((2.0, 2.0) if mat == 'wall' else (1.0, 1.0))
+        if abs(n[1]) > .9:
+            uv = [(p[0]/scale_u, p[2]/scale_u) for p in points]
+        else:
+            axis = 0 if abs(n[2]) > .9 else 2
+            uv = [(p[axis]/scale_u, -p[1]/scale_v) for p in points]
         for i in [0, 1, 2, 0, 2, 3]:
             self.buckets[(*self.anchor, mat)].append((tuple(points[i]), n, uv[i], color))
 
@@ -119,7 +125,7 @@ class Builder:
             y = hi[1]-1.35
             box(0,y,.025,1.13,1.38,.065,'iron',(.48,.51,.46))
             for x in [-.58,.58]:
-                box(x,y,.055,.09,1.56,.10,'stone')
+                box(x,y,.055,.09,1.37,.10,'stone')
             for sy in [-.73,.73]:
                 box(0,y+sy,.055,1.25,.09,.10,'stone')
             box(0,y-.81,.06,1.38,.10,.12,'stone')
@@ -159,7 +165,9 @@ class Builder:
             w,d=hi[0]-lo[0],hi[2]-lo[2]
             self.anchor=(math.floor(x/32),math.floor(z/32),False)
             self.box((x,y-.035,z),(w-.08,.07,.14),'stone',(.72,.68,.58))
-            self.box((x,y-.035,z),(.14,.07,d-.08),'stone',(.72,.68,.58))
+            half_span = (d-.08-.14)/2
+            for side in [-1,1]:
+                self.box((x,y-.035,z+side*(.07+half_span/2)),(.14,.07,half_span),'stone',(.72,.68,.58))
             self.box((x,y-.10,z),(.32,.12,.38),'iron')
             self.box((x,y-.167,z),(.24,.02,.28),'lamp')
             self.features.append({'kind':'vault_trim','lo':lo,'hi':hi})
@@ -173,9 +181,9 @@ class Builder:
             self.box((x,floor+h/2,z),(w,h,d),'wall',tint)
             for offset in [-1,1]:
                 self.box((x+offset*(w/2-.13),floor+h+.15,z),(.26,.40,d+.15),'stone',tint)
-                self.box((x,floor+h+.15,z+offset*(d/2-.13)),(w,.40,.26),'stone',tint)
+                self.box((x,floor+h+.15,z+offset*(d/2-.13)),(w-.52,.40,.26),'stone',tint)
             # Small roof cistern and closed windows enrich the distant silhouette.
-            self.box((x+1,floor+h+.65,z),(1.1,1.0,1.1),'stone',(.74,.75,.66))
+            self.box((x+1,floor+h+.5,z),(1.1,1.0,1.1),'stone',(.74,.75,.66))
             for sy in range(2):
                 for sx in [-1,1]:
                     self.box((x+sx*w*.23,floor+h*.45+sy*2.5,z-d/2-.018),(.8,1.05,.035),'shutter',(.63,.69,.65))

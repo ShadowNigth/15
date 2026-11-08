@@ -1,9 +1,9 @@
 {
-  "triangles": 7140,
+  "triangles": 7176,
   "mesh_cells": 28,
   "materials": 5,
   "source_commit": "511be65e61447fd5801e00898a76a369b8d043ff",
-  "asset_sha256": "93d35c4ac0b06294deec4162c3df662b9de82545798968471d22390f13cdb48a",
+  "asset_sha256": "c1295ee71a1fb8e34ad2fcca5b162890047f12f1c4beaca343d3eaed12376887",
   "features": [
     {
       "kind": "facade",
