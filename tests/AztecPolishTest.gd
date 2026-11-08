@@ -126,6 +126,10 @@ func run() -> void:
 	for spawn in data.ct_spawns + data.t_spawns:
 		var pos := vec(spawn.pos)
 		rays.append([pos + Vector3.UP * 2, pos - Vector3.UP * 10])
+	# Sky-down rays hit the bridge-room roof first. Probe the actual deck
+	# from below that roof in BOTH baseline and repaired maps.
+	for z in [-26.0, -22.0, -17.0, -12.0, -5.0]:
+		rays.append([Vector3(-22, -4.5, z), Vector3(-22, -12, z)])
 	for segment in rays:
 		var hit := ray(segment[0], segment[1])
 		reference.append({"position": hit.get("position", Vector3.INF), "normal": hit.get("normal", Vector3.ZERO)})
