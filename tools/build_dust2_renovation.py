@@ -152,7 +152,8 @@ class Builder:
         self.features.append({'kind':'facade','normal':n,'lo':lo,'hi':hi,'closed_shutter':window,'vertices':sum(len(v)for v in self.buckets.values())-start})
 
     def interiors(self):
-        for face in facades(ceiling=True):
+        selected = sorted(facades(ceiling=True), key=lambda f: -(f['hi'][0]-f['lo'][0])*(f['hi'][2]-f['lo'][2]))[:3]
+        for face in selected:
             lo,hi=face['lo'],face['hi']
             x,y,z=[(lo[i]+hi[i])/2 for i in range(3)]
             w,d=hi[0]-lo[0],hi[2]-lo[2]

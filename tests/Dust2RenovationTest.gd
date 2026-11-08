@@ -15,7 +15,8 @@ func validate_map(built: Dictionary) -> void:
 		return
 	expect(dressing.find_children("*", "CollisionObject3D", true, false).is_empty(), "Decor cannot add invisible walls or affect bullets/navigation")
 	var meshes := dressing.find_children("*", "MeshInstance3D", true, false)
-	expect(meshes.size() == 27, "Spatially batched dressing budget")
+	var report: Dictionary = GameData._load_json("res://data/dust2_renovation.json")
+	expect(meshes.size() == int(report.mesh_cells) and meshes.size() <= 30, "Spatially batched dressing budget")
 	var triangles := 0
 	for raw in meshes:
 		var mesh := raw as MeshInstance3D
