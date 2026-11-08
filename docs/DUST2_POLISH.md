@@ -39,14 +39,14 @@ unchanged, as do original credits, relief and texture provenance.
 ## Runtime validation
 
 `Dust2PolishTest.tscn` compares baseline and repaired physics with dense floor and
-horizontal wall rays, checks all 40 authored spawns and directed routes from
+horizontal wall rays, checks the actual standing capsule at all 40 authored spawns and directed routes from
 each spawn to both bombsites, simulates live bots through the actual game world,
 and exercises C4 kit defusal at both sites. The graph remains the authored 1,238
 YaPB nodes. Dust2 is bomb/defuse: hostage rescue and VIP escort belong to other
 maps and remain covered by the existing mission regressions.
 
 Four identical-camera before/after OpenGL captures cover both sites and the two
-spawn environments. Their primitive counts are logged as a culling diagnostic,
+spawn environments, plus two rendered samples of live bot gameplay. Their primitive counts are logged as a culling diagnostic,
 not an FPS benchmark. More sectors can increase draw calls; no blanket speedup
 or universal removal of every collision problem is claimed. We do not delete
 unverified walls or seal intentionally open map boundaries.

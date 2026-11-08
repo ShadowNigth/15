@@ -137,11 +137,11 @@ func run() -> void:
 			if not floor_hit.is_empty():
 				var capsule := CapsuleShape3D.new()
 				capsule.radius = 0.36
-				capsule.height = 1.72
+				capsule.height = CSActor.STAND_HEIGHT
 				var query := PhysicsShapeQueryParameters3D.new()
 				query.shape = capsule
 				query.collision_mask = 1
-				query.transform = Transform3D(Basis.IDENTITY, (floor_hit.position as Vector3) + Vector3.UP * 0.92)
+				query.transform = Transform3D(Basis.IDENTITY, (floor_hit.position as Vector3) + Vector3.UP * (CSActor.STAND_HEIGHT * 0.5 + 0.06))
 				expect(get_world_3d().direct_space_state.intersect_shape(query, 1).is_empty(), "Standing capsule fits at " + team + " spawn")
 			for site in world.bombsites:
 				var goal := world.bot_navigator.get_nearest_node(site.get_center())
