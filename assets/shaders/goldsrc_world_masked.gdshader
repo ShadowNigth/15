@@ -5,11 +5,15 @@ uniform sampler2D albedo_tex : source_color, filter_linear_mipmap_anisotropic, r
 uniform sampler2D lightmap_tex : source_color, filter_linear;
 uniform float lightmap_boost : hint_range(0.5, 3.0) = 1.25;
 
+uniform float lightmap_exponent = 0.84;
+uniform float lightmap_floor = 0.10;
+uniform float lightmap_ceiling = 1.60;
+
 void fragment() {
 	vec4 tex = texture(albedo_tex, UV);
 	vec3 lm_raw = texture(lightmap_tex, UV2).rgb;
-	vec3 lm = pow(max(lm_raw, vec3(0.001)), vec3(0.84)) * lightmap_boost;
-	lm = clamp(lm, vec3(0.10), vec3(1.60));
+	vec3 lm = pow(max(lm_raw, vec3(0.001)), vec3(lightmap_exponent)) * lightmap_boost;
+	lm = clamp(lm, vec3(lightmap_floor), vec3(lightmap_ceiling));
 
 	ALBEDO = tex.rgb;
 	EMISSION = tex.rgb * lm;

@@ -7,6 +7,10 @@ uniform float lightmap_boost : hint_range(0.5, 3.0) = 1.25;
 uniform float alpha_Val : hint_range(0.0, 1.0) = 0.72;
 uniform bool is_water = false;
 
+uniform float lightmap_exponent = 0.84;
+uniform float lightmap_floor = 0.14;
+uniform float lightmap_ceiling = 1.60;
+
 void fragment() {
 	vec2 uv = UV;
 	if (is_water) {
@@ -15,8 +19,8 @@ void fragment() {
 	}
 	vec4 tex = texture(albedo_tex, uv);
 	vec3 lm_raw = texture(lightmap_tex, UV2).rgb;
-	vec3 lm = pow(max(lm_raw, vec3(0.001)), vec3(0.84)) * lightmap_boost;
-	lm = clamp(lm, vec3(0.14), vec3(1.60));
+	vec3 lm = pow(max(lm_raw, vec3(0.001)), vec3(lightmap_exponent)) * lightmap_boost;
+	lm = clamp(lm, vec3(lightmap_floor), vec3(lightmap_ceiling));
 
 	ALBEDO = tex.rgb;
 	EMISSION = tex.rgb * lm;

@@ -261,3 +261,13 @@ conservan mapas, UV, texturas, rutas y objetivos. Geometría estática agrupada,
 materiales mates compartidos, sin sombras dinámicas ni precarga. La decoración
 sí añade coste de renderizado: no se promete un aumento de FPS.
 Detalles y pruebas: [Dust2 visual renovation](docs/DUST2_VISUAL_RENOVATION.md).
+
+### Aztec: mejora fiel de iluminación, materiales y geometría
+
+Aztec conserva sus texturas originales, UV, cielo tormentoso, agua verde, puente,
+apariciones, objetivos y grafo YaPB. Perfil exclusivo de iluminación/materiales;
+agua menos brillante/distorsionada sin perder animación, refracción o interacción.
+Reparación reproducible de geometría degenerada/uniones T y sectores para descarte
+por cámara, sin añadir precarga ni cambiar las colisiones intencionales del cristal.
+Pruebas físicas, puente, rutas, apariciones, agua y capturas antes/después:
+[Aztec polish](docs/AZTEC_POLISH.md).

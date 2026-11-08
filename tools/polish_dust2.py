@@ -41,7 +41,7 @@ def area_squared(points):
     return sum(x*x for x in (u[1]*v[2]-u[2]*v[1], u[2]*v[0]-u[0]*v[2], u[0]*v[1]-u[1]*v[0]))
 
 
-def polish(source):
+def polish(source, cell_size=CELL, source_commit=BASE, generator='Dust2 faithful polish v1'):
     old, binary = unpack(source)
     doc = copy.deepcopy(old)
     doc['accessors'], doc['bufferViews'], doc['meshes'], doc['nodes'] = [], [], [], []
@@ -139,7 +139,7 @@ def polish(source):
                 if len(triangles) > 1:
                     report['t_junction_triangles_repaired'] += 1
                 centroid = [sum(v['POSITION'][i] for v in tri)/3 for i in range(3)]
-                cell = (math.floor(centroid[0]/CELL), math.floor(centroid[2]/CELL)) if world else (0, 0)
+                cell = (math.floor(centroid[0]/cell_size), math.floor(centroid[2]/cell_size)) if world else (0, 0)
                 valid_triangles = []
                 for repaired in triangles:
                     for vertex in repaired:
@@ -182,12 +182,12 @@ def polish(source):
     while len(blob) % 4:
         blob.append(0)
     doc['buffers'] = [{'byteLength': len(blob)}]
-    doc.setdefault('asset', {})['generator'] = 'Dust2 faithful polish v1'
+    doc.setdefault('asset', {})['generator'] = generator
     encoded = json.dumps(doc, separators=(',', ':')).encode()
     encoded += b' ' * (-len(encoded) % 4)
     result = struct.pack('<III', 0x46546C67, 2, 28+len(encoded)+len(blob))+struct.pack('<II', len(encoded), 0x4E4F534A)+encoded+struct.pack('<II', len(blob), 0x004E4942)+blob
     report = dict(report)
-    report.update(source_sha256=hashlib.sha256(source).hexdigest(), output_sha256=hashlib.sha256(result).hexdigest(), source_commit=BASE, chunk_size_m=CELL)
+    report.update(source_sha256=hashlib.sha256(source).hexdigest(), output_sha256=hashlib.sha256(result).hexdigest(), source_commit=source_commit, chunk_size_m=cell_size)
     return result, dict(report)
 
 

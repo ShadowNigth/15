@@ -36,6 +36,8 @@ static func build_map(parent: Node3D, map_data: Dictionary) -> Dictionary:
 
 	if String(map_data.get("name", "")) == "de_dust2":
 		Dust2Polish.configure_lighting(map_root)
+	elif String(map_data.get("name", "")) == "de_aztec":
+		AztecPolish.configure_lighting(map_root)
 
 	# 2. Load .glb geometry & baked GoldSrc RGB lightmap
 	var glb_path := String(map_data.get("glb", ""))
@@ -149,6 +151,8 @@ static func build_map(parent: Node3D, map_data: Dictionary) -> Dictionary:
 						smat.set_shader_parameter("detail_strength", 0.12 if decorative else 0.34)
 					if String(map_data.get("name", "")) == "de_dust2" and smat.shader == world_shader:
 						Dust2Polish.configure_material(smat, tlow)
+					if String(map_data.get("name", "")) == "de_aztec":
+						AztecPolish.configure_material(smat, tlow)
 					if albedo:
 						smat.set_shader_parameter("albedo_tex", albedo)
 					if lm_tex:

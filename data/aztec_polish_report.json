@@ -1,0 +1,11 @@
+{
+  "input_triangles": 11460,
+  "degenerate_triangles_removed": 973,
+  "t_junction_triangles_repaired": 709,
+  "output_triangles": 11506,
+  "world_chunks": 25,
+  "source_sha256": "31dd10d60d053d82357ce63cff0c8af3ef2910a7951116d39dc2edf39fee73ad",
+  "output_sha256": "a0becb0bfb1de17fab451088362d70c8a0c22315bc3141d9932e6d7f281e2c85",
+  "source_commit": "babfb0ad6e4f47b33f5a1703c7b77f15be1b354a",
+  "chunk_size_m": 32.0
+}
