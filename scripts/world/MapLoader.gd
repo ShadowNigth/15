@@ -34,6 +34,9 @@ static func build_map(parent: Node3D, map_data: Dictionary) -> Dictionary:
 	# 1. Skybox & Lighting
 	SkyBuilder.setup_environment(map_root, String(map_data.get("skyname", "des")))
 
+	if String(map_data.get("name", "")) == "de_dust2":
+		Dust2Polish.configure_lighting(map_root)
+
 	# 2. Load .glb geometry & baked GoldSrc RGB lightmap
 	var glb_path := String(map_data.get("glb", ""))
 	var lm_path := String(map_data.get("lightmap", ""))
@@ -144,6 +147,8 @@ static func build_map(parent: Node3D, map_data: Dictionary) -> Dictionary:
 							or "screen" in tlow or "money" in tlow
 						smat.set_shader_parameter("relief_depth", 0.0 if decorative else 0.045)
 						smat.set_shader_parameter("detail_strength", 0.12 if decorative else 0.34)
+					if String(map_data.get("name", "")) == "de_dust2" and smat.shader == world_shader:
+						Dust2Polish.configure_material(smat, tlow)
 					if albedo:
 						smat.set_shader_parameter("albedo_tex", albedo)
 					if lm_tex:

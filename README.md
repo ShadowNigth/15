@@ -241,3 +241,12 @@ En **Configuration & Controls → Editor de mira y HUD**, o en **Esc → Editor 
 - Se mantienen la munición numérica y la posición central de la mira; flash, humo, visión nocturna y visor no se pueden mover ni desactivar desde el editor. La partida conserva el comportamiento del menú de pausa actual (no congela a los bots).
 
 Implementación nativa para Godot, inspirada en las opciones de edición del mod ScCsgoKnives, sin dependencia de sus widgets de Survivalcraft. Regresión: `tests/UICustomizationTest.tscn`; CI `Mira y HUD QA`, con capturas OpenGL de ambos editores y comprobación del HUD dentro de una partida real.
+
+### Dust2: primera mejora fiel al mapa clásico
+
+Dust2 conserva texturas originales, coordenadas UV, lightmap, puntos de aparición,
+recorridos y objetivos. Se reparan triángulos degenerados y uniones T; la geometría
+estática se divide en sectores para descarte por cámara. Tiene un perfil exclusivo
+de iluminación/materiales, con relieve y enfoque más suaves, sin brillo plástico.
+No se añaden agua, rehenes, VIP, decoraciones ni sistemas de precarga.
+Ver [alcance, reconstrucción y pruebas](docs/DUST2_POLISH.md).
