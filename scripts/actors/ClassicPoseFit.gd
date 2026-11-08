@@ -56,7 +56,7 @@ func solve_chain(root: int, middle: int, tip: int, target: Vector3) -> bool:
 	_rotate_to(tip, old_tip_basis)
 	return true
 
-func fit(actor: CSActor, skeleton: Skeleton3D, native_action: bool) -> void:
+func fit(actor, skeleton: Skeleton3D, native_action: bool) -> void:
 	_skeleton = skeleton
 	if not actor.is_alive or not actor.is_on_floor() or actor.on_ladder or actor.in_water:
 		return
@@ -74,7 +74,7 @@ func fit(actor: CSActor, skeleton: Skeleton3D, native_action: bool) -> void:
 			var offset := clampf((hit.position as Vector3).y+0.055-ankle.y, -0.10, 0.10)
 			if absf(offset) > 0.008:
 				solve_chain(skeleton.find_bone("Bip01 %s Thigh" % side), skeleton.find_bone("Bip01 %s Calf" % side), foot, skeleton.to_local(ankle+Vector3.UP*offset))
-	var wid := actor.weapon_ctrl.current_weapon_id
+	var wid: String = actor.weapon_ctrl.current_weapon_id
 	if _weapon != wid:
 		_weapon = wid
 		_has_grip = false

@@ -18,8 +18,9 @@ static func acquire(owner: Node) -> void:
 	Input.mouse_mode = Input.MOUSE_MODE_VISIBLE
 
 static func release(owner: Node, capture_mouse: bool = true) -> void:
-	if _owners.erase(owner.get_instance_id()):
-		generation += 1
+	if not _owners.erase(owner.get_instance_id()):
+		return
+	generation += 1
 	_prune()
 	Input.mouse_mode = Input.MOUSE_MODE_VISIBLE if not _owners.is_empty() or not capture_mouse else _restore_mode
 

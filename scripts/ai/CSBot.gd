@@ -2694,3 +2694,9 @@ func apply_goldsrc_movement(wish_dir_world: Vector3, want_jump: bool, want_crouc
 		_stuck_timer = 0.0
 		_cur_node_elapsed = 0.0
 	super.apply_goldsrc_movement(negotiated, want_jump, want_crouch, want_walk, delta)
+
+func get_traffic_intent() -> Vector3:
+	return traffic.intent
+
+func get_bomb_banned_nodes() -> Dictionary:
+	return _banned_nodes

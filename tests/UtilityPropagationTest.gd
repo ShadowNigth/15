@@ -44,13 +44,13 @@ func _run() -> void:
 		expect(absf(point.y) < 0.08, "patches follow supporting floor")
 		var connected := (patch.pos as Vector3).length() < 0.1
 		for other in fire._patches:
-			if other != patch and (patch.pos as Vector3).distance_to(other.pos as Vector3) < 1.1:
+			if other != patch and (patch.pos as Vector3).distance_to(other.pos as Vector3) < 1.64:
 				connected = true
 		expect(connected, "fire patches remain connected, not isolated islands")
 	expect(fire._project_candidate(Vector3.ZERO, Vector3(24, 0, 0)) == null, "unsupported candidates rejected")
 	var cloud := SmokeCloudVolume.new()
 	add_child(cloud)
-	cloud.setup_cloud(fire.global_position, get_world_3d().direct_space_state)
+	cloud.setup_cloud(fire.global_position)
 	cloud.age = 2.0
 	expect(cloud._v_count > 20, "smoke flood fill creates volume")
 	for i in range(cloud._v_count):

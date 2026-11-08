@@ -35,11 +35,13 @@ func _run() -> void:
 	add_child(bot)
 	bot.set_physics_process(false)
 	bot.team = "CT"
+	bot.is_alive = true
 	bot.has_defuser = true
 	var mate := CSBot.new()
 	add_child(mate)
 	mate.set_physics_process(false)
 	mate.team = "CT"
+	mate.is_alive = true
 	mate.global_position = Vector3(1, 0, 0)
 	var bomb := PlantedC4.new()
 	add_child(bomb)

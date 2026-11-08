@@ -5,6 +5,7 @@ on:
     paths:
       - 'scripts/**'
       - 'tests/SquadInteractionTest*'
+      - 'tests/SquadGameplayTest*'
       - 'tests/UtilityPropagationTest*'
       - '.github/workflows/squad-systems-qa.yml'
 concurrency:
@@ -29,6 +30,7 @@ jobs:
           unzip -q /tmp/godot.zip -d /tmp/godot
           sudo install -m 755 /tmp/godot/Godot_v4.3-stable_linux.x86_64 /usr/local/bin/godot
       - name: Import and compile
+        id: compile
         shell: bash
         run: |
           set -o pipefail
@@ -38,11 +40,48 @@ jobs:
         shell: bash
         run: |
           set -o pipefail
-          for suite in SquadInteractionTest UtilityPropagationTest NativeGunAnimationTest NativeAudioTest KillFirePolishTest; do
-            timeout 420s godot --headless --path . --fixed-fps 60 "res://tests/$suite.tscn" 2>&1 | tee "/tmp/$suite.log"
-            ! grep -Eq 'SCRIPT ERROR:|Parse Error:|Compile Error:' "/tmp/$suite.log"
-            grep -q 'PASS:' "/tmp/$suite.log"
+          status=0
+          for suite in SquadInteractionTest SquadGameplayTest UtilityPropagationTest NativeGunAnimationTest NativeAudioTest KillFirePolishTest; do
+            if ! timeout 420s godot --headless --path . --fixed-fps 60 "res://tests/$suite.tscn" 2>&1 | tee "/tmp/$suite.log"; then status=1; fi
+            if grep -Eq 'SCRIPT ERROR:|Parse Error:|Compile Error:' "/tmp/$suite.log"; then status=1; fi
+            if ! grep -q 'PASS:' "/tmp/$suite.log"; then status=1; fi
           done
+          exit "$status"
+      - name: Render moving classic squad
+        if: ${{ !cancelled() && steps.compile.outcome == 'success' }}
+        shell: bash
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y xvfb libgl1-mesa-dri
+          pip install Pillow
+          set -o pipefail
+          mkdir -p /tmp/squad-captures
+          SQUAD_CAPTURE_DIR=/tmp/squad-captures LIBGL_ALWAYS_SOFTWARE=1 timeout 180s xvfb-run -a godot --path . --rendering-method gl_compatibility --fixed-fps 60 res://tests/SquadGameplayTest.tscn 2>&1 | tee /tmp/squad-render.log
+          ! grep -Eq 'SCRIPT ERROR:|Parse Error:|Compile Error:' /tmp/squad-render.log
+          grep -q 'PASS:' /tmp/squad-render.log
+      - name: Publish actual framebuffers
+        if: always()
+        run: |
+          python - <<'PY'
+          import base64, io
+          from pathlib import Path
+          from PIL import Image
+          for p in Path('/tmp/squad-captures').glob('*.png'):
+              image = Image.open(p).convert('RGB')
+              image.thumbnail((800, 500))
+              quality = 75
+              while True:
+                  stream = io.BytesIO()
+                  image.save(stream, format='JPEG', quality=quality)
+                  data = stream.getvalue()
+                  if len(data) < 17000 or quality <= 15:
+                      break
+                  quality -= 10
+              encoded = base64.b64encode(data).decode()
+              parts = [encoded[i:i+3500] for i in range(0, len(encoded), 3500)]
+              for i, part in enumerate(parts):
+                  print(f'::notice title=Squad JPEG {p.stem} {i+1}/{len(parts)}::{part}')
+          PY
       - name: Diagnostic logs
         if: always()
         run: |
@@ -62,3 +101,5 @@ jobs:
           path: |
             /tmp/squad-import.log
             /tmp/*Test.log
+            /tmp/squad-render.log
+            /tmp/squad-captures/

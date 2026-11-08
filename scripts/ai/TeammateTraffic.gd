@@ -65,8 +65,10 @@ func steer(actor: CSActor, desired: Vector3, actors: Array) -> Vector3:
 	var gap := other.global_position-actor.global_position
 	gap.y = 0
 	var mate_intent := Vector3(other.velocity.x, 0, other.velocity.z)
-	if other is CSBot and (other as CSBot).traffic.intent.length_squared() > 0.01:
-		mate_intent = (other as CSBot).traffic.intent
+	if other.has_method("get_traffic_intent"):
+		var planned: Vector3 = other.call("get_traffic_intent")
+		if planned.length_squared() > 0.01:
+			mate_intent = planned
 	if mate_intent.dot(heading) > 0.2 and peer == null:
 		mode = "follow"
 		return desired if gap.length() > 1.8 else Vector3.ZERO
