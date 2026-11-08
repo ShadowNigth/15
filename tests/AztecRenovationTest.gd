@@ -45,11 +45,12 @@ func validate_map(built: Dictionary) -> void:
 		if forward.dot((crown-origin).normalized()) > 0.80 and ray(origin, crown).is_empty():
 			visible_crowns += 1
 	expect(visible_crowns > 0, "New jungle is visible above walls from normal player height, not hidden scenery")
+	expect(ray(Vector3(16, -4, 60), Vector3(25, 21, 83)).is_empty(), "Background temple roof is visible from CT spawn at player eye height")
 	print("[AZTEC RENOVATION] visible crowns=", visible_crowns)
 	print("[AZTEC RENOVATION] triangles=", triangles, "; cells=", meshes.size())
 
 func comparison_views() -> Array:
 	var views := VIEWS.duplicate(true)
 	views.append(["canopy", Vector3(43, -4, -29), Vector3(49, 4, -20)])
-	views.append(["temple", Vector3(-30, -4, 14), Vector3(-30, 4, 30)])
+	views.append(["temple", Vector3(16, -4, 60), Vector3(25, 14, 83)])
 	return views

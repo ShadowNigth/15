@@ -20,7 +20,7 @@ al mapa. No se reemplazan ni alteran sus PNG originales ni las UV del BSP.
 La decoración usa color por vértice para sombras mates horneadas, no luces extra.
 Agua, puente reparado, armas, personajes y objetivos conservan sus sistemas.
 
-Presupuesto: 16.138 triángulos, 44 celdas, 5 materiales. Las celdas locales tienen
+Presupuesto: 16.138 triángulos, 43 celdas, 5 materiales. Las celdas locales tienen
 corte a 95 m y el fondo a 260 m. Sin colisiones, navegación, nuevas precargas,
 sombras dinámicas ni geometría sobre las rutas. La decoración tiene un coste:
 los recuentos de primitivas no deben presentarse como mejoras de FPS.
