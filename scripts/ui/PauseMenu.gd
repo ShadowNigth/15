@@ -54,6 +54,7 @@ func _ready() -> void:
 	vbox.add_child(title)
 
 	_make_btn(vbox, "Resume Game", func(): close_pause(); resume_requested.emit())
+	_make_btn(vbox, "Editor de mira y HUD", func(): UICustomizationEditor.open(self))
 	_make_btn(vbox, "Choose Team (M)", func(): close_pause(); change_team_requested.emit())
 	_make_btn(vbox, "+ Add CT Bot", func(): add_bot_requested.emit("CT"))
 	_make_btn(vbox, "+ Add Terrorist Bot", func(): add_bot_requested.emit("T"))

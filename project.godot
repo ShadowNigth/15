@@ -17,6 +17,7 @@ config/icon="res://icon.png"
 GameData="*res://scripts/core/GameData.gd"
 AudioManager="*res://scripts/core/AudioManager.gd"
 RoundManager="*res://scripts/core/RoundManager.gd"
+UICustomization="*res://scripts/ui/UICustomization.gd"
 
 [display]
 

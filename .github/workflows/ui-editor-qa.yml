@@ -1,0 +1,57 @@
+name: Mira y HUD QA
+on:
+  push:
+    paths:
+      - 'scripts/ui/**'
+      - 'tests/UICustomization*'
+      - 'project.godot'
+      - '.github/workflows/ui-editor-qa.yml'
+  workflow_dispatch:
+jobs:
+  editor:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install Godot and OpenGL
+        run: |
+          curl -fL --retry 3 -o /tmp/godot.zip https://github.com/godotengine/godot-builds/releases/download/4.3-stable/Godot_v4.3-stable_linux.x86_64.zip
+          unzip -q /tmp/godot.zip -d /tmp/godot
+          sudo install -m 755 /tmp/godot/Godot_v4.3-stable_linux.x86_64 /usr/local/bin/godot
+          sudo apt-get update -qq
+          sudo apt-get install -y -qq xvfb libgl1-mesa-dri
+          python -m pip install pillow
+      - name: Import all scripts
+        run: |
+          set -o pipefail
+          godot --headless --path . --import 2>&1 | tee /tmp/import.log
+          if grep -Eq 'SCRIPT ERROR:|Parse Error:|Compile Error:' /tmp/import.log; then exit 1; fi
+      - name: Real editors and gameplay integration
+        run: |
+          set -o pipefail
+          timeout 180s xvfb-run -a godot --path . --audio-driver Dummy --rendering-method gl_compatibility --disable-render-loop --fixed-fps 60 --resolution 1280x720 res://tests/UICustomizationTest.tscn 2>&1 | tee /tmp/editor.log
+          if grep -Eq 'SCRIPT ERROR:|Parse Error:|Compile Error:' /tmp/editor.log; then exit 1; fi
+          grep -q '\[UI EDITOR\] PASS:' /tmp/editor.log
+      - name: Diagnostics
+        if: always()
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          for p in (Path('/tmp/import.log'), Path('/tmp/editor.log')):
+              if p.exists():
+                  text = '\n'.join(x for x in p.read_text(errors='replace').splitlines() if any(k in x for k in ['ERROR', 'Error', 'FAIL', '[UI EDITOR]']))[-7000:]
+                  print('::notice title=Editor diagnostics::'+text.replace('%','%25').replace('\n','%0A'))
+          PY
+      - name: Crosshair framebuffer
+        if: always()
+        run: python tools/publish_polish_capture.py editor_crosshair
+      - name: HUD framebuffer
+        if: always()
+        run: python tools/publish_polish_capture.py editor_hud
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: ui-editor-evidence
+          path: |
+            /tmp/editor.log
+            /tmp/dm-polish-review/editor_*.png

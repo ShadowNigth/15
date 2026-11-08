@@ -230,3 +230,14 @@ sustituyen la revisión de las capturas reales.
   la adaptación de esqueletos/armas/acciones; no se sustituyen por modelos sin animar.
 
 Detalles, reconstrucción y límites: [docs/NATIVE_WORLD_ASSETS.md](docs/NATIVE_WORLD_ASSETS.md).
+
+### Editor de mira y HUD
+
+En **Configuration & Controls → Editor de mira y HUD**, o en **Esc → Editor de mira y HUD** durante una partida:
+
+- **Mira:** largo, separación, grosor, contorno, punto central, forma de T, color/transparencia y modo dinámico. Vista previa con simulación opcional; comparte el dibujado con la partida y no modifica trayectoria de disparo, recoil ni mira telescópica.
+- **HUD:** diez grupos reales seleccionables por lista o clic, arrastre y ajuste fino con flechas (Mayús: 10 píxeles), escala 0.5–2.5, opacidad 0.2–1 y visibilidad. Los elementos ocultos siguen siendo seleccionables mediante sus recuadros y la lista.
+- **Guardar** persiste localmente en `user://ui_customization.cfg`; **Cancelar/Esc** revierte todos los cambios de la sesión. Restaurar pestaña o elemento es provisional hasta guardar. Los errores de escritura conservan abierto el editor.
+- Se mantienen la munición numérica y la posición central de la mira; flash, humo, visión nocturna y visor no se pueden mover ni desactivar desde el editor. La partida conserva el comportamiento del menú de pausa actual (no congela a los bots).
+
+Implementación nativa para Godot, inspirada en las opciones de edición del mod ScCsgoKnives, sin dependencia de sus widgets de Survivalcraft. Regresión: `tests/UICustomizationTest.tscn`; CI `Mira y HUD QA`, con capturas OpenGL de ambos editores y comprobación del HUD dentro de una partida real.

@@ -869,6 +869,11 @@ func _build_options_dialog() -> void:
 	grid.add_theme_constant_override("v_separation", 8)
 	content.add_child(grid)
 
+	var editor_button := Button.new()
+	editor_button.text = "Editor de mira y HUD"
+	editor_button.pressed.connect(func(): UICustomizationEditor.open(self))
+	content.add_child(editor_button)
+
 	var cosmetic_labels := ["Original casings + native ejection timing", "Low-ammunition warning colors", "Native dropped defuse-kit model"]
 	var keys: Array = GameData.COSMETIC_KEYS.duplicate()
 	keys.erase("native_ammo_icons")
@@ -931,14 +936,6 @@ func _build_options_dialog() -> void:
 	rh_chk.button_pressed = GameData.right_hand
 	rh_chk.toggled.connect(func(b: bool): GameData.right_hand = b)
 	grid.add_child(rh_chk)
-
-	var dl := Label.new()
-	dl.text = "Dynamic Crosshair (cl_dynamiccrosshair 1):"
-	grid.add_child(dl)
-	var dc_chk := CheckBox.new()
-	dc_chk.button_pressed = GameData.dynamic_crosshair
-	dc_chk.toggled.connect(func(b: bool): GameData.dynamic_crosshair = b)
-	grid.add_child(dc_chk)
 
 	var keys_lbl := Label.new()
 	keys_lbl.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART

@@ -25,6 +25,9 @@ const KILL_RING_RED := Color(0.88, 0.0, 0.0, 0.95)
 const KILL_PLATE_DARKRED := Color(0.36, 0.05, 0.04, 0.78)
 
 var player: PlayerController = null
+var preview_mode := false
+var layout_elements: Dictionary = {}
+var _layout_defaults: Dictionary = {}
 
 var _nvg_rect: ColorRect = null
 var _scope_root: Control = null
@@ -311,6 +314,12 @@ func _ready() -> void:
 	layer = 5
 	_build_hud_tree()
 	_load_radar_overview()
+	UICustomization.changed.connect(apply_custom_layout)
+	get_viewport().size_changed.connect(apply_custom_layout)
+	apply_custom_layout.call_deferred()
+
+	if preview_mode:
+		return
 
 	RoundManager.center_message.connect(_on_center_message)
 	RoundManager.kill_detailed.connect(_on_kill_logged)
@@ -697,6 +706,10 @@ func _build_hud_tree() -> void:
 	_killcards.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	root.add_child(_killcards)
 
+	bl_root.size = Vector2(252, 54)
+	for entry in [["radar", _radar_panel], ["status", left_icons], ["score", _score_panel], ["killfeed", _killfeed_vbox], ["announcements", _center_label], ["spectator", _spec_label], ["progress", prog_box], ["radio", _radio_vbox], ["health", bl_root], ["equipment", br_root]]:
+		register_layout_element(entry[0], entry[1])
+
 	# 12. Inside-Smoke Volumetric Immersion Overlay + Flashbang Fullscreen Whiteout
 	_smoke_rect = ColorRect.new()
 	_smoke_rect.set_anchors_preset(Control.PRESET_FULL_RECT)
@@ -759,7 +772,7 @@ func _process(delta: float) -> void:
 				_icon_c4.modulate = HUD_WHITE
 		_icon_defuser.visible = player.has_defuser
 
-		var target_gap := 5.0
+		var target_gap: float = UICustomization.crosshair.gap
 		if GameData.dynamic_crosshair and player.is_alive:
 			var spd := Vector2(player.velocity.x, player.velocity.z).length()
 			target_gap += spd * 1.35 + float(player.weapon_ctrl.shots_fired) * 1.65 + player.weapon_ctrl.punch_angles.length() * 0.85
@@ -894,18 +907,7 @@ func _draw_crosshair() -> void:
 	if not player.is_alive or _scope_root.visible:
 		return
 
-	var gap := _crosshair_gap_cur
-	var seg := 8.0
-	var col := GameData.crosshair_color
-	var shadow := Color(0.0, 0.0, 0.0, col.a * 0.55)
-	_crosshair_ctrl.draw_line(center + Vector2(-gap - seg, 0), center + Vector2(-gap, 0), shadow, 3.2)
-	_crosshair_ctrl.draw_line(center + Vector2(gap, 0), center + Vector2(gap + seg, 0), shadow, 3.2)
-	_crosshair_ctrl.draw_line(center + Vector2(0, -gap - seg), center + Vector2(0, -gap), shadow, 3.2)
-	_crosshair_ctrl.draw_line(center + Vector2(0, gap), center + Vector2(0, gap + seg), shadow, 3.2)
-	_crosshair_ctrl.draw_line(center + Vector2(-gap - seg, 0), center + Vector2(-gap, 0), col, 1.8)
-	_crosshair_ctrl.draw_line(center + Vector2(gap, 0), center + Vector2(gap + seg, 0), col, 1.8)
-	_crosshair_ctrl.draw_line(center + Vector2(0, -gap - seg), center + Vector2(0, -gap), col, 1.8)
-	_crosshair_ctrl.draw_line(center + Vector2(0, gap), center + Vector2(0, gap + seg), col, 1.8)
+	CrosshairPainter.paint(_crosshair_ctrl, center, _crosshair_gap_cur)
 
 
 func _draw_sniper_scope() -> void:
@@ -1335,3 +1337,33 @@ func _on_radio_chat(sname: String, steam: String, txt: String) -> void:
 	tw.tween_interval(6.5)
 	tw.tween_property(card, "modulate:a", 0.0, 1.0)
 	tw.tween_callback(card.queue_free)
+
+
+func register_layout_element(id: String, control: Control) -> void:
+	layout_elements[id] = control
+	_layout_defaults[id] = {"anchors": [control.anchor_left, control.anchor_top, control.anchor_right, control.anchor_bottom], "offsets": [control.offset_left, control.offset_top, control.offset_right, control.offset_bottom]}
+
+
+func apply_custom_layout() -> void:
+	var area := get_viewport().get_visible_rect().size
+	for id in layout_elements:
+		var control: Control = layout_elements[id]
+		var original: Dictionary = _layout_defaults[id]
+		for i in range(4):
+			control.set_anchor(i, original.anchors[i])
+			control.set_offset(i, original.offsets[i])
+		control.scale = Vector2.ONE
+		control.modulate.a = 1.0
+		control.visible = true
+		if not UICustomization.hud.has(id):
+			continue
+		var entry: Dictionary = UICustomization.hud[id]
+		var base_size := control.size
+		var factor := minf(float(entry.scale), minf(area.x / maxf(base_size.x, 1), area.y / maxf(base_size.y, 1)))
+		var free := (area - base_size * factor).max(Vector2.ZERO)
+		control.set_anchors_preset(Control.PRESET_TOP_LEFT)
+		control.position = Vector2(entry.position) * free
+		control.size = base_size
+		control.scale = Vector2.ONE * factor
+		control.modulate.a = float(entry.opacity)
+		control.visible = bool(entry.visible)
