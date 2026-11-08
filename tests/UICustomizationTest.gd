@@ -43,6 +43,7 @@ func run() -> void:
 	expect(not editor.hud_preview.layout_elements.values().has(editor.hud_preview._flash_rect), "Flash overlay cannot be hidden")
 	expect(not editor.hud_preview.layout_elements.values().has(editor.hud_preview._scope_root), "Scope stays protected")
 	expect(editor.hud_preview._ammo_label.text == "30", "Numerical ammunition preview")
+	expect(editor.hud_preview.layout_elements.equipment.size.y == 268, "Equipment bounds include inventory above ammunition")
 	for id in UICustomizationEditor.NAMES:
 		editor.select_element(id)
 		editor.update_layout("scale", 1.2)

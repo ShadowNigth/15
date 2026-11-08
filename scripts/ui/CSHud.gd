@@ -706,8 +706,22 @@ func _build_hud_tree() -> void:
 	_killcards.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	root.add_child(_killcards)
 
+	# Include the three inventory slots above the ammo panel in its drag bounds.
+	# Their original coordinates and native layout are unchanged.
+	var equipment_group := Control.new()
+	equipment_group.set_anchors_preset(Control.PRESET_BOTTOM_RIGHT)
+	equipment_group.offset_left = -330
+	equipment_group.offset_right = -18
+	equipment_group.offset_top = -282
+	equipment_group.offset_bottom = -14
+	equipment_group.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	root.add_child(equipment_group)
+	br_root.reparent(equipment_group, false)
+	br_root.set_anchors_and_offsets_preset(Control.PRESET_TOP_LEFT)
+	br_root.position = Vector2(0, 72)
+	br_root.size = Vector2(312, 196)
 	bl_root.size = Vector2(252, 54)
-	for entry in [["radar", _radar_panel], ["status", left_icons], ["score", _score_panel], ["killfeed", _killfeed_vbox], ["announcements", _center_label], ["spectator", _spec_label], ["progress", prog_box], ["radio", _radio_vbox], ["health", bl_root], ["equipment", br_root]]:
+	for entry in [["radar", _radar_panel], ["status", left_icons], ["score", _score_panel], ["killfeed", _killfeed_vbox], ["announcements", _center_label], ["spectator", _spec_label], ["progress", prog_box], ["radio", _radio_vbox], ["health", bl_root], ["equipment", equipment_group]]:
 		register_layout_element(entry[0], entry[1])
 
 	# 12. Inside-Smoke Volumetric Immersion Overlay + Flashbang Fullscreen Whiteout
