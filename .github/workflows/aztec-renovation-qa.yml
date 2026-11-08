@@ -33,10 +33,13 @@ jobs:
           fetch-depth: 0
       - name: Validate texture-preserving repair and create baseline
         run: |
-          python tests/check_aztec_polish.py
-          python tests/check_aztec_renovation.py
-          python tests/check_dust2_renovation.py
-          git show babfb0ad6e4f47b33f5a1703c7b77f15be1b354a:assets/maps/de_aztec.glb > assets/maps/aztec_baseline.glb
+          set -o pipefail
+          {
+            python tests/check_aztec_polish.py &&
+            python tests/check_aztec_renovation.py &&
+            python tests/check_dust2_renovation.py &&
+            git show babfb0ad6e4f47b33f5a1703c7b77f15be1b354a:assets/maps/de_aztec.glb > assets/maps/aztec_baseline.glb
+          } 2>&1 | tee /tmp/aztec-static.log
       - name: Install Godot and renderer
         run: |
           curl -fL --retry 3 -o /tmp/godot.zip https://github.com/godotengine/godot-builds/releases/download/4.3-stable/Godot_v4.3-stable_linux.x86_64.zip
@@ -67,10 +70,10 @@ jobs:
         run: |
           python - <<'PY'
           from pathlib import Path
-          for name in ('aztec-import', 'aztec', 'aztec-water'):
+          for name in ('aztec-static', 'aztec-import', 'aztec', 'aztec-water'):
               p = Path('/tmp/' + name + '.log')
               if p.exists():
-                  text = '\n'.join(x for x in p.read_text(errors='replace').splitlines() if any(k in x for k in ['ERROR', 'Error', '[AZTEC RENOVATION]', '[AZTEC]', '[MAP SURFACE/WATER TEST]']))[-18000:]
+                  text = '\n'.join(x for x in p.read_text(errors='replace').splitlines() if any(k in x for k in ['ERROR', 'Error', 'Traceback', 'Assertion', 'File ', 'line ', 'fatal:', '[AZTEC RENOVATION STATIC]', '[AZTEC RENOVATION]', '[AZTEC]', '[MAP SURFACE/WATER TEST]']))[-18000:]
                   print('::notice title=Aztec diagnostics::' + text.replace('%','%25').replace('\n','%0A'))
           PY
       - name: Jungle canopy before
