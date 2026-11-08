@@ -9,7 +9,8 @@ pasados a MapLoader, sin cambiar el mapa original.
   no se rellenan puertas, ventanas ni huecos arquitectónicos.
 - Helechos geométricos colgantes en una selección de muros altos.
 - 19 árboles tropicales con frondas y 4 templos escalonados en el fondo, totalmente
-  fuera de los límites jugables. No son nuevas coberturas ni lugares accesibles.
+  fuera de los límites jugables. Las copas de 30–36 m y las pirámides de 25 m
+  sobresalen por encima del recinto y se verifican desde la altura del jugador. No son nuevas coberturas ni lugares accesibles.
 - Cielo tormentoso con capas de nubes direccionales que se desplazan lentamente,
   conservando el arte original `doom1` en el horizonte. Sin relámpagos ni destellos.
 - Bruma verde-gris muy tenue compatible con OpenGL, no niebla volumétrica.
@@ -19,7 +20,7 @@ al mapa. No se reemplazan ni alteran sus PNG originales ni las UV del BSP.
 La decoración usa color por vértice para sombras mates horneadas, no luces extra.
 Agua, puente reparado, armas, personajes y objetivos conservan sus sistemas.
 
-Presupuesto: 15.946 triángulos, 44 celdas, 5 materiales. Las celdas locales tienen
+Presupuesto: 16.138 triángulos, 44 celdas, 5 materiales. Las celdas locales tienen
 corte a 95 m y el fondo a 260 m. Sin colisiones, navegación, nuevas precargas,
 sombras dinámicas ni geometría sobre las rutas. La decoración tiene un coste:
 los recuentos de primitivas no deben presentarse como mejoras de FPS.

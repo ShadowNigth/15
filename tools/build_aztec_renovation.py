@@ -93,12 +93,12 @@ class AztecBuilder(Builder):
         def box(x,y,d,width,height,depth,mat='stone',tint=(.90,.94,.85)):
             self.box(point(x,y,d),(width,height,depth) if abs(n[2])>.9 else (depth,height,width),mat,tint)
         # Shallow detail wholly backed by a solid rectangle, above standing heads.
-        box(0,hi[1]-.16,.055,w-.12,.16,.11)
+        box(0,hi[1]-.16,.09,w-.12,.22,.18)
         box(0,hi[1]-.32,.035,w-.18,.07,.07,tint=(.64,.72,.57))
         count = max(1, int(w/3.8))
         for k in range(count):
             x = (k+.5)*w/count-w/2
-            box(x,hi[1]-.59,.045,min(.72,w/count-.18),.28,.09,'glyph')
+            box(x,hi[1]-.56,.06,min(1.05,w/count-.18),.36,.12,'glyph')
         has_fern = hi[1]-lo[1] > 4.4 and index % 4 == 0
         if has_fern:
             # Hang on the wall plane; not across doors, paths or the bridge deck.
@@ -111,18 +111,18 @@ class AztecBuilder(Builder):
         self.features.append(dict(kind='upper_wall',lo=lo,hi=hi,normal=n,bounds=bounds,max_depth=.65,fern=has_fern))
 
     def jungle(self, rng):
-        temples = [(-75,-80,18,16), (81,-55,20,18), (-20,-141,22,20), (25,99,20,18)]
+        temples = [(-60,-80,18,16), (68,-55,20,18), (-20,-130,22,20), (25,83,20,18)]
         for x,z,w,d in temples:
             self.anchor=(math.floor(x/32),math.floor(z/32),True)
-            for tier in range(5):
-                self.box((x,1+tier*1.35,z),(w-tier*2.6,1.35,d-tier*2.3),'wall',(.57,.66,.58))
-                self.box((x,1.7+tier*1.35,z),(w-tier*2.6+.25,.16,d-tier*2.3+.25),'stone',(.66,.72,.61))
-            self.box((x,8.5,z),(3,2.5,3),'glyph',(.65,.73,.63))
-            self.features.append(dict(kind='backdrop_temple',center=[x,4,z],size=[w+.3,12,d+.3]))
-        places=[(-67,z) for z in [-104,-65,-25,20,60]]+[(76,z) for z in [-95,-65,-30,5,42,68]]+[(x,-132)for x in [-37,-5,27,51]]+[(x,90)for x in [-39,-8,24,51]]
+            for tier in range(7):
+                self.box((x,1.5+tier*3.0,z),(w-tier*1.8,3.0,d-tier*1.6),'wall',(.57,.66,.58))
+                self.box((x,3.0+tier*3.0,z),(w-tier*1.8+.25,.18,d-tier*1.6+.25),'stone',(.66,.72,.61))
+            self.box((x,23.0,z),(3,4.0,3),'glyph',(.65,.73,.63))
+            self.features.append(dict(kind='backdrop_temple',center=[x,12.5,z],size=[w+.3,25,d+.3]))
+        places=[(-56,z) for z in [-104,-65,-25,20,60]]+[(64,z) for z in [-95,-65,-30,5,42,68]]+[(x,-125)for x in [-37,-5,27,51]]+[(x,80)for x in [-39,-8,24,51]]
         for index,(x,z) in enumerate(places):
             self.anchor=(math.floor(x/32),math.floor(z/32),True)
-            h=rng.uniform(13,19)
+            h=rng.uniform(30,36)
             bottom=(x,-4,z); crown=(x+rng.uniform(-1,1),h,z+rng.uniform(-1,1))
             self.pipe(bottom,crown,.30,'bark',7)
             for branch in range(7):

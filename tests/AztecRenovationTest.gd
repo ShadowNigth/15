@@ -34,6 +34,18 @@ func validate_map(built: Dictionary) -> void:
 		var face := raw as MeshInstance3D
 		var material := face.material_override as ShaderMaterial
 		expect(material != null and material.get_shader_parameter("original_sky") != null, "Continuous storm sky retains original artwork")
+	var visible_crowns := 0
+	var origin := Vector3(43, -4, -29)
+	var forward := Vector3(6, 8, 9).normalized()
+	for feature in report.features:
+		if String(feature.kind) != "backdrop_tree":
+			continue
+		var crown := vec(feature.center)
+		crown.y *= 2.0
+		if forward.dot((crown-origin).normalized()) > 0.80 and ray(origin, crown).is_empty():
+			visible_crowns += 1
+	expect(visible_crowns > 0, "New jungle is visible above walls from normal player height, not hidden scenery")
+	print("[AZTEC RENOVATION] visible crowns=", visible_crowns)
 	print("[AZTEC RENOVATION] triangles=", triangles, "; cells=", meshes.size())
 
 func comparison_views() -> Array:
