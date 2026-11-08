@@ -367,6 +367,9 @@ static func build_map(parent: Node3D, map_data: Dictionary) -> Dictionary:
 		map_root.add_child(ap)
 		amb_count += 1
 
+	if String(map_data.get("name", "")) == "de_dust2" and bool(map_data.get("visual_renovation", true)):
+		Dust2Renovation.apply(map_root)
+
 	return result
 
 

@@ -250,3 +250,14 @@ estática se divide en sectores para descarte por cámara. Tiene un perfil exclu
 de iluminación/materiales, con relieve y enfoque más suaves, sin brillo plástico.
 No se añaden agua, rehenes, VIP, decoraciones ni sistemas de precarga.
 Ver [alcance, reconstrucción y pruebas](docs/DUST2_POLISH.md).
+
+### Renovación visual de Dust2
+
+Dust2 añade decoración de fachadas (cornisas, contraventanas cerradas, desagües,
+cableado y faroles), detalles de techo en el paso CT y un poblado de fondo fuera
+del área jugable. El cielo conserva las montañas originales con nuevo degradado,
+nubes suaves y una ligera bruma. No hay nuevas colisiones ni coberturas; se
+conservan mapas, UV, texturas, rutas y objetivos. Geometría estática agrupada,
+materiales mates compartidos, sin sombras dinámicas ni precarga. La decoración
+sí añade coste de renderizado: no se promete un aumento de FPS.
+Detalles y pruebas: [Dust2 visual renovation](docs/DUST2_VISUAL_RENOVATION.md).

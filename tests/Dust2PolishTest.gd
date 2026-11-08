@@ -72,12 +72,19 @@ func capture_bots(world: GameWorld, name: String) -> void:
 	expect(get_viewport().get_texture().get_image().save_png("/tmp/dm-polish-review/" + name + ".png") == OK, "Live bot gameplay " + name)
 	camera.queue_free()
 
-func run() -> void:
-	seed(2481)
-	var data := GameData.load_map_data("de_dust2")
+func baseline_data(data: Dictionary) -> Dictionary:
 	var before := data.duplicate(true)
 	before.name = "dust2_baseline"
 	before.glb = "res://assets/maps/dust2_baseline.glb"
+	return before
+
+func validate_map(_built: Dictionary) -> void:
+	pass
+
+func run() -> void:
+	seed(2481)
+	var data := GameData.load_map_data("de_dust2")
+	var before := baseline_data(data)
 	var original: Node3D = MapLoader.build_map(self, before).root
 	await get_tree().physics_frame
 	await get_tree().physics_frame
@@ -102,6 +109,7 @@ func run() -> void:
 	await get_tree().physics_frame
 	var built := MapLoader.build_map(self, data)
 	var repaired: Node3D = built.root
+	validate_map(built)
 	await get_tree().physics_frame
 	await get_tree().physics_frame
 	for i in range(rays.size()):
