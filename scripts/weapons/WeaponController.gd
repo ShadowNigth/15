@@ -10,11 +10,16 @@ extends Node
 signal weapon_switched(weapon_id: String, spec: Dictionary)
 signal ammo_updated(clip: int, reserve: int)
 signal fired_shot(weapon_id: String, silenced: bool)
+## Opt-in diagnostics only: no timers, audio changes or retained frame history.
+signal shot_audited(facts: Dictionary)
+signal tracer_audited(facts: Dictionary)
 signal zoom_changed(fov_deg: float, scoped_overlay: bool)
 signal plant_progress_changed(ratio: float)
 
 var actor = null  # CSActor owner (duck-typed to avoid cyclic class_name reference)
 var casing_epoch: int = 0
+var shot_serial: int = 0
+var _input_gate_generation: int = 0
 var current_weapon_id: String = "knife"
 var last_weapon_id: String = "knife"
 
@@ -245,6 +250,9 @@ func _emit_ammo() -> void:
 
 
 func _process(delta: float) -> void:
+	if is_instance_valid(actor) and bool(actor.get("is_human")) and (bool(actor.get("ui_blocking_input")) or GameplayInputGate.blocked() or _input_gate_generation != GameplayInputGate.generation):
+		suspend_input()
+		_input_gate_generation = GameplayInputGate.generation
 	if not is_instance_valid(actor) or not bool(actor.get("is_alive")):
 		return
 
@@ -621,6 +629,8 @@ func _execute_bullet_shot(spec: Dictionary, is_burst_subshot: bool) -> void:
 	var cur_clip := int(clips.get(current_weapon_id, 0))
 	if cur_clip <= 0:
 		return
+	shot_serial += 1
+	var shot_sound := ""
 	var shot_context := KillContext.capture(actor, spec, zoom_index)
 	clips[current_weapon_id] = cur_clip - 1
 	shots_fired += 1
@@ -646,6 +656,7 @@ func _execute_bullet_shot(spec: Dictionary, is_burst_subshot: bool) -> void:
 		wav_list = spec.get("fire_sounds", [])
 	if not wav_list.is_empty():
 		var wpath := String(wav_list[randi() % wav_list.size()])
+		shot_sound = wpath
 		var hear_r := 14.0 if (is_sil or bool(spec.get("quiet", false))) else 52.0
 		var vol := -2.5 if is_sil else 1.5
 		AudioManager.play_3d(wpath, actor.global_position, vol, 70.0, randf_range(0.98, 1.02), hear_r, String(actor.get("team")))
@@ -689,6 +700,13 @@ func _execute_bullet_shot(spec: Dictionary, is_burst_subshot: bool) -> void:
 		var ry := randfn(0.0, spread)
 		var dir := (-aim_basis.z + aim_basis.x * rx + aim_basis.y * ry).normalized()
 		_fire_penetrating_ray(eye_pos, dir, max_range_m, base_dmg, armor_ratio, range_mod, pen, shot_context)
+
+	if shot_audited.get_connections().size() > 0:
+		shot_audited.emit({"serial": shot_serial, "weapon": current_weapon_id,
+			"physics_frame": Engine.get_physics_frames(), "clip_before": cur_clip,
+			"clip_after": int(clips[current_weapon_id]), "sound": shot_sound,
+			"eye": eye_pos, "aim": -aim_basis.z, "pellets": pellets,
+			"burst_followup": is_burst_subshot, "silenced": is_sil})
 
 	# Reproducible spray and stance response, separate from random spread.
 	var kick := BallisticModel.spray_kick(spec, shots_fired, bool(actor.get("is_crouching")), is_revolver_alt)
@@ -878,6 +896,9 @@ func _spawn_weapon_tracer(eye_pos: Vector3, shot_dir: Vector3, end_pos: Vector3,
 	if not is_instance_valid(RoundManager.game_world):
 		return
 	var start := _get_tracer_origin(eye_pos, shot_dir)
+	if tracer_audited.get_connections().size() > 0:
+		tracer_audited.emit({"serial": shot_serial, "eye": eye_pos, "muzzle": start,
+			"direction": shot_dir, "end": end_pos, "physics_frame": Engine.get_physics_frames()})
 	if current_weapon_id == "taser":
 		ImpactEffects.spawn_taser_arc(RoundManager.game_world, start, end_pos)
 	else:
@@ -1174,3 +1195,14 @@ func _cancel_spawn_protection() -> void:
 	# The controller also supports non-CSActor tools/fixtures; classic callers need no DM fields.
 	if RoundManager.map_mode == "dm" and actor is CSActor:
 		(actor as CSActor).dm_protection = 0.0
+
+func suspend_input() -> void:
+	# Cancel queued gameplay without throwing a primed grenade into an open menu.
+	burst_remaining = 0
+	_revolver_windup = 0.0
+	_grenade_pin_pulled = false
+	_grenade_want_release = false
+	_grenade_pin_timer = 0.0
+	if plant_progress > 0.0:
+		plant_progress = 0.0
+		plant_progress_changed.emit(0.0)

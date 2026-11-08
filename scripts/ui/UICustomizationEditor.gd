@@ -30,7 +30,7 @@ func _ready() -> void:
 	layer = 40
 	before = UICustomization.snapshot()
 	old_mouse_mode = Input.mouse_mode
-	Input.mouse_mode = Input.MOUSE_MODE_VISIBLE
+	GameplayInputGate.acquire(self)
 	var shade := ColorRect.new()
 	shade.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
 	shade.color = Color(0.018, 0.024, 0.031, 0.98)
@@ -285,7 +285,7 @@ func cancel() -> void:
 func _exit_tree() -> void:
 	if not closing:
 		UICustomization.restore(before)
-	Input.mouse_mode = old_mouse_mode
+	GameplayInputGate.release(self)
 
 func _input(event: InputEvent) -> void:
 	if closing:

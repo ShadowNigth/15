@@ -125,7 +125,7 @@ func open_menu(p: PlayerController) -> void:
 	_time = 0.0
 	_toast_t = 0.0
 	player.ui_blocking_input = true
-	Input.set_mouse_mode(Input.MOUSE_MODE_VISIBLE)
+	GameplayInputGate.acquire(self)
 	AudioManager.play_ui("launch_upmenu1.wav")
 	_pv_viewport.render_target_update_mode = SubViewport.UPDATE_ALWAYS
 	_ensure_preview_model()
@@ -143,7 +143,7 @@ func close_menu() -> void:
 	_pv_viewport.render_target_update_mode = SubViewport.UPDATE_DISABLED
 	if is_instance_valid(player):
 		player.ui_blocking_input = false
-	Input.set_mouse_mode(Input.MOUSE_MODE_CAPTURED)
+	GameplayInputGate.release(self)
 	AudioManager.play_ui("launch_dnmenu1.wav")
 	menu_closed.emit()
 

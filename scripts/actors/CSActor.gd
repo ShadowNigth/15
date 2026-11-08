@@ -63,6 +63,7 @@ var _body_anim: AnimationPlayer = null
 var _skel: Skeleton3D = null
 var _hand_attachment: BoneAttachment3D = null
 var _held_weapon_model: Node3D = null
+var _classic_pose_fit := ClassicPoseFit.new()
 var _held_weapon_rest_transform: Transform3D = Transform3D.IDENTITY
 var _tp_muzzle_sprite: Sprite3D = null
 var _tp_muzzle_light: OmniLight3D = null
@@ -143,6 +144,8 @@ func set_team_and_class(new_team: String, new_class: String) -> void:
 
 
 func _rebuild_character_model() -> void:
+	_classic_pose_fit.restore()
+	_classic_pose_fit = ClassicPoseFit.new()
 	remove_from_group("skeletal_bullet_actors")
 	if is_instance_valid(_bullet_hitboxes):
 		for entry in _bullet_hitboxes.entries:
@@ -450,6 +453,7 @@ func _tick_corpse_grounding(delta: float) -> void:
 
 
 func _evaluate_character_pose(delta: float) -> void:
+	_classic_pose_fit.restore()
 	if _skel == null or _anim_res_map.is_empty():
 		return
 
@@ -592,6 +596,9 @@ func _evaluate_character_pose(delta: float) -> void:
 		var q_spine := _skel.get_bone_pose_rotation(_spine_bone_idx)
 		var b_new := (b_pelvis.inverse() * r_twist * b_pelvis * Basis(q_spine)).orthonormalized()
 		_skel.set_bone_pose_rotation(_spine_bone_idx, b_new.get_rotation_quaternion())
+
+
+	_classic_pose_fit.fit(self, _skel, not _upper_action_key.is_empty())
 
 
 func _find_skeleton(n: Node) -> Skeleton3D:
@@ -1340,11 +1347,11 @@ func drop_current_weapon() -> void:
 			weapon_ctrl.equip_slot(3)
 
 
-func _spawn_drop_entity(item_id: String, spread_idx: int = 0) -> void:
+func _spawn_drop_entity(item_id: String, spread_idx: int = 0) -> DroppedWeapon:
 	if RoundManager.map_mode == "dm":
-		return
+		return null
 	if not is_instance_valid(RoundManager.game_world):
-		return
+		return null
 	var drop := DroppedWeapon.new()
 	RoundManager.game_world.add_child(drop)
 
@@ -1404,6 +1411,7 @@ func _spawn_drop_entity(item_id: String, spread_idx: int = 0) -> void:
 	drop.setup_drop(item_id, clip, res, throw_v, bool(weapon_ctrl.silenced_state.get(item_id, false)))
 	RoundManager.dropped_items.append(drop)
 
+	return drop
 
 func try_pickup_dropped(drop: DroppedWeapon) -> bool:
 	if is_vip:

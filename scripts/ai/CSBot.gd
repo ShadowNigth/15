@@ -23,6 +23,11 @@ var personality: int = PERSONALITY_NORMAL
 var target_enemy: CSActor = null
 
 # YaPB directed node-graph navigation state
+var traffic := TeammateTraffic.new()
+var bomb_role: String = "none"
+var _bomb_role_node: int = -1
+var _bomb_role_epoch: int = 0
+
 var _node_path: PackedInt32Array = PackedInt32Array()
 var _prev_node_idx: int = -1
 var _goal_node_idx: int = -1
@@ -155,6 +160,10 @@ func _on_bot_freeze_ended() -> void:
 
 
 func spawn_for_round(pos: Vector3, yaw_rad: float, reset_weapons: bool) -> void:
+	traffic.reset()
+	bomb_role = "none"
+	_bomb_role_node = -1
+	_bomb_role_epoch = 0
 	super.spawn_for_round(pos, yaw_rad, reset_weapons)
 	_release_camp_spot()
 	target_enemy = null
@@ -547,7 +556,7 @@ func _physics_process(delta: float) -> void:
 	# Priority 1: CT Defusing Planted C4 when clear (YaPB TaskId::DefuseBomb)!
 	if team == "CT" and target_enemy == null and is_instance_valid(RoundManager.planted_c4):
 		var c4 := RoundManager.planted_c4 as PlantedC4
-		if c4 and global_position.distance_to(c4.global_position) <= 2.35:
+		if c4 and global_position.distance_to(c4.global_position) <= 2.35 and BombSquad.elect_defuser(c4, RoundManager.actors) == self:
 			if c4.defuser_actor == null or c4.defuser_actor == self:
 				_release_camp_spot()
 				_defusing_ref = c4
@@ -1705,7 +1714,10 @@ func _update_tactical_objective() -> void:
 						continue
 					if mate.team != "T":
 						continue
-					if mate.global_position.distance_to(dc4_pos) < my_d - 0.35:
+					if mate.is_human:
+						continue
+					var mate_d := mate.global_position.distance_to(dc4_pos)
+					if mate_d < my_d - 0.01 or (absf(mate_d-my_d) <= 0.01 and mate.get_instance_id() < get_instance_id()):
 						nearest = false
 						break
 				if nearest:
@@ -1720,25 +1732,35 @@ func _update_tactical_objective() -> void:
 		_update_vip_escape(nav, gw)
 		return
 
-	if _hold_pos_timer > 0.0 or _camp_timer > 0.0:
+	if (_hold_pos_timer > 0.0 or _camp_timer > 0.0) and not is_instance_valid(RoundManager.planted_c4):
 		return
 
-	# Urgent objective: Planted C4!
+	# One reachable CT takes the keypad; the rest hold separate graph positions.
 	if is_instance_valid(RoundManager.planted_c4):
-		var c4_pos := RoundManager.planted_c4.global_position
-		if team == "CT":
-			if not _has_goal or _goal_pos.distance_to(c4_pos) > 2.4 or _node_path.is_empty():
-				_plan_to_world_pos(nav, c4_pos, false, BotNavigator.PATH_FAST)
-			return
+		var bomb := RoundManager.planted_c4 as PlantedC4
+		var epoch := bomb.get_instance_id()
+		var selected := BombSquad.elect_defuser(bomb, RoundManager.actors, nav) if team == "CT" else null
+		var role := "defuse" if selected == self else ("cover" if team == "CT" else "guard")
+		if _bomb_role_epoch != epoch or bomb_role != role:
+			_release_camp_spot()
+			_bomb_role_node = -1
+			_has_goal = false
+			_bomb_role_epoch = epoch
+		bomb_role = role
+		if role == "defuse":
+			if not _has_goal or _node_path.is_empty() or _goal_pos.distance_to(bomb.global_position) > 2.4:
+				_plan_to_world_pos(nav, bomb.global_position, false, BotNavigator.PATH_FAST)
 		else:
-			# Terrorists take nearby YaPB Camp spots overlooking the planted C4!
-			if not _has_goal or _node_path.is_empty():
-				var camp_c4 := nav.pick_camp_or_sniper_node(c4_pos, "T", _uses_sniper(), 18.0, self)
-				if camp_c4 >= 0:
-					_plan_to_node(nav, camp_c4, false, BotNavigator.PATH_SAFE)
-				else:
-					_plan_to_world_pos(nav, c4_pos + Vector3(randf_range(-4.5, 4.5), 0.0, randf_range(-4.5, 4.5)), false)
-			return
+			if _bomb_role_node < 0:
+				_bomb_role_node = BombSquad.objective_node(self, bomb.global_position, nav, RoundManager.actors)
+				if _bomb_role_node >= 0:
+					nav.claim_node(_bomb_role_node, self)
+					_camping_node_idx = _bomb_role_node
+			if _bomb_role_node >= 0 and (not _has_goal or _node_path.is_empty()) and global_position.distance_to(nav.get_node_pos(_bomb_role_node)) > 1.3:
+				_plan_to_node(nav, _bomb_role_node, false, BotNavigator.PATH_SAFE)
+		return
+	bomb_role = "none"
+	_bomb_role_node = -1
 
 	# Assassination squad roles: CT formation/advance escort, T hunt/ambush.
 	if RoundManager.map_mode == "as" and _update_as_squad_objective(nav, gw):
@@ -1752,6 +1774,16 @@ func _update_tactical_objective() -> void:
 			var g_bomb := nav.pick_goal_node_near(site_aabb.get_center(), 14.0)
 			_plan_to_node(nav, g_bomb, false, BotNavigator.PATH_SAFE)
 		return
+
+	# Two nearby T bots support the carrier; other Ts keep independent flank routes.
+	if team == "T" and RoundManager.map_mode == "de":
+		var support := BombSquad.escort_slot(self, RoundManager.actors)
+		if not support.is_empty():
+			bomb_role = "escort"
+			var carrier := support.carrier as CSActor
+			if global_position.distance_to(carrier.global_position) > 5.0 and (_node_path.is_empty() or _goal_pos.distance_to(carrier.global_position) > 4.0):
+				_plan_to_world_pos(nav, carrier.global_position, false, BotNavigator.PATH_SAFE)
+			return
 
 	# Hostage Rescue Mode (cs_*)
 	if RoundManager.map_mode == "cs":
@@ -2099,6 +2131,9 @@ func _follow_navigation_path(delta: float) -> void:
 		var moved_dist := global_position.distance_to(_last_pos)
 		if on_ladder and absf(velocity.y) > 0.55:
 			_stuck_timer = 0.0
+		elif traffic.mode in ["wait", "yield", "follow", "sidestep"]:
+			_stuck_timer = 0.0
+			_cur_node_elapsed = 0.0
 		elif moved_dist < 1.05 * delta:
 			_stuck_timer += delta
 			if _stuck_timer > 0.24 and _jump_cooldown <= 0.0 and is_on_floor():
@@ -2150,6 +2185,8 @@ func _follow_navigation_path(delta: float) -> void:
 
 
 func _try_enter_camp_at_node(nav: BotNavigator, node_idx: int) -> void:
+	if bomb_role in ["cover", "guard", "escort"]:
+		return
 	if _camp_cooldown > 0.0 or is_vip or _is_leading_hostage() or _is_assigned_vip_escort():
 		return
 	if team == "T" and RoundManager.map_mode == "de" and not is_instance_valid(RoundManager.planted_c4) and String(weapon_ctrl.slots.get(5, "")) == "c4":
@@ -2330,10 +2367,10 @@ func _steer_around_obstacles(desired_dir: Vector3) -> Vector3:
 				else:
 					steer = desired_dir.rotated(Vector3.UP, deg_to_rad(115.0 * _avoid_side))
 
-	# Wall-safe teammate separation (checks shin height +0.62m so bots NEVER push into parapets!)
+	# Legacy enemy separation; teammates use the common traffic negotiator (checks shin height +0.62m so bots NEVER push into parapets!)
 	var sep_accum := Vector3.ZERO
 	for a in RoundManager.actors:
-		if not is_instance_valid(a) or a == self or not bool(a.get("is_alive")):
+		if not is_instance_valid(a) or a == self or not bool(a.get("is_alive")) or String(a.get("team")) == team:
 			continue
 		var a_node := a as Node3D
 		if a_node == null or absf(a_node.global_position.y - global_position.y) > 1.6:
@@ -2511,6 +2548,13 @@ func _update_bomb_escape_state() -> void:
 			defuse_t = maxf(0.1, float(c4.defuse_required) - float(c4.defuse_progress))
 			margin = 0.15
 		var travel_est: float = d_bomb * 0.235 + 0.55
+		var teammate := BombSquad.elect_defuser(c4, RoundManager.actors)
+		if teammate != null and teammate != self:
+			defuse_t = (5.0 if teammate.has_defuser else 10.0)
+			travel_est = teammate.global_position.distance_to(c4.global_position) * 0.235 + 0.55
+			if c4.defuser_actor == teammate:
+				defuse_t = maxf(0.1, c4.defuse_required-c4.defuse_progress)
+				travel_est = 0.0
 		_bomb_escape_active = t_left <= travel_est + defuse_t + margin
 	else:
 		if was_active:
@@ -2641,3 +2685,12 @@ func _maybe_share_loadout() -> void:
 	var rec_bot := best_rec as CSBot
 	if rec_bot != null and is_instance_valid(drop_g):
 		rec_bot._pending_share_drop = drop_g
+
+
+func apply_goldsrc_movement(wish_dir_world: Vector3, want_jump: bool, want_crouch: bool, want_walk: bool, delta: float) -> void:
+	var negotiated := traffic.steer(self, wish_dir_world, RoundManager.actors)
+	if traffic.mode in ["wait", "yield", "follow", "sidestep"]:
+		want_jump = false
+		_stuck_timer = 0.0
+		_cur_node_elapsed = 0.0
+	super.apply_goldsrc_movement(negotiated, want_jump, want_crouch, want_walk, delta)

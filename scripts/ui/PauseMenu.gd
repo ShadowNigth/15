@@ -77,10 +77,10 @@ func _make_btn(parent: VBoxContainer, txt: String, cb: Callable) -> void:
 func open_pause() -> void:
 	is_open = true
 	visible = true
-	Input.set_mouse_mode(Input.MOUSE_MODE_VISIBLE)
+	GameplayInputGate.acquire(self)
 
 
 func close_pause() -> void:
 	is_open = false
 	visible = false
-	Input.set_mouse_mode(Input.MOUSE_MODE_CAPTURED)
+	GameplayInputGate.release(self)

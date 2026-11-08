@@ -307,7 +307,7 @@ func spawn_for_round(pos: Vector3, yaw_rad: float, reset_weapons: bool) -> void:
 
 
 func _unhandled_input(event: InputEvent) -> void:
-	if ui_blocking_input:
+	if ui_blocking_input or GameplayInputGate.blocked():
 		return
 
 	if event is InputEventMouseMotion and Input.get_mouse_mode() == Input.MOUSE_MODE_CAPTURED:
@@ -491,6 +491,15 @@ func _process(delta: float) -> void:
 
 
 func _physics_process(delta: float) -> void:
+	var blocked := ui_blocking_input or GameplayInputGate.blocked()
+	if blocked or _gate_generation != GameplayInputGate.generation:
+		_actions_armed = false
+		_gate_generation = GameplayInputGate.generation
+		_jump_buffer_timer = 0.0
+		weapon_ctrl.suspend_input()
+		_cancel_use()
+	if not blocked and not Input.is_action_pressed("attack1") and not Input.is_action_pressed("attack2") and not Input.is_action_pressed("use") and not Input.is_action_pressed("jump"):
+		_actions_armed = true
 	if not is_alive:
 		return
 
@@ -502,7 +511,7 @@ func _physics_process(delta: float) -> void:
 		_coyote_timer = maxf(0.0, _coyote_timer - delta)
 
 	var in_vec := Vector2.ZERO
-	if not ui_blocking_input:
+	if not blocked:
 		in_vec = Input.get_vector("move_left", "move_right", "move_forward", "move_back")
 	_last_in_x = lerpf(_last_in_x, in_vec.x, minf(1.0, 14.0 * delta))
 
@@ -511,11 +520,11 @@ func _physics_process(delta: float) -> void:
 	if wish_dir.length_squared() > 0.001:
 		wish_dir = wish_dir.normalized()
 
-	if (not ui_blocking_input) and Input.is_action_just_pressed("jump"):
+	if not blocked and _actions_armed and Input.is_action_just_pressed("jump"):
 		_jump_buffer_timer = 0.11
-	var want_jump := _jump_buffer_timer > 0.0 and (is_on_floor() or on_ladder)
-	var want_crouch := (not ui_blocking_input) and Input.is_action_pressed("crouch")
-	var want_walk := (not ui_blocking_input) and Input.is_action_pressed("walk")
+	var want_jump := not blocked and _actions_armed and _jump_buffer_timer > 0.0 and (is_on_floor() or on_ladder)
+	var want_crouch := (not blocked) and Input.is_action_pressed("crouch")
+	var want_walk := (not blocked) and Input.is_action_pressed("walk")
 
 	# Ledge step-off coyote jump forgiveness (85ms grace after walking off a crate/ramp lip)
 	if _jump_buffer_timer > 0.0 and not is_on_floor() and not on_ladder and _coyote_timer > 0.0 and not RoundManager.is_movement_frozen():
@@ -534,7 +543,7 @@ func _physics_process(delta: float) -> void:
 	_was_on_floor = is_on_floor()
 
 	# Primary & secondary attack (just pressed, held, or released)
-	if not ui_blocking_input:
+	if not blocked and _actions_armed:
 		if Input.is_action_just_pressed("attack1"):
 			weapon_ctrl.trigger_primary(false, delta)
 		elif Input.is_action_pressed("attack1"):
@@ -548,44 +557,71 @@ func _physics_process(delta: float) -> void:
 		_handle_use_interaction(delta)
 
 
-func _handle_use_interaction(delta: float) -> void:
-	if Input.is_action_just_pressed("use"):
-		var eye := get_eye_position()
-		var fwd := get_look_forward()
-		var space := get_world_3d().direct_space_state
-		var q := PhysicsRayQueryParameters3D.create(eye, eye + fwd * 2.8)
-		q.collision_mask = 1 | 2
-		q.exclude = [get_rid()]
-		var hit := space.intersect_ray(q)
-		if hit:
-			var col = hit["collider"]
-			if col is HostageNPC:
-				(col as HostageNPC).interact(self)
-			elif col is Node and col.has_meta("door"):
-				var door = col.get_meta("door")
-				if is_instance_valid(door) and door.has_method("interact"):
-					door.call("interact", self)
-			elif col is Node and col.has_meta("button_target"):
-				var btn_tgt := String(col.get_meta("button_target"))
-				var btn_pos: Vector3 = col.get_meta("button_center") if col.has_meta("button_center") else hit["position"]
-				AudioManager.play_3d("buttons/blip1.wav", btn_pos, -3.5, 18.0, 1.0, 12.0, team)
-				if RoundManager.game_world != null:
-					RoundManager.game_world.trigger_map_target(btn_tgt, self)
+var _actions_armed: bool = true
+var _gate_generation: int = 0
 
-	# Continuous hold E to defuse planted C4 (CT only)
+func _cancel_use() -> void:
+	if is_instance_valid(_defusing_c4):
+		_defusing_c4.cancel_defuse(self)
+	_defusing_c4 = null
+	defuse_progress_changed.emit(0.0)
+
+func _handle_use_interaction(delta: float) -> void:
+	# Defuse owns E for this tick: never also toggle a hostage/door or pick up a gun.
 	if team == "CT" and Input.is_action_pressed("use") and is_instance_valid(RoundManager.planted_c4):
 		var c4 := RoundManager.planted_c4 as PlantedC4
-		if c4 and global_position.distance_to(c4.global_position) <= 2.5:
+		if global_position.distance_to(c4.global_position) <= 2.5 and UseSelection.visible(self, c4.global_position+Vector3.UP*0.15):
 			_defusing_c4 = c4
-			var prog := c4.begin_or_continue_defuse(self, delta)
-			defuse_progress_changed.emit(prog)
+			defuse_progress_changed.emit(c4.begin_or_continue_defuse(self, delta))
 			return
+	_cancel_use()
+	if Input.is_action_just_pressed("use"):
+		perform_use_selection(UseSelection.select(self))
 
-	if _defusing_c4 != null:
-		if is_instance_valid(_defusing_c4):
-			_defusing_c4.cancel_defuse(self)
-		_defusing_c4 = null
-		defuse_progress_changed.emit(0.0)
+func perform_use_selection(selection: Dictionary) -> bool:
+	if selection.is_empty() or ui_blocking_input or GameplayInputGate.blocked():
+		return false
+	var target: Node = selection.target
+	if not is_instance_valid(target):
+		return false
+	match String(selection.kind):
+		"drop":
+			var drop := target as DroppedWeapon
+			if not UseSelection.drop_allowed(self, drop):
+				return false
+			var spec: Dictionary = GameData.weapons.get(drop.item_id, {})
+			var slot := int(spec.get("slot", 0))
+			var old_id := ""
+			var outgoing: DroppedWeapon = null
+			if slot in [1, 2] and not String(weapon_ctrl.slots.get(slot, "")).is_empty():
+				if not is_instance_valid(RoundManager.game_world):
+					return false
+				old_id = String(weapon_ctrl.slots[slot])
+				outgoing = _spawn_drop_entity(old_id)
+				if outgoing == null:
+					return false
+				weapon_ctrl.slots[slot] = ""
+			if try_pickup_dropped(drop):
+				RoundManager.dropped_items.erase(drop)
+				drop.queue_free()
+				return true
+			if outgoing != null:
+				weapon_ctrl.slots[slot] = old_id
+				RoundManager.dropped_items.erase(outgoing)
+				outgoing.queue_free()
+		"hostage":
+			(target as HostageNPC).interact(self)
+			return true
+		"door":
+			if target.has_method("interact"):
+				target.call("interact", self)
+				return true
+		"button":
+			AudioManager.play_3d("buttons/blip1.wav", global_position, -3.5, 18.0)
+			if is_instance_valid(RoundManager.game_world):
+				RoundManager.game_world.trigger_map_target(String(target.get_meta("button_target")), self)
+				return true
+	return false
 
 
 func _on_weapon_switched(wid: String, _spec: Dictionary) -> void:

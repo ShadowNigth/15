@@ -93,15 +93,14 @@ func _build_ui() -> void:
 func open_menu() -> void:
 	is_open = true
 	visible = true
-	Input.set_mouse_mode(Input.MOUSE_MODE_VISIBLE)
+	GameplayInputGate.acquire(self)
 	_show_team_step()
 
 
 func close_menu(capture_mouse: bool = true) -> void:
 	is_open = false
 	visible = false
-	if capture_mouse:
-		Input.set_mouse_mode(Input.MOUSE_MODE_CAPTURED)
+	GameplayInputGate.release(self, capture_mouse)
 
 
 func _unhandled_input(event: InputEvent) -> void:
