@@ -110,6 +110,8 @@ func validate_map(_built: Dictionary) -> void:
 func run() -> void:
 	seed(2481)
 	var data := GameData.load_map_data("de_aztec")
+	if get_script().resource_path == "res://tests/AztecPolishTest.gd":
+		data.visual_renovation = false
 	var before := baseline_data(data)
 	var original: Node3D = MapLoader.build_map(self, before).root
 	await get_tree().physics_frame

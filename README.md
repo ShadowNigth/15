@@ -271,3 +271,11 @@ Reparación reproducible de geometría degenerada/uniones T y sectores para desc
 por cámara, sin añadir precarga ni cambiar las colisiones intencionales del cristal.
 Pruebas físicas, puente, rutas, apariciones, agua y capturas antes/después:
 [Aztec polish](docs/AZTEC_POLISH.md).
+
+### Renovación visual de Aztec
+
+Ruinas tropicales con cornisas y frisos de glifos, helechos en muros altos,
+templos y árboles fuera del área jugable, cielo tormentoso de nubes lentas y
+bruma tenue. Conserva las texturas originales, las rutas, el puente reparado y
+los objetivos. Sin sistema de precarga ni nuevas colisiones decorativas.
+Detalles, límites y pruebas: [docs/AZTEC_RENOVATION.md](docs/AZTEC_RENOVATION.md).

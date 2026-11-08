@@ -189,13 +189,13 @@ class Builder:
                     self.box((x+sx*w*.23,floor+h*.45+sy*2.5,z-d/2-.018),(.8,1.05,.035),'shutter',(.63,.69,.65))
             self.features.append({'kind':'backdrop','center':[x,floor+h/2,z],'size':[w,h,d]})
 
-    def bake(self):
-        mats=[('stone','sandtrim'),('wall','-0cssandwall'),('shutter','sandcrtsmsd'),('iron','generic011'),('lamp','white')]
-        doc={'asset':{'version':'2.0','generator':'Dust2 visual renovation v1'},'scene':0,'scenes':[{'nodes':[]}],'nodes':[],'meshes':[],'materials':[],'textures':[],'images':[],'samplers':[{'magFilter':9729,'minFilter':9987,'wrapS':10497,'wrapT':10497}],'buffers':[],'bufferViews':[],'accessors':[]}
+    def bake(self, mats=None, label="Dust2", source_commit=BASE):
+        mats=mats or [('stone','sandtrim'),('wall','-0cssandwall'),('shutter','sandcrtsmsd'),('iron','generic011'),('lamp','white')]
+        doc={'asset':{'version':'2.0','generator':label+' visual renovation v1'},'scene':0,'scenes':[{'nodes':[]}],'nodes':[],'meshes':[],'materials':[],'textures':[],'images':[],'samplers':[{'magFilter':9729,'minFilter':9987,'wrapS':10497,'wrapT':10497}],'buffers':[],'bufferViews':[],'accessors':[]}
         for i,(name,texture) in enumerate(mats):
             doc['images'].append({'uri':'../textures/world/'+texture+'.png'})
             doc['textures'].append({'source':i,'sampler':0})
-            doc['materials'].append({'name':'Dust2_'+name,'pbrMetallicRoughness':{'baseColorTexture':{'index':i},'baseColorFactor':([.20,.40,.35,1] if name=='shutter' else ([.95,.65,.27,1] if name=='lamp' else [1,1,1,1])),'metallicFactor':0,'roughnessFactor':1}})
+            doc['materials'].append({'name':label+'_'+name,'pbrMetallicRoughness':{'baseColorTexture':{'index':i},'baseColorFactor':([.20,.40,.35,1] if name=='shutter' and label=='Dust2' else ([.95,.65,.27,1] if name=='lamp' and label=='Dust2' else [1,1,1,1])),'metallicFactor':0,'roughnessFactor':1}})
         indices={name:i for i,(name,_) in enumerate(mats)}
         blob=bytearray()
         def acc(values,kind):
@@ -219,7 +219,7 @@ class Builder:
         doc['buffers']=[{'byteLength':len(blob)}]
         raw=json.dumps(doc,separators=(',',':')).encode();raw+=b' '*(-len(raw)%4)
         output=struct.pack('<III',0x46546c67,2,28+len(raw)+len(blob))+struct.pack('<II',len(raw),0x4e4f534a)+raw+struct.pack('<II',len(blob),0x004e4942)+blob
-        report={'triangles':sum(len(v)//3 for v in self.buckets.values()),'mesh_cells':len(cells),'materials':len(mats),'source_commit':BASE,'asset_sha256':hashlib.sha256(output).hexdigest(),'features':self.features}
+        report={'triangles':sum(len(v)//3 for v in self.buckets.values()),'mesh_cells':len(cells),'materials':len(mats),'source_commit':source_commit,'asset_sha256':hashlib.sha256(output).hexdigest(),'features':self.features}
         return output,report
 
 

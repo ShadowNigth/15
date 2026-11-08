@@ -376,6 +376,8 @@ static func build_map(parent: Node3D, map_data: Dictionary) -> Dictionary:
 
 	if String(map_data.get("name", "")) == "de_dust2" and bool(map_data.get("visual_renovation", true)):
 		Dust2Renovation.apply(map_root)
+	if String(map_data.get("name", "")) == "de_aztec" and bool(map_data.get("visual_renovation", true)):
+		AztecRenovation.apply(map_root)
 
 	return result
 

@@ -1,0 +1,124 @@
+name: Aztec visual renovation QA
+on:
+  workflow_dispatch:
+  push:
+    paths:
+      - 'scripts/world/AztecPolish.gd'
+      - 'scripts/world/AztecRenovation.gd'
+      - 'assets/maps/de_aztec_dressing*'
+      - 'assets/shaders/aztec_sky.gdshader'
+      - 'tools/build_aztec_renovation.py'
+      - 'tools/build_dust2_renovation.py'
+      - 'tests/check_aztec_renovation.py'
+      - 'scripts/world/MapLoader.gd'
+      - 'assets/maps/de_aztec.glb'
+      - 'assets/maps/de_aztec.glb.import'
+      - 'assets/shaders/goldsrc_world*.gdshader'
+      - 'assets/shaders/water.gdshader'
+      - 'tools/polish_dust2.py'
+      - 'tools/polish_aztec.py'
+      - 'tools/publish_dust2_capture.py'
+      - 'tests/*Aztec*'
+      - 'tests/check_aztec_polish.py'
+      - '.github/workflows/aztec-renovation-qa.yml'
+jobs:
+  aztec:
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    env:
+      DUST2_IMAGE_LIMIT: '9000'
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Validate texture-preserving repair and create baseline
+        run: |
+          python tests/check_aztec_polish.py
+          python tests/check_aztec_renovation.py
+          python tests/check_dust2_renovation.py
+          git show babfb0ad6e4f47b33f5a1703c7b77f15be1b354a:assets/maps/de_aztec.glb > assets/maps/aztec_baseline.glb
+      - name: Install Godot and renderer
+        run: |
+          curl -fL --retry 3 -o /tmp/godot.zip https://github.com/godotengine/godot-builds/releases/download/4.3-stable/Godot_v4.3-stable_linux.x86_64.zip
+          unzip -q /tmp/godot.zip -d /tmp/godot
+          sudo install -m 755 /tmp/godot/Godot_v4.3-stable_linux.x86_64 /usr/local/bin/godot
+          sudo apt-get update -qq
+          sudo apt-get install -y -qq xvfb libgl1-mesa-dri
+          python -m pip install pillow
+      - name: Native import
+        run: |
+          set -o pipefail
+          godot --headless --path . --import 2>&1 | tee /tmp/aztec-import.log
+          if grep -Eq 'SCRIPT ERROR:|Parse Error:|Compile Error:|SHADER ERROR|Shader compilation failed' /tmp/aztec-import.log; then exit 1; fi
+      - name: Physics equivalence, routes, live bots, objectives and OpenGL comparison
+        run: |
+          set -o pipefail
+          timeout 320s xvfb-run -a godot --path . --audio-driver Dummy --rendering-method gl_compatibility --disable-render-loop --fixed-fps 60 --resolution 1280x720 res://tests/AztecRenovationTest.tscn 2>&1 | tee /tmp/aztec.log
+          if grep -Eq 'SCRIPT ERROR:|Parse Error:|Compile Error:|SHADER ERROR|Shader compilation failed' /tmp/aztec.log; then exit 1; fi
+          grep -q '\[AZTEC\] PASS:' /tmp/aztec.log
+      - name: Water interaction regression
+        run: |
+          set -o pipefail
+          godot --headless --path . --fixed-fps 60 res://tests/MapSurfaceWaterTest.tscn 2>&1 | tee /tmp/aztec-water.log
+          if grep -Eq 'SCRIPT ERROR:|Parse Error:|Compile Error:|SHADER ERROR|Shader compilation failed' /tmp/aztec-water.log; then exit 1; fi
+          grep -q '\[MAP SURFACE/WATER TEST\] PASS:' /tmp/aztec-water.log
+      - name: Diagnostics
+        if: always()
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          for name in ('aztec-import', 'aztec', 'aztec-water'):
+              p = Path('/tmp/' + name + '.log')
+              if p.exists():
+                  text = '\n'.join(x for x in p.read_text(errors='replace').splitlines() if any(k in x for k in ['ERROR', 'Error', '[AZTEC RENOVATION]', '[AZTEC]', '[MAP SURFACE/WATER TEST]']))[-18000:]
+                  print('::notice title=Aztec diagnostics::' + text.replace('%','%25').replace('\n','%0A'))
+          PY
+      - name: Jungle canopy before
+        if: always()
+        run: python tools/publish_dust2_capture.py aztec_canopy_before
+      - name: Jungle canopy after
+        if: always()
+        run: python tools/publish_dust2_capture.py aztec_canopy_after
+      - name: Temple skyline before
+        if: always()
+        run: python tools/publish_dust2_capture.py aztec_temple_before
+      - name: Temple skyline after
+        if: always()
+        run: python tools/publish_dust2_capture.py aztec_temple_after
+      - name: Site B before
+        if: always()
+        run: python tools/publish_dust2_capture.py aztec_b_before
+      - name: Site B after
+        if: always()
+        run: python tools/publish_dust2_capture.py aztec_b_after
+      - name: Site A before
+        if: always()
+        run: python tools/publish_dust2_capture.py aztec_a_before
+      - name: Site A after
+        if: always()
+        run: python tools/publish_dust2_capture.py aztec_a_after
+      - name: Bridge before
+        if: always()
+        run: python tools/publish_dust2_capture.py aztec_bridge_before
+      - name: Bridge after
+        if: always()
+        run: python tools/publish_dust2_capture.py aztec_bridge_after
+      - name: River before
+        if: always()
+        run: python tools/publish_dust2_capture.py aztec_water_before
+      - name: River after
+        if: always()
+        run: python tools/publish_dust2_capture.py aztec_water_after
+      - name: Live bots first sample
+        if: always()
+        run: python tools/publish_dust2_capture.py aztec_gameplay_a
+      - name: Live bots second sample
+        if: always()
+        run: python tools/publish_dust2_capture.py aztec_gameplay_b
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: aztec-comparison
+          path: |
+            /tmp/aztec*.log
+            /tmp/dm-polish-review/aztec_*.png
