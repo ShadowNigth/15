@@ -15,6 +15,7 @@ var simulation := false
 var elapsed := 0.0
 var old_mouse_mode: int
 var closing := false
+var preference_path := UICustomization.PATH
 var _populating := false
 
 static func open(parent: Node) -> UICustomizationEditor:
@@ -168,6 +169,9 @@ func populate_inspector() -> void:
 		check("Forma de T", UICustomization.crosshair.t_shape, func(v: bool): set_crosshair("t_shape", v))
 		check("Mira dinámica", GameData.dynamic_crosshair, func(v: bool): GameData.dynamic_crosshair = v; UICustomization.changed.emit())
 		check("Simular movimiento / disparos", simulation, func(v: bool): simulation = v)
+		var color_caption := Label.new()
+		color_caption.text = "Color y transparencia"
+		inspector.add_child(color_caption)
 		var color := ColorPickerButton.new()
 		color.color = GameData.crosshair_color
 		color.text = "Color y transparencia"
@@ -207,6 +211,7 @@ func build_hud_preview() -> void:
 	hud_preview._armor_label.text = "100"
 	hud_preview._money_label.text = "$ 3200"
 	hud_preview._weapon_name_label.text = "AK-47"
+	hud_preview._weapon_icon.texture = GameData.get_weapon_hud_atlas("ak47", "weapon_s_640")
 	hud_preview._ammo_label.text = "30"
 	hud_preview._ammo_reserve_label.text = "90"
 	hud_preview._center_label.text = "Ronda de ejemplo"
@@ -261,7 +266,7 @@ func reset_tab() -> void:
 	populate_inspector()
 
 func save_and_close() -> void:
-	var result := UICustomization.save_preferences()
+	var result := UICustomization.save_preferences(preference_path)
 	if result != OK:
 		message.text = "No se pudo guardar (%s). Los cambios siguen en vista previa." % error_string(result)
 		return

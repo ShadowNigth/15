@@ -33,6 +33,7 @@ func run() -> void:
 	editor.set_crosshair("length", 14.0)
 	GameData.crosshair_color = Color(0, 0.9, 1, 0.8)
 	editor.simulation = true
+	editor.populate_inspector()
 	expect(UICustomization.crosshair.dot and UICustomization.crosshair.t_shape, "Live crosshair options")
 	await capture("editor_crosshair")
 	editor.show_tab(true)
@@ -75,13 +76,21 @@ func run() -> void:
 	expect(target.position.x + target.size.x <= 1281 and target.position.y + target.size.y <= 721, "Drag clamped at bottom-right")
 	editor.move_element(Vector2(230, 160))
 	editor.update_layout("scale", 1.15)
+	editor.populate_inspector()
 	await capture("editor_hud")
+	preview_resize(editor)
 	var saved := UICustomization.snapshot()
 	expect(UICustomization.save_preferences("user://ui_test.cfg") == OK, "Config file saved")
 	UICustomization.reset_crosshair()
 	UICustomization.hud.clear()
 	UICustomization.load_preferences("user://ui_test.cfg")
-	expect(UICustomization.snapshot() == saved, "Full disk round-trip")
+	var loaded := UICustomization.snapshot()
+	var same: bool = loaded.crosshair == saved.crosshair and loaded.color.is_equal_approx(saved.color) and loaded.dynamic == saved.dynamic and loaded.hud.keys() == saved.hud.keys()
+	for id in saved.hud:
+		var a: Dictionary = loaded.hud[id]
+		var b: Dictionary = saved.hud[id]
+		same = same and Vector2(a.position).is_equal_approx(b.position) and is_equal_approx(a.scale, b.scale) and is_equal_approx(a.opacity, b.opacity) and a.visible == b.visible
+	expect(same, "Full disk round-trip (ConfigFile float precision)")
 	editor.cancel()
 	await get_tree().process_frame
 	expect(UICustomization.hud.is_empty(), "Cancel restores layout before editor")
@@ -118,9 +127,28 @@ func run() -> void:
 	editor.cancel()
 	await get_tree().process_frame
 	expect(world.pause_menu.is_open and world.player.ui_blocking_input, "Cancel returns to pause, not gameplay")
+	editor = UICustomizationEditor.open(world.pause_menu)
+	editor.preference_path = "user://ui_test.cfg"
+	editor.set_crosshair("dot", true)
+	editor.save_and_close()
+	await get_tree().process_frame
+	expect(not is_instance_valid(editor), "Save button closes the editor")
+	expect(UICustomization.crosshair.dot, "Save keeps applied settings")
+	UICustomization.reset_crosshair()
+	UICustomization.load_preferences("user://ui_test.cfg")
+	expect(UICustomization.crosshair.dot, "Saved editor settings reload")
 	world.queue_free()
 	await get_tree().process_frame
 	UICustomization.restore(initial)
 	DirAccess.remove_absolute("user://ui_test.cfg")
 	print("[UI EDITOR] %s: %d checks; %d failures" % ["PASS" if failures == 0 else "FAIL", checks, failures])
 	get_tree().quit(0 if failures == 0 else 1)
+
+func preview_resize(editor: UICustomizationEditor) -> void:
+	var previous := editor.preview_viewport.size_2d_override
+	editor.preview_viewport.size_2d_override = Vector2i(960, 720)
+	editor.hud_preview.apply_custom_layout()
+	var target: Control = editor.hud_preview.layout_elements.radar
+	expect(target.position.x + target.size.x * target.scale.x <= 961, "Normalized layout stays on screen at 4:3")
+	editor.preview_viewport.size_2d_override = previous
+	editor.hud_preview.apply_custom_layout()
