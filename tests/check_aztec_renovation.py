@@ -9,6 +9,10 @@ output,report=build.build()
 expected=Path(build.OUT).read_bytes()
 if output != expected:
     print('First differing byte:', next((i for i,(a,b) in enumerate(zip(output,expected)) if a!=b), -1), 'lengths', len(output), len(expected))
+    actual_doc,actual_bin=unpack(output);expected_doc,expected_bin=unpack(expected)
+    for i,(a,b) in enumerate(zip(actual_doc['accessors'],expected_doc['accessors'])):
+        if a != b:print('First differing accessor:',i,a,b);break
+    print('First differing binary bytes:', [(i,a,b) for i,(a,b) in enumerate(zip(actual_bin,expected_bin)) if a!=b][:12])
 assert output==expected, 'Dressing must be reproducible'
 assert json.loads(json.dumps(report))==json.loads(Path('data/aztec_renovation.json').read_text())
 assert report['triangles']<=18000 and report['mesh_cells']<=50 and report['materials']==5

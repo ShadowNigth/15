@@ -57,7 +57,12 @@ class AztecBuilder(Builder):
         # Trigonometric libm results differ at the last bit between platforms.
         # Snap only NEW decorative vertices to micrometres before baking.
         points = [tuple(round(x,6) for x in p) for p in points]
+        key = (*self.anchor,mat)
+        start = len(self.buckets[key])
         super().quad(points,mat,tuple(round(x,6) for x in tint))
+        # Python 3.12 changed sum() accumulation: also stabilize computed
+        # normals/colors and their JSON accessor bounds, not only positions.
+        self.buckets[key][start:] = [tuple(tuple(round(x,6) for x in attribute) for attribute in vertex) for vertex in self.buckets[key][start:]]
 
     def fern(self, origin, length, angle, droop, rng):
         x,y,z = origin

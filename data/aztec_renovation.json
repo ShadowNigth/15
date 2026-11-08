@@ -3,7 +3,7 @@
   "mesh_cells": 44,
   "materials": 5,
   "source_commit": "57034ba0d31fd12335f7c3a50979377a4934c1c3",
-  "asset_sha256": "4a8c791cd7c6aaf42e3848ebcd773e5b4d03af06ffd9692eec17f779289432f5",
+  "asset_sha256": "dbc3dbf3293e9c87800f24cc738a63a7921a64e3e89001ec50aebecafdd3a493",
   "features": [
     {
       "kind": "upper_wall",
