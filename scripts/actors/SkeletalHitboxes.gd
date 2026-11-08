@@ -64,6 +64,9 @@ func sync_pose() -> void:
 
 static func exclusions(tree: SceneTree, shooter: CollisionObject3D) -> Array[RID]:
 	var result: Array[RID] = [shooter.get_rid()]
+	for support in tree.get_nodes_in_group("weapon_ray_excluded_support"):
+		if support is CollisionObject3D and support.is_inside_tree():
+			result.append(support.get_rid())
 	for candidate in tree.get_nodes_in_group("skeletal_bullet_actors"):
 		if not is_instance_valid(candidate) or not candidate.is_inside_tree():
 			continue

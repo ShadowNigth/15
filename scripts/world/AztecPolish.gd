@@ -69,6 +69,8 @@ static func restore_bridge_floor(mesh: MeshInstance3D) -> void:
 	body.collision_layer = 1
 	body.collision_mask = 0
 	body.set_meta("aztec_bridge_floor", true)
+	# Weapons must still query the original layer-8 net, not double-hit its support.
+	body.add_to_group("weapon_ray_excluded_support")
 	mesh.add_child(body)
 	var collision := CollisionShape3D.new()
 	var shape := ConcavePolygonShape3D.new()

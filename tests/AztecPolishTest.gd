@@ -79,6 +79,12 @@ func cross_bridge(world: GameWorld) -> void:
 		bot.set_physics_process(false)
 	world.player.set_physics_process(false)
 	world.player.dm_protection = 999.0
+	var query := PhysicsRayQueryParameters3D.create(Vector3(-22, -4.5, -17), Vector3(-22, -10, -17))
+	query.collision_mask = 1 | 8
+	query.exclude = SkeletalHitboxes.exclusions(get_tree(), world.player)
+	var net_hit := get_world_3d().direct_space_state.intersect_ray(query)
+	expect(not net_hit.is_empty() and (net_hit.collider as CollisionObject3D).collision_layer == 8, "Weapon rays retain the original net penetration, not doubled support impacts")
+	expect(ray(Vector3(-25, -10, -15), Vector3(-19, -10, -15)).is_empty(), "Restored deck creates no invisible wall across the river below")
 	RoundManager.state = RoundManager.State.LIVE
 	RoundManager.state_timer = 999
 	for direction in [1.0, -1.0]:

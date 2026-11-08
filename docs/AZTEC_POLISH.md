@@ -59,3 +59,5 @@ unverified walls are deleted or intentional holes filled.
 Primitive counts from fixed views are a culling diagnostic, not an FPS benchmark.
 More sectors can increase draw calls; no universal speedup is promised. Full-size
 PNG comparisons and live-gameplay samples are retained in Aztec polish QA.
+
+El apoyo del puente se excluye de las consultas de disparo y cuchillo: estas siguen encontrando la red original de capa 8, conservando su penetración y evitando impactos duplicados. Una prueba nativa comprueba también el paso libre bajo el puente.
