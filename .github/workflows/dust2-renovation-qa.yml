@@ -21,6 +21,8 @@ jobs:
   dust2:
     runs-on: ubuntu-latest
     timeout-minutes: 25
+    env:
+      DUST2_IMAGE_LIMIT: '10500'
     steps:
       - uses: actions/checkout@v4
         with:
@@ -84,6 +86,12 @@ jobs:
       - name: T exterior after
         if: always()
         run: python tools/publish_dust2_capture.py dust2_t_after
+      - name: Facade detail before
+        if: always()
+        run: python tools/publish_dust2_capture.py dust2_facade_before
+      - name: Facade detail after
+        if: always()
+        run: python tools/publish_dust2_capture.py dust2_facade_after
       - name: Live bots first sample
         if: always()
         run: python tools/publish_dust2_capture.py dust2_gameplay_a

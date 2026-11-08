@@ -1,6 +1,11 @@
 extends "res://tests/Dust2PolishTest.gd"
 ## Same-camera comparison with previous delivered Dust2, plus full physics/bot suite.
 
+func comparison_views() -> Array:
+	var views := VIEWS.duplicate(true)
+	views.append(["facade", Vector3(-91.5, 8.5, -45.5), Vector3(-91.5, 8.5, -50)])
+	return views
+
 func baseline_data(data: Dictionary) -> Dictionary:
 	var before := data.duplicate(true)
 	before.visual_renovation = false

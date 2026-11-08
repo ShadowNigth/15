@@ -8,7 +8,7 @@ const VIEWS := [
 	["b", Vector3(-84, 6, 48), Vector3(-72, 1.5, 46)],
 	["a", Vector3(-95, 9.5, -49), Vector3(-77, 4.5, -36)],
 	["ct", Vector3(-77, -1.5, -14), Vector3(-65, -1, -5)],
-	["t", Vector3(22, 6.5, 26), Vector3(0, 3, 25)],
+	["t", Vector3(22, 6.5, 26), Vector3(14, 5.8, 48)],
 ]
 
 func _ready() -> void:
@@ -27,6 +27,9 @@ func vec(a: Array) -> Vector3:
 func ray(a: Vector3, b: Vector3) -> Dictionary:
 	return get_world_3d().direct_space_state.intersect_ray(PhysicsRayQueryParameters3D.create(a, b, 1))
 
+func comparison_views() -> Array:
+	return VIEWS
+
 func screenshots(root: Node3D, suffix: String) -> void:
 	if DisplayServer.get_name() == "headless":
 		return
@@ -35,7 +38,7 @@ func screenshots(root: Node3D, suffix: String) -> void:
 	root.add_child(camera)
 	camera.make_current()
 	var primitives := 0
-	for view in VIEWS:
+	for view in comparison_views():
 		camera.position = view[1]
 		camera.look_at(view[2])
 		for frame in range(3):
