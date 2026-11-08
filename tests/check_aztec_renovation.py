@@ -6,7 +6,10 @@ from polish_dust2 import unpack,accessor,area_squared
 from pathlib import Path
 import json,math,subprocess,itertools
 output,report=build.build()
-assert output==Path(build.OUT).read_bytes(), 'Dressing must be reproducible'
+expected=Path(build.OUT).read_bytes()
+if output != expected:
+    print('First differing byte:', next((i for i,(a,b) in enumerate(zip(output,expected)) if a!=b), -1), 'lengths', len(output), len(expected))
+assert output==expected, 'Dressing must be reproducible'
 assert json.loads(json.dumps(report))==json.loads(Path('data/aztec_renovation.json').read_text())
 assert report['triangles']<=18000 and report['mesh_cells']<=50 and report['materials']==5
 for path in ['assets/maps/de_aztec.glb','data/maps/de_aztec.json','assets/maps/de_dust2.glb','assets/maps/de_dust2_dressing.glb']:

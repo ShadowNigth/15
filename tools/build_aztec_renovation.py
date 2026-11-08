@@ -53,6 +53,12 @@ def walls():
 
 
 class AztecBuilder(Builder):
+    def quad(self, points, mat, tint=(1,1,1)):
+        # Trigonometric libm results differ at the last bit between platforms.
+        # Snap only NEW decorative vertices to micrometres before baking.
+        points = [tuple(round(x,6) for x in p) for p in points]
+        super().quad(points,mat,tuple(round(x,6) for x in tint))
+
     def fern(self, origin, length, angle, droop, rng):
         x,y,z = origin
         dx,dz = math.cos(angle),math.sin(angle)

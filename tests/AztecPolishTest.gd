@@ -46,7 +46,7 @@ func screenshots(root: Node3D, suffix: String) -> void:
 		primitives += int(RenderingServer.viewport_get_render_info(get_viewport().get_viewport_rid(), RenderingServer.VIEWPORT_RENDER_INFO_TYPE_VISIBLE, RenderingServer.VIEWPORT_RENDER_INFO_PRIMITIVES_IN_FRAME))
 		DirAccess.make_dir_recursive_absolute("/tmp/dm-polish-review")
 		expect(get_viewport().get_texture().get_image().save_png("/tmp/dm-polish-review/aztec_" + view[0] + "_" + suffix + ".png") == OK, "Capture " + view[0] + suffix)
-	print("[AZTEC] rendered primitives over four identical views ", suffix, "=", primitives)
+	print("[AZTEC] rendered primitives over ", comparison_views().size(), " identical views ", suffix, "=", primitives)
 	camera.queue_free()
 
 func capture_bots(world: GameWorld, name: String) -> void:
