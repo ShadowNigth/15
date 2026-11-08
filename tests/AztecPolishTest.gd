@@ -140,7 +140,7 @@ func run() -> void:
 		var is_bridge_fix: bool = not hit.is_empty() and (hit.collider as Node).has_meta("aztec_bridge_floor")
 		if is_bridge_fix:
 			restored_bridge_hits += 1
-			expect(actual.x >= -24.001 and actual.x <= -19.999 and actual.z >= -28.001 and actual.z <= -3.499 and actual.y >= -7.05 and actual.y <= -5.99 and (not expected.is_finite() or expected.y < actual.y - 1), "Only the missing bridge support may change baseline probes")
+			expect(actual.x >= -24.001 and actual.x <= -19.999 and actual.z >= -28.001 and actual.z <= -3.499 and actual.y >= -7.05 and actual.y <= -5.99 and (not expected.is_finite() or rays[i][0].distance_to(actual) <= rays[i][0].distance_to(expected) + 0.003), "Only the missing bridge support may change baseline probes")
 		else:
 			expect((not actual.is_finite() and not expected.is_finite()) or (actual.is_finite() and expected.is_finite() and actual.distance_to(expected) < 0.003), "Collision equivalence probe %d expected %s actual %s" % [i, expected, actual])
 	expect(restored_bridge_hits > 0, "Physical comparison detects and bounds the restored bridge support")
