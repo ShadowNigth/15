@@ -12,7 +12,7 @@ func expect(ok: bool, label: String) -> void:
 	checks += 1
 	if not ok:
 		failures += 1
-		push_error("[SQUAD GAMEPLAY] " + label)
+		push_error("[SQUAD GAMEPLAY] FAIL: " + label)
 
 func block(pos: Vector3, size: Vector3) -> void:
 	var body := StaticBody3D.new()
@@ -90,6 +90,7 @@ func _run() -> void:
 		await get_tree().physics_frame
 		if frame == 75:
 			await capture("corridor_yield")
+	print("[SQUAD GAMEPLAY] corridor endpoints: ", first.global_position, " / ", second.global_position)
 	expect(negotiated, "real corridor encounter negotiates instead of overlapping unconditionally")
 	expect(first.global_position.z > 2.0 and second.global_position.z < -2.0, "both bots pass and resume their goals")
 	expect(first.collision_layer == 2 and first.collision_mask == 1, "classic actor masks unchanged")
@@ -122,6 +123,18 @@ func _run() -> void:
 	player.set_physics_process(false)
 	player.set_team_and_class("CT", "urban")
 	player.spawn_for_round(Vector3(-7, 0.03, 0), 0, true)
+	var modal := Node.new()
+	add_child(modal)
+	GameplayInputGate.acquire(modal)
+	player.weapon_ctrl.burst_remaining = 2
+	player.weapon_ctrl._revolver_windup = 0.2
+	player.weapon_ctrl._grenade_pin_pulled = true
+	player.weapon_ctrl._grenade_want_release = true
+	player.weapon_ctrl.fire_cooldown = 0.5
+	player.weapon_ctrl._process(0.1)
+	expect(player.weapon_ctrl.burst_remaining == 0 and not player.weapon_ctrl._grenade_want_release and player.weapon_ctrl._revolver_windup == 0.0, "real human weapon timer obeys modal gate")
+	expect(player.weapon_ctrl.fire_cooldown < 0.5, "modal does not pause weapon recovery timers")
+	GameplayInputGate.release(modal)
 	player.weapon_ctrl.shot_audited.connect(func(facts: Dictionary): shots.append(facts))
 	player.weapon_ctrl.tracer_audited.connect(func(facts: Dictionary): traces.append(facts))
 	for wid in ["glock18", "m4a1", "awp", "famas", "elite", "m3"]:
@@ -153,6 +166,10 @@ func _run() -> void:
 	incoming.position = player.position+Vector3(0, 0.15, -1)
 	RoundManager.dropped_items.append(incoming)
 	expect(not player.try_pickup_dropped(incoming), "automatic pickup cannot replace primary")
+	GameplayInputGate.acquire(modal)
+	expect(not player.perform_use_selection({"kind": "drop", "target": incoming}), "E cannot swap inventory through a modal")
+	GameplayInputGate.release(modal)
+	modal.queue_free()
 	expect(player.perform_use_selection({"kind": "drop", "target": incoming}), "explicit E swaps occupied primary")
 	expect(String(player.weapon_ctrl.slots[1]) == "ak47" and int(player.weapon_ctrl.clips["ak47"]) == 11, "incoming weapon clip retained")
 	var outgoing: DroppedWeapon = null

@@ -8,6 +8,7 @@ on:
       - 'tests/SquadGameplayTest*'
       - 'tests/UtilityPropagationTest*'
       - '.github/workflows/squad-systems-qa.yml'
+      - 'tools/publish_squad_capture.py'
 concurrency:
   group: squad-qa-${{ github.ref }}
   cancel-in-progress: true
@@ -65,29 +66,18 @@ jobs:
           SQUAD_CAPTURE_DIR=/tmp/squad-captures LIBGL_ALWAYS_SOFTWARE=1 timeout 180s xvfb-run -a godot --path . --rendering-method gl_compatibility --fixed-fps 60 res://tests/SquadGameplayTest.tscn 2>&1 | tee /tmp/squad-render.log
           ! grep -Eq 'SCRIPT ERROR:|Parse Error:|Compile Error:' /tmp/squad-render.log
           grep -q 'PASS:' /tmp/squad-render.log
-      - name: Publish actual framebuffers
+      - name: Publish corridor_before framebuffer
         if: always()
-        run: |
-          python - <<'PY'
-          import base64, io
-          from pathlib import Path
-          from PIL import Image
-          for p in Path('/tmp/squad-captures').glob('*.png'):
-              image = Image.open(p).convert('RGB')
-              image.thumbnail((800, 500))
-              quality = 75
-              while True:
-                  stream = io.BytesIO()
-                  image.save(stream, format='JPEG', quality=quality)
-                  data = stream.getvalue()
-                  if len(data) < 17000 or quality <= 15:
-                      break
-                  quality -= 10
-              encoded = base64.b64encode(data).decode()
-              parts = [encoded[i:i+3500] for i in range(0, len(encoded), 3500)]
-              for i, part in enumerate(parts):
-                  print(f'::notice title=Squad JPEG {p.stem} {i+1}/{len(parts)}::{part}')
-          PY
+        run: python tools/publish_squad_capture.py corridor_before
+      - name: Publish corridor_yield framebuffer
+        if: always()
+        run: python tools/publish_squad_capture.py corridor_yield
+      - name: Publish corridor_after framebuffer
+        if: always()
+        run: python tools/publish_squad_capture.py corridor_after
+      - name: Publish classic_pose_and_weapon framebuffer
+        if: always()
+        run: python tools/publish_squad_capture.py classic_pose_and_weapon
       - name: Diagnostic logs
         if: always()
         run: |
@@ -99,7 +89,7 @@ jobs:
                   lines = text.splitlines()
                   errors = []
                   for i, line in enumerate(lines):
-                      if any(k in line for k in ['SCRIPT ERROR', 'Parse Error', 'Compile Error', 'FAIL', 'PASS:']):
+                      if any(k in line for k in ['SCRIPT ERROR', 'Parse Error', 'Compile Error', 'FAIL', 'PASS:', '[SQUAD GAMEPLAY]']):
                           errors.extend(lines[i:i+2])
                   message = '\n'.join(errors)[-7000:].replace('%', '%25').replace('\n', '%0A').replace('\r','%0D')
                   print(f'::notice title={p.name}::{message}')

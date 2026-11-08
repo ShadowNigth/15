@@ -603,6 +603,7 @@ func perform_use_selection(selection: Dictionary) -> bool:
 				weapon_ctrl.slots[slot] = ""
 			if try_pickup_dropped(drop):
 				RoundManager.dropped_items.erase(drop)
+				drop.set_physics_process(false)
 				drop.queue_free()
 				return true
 			if outgoing != null:

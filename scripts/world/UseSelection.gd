@@ -2,7 +2,7 @@ class_name UseSelection
 extends RefCounted
 ## Aim-selected use. World blockers always win over nearby fallback pickups.
 static func drop_allowed(actor: CSActor, drop: DroppedWeapon) -> bool:
-	if actor.is_vip or drop._pickup_cooldown > 0.0 or (drop.pickup_lock_actor == actor and drop.pickup_lock_time > 0.0):
+	if drop.is_queued_for_deletion() or actor.is_vip or drop._pickup_cooldown > 0.0 or (drop.pickup_lock_actor == actor and drop.pickup_lock_time > 0.0):
 		return false
 	if drop.item_id == "c4":
 		return actor.team == "T" and String(actor.weapon_ctrl.slots.get(5, "")).is_empty()
