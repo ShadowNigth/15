@@ -210,6 +210,8 @@ func set_hud_color(value: Color) -> void:
 	if not Vector4(value.r, value.g, value.b, value.a).is_finite():
 		return
 	UICustomization.hud_appearance.color = Color(value.clamp(), 0.98)
+	if is_instance_valid(hud_color_picker) and hud_color_picker.color != UICustomization.hud_appearance.color:
+		hud_color_picker.color = UICustomization.hud_appearance.color
 	UICustomization.changed.emit()
 
 func set_hud_rgb(enabled: bool) -> void:

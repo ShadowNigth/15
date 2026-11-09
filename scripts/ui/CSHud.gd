@@ -918,7 +918,7 @@ func _draw_scoreboard() -> void:
 			else:
 				_score_ctrl.draw_rect(Rect2(x, 36, (tile - 3) * clampf(actor.health / 100.0, 0, 1), 2), color)
 	if RoundManager.map_mode == "dm":
-		_score_ctrl.draw_string(font, Vector2(cx - 43, 65), "DM / %d" % GameData.dm_frag_limit, HORIZONTAL_ALIGNMENT_CENTER, 86, 11, HUD_DIM)
+		_score_ctrl.draw_string(font, Vector2(cx - 43, 65), "DM / %d" % GameData.dm_frag_limit, HORIZONTAL_ALIGNMENT_CENTER, 86, 11, _accent(true))
 
 
 func _draw_crosshair() -> void:

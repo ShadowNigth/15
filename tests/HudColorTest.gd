@@ -36,6 +36,20 @@ func _run() -> void:
 	var cyan := Color(0.2, 0.9, 1.0, 0.98)
 	editor.hud_color_picker.color_changed.emit(cyan)
 	expect(UICustomization.get_hud_color().is_equal_approx(cyan), "real colour picker updates fixed HUD preference")
+	expect(editor.hud_color_picker.color.is_equal_approx(cyan), "colour button shows selected fixed colour")
+	var arrow := InputEventKey.new()
+	arrow.keycode = KEY_RIGHT
+	arrow.pressed = true
+	editor.hud_color_picker.grab_focus()
+	editor._input(arrow)
+	expect(UICustomization.hud.is_empty(), "focused colour controls do not move HUD via arrow keys")
+	editor.hud_color_picker.get_popup().popup_centered(Vector2i(320, 400))
+	var escape := InputEventKey.new()
+	escape.keycode = KEY_ESCAPE
+	escape.pressed = true
+	editor._input(escape)
+	expect(not editor.closing, "Escape belongs to open colour popup, not editor cancel")
+	editor.hud_color_picker.get_popup().hide()
 	expect(hud._money_label.get_theme_color("font_color").is_equal_approx(cyan), "live money tint")
 	expect(hud._hp_label.get_theme_color("font_color").is_equal_approx(cyan), "live health tint")
 	expect(hud._inv_icons[2].modulate.r == cyan.r, "knife silhouette participates in tint")
