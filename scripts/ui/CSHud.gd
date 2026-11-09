@@ -26,6 +26,9 @@ const KILL_PLATE_DARKRED := Color(0.36, 0.05, 0.04, 0.78)
 
 var player: PlayerController = null
 var preview_mode := false
+var _accent_labels: Array[Label] = []
+var _last_hud_color := Color.TRANSPARENT
+var _shown_clip: int = -1
 var layout_elements: Dictionary = {}
 var _layout_defaults: Dictionary = {}
 
@@ -101,6 +104,7 @@ var _ov_fit_off: Vector2 = Vector2.ZERO
 ## kill 6 a single counter card), with a vertical light beam, rising sparks and
 ## an expanding glow-ring flash — CS2's animated kill cards.
 class KillCardDisplay extends Control:
+	var hud_color := Color(0.97, 0.85, 0.46, 0.98)
 	const EMBLEM_R: float = 17.0
 	const CARD_W: float = 18.0
 	const CARD_H: float = 30.0
@@ -207,7 +211,7 @@ class KillCardDisplay extends Control:
 		if team != "CT" and team != "T":
 			return
 		var ct := team == "CT"
-		var accent := Color(0.97, 0.85, 0.46, 0.9)
+		var accent := Color(hud_color, 0.9)
 		var hot := Color(0.85, 0.92, 1.0) if ct else Color(1.0, 0.87, 0.55)
 		var cx := size.x * 0.5
 		var cy := size.y - 41.0
@@ -269,7 +273,7 @@ class KillCardDisplay extends Control:
 		var team_col := Color(1.0, 1.0, 1.0, 0.92 * mark_a)
 		var emblem := load("res://assets/ui/teams/" + team.to_lower() + ".svg") as Texture2D
 		if emblem != null:
-			draw_texture_rect(emblem, Rect2(cx - 15, cy - 15, 30, 30), false, Color(1.47, 1.09, 0.54, mark_a) if ct else Color(1.11, 1.16, 1.05, mark_a))
+			draw_texture_rect(emblem, Rect2(cx - 15, cy - 15, 30, 30), false, Color(hud_color.r / (0.663 if ct else 0.875), hud_color.g / (0.78 if ct else 0.729), hud_color.b / (0.863 if ct else 0.439), mark_a))
 
 		# Numbered kill cards fanning out above the emblem
 		var n := cards.size()
@@ -318,6 +322,8 @@ func _ready() -> void:
 	_build_hud_tree()
 	_load_radar_overview()
 	UICustomization.changed.connect(apply_custom_layout)
+	UICustomization.changed.connect(update_hud_color.bind(true))
+	update_hud_color(true)
 	get_viewport().size_changed.connect(apply_custom_layout)
 	apply_custom_layout.call_deferred()
 
@@ -368,6 +374,10 @@ func _make_label(txt: String, fsize: int, col: Color) -> Label:
 	var l := Label.new()
 	l.text = txt
 	l.add_theme_font_size_override("font_size", fsize)
+	if col == HUD_WHITE or col == HUD_DIM:
+		l.set_meta("hud_dim", col == HUD_DIM)
+		_accent_labels.append(l)
+		col = _accent(col == HUD_DIM)
 	l.add_theme_color_override("font_color", col)
 	l.add_theme_color_override("font_shadow_color", Color(0, 0, 0, 0.85))
 	l.add_theme_constant_override("shadow_offset_x", 1)
@@ -448,7 +458,7 @@ func _build_hud_tree() -> void:
 	_radar_panel.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	_radar_panel.clip_children = CanvasItem.CLIP_CHILDREN_AND_DRAW
 	_radar_panel.add_theme_stylebox_override("panel", _cs2_panel_style(93, Color(0.03, 0.035, 0.025, 0.85), HUD_WHITE))
-	_radar_panel.draw.connect(func(): _radar_panel.draw_arc(Vector2(93, 93), 91, 0, TAU, 96, HUD_WHITE, 2, true))
+	_radar_panel.draw.connect(func(): _radar_panel.draw_arc(Vector2(93, 93), 91, 0, TAU, 96, _accent(), 2, true))
 	root.add_child(_radar_panel)
 
 	_radar_ctrl = Control.new()
@@ -741,7 +751,7 @@ func _process(delta: float) -> void:
 
 	if is_instance_valid(player):
 		if not GameData.low_ammo_warning:
-			_ammo_label.add_theme_color_override("font_color", HUD_WHITE)
+			_ammo_label.add_theme_color_override("font_color", _accent())
 		var smoke_d := RoundManager.get_smoke_density_at(player.get_eye_position()) if player.is_alive else 0.0
 		_smoke_rect.color.a = lerpf(_smoke_rect.color.a, clampf(smoke_d * 0.97, 0.0, 0.97), minf(1.0, delta * 9.0))
 		var fl_raw: float = clampf(player.flash_alpha, 0.0, 1.35)
@@ -751,9 +761,9 @@ func _process(delta: float) -> void:
 		_icon_c4.visible = carries_c4
 		if carries_c4 and is_instance_valid(RoundManager.game_world) and RoundManager.game_world.has_method("is_in_bombsite"):
 			if bool(RoundManager.game_world.call("is_in_bombsite", player.global_position)):
-				_icon_c4.modulate = RED_WARN if sin(_c4_blink_phase * 2.5) > 0.0 else HUD_WHITE
+				_icon_c4.modulate = RED_WARN if sin(_c4_blink_phase * 2.5) > 0.0 else _accent()
 			else:
-				_icon_c4.modulate = HUD_WHITE
+				_icon_c4.modulate = _accent()
 		_icon_defuser.visible = player.has_defuser
 
 		var target_gap: float = UICustomization.crosshair.gap
@@ -807,9 +817,43 @@ func _process(delta: float) -> void:
 			var vit_src := vst as CSActor
 			_apply_vitals(vit_src.health, vit_src.armor, vit_src.has_helmet)
 
+	update_hud_color()
 	_crosshair_ctrl.queue_redraw()
 	_radar_ctrl.queue_redraw()
 
+
+func _accent(dim: bool = false) -> Color:
+	var tint := UICustomization.get_hud_color()
+	return Color(tint, 0.72) if dim else tint
+
+func update_hud_color(force: bool = false) -> void:
+	var tint := _accent()
+	if not force and tint == _last_hud_color:
+		return
+	_last_hud_color = tint
+	for index in range(_accent_labels.size() - 1, -1, -1):
+		var label := _accent_labels[index]
+		if not is_instance_valid(label):
+			_accent_labels.remove_at(index)
+			continue
+		label.add_theme_color_override("font_color", _accent(bool(label.get_meta("hud_dim", false))))
+	# Warnings and team identities are semantic: never cycle them through RGB.
+	_hp_label.add_theme_color_override("font_color", RED_WARN if _shown_hp >= 0 and _shown_hp <= 25 else tint)
+	_armor_label.add_theme_color_override("font_color", tint if _shown_ap > 0 or preview_mode else _accent(true))
+	if GameData.low_ammo_warning and _shown_clip >= 0 and _shown_clip <= 5:
+		_ammo_label.add_theme_color_override("font_color", RED_WARN if _shown_clip == 0 else Color(0.98, 0.82, 0.35, 0.98))
+	_hp_icon.modulate = tint
+	_ap_icon.modulate = tint if _shown_ap > 0 or preview_mode else Color(tint, 0.35)
+	for icon in _inv_icons:
+		icon.modulate = Color(tint, icon.modulate.a)
+	var radar_style := _radar_panel.get_theme_stylebox("panel") as StyleBoxFlat
+	radar_style.border_color = tint
+	var progress_style := _progress_bar.get_theme_stylebox("fill") as StyleBoxFlat
+	progress_style.bg_color = tint
+	_killcards.hud_color = tint
+	_killcards.queue_redraw()
+	_radar_panel.queue_redraw()
+	_score_ctrl.queue_redraw()
 
 func _refresh_inventory_icons() -> void:
 	_knife_icon_id = GameData.selected_knife_id
@@ -839,7 +883,7 @@ func _refresh_inventory_icons() -> void:
 			ic.texture = wh
 			# Grey out the non-equipped slots, full white for the active weapon
 			var cur := String(player.weapon_ctrl.current_weapon_id)
-			ic.modulate = HUD_WHITE if wid == cur else Color(0.97, 0.85, 0.46, 0.72)
+			ic.modulate = _accent() if wid == cur else Color(_accent(), 0.72)
 
 
 func _draw_scoreboard() -> void:
@@ -850,7 +894,7 @@ func _draw_scoreboard() -> void:
 		seconds = maxi(0, int(ceil((RoundManager.planted_c4 as PlantedC4).time_left)))
 	_score_ctrl.draw_rect(Rect2(cx - 37, 0, 74, 55), Color(0.015, 0.025, 0.035, 0.7))
 	var timer := "%d:%02d" % [seconds / 60, seconds % 60]
-	_score_ctrl.draw_string(font, Vector2(cx - 27, 23), timer, HORIZONTAL_ALIGNMENT_CENTER, 54, 21, RED_WARN if seconds <= 10 else HUD_WHITE)
+	_score_ctrl.draw_string(font, Vector2(cx - 27, 23), timer, HORIZONTAL_ALIGNMENT_CENTER, 54, 21, RED_WARN if seconds <= 10 else _accent())
 	_score_ctrl.draw_string(font, Vector2(cx - 26, 46), str(RoundManager.ct_score), HORIZONTAL_ALIGNMENT_CENTER, 20, 17, CT_COLOR)
 	_score_ctrl.draw_string(font, Vector2(cx + 6, 46), str(RoundManager.t_score), HORIZONTAL_ALIGNMENT_CENTER, 20, 17, T_COLOR)
 	for tm in ["CT", "T"]:
@@ -1039,16 +1083,16 @@ func _apply_vitals(hp: int, ap: int, helmet: bool) -> void:
 	_shown_ap = ap
 	_shown_helmet = helmet
 	_hp_label.text = str(hp)
-	_hp_label.add_theme_color_override("font_color", RED_WARN if hp <= 25 else HUD_WHITE)
+	_hp_label.add_theme_color_override("font_color", RED_WARN if hp <= 25 else _accent())
 	_armor_label.text = str(ap)
-	_armor_label.add_theme_color_override("font_color", HUD_WHITE if ap > 0 else HUD_DIM)
+	_armor_label.add_theme_color_override("font_color", _accent() if ap > 0 else _accent(true))
 	var ap_entry := "suithelmet_full" if helmet else "suit_full"
 	var ap_tex := GameData.equipment_icon("vesthelm" if helmet else "vest")
 	if ap_tex == null:
 		ap_tex = GameData.get_hud_atlas(ap_entry, 320)
 	if ap_tex:
 		_ap_icon.texture = ap_tex
-	_ap_icon.modulate = HUD_WHITE if ap > 0 else Color(1, 1, 1, 0.35)
+	_ap_icon.modulate = _accent() if ap > 0 else Color(_accent(), 0.35)
 
 
 func _on_money(amount: int, delta_amt: int) -> void:
@@ -1088,6 +1132,7 @@ func _on_weapon_switched(wid: String, spec: Dictionary) -> void:
 
 
 func _on_ammo_updated(clip: int, reserve: int) -> void:
+	_shown_clip = clip
 	if clip < 0:
 		_ammo_label.text = ""
 		_ammo_reserve_label.text = ""
@@ -1095,13 +1140,13 @@ func _on_ammo_updated(clip: int, reserve: int) -> void:
 		_ammo_label.text = str(clip)
 		_ammo_reserve_label.text = "| %d" % reserve
 		if not GameData.low_ammo_warning:
-			_ammo_label.add_theme_color_override("font_color", HUD_WHITE)
+			_ammo_label.add_theme_color_override("font_color", _accent())
 		elif clip == 0:
 			_ammo_label.add_theme_color_override("font_color", RED_WARN)
 		elif clip <= 5:
 			_ammo_label.add_theme_color_override("font_color", Color(0.98, 0.82, 0.35, 0.98))
 		else:
-			_ammo_label.add_theme_color_override("font_color", HUD_WHITE)
+			_ammo_label.add_theme_color_override("font_color", _accent())
 
 
 func _on_center_message(msg: String, dur: float) -> void:

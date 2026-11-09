@@ -17,6 +17,8 @@ var old_mouse_mode: int
 var closing := false
 var preference_path := UICustomization.PATH
 var _populating := false
+var hud_color_picker: ColorPickerButton
+var hud_color_swatch: ColorRect
 
 static func open(parent: Node) -> UICustomizationEditor:
 	for node in parent.get_tree().get_nodes_in_group("ui_customization_editor"):
@@ -141,6 +143,30 @@ func populate_inspector() -> void:
 	_populating = true
 	clear_children(inspector)
 	if hud_mode:
+		var color_caption := Label.new()
+		color_caption.text = "COLOR GLOBAL DEL HUD"
+		inspector.add_child(color_caption)
+		hud_color_picker = ColorPickerButton.new()
+		hud_color_picker.name = "HudColor"
+		hud_color_picker.text = "Elegir color fijo"
+		hud_color_picker.edit_alpha = false
+		hud_color_picker.color = UICustomization.hud_appearance.color
+		hud_color_picker.disabled = bool(UICustomization.hud_appearance.rgb)
+		hud_color_picker.custom_minimum_size.y = 36
+		hud_color_picker.color_changed.connect(set_hud_color)
+		inspector.add_child(hud_color_picker)
+		check("RGB automático (arcoíris)", UICustomization.hud_appearance.rgb, set_hud_rgb)
+		slider("Ciclo RGB (segundos)", 3, 30, 0.5, UICustomization.hud_appearance.rgb_period, set_hud_rgb_period)
+		hud_color_swatch = ColorRect.new()
+		hud_color_swatch.custom_minimum_size.y = 18
+		hud_color_swatch.mouse_filter = Control.MOUSE_FILTER_IGNORE
+		hud_color_swatch.color = UICustomization.get_hud_color()
+		inspector.add_child(hud_color_swatch)
+		var note := Label.new()
+		note.text = "Vida baja, alertas y bandos conservan sus colores."
+		note.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+		inspector.add_child(note)
+		inspector.add_child(HSeparator.new())
 		var selector := OptionButton.new()
 		for key in NAMES:
 			selector.add_item(NAMES[key])
@@ -180,6 +206,24 @@ func populate_inspector() -> void:
 		inspector.add_child(color)
 	_populating = false
 
+func set_hud_color(value: Color) -> void:
+	if not Vector4(value.r, value.g, value.b, value.a).is_finite():
+		return
+	UICustomization.hud_appearance.color = Color(value.clamp(), 0.98)
+	UICustomization.changed.emit()
+
+func set_hud_rgb(enabled: bool) -> void:
+	UICustomization.hud_appearance.rgb = enabled
+	if is_instance_valid(hud_color_picker):
+		hud_color_picker.disabled = enabled
+	UICustomization.changed.emit()
+
+func set_hud_rgb_period(seconds: float) -> void:
+	if not is_finite(seconds):
+		return
+	UICustomization.hud_appearance.rgb_period = clampf(seconds, 3, 30)
+	UICustomization.changed.emit()
+
 func set_crosshair(key: String, value: Variant) -> void:
 	UICustomization.crosshair[key] = value
 	UICustomization.changed.emit()
@@ -212,6 +256,9 @@ func build_hud_preview() -> void:
 	hud_preview._money_label.text = "$ 3200"
 	hud_preview._weapon_name_label.text = "AK-47"
 	hud_preview._weapon_icon.texture = GameData.get_weapon_hud_atlas("ak47", "weapon_s_640")
+	for index in range(3):
+		hud_preview._inv_icons[index].texture = GameData.equipment_icon(["ak47", "usp", "knife"][index])
+	hud_preview._killcards.team = "CT"
 	hud_preview._ammo_label.text = "30"
 	hud_preview._ammo_reserve_label.text = "90"
 	hud_preview._center_label.text = "Ronda de ejemplo"
@@ -220,8 +267,7 @@ func build_hud_preview() -> void:
 	hud_preview._progress_bar.visible = true
 	hud_preview._progress_bar.value = 0.6
 	for pair in [[hud_preview._killfeed_vbox, "Jugador    AK-47    Rival"], [hud_preview._radio_vbox, "[Radio] ¡Cubridme!"]]:
-		var label := Label.new()
-		label.text = pair[1]
+		var label := hud_preview._make_label(pair[1], 13, CSHud.HUD_WHITE)
 		pair[0].add_child(label)
 	var overlay := CanvasLayer.new()
 	overlay.layer = 6
@@ -260,7 +306,7 @@ func move_element(position: Vector2) -> void:
 func reset_tab() -> void:
 	if hud_mode:
 		UICustomization.hud.clear()
-		UICustomization.changed.emit()
+		UICustomization.reset_hud_appearance()
 	else:
 		UICustomization.reset_crosshair()
 	populate_inspector()
@@ -291,10 +337,14 @@ func _input(event: InputEvent) -> void:
 	if closing:
 		return
 	if event is InputEventKey and event.pressed:
+		if hud_mode and is_instance_valid(hud_color_picker) and hud_color_picker.get_popup().visible:
+			return # The colour popup owns Escape/arrows while editing RGB/HTML fields.
 		if event.keycode == KEY_ESCAPE:
 			get_viewport().set_input_as_handled()
 			cancel()
 		elif hud_mode and event.keycode in [KEY_LEFT, KEY_RIGHT, KEY_UP, KEY_DOWN]:
+			if get_viewport().gui_get_focus_owner() != null:
+				return
 			var movement := Vector2.ZERO
 			match event.keycode:
 				KEY_LEFT: movement.x = -1
@@ -308,6 +358,9 @@ func _input(event: InputEvent) -> void:
 func _process(delta: float) -> void:
 	elapsed += delta
 	if hud_mode and is_instance_valid(handles):
+		hud_preview.update_hud_color()
+		if is_instance_valid(hud_color_swatch):
+			hud_color_swatch.color = UICustomization.get_hud_color()
 		handles.queue_redraw()
 	elif preview_column.get_child_count() > 0:
 		preview_column.get_child(0).queue_redraw()

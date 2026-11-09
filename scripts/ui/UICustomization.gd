@@ -5,12 +5,29 @@ const PATH := "user://ui_customization.cfg"
 const CROSSHAIR_DEFAULTS := {"length": 8.0, "gap": 5.0, "width": 1.8, "outline": 0.7, "dot": false, "t_shape": false, "enabled": true}
 var crosshair: Dictionary = CROSSHAIR_DEFAULTS.duplicate(true)
 var hud: Dictionary = {}
+const HUD_APPEARANCE_DEFAULTS := {"color": Color(0.97, 0.85, 0.46, 0.98), "rgb": false, "rgb_period": 8.0}
+var hud_appearance: Dictionary = HUD_APPEARANCE_DEFAULTS.duplicate(true)
+var _rgb_phase: float = 0.0
+
+func _process(delta: float) -> void:
+	if bool(hud_appearance.rgb):
+		_rgb_phase = fposmod(_rgb_phase + delta / float(hud_appearance.rgb_period), 1.0)
+
+func get_hud_color() -> Color:
+	if bool(hud_appearance.rgb):
+		return Color(Color.from_hsv(_rgb_phase, 0.85, 1.0), 0.98)
+	return hud_appearance.color
+
+func reset_hud_appearance() -> void:
+	hud_appearance = HUD_APPEARANCE_DEFAULTS.duplicate(true)
+	changed.emit()
+
 
 func _ready() -> void:
 	load_preferences()
 
 func snapshot() -> Dictionary:
-	return {"crosshair": crosshair.duplicate(true), "hud": hud.duplicate(true), "color": GameData.crosshair_color, "dynamic": GameData.dynamic_crosshair}
+	return {"crosshair": crosshair.duplicate(true), "hud": hud.duplicate(true), "color": GameData.crosshair_color, "dynamic": GameData.dynamic_crosshair, "hud_appearance": hud_appearance.duplicate(true)}
 
 func restore(data: Dictionary) -> void:
 	crosshair = CROSSHAIR_DEFAULTS.duplicate(true)
@@ -38,6 +55,18 @@ func restore(data: Dictionary) -> void:
 			if not (scale_value is float or scale_value is int) or not (alpha is float or alpha is int):
 				continue
 			hud[str(key)] = {"position": pos.clamp(Vector2.ZERO, Vector2.ONE), "scale": clampf(scale_value, 0.5, 2.5) if is_finite(scale_value) else 1.0, "opacity": clampf(alpha, 0.2, 1.0) if is_finite(alpha) else 1.0, "visible": bool(item.get("visible", true))}
+	hud_appearance = HUD_APPEARANCE_DEFAULTS.duplicate(true)
+	var appearance: Variant = data.get("hud_appearance", {})
+	if appearance is Dictionary:
+		var tint: Variant = appearance.get("color", hud_appearance.color)
+		if tint is Color and Vector4(tint.r, tint.g, tint.b, tint.a).is_finite():
+			hud_appearance.color = Color(tint.clamp(), 0.98)
+		var rgb: Variant = appearance.get("rgb", false)
+		if rgb is bool:
+			hud_appearance.rgb = rgb
+		var period: Variant = appearance.get("rgb_period", 8.0)
+		if (period is float or period is int) and is_finite(float(period)):
+			hud_appearance.rgb_period = clampf(float(period), 3.0, 30.0)
 	var color: Variant = data.get("color", GameData.crosshair_color)
 	if color is Color and Vector4(color.r, color.g, color.b, color.a).is_finite():
 		GameData.crosshair_color = color.clamp()
