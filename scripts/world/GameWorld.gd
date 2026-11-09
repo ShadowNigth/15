@@ -36,6 +36,7 @@ var pause_menu: PauseMenu = null
 var _match_started: bool = false
 var _bot_name_cursor: int = 0
 var _hud_visible_before_team_menu: bool = true
+var _vm_visible_before_team_menu: bool = true
 
 
 func _ready() -> void:
@@ -175,10 +176,13 @@ func _unhandled_input(event: InputEvent) -> void:
 func _on_team_menu_visibility_changed() -> void:
 	if team_menu.is_open:
 		_hud_visible_before_team_menu = hud.visible
+		_vm_visible_before_team_menu = player._vm_layer.visible
 		hud.visible = false
+		player._vm_layer.visible = false
 		player.ui_blocking_input = true
 	else:
 		hud.visible = _hud_visible_before_team_menu
+		player._vm_layer.visible = _vm_visible_before_team_menu
 		player.ui_blocking_input = GameplayInputGate.blocked()
 
 

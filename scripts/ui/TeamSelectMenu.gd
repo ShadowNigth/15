@@ -14,6 +14,7 @@ var _viewports: Dictionary = {}
 var _animations: Dictionary = {}
 var _emblems: Dictionary = {}
 var _models: Dictionary = {}
+var _cameras: Dictionary = {}
 var _root: Control
 
 func _ready() -> void:
@@ -50,7 +51,6 @@ func _build_choice(tm: String) -> void:
 	var button := Button.new()
 	button.name = "Choose" + tm
 	button.text = ""
-	button.tooltip_text = "Terroristas · personaje aleatorio (1)" if tm == "T" else "Antiterroristas · personaje aleatorio (2)"
 	button.mouse_default_cursor_shape = Control.CURSOR_POINTING_HAND
 	button.anchor_left = 0.04 if tm == "T" else 0.54
 	button.anchor_right = 0.46 if tm == "T" else 0.96
@@ -132,11 +132,14 @@ func _build_preview(tm: String) -> void:
 	stage.add_child(camera)
 	camera.look_at_from_position(Vector3(0, 1.10, 3.7), Vector3(0, 1.08, 0), Vector3.UP)
 	camera.current = true
+	_cameras[tm] = camera
 	var scene := GameData.get_model_scene("players/" + String(PREVIEW_CLASSES[tm]))
 	if scene == null:
 		return
 	var model := scene.instantiate() as Node3D
 	stage.add_child(model)
+	# Classic clips are authored around the GoldSrc hull centre, not the feet.
+	model.position.y = CSActor.MODEL_STAND_OFFSET_Y
 	model.rotation.y = PI + (-0.14 if tm == "T" else 0.14)
 	_models[tm] = model
 	_style_meshes(model)
@@ -164,13 +167,38 @@ func _build_preview(tm: String) -> void:
 				_style_meshes(prop)
 	if animation.has_animation("idle1"):
 		# Do not mutate the shared imported animation resource.
-		var idle := animation.get_animation("idle1").duplicate() as Animation
+		var idle := _combined_idle(animation, skeletons[0] as Skeleton3D, aim)
 		idle.loop_mode = Animation.LOOP_LINEAR
 		var library := AnimationLibrary.new()
 		library.add_animation("idle", idle)
 		animation.add_animation_library("team_preview", library)
 		animation.play("team_preview/idle")
 		animation.advance(0.0)
+
+func _combined_idle(player: AnimationPlayer, skeleton: Skeleton3D, aim_name: String) -> Animation:
+	# GoldSrc splits gait and weapon aim. Playing them sequentially resets the
+	# unkeyed upper body to a T-pose; combine disjoint tracks in a PRIVATE clip.
+	var idle := player.get_animation("idle1").duplicate() as Animation
+	var upper: Array[int] = []
+	var spine := skeleton.find_bone("Bip01 Spine")
+	for bone in range(skeleton.get_bone_count()):
+		var ancestor := bone
+		while ancestor >= 0:
+			if ancestor == spine:
+				upper.append(bone)
+				break
+			ancestor = skeleton.get_bone_parent(ancestor)
+	for track in range(idle.get_track_count() - 1, -1, -1):
+		var bone := skeleton.find_bone(String(idle.track_get_path(track).get_concatenated_subnames()))
+		if bone in upper:
+			idle.remove_track(track)
+	if player.has_animation(aim_name):
+		var aim := player.get_animation(aim_name)
+		for track in range(aim.get_track_count()):
+			var bone := skeleton.find_bone(String(aim.track_get_path(track).get_concatenated_subnames()))
+			if bone in upper:
+				aim.copy_track(track, idle)
+	return idle
 
 func _style_meshes(node: Node) -> void:
 	if node is MeshInstance3D:

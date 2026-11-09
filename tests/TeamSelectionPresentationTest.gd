@@ -50,6 +50,21 @@ func key(code: Key) -> void:
 	Input.parse_input_event(event)
 	await settle(2)
 
+func check_pose_and_frame() -> void:
+	for tm in ["T", "CT"]:
+		var model := menu._models[tm] as Node3D
+		var skeleton := model.find_children("*", "Skeleton3D", true, false)[0] as Skeleton3D
+		var hands: Array[Vector3] = []
+		for side in ["L", "R"]:
+			hands.append(skeleton.get_bone_global_pose(skeleton.find_bone("Bip01 " + side + " Hand")).origin)
+		expect(hands[0].distance_to(hands[1]) < 0.85, "rifle stance, not a T-pose " + tm)
+		var camera := menu._cameras[tm] as Camera3D
+		var viewport := menu._viewports[tm] as SubViewport
+		var frame := Rect2(Vector2(3, 3), Vector2(viewport.size) - Vector2(6, 6))
+		for bone_name in ["Bip01 Head", "Bip01 L Foot", "Bip01 R Foot"]:
+			var point := skeleton.global_transform * skeleton.get_bone_global_pose(skeleton.find_bone(bone_name)).origin
+			expect(not camera.is_position_behind(point) and frame.has_point(camera.unproject_position(point)), "full-body framing " + tm + " " + bone_name)
+
 func _run() -> void:
 	get_tree().root.content_scale_mode = Window.CONTENT_SCALE_MODE_DISABLED
 	get_tree().root.size = Vector2i(1280, 720)
@@ -65,6 +80,7 @@ func _run() -> void:
 	expect(GameplayInputGate.blocked(), "gameplay locked while selector is open")
 	expect(Input.mouse_mode == Input.MOUSE_MODE_VISIBLE, "visible cursor")
 	expect(not world.hud.visible, "gameplay HUD hidden under clean team presentation")
+	expect(not world.player._vm_layer.visible, "first-person weapon hidden under team presentation")
 	expect(menu._models.size() == 2 and menu._animations.size() == 2, "two genuine animated classic models")
 	var count := RoundManager.actors.size()
 	for tm in ["T", "CT"]:
@@ -75,6 +91,7 @@ func _run() -> void:
 		var before := animation.current_animation_position
 		await settle(8)
 		expect(not is_equal_approx(before, animation.current_animation_position), "native idle advances " + tm)
+	check_pose_and_frame()
 	await capture("team_selection")
 	await click(menu._buttons["T"])
 	expect(choices.size() == 1 and choices[0][0] == "T", "real character click joins T once")
@@ -97,6 +114,8 @@ func _run() -> void:
 		var rect: Rect2 = menu._buttons[tm].get_global_rect()
 		expect(Rect2(Vector2.ZERO, Vector2(get_tree().root.size)).encloses(rect), "4:3 choice inside screen " + tm)
 		expect(rect.encloses((menu._emblems[tm] as TextureRect).get_global_rect()), "4:3 emblem inside choice " + tm)
+	check_pose_and_frame()
+	expect(not world.player._vm_layer.visible, "reopened selector hides equipped viewmodel")
 	await capture("team_selection_4x3")
 	await key(KEY_2)
 	expect(choices.size() == 2 and choices[1][0] == "CT", "keyboard chooses CT without appearance menu")
