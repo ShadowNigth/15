@@ -39,6 +39,7 @@ var _skin_opt: OptionButton = null
 var _syncing_skin_options := false
 
 var _arsenal_entries: Array[Dictionary] = []
+var _arsenal_selected_meta: String = "ak47"
 var _arsenal_list: ItemList
 var _arsenal_search: LineEdit
 var _arsenal_category: OptionButton
@@ -210,6 +211,10 @@ func _close_panels() -> void:
 			panel.hide()
 	_modal_shade.hide()
 
+func _input(event: InputEvent) -> void:
+	# Escape also works while a search field or popup owns GUI focus.
+	_unhandled_key_input(event)
+
 func _unhandled_key_input(event: InputEvent) -> void:
 	if event.is_action_pressed("ui_cancel") and _modal_shade.visible:
 		_close_panels()
@@ -302,7 +307,12 @@ func _build_play_dialog() -> void:
 	right.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	right.size_flags_vertical = Control.SIZE_EXPAND_FILL
 	right.add_theme_constant_override("separation", 8)
-	body.add_child(right)
+	var setup_scroll := ScrollContainer.new()
+	setup_scroll.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	setup_scroll.size_flags_vertical = Control.SIZE_EXPAND_FILL
+	setup_scroll.horizontal_scroll_mode = ScrollContainer.SCROLL_MODE_DISABLED
+	body.add_child(setup_scroll)
+	setup_scroll.add_child(right)
 
 	_map_title_lbl = Label.new()
 	_map_title_lbl.add_theme_font_size_override("font_size", 16)
@@ -350,7 +360,7 @@ func _build_play_dialog() -> void:
 	right.add_child(settings_grid)
 
 	var mode_label := Label.new()
-	mode_label.text = "Game mode:"
+	mode_label.text = "Modo de juego:"
 	settings_grid.add_child(mode_label)
 	_game_mode_opt = OptionButton.new()
 	_game_mode_opt.add_item("Classic — DE / CS / AS")
@@ -358,7 +368,7 @@ func _build_play_dialog() -> void:
 	_game_mode_opt.selected = 1 if GameData.game_mode == "deathmatch" else 0
 	settings_grid.add_child(_game_mode_opt)
 	var loadout_label := Label.new()
-	loadout_label.text = "DM primary (free):"
+	loadout_label.text = "Arma en DM:"
 	settings_grid.add_child(loadout_label)
 	_dm_weapon_opt = OptionButton.new()
 	for wid in ["ak47", "m4a1", "aug", "sg552", "mp5navy", "p90", "awp", "m3", "galil", "famas"]:
@@ -374,7 +384,7 @@ func _build_play_dialog() -> void:
 	_game_mode_opt.tooltip_text = "Team DM: 40 team frags or 10 minutes; respawn after 3 seconds, 2 seconds of protection."
 
 	var bl := Label.new()
-	bl.text = "Number of Bots IA:"
+	bl.text = "Cantidad de bots:"
 	bl.add_theme_font_size_override("font_size", 13)
 	settings_grid.add_child(bl)
 	_bot_spin = SpinBox.new()
@@ -384,7 +394,7 @@ func _build_play_dialog() -> void:
 	settings_grid.add_child(_bot_spin)
 
 	var dl := Label.new()
-	dl.text = "Bot Skill Level:"
+	dl.text = "Dificultad:"
 	dl.add_theme_font_size_override("font_size", 13)
 	settings_grid.add_child(dl)
 	_diff_opt = OptionButton.new()
@@ -394,7 +404,7 @@ func _build_play_dialog() -> void:
 	settings_grid.add_child(_diff_opt)
 
 	var ml := Label.new()
-	ml.text = "Starting Money:"
+	ml.text = "Dinero inicial:"
 	ml.add_theme_font_size_override("font_size", 13)
 	settings_grid.add_child(ml)
 	_money_opt = OptionButton.new()
@@ -405,20 +415,20 @@ func _build_play_dialog() -> void:
 	settings_grid.add_child(_money_opt)
 
 	var gl := Label.new()
-	gl.text = "First-person Gloves:"
+	gl.text = "Guantes:"
 	gl.add_theme_font_size_override("font_size", 13)
 	settings_grid.add_child(gl)
 	_glove_opt = OptionButton.new()
-	_glove_opt.custom_minimum_size.x = 260.0
+	_glove_opt.custom_minimum_size.x = 180.0
 	_populate_glove_options(_glove_opt)
 	settings_grid.add_child(_glove_opt)
 
 	var knife_label := Label.new()
-	knife_label.text = "Knife model:"
+	knife_label.text = "Cuchillo:"
 	knife_label.add_theme_font_size_override("font_size", 13)
 	settings_grid.add_child(knife_label)
 	_knife_opt = OptionButton.new()
-	_knife_opt.custom_minimum_size.x = 260.0
+	_knife_opt.custom_minimum_size.x = 180.0
 	for raw in GameData.get_knife_options():
 		var option := raw as Dictionary
 		var index := _knife_opt.item_count
@@ -431,18 +441,24 @@ func _build_play_dialog() -> void:
 	)
 	settings_grid.add_child(_knife_opt)
 
+	for option in [_game_mode_opt, _dm_weapon_opt, _diff_opt, _money_opt, _glove_opt, _knife_opt]:
+		option.fit_to_longest_item = false
+		option.clip_text = true
+		option.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+		option.get_popup().max_size = Vector2i(680, 500)
+
 	var start_btn := Button.new()
-	start_btn.text = "LAUNCH MATCH  >>"
+	start_btn.text = "INICIAR PARTIDA  →"
 	start_btn.custom_minimum_size = Vector2(0, 38)
 	start_btn.add_theme_font_size_override("font_size", 16)
-	start_btn.add_theme_color_override("font_color", Color(0.28, 1.0, 0.38))
+	start_btn.add_theme_color_override("font_color", Color(0.06, 0.08, 0.10))
 	var sb_launch := StyleBoxFlat.new()
-	sb_launch.bg_color = Color(0.06, 0.22, 0.08, 0.90)
-	sb_launch.border_color = Color(0.30, 0.95, 0.40, 0.95)
+	sb_launch.bg_color = AMBER
+	sb_launch.border_color = AMBER
 	sb_launch.set_border_width_all(2)
 	start_btn.add_theme_stylebox_override("normal", sb_launch)
 	var sb_launch_h := sb_launch.duplicate() as StyleBoxFlat
-	sb_launch_h.bg_color = Color(0.10, 0.34, 0.14, 0.96)
+	sb_launch_h.bg_color = Color(1.0, 0.82, 0.35)
 	start_btn.add_theme_stylebox_override("hover", sb_launch_h)
 	start_btn.pressed.connect(_start_selected_game)
 	right.add_child(start_btn)
@@ -1105,10 +1121,7 @@ func _build_arsenal_catalogue() -> void:
 	_arsenal_entries.append({"name": "Kit de desactivación", "category": "EQUIPO", "meta": "native:defuser_item"})
 
 func _refresh_arsenal_list() -> void:
-	var previous := _viewer_current_wid
-	var selected := _arsenal_list.get_selected_items()
-	if not selected.is_empty():
-		previous = String(_arsenal_list.get_item_metadata(selected[0]))
+	var previous := _arsenal_selected_meta
 	_arsenal_list.clear()
 	var query := _arsenal_search.text.strip_edges().to_lower()
 	var category := _arsenal_category.get_item_text(_arsenal_category.selected)
@@ -1127,6 +1140,7 @@ func _refresh_arsenal_list() -> void:
 
 func _on_arsenal_item_selected(index: int) -> void:
 	var meta := String(_arsenal_list.get_item_metadata(index))
+	_arsenal_selected_meta = meta
 	if meta.begins_with("native:"):
 		_load_viewer_native(meta.trim_prefix("native:"))
 	elif meta.begins_with("player:"):

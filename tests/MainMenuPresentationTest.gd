@@ -89,6 +89,15 @@ func _run() -> void:
 	expect(inside(panel, menu._arsenal_tabs.get_global_rect()), "4:3 tabs remain inside panel")
 	expect(inside(panel, menu._viewer_animation_opt.get_global_rect()), "4:3 animation selector not clipped")
 	await capture("menu_arsenal_4x3")
+	# Non-weapon selection also survives filtering to zero results and back.
+	var remembered := "native:defuser_item"
+	menu._arsenal_selected_meta = remembered
+	menu._arsenal_search.text = "no-such-item"
+	menu._refresh_arsenal_list()
+	menu._arsenal_search.text = ""
+	menu._refresh_arsenal_list()
+	var restored := menu._arsenal_list.get_selected_items()
+	expect(not restored.is_empty() and menu._arsenal_list.get_item_metadata(restored[0]) == remembered, "equipment selection survives filtering")
 	menu._load_viewer_player("sas")
 	await settle()
 	expect(menu._viewer_anim != null and menu._viewer_anim.is_playing(), "classic player preview remains animated")
