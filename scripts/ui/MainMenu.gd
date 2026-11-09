@@ -31,6 +31,7 @@ var _knife_opt: OptionButton = null
 # 3D Arsenal Viewer widgets
 var _viewer_viewport: SubViewport = null
 var _viewer_pivot: Node3D = null
+var _viewer_camera: Camera3D
 var _viewer_anim: AnimationPlayer = null
 var _viewer_animation_opt: OptionButton = null
 var _viewer_stats_lbl: Label = null
@@ -606,14 +607,15 @@ func _build_arsenal_dialog() -> void:
 	var studio := WorldEnvironment.new()
 	studio.environment = Environment.new()
 	studio.environment.background_mode = Environment.BG_COLOR
-	studio.environment.background_color = Color(0.075, 0.10, 0.125)
+	studio.environment.background_color = Color(0.14, 0.18, 0.22)
 	studio.environment.ambient_light_source = Environment.AMBIENT_SOURCE_COLOR
 	studio.environment.ambient_light_color = Color(0.65, 0.73, 0.80)
-	studio.environment.ambient_light_energy = 0.6
+	studio.environment.ambient_light_energy = 1.0
 	_viewer_viewport.add_child(studio)
 	svc.add_child(_viewer_viewport)
 
 	var vcam := Camera3D.new()
+	_viewer_camera = vcam
 	_viewer_viewport.add_child(vcam)
 	vcam.look_at_from_position(Vector3(0.0, 0.35, 1.35), Vector3(0.0, 0.15, 0.0), Vector3.UP)
 
@@ -626,6 +628,11 @@ func _build_arsenal_dialog() -> void:
 	valight.position = Vector3(-1.2, 1.0, 1.5)
 	valight.light_energy = 1.2
 	_viewer_viewport.add_child(valight)
+	var front_fill := OmniLight3D.new()
+	front_fill.position = Vector3(1.3, 0.6, 1.2)
+	front_fill.light_energy = 2.2
+	front_fill.omni_range = 5.0
+	_viewer_viewport.add_child(front_fill)
 
 	_viewer_pivot = Node3D.new()
 	_viewer_viewport.add_child(_viewer_pivot)
@@ -843,6 +850,9 @@ func _on_viewer_skin_selected(index: int) -> void:
 func _load_viewer_weapon(wid: String) -> void:
 	_set_arsenal_heading(String(GameData.weapons.get(wid, {}).get("name", wid)), _weapon_category(wid))
 	_viewer_current_wid = wid
+	if _viewer_camera != null:
+		_viewer_camera.fov = 48.0
+		_viewer_camera.look_at_from_position(Vector3(0.85, 0.45, 1.25), Vector3(-0.08, -0.03, 0.35), Vector3.UP)
 	_populate_viewer_skin_options(wid)
 	_clear_viewer_pivot()
 	_viewer_pivot.rotation = Vector3.ZERO
@@ -876,6 +886,9 @@ func _load_viewer_weapon(wid: String) -> void:
 
 func _load_viewer_player(cid: String) -> void:
 	_set_arsenal_heading(cid.to_upper(), "PERSONAJES CLÁSICOS")
+	if _viewer_camera != null:
+		_viewer_camera.fov = 65.0
+		_viewer_camera.look_at_from_position(Vector3(0.0, 0.35, 1.35), Vector3(0.0, 0.3, 0.0), Vector3.UP)
 	_viewer_current_wid = ""
 	_populate_viewer_skin_options("")
 	_clear_viewer_pivot()
@@ -1059,6 +1072,9 @@ func _load_viewer_native(resource: String) -> void:
 	_set_arsenal_heading("Kit de desactivación", "EQUIPO")
 	if resource != "defuser_item":
 		return
+	if _viewer_camera != null:
+		_viewer_camera.fov = 65.0
+		_viewer_camera.look_at_from_position(Vector3(0.0, 0.35, 1.35), Vector3(0.0, 0.15, 0.0), Vector3.UP)
 	_viewer_current_wid = ""
 	_populate_viewer_skin_options("")
 	_clear_viewer_pivot()
