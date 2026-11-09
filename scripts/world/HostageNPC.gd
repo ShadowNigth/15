@@ -26,6 +26,7 @@ var _avoid_timer: float = 0.0
 var _avoid_dir: Vector3 = Vector3.ZERO
 var _last_pos: Vector3 = Vector3.ZERO
 var _avoid_side: float = 1.0
+var _following_motion: bool = false
 
 
 func _ready() -> void:
@@ -115,6 +116,7 @@ func reset_for_round() -> void:
 	is_alive = true
 	is_rescued = false
 	leader = null
+	_following_motion = false
 	health = 100.0
 	_touched_once = false
 	_scared_timer = 0.0
@@ -148,10 +150,12 @@ func interact(actor: Node3D) -> void:
 		return
 	if leader == actor:
 		leader = null
+		_following_motion = false
 		_play_anim("idle1")
 		return
 
 	leader = actor
+	_following_motion = false
 	_nav_path.clear()
 	_repath_timer = 0.0
 	_stuck_timer = 0.0
@@ -264,6 +268,14 @@ func _try_step_up(horiz_motion: Vector3, preserve_hvel: Vector3) -> void:
 		return
 
 
+static func should_follow(distance: float, was_moving: bool, finishing_rescue: bool) -> bool:
+	# A separate start/stop distance prevents threshold oscillation. Keep the
+	# rescue-brush exception: followers must cross the trigger, not wait outside.
+	if finishing_rescue:
+		return distance > 0.35
+	return distance > (1.65 if was_moving else 2.15)
+
+
 func _physics_process(delta: float) -> void:
 	if not is_alive or is_rescued:
 		return
@@ -279,6 +291,13 @@ func _physics_process(delta: float) -> void:
 	if not grounded:
 		velocity.y -= 24.0 * delta
 
+	if leader != null and (not is_instance_valid(leader) or not bool(leader.get("is_alive"))):
+		leader = null
+		_following_motion = false
+		_nav_path.clear()
+		_avoid_timer = 0.0
+		_scared_timer = maxf(_scared_timer, 2.0)
+
 	if is_instance_valid(leader) and bool(leader.get("is_alive")):
 		var dist := global_position.distance_to(leader.global_position)
 		var finishing_rescue := false
@@ -288,8 +307,8 @@ func _physics_process(delta: float) -> void:
 			finishing_rescue = leader_inside and not self_inside
 		# The normal 2.15 m follow gap must not leave the NPC just outside the
 		# trigger after its rescuer has entered. Close in until this body crosses.
-		var follow_stop := 0.35 if finishing_rescue else 2.15
-		if dist > follow_stop:
+		_following_motion = should_follow(dist, _following_motion, finishing_rescue)
+		if _following_motion:
 			_repath_timer -= delta
 			var direct_clear := dist < 7.0 and _has_clear_move_line(leader.global_position)
 			# Keep progress along a ramp/corridor. Rebuilding every half second

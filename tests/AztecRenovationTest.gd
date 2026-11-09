@@ -8,46 +8,13 @@ func baseline_data(data: Dictionary) -> Dictionary:
 func validate_map(built: Dictionary) -> void:
 	var root := built.root as Node3D
 	expect(root.has_meta("aztec_visual_renovation"), "Aztec renovation installed")
-	var decor := root.get_node_or_null("AztecVisualRenovation") as Node3D
-	expect(decor != null, "Temple and jungle asset instantiated")
-	if decor == null:
-		return
-	expect(decor.find_children("*", "CollisionObject3D", true, false).is_empty(), "Visual dressing adds no invisible collision, cover or bullet blocking")
-	var meshes := decor.find_children("*", "MeshInstance3D", true, false)
-	var report: Dictionary = GameData._load_json("res://data/aztec_renovation.json")
-	expect(meshes.size() == int(report.mesh_cells) and meshes.size() <= 50, "Spatial mesh budget")
-	var triangles := 0
-	for raw in meshes:
-		var mesh := raw as MeshInstance3D
-		expect(mesh.cast_shadow == GeometryInstance3D.SHADOW_CASTING_SETTING_OFF, "No new shadow passes")
-		for surface in range(mesh.mesh.get_surface_count()):
-			var arrays := mesh.mesh.surface_get_arrays(surface)
-			var vertices: PackedVector3Array = arrays[Mesh.ARRAY_VERTEX]
-			var indices: PackedInt32Array = arrays[Mesh.ARRAY_INDEX] if arrays[Mesh.ARRAY_INDEX] != null else PackedInt32Array()
-			triangles += (indices.size() if not indices.is_empty() else vertices.size()) / 3
-			var material := mesh.get_surface_override_material(surface) as StandardMaterial3D
-			expect(material != null and material.vertex_color_use_as_albedo and material.roughness == 1.0, "Original textures, matte baked shading")
-	expect(triangles <= 18000, "Decoration triangle budget")
+	expect(root.get_node_or_null("AztecVisualRenovation") == null, "Added decorative objects removed")
 	var environment := (root.get_node("WorldEnvironment") as WorldEnvironment).environment
 	expect(environment.fog_enabled and environment.fog_density <= 0.0015, "Thin jungle haze, not opaque fog")
 	for raw in root.get_node("GoldSrcSkybox").get_children():
 		var face := raw as MeshInstance3D
 		var material := face.material_override as ShaderMaterial
 		expect(material != null and material.get_shader_parameter("original_sky") != null, "Continuous storm sky retains original artwork")
-	var visible_crowns := 0
-	var origin := Vector3(43, -4, -29)
-	var forward := Vector3(6, 8, 9).normalized()
-	for feature in report.features:
-		if String(feature.kind) != "backdrop_tree":
-			continue
-		var crown := vec(feature.center)
-		crown.y *= 2.0
-		if forward.dot((crown-origin).normalized()) > 0.80 and ray(origin, crown).is_empty():
-			visible_crowns += 1
-	expect(visible_crowns > 0, "New jungle is visible above walls from normal player height, not hidden scenery")
-	expect(ray(Vector3(16, -4, 60), Vector3(25, 21, 83)).is_empty(), "Background temple roof is visible from CT spawn at player eye height")
-	print("[AZTEC RENOVATION] visible crowns=", visible_crowns)
-	print("[AZTEC RENOVATION] triangles=", triangles, "; cells=", meshes.size())
 
 func comparison_views() -> Array:
 	var views := VIEWS.duplicate(true)

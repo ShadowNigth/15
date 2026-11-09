@@ -488,6 +488,8 @@ func _physics_process(delta: float) -> void:
 		apply_goldsrc_movement(blind_move.normalized(), false, false, false, delta)
 		return
 
+	_validate_visual_contact()
+
 	_think_timer -= delta
 	if _think_timer <= 0.0:
 		_think_timer = randf_range(0.12, 0.22)
@@ -756,6 +758,13 @@ func _is_utility_weapon(wid: String) -> bool:
 	if wid in ["knife", "c4", "taser"]:
 		return true
 	return bool((GameData.weapons.get(wid, {}) as Dictionary).get("grenade", false))
+
+
+func _validate_visual_contact() -> void:
+	# Visibility can change between tactical scans (doors, smoke, corners).
+	# Never refresh a hidden actor's live coordinates during that interval.
+	if is_instance_valid(target_enemy) and (not target_enemy.is_alive or not _can_see_actor(target_enemy)):
+		target_enemy = null
 
 
 func _can_see_actor(other: Node3D) -> bool:
@@ -2489,26 +2498,28 @@ func _on_taken_damage_from(attacker: Node3D, hit_pos: Vector3) -> void:
 	if attacker is CSActor:
 		var enemy := attacker as CSActor
 		if is_instance_valid(enemy) and enemy != self and enemy.team != team and enemy.is_alive:
-			_last_enemy_pos = enemy.global_position
-			_last_enemy_seen_age = 0.0
-			_sound_investigate_pos = enemy.global_position
+			var visible := _can_see_actor(enemy)
+			# Damage is evidence of danger, not a wall-penetrating position sensor.
+			# Only visual contact may disclose the attacker's exact location.
+			var known_pos := enemy.global_position if visible else hit_pos
+			if visible:
+				_last_enemy_pos = known_pos
+				_last_enemy_seen_age = 0.0
+			_sound_investigate_pos = known_pos
 			_sound_investigate_timer = 3.5
 			if is_vip:
 				_vip_route_rethink = 0.0
-			if target_enemy == null:
-				var visible := _can_see_actor(enemy)
-				if visible and (not is_vip or global_position.distance_to(enemy.global_position) <= 12.0):
-					target_enemy = enemy
-					var fast_react: float = float([0.22, 0.14, 0.09, 0.045][clampi(skill_level, 0, 3)])
-					_reaction_timer = fast_react
-				elif not visible:
-					_look_smoothly_toward(enemy.global_position + Vector3(0.0, 1.35, 0.0), 0.58)
-			for mate in RoundManager.actors:
-				if mate is CSBot and mate != self and is_instance_valid(mate):
-					var m_bot := mate as CSBot
-					if m_bot.is_alive and m_bot.team == team and m_bot.target_enemy == null:
-						if m_bot.global_position.distance_to(global_position) < 18.0:
-							m_bot.notify_squad_contact(enemy.global_position)
+			if target_enemy == null and visible and (not is_vip or global_position.distance_to(known_pos) <= 12.0):
+				target_enemy = enemy
+				var fast_react: float = float([0.22, 0.14, 0.09, 0.045][clampi(skill_level, 0, 3)])
+				_reaction_timer = fast_react
+			if visible:
+				for mate in RoundManager.actors:
+					if mate is CSBot and mate != self and is_instance_valid(mate):
+						var m_bot := mate as CSBot
+						if m_bot.is_alive and m_bot.team == team and m_bot.target_enemy == null:
+							if m_bot.global_position.distance_to(global_position) < 18.0:
+								m_bot.notify_squad_contact(known_pos)
 			return
 
 	_sound_investigate_pos = hit_pos
