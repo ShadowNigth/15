@@ -656,8 +656,10 @@ func _build_hud_tree() -> void:
 	equipment_group.add_child(inv_col)
 	var outline_shader := Shader.new()
 	outline_shader.code = """shader_type canvas_item;
+varying vec4 icon_tint;
+void vertex() { icon_tint = COLOR; }
 void fragment() {
- vec4 tint = COLOR;
+ vec4 tint = icon_tint;
  vec4 tex = texture(TEXTURE, UV);
  vec2 step_uv = TEXTURE_PIXEL_SIZE * 2.0;
  float border = tex.a;
