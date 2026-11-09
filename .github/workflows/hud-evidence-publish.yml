@@ -24,9 +24,15 @@ jobs:
           github-token: ${{ github.token }}
           path: /tmp
       - run: pip install pillow
-      - name: Firearm native framebuffer
-        run: python tools/publish_hud_capture.py hud_firearm
-      - name: Karambit native framebuffer
-        run: python tools/publish_hud_capture.py hud_karambit
-      - name: Karambit 4x3 native framebuffer
-        run: python tools/publish_hud_capture.py hud_karambit_4x3
+      - name: hud_firearm framebuffer part 1
+        run: python tools/publish_hud_capture.py hud_firearm 0
+      - name: hud_firearm framebuffer part 2
+        run: python tools/publish_hud_capture.py hud_firearm 1
+      - name: hud_karambit framebuffer part 1
+        run: python tools/publish_hud_capture.py hud_karambit 0
+      - name: hud_karambit framebuffer part 2
+        run: python tools/publish_hud_capture.py hud_karambit 1
+      - name: hud_karambit_4x3 framebuffer part 1
+        run: python tools/publish_hud_capture.py hud_karambit_4x3 0
+      - name: hud_karambit_4x3 framebuffer part 2
+        run: python tools/publish_hud_capture.py hud_karambit_4x3 1
