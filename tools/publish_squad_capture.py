@@ -5,7 +5,7 @@ import sys
 from pathlib import Path
 
 name = sys.argv[1]
-assert name in {"corridor_before", "corridor_yield", "corridor_after", "classic_pose_and_weapon"}
+assert name in {"corridor_before", "corridor_yield", "corridor_after", "classic_pose_and_weapon", "melee_before", "melee_after"}
 path = Path("/tmp/squad-captures") / (name + ".png")
 if not path.exists():
     raise SystemExit(0)

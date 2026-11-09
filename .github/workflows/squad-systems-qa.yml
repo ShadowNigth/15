@@ -74,6 +74,20 @@ jobs:
           LIBGL_ALWAYS_SOFTWARE=1 timeout 180s xvfb-run -a godot --path . --audio-driver Dummy --rendering-method gl_compatibility --disable-render-loop --fixed-fps 60 --resolution 1280x720 res://tests/UICustomizationTest.tscn 2>&1 | tee /tmp/UIEditorTest.log
           ! grep -Eq 'SCRIPT ERROR:|Parse Error:|Compile Error:' /tmp/UIEditorTest.log
           grep -q 'PASS:' /tmp/UIEditorTest.log
+      - name: Render resource recovery and native knife pursuit
+        if: ${{ !cancelled() && steps.compile.outcome == 'success' }}
+        shell: bash
+        run: |
+          set -o pipefail
+          SQUAD_CAPTURE_DIR=/tmp/squad-captures LIBGL_ALWAYS_SOFTWARE=1 timeout 180s xvfb-run -a godot --path . --audio-driver Dummy --rendering-method gl_compatibility --fixed-fps 60 res://tests/BotResourceMobilityTest.tscn 2>&1 | tee /tmp/bot-resource-render.log
+          ! grep -Eq 'SCRIPT ERROR:|Parse Error:|Compile Error:' /tmp/bot-resource-render.log
+          grep -q 'PASS:' /tmp/bot-resource-render.log
+      - name: Publish melee_before framebuffer
+        if: always()
+        run: python tools/publish_squad_capture.py melee_before
+      - name: Publish melee_after framebuffer
+        if: always()
+        run: python tools/publish_squad_capture.py melee_after
       - name: Publish corridor_before framebuffer
         if: always()
         run: python tools/publish_squad_capture.py corridor_before

@@ -1,6 +1,7 @@
 extends Node3D
 ## Production ammo choice, pickup swaps, melee pursuit and environmental probes.
 var bot_navigator: BotNavigator = null
+var water: WaterEffects = null
 var checks: int = 0
 var failures: int = 0
 
@@ -19,6 +20,11 @@ func block(pos: Vector3, size: Vector3) -> StaticBody3D:
 	box.size = size
 	shape.shape = box
 	body.add_child(shape)
+	var visual := MeshInstance3D.new()
+	var mesh := BoxMesh.new()
+	mesh.size = size
+	visual.mesh = mesh
+	body.add_child(visual)
 	add_child(body)
 	return body
 
@@ -34,6 +40,17 @@ func drop_at(wid: String, pos: Vector3, clip: int, reserve: int) -> DroppedWeapo
 	RoundManager.dropped_items.append(drop)
 	return drop
 
+func capture(label: String) -> void:
+	var output := OS.get_environment("SQUAD_CAPTURE_DIR")
+	if output.is_empty() or DisplayServer.get_name() == "headless":
+		return
+	DirAccess.make_dir_recursive_absolute(output)
+	for i in range(3):
+		await get_tree().process_frame
+		RenderingServer.force_draw(false)
+	expect(get_viewport().get_texture().get_image().save_png(output.path_join(label+".png")) == OK, "rendered melee evidence " + label)
+
+
 func _ready() -> void:
 	_run.call_deferred()
 
@@ -46,7 +63,8 @@ func _run() -> void:
 	var bot := CSBot.new()
 	bot.team = "CT"
 	add_child(bot)
-	bot.is_alive = true
+	bot.set_team_and_class("CT", "urban")
+	bot.spawn_for_round(Vector3(0, 0.03, 0), 0.0, true)
 	bot.set_physics_process(false)
 	bot.weapon_ctrl.give_weapon("ak47", 0, 0)
 	bot.weapon_ctrl.give_weapon("usp", 7, 0)
@@ -122,17 +140,33 @@ func _run() -> void:
 	var enemy := CSBot.new()
 	enemy.team = "T"
 	add_child(enemy)
-	enemy.is_alive = true
+	enemy.set_team_and_class("T", "leet")
+	enemy.spawn_for_round(Vector3(0, 0.03, -5), 0.0, true)
 	enemy.set_physics_process(false)
-	enemy.position = Vector3(0, 0, -5)
 	bot.target_enemy = enemy
 	bot._select_usable_gun()
 	var start_distance := bot.global_position.distance_to(enemy.global_position)
+	var light := DirectionalLight3D.new()
+	light.rotation_degrees = Vector3(-45, 20, 0)
+	add_child(light)
+	var camera := Camera3D.new()
+	add_child(camera)
+	camera.position = Vector3(6, 5, 4)
+	camera.look_at(Vector3(0, 0.8, -2.5))
+	camera.current = true
+	await capture("melee_before")
 	for i in range(45):
 		bot._engage_without_ammo(1.0/60.0)
 		await get_tree().physics_frame
 	expect(bot.weapon_ctrl.current_weapon_id == "knife", "melee remains equipped throughout pursuit")
 	expect(bot.global_position.distance_to(enemy.global_position) < start_distance - 1.0, "real melee movement closes distance instead of rifle strafing")
+	for i in range(60):
+		if not enemy.is_alive:
+			break
+		bot._engage_without_ammo(1.0/60.0)
+		await get_tree().physics_frame
+	expect(enemy.health < 100.0, "native knife attack damages enemy after closing distance")
+	await capture("melee_after")
 	AudioManager.stop_all()
 	if failures == 0:
 		print("[BOT RESOURCE] PASS: %d checks" % checks)
