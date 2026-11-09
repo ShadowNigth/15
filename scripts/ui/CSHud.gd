@@ -9,7 +9,7 @@ extends CanvasLayer
 ##     each enemy kill pops a numbered card above the emblem (1-5 fan out with
 ##     weapon pips, ace on the fifth, from 6 a counter card) plus a light beam
 ##     and glow-ring flash — the CS2 kill card effect
-##   - CS2 white typography with team-blue CT and team-gold T accents
+##   - CS2 gold typography with team-blue CT and team-gold T accents
 
 const HUD_WHITE := Color(0.97, 0.85, 0.46, 0.98)
 const HUD_DIM := Color(0.82, 0.74, 0.48, 0.72)
@@ -207,7 +207,7 @@ class KillCardDisplay extends Control:
 		if team != "CT" and team != "T":
 			return
 		var ct := team == "CT"
-		var accent := Color(0.55, 0.76, 1.0, 0.85) if ct else Color(1.0, 0.77, 0.3, 0.85)
+		var accent := Color(0.97, 0.85, 0.46, 0.9)
 		var hot := Color(0.85, 0.92, 1.0) if ct else Color(1.0, 0.87, 0.55)
 		var cx := size.x * 0.5
 		var cy := size.y - 41.0
@@ -269,7 +269,7 @@ class KillCardDisplay extends Control:
 		var team_col := Color(1.0, 1.0, 1.0, 0.92 * mark_a)
 		var emblem := load("res://assets/ui/teams/" + team.to_lower() + ".svg") as Texture2D
 		if emblem != null:
-			draw_texture_rect(emblem, Rect2(cx - 15, cy - 15, 30, 30), false, Color(1, 1, 1, mark_a))
+			draw_texture_rect(emblem, Rect2(cx - 15, cy - 15, 30, 30), false, Color(1.47, 1.09, 0.54, mark_a) if ct else Color(1.11, 1.16, 1.05, mark_a))
 
 		# Numbered kill cards fanning out above the emblem
 		var n := cards.size()
@@ -629,9 +629,10 @@ func _build_hud_tree() -> void:
 	equipment_group.add_child(ammo_row)
 	_ammo_label = _make_label("12", 34, HUD_WHITE)
 	_ammo_reserve_label = _make_label("| 24", 18, HUD_DIM)
+	_ammo_reserve_label.vertical_alignment = VERTICAL_ALIGNMENT_BOTTOM
 	ammo_row.add_child(_ammo_label)
 	ammo_row.add_child(_ammo_reserve_label)
-	_weapon_name_label = _make_label("", 13, HUD_WHITE)
+	_weapon_name_label = _make_label("", 16, HUD_WHITE)
 	_weapon_name_label.anchor_left = 1.0
 	_weapon_name_label.anchor_right = 1.0
 	_weapon_name_label.offset_left = -200
@@ -653,6 +654,22 @@ func _build_hud_tree() -> void:
 	inv_col.add_theme_constant_override("separation", 5)
 	inv_col.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	equipment_group.add_child(inv_col)
+	var outline_shader := Shader.new()
+	outline_shader.code = """shader_type canvas_item;
+void fragment() {
+ vec4 tint = COLOR;
+ vec4 tex = texture(TEXTURE, UV);
+ vec2 step_uv = TEXTURE_PIXEL_SIZE * 2.0;
+ float border = tex.a;
+ for (int x = -1; x <= 1; x++) {
+  for (int y = -1; y <= 1; y++) {
+   border = max(border, texture(TEXTURE, UV + vec2(float(x), float(y)) * step_uv).a);
+  }
+ }
+ COLOR = vec4(mix(vec3(0.015), tex.rgb * tint.rgb, tex.a), border * tint.a);
+}"""
+	var outline_material := ShaderMaterial.new()
+	outline_material.shader = outline_shader
 	for slot in range(5):
 		var row := HBoxContainer.new()
 		row.alignment = BoxContainer.ALIGNMENT_END
@@ -663,9 +680,10 @@ func _build_hud_tree() -> void:
 		inv_ic.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
 		inv_ic.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
 		inv_ic.modulate = HUD_WHITE
+		inv_ic.material = outline_material
 		inv_ic.mouse_filter = Control.MOUSE_FILTER_IGNORE
 		row.add_child(inv_ic)
-		row.add_child(_make_label(str(slot + 1), 11, HUD_DIM))
+		row.add_child(_make_label(str(slot + 1), 13, HUD_DIM))
 		_inv_icons.append(inv_ic)
 	_killcards = KillCardDisplay.new()
 	_killcards.set_anchors_preset(Control.PRESET_FULL_RECT)
@@ -806,6 +824,7 @@ func _refresh_inventory_icons() -> void:
 						wid = grenade
 						break
 		var ic: TextureRect = _inv_icons[i]
+		ic.get_parent().visible = not wid.is_empty()
 		if wid.is_empty():
 			ic.texture = null
 			ic.modulate = Color(1, 1, 1, 0.16)
@@ -818,7 +837,7 @@ func _refresh_inventory_icons() -> void:
 			ic.texture = wh
 			# Grey out the non-equipped slots, full white for the active weapon
 			var cur := String(player.weapon_ctrl.current_weapon_id)
-			ic.modulate = HUD_WHITE if wid == cur else Color(0.82, 0.74, 0.48, 0.48)
+			ic.modulate = HUD_WHITE if wid == cur else Color(0.97, 0.85, 0.46, 0.72)
 
 
 func _draw_scoreboard() -> void:
