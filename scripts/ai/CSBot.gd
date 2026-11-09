@@ -127,6 +127,11 @@ var _hostage_direct_goal: Vector3 = Vector3.ZERO
 var _hostage_direct_elapsed: float = 0.0
 var _hostage_direct_stuck: float = 0.0
 
+var _supply_scan_left: float = 0.0
+var _supply_target: DroppedWeapon = null
+var _supply_repath_left: float = 0.0
+var _empty_route_time: float = 0.0
+
 
 func _ready() -> void:
 	is_human = false
@@ -160,6 +165,10 @@ func _on_bot_freeze_ended() -> void:
 
 
 func spawn_for_round(pos: Vector3, yaw_rad: float, reset_weapons: bool) -> void:
+	_supply_target = null
+	_supply_scan_left = 0.0
+	_supply_repath_left = 0.0
+	_empty_route_time = 0.0
 	traffic.reset()
 	bomb_role = "none"
 	_bomb_role_node = -1
@@ -488,6 +497,8 @@ func _physics_process(delta: float) -> void:
 		apply_goldsrc_movement(blind_move.normalized(), false, false, false, delta)
 		return
 
+	_supply_scan_left = maxf(0.0, _supply_scan_left - delta)
+	_supply_repath_left = maxf(0.0, _supply_repath_left - delta)
 	_validate_visual_contact()
 
 	_think_timer -= delta
@@ -635,6 +646,9 @@ func _physics_process(delta: float) -> void:
 		return
 
 	# Priority 4.5: Active YaPB Camp / Sniper Sightline Holding (TaskId::Camp)!
+	if not _has_usable_gun() and not is_vip and not _is_leading_hostage() and not is_instance_valid(RoundManager.planted_c4):
+		if _seek_visible_supply(delta):
+			return
 	if _camp_timer > 0.0 and _camping_node_idx >= 0:
 		_execute_camp_behavior(delta)
 		return
@@ -650,8 +664,7 @@ func _physics_process(delta: float) -> void:
 			if weapon_ctrl.current_weapon_id != "knife":
 				weapon_ctrl.equip_slot(3)
 		elif _is_utility_weapon(weapon_ctrl.current_weapon_id):
-			if not weapon_ctrl.equip_slot(1):
-				weapon_ctrl.equip_slot(2)
+			_select_usable_gun()
 
 	# Priority 5: Navigate along YaPB directed node graph!
 	_follow_navigation_path(delta)
@@ -659,6 +672,11 @@ func _physics_process(delta: float) -> void:
 
 func _execute_camp_behavior(delta: float) -> void:
 	_camp_timer -= delta
+	# Recent sensory evidence interrupts optional holding, not mission guarding.
+	if bomb_role == "none" and (_last_enemy_seen_age < 4.5 or _sound_investigate_timer > 0.4):
+		_camp_cooldown = 6.0
+		_release_camp_spot()
+		return
 	if _camp_timer <= 0.0 or (is_instance_valid(RoundManager.planted_c4) and team == "CT"):
 		_camp_cooldown = 9.0
 		_release_camp_spot()
@@ -809,6 +827,10 @@ func _find_cover_direction(threat_pos: Vector3) -> Vector3:
 
 func _engage_enemy(delta: float) -> void:
 	var dist := global_position.distance_to(target_enemy.global_position)
+	_select_usable_gun()
+	if not _has_usable_gun():
+		_engage_without_ammo(delta)
+		return
 
 	# Critical HP vs a live enemy at range: sometimes break contact instead of suicide-trading!
 	if (
@@ -856,19 +878,6 @@ func _engage_enemy(delta: float) -> void:
 				weapon_ctrl.trigger_primary(false, delta)
 				return
 
-	# Ensure combat gun equipped; quick-switch to pistol if primary runs dry in close quarters!
-	if _is_utility_weapon(weapon_ctrl.current_weapon_id):
-		if not weapon_ctrl.equip_slot(1):
-			weapon_ctrl.equip_slot(2)
-	else:
-		var cr := weapon_ctrl.get_clip_and_reserve()
-		if cr.x == 0:
-			var cur_slot := int(weapon_ctrl.get_current_spec().get("slot", 1))
-			var sec_id := String(weapon_ctrl.slots.get(2, ""))
-			if cur_slot == 1 and dist < 14.0 and not sec_id.is_empty() and int(weapon_ctrl.clips.get(sec_id, 0)) > 0:
-				weapon_ctrl.equip_slot(2)
-			elif cr.y > 0 and not weapon_ctrl.is_reloading:
-				weapon_ctrl.start_reload()
 
 	var wid := weapon_ctrl.current_weapon_id
 	var is_sniper := wid in ["awp", "scout", "g3sg1", "sg550"]
@@ -928,6 +937,7 @@ func _engage_enemy(delta: float) -> void:
 			fwd_adjust = Basis(Vector3.UP, look_yaw).z * 0.45
 		strafe_vec = _steer_around_obstacles((right * _strafe_dir + fwd_adjust).normalized())
 
+	strafe_vec = _safe_local_direction(strafe_vec)
 	apply_goldsrc_movement(strafe_vec, false, crouch_shoot, false, delta)
 
 	if _reaction_timer > 0.0:
@@ -948,6 +958,176 @@ func _engage_enemy(delta: float) -> void:
 			_burst_pause_timer = randf_range(0.17, 0.28)
 			return
 		weapon_ctrl.trigger_primary(false, delta)
+
+
+func _gun_ammo(wid: String) -> Vector2i:
+	var spec: Dictionary = GameData.weapons.get(wid, {})
+	if spec.is_empty() or int(spec.get("slot", 0)) not in [1, 2]:
+		return Vector2i.ZERO
+	return Vector2i(int(weapon_ctrl.clips.get(wid, 0)), int(weapon_ctrl.ammo_pool.get(String(spec.get("ammo_type", "none")), 0)))
+
+func _has_usable_gun() -> bool:
+	for slot in [1, 2]:
+		var ammo := _gun_ammo(String(weapon_ctrl.slots.get(slot, "")))
+		if ammo.x > 0 or ammo.y > 0:
+			return true
+	return false
+
+func _select_usable_gun() -> void:
+	var current := weapon_ctrl.current_weapon_id
+	if _gun_ammo(current).x > 0 or (weapon_ctrl.is_reloading and _gun_ammo(current).y > 0):
+		return
+	# A loaded sidearm beats waiting through an empty primary's reload.
+	for require_loaded in [true, false]:
+		for slot in [1, 2]:
+			var wid := String(weapon_ctrl.slots.get(slot, ""))
+			var ammo := _gun_ammo(wid)
+			if ammo.x > 0 or (not require_loaded and ammo.y > 0):
+				if current != wid:
+					weapon_ctrl.equip_weapon_by_id(wid)
+				if ammo.x <= 0 and not weapon_ctrl.is_reloading:
+					weapon_ctrl.start_reload()
+				return
+	if current != "knife":
+		weapon_ctrl.equip_slot(3)
+
+func _find_visible_supply() -> DroppedWeapon:
+	var best: DroppedWeapon = null
+	var best_distance := 9.0
+	for raw in RoundManager.dropped_items:
+		var drop := raw as DroppedWeapon
+		if not is_instance_valid(drop) or drop.is_queued_for_deletion() or drop._pickup_cooldown > 0.0:
+			continue
+		if drop.pickup_lock_actor == self and drop.pickup_lock_time > 0.0:
+			continue
+		var spec: Dictionary = GameData.weapons.get(drop.item_id, {})
+		if int(spec.get("slot", 0)) not in [1, 2] or drop.clip_ammo + drop.reserve_ammo <= 0:
+			continue
+		var gap := drop.global_position - global_position
+		if gap.length() >= best_distance or absf(gap.y) > 0.75:
+			continue
+		if gap.length() > 2.0 and get_look_forward().dot(gap.normalized()) < 0.15:
+			continue
+		if not UseSelection.visible(self, drop.global_position + Vector3.UP * 0.12) or not _has_wide_corridor_sight(global_position, drop.global_position) or not _has_vip_escort_floor_path(global_position, drop.global_position):
+			continue
+		best = drop
+		best_distance = gap.length()
+	return best
+
+func try_pickup_dropped(drop: DroppedWeapon) -> bool:
+	# Automatic pickup also needs the same reach/visibility/lock rules as pursuit.
+	if not is_instance_valid(drop) or drop.is_queued_for_deletion() or drop._pickup_cooldown > 0.0 or is_vip:
+		return false
+	if drop.pickup_lock_actor == self and drop.pickup_lock_time > 0.0:
+		return false
+	if global_position.distance_to(drop.global_position) > 1.6 or not UseSelection.visible(self, drop.global_position + Vector3.UP * 0.12):
+		return false
+	var spec: Dictionary = GameData.weapons.get(drop.item_id, {})
+	var slot := int(spec.get("slot", 0))
+	var held := String(weapon_ctrl.slots.get(slot, ""))
+	if slot in [1, 2] and not held.is_empty() and drop.clip_ammo + drop.reserve_ammo > 0:
+		var ammo := _gun_ammo(held)
+		if ammo.x <= 0 and ammo.y <= 0:
+			_spawn_drop_entity(held, 0)
+			weapon_ctrl.slots[slot] = ""
+			if super.try_pickup_dropped(drop):
+				weapon_ctrl.equip_slot(slot)
+				_supply_target = null
+				return true
+			weapon_ctrl.slots[slot] = held
+	return super.try_pickup_dropped(drop)
+
+func _seek_visible_supply(delta: float) -> bool:
+	if _supply_scan_left <= 0.0:
+		_supply_target = _find_visible_supply()
+		_supply_scan_left = 0.4
+	if not is_instance_valid(_supply_target) or _supply_target.is_queued_for_deletion():
+		return false
+	if not UseSelection.visible(self, _supply_target.global_position + Vector3.UP * 0.12):
+		_supply_target = null
+		return false
+	var gap := _supply_target.global_position - global_position
+	var candidate := _supply_target
+	if gap.length() < 1.3 and try_pickup_dropped(candidate):
+		RoundManager.dropped_items.erase(candidate)
+		candidate.queue_free()
+		_supply_target = null
+		return true
+	var direction := Vector3(gap.x, 0, gap.z).normalized()
+	var safe := _safe_local_direction(direction)
+	if safe.length_squared() < 0.01:
+		_supply_target = null
+		return false
+	_look_smoothly_toward(_supply_target.global_position + Vector3.UP * 0.3, delta * 8.0)
+	apply_goldsrc_movement(safe, false, _needs_crouch_clearance(safe), false, delta)
+	return true
+
+func _engage_without_ammo(delta: float) -> void:
+	if _seek_visible_supply(delta):
+		return
+	if weapon_ctrl.current_weapon_id != "knife":
+		weapon_ctrl.equip_slot(3)
+	_burst_pause_timer = 0.0
+	_burst_stop_timer = 0.0
+	var goal := target_enemy.global_position
+	var aim := goal + Vector3.UP * (0.8 if target_enemy.is_crouching else 1.2)
+	_look_smoothly_toward(aim, delta * 12.0)
+	var direction := goal - global_position
+	direction.y = 0.0
+	direction = direction.normalized()
+	if _has_wide_corridor_sight(global_position, goal) and _has_local_floor(direction, minf(1.0, global_position.distance_to(goal))):
+		_jump_cooldown = maxf(0.0, _jump_cooldown - delta)
+		var move_dir := _safe_local_direction(_steer_around_obstacles(direction))
+		var jump := is_on_floor() and _jump_cooldown <= 0.0 and _can_opportunistic_jump(move_dir)
+		if jump:
+			_jump_cooldown = 0.9
+			_air_crouch_timer = 0.55
+		apply_goldsrc_movement(move_dir, jump, _needs_crouch_clearance(move_dir) or (_air_crouch_timer > 0.0 and not is_on_floor()), false, delta)
+	elif is_instance_valid(RoundManager.game_world):
+		var nav: BotNavigator = RoundManager.game_world.get("bot_navigator")
+		if nav != null:
+			if _supply_repath_left <= 0.0:
+				_plan_to_world_pos(nav, goal, false, BotNavigator.PATH_FAST)
+				_supply_repath_left = 0.7
+			_follow_navigation_path(delta)
+	if global_position.distance_to(goal) < 1.8 and get_look_forward().dot((aim-get_eye_position()).normalized()) > 0.8:
+		weapon_ctrl.trigger_primary(false, delta)
+
+func _has_local_floor(direction: Vector3, distance: float = 1.0) -> bool:
+	if direction.length_squared() < 0.01:
+		return true
+	var forward := Vector3(direction.x, 0, direction.z).normalized()
+	var side := Vector3(-forward.z, 0, forward.x) * 0.20
+	for fraction in [0.5, 1.0]:
+		for offset in [Vector3.ZERO, side, -side]:
+			var point: Vector3 = global_position + forward * distance * float(fraction) + offset
+			var query := PhysicsRayQueryParameters3D.create(point + Vector3.UP * 0.55, point - Vector3.UP * 1.0, 1)
+			var hit := get_world_3d().direct_space_state.intersect_ray(query)
+			if hit.is_empty() or (hit.normal as Vector3).y < 0.65:
+				return false
+	return true
+
+func _safe_local_direction(desired: Vector3) -> Vector3:
+	if on_ladder or not is_on_floor() or desired.length_squared() < 0.01:
+		return desired
+	if _has_local_floor(desired):
+		return desired
+	for angle in [45.0, -45.0, 90.0, -90.0]:
+		var candidate := desired.rotated(Vector3.UP, deg_to_rad(float(angle)))
+		if _has_local_floor(candidate) and not test_move(global_transform, candidate * 0.7):
+			return candidate
+	return Vector3.ZERO
+
+func _can_opportunistic_jump(direction: Vector3) -> bool:
+	if not _is_jumpable_ledge(direction):
+		return false
+	var space := get_world_3d().direct_space_state
+	var head := global_position + Vector3.UP * 1.7
+	if not space.intersect_ray(PhysicsRayQueryParameters3D.create(head, head + Vector3.UP * 0.5, 1)).is_empty():
+		return false
+	var landing := global_position + direction.normalized() * 1.6
+	var hit := space.intersect_ray(PhysicsRayQueryParameters3D.create(landing + Vector3.UP * 1.5, landing - Vector3.UP * 1.0, 1))
+	return not hit.is_empty() and (hit.normal as Vector3).y >= 0.65
 
 
 func _is_leading_hostage() -> bool:
@@ -1873,6 +2053,7 @@ func _plan_to_node(nav: BotNavigator, goal_idx: int, hostage_safe: bool, mode: i
 	_goal_pos = nav.get_node_pos(goal_idx)
 	_has_goal = true
 	_node_path = nav.plan_node_path(global_position, goal_idx, team, use_mode, hostage_safe, space, _diversity_seed, _banned_nodes)
+	_has_goal = not _node_path.is_empty()
 	_prev_node_idx = nav.get_nearest_node(global_position, space, 3.6, true)
 	if not _node_path.is_empty():
 		_advance_to_node_entry(nav, _node_path[0])
@@ -1921,7 +2102,7 @@ func _follow_navigation_path(delta: float) -> void:
 		_smoothed_move_dir = _blend_move_dir(_smoothed_move_dir, esc_raw, delta * 10.0)
 		_look_smoothly_toward(global_position + _smoothed_move_dir * 3.5 + Vector3(0.0, 1.45, 0.0), delta * 7.5)
 		var esc_jump := false
-		if _jump_cooldown <= 0.0 and is_on_floor() and _is_jumpable_ledge(_smoothed_move_dir):
+		if _jump_cooldown <= 0.0 and is_on_floor() and _can_opportunistic_jump(_smoothed_move_dir):
 			esc_jump = true
 			_jump_cooldown = 1.25
 			_air_crouch_timer = 0.55
@@ -1944,6 +2125,14 @@ func _follow_navigation_path(delta: float) -> void:
 				_plan_to_node(nav, _goal_node_idx, _is_leading_hostage(), BotNavigator.PATH_DIVERSITY)
 		return
 
+	if _hold_pos_timer <= 0.0 and _node_path.is_empty() and not is_vip and bomb_role == "none" and RoundManager.map_mode not in ["cs", "as"]:
+		_empty_route_time += delta
+		if _empty_route_time > 1.6:
+			_empty_route_time = 0.0
+			_has_goal = false
+			_plan_to_node(nav, nav.pick_roam_node(global_position, team), false, BotNavigator.PATH_DIVERSITY)
+	else:
+		_empty_route_time = 0.0
 	if _hold_pos_timer > 0.0 or _node_path.is_empty():
 		_smoothed_move_dir = _smoothed_move_dir.lerp(Vector3.ZERO, minf(1.0, 10.0 * delta))
 		apply_goldsrc_movement(Vector3.ZERO, false, false, false, delta)
@@ -2153,7 +2342,7 @@ func _follow_navigation_path(delta: float) -> void:
 		elif moved_dist < 1.05 * delta:
 			_stuck_timer += delta
 			if _stuck_timer > 0.24 and _jump_cooldown <= 0.0 and is_on_floor():
-				if _is_jumpable_ledge(raw_dir) or _is_jumpable_ledge(move_dir):
+				if _can_opportunistic_jump(raw_dir) or _can_opportunistic_jump(move_dir):
 					want_jump = true
 					_jump_cooldown = 1.05
 					_air_crouch_timer = 0.58
@@ -2220,7 +2409,7 @@ func _try_enter_camp_at_node(nav: BotNavigator, node_idx: int) -> void:
 		return
 	nav.claim_node(node_idx, self)
 	_camping_node_idx = node_idx
-	_camp_timer = randf_range(5.5, 11.5) if not _uses_sniper() else randf_range(8.0, 15.0)
+	_camp_timer = randf_range(3.0, 6.0) if not _uses_sniper() else randf_range(8.0, 15.0)
 	_camp_sweep_timer = randf_range(2.0, 3.8)
 	_camp_look_alt = false
 
@@ -2279,7 +2468,7 @@ func _pick_open_escape_direction(blocked_dir: Vector3) -> Vector3:
 	var space := get_world_3d().direct_space_state
 	var shin := global_position + Vector3(0.0, 0.58, 0.0)
 	var chest := global_position + Vector3(0.0, 1.05, 0.0)
-	var best_dir := -blocked_dir
+	var best_dir := Vector3.ZERO
 	var best_score := -1e9
 	var base := blocked_dir if blocked_dir.length_squared() > 0.01 else Vector3.FORWARD
 	for i in range(8):
@@ -2301,10 +2490,9 @@ func _pick_open_escape_direction(blocked_dir: Vector3) -> Vector3:
 		var floor_q := PhysicsRayQueryParameters3D.create(floor_probe + Vector3(0.0, 0.65, 0.0), floor_probe - Vector3(0.0, 1.45, 0.0))
 		floor_q.collision_mask = 1
 		var floor_hit := space.intersect_ray(floor_q)
-		var floor_penalty := 0.0
-		if floor_hit.is_empty() or (floor_hit.get("normal", Vector3.UP) as Vector3).y < 0.45:
-			floor_penalty = 12.0
-		var score := free_d + away_bonus + randf_range(-0.12, 0.12) - floor_penalty
+		if floor_hit.is_empty() or (floor_hit.get("normal", Vector3.UP) as Vector3).y < 0.65 or not _has_local_floor(cand, 1.15):
+			continue
+		var score := free_d + away_bonus + randf_range(-0.12, 0.12)
 		if score > best_score:
 			best_score = score
 			best_dir = cand
