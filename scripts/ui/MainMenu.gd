@@ -1,6 +1,6 @@
 class_name MainMenu
 extends Control
-## Counter-Strike 1.5 Classic WON-Style Main Menu (Responsive 16:9 / 4:3 Layout):
+## CS2-inspired local main menu and categorized arsenal; classic gameplay/assets preserved.
 ##   - Full uncropped splash.png artwork + authentic UI sounds (launch_glow1.wav, launch_select1.wav)
 ##   - Compact Create Game dialog across ALL 26 CS 1.5 maps with side-by-side radar, scrollable briefing & Bot setup
 ##   - 3D Arsenal & Model Inspector turntable (preview extracted v_* weapons & player models)
@@ -8,7 +8,7 @@ extends Control
 
 const AMBER := Color(1.0, 0.72, 0.16)
 const AMBER_DIM := Color(0.88, 0.60, 0.15)
-const PANEL_BG := Color(0.04, 0.04, 0.04, 0.92)
+const PANEL_BG := Color(0.055, 0.070, 0.085, 0.99)
 
 var _starting_match := false
 var _play_panel: PanelContainer = null
@@ -38,131 +38,195 @@ var _viewer_current_wid: String = "ak47"
 var _skin_opt: OptionButton = null
 var _syncing_skin_options := false
 
+var _arsenal_entries: Array[Dictionary] = []
+var _arsenal_list: ItemList
+var _arsenal_search: LineEdit
+var _arsenal_category: OptionButton
+var _arsenal_count: Label
+var _arsenal_title: Label
+var _arsenal_kind: Label
+var _arsenal_tabs: TabContainer
+var _modal_shade: ColorRect
+
 
 func _ready() -> void:
 	Input.set_mouse_mode(Input.MOUSE_MODE_VISIBLE)
+	_install_menu_theme()
 	_build_main_screen()
 	_build_play_dialog()
 	_build_arsenal_dialog()
 	_build_options_dialog()
 
 
+func _menu_box(color: Color, border: Color = Color(0.22, 0.27, 0.31)) -> StyleBoxFlat:
+	var box := StyleBoxFlat.new()
+	box.bg_color = color
+	box.border_color = border
+	box.set_border_width_all(1)
+	box.set_corner_radius_all(4)
+	box.set_content_margin_all(12)
+	return box
+
+func _install_menu_theme() -> void:
+	theme = Theme.new()
+	theme.default_font_size = 15
+	for type_name in ["Button", "OptionButton", "LineEdit", "SpinBox", "ItemList", "TabContainer"]:
+		theme.set_color("font_color", type_name, Color(0.89, 0.92, 0.94))
+	for type_name in ["Button", "OptionButton"]:
+		theme.set_stylebox("normal", type_name, _menu_box(Color(0.10, 0.13, 0.16)))
+		theme.set_stylebox("hover", type_name, _menu_box(Color(0.18, 0.22, 0.25), AMBER))
+		theme.set_stylebox("pressed", type_name, _menu_box(Color(0.27, 0.23, 0.15), AMBER))
+		theme.set_stylebox("focus", type_name, _menu_box(Color(0, 0, 0, 0), AMBER))
+		theme.set_color("font_hover_color", type_name, AMBER)
+	theme.set_stylebox("normal", "LineEdit", _menu_box(Color(0.04, 0.06, 0.08)))
+	theme.set_stylebox("focus", "LineEdit", _menu_box(Color(0, 0, 0, 0), AMBER))
+	theme.set_stylebox("panel", "ItemList", _menu_box(Color(0.045, 0.06, 0.075)))
+	theme.set_stylebox("selected", "ItemList", _menu_box(Color(0.32, 0.25, 0.13), AMBER))
+	theme.set_stylebox("selected_focus", "ItemList", _menu_box(Color(0.32, 0.25, 0.13), AMBER))
+	theme.set_stylebox("panel", "TabContainer", _menu_box(Color(0.07, 0.09, 0.11)))
+	theme.set_stylebox("tab_selected", "TabContainer", _menu_box(Color(0.23, 0.20, 0.13), AMBER))
+	theme.set_stylebox("tab_unselected", "TabContainer", _menu_box(Color(0.10, 0.13, 0.16)))
+
+func _menu_label(text: String, font_size: int, color: Color = Color(0.9, 0.93, 0.95)) -> Label:
+	var label := Label.new()
+	label.text = text
+	label.add_theme_font_size_override("font_size", font_size)
+	label.add_theme_color_override("font_color", color)
+	return label
+
+func _nav_button(text: String, callback: Callable, primary: bool = false) -> Button:
+	var button := Button.new()
+	button.text = text
+	button.custom_minimum_size = Vector2(110, 42)
+	button.mouse_entered.connect(func(): AudioManager.play_ui("launch_glow1.wav"))
+	button.pressed.connect(func():
+		AudioManager.play_ui("launch_select1.wav")
+		callback.call()
+	)
+	if primary:
+		button.add_theme_stylebox_override("normal", _menu_box(AMBER, AMBER))
+		button.add_theme_color_override("font_color", Color(0.07, 0.08, 0.09))
+	return button
+
+func _open_arsenal() -> void:
+	_show_subpanel(_arsenal_panel)
+	if _viewer_pivot.get_child_count() == 0:
+		_load_viewer_weapon("ak47")
+	_refresh_arsenal_list()
+	_arsenal_search.grab_focus()
+
 func _build_main_screen() -> void:
 	set_anchors_preset(Control.PRESET_FULL_RECT)
+	var backdrop := ColorRect.new()
+	backdrop.set_anchors_preset(Control.PRESET_FULL_RECT)
+	backdrop.color = Color(0.045, 0.065, 0.08)
+	backdrop.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	add_child(backdrop)
+	var artwork := TextureRect.new()
+	artwork.set_anchors_preset(Control.PRESET_FULL_RECT)
+	artwork.texture = GameData.get_texture("res://assets/ui/shell/splash.png")
+	artwork.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
+	artwork.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_COVERED
+	artwork.modulate = Color(0.32, 0.38, 0.43, 0.5)
+	artwork.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	add_child(artwork)
+	var shade := ColorRect.new()
+	shade.set_anchors_preset(Control.PRESET_FULL_RECT)
+	shade.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	var shader := Shader.new()
+	shader.code = "shader_type canvas_item; void fragment(){float a=mix(0.96,0.16,smoothstep(0.12,0.95,UV.x)); COLOR=vec4(0.025,0.045,0.065,a);}"
+	var material := ShaderMaterial.new()
+	material.shader = shader
+	shade.material = material
+	add_child(shade)
 
-	var bg_dark := ColorRect.new()
-	bg_dark.set_anchors_preset(Control.PRESET_FULL_RECT)
-	bg_dark.color = Color(0.02, 0.02, 0.02)
-	add_child(bg_dark)
+	var header := HBoxContainer.new()
+	header.anchor_right = 1.0
+	header.offset_left = 36
+	header.offset_right = -36
+	header.offset_top = 24
+	header.offset_bottom = 78
+	header.add_theme_constant_override("separation", 12)
+	add_child(header)
+	var brand := _menu_label("CS / RETAIL", 26, AMBER)
+	brand.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	header.add_child(brand)
+	header.add_child(_nav_button("JUGAR", func(): _show_subpanel(_play_panel)))
+	header.add_child(_nav_button("ARSENAL", _open_arsenal))
+	header.add_child(_nav_button("AJUSTES", func(): _show_subpanel(_options_panel)))
+	header.add_child(_nav_button("SALIR", func(): get_tree().quit()))
 
-	var splash_tex := GameData.get_texture("res://assets/ui/shell/splash.png")
-
-	# Dimmed widescreen backdrop fill so 16:9 sidebars blend naturally without cropping main logo
-	var splash_backdrop := TextureRect.new()
-	splash_backdrop.set_anchors_preset(Control.PRESET_FULL_RECT)
-	splash_backdrop.texture = splash_tex
-	splash_backdrop.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
-	splash_backdrop.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_COVERED
-	splash_backdrop.modulate = Color(0.24, 0.22, 0.18, 0.85)
-	add_child(splash_backdrop)
-
-	# Full uncropped 4:3 Counter-Strike 1.5 Retail splash artwork centered cleanly!
-	var splash := TextureRect.new()
-	splash.set_anchors_preset(Control.PRESET_FULL_RECT)
-	splash.texture = splash_tex
-	splash.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
-	splash.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
-	add_child(splash)
-
-	# Sleek WON left menu column
-	var left_shade := ColorRect.new()
-	left_shade.anchor_bottom = 1.0
-	left_shade.offset_right = 290
-	left_shade.color = Color(0.0, 0.0, 0.0, 0.62)
-	add_child(left_shade)
-
-	var menu_vbox := VBoxContainer.new()
-	menu_vbox.anchor_top = 0.34
-	menu_vbox.anchor_bottom = 0.90
-	menu_vbox.offset_left = 26
-	menu_vbox.offset_right = 272
-	menu_vbox.add_theme_constant_override("separation", 8)
-	add_child(menu_vbox)
-
-	var ver_lbl := Label.new()
-	ver_lbl.text = "COUNTER-STRIKE 1.5 RETAIL"
-	ver_lbl.add_theme_font_size_override("font_size", 13)
-	ver_lbl.add_theme_color_override("font_color", Color(1.0, 0.84, 0.42, 0.92))
-	menu_vbox.add_child(ver_lbl)
-
-	_add_won_button(menu_vbox, "Play CS 1.5 (LAN / Bots)", func(): _show_subpanel(_play_panel))
-	_add_won_button(menu_vbox, "Quick Match: de_dust2", func():
+	var hero := VBoxContainer.new()
+	hero.anchor_left = 0.065
+	hero.anchor_right = 0.59
+	hero.anchor_top = 0.28
+	hero.anchor_bottom = 0.86
+	hero.add_theme_constant_override("separation", 14)
+	add_child(hero)
+	hero.add_child(_menu_label("EL CLÁSICO. TU PARTIDA.", 14, AMBER))
+	hero.add_child(_menu_label("COUNTER\nSTRIKE", 64))
+	var description := _menu_label("Jugabilidad clásica. Un nuevo punto de encuentro.\nConfigura tus bots, elige tu mapa y entra en acción.", 17, Color(0.65, 0.72, 0.77))
+	description.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+	hero.add_child(description)
+	var actions := HBoxContainer.new()
+	actions.add_theme_constant_override("separation", 12)
+	hero.add_child(actions)
+	actions.add_child(_nav_button("CREAR PARTIDA  →", func(): _show_subpanel(_play_panel), true))
+	actions.add_child(_nav_button("EXPLORAR ARSENAL", _open_arsenal))
+	var quick := _nav_button("PARTIDA RÁPIDA  /  DUST II", func():
 		GameData.selected_map = "de_dust2"
 		_start_selected_game()
 	)
-	_add_won_button(menu_vbox, "3D Arsenal, Skins & Models", func():
-		_show_subpanel(_arsenal_panel)
-		_load_viewer_weapon("ak47")
-	)
-	_add_won_button(menu_vbox, "Configuration & Controls", func(): _show_subpanel(_options_panel))
-	_add_won_button(menu_vbox, "Quit Game", func(): get_tree().quit())
+	quick.size_flags_horizontal = Control.SIZE_SHRINK_BEGIN
+	hero.add_child(quick)
 
-	var footer := Label.new()
+	var edition := VBoxContainer.new()
+	edition.anchor_left = 0.74
+	edition.anchor_right = 0.96
+	edition.anchor_top = 0.52
+	edition.anchor_bottom = 0.84
+	edition.add_theme_constant_override("separation", 12)
+	add_child(edition)
+	edition.add_child(_menu_label("01 / LISTO PARA JUGAR", 12, AMBER))
+	edition.add_child(_menu_label("26 MAPAS\n43 ARMAS", 30))
+	edition.add_child(_menu_label("BOTS LOCALES\nSIN CONEXIÓN", 14, Color(0.62, 0.70, 0.76)))
+	var footer := _menu_label("COUNTER-STRIKE 1.5  /  GODOT     •     EXPERIENCIA LOCAL CON BOTS", 12, Color(0.51, 0.60, 0.66))
 	footer.anchor_top = 1.0
 	footer.anchor_bottom = 1.0
-	footer.offset_left = 20
-	footer.offset_right = 920
-	footer.offset_top = -26
-	footer.offset_bottom = -6
-	footer.text = "Counter-Strike 1.5 Retail (Godot 4)  •  26 BSP Maps  •  27 Weapons (cs_i386.so)  •  Offline Bots IA"
-	footer.add_theme_font_size_override("font_size", 11)
-	footer.add_theme_color_override("font_color", Color(0.82, 0.80, 0.72, 0.78))
+	footer.offset_left = 36
+	footer.offset_right = 1000
+	footer.offset_top = -36
+	footer.offset_bottom = -12
 	add_child(footer)
+	_modal_shade = ColorRect.new()
+	_modal_shade.set_anchors_preset(Control.PRESET_FULL_RECT)
+	_modal_shade.color = Color(0.01, 0.02, 0.03, 0.88)
+	_modal_shade.visible = false
+	add_child(_modal_shade)
 
+func _close_panels() -> void:
+	for panel in [_play_panel, _arsenal_panel, _options_panel]:
+		if panel != null:
+			panel.hide()
+	_modal_shade.hide()
 
-func _add_won_button(parent: VBoxContainer, txt: String, cb: Callable) -> void:
-	var btn := Button.new()
-	btn.text = txt
-	btn.alignment = HORIZONTAL_ALIGNMENT_LEFT
-	btn.custom_minimum_size = Vector2(236, 34)
-	btn.add_theme_font_size_override("font_size", 15)
-	btn.add_theme_color_override("font_color", AMBER_DIM)
-	btn.add_theme_color_override("font_hover_color", Color(1.0, 0.94, 0.58))
-
-	var sb_n := StyleBoxFlat.new()
-	sb_n.bg_color = Color(0.08, 0.06, 0.02, 0.72)
-	sb_n.border_color = Color(1.0, 0.65, 0.12, 0.48)
-	sb_n.border_width_left = 3
-	sb_n.content_margin_left = 12
-	sb_n.content_margin_right = 8
-	sb_n.content_margin_top = 4
-	sb_n.content_margin_bottom = 4
-	btn.add_theme_stylebox_override("normal", sb_n)
-
-	var sb_h := sb_n.duplicate() as StyleBoxFlat
-	sb_h.bg_color = Color(0.26, 0.17, 0.03, 0.90)
-	sb_h.border_color = Color(1.0, 0.85, 0.25, 1.0)
-	btn.add_theme_stylebox_override("hover", sb_h)
-
-	btn.mouse_entered.connect(func(): AudioManager.play_ui("launch_glow1.wav"))
-	btn.pressed.connect(func():
-		AudioManager.play_ui("launch_select1.wav")
-		cb.call()
-	)
-	parent.add_child(btn)
+func _unhandled_key_input(event: InputEvent) -> void:
+	if event.is_action_pressed("ui_cancel") and _modal_shade.visible:
+		_close_panels()
+		get_viewport().set_input_as_handled()
 
 
 func _make_modal_panel(title_txt: String) -> Array:
 	var panel := PanelContainer.new()
-	panel.anchor_left = 0.25
-	panel.anchor_right = 0.97
-	panel.anchor_top = 0.06
-	panel.anchor_bottom = 0.94
+	panel.anchor_left = 0.035
+	panel.anchor_right = 0.965
+	panel.anchor_top = 0.12
+	panel.anchor_bottom = 0.95
 	panel.clip_contents = true
 	var sb := StyleBoxFlat.new()
 	sb.bg_color = PANEL_BG
-	sb.border_color = AMBER
-	sb.set_border_width_all(2)
+	sb.border_color = Color(0.27, 0.32, 0.36)
+	sb.set_border_width_all(1)
 	sb.content_margin_left = 16
 	sb.content_margin_right = 16
 	sb.content_margin_top = 12
@@ -184,12 +248,12 @@ func _make_modal_panel(title_txt: String) -> Array:
 	tl.add_theme_font_size_override("font_size", 17)
 	tl.add_theme_color_override("font_color", AMBER)
 	var close_b := Button.new()
-	close_b.text = "X Close"
+	close_b.text = "VOLVER  /  ESC"
 	close_b.custom_minimum_size = Vector2(78, 28)
 	close_b.add_theme_font_size_override("font_size", 13)
 	close_b.pressed.connect(func():
 		AudioManager.play_ui("launch_dnmenu1.wav")
-		panel.visible = false
+		_close_panels()
 	)
 	h.add_child(tl)
 	h.add_child(close_b)
@@ -198,13 +262,14 @@ func _make_modal_panel(title_txt: String) -> Array:
 
 
 func _show_subpanel(target: PanelContainer) -> void:
+	_modal_shade.show()
 	for p in [_play_panel, _arsenal_panel, _options_panel]:
 		if p:
 			p.visible = (p == target)
 
 
 func _build_play_dialog() -> void:
-	var res := _make_modal_panel("CREATE GAME — SELECT MAP & BOTS (ALL 26 CS 1.5 MAPS)")
+	var res := _make_modal_panel("JUGAR  /  MAPAS Y BOTS")
 	_play_panel = res[0]
 	var vbox: VBoxContainer = res[1]
 
@@ -465,7 +530,7 @@ func _start_selected_game() -> void:
 
 
 func _build_arsenal_dialog() -> void:
-	var res := _make_modal_panel("3D ARSENAL & STUDIO MODEL INSPECTOR (cs_i386.so + .mdl)")
+	var res := _make_modal_panel("ARSENAL  /  INVENTARIO E INSPECCIÓN")
 	_arsenal_panel = res[0]
 	var vbox: VBoxContainer = res[1]
 
@@ -474,57 +539,44 @@ func _build_arsenal_dialog() -> void:
 	body.add_theme_constant_override("separation", 12)
 	vbox.add_child(body)
 
-	var wlist := ItemList.new()
-	wlist.custom_minimum_size = Vector2(200, 0)
-	wlist.size_flags_vertical = Control.SIZE_EXPAND_FILL
-	wlist.add_theme_font_size_override("font_size", 13)
-	var ids := GameData.weapons.keys()
-	ids.sort()
-	for wid in ids:
-		var sp: Dictionary = GameData.weapons[wid]
-		var idx := wlist.add_item("%s ($%d)" % [String(sp.get("name", wid)), int(sp.get("price", 0))])
-		wlist.set_item_metadata(idx, wid)
-	for tm in ["CT", "T"]:
-		for cinfo in GameData.classes.get(tm, []):
-			var idx2 := wlist.add_item("[Player %s] %s" % [tm, String(cinfo["name"])])
-			wlist.set_item_metadata(idx2, "player:" + String(cinfo["id"]))
-	for raw in GameData.get_knife_options():
-		var knife_option := raw as Dictionary
-		if String(knife_option["id"]) == "original":
-			continue
-		var knife_idx := wlist.add_item("[Knife] " + String(knife_option["name"]))
-		wlist.set_item_metadata(knife_idx, "knife:" + String(knife_option["id"]))
-	var glove_idx := wlist.add_item("[Gloves] Original Counter-Strike")
-	wlist.set_item_metadata(glove_idx, "glove:" + String(GameData.sport_gloves.get("classic_id", "classic")))
-	for raw in GameData.get_glove_options():
-		var option := raw as Dictionary
-		var idx3 := wlist.add_item("[Gloves] %s — %s" % [String(option.get("family", "Sport")), String(option.get("wear_code", ""))])
-		wlist.set_item_metadata(idx3, "glove:" + String(option.get("id", "")))
-
-	for resource in ["defuser_item"]:
-		var native_idx := wlist.add_item("[Native review] " + resource)
-		wlist.set_item_metadata(native_idx, "native:" + resource)
-
-	wlist.item_selected.connect(func(idx: int):
-		var meta := String(wlist.get_item_metadata(idx))
-		if meta.begins_with("native:"):
-			_load_viewer_native(meta.trim_prefix("native:"))
-		elif meta.begins_with("player:"):
-			_load_viewer_player(meta.trim_prefix("player:"))
-		elif meta.begins_with("knife:"):
-			_select_knife_for_match(meta.trim_prefix("knife:"))
-		elif meta.begins_with("glove:"):
-			_select_glove_for_match(meta.trim_prefix("glove:"))
-		else:
-			_load_viewer_weapon(meta)
-	)
-	body.add_child(wlist)
+	var library := VBoxContainer.new()
+	library.custom_minimum_size.x = 260
+	library.add_theme_constant_override("separation", 10)
+	body.add_child(library)
+	library.add_child(_menu_label("TU COLECCIÓN", 13, AMBER))
+	_arsenal_search = LineEdit.new()
+	_arsenal_search.placeholder_text = "Buscar arma, modelo o equipo…"
+	_arsenal_search.clear_button_enabled = true
+	library.add_child(_arsenal_search)
+	_arsenal_category = OptionButton.new()
+	_arsenal_category.fit_to_longest_item = false
+	for category in ["TODO", "RIFLES", "PISTOLAS", "SUBFUSILES", "FRANCOTIRADORES", "ESCOPETAS", "AMETRALLADORAS", "UTILIDAD", "CUCHILLOS", "GUANTES", "PERSONAJES", "EQUIPO"]:
+		_arsenal_category.add_item(category)
+	library.add_child(_arsenal_category)
+	_arsenal_count = _menu_label("", 12, Color(0.57, 0.66, 0.72))
+	library.add_child(_arsenal_count)
+	_arsenal_list = ItemList.new()
+	_arsenal_list.size_flags_vertical = Control.SIZE_EXPAND_FILL
+	_arsenal_list.add_theme_font_size_override("font_size", 14)
+	_arsenal_list.add_theme_constant_override("v_separation", 12)
+	_arsenal_list.clip_contents = true
+	library.add_child(_arsenal_list)
+	_build_arsenal_catalogue()
+	_arsenal_search.text_changed.connect(func(_text: String): _refresh_arsenal_list())
+	_arsenal_category.item_selected.connect(func(_index: int): _refresh_arsenal_list())
+	_arsenal_list.item_selected.connect(_on_arsenal_item_selected)
+	_refresh_arsenal_list()
 
 	var right := VBoxContainer.new()
 	right.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	right.size_flags_vertical = Control.SIZE_EXPAND_FILL
 	right.add_theme_constant_override("separation", 6)
 	body.add_child(right)
+	_arsenal_kind = _menu_label("VISTA DE EQUIPAMIENTO", 12, AMBER)
+	right.add_child(_arsenal_kind)
+	_arsenal_title = _menu_label("Selecciona un objeto", 26)
+	_arsenal_title.text_overrun_behavior = TextServer.OVERRUN_TRIM_ELLIPSIS
+	right.add_child(_arsenal_title)
 
 	var svc := SubViewportContainer.new()
 	svc.stretch = true
@@ -534,7 +586,15 @@ func _build_arsenal_dialog() -> void:
 
 	_viewer_viewport = SubViewport.new()
 	_viewer_viewport.own_world_3d = true
-	_viewer_viewport.transparent_bg = true
+	_viewer_viewport.transparent_bg = false
+	var studio := WorldEnvironment.new()
+	studio.environment = Environment.new()
+	studio.environment.background_mode = Environment.BG_COLOR
+	studio.environment.background_color = Color(0.075, 0.10, 0.125)
+	studio.environment.ambient_light_source = Environment.AMBIENT_SOURCE_COLOR
+	studio.environment.ambient_light_color = Color(0.65, 0.73, 0.80)
+	studio.environment.ambient_light_energy = 0.6
+	_viewer_viewport.add_child(studio)
 	svc.add_child(_viewer_viewport)
 
 	var vcam := Camera3D.new()
@@ -554,13 +614,30 @@ func _build_arsenal_dialog() -> void:
 	_viewer_pivot = Node3D.new()
 	_viewer_viewport.add_child(_viewer_pivot)
 
+	_arsenal_tabs = TabContainer.new()
+	_arsenal_tabs.custom_minimum_size.y = 180
+	right.add_child(_arsenal_tabs)
+	var finish_tab := VBoxContainer.new()
+	finish_tab.name = "Acabados"
+	_arsenal_tabs.add_child(finish_tab)
+	var animation_tab := VBoxContainer.new()
+	animation_tab.name = "Animaciones"
+	_arsenal_tabs.add_child(animation_tab)
+	var sound_tab := VBoxContainer.new()
+	sound_tab.name = "Sonidos"
+	_arsenal_tabs.add_child(sound_tab)
+	var detail_scroll := ScrollContainer.new()
+	detail_scroll.name = "Detalles"
+	detail_scroll.horizontal_scroll_mode = ScrollContainer.SCROLL_MODE_DISABLED
+	_arsenal_tabs.add_child(detail_scroll)
+
 	var btn_row := HBoxContainer.new()
 	btn_row.add_theme_constant_override("separation", 8)
 	var fire_btn := Button.new()
-	fire_btn.text = "Test Fire Sound & Anim"
+	fire_btn.text = "PROBAR DISPARO"
 	fire_btn.pressed.connect(_test_viewer_fire)
 	var rel_btn := Button.new()
-	rel_btn.text = "Play Reload / Run Anim"
+	rel_btn.text = "RECARGA / MOVIMIENTO"
 	rel_btn.pressed.connect(func():
 		if _viewer_anim:
 			for a in _viewer_anim.get_animation_list():
@@ -570,14 +647,16 @@ func _build_arsenal_dialog() -> void:
 	)
 	btn_row.add_child(fire_btn)
 	btn_row.add_child(rel_btn)
-	right.add_child(btn_row)
+	animation_tab.add_child(btn_row)
 
 	var animation_row := HBoxContainer.new()
 	var animation_label := Label.new()
-	animation_label.text = "Preview animation:"
+	animation_label.text = "Secuencia"
 	animation_row.add_child(animation_label)
 	_viewer_animation_opt = OptionButton.new()
 	_viewer_animation_opt.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	_viewer_animation_opt.fit_to_longest_item = false
+	_viewer_animation_opt.clip_text = true
 	_viewer_animation_opt.item_selected.connect(func(index: int):
 		if _viewer_anim != null and index >= 0:
 			_viewer_anim.stop()
@@ -586,7 +665,7 @@ func _build_arsenal_dialog() -> void:
 			_viewer_anim.advance(0.0)
 	)
 	animation_row.add_child(_viewer_animation_opt)
-	right.add_child(animation_row)
+	animation_tab.add_child(animation_row)
 
 	var audio_row := HBoxContainer.new()
 	var audio_options := OptionButton.new()
@@ -602,7 +681,7 @@ func _build_arsenal_dialog() -> void:
 	var audition := AudioStreamPlayer.new()
 	audio_row.add_child(audition)
 	var listen := Button.new()
-	listen.text = "Listen"
+	listen.text = "ESCUCHAR"
 	listen.pressed.connect(func():
 		audition.stop()
 		audition.stream = GameData.get_sound(String(audio_options.get_item_metadata(audio_options.selected)))
@@ -610,12 +689,13 @@ func _build_arsenal_dialog() -> void:
 		audition.play()
 	)
 	var stop_audio := Button.new()
-	stop_audio.text = "Stop"
+	stop_audio.text = "DETENER"
 	stop_audio.pressed.connect(audition.stop)
 	audio_row.add_child(audio_options)
 	audio_row.add_child(listen)
 	audio_row.add_child(stop_audio)
-	right.add_child(audio_row)
+	sound_tab.add_child(audio_row)
+	_arsenal_tabs.tab_changed.connect(func(_tab: int): audition.stop())
 	_arsenal_panel.visibility_changed.connect(func():
 		if not _arsenal_panel.visible:
 			audition.stop()
@@ -624,21 +704,24 @@ func _build_arsenal_dialog() -> void:
 	var skin_row := HBoxContainer.new()
 	skin_row.add_theme_constant_override("separation", 8)
 	var skin_label := Label.new()
-	skin_label.text = "Weapon finish (next match):"
+	skin_label.text = "Acabado para la próxima partida"
 	skin_label.add_theme_font_size_override("font_size", 12)
 	skin_row.add_child(skin_label)
 	_skin_opt = OptionButton.new()
 	_skin_opt.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	_skin_opt.fit_to_longest_item = false
+	_skin_opt.clip_text = true
 	_skin_opt.add_theme_font_size_override("font_size", 12)
 	_skin_opt.item_selected.connect(_on_viewer_skin_selected)
 	skin_row.add_child(_skin_opt)
-	right.add_child(skin_row)
+	finish_tab.add_child(skin_row)
 
 	_viewer_stats_lbl = Label.new()
+	_viewer_stats_lbl.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	_viewer_stats_lbl.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 	_viewer_stats_lbl.add_theme_font_size_override("font_size", 12)
 	_viewer_stats_lbl.add_theme_color_override("font_color", Color(0.92, 0.88, 0.76))
-	right.add_child(_viewer_stats_lbl)
+	detail_scroll.add_child(_viewer_stats_lbl)
 
 
 func _select_knife_for_match(option_id: String) -> void:
@@ -709,7 +792,7 @@ func _populate_viewer_skin_options(wid: String) -> void:
 	_skin_opt.disabled = options.is_empty()
 	var original := String(GameData.weapon_skins.get("default", "original"))
 	var original_index := _skin_opt.item_count
-	var default_label := "Original HD" if not options.is_empty() else "Original HD — no curated finishes"
+	var default_label := "Original" if not options.is_empty() else "Original — sin acabados alternativos"
 	if wid == "knife" and GameData.selected_knife_id != "original":
 		for raw in GameData.get_knife_options():
 			if String((raw as Dictionary)["id"]) == GameData.selected_knife_id:
@@ -742,6 +825,7 @@ func _on_viewer_skin_selected(index: int) -> void:
 
 
 func _load_viewer_weapon(wid: String) -> void:
+	_set_arsenal_heading(String(GameData.weapons.get(wid, {}).get("name", wid)), _weapon_category(wid))
 	_viewer_current_wid = wid
 	_populate_viewer_skin_options(wid)
 	_clear_viewer_pivot()
@@ -775,6 +859,7 @@ func _load_viewer_weapon(wid: String) -> void:
 
 
 func _load_viewer_player(cid: String) -> void:
+	_set_arsenal_heading(cid.to_upper(), "PERSONAJES CLÁSICOS")
 	_viewer_current_wid = ""
 	_populate_viewer_skin_options("")
 	_clear_viewer_pivot()
@@ -848,7 +933,7 @@ func _process(delta: float) -> void:
 
 
 func _build_options_dialog() -> void:
-	var res := _make_modal_panel("CONFIGURATION & CONTROLS")
+	var res := _make_modal_panel("AJUSTES  /  CONTROLES Y AUDIO")
 	_options_panel = res[0]
 	var vbox: VBoxContainer = res[1]
 
@@ -955,6 +1040,7 @@ func _build_options_dialog() -> void:
 
 
 func _load_viewer_native(resource: String) -> void:
+	_set_arsenal_heading("Kit de desactivación", "EQUIPO")
 	if resource != "defuser_item":
 		return
 	_viewer_current_wid = ""
@@ -978,3 +1064,86 @@ func _load_viewer_native(resource: String) -> void:
 	GameData.apply_native_world_material(instance, resource)
 	_viewer_stats_lbl.text = "ScCsgoKnives native review: " + resource + "\n"
 	_viewer_stats_lbl.text += "Original dropped defuse-kit model; animated character entries removed."
+
+
+func _weapon_category(wid: String) -> String:
+	if wid == "knife":
+		return "CUCHILLOS"
+	if wid in ["awp", "scout", "g3sg1", "sg550"]:
+		return "FRANCOTIRADORES"
+	if wid in ["m3", "xm1014", "mag7", "sawedoff"]:
+		return "ESCOPETAS"
+	if wid in ["m249", "negev"]:
+		return "AMETRALLADORAS"
+	if wid in ["ak47", "m4a1", "m4a4", "aug", "sg552", "famas", "galil"]:
+		return "RIFLES"
+	var spec: Dictionary = GameData.weapons.get(wid, {})
+	if int(spec.get("slot", 0)) == 2:
+		return "PISTOLAS"
+	if int(spec.get("slot", 0)) == 1:
+		return "SUBFUSILES"
+	return "UTILIDAD"
+
+func _build_arsenal_catalogue() -> void:
+	_arsenal_entries.clear()
+	var ids := GameData.weapons.keys()
+	ids.sort()
+	for wid in ids:
+		var spec: Dictionary = GameData.weapons[wid]
+		_arsenal_entries.append({"name": String(spec.get("name", wid)), "category": _weapon_category(String(wid)), "meta": String(wid)})
+	for team in ["CT", "T"]:
+		for info in GameData.classes.get(team, []):
+			_arsenal_entries.append({"name": team + " / " + String(info["name"]), "category": "PERSONAJES", "meta": "player:" + String(info["id"])})
+	for raw in GameData.get_knife_options():
+		var option := raw as Dictionary
+		if String(option["id"]) != "original":
+			_arsenal_entries.append({"name": String(option["name"]), "category": "CUCHILLOS", "meta": "knife:" + String(option["id"])})
+	_arsenal_entries.append({"name": "Guantes clásicos", "category": "GUANTES", "meta": "glove:" + String(GameData.sport_gloves.get("classic_id", "classic"))})
+	for raw in GameData.get_glove_options():
+		var option := raw as Dictionary
+		_arsenal_entries.append({"name": "%s / %s" % [String(option.get("family", "Sport")), String(option.get("wear_code", ""))], "category": "GUANTES", "meta": "glove:" + String(option.get("id", ""))})
+	_arsenal_entries.append({"name": "Kit de desactivación", "category": "EQUIPO", "meta": "native:defuser_item"})
+
+func _refresh_arsenal_list() -> void:
+	var previous := _viewer_current_wid
+	var selected := _arsenal_list.get_selected_items()
+	if not selected.is_empty():
+		previous = String(_arsenal_list.get_item_metadata(selected[0]))
+	_arsenal_list.clear()
+	var query := _arsenal_search.text.strip_edges().to_lower()
+	var category := _arsenal_category.get_item_text(_arsenal_category.selected)
+	for entry in _arsenal_entries:
+		if category != "TODO" and category != String(entry.category):
+			continue
+		var searchable := (String(entry.name) + " " + String(entry.meta) + " " + String(entry.category)).to_lower()
+		if not query.is_empty() and not searchable.contains(query):
+			continue
+		var index := _arsenal_list.add_item(String(entry.name))
+		_arsenal_list.set_item_metadata(index, entry.meta)
+		_arsenal_list.set_item_tooltip(index, String(entry.category) + " / " + String(entry.name))
+		if String(entry.meta) == previous:
+			_arsenal_list.select(index)
+	_arsenal_count.text = "%d OBJETOS  /  %s" % [_arsenal_list.item_count, category] if _arsenal_list.item_count > 0 else "SIN RESULTADOS · Cambia la búsqueda"
+
+func _on_arsenal_item_selected(index: int) -> void:
+	var meta := String(_arsenal_list.get_item_metadata(index))
+	if meta.begins_with("native:"):
+		_load_viewer_native(meta.trim_prefix("native:"))
+	elif meta.begins_with("player:"):
+		_load_viewer_player(meta.trim_prefix("player:"))
+	elif meta.begins_with("knife:"):
+		_select_knife_for_match(meta.trim_prefix("knife:"))
+	elif meta.begins_with("glove:"):
+		_select_glove_for_match(meta.trim_prefix("glove:"))
+	else:
+		_load_viewer_weapon(meta)
+	for entry in _arsenal_entries:
+		if String(entry.meta) == meta:
+			_set_arsenal_heading(String(entry.name), String(entry.category))
+			break
+
+func _set_arsenal_heading(title: String, category: String) -> void:
+	if _arsenal_title != null:
+		_arsenal_title.text = title
+	if _arsenal_kind != null:
+		_arsenal_kind.text = category + "  /  INSPECCIÓN 3D"
