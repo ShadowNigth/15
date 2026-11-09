@@ -1,0 +1,32 @@
+name: Publish verified HUD framebuffers
+on:
+  push:
+    paths:
+      - '.github/workflows/hud-evidence-publish.yml'
+  workflow_dispatch:
+    inputs:
+      source_run:
+        description: Successful native HUD presentation run
+        default: '42703311098'
+        required: true
+permissions:
+  actions: read
+  contents: read
+jobs:
+  framebuffers:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/download-artifact@v4
+        with:
+          name: hud-presentation-evidence
+          run-id: ${{ github.event.inputs.source_run || '42703311098' }}
+          github-token: ${{ github.token }}
+          path: /tmp
+      - run: pip install pillow
+      - name: Firearm native framebuffer
+        run: python tools/publish_hud_capture.py hud_firearm
+      - name: Karambit native framebuffer
+        run: python tools/publish_hud_capture.py hud_karambit
+      - name: Karambit 4x3 native framebuffer
+        run: python tools/publish_hud_capture.py hud_karambit_4x3

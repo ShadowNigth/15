@@ -15,13 +15,13 @@ while True:
     for quality in [80, 65, 50, 35, 20]:
         out = io.BytesIO()
         image.save(out, 'JPEG', quality=quality)
-        if len(out.getvalue()) < 42000:
+        if len(out.getvalue()) < 39000:
             break
-    if len(out.getvalue()) < 42000:
+    if len(out.getvalue()) < 39000:
         break
     image.thumbnail((int(image.width * .85), int(image.height * .85)))
 encoded = base64.b64encode(out.getvalue()).decode()
-parts = [encoded[i:i+6000] for i in range(0, len(encoded), 6000)]
-assert len(parts) <= 10
+parts = [encoded[i:i+3500] for i in range(0, len(encoded), 3500)]
+assert len(parts) <= 15
 for i, part in enumerate(parts):
     print(f'::notice title=HUD JPEG {name} {i+1}/{len(parts)}::{part}')
