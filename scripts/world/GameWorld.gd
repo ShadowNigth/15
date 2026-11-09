@@ -35,6 +35,7 @@ var pause_menu: PauseMenu = null
 
 var _match_started: bool = false
 var _bot_name_cursor: int = 0
+var _hud_visible_before_team_menu: bool = true
 
 
 func _ready() -> void:
@@ -111,6 +112,7 @@ func _ready() -> void:
 	team_menu = TeamSelectMenu.new()
 	add_child(team_menu)
 	team_menu.team_class_chosen.connect(_on_player_team_chosen)
+	team_menu.visibility_changed.connect(_on_team_menu_visibility_changed)
 
 	radio_menu = RadioMenu.new()
 	add_child(radio_menu)
@@ -129,7 +131,7 @@ func _ready() -> void:
 	pause_menu.restart_round_requested.connect(_restart_match)
 	pause_menu.exit_to_main_menu_requested.connect(_return_to_main_menu)
 
-	# Open Team Select VGUI on map entry just like Counter-Strike 1.5!
+	# Choose a faction directly; its classic character is assigned automatically.
 	player.ui_blocking_input = true
 	team_menu.open_menu()
 
@@ -168,6 +170,16 @@ func _unhandled_input(event: InputEvent) -> void:
 		radio_menu.toggle_radio("radio2", player)
 	elif event.is_action_pressed("radio_3"):
 		radio_menu.toggle_radio("radio3", player)
+
+
+func _on_team_menu_visibility_changed() -> void:
+	if team_menu.is_open:
+		_hud_visible_before_team_menu = hud.visible
+		hud.visible = false
+		player.ui_blocking_input = true
+	else:
+		hud.visible = _hud_visible_before_team_menu
+		player.ui_blocking_input = GameplayInputGate.blocked()
 
 
 func _on_player_team_chosen(tm: String, cid: String, capture_mouse: bool = true) -> void:

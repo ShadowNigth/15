@@ -1,0 +1,79 @@
+name: Team selection QA
+on:
+  push:
+    paths:
+      - 'scripts/ui/TeamSelectMenu.gd'
+      - 'scripts/world/GameWorld.gd'
+      - 'assets/ui/teams/**'
+      - 'tests/TeamSelectionPresentationTest*'
+      - 'tools/publish_team_capture.py'
+      - '.github/workflows/team-selection-qa.yml'
+  workflow_dispatch:
+concurrency:
+  group: team-qa-${{ github.ref }}
+  cancel-in-progress: true
+jobs:
+  presentation:
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install Godot and OpenGL
+        run: |
+          curl -fL --retry 3 -o /tmp/godot.zip https://github.com/godotengine/godot-builds/releases/download/4.3-stable/Godot_v4.3-stable_linux.x86_64.zip
+          unzip -q /tmp/godot.zip -d /tmp/godot
+          sudo install -m 755 /tmp/godot/Godot_v4.3-stable_linux.x86_64 /usr/local/bin/godot
+          sudo apt-get update -qq
+          sudo apt-get install -y -qq xvfb libgl1-mesa-dri
+          pip install pillow gdtoolkit==4.3.4
+      - name: Validate and import
+        id: compile
+        run: |
+          set -o pipefail
+          python tools/verify_godot_project.py
+          godot --headless --path . --import 2>&1 | tee /tmp/team-import.log
+          ! grep -Eq 'SCRIPT ERROR:|Parse Error:|Compile Error:' /tmp/team-import.log
+      - name: Render and interact with native team selector
+        if: ${{ !cancelled() && steps.compile.outcome == 'success' }}
+        run: |
+          set -o pipefail
+          TEAM_CAPTURE_DIR=/tmp/team-captures LIBGL_ALWAYS_SOFTWARE=1 timeout 240s xvfb-run -a godot --path . --audio-driver Dummy --rendering-method gl_compatibility --fixed-fps 60 res://tests/TeamSelectionPresentationTest.tscn 2>&1 | tee /tmp/team-runtime.log
+          ! grep -Eq 'SCRIPT ERROR:|Parse Error:|Compile Error:|SHADER ERROR' /tmp/team-runtime.log
+          grep -q 'PASS:' /tmp/team-runtime.log
+      - name: Native preview and editor regressions
+        if: ${{ !cancelled() && steps.compile.outcome == 'success' }}
+        run: |
+          set -o pipefail
+          status=0
+          for suite in UICustomizationTest; do
+            if ! timeout 420s godot --headless --path . --fixed-fps 60 res://tests/$suite.tscn 2>&1 | tee /tmp/$suite.log; then status=1; fi
+            if grep -Eq 'SCRIPT ERROR:|Parse Error:|Compile Error:' /tmp/$suite.log; then status=1; fi
+            if ! grep -q 'PASS:' /tmp/$suite.log; then status=1; fi
+          done
+          exit "$status"
+      - name: Menu diagnostics
+        if: always()
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          for filename in ['team-import', 'team-runtime', 'NativeGunAnimationTest', 'KnifeLoadoutTest', 'UICustomizationTest']:
+              p = Path('/tmp') / (filename + '.log')
+              if p.exists():
+                  lines = p.read_text(errors='replace').splitlines()
+                  text = '\n'.join(x for x in lines if any(k in x for k in ['ERROR', 'Error', 'FAIL', 'PASS:']))[-6500:]
+                  print('::notice title='+filename+'::'+text.replace('%','%25').replace('\n','%0A'))
+          PY
+      - name: Team selector framebuffer
+        if: always()
+        run: python tools/publish_team_capture.py team_selection
+      - name: Team selector 4x3 framebuffer
+        if: always()
+        run: python tools/publish_team_capture.py team_selection_4x3
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: team-selection-evidence
+          path: |
+            /tmp/team-*.log
+            /tmp/*Test.log
+            /tmp/team-captures/
