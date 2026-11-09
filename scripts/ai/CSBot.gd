@@ -2374,10 +2374,12 @@ func _steer_around_obstacles(desired_dir: Vector3) -> Vector3:
 				else:
 					steer = desired_dir.rotated(Vector3.UP, deg_to_rad(115.0 * _avoid_side))
 
-	# Legacy enemy separation; teammates use the common traffic negotiator (checks shin height +0.62m so bots NEVER push into parapets!)
+	# Keep the proven close steering for CT hostage missions, whose authored
+	# basement/stair approaches depend on it. Other teammates use negotiation.
+	var preserve_hostage_steering := team == "CT" and RoundManager.map_mode == "cs"
 	var sep_accum := Vector3.ZERO
 	for a in RoundManager.actors:
-		if not is_instance_valid(a) or a == self or not bool(a.get("is_alive")) or String(a.get("team")) == team:
+		if not is_instance_valid(a) or a == self or not bool(a.get("is_alive")) or (String(a.get("team")) == team and not preserve_hostage_steering):
 			continue
 		var a_node := a as Node3D
 		if a_node == null or absf(a_node.global_position.y - global_position.y) > 1.6:
@@ -2695,6 +2697,12 @@ func _maybe_share_loadout() -> void:
 
 
 func apply_goldsrc_movement(wish_dir_world: Vector3, want_jump: bool, want_crouch: bool, want_walk: bool, delta: float) -> void:
+	# Preserve the existing CT hostage mission controller end-to-end. Its exact
+	# approach steering is not interchangeable with free corridor negotiation.
+	if team == "CT" and RoundManager.map_mode == "cs":
+		traffic.reset()
+		super.apply_goldsrc_movement(wish_dir_world, want_jump, want_crouch, want_walk, delta)
+		return
 	var negotiated := traffic.steer(self, wish_dir_world, RoundManager.actors, delta)
 	# Authored hostage/VIP approaches may negotiate a wait, never a lateral or
 	# reverse detour off their precise staircase, doorway or extraction route.

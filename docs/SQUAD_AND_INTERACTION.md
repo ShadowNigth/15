@@ -13,8 +13,11 @@ audio, materiales y renderer `gl_compatibility` existentes.
   durante el encuentro. Prioriza también al rescatador que ya lleva un rehén.
   Si varios bots quedan sin progreso, un reintento acotado devuelve el control
   a su navegación original sin teletransportes ni saltos forzados. Los tramos
-  precisos de VIP/rehenes sólo aceptan espera: no se desvían lateralmente ni
-  retroceden fuera de sus escaleras, accesos o aproximaciones de extracción.
+  precisos del VIP sólo aceptan espera: no se desvían lateralmente ni retroceden
+  fuera de sus accesos. **Excepción de compatibilidad:** los CT en mapas `cs_*`
+  conservan íntegramente el controlador y la separación clásicos de rescate,
+  sin aplicar la nueva negociación. Su sustitución queda pendiente de una
+  adaptación específica que pase también la aproximación del sótano de Estate.
   La espera no consume los temporizadores que saltan o
   descartan nodos de navegación. No modifica las máscaras 2/1 ni la función
   GoldSrc de `CSActor`.
