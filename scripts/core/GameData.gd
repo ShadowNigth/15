@@ -912,6 +912,10 @@ func apply_native_world_material(instance: Node3D, resource: String) -> void:
 
 
 func equipment_icon(wid: String) -> Texture2D:
+	if wid == "knife":
+		var knife_path := "res://assets/ui/knives/%s.png" % selected_knife_id
+		if ResourceLoader.exists(knife_path):
+			return get_texture(knife_path)
 	# Tiny explicit aliases: do not parse the multi-megabyte animation report for HUD icons.
 	const ALIASES := {"p2000": "hkp2000", "cz75": "cz75a", "usp": "usp_silencer", "p228": "p250", "m3": "nova", "mp5navy": "mp5sd", "tmp": "mp9", "m4a1": "m4a1s", "galil": "galilar", "sg552": "sg556", "scout": "ssg08", "sg550": "scar20"}
 	var path := "res://assets/polish/hud_weapon_%s.png" % String(ALIASES.get(wid, wid))

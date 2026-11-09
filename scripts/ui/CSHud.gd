@@ -2,7 +2,7 @@ class_name CSHud
 extends CanvasLayer
 ## Counter-Strike 2 style HUD for the CS 1.5 remake:
 ##   - Top-center scoreboard (CT score | round timer | T score + alive pips)
-##   - Top-left square rounded radar with the real map overview & player arrow
+##   - Top-left circular radar with the real map overview & player arrow
 ##   - Top-right KILL FEED CARDS (dark rounded cards: killer / weapon icon / headshot / victim)
 ##   - Bottom-left HP & Armor plates, bottom-right money / weapon / ammo (CS2 layout)
 ##   - Bottom-center team emblem on a divider line with ANIMATED KILL CARDS:
@@ -11,8 +11,8 @@ extends CanvasLayer
 ##     and glow-ring flash — the CS2 kill card effect
 ##   - CS2 white typography with team-blue CT and team-gold T accents
 
-const HUD_WHITE := Color(0.94, 0.95, 0.97, 0.97)
-const HUD_DIM := Color(0.72, 0.75, 0.80, 0.85)
+const HUD_WHITE := Color(0.97, 0.85, 0.46, 0.98)
+const HUD_DIM := Color(0.82, 0.74, 0.48, 0.72)
 const RED_WARN := Color(0.95, 0.28, 0.24, 0.98)
 const GREEN_MONEY := Color(0.55, 0.86, 0.45, 0.98)
 const CT_COLOR := Color(0.47, 0.70, 0.98, 1.0)
@@ -63,6 +63,8 @@ var _icon_c4: TextureRect = null
 var _icon_defuser: TextureRect = null
 
 var _inv_icons: Array[TextureRect] = []
+var _knife_icon_id: String = ""
+var _location_label: Label
 
 var _killfeed_vbox: VBoxContainer = null
 var _radio_vbox: VBoxContainer = null
@@ -86,7 +88,7 @@ var _shown_helmet: bool = false
 
 var _killcards: KillCardDisplay = null
 
-# Cached map overview for the CS2 square radar
+# Cached map overview for the circular radar
 var _ov_tex: Texture2D = null
 var _ov_affine: Array = []
 var _ov_rot: int = 0
@@ -212,8 +214,8 @@ class KillCardDisplay extends Control:
 		var font := get_theme_default_font()
 
 		# Divider line running between the HP/Armor plates and the ammo block
-		var x0 := 276.0
-		var x1 := size.x - 250.0
+		var x0 := cx - 104.0
+		var x1 := cx + 104.0
 		if x1 - x0 > 60.0:
 			draw_rect(Rect2(x0, cy - 1.0, x1 - x0, 2.0), Color(1.0, 1.0, 1.0, 0.20))
 
@@ -265,8 +267,9 @@ class KillCardDisplay extends Control:
 		var mark_a := clampf(1.0 - flare * 1.2, 0.0, 1.0)
 		draw_arc(Vector2(cx, cy), EMBLEM_R, 0.0, TAU, 44, Color(accent.r, accent.g, accent.b, accent.a * mark_a), 1.7, true)
 		var team_col := Color(1.0, 1.0, 1.0, 0.92 * mark_a)
-		draw_string(font, Vector2(cx - 24.0, cy + 7.0), team, HORIZONTAL_ALIGNMENT_CENTER, 48.0, 15, Color(0.0, 0.0, 0.0, 0.7 * mark_a))
-		draw_string(font, Vector2(cx - 24.0, cy + 6.0), team, HORIZONTAL_ALIGNMENT_CENTER, 48.0, 15, team_col)
+		var emblem := load("res://assets/ui/teams/" + team.to_lower() + ".svg") as Texture2D
+		if emblem != null:
+			draw_texture_rect(emblem, Rect2(cx - 15, cy - 15, 30, 30), false, Color(1, 1, 1, mark_a))
 
 		# Numbered kill cards fanning out above the emblem
 		var n := cards.size()
@@ -443,7 +446,9 @@ func _build_hud_tree() -> void:
 	_radar_panel.position = Vector2(14, 14)
 	_radar_panel.size = Vector2(186, 186)
 	_radar_panel.mouse_filter = Control.MOUSE_FILTER_IGNORE
-	_radar_panel.add_theme_stylebox_override("panel", _cs2_panel_style(10))
+	_radar_panel.clip_children = CanvasItem.CLIP_CHILDREN_AND_DRAW
+	_radar_panel.add_theme_stylebox_override("panel", _cs2_panel_style(93, Color(0.03, 0.035, 0.025, 0.85), HUD_WHITE))
+	_radar_panel.draw.connect(func(): _radar_panel.draw_arc(Vector2(93, 93), 91, 0, TAU, 96, HUD_WHITE, 2, true))
 	root.add_child(_radar_panel)
 
 	_radar_ctrl = Control.new()
@@ -456,12 +461,17 @@ func _build_hud_tree() -> void:
 	_radar_ctrl.draw.connect(_draw_radar)
 	_radar_panel.add_child(_radar_ctrl)
 
+	_location_label = _make_label(GameData.selected_map.replace("_", " ").to_upper(), 13, HUD_WHITE)
+	_location_label.position = Vector2(18, 203)
+	root.add_child(_location_label)
+
 	# 5. Left Status Icons (Buyzone, C4, Defuser) under the radar
 	var left_icons := VBoxContainer.new()
-	left_icons.position = Vector2(20, 208)
+	left_icons.position = Vector2(18, 203)
 	left_icons.add_theme_constant_override("separation", 8)
 	left_icons.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	root.add_child(left_icons)
+	_location_label.reparent(left_icons, false)
 
 	_icon_buyzone = _make_hud_icon("buyzone", GREEN_HUD, Vector2(18, 18))
 	_icon_c4 = _make_hud_icon("smallc4", GREEN_HUD, Vector2(18, 18))
@@ -474,12 +484,12 @@ func _build_hud_tree() -> void:
 	_score_panel = Panel.new()
 	_score_panel.anchor_left = 0.5
 	_score_panel.anchor_right = 0.5
-	_score_panel.offset_left = -150
-	_score_panel.offset_right = 150
-	_score_panel.offset_top = 10
-	_score_panel.offset_bottom = 56
+	_score_panel.offset_left = -244
+	_score_panel.offset_right = 244
+	_score_panel.offset_top = 0
+	_score_panel.offset_bottom = 60
 	_score_panel.mouse_filter = Control.MOUSE_FILTER_IGNORE
-	_score_panel.add_theme_stylebox_override("panel", _cs2_panel_style(8))
+	_score_panel.add_theme_stylebox_override("panel", StyleBoxEmpty.new())
 	root.add_child(_score_panel)
 
 	_score_ctrl = Control.new()
@@ -547,180 +557,120 @@ func _build_hud_tree() -> void:
 
 	# 9. Top-Left Radio / Chat Feed (CS2: under the radar & status icons)
 	_radio_vbox = VBoxContainer.new()
-	_radio_vbox.position = Vector2(16, 292)
+	_radio_vbox.position = Vector2(16, 304)
 	_radio_vbox.custom_minimum_size = Vector2(430, 150)
 	_radio_vbox.add_theme_constant_override("separation", 4)
 	_radio_vbox.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	root.add_child(_radio_vbox)
 
-	# 10. Bottom-Left CS2 Health & Armor Plates
+	# Reference layout: money at the far left, compact vitals left of centre.
 	var bl_root := Control.new()
+	bl_root.anchor_right = 0.5
 	bl_root.anchor_top = 1.0
 	bl_root.anchor_bottom = 1.0
 	bl_root.offset_left = 18
+	bl_root.offset_right = -130
 	bl_root.offset_top = -68
 	bl_root.offset_bottom = -14
 	bl_root.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	root.add_child(bl_root)
-
-	var hp_plate := Panel.new()
-	hp_plate.position = Vector2(0, 0)
-	hp_plate.size = Vector2(118, 54)
-	hp_plate.mouse_filter = Control.MOUSE_FILTER_IGNORE
-	hp_plate.add_theme_stylebox_override("panel", _cs2_panel_style(8))
-	bl_root.add_child(hp_plate)
+	_money_label = _make_label("$800", 26, HUD_WHITE)
+	_money_label.position = Vector2(0, 5)
+	bl_root.add_child(_money_label)
+	_money_delta_label = _make_label("", 16, GREEN_MONEY)
+	_money_delta_label.position = Vector2(0, -20)
+	bl_root.add_child(_money_delta_label)
 	var hp_row := HBoxContainer.new()
-	hp_row.set_anchors_preset(Control.PRESET_FULL_RECT)
-	hp_row.offset_left = 10.0
-	hp_row.offset_right = -8.0
-	hp_row.add_theme_constant_override("separation", 8)
-	hp_row.alignment = BoxContainer.ALIGNMENT_CENTER
-	hp_row.mouse_filter = Control.MOUSE_FILTER_IGNORE
-	hp_plate.add_child(hp_row)
-	_hp_icon = _make_hud_icon("cross", HUD_WHITE, Vector2(24, 24))
-	_hp_label = _make_label("100", 32, HUD_WHITE)
+	hp_row.anchor_left = 1.0
+	hp_row.anchor_right = 1.0
+	hp_row.offset_left = -100
+	hp_row.offset_right = 0
+	hp_row.offset_top = 12
+	hp_row.offset_bottom = 54
+	hp_row.add_theme_constant_override("separation", 9)
+	bl_root.add_child(hp_row)
+	_hp_icon = _make_hud_icon("cross", HUD_WHITE, Vector2(19, 19))
+	_hp_label = _make_label("100", 34, HUD_WHITE)
 	hp_row.add_child(_hp_icon)
 	hp_row.add_child(_hp_label)
-
-	var ap_plate := Panel.new()
-	ap_plate.position = Vector2(126, 0)
-	ap_plate.size = Vector2(126, 54)
-	ap_plate.mouse_filter = Control.MOUSE_FILTER_IGNORE
-	ap_plate.add_theme_stylebox_override("panel", _cs2_panel_style(8))
-	bl_root.add_child(ap_plate)
 	var ap_row := HBoxContainer.new()
-	ap_row.set_anchors_preset(Control.PRESET_FULL_RECT)
-	ap_row.offset_left = 10.0
-	ap_row.offset_right = -8.0
-	ap_row.add_theme_constant_override("separation", 8)
-	ap_row.alignment = BoxContainer.ALIGNMENT_CENTER
-	ap_row.mouse_filter = Control.MOUSE_FILTER_IGNORE
-	ap_plate.add_child(ap_row)
-	_ap_icon = _make_hud_icon("suit_full", HUD_WHITE, Vector2(24, 24))
-	_armor_label = _make_label("0", 32, HUD_DIM)
+	ap_row.anchor_left = 1.0
+	ap_row.anchor_right = 1.0
+	ap_row.offset_left = -96
+	ap_row.offset_right = 0
+	ap_row.offset_top = -8
+	ap_row.offset_bottom = 12
+	ap_row.add_theme_constant_override("separation", 5)
+	bl_root.add_child(ap_row)
+	_ap_icon = _make_hud_icon("suit_full", HUD_WHITE, Vector2(15, 15))
+	_armor_label = _make_label("0", 14, HUD_DIM)
 	ap_row.add_child(_ap_icon)
 	ap_row.add_child(_armor_label)
 
-	# 11. Bottom-Right CS2 stack: money (green) -> weapon icon+name -> clip | reserve
-	var br_root := Control.new()
-	br_root.anchor_left = 1.0
-	br_root.anchor_right = 1.0
-	br_root.anchor_top = 1.0
-	br_root.anchor_bottom = 1.0
-	br_root.offset_left = -330
-	br_root.offset_right = -18
-	br_root.offset_top = -210
-	br_root.offset_bottom = -14
-	br_root.mouse_filter = Control.MOUSE_FILTER_IGNORE
-	root.add_child(br_root)
-
-	_money_delta_label = _make_label("", 18, GREEN_MONEY)
-	_money_delta_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_RIGHT
-	_money_delta_label.anchor_left = 1.0
-	_money_delta_label.anchor_right = 1.0
-	_money_delta_label.offset_left = -200
-	_money_delta_label.offset_right = 0
-	_money_delta_label.offset_top = 0
-	_money_delta_label.offset_bottom = 24
-	br_root.add_child(_money_delta_label)
-
-	_money_label = _make_label("$800", 26, GREEN_MONEY)
-	_money_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_RIGHT
-	_money_label.anchor_left = 1.0
-	_money_label.anchor_right = 1.0
-	_money_label.offset_left = -220
-	_money_label.offset_right = 0
-	_money_label.offset_top = 22
-	_money_label.offset_bottom = 54
-	br_root.add_child(_money_label)
-
-	_weapon_icon = TextureRect.new()
-	_weapon_icon.anchor_left = 1.0
-	_weapon_icon.anchor_right = 1.0
-	_weapon_icon.offset_left = -96
-	_weapon_icon.offset_right = -4
-	_weapon_icon.offset_top = 58
-	_weapon_icon.offset_bottom = 86
-	_weapon_icon.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
-	_weapon_icon.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
-	_weapon_icon.modulate = HUD_WHITE
-	_weapon_icon.mouse_filter = Control.MOUSE_FILTER_IGNORE
-	br_root.add_child(_weapon_icon)
-
-	_weapon_name_label = _make_label("", 14, HUD_DIM)
-	_weapon_name_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_RIGHT
-	_weapon_name_label.anchor_left = 1.0
-	_weapon_name_label.anchor_right = 1.0
-	_weapon_name_label.offset_left = -240
-	_weapon_name_label.offset_right = -102
-	_weapon_name_label.offset_top = 62
-	_weapon_name_label.offset_bottom = 84
-	br_root.add_child(_weapon_name_label)
-
-	var ammo_row := HBoxContainer.new()
-	ammo_row.anchor_left = 1.0
-	ammo_row.anchor_right = 1.0
-	ammo_row.anchor_top = 1.0
-	ammo_row.anchor_bottom = 1.0
-	ammo_row.offset_left = -240
-	ammo_row.offset_right = 0
-	ammo_row.offset_top = -64
-	ammo_row.offset_bottom = -8
-	ammo_row.alignment = BoxContainer.ALIGNMENT_END
-	ammo_row.add_theme_constant_override("separation", 8)
-	ammo_row.mouse_filter = Control.MOUSE_FILTER_IGNORE
-	br_root.add_child(ammo_row)
-
-	_ammo_label = _make_label("12", 40, HUD_WHITE)
-	ammo_row.add_child(_ammo_label)
-	_ammo_reserve_label = _make_label("| 24", 22, HUD_DIM)
-	ammo_row.add_child(_ammo_reserve_label)
-
-	# Vertical inventory mini-strip (primary / secondary / knife) at the right edge
-	var inv_col := VBoxContainer.new()
-	inv_col.anchor_left = 1.0
-	inv_col.anchor_right = 1.0
-	inv_col.anchor_top = 1.0
-	inv_col.anchor_bottom = 1.0
-	inv_col.offset_left = -58
-	inv_col.offset_right = -16
-	inv_col.offset_top = -268
-	inv_col.offset_bottom = -218
-	inv_col.add_theme_constant_override("separation", 4)
-	inv_col.alignment = BoxContainer.ALIGNMENT_END
-	inv_col.mouse_filter = Control.MOUSE_FILTER_IGNORE
-	br_root.add_child(inv_col)
-	for _si in range(3):
-		var inv_ic := TextureRect.new()
-		inv_ic.custom_minimum_size = Vector2(38, 14)
-		inv_ic.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
-		inv_ic.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
-		inv_ic.modulate = HUD_WHITE
-		inv_ic.mouse_filter = Control.MOUSE_FILTER_IGNORE
-		inv_col.add_child(inv_ic)
-		_inv_icons.append(inv_ic)
-
-	# 11b. Bottom-center CS2 kill cards: divider line + team emblem + fan cards
-	_killcards = KillCardDisplay.new()
-	_killcards.set_anchors_preset(Control.PRESET_FULL_RECT)
-	_killcards.mouse_filter = Control.MOUSE_FILTER_IGNORE
-	root.add_child(_killcards)
-
-	# Include the three inventory slots above the ammo panel in its drag bounds.
-	# Their original coordinates and native layout are unchanged.
+	# One editable equipment group still contains both ammunition and inventory.
 	var equipment_group := Control.new()
-	equipment_group.set_anchors_preset(Control.PRESET_BOTTOM_RIGHT)
-	equipment_group.offset_left = -330
+	equipment_group.anchor_left = 0.72
+	equipment_group.anchor_right = 1.0
+	equipment_group.anchor_top = 1.0
+	equipment_group.anchor_bottom = 1.0
+	equipment_group.offset_left = 0
 	equipment_group.offset_right = -18
 	equipment_group.offset_top = -282
 	equipment_group.offset_bottom = -14
 	equipment_group.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	root.add_child(equipment_group)
-	br_root.reparent(equipment_group, false)
-	br_root.set_anchors_and_offsets_preset(Control.PRESET_TOP_LEFT)
-	br_root.position = Vector2(0, 72)
-	br_root.size = Vector2(312, 196)
-	bl_root.size = Vector2(252, 54)
+	var ammo_row := HBoxContainer.new()
+	ammo_row.anchor_top = 1.0
+	ammo_row.anchor_bottom = 1.0
+	ammo_row.offset_top = -46
+	ammo_row.offset_bottom = 0
+	ammo_row.offset_right = 180
+	ammo_row.add_theme_constant_override("separation", 6)
+	equipment_group.add_child(ammo_row)
+	_ammo_label = _make_label("12", 34, HUD_WHITE)
+	_ammo_reserve_label = _make_label("| 24", 18, HUD_DIM)
+	ammo_row.add_child(_ammo_label)
+	ammo_row.add_child(_ammo_reserve_label)
+	_weapon_name_label = _make_label("", 13, HUD_WHITE)
+	_weapon_name_label.anchor_left = 1.0
+	_weapon_name_label.anchor_right = 1.0
+	_weapon_name_label.offset_left = -200
+	_weapon_name_label.offset_right = 0
+	_weapon_name_label.offset_top = -23
+	_weapon_name_label.offset_bottom = -3
+	_weapon_name_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_RIGHT
+	equipment_group.add_child(_weapon_name_label)
+	_weapon_icon = TextureRect.new()
+	_weapon_icon.visible = false # Active weapon is highlighted in the strip, not duplicated.
+	equipment_group.add_child(_weapon_icon)
+	var inv_col := VBoxContainer.new()
+	inv_col.anchor_left = 1.0
+	inv_col.anchor_right = 1.0
+	inv_col.offset_left = -128
+	inv_col.offset_right = 0
+	inv_col.offset_top = 0
+	inv_col.offset_bottom = 200
+	inv_col.add_theme_constant_override("separation", 5)
+	inv_col.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	equipment_group.add_child(inv_col)
+	for slot in range(5):
+		var row := HBoxContainer.new()
+		row.alignment = BoxContainer.ALIGNMENT_END
+		row.mouse_filter = Control.MOUSE_FILTER_IGNORE
+		inv_col.add_child(row)
+		var inv_ic := TextureRect.new()
+		inv_ic.custom_minimum_size = Vector2(103, 30)
+		inv_ic.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
+		inv_ic.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
+		inv_ic.modulate = HUD_WHITE
+		inv_ic.mouse_filter = Control.MOUSE_FILTER_IGNORE
+		row.add_child(inv_ic)
+		row.add_child(_make_label(str(slot + 1), 11, HUD_DIM))
+		_inv_icons.append(inv_ic)
+	_killcards = KillCardDisplay.new()
+	_killcards.set_anchors_preset(Control.PRESET_FULL_RECT)
+	_killcards.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	root.add_child(_killcards)
 	for entry in [["radar", _radar_panel], ["status", left_icons], ["score", _score_panel], ["killfeed", _killfeed_vbox], ["announcements", _center_label], ["spectator", _spec_label], ["progress", prog_box], ["radio", _radio_vbox], ["health", bl_root], ["equipment", equipment_group]]:
 		register_layout_element(entry[0], entry[1])
 
@@ -820,6 +770,11 @@ func _process(delta: float) -> void:
 		_ct_alive = ct_n
 		_t_alive = t_n
 
+	if _knife_icon_id != GameData.selected_knife_id:
+		_refresh_inventory_icons()
+		if is_instance_valid(player) and player.weapon_ctrl.current_weapon_id == "knife":
+			_on_weapon_switched("knife", player.weapon_ctrl.get_current_spec())
+
 	_inv_refresh_timer -= delta
 	if _inv_refresh_timer <= 0.0:
 		_inv_refresh_timer = 0.5
@@ -837,10 +792,19 @@ func _process(delta: float) -> void:
 
 
 func _refresh_inventory_icons() -> void:
+	_knife_icon_id = GameData.selected_knife_id
 	if not is_instance_valid(player):
 		return
-	for i in range(3):
+	for i in range(5):
 		var wid := String(player.weapon_ctrl.slots.get(i + 1, ""))
+		if i == 3:
+			if int(player.weapon_ctrl.grenades.get(player.weapon_ctrl.current_weapon_id, 0)) > 0:
+				wid = player.weapon_ctrl.current_weapon_id
+			elif wid.is_empty():
+				for grenade in player.weapon_ctrl.grenades:
+					if int(player.weapon_ctrl.grenades[grenade]) > 0:
+						wid = grenade
+						break
 		var ic: TextureRect = _inv_icons[i]
 		if wid.is_empty():
 			ic.texture = null
@@ -854,46 +818,42 @@ func _refresh_inventory_icons() -> void:
 			ic.texture = wh
 			# Grey out the non-equipped slots, full white for the active weapon
 			var cur := String(player.weapon_ctrl.current_weapon_id)
-			ic.modulate = HUD_WHITE if wid == cur or wid == "knife" else Color(1, 1, 1, 0.45)
+			ic.modulate = HUD_WHITE if wid == cur else Color(0.82, 0.74, 0.48, 0.48)
 
 
 func _draw_scoreboard() -> void:
-	var fnt := _score_ctrl.get_theme_default_font()
-	var sz := _score_ctrl.size
-
+	var font := _score_ctrl.get_theme_default_font()
+	var cx := _score_ctrl.size.x * 0.5
+	var seconds := maxi(0, int(ceil(RoundManager.state_timer)))
+	if is_instance_valid(RoundManager.planted_c4):
+		seconds = maxi(0, int(ceil((RoundManager.planted_c4 as PlantedC4).time_left)))
+	_score_ctrl.draw_rect(Rect2(cx - 37, 0, 74, 55), Color(0.015, 0.025, 0.035, 0.7))
+	var timer := "%d:%02d" % [seconds / 60, seconds % 60]
+	_score_ctrl.draw_string(font, Vector2(cx - 27, 23), timer, HORIZONTAL_ALIGNMENT_CENTER, 54, 21, RED_WARN if seconds <= 10 else HUD_WHITE)
+	_score_ctrl.draw_string(font, Vector2(cx - 26, 46), str(RoundManager.ct_score), HORIZONTAL_ALIGNMENT_CENTER, 20, 17, CT_COLOR)
+	_score_ctrl.draw_string(font, Vector2(cx + 6, 46), str(RoundManager.t_score), HORIZONTAL_ALIGNMENT_CENTER, 20, 17, T_COLOR)
+	for tm in ["CT", "T"]:
+		var actors: Array = []
+		for actor in RoundManager.actors:
+			if is_instance_valid(actor) and actor.team == tm:
+				actors.append(actor)
+		var tile := minf(34.0, 196.0 / maxf(5, actors.size()))
+		for index in range(actors.size()):
+			var actor: CSActor = actors[index]
+			var x := cx - 43 - (index + 1) * tile if tm == "CT" else cx + 43 + index * tile
+			var rectangle := Rect2(x, 2, tile - 3, 32)
+			var color := CT_COLOR if tm == "CT" else T_COLOR
+			_score_ctrl.draw_rect(rectangle, Color(color, 0.3 if actor.is_alive else 0.08))
+			var portrait := GameData.get_texture("res://assets/ui/vgui/640_%s.png" % actor.class_id)
+			if portrait != null:
+				_score_ctrl.draw_texture_rect_region(rectangle.grow(-2), portrait, Rect2(20, 0, 88, 88), Color(1, 1, 1, 1.0 if actor.is_alive else 0.18))
+			_score_ctrl.draw_line(rectangle.end - Vector2(rectangle.size.x, 0), rectangle.end, color, 2)
+			if not actor.is_alive:
+				_score_ctrl.draw_line(rectangle.position, rectangle.end, Color(0.8, 0.3, 0.25), 1)
+			else:
+				_score_ctrl.draw_rect(Rect2(x, 36, (tile - 3) * clampf(actor.health / 100.0, 0, 1), 2), color)
 	if RoundManager.map_mode == "dm":
-		_score_ctrl.draw_string(fnt, Vector2(65, 13), "TEAM DM / %d" % GameData.dm_frag_limit, HORIZONTAL_ALIGNMENT_LEFT, -1, 11, HUD_WHITE)
-
-	# --- CT block (left): number, caption, alive pips ---
-	_score_ctrl.draw_string(fnt, Vector2(18, 36), str(RoundManager.ct_score), HORIZONTAL_ALIGNMENT_LEFT, -1, 24, CT_COLOR)
-	_score_ctrl.draw_string(fnt, Vector2(18, 15), "CT", HORIZONTAL_ALIGNMENT_LEFT, -1, 11, Color(CT_COLOR.r, CT_COLOR.g, CT_COLOR.b, 0.8))
-	for i in range(5):
-		var pip_c := CT_COLOR if i < _ct_alive else Color(CT_COLOR.r, CT_COLOR.g, CT_COLOR.b, 0.16)
-		_score_ctrl.draw_circle(Vector2(58 + i * 12, 30), 3.8, pip_c)
-
-	# --- T block (right): number, caption, alive pips (mirrored) ---
-	_score_ctrl.draw_string(fnt, Vector2(sz.x - 64, 36), str(RoundManager.t_score), HORIZONTAL_ALIGNMENT_RIGHT, 46, 24, T_COLOR)
-	_score_ctrl.draw_string(fnt, Vector2(sz.x - 64, 15), "T", HORIZONTAL_ALIGNMENT_RIGHT, 46, 11, Color(T_COLOR.r, T_COLOR.g, T_COLOR.b, 0.8))
-	for i in range(5):
-		var pip_c2 := T_COLOR if i < _t_alive else Color(T_COLOR.r, T_COLOR.g, T_COLOR.b, 0.16)
-		_score_ctrl.draw_circle(Vector2(sz.x - 58 - i * 12, 30), 3.8, pip_c2)
-
-	# --- Center round timer: white normally, blinking red near blast / round end ---
-	var secs := maxi(0, int(ceil(RoundManager.state_timer)))
-	var bomb_mode := is_instance_valid(RoundManager.planted_c4)
-	if bomb_mode:
-		secs = maxi(0, int(ceil((RoundManager.planted_c4 as PlantedC4).time_left)))
-	var tcol := HUD_WHITE
-	if bomb_mode:
-		tcol = RED_WARN if sin(_c4_blink_phase * 2.0) > 0.0 else HUD_WHITE
-	elif secs <= 10 and RoundManager.state == RoundManager.State.LIVE:
-		tcol = RED_WARN
-	var mins := int(floor(float(secs) / 60.0))
-	var tstr := "%d:%02d" % [mins, secs % 60]
-	_score_ctrl.draw_string(fnt, Vector2(sz.x * 0.5 - 24, 34), tstr, HORIZONTAL_ALIGNMENT_LEFT, -1, 22, tcol)
-	# Vertical separator lines around the timer (CS2 scoreboard dividers)
-	_score_ctrl.draw_line(Vector2(sz.x * 0.5 - 44, 9), Vector2(sz.x * 0.5 - 44, sz.y - 9), Color(1, 1, 1, 0.10), 1.0)
-	_score_ctrl.draw_line(Vector2(sz.x * 0.5 + 44, 9), Vector2(sz.x * 0.5 + 44, sz.y - 9), Color(1, 1, 1, 0.10), 1.0)
+		_score_ctrl.draw_string(font, Vector2(cx - 43, 65), "DM / %d" % GameData.dm_frag_limit, HORIZONTAL_ALIGNMENT_CENTER, 86, 11, HUD_DIM)
 
 
 func _draw_crosshair() -> void:
@@ -1108,7 +1068,7 @@ func _on_weapon_switched(wid: String, spec: Dictionary) -> void:
 
 func _on_ammo_updated(clip: int, reserve: int) -> void:
 	if clip < 0:
-		_ammo_label.text = "---"
+		_ammo_label.text = ""
 		_ammo_reserve_label.text = ""
 	else:
 		_ammo_label.text = str(clip)
