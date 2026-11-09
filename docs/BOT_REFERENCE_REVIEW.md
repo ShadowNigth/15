@@ -49,3 +49,7 @@ Los GLB y generadores antiguos quedan como recursos inactivos para trazabilidad 
 - Verificador local: 47 scripts de producción, 49 referencias, 43 armas, 26 mapas, 308 GLB y 1021 WAV: PASS.
 - Checks estáticos de recursos decorativos archivados: PASS para ambos mapas.
 - Godot local no disponible: descarga bloqueada al redirigir a release-assets.githubusercontent.com. Compilación nativa, nuevas pruebas y regresiones se ejecutan en GitHub Actions; consultar el estado de la ejecución correspondiente antes de afirmar aprobación.
+
+### Primera ejecución nativa (e9777c06)
+
+Las cuatro suites de mapas (Aztec/Dust2, polish/renovación) aprobaron. La suite de escuadrón compiló y aprobó misiones (55), render animado y regresiones previas, pero el nuevo test falló 3/16 porque creaba actores sin activar `is_alive` (por defecto false antes de spawn). Se corrigió únicamente el montaje del test: ambos actores pasan a vivos explícitamente. No se relajaron las expectativas ni se cambió producción para hacer pasar la prueba. La ejecución posterior es la que debe confirmar la corrección.

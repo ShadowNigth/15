@@ -20,10 +20,12 @@ func _run() -> void:
 	bot.team = "CT"
 	add_child(bot)
 	bot.set_physics_process(false)
+	bot.is_alive = true
 	var enemy := CSBot.new()
 	enemy.team = "T"
 	add_child(enemy)
 	enemy.set_physics_process(false)
+	enemy.is_alive = true
 	enemy.position = Vector3(0, 0, -8)
 	RoundManager.actors.assign([bot, enemy])
 	await get_tree().physics_frame
