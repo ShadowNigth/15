@@ -45,3 +45,7 @@ Los rayos de terreno son heurísticas, no una prueba matemática del arco comple
 `BotResourceMobilityTest` usa física real para probar selección de pistola/cuchillo/recarga, deploy estable, suelo/borde/vacío, arma visible/oculta/vacía/bloqueada, sustitución de slot, conservación de munición, consumo único, salto con aterrizaje, techo, agachado y avance real con cuchillo. Se añade a la suite junto a percepción, misiones Estate/747/OilRig, combate, utilidades, audio y render animado.
 
 La validación estática local pasa. La compilación y ejecución Godot se verifican en Actions; no confundir el AST local con prueba nativa ni afirmar éxito antes de finalizar esa ejecución.
+
+## Compatibilidad de rescate
+
+La primera ejecución de esta iteración compiló y aprobó el render de movilidad/daño de cuchillo, pero Estate no completó el tercer rescate; el control anterior sí lo completó. Por ello los CT en mapas `cs_*` conservan el criterio entregado de salto improvisado, elección de salida de atasco y validez de objetivo. Las nuevas restricciones de terreno no se presentan como activas en esa navegación especial. Las mejoras de munición/percepción/combate siguen disponibles; el VIP no persigue armas que no puede recoger. La persecución con cuchillo frena con input contrario antes de solapar la cápsula enemiga, sin modificar velocidades de física. La siguiente ejecución debe confirmar la compatibilidad.

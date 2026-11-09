@@ -106,6 +106,9 @@ func _run() -> void:
 	await get_tree().physics_frame
 	await get_tree().physics_frame
 	usable.position = Vector3(0, 0.15, -0.8)
+	bot.is_vip = true
+	expect(not bot._seek_visible_supply(1.0/60.0), "VIP cannot abandon extraction to pursue forbidden pickup")
+	bot.is_vip = false
 	bot._supply_scan_left = 0.0
 	expect(bot._seek_visible_supply(1.0/60.0), "nearby usable drop is collected")
 	expect(bot.weapon_ctrl.current_weapon_id == "m4a1", "dry occupied primary slot can be replaced")

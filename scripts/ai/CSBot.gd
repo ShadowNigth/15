@@ -1038,6 +1038,8 @@ func try_pickup_dropped(drop: DroppedWeapon) -> bool:
 	return super.try_pickup_dropped(drop)
 
 func _seek_visible_supply(delta: float) -> bool:
+	if is_vip:
+		return false
 	if _supply_scan_left <= 0.0:
 		_supply_target = _find_visible_supply()
 		_supply_scan_left = 0.4
@@ -1077,7 +1079,12 @@ func _engage_without_ammo(delta: float) -> void:
 	direction = direction.normalized()
 	if _has_wide_corridor_sight(global_position, goal) and _has_local_floor(direction, minf(1.0, global_position.distance_to(goal))):
 		_jump_cooldown = maxf(0.0, _jump_cooldown - delta)
+		# Brake before overlapping the enemy capsule: a melee ray starting
+		# inside the target can miss, and oscillating through it is not pursuit.
 		var move_dir := _safe_local_direction(_steer_around_obstacles(direction))
+		if global_position.distance_to(goal) <= 1.25:
+			var horizontal_velocity := Vector3(velocity.x, 0, velocity.z)
+			move_dir = _safe_local_direction(-horizontal_velocity.normalized()) if horizontal_velocity.length() > 0.3 else Vector3.ZERO
 		var jump := is_on_floor() and _jump_cooldown <= 0.0 and _can_opportunistic_jump(move_dir)
 		if jump:
 			_jump_cooldown = 0.9
@@ -1119,6 +1126,10 @@ func _safe_local_direction(desired: Vector3) -> Vector3:
 	return Vector3.ZERO
 
 func _can_opportunistic_jump(direction: Vector3) -> bool:
+	# Estate's authored stair recovery needs the delivered jump timing. Keep
+	# this mission-compatible route until stricter probes pass its full rescue.
+	if team == "CT" and RoundManager.map_mode == "cs":
+		return _is_jumpable_ledge(direction)
 	if not _is_jumpable_ledge(direction):
 		return false
 	var space := get_world_3d().direct_space_state
@@ -2053,7 +2064,7 @@ func _plan_to_node(nav: BotNavigator, goal_idx: int, hostage_safe: bool, mode: i
 	_goal_pos = nav.get_node_pos(goal_idx)
 	_has_goal = true
 	_node_path = nav.plan_node_path(global_position, goal_idx, team, use_mode, hostage_safe, space, _diversity_seed, _banned_nodes)
-	_has_goal = not _node_path.is_empty()
+	_has_goal = true if team == "CT" and RoundManager.map_mode == "cs" else not _node_path.is_empty()
 	_prev_node_idx = nav.get_nearest_node(global_position, space, 3.6, true)
 	if not _node_path.is_empty():
 		_advance_to_node_entry(nav, _node_path[0])
@@ -2468,7 +2479,8 @@ func _pick_open_escape_direction(blocked_dir: Vector3) -> Vector3:
 	var space := get_world_3d().direct_space_state
 	var shin := global_position + Vector3(0.0, 0.58, 0.0)
 	var chest := global_position + Vector3(0.0, 1.05, 0.0)
-	var best_dir := Vector3.ZERO
+	var legacy_rescue := team == "CT" and RoundManager.map_mode == "cs"
+	var best_dir := -blocked_dir if legacy_rescue else Vector3.ZERO
 	var best_score := -1e9
 	var base := blocked_dir if blocked_dir.length_squared() > 0.01 else Vector3.FORWARD
 	for i in range(8):
@@ -2490,9 +2502,13 @@ func _pick_open_escape_direction(blocked_dir: Vector3) -> Vector3:
 		var floor_q := PhysicsRayQueryParameters3D.create(floor_probe + Vector3(0.0, 0.65, 0.0), floor_probe - Vector3(0.0, 1.45, 0.0))
 		floor_q.collision_mask = 1
 		var floor_hit := space.intersect_ray(floor_q)
-		if floor_hit.is_empty() or (floor_hit.get("normal", Vector3.UP) as Vector3).y < 0.65 or not _has_local_floor(cand, 1.15):
+		var floor_penalty := 0.0
+		if legacy_rescue:
+			if floor_hit.is_empty() or (floor_hit.get("normal", Vector3.UP) as Vector3).y < 0.45:
+				floor_penalty = 12.0
+		elif floor_hit.is_empty() or (floor_hit.get("normal", Vector3.UP) as Vector3).y < 0.65 or not _has_local_floor(cand, 1.15):
 			continue
-		var score := free_d + away_bonus + randf_range(-0.12, 0.12)
+		var score := free_d + away_bonus + randf_range(-0.12, 0.12) - floor_penalty
 		if score > best_score:
 			best_score = score
 			best_dir = cand

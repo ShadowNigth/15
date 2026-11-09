@@ -122,16 +122,22 @@ jobs:
         run: |
           python - <<'PY'
           from pathlib import Path
-          for p in [Path('/tmp/squad-import.log'), *Path('/tmp').glob('*Test.log')]:
-              if p.exists():
-                  text = p.read_text(errors='replace')
-                  lines = text.splitlines()
-                  errors = []
-                  for i, line in enumerate(lines):
-                      if any(k in line for k in ['SCRIPT ERROR', 'Parse Error', 'Compile Error', 'FAIL', 'PASS:', '[SQUAD GAMEPLAY]', '[MISSION AI TEST] -', 'ERROR: [', '::error']):
-                          errors.extend(lines[i:i+2])
-                  message = '\n'.join(errors)[-7000:].replace('%', '%25').replace('\n', '%0A').replace('\r','%0D')
-                  print(f'::notice title={p.name}::{message}')
+          summaries = []
+          problems = []
+          for p in [Path('/tmp/squad-import.log'), *sorted(Path('/tmp').glob('*Test.log')), Path('/tmp/bot-resource-render.log')]:
+              if not p.exists():
+                  continue
+              lines = p.read_text(errors='replace').splitlines()
+              for i, line in enumerate(lines):
+                  if 'PASS:' in line:
+                      summaries.append(p.name + ': ' + line[:300])
+                  if any(k in line for k in ['SCRIPT ERROR', 'Parse Error', 'Compile Error', 'FAIL', 'ERROR: [']):
+                      problems.append(p.name + ': ' + ' '.join(lines[i:i+2])[:600])
+          def notice(title, lines):
+              message = '\n'.join(lines)[-11000:].replace('%', '%25').replace('\n', '%0A').replace('\r','%0D')
+              print(f'::notice title={title}::{message}')
+          notice('All suite summaries', summaries)
+          notice('All suite failures', problems)
           PY
       - name: Save CI-only imported resources
         if: ${{ always() && !cancelled() && steps.imports.outputs.cache-hit != 'true' }}
