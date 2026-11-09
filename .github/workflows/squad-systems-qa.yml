@@ -5,6 +5,7 @@ on:
     paths:
       - 'scripts/**'
       - 'tests/SquadInteractionTest*'
+      - 'tests/BotPerceptionHostageTest*'
       - 'tests/SquadGameplayTest*'
       - 'tests/UtilityPropagationTest*'
       - '.github/workflows/squad-systems-qa.yml'
