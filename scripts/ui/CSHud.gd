@@ -570,12 +570,12 @@ func _build_hud_tree() -> void:
 	bl_root.anchor_bottom = 1.0
 	bl_root.offset_left = 18
 	bl_root.offset_right = -130
-	bl_root.offset_top = -68
+	bl_root.offset_top = -76
 	bl_root.offset_bottom = -14
 	bl_root.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	root.add_child(bl_root)
 	_money_label = _make_label("$800", 26, HUD_WHITE)
-	_money_label.position = Vector2(0, 5)
+	_money_label.position = Vector2(0, 13)
 	bl_root.add_child(_money_label)
 	_money_delta_label = _make_label("", 16, GREEN_MONEY)
 	_money_delta_label.position = Vector2(0, -20)
@@ -585,8 +585,8 @@ func _build_hud_tree() -> void:
 	hp_row.anchor_right = 1.0
 	hp_row.offset_left = -100
 	hp_row.offset_right = 0
-	hp_row.offset_top = 12
-	hp_row.offset_bottom = 54
+	hp_row.offset_top = 20
+	hp_row.offset_bottom = 62
 	hp_row.add_theme_constant_override("separation", 9)
 	bl_root.add_child(hp_row)
 	_hp_icon = _make_hud_icon("cross", HUD_WHITE, Vector2(19, 19))
@@ -598,8 +598,8 @@ func _build_hud_tree() -> void:
 	ap_row.anchor_right = 1.0
 	ap_row.offset_left = -96
 	ap_row.offset_right = 0
-	ap_row.offset_top = -8
-	ap_row.offset_bottom = 12
+	ap_row.offset_top = 0
+	ap_row.offset_bottom = 20
 	ap_row.add_theme_constant_override("separation", 5)
 	bl_root.add_child(ap_row)
 	_ap_icon = _make_hud_icon("suit_full", HUD_WHITE, Vector2(15, 15))
@@ -636,8 +636,8 @@ func _build_hud_tree() -> void:
 	_weapon_name_label.anchor_right = 1.0
 	_weapon_name_label.offset_left = -200
 	_weapon_name_label.offset_right = 0
-	_weapon_name_label.offset_top = -23
-	_weapon_name_label.offset_bottom = -3
+	_weapon_name_label.offset_top = 0
+	_weapon_name_label.offset_bottom = 20
 	_weapon_name_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_RIGHT
 	equipment_group.add_child(_weapon_name_label)
 	_weapon_icon = TextureRect.new()
@@ -648,8 +648,8 @@ func _build_hud_tree() -> void:
 	inv_col.anchor_right = 1.0
 	inv_col.offset_left = -128
 	inv_col.offset_right = 0
-	inv_col.offset_top = 0
-	inv_col.offset_bottom = 200
+	inv_col.offset_top = 24
+	inv_col.offset_bottom = 224
 	inv_col.add_theme_constant_override("separation", 5)
 	inv_col.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	equipment_group.add_child(inv_col)
@@ -846,7 +846,7 @@ func _draw_scoreboard() -> void:
 			_score_ctrl.draw_rect(rectangle, Color(color, 0.3 if actor.is_alive else 0.08))
 			var portrait := GameData.get_texture("res://assets/ui/vgui/640_%s.png" % actor.class_id)
 			if portrait != null:
-				_score_ctrl.draw_texture_rect_region(rectangle.grow(-2), portrait, Rect2(20, 0, 88, 88), Color(1, 1, 1, 1.0 if actor.is_alive else 0.18))
+				_score_ctrl.draw_texture_rect_region(portrait, rectangle.grow(-2), Rect2(20, 0, 88, 88), Color(1, 1, 1, 1.0 if actor.is_alive else 0.18))
 			_score_ctrl.draw_line(rectangle.end - Vector2(rectangle.size.x, 0), rectangle.end, color, 2)
 			if not actor.is_alive:
 				_score_ctrl.draw_line(rectangle.position, rectangle.end, Color(0.8, 0.3, 0.25), 1)

@@ -9,8 +9,8 @@ func expect(ok: bool, label: String) -> void:
 		push_error("[HUD QA] " + label)
 func _ready() -> void:
 	_run.call_deferred()
-func settle() -> void:
-	for frame in range(8):
+func settle(frames: int = 8) -> void:
+	for frame in range(frames):
 		await get_tree().process_frame
 func capture(name: String) -> void:
 	var output := OS.get_environment("HUD_CAPTURE_DIR")
@@ -57,6 +57,7 @@ func _run() -> void:
 	expect(hud._inv_icons[3].texture != null, "owned utility appears even without slot dictionary entry")
 	expect(RoundManager.actors.size() == 10, "portrait strip uses actual match roster")
 	hud._on_kill_logged("CT player", "CT", "T player", "T", "mp7", true)
+	await settle(60)
 	await capture("hud_firearm")
 	var hashes: Dictionary = {}
 	var firearm_icon := GameData.equipment_icon("mp7")
@@ -78,6 +79,7 @@ func _run() -> void:
 	expect(hud._inv_icons[2].modulate == CSHud.HUD_WHITE, "only active inventory row fully highlighted")
 	expect(hud._ammo_label.text.is_empty(), "melee has no fake ammunition")
 	expect(player._cur_vm_model_name == "v_knife_karambit", "HUD icon matches actual in-hand viewmodel")
+	await settle(60)
 	await capture("hud_karambit")
 	get_tree().root.size = Vector2i(1024, 768)
 	await settle()
