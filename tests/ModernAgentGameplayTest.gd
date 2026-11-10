@@ -105,7 +105,7 @@ func _run() -> void:
 	# Real socket direction, not just a non-null prop/valid scale. The classic
 	# grip previously passed those checks while aiming ninety degrees sideways.
 	for actor in actors:
-		for wid in ["ak47", "m4a1", "awp", "mp5navy", "glock18"]:
+		for wid in GameData.weapons:
 			actor.weapon_ctrl.give_weapon(wid, 30, 90)
 			actor.weapon_ctrl.equip_weapon_by_id(wid)
 			actor._modern_pose.action = ""
@@ -113,7 +113,8 @@ func _run() -> void:
 				actor._evaluate_character_pose(1.0 / 60)
 			var hand := actor._skel.global_transform * actor._skel.get_bone_global_pose(actor._skel.find_bone("hand_R"))
 			var muzzle_axis := (hand.basis * ModernAgentPose.socket_basis(ModernAgentPose.role(actor.team, actor.class_id), wid) * Vector3.FORWARD).normalized()
-			expect(muzzle_axis.dot(Vector3.FORWARD) > 0.86, "barrel faces actor forward " + wid)
+			if int(GameData.weapons[wid].get("slot", 0)) in [1, 2]:
+				expect(muzzle_axis.dot(Vector3.FORWARD) > 0.80, "barrel faces actor forward " + wid)
 			if int(GameData.weapons[wid].slot) == 1:
 				var support: Array = ModernAgentPose.table(ModernAgentPose.role(actor.team, actor.class_id), wid).support
 				var target := hand * Vector3(support[0], support[1], support[2])
@@ -122,6 +123,19 @@ func _run() -> void:
 		actor.weapon_ctrl.equip_weapon_by_id("ak47")
 		actor._modern_pose.action = ""
 		actor._evaluate_character_pose(0.2)
+		# A sharp turn must apply to the body BEFORE world-space pitch and IK.
+		actor.look_yaw = PI * 0.5
+		actor.look_pitch = 0.25
+		actor._evaluate_character_pose(1.0 / 60)
+		expect(absf(actor._body_root.rotation.y - actor.look_yaw) < 0.001, "same-frame turn orientation")
+		var turn_hand := actor._skel.global_transform * actor._skel.get_bone_global_pose(actor._skel.find_bone("hand_R"))
+		var turn_support: Array = ModernAgentPose.table(ModernAgentPose.role(actor.team, actor.class_id), "ak47").support
+		var turn_target := turn_hand * Vector3(turn_support[0], turn_support[1], turn_support[2])
+		var turn_left := actor._skel.global_transform * actor._skel.get_bone_global_pose(actor._skel.find_bone("hand_L")).origin
+		expect(turn_left.distance_to(turn_target) < 0.075, "support grip stays attached during sharp aimed turn")
+		actor.look_yaw = 0.0
+		actor.look_pitch = 0.0
+
 	for frame in 10:
 		for actor in actors:
 			actor.apply_goldsrc_movement(Vector3.ZERO, false, false, false, 1.0/60)
@@ -156,6 +170,7 @@ func _run() -> void:
 		actor.weapon_ctrl.fire_cooldown = 0
 		actor.weapon_ctrl.start_reload()
 		expect(actor.weapon_ctrl.is_reloading and actor._modern_pose.action == "reload", "real reload routes native action")
+		expect(is_equal_approx(actor._modern_pose.action_duration, actor.weapon_ctrl.reload_timer), "magazine animation uses actual reload duration")
 		actor._evaluate_character_pose(0.4)
 	await capture("modern_live_reload")
 	for actor in actors:

@@ -108,6 +108,12 @@ func run() -> void:
 			expect(head.y > 1.2 and head.y < 2.2, "metric body proportions " + avatar)
 			actor._bullet_hitboxes.sync_pose()
 			expect(actor._bullet_hitboxes.entries.size() == 11, "animated hitboxes " + avatar)
+			for weapon_id in GameData.weapons:
+				var grip := ModernAgentPose.table(avatar, weapon_id)
+				expect(grip.has("basis") and grip.has("clips"), "per-weapon calibration " + avatar + "/" + weapon_id)
+				var basis := ModernAgentPose.socket_basis(avatar, weapon_id)
+				expect(basis.is_finite() and absf(basis.determinant()) > 0.01, "valid grip frame " + avatar + "/" + weapon_id)
+
 			actors.append(actor)
 			index += 1
 	for frame in 15:

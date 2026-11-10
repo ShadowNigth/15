@@ -95,13 +95,25 @@ func fit(actor, skeleton: Skeleton3D, native_action: bool) -> void:
 		solve_chain(skeleton.find_bone("Bip01 L UpperArm"), skeleton.find_bone("Bip01 L Forearm"), left, target)
 
 
-func fit_modern_support(skeleton: Skeleton3D, target_world: Vector3) -> bool:
+func fit_modern_support(skeleton: Skeleton3D, target_world: Vector3, weight: float = 1.0) -> bool:
 	_skeleton = skeleton
-	return solve_chain(skeleton.find_bone("arm_upper_L"), skeleton.find_bone("arm_lower_L"), skeleton.find_bone("hand_L"), skeleton.to_local(target_world))
+	var bones := [skeleton.find_bone("arm_upper_L"), skeleton.find_bone("arm_lower_L"), skeleton.find_bone("hand_L")]
+	if bones.min() < 0:
+		return false
+	var rotations: Array[Quaternion] = []
+	for bone in bones:
+		rotations.append(skeleton.get_bone_pose_rotation(bone))
+	var solved := solve_chain(bones[0], bones[1], bones[2], skeleton.to_local(target_world))
+	for index in bones.size():
+		var bone: int = bones[index]
+		skeleton.set_bone_pose_rotation(bone, rotations[index].slerp(skeleton.get_bone_pose_rotation(bone), clampf(weight, 0, 1)))
+	return solved
 
 
-func orient_modern_wrist(skeleton: Skeleton3D, target_world: Basis) -> void:
+func orient_modern_wrist(skeleton: Skeleton3D, target_world: Basis, weight: float = 1.0) -> void:
 	_skeleton = skeleton
 	var hand := skeleton.find_bone("hand_L")
 	if hand >= 0:
+		var before := skeleton.get_bone_pose_rotation(hand)
 		_rotate_to(hand, skeleton.global_basis.inverse() * target_world)
+		skeleton.set_bone_pose_rotation(hand, before.slerp(skeleton.get_bone_pose_rotation(hand), clampf(weight, 0, 1)))

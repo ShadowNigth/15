@@ -9,6 +9,10 @@ var clock := 0.0
 var action := ""
 var action_time := 0.0
 var action_weapon := ""
+var action_duration := 0.0
+var _support_weight := 1.0
+var _running := false
+var _direction := "n"
 var death_time := 0.0
 var selected_gait := "idle_rifle"
 var gait_phase := 0.0
@@ -88,16 +92,16 @@ static func fit_prop(prop: Node3D, avatar: String, wid: String) -> void:
 	# Socket includes the inverse inch-root scale. Meshes and textures are untouched.
 	prop.transform = Transform3D(socket_basis(avatar, wid).scaled(Vector3.ONE * GameData.get_world_model_scale(wid)), Vector3.ZERO)
 
-static func fit_support(skeleton: Skeleton3D, fit: ClassicPoseFit, appearance: String, wid: String) -> void:
-	if not ModernAgentPose.is_modern(skeleton) or int(GameData.weapons.get(wid, {}).get("slot", 0)) != 1:
+static func fit_support(skeleton: Skeleton3D, fit: ClassicPoseFit, appearance: String, wid: String, weight: float = 1.0) -> void:
+	if weight <= 0.0 or not ModernAgentPose.is_modern(skeleton) or int(GameData.weapons.get(wid, {}).get("slot", 0)) != 1:
 		return
 	var support: Array = ModernAgentPose.table(appearance, wid).get("support", [])
 	if support.size() == 3:
 		var hand := skeleton.global_transform * skeleton.get_bone_global_pose(skeleton.find_bone("hand_R"))
-		fit.fit_modern_support(skeleton, hand * Vector3(support[0], support[1], support[2]))
+		fit.fit_modern_support(skeleton, hand * Vector3(support[0], support[1], support[2]), weight)
 		var rotation: Array = ModernAgentPose.table(appearance, wid).get("support_rotation", [])
 		if rotation.size() == 4:
-			fit.orient_modern_wrist(skeleton, hand.basis.orthonormalized() * Basis(Quaternion(rotation[0], rotation[1], rotation[2], rotation[3])))
+			fit.orient_modern_wrist(skeleton, hand.basis.orthonormalized() * Basis(Quaternion(rotation[0], rotation[1], rotation[2], rotation[3])), weight)
 
 func trigger(actor, kind: String) -> void:
 	if not actor.is_alive:
@@ -111,6 +115,7 @@ func trigger(actor, kind: String) -> void:
 	action = kind
 	action_time = 0.0
 	action_weapon = actor.weapon_ctrl.current_weapon_id
+	action_duration = maxf(0.01, actor.weapon_ctrl.reload_timer) if kind == "reload" and not bool(actor.weapon_ctrl.get_current_spec().get("shotgun_reload", false)) else 0.0
 
 func tick(actor, delta: float) -> void:
 	var rig: Skeleton3D = actor._skel
@@ -138,6 +143,9 @@ func tick(actor, delta: float) -> void:
 		actor._body_root.position.y -= lowest
 		return
 	death_time = 0.0
+	# Set this frame's world orientation BEFORE world-space aim and hand IK.
+	actor._body_root.rotation = Vector3(0, actor.look_yaw, 0)
+	actor._body_root.position = actor.get_visual_world_pos() - actor.global_position
 	_support_fit.restore()
 	clock += delta
 	var prior_pos: Array[Vector3] = []
@@ -155,22 +163,27 @@ func tick(actor, delta: float) -> void:
 	var horizontal := Vector3(actor.velocity.x, 0, actor.velocity.z)
 	var speed := horizontal.length()
 	var local := Basis(Vector3.UP, actor.look_yaw).inverse() * horizontal
-	var direction := "n" if local.z < 0 else "s"
-	if absf(local.x) > absf(local.z):
-		direction = "e" if local.x > 0 else "w"
+	# Hysteresis avoids walk/run and diagonal-direction flicker near boundaries.
+	if speed > 0.3:
+		if absf(local.x) > absf(local.z) * 1.15:
+			_direction = "e" if local.x > 0 else "w"
+		elif absf(local.z) > absf(local.x) * 1.15:
+			_direction = "n" if local.z < 0 else "s"
+	_running = speed > (3.7 if _running else 4.3)
 	selected_gait = "idle_" + family
 	var rate := 1.0
-	if actor.is_crouching:
-		selected_gait = "crouch_" + direction + "_" + family if speed > 0.3 else "idle_crouch_" + family
-		rate = clampf(speed / 2.5, 0.5, 1.5) if speed > 0.3 else 1.0
-	elif actor.on_ladder:
+	if actor.on_ladder:
 		selected_gait = "walk_n_" + family
 		rate = clampf(absf(actor.velocity.y) / 3.0, 0.0, 1.5)
 	elif not actor.is_on_floor():
-		selected_gait = ("jump_stand_" if actor.velocity.y > 0.4 else "inair_stand_") + family
+		var stance := "crouch_stand_" if actor.is_crouching else "stand_"
+		selected_gait = ("jump_" if actor.velocity.y > 0.4 else "inair_") + stance + family
+	elif actor.is_crouching:
+		selected_gait = "crouch_" + _direction + "_" + family if speed > 0.3 else "idle_crouch_" + family
+		rate = clampf(speed / 2.5, 0.5, 1.5) if speed > 0.3 else 1.0
 	elif speed > 0.3:
-		selected_gait = ("run_" if speed > 4 else "walk_") + direction + "_" + family
-		rate = clampf(speed / (6.5 if speed > 4 else 3.4), 0.5, 1.5)
+		selected_gait = ("run_" if _running else "walk_") + _direction + "_" + family
+		rate = clampf(speed / (6.5 if _running else 3.4), 0.5, 1.5)
 	if not actor._anim_res_map.has(selected_gait):
 		selected_gait = "idle_rifle"
 	var clip: Animation = actor._anim_res_map[selected_gait]
@@ -194,8 +207,10 @@ func tick(actor, delta: float) -> void:
 			if actor._anim_res_map.has(key):
 				var active_clip: Animation = actor._anim_res_map[key]
 				action_time += delta
-				actor._apply_anim_layer(key, minf(action_time, active_clip.length), 1, minf(minf(1.0, action_time / 0.045), maxf(0.0, (active_clip.length - action_time) / 0.10)))
-				if action_time >= active_clip.length:
+				var duration := action_duration if action == "reload" and action_duration > 0.0 else active_clip.length
+				var sample := clampf(action_time / maxf(0.01, duration), 0.0, 1.0) * active_clip.length
+				actor._apply_anim_layer(key, sample, 1, minf(minf(1.0, action_time / 0.045), maxf(0.0, (duration - action_time) / 0.10)))
+				if action_time >= duration:
 					action = ""
 			else:
 				action = ""
@@ -226,8 +241,10 @@ func tick(actor, delta: float) -> void:
 	# The p_ meshes retain the established classic grip. Fit the support hand
 	# to that grip, not to the differently proportioned source weapon. Reloads,
 	# draws and one-handed tools retain their unpinned native animation.
-	if int(spec.get("slot", 0)) == 1 and action in ["", "shoot"]:
-		fit_support(rig, _support_fit, role(actor.team, actor.class_id), wid)
+	var can_support := int(spec.get("slot", 0)) == 1 and action in ["", "shoot"] and not actor.weapon_ctrl.is_reloading and not actor.weapon_ctrl.is_attaching_silencer and not actor.on_ladder
+	_support_weight = move_toward(_support_weight, 1.0 if can_support else 0.0, delta * 12.0)
+	if int(spec.get("slot", 0)) == 1:
+		fit_support(rig, _support_fit, role(actor.team, actor.class_id), wid, _support_weight)
 	actor._body_root.rotation = Vector3(0, actor.look_yaw, 0)
 	actor._body_root.position = actor.get_visual_world_pos() - actor.global_position
 	if actor.is_on_floor() and not _grounded:
