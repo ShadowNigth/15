@@ -162,7 +162,8 @@ func _run() -> void:
 	for actor in actors:
 		actor.velocity = Vector3.ZERO
 		actor.is_crouching = true
-		actor._evaluate_character_pose(0.1)
+		for frame in 20:
+			actor._evaluate_character_pose(1.0 / 60)
 	await capture("modern_live_crouch")
 	for actor in actors:
 		actor.is_crouching = false

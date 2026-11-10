@@ -85,12 +85,15 @@ jobs:
       - name: Rendered movement
         if: always()
         run: python tools/publish_modern_capture.py modern_live_run
-      - name: Rendered crouch and action grips
+      - name: Rendered crouch grip
         if: always()
-        run: |
-          python tools/publish_modern_capture.py modern_live_crouch
-          python tools/publish_modern_capture.py modern_live_shoot
-          python tools/publish_modern_capture.py modern_live_reload
+        run: python tools/publish_modern_capture.py modern_live_crouch
+      - name: Rendered firing grip
+        if: always()
+        run: python tools/publish_modern_capture.py modern_live_shoot
+      - name: Rendered reload grip
+        if: always()
+        run: python tools/publish_modern_capture.py modern_live_reload
       - name: Rendered team selector
         if: always()
         run: python tools/publish_modern_capture.py team_selection
