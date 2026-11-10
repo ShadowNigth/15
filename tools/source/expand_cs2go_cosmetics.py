@@ -85,7 +85,7 @@ def part_name(name,dual=False):
         if key in name:return prefix+('magazine2' if key=='clip2' else 'magazine' if key=='clip' else key)
     return prefix+'body'
 
-def surface(document,binary,material):
+def surface(document,binary,material,glove=False):
     positions=[];texcoords=[];triangles=[];owners=[]
     for mesh in document['meshes']:
         for p in mesh['primitives']:
@@ -97,7 +97,7 @@ def surface(document,binary,material):
             if 'JOINTS_0' in a:
                 joints=_accessor(document,binary,a['JOINTS_0']);weights=_accessor(document,binary,a['WEIGHTS_0'])
                 bone_nodes=document['skins'][0]['joints']
-                labels=[part_name(document['nodes'][bone_nodes[int(j)]]['name'],any('elite' in m.get('name','') for m in document['materials'])) for j in joints[np.arange(len(joints)),weights.argmax(1)]]
+                labels=[glove_part(document['nodes'][bone_nodes[int(j)]]['name']) if glove else part_name(document['nodes'][bone_nodes[int(j)]]['name'],any('elite' in m.get('name','') for m in document['materials'])) for j in joints[np.arange(len(joints)),weights.argmax(1)]]
             else: labels=['body']*len(v)
             triangles.extend(faces+len(positions));positions.extend(v);texcoords.extend(t);owners.extend(labels)
     assert positions,material
@@ -219,6 +219,12 @@ def glove_bone(name):
         return 'finger_'+names[int(finger[0])]+'_'+str(int(finger[1]) if len(finger)>1 else 0)+'_'+side
     return ''
 
+def glove_part(name):
+    bone=glove_bone(name) if 'Bip01' in name else name
+    side=bone[-1:] if bone[-1:] in ['L','R'] else ('L' if '_L' in bone else 'R')
+    if 'meta' in bone or 'arm_' in bone:return 'hand_'+side
+    return bone
+
 def gloves(selected,report):
     from .add_cs2_knives import matrices
     path=ROOT/'data/sport_gloves.json';catalog=json.loads(path.read_text())
@@ -246,7 +252,7 @@ def gloves(selected,report):
     joint_nodes=td['skins'][0]['joints'];mappings={};stats={}
     for mat in [m['name'] for m in td['materials']]:
         side='right' if '_l_' in mat else 'left'
-        target=surface(td,tb,[mat]);canonical=[]
+        target=surface(td,tb,[mat],glove=True);canonical=[];canonical_owners=[]
         # Sport output has one rigid owning joint per vertex, unchanged by this pass.
         matching=[p for m in td['meshes'] for p in m['primitives'] if td['materials'][p['material']]['name']==mat]
         for p in matching:
@@ -257,10 +263,12 @@ def gloves(selected,report):
                     hand_name=td['nodes'][bone]['name'].replace('_Forearm','_Hand').replace('_ForeTwist','_Hand')
                     bone=tn[hand_name]
                 source=paired[bone]
-                local=(np.linalg.inv(tg[bone])@np.append(v,1))[:3]@axis
+                local=(np.linalg.inv(tg[bone])@np.append(v,1))[:3]@axis * (0.0254 / 0.03125)
                 canonical.append((sg[source]@np.append(local,1))[:3])
+                canonical_owners.append(glove_part(sd['nodes'][source]['name']))
         target['positions']=np.array(canonical)
-        source=surface(sd,sb,['glove_sporty_'+side])
+        target['owners']=np.array(canonical_owners)
+        source=surface(sd,sb,['glove_sporty_'+side],glove=True)
         mappings[mat],stats[mat]=correspondence(target,source,256)
         if stats[mat]['median_distance']>.04:raise ValueError('Unaligned Sport surface '+mat+str(stats[mat]))
     catalog['options']=[o for o in catalog['options'] if not o['id'].startswith('cs2go_')]

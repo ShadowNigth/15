@@ -68,9 +68,9 @@ func run() -> void:
 	floor_body.add_child(floor_shape)
 	add_child(floor_body)
 	var camera := Camera3D.new()
-	camera.fov = 58
+	camera.fov = 36
 	add_child(camera)
-	camera.look_at_from_position(Vector3(0, 3.2, -8.6), Vector3(0, 0.9, 1.2))
+	camera.look_at_from_position(Vector3(0, 2.6, -7.5), Vector3(0, 0.9, 1.2))
 	camera.current = true
 	var env := Environment.new()
 	env.background_mode = Environment.BG_COLOR
@@ -131,8 +131,23 @@ func run() -> void:
 		GameData.select_weapon_skin(wid, rows[0].id)
 		GameData.select_glove("cs2go_5030_1417")
 		menu._load_viewer_weapon(wid)
-		await capture("cosmetic_" + wid)
+		await capture("cosmetic_arsenal_" + wid)
 	menu.free()
+	var player := PlayerController.new()
+	add_child(player)
+	player.set_team_and_class("CT", "urban")
+	player.spawn_for_round(Vector3.ZERO, 0.0, true)
+	player.set_physics_process(false)
+	player.set_process_unhandled_input(false)
+	player.weapon_ctrl.set_physics_process(false)
+	for wid in ["ak47", "m4a1", "awp"]:
+		player.weapon_ctrl.give_weapon(wid)
+		player.weapon_ctrl.force_equip(wid)
+		await get_tree().create_timer(1.5).timeout
+		expect(player._vm_model_root != null, "Production first-person model " + wid)
+		expect(player._vm_anim != null, "Production first-person animation " + wid)
+		await capture("cosmetic_" + wid)
+	player.free()
 	GameData.selected_weapon_skins = selected
 	GameData.selected_glove_id = old_glove
 	print("PASS: Cosmetics ", checks, " checks; ", failures, " failures")
