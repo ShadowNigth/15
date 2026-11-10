@@ -1,0 +1,48 @@
+name: Experimental movement QA
+on:
+  push:
+    paths:
+      - 'scripts/actors/**'
+      - 'scripts/core/GameData.gd'
+      - 'scripts/ui/MainMenu.gd'
+      - 'tests/MovementProfileTest*'
+      - '.github/workflows/movement-profile-qa.yml'
+  workflow_dispatch:
+concurrency:
+  group: movement-${{ github.ref }}
+  cancel-in-progress: true
+jobs:
+  movement:
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install Godot
+        run: |
+          curl -fL --retry 3 -o /tmp/godot.zip https://github.com/godotengine/godot-builds/releases/download/4.3-stable/Godot_v4.3-stable_linux.x86_64.zip
+          unzip -q /tmp/godot.zip -d /tmp/godot
+          sudo install -m 755 /tmp/godot/Godot_v4.3-stable_linux.x86_64 /usr/local/bin/godot
+      - name: Import
+        run: |
+          set -o pipefail
+          godot --headless --path . --import 2>&1 | tee /tmp/movement-import.log
+          ! grep -Eq 'SCRIPT ERROR:|Parse Error:|Compile Error:' /tmp/movement-import.log
+      - name: Equations and physical actors under both profiles
+        run: |
+          set -o pipefail
+          timeout 240s godot --headless --path . --fixed-fps 60 res://tests/MovementProfileTest.tscn 2>&1 | tee /tmp/movement.log
+          ! grep -Eq 'SCRIPT ERROR:|Parse Error:|Compile Error:|FAIL:' /tmp/movement.log
+          grep -q '\[MOVEMENT\] PASS:' /tmp/movement.log
+      - name: Diagnostics
+        if: always()
+        run: |
+          python3 - <<'PY'
+          from pathlib import Path
+          for name in ['movement-import', 'movement']:
+              p = Path('/tmp/' + name + '.log')
+              if p.exists():
+                  lines = list(dict.fromkeys(p.read_text(errors='replace').splitlines()))
+                  lines = [x for x in lines if any(k in x for k in ['[MOVEMENT]', 'ERROR:', ' at: ', 'Error:'])]
+                  text = '\n'.join(lines)[-6000:].replace('%', '%25').replace('\n', '%0A').replace('\r', '%0D')
+                  print('::notice title=' + name + '::' + text)
+          PY

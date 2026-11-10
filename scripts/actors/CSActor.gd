@@ -969,24 +969,27 @@ func apply_goldsrc_movement(wish_dir_world: Vector3, want_jump: bool, want_crouc
 
 	var grounded := is_on_floor()
 	if grounded:
-		# PM_Friction
-		var hvel := Vector2(velocity.x, velocity.z)
-		var spd := hvel.length()
-		if spd > 0.001:
-			var ctrl := maxf(spd, STOP_SPEED_MPS)
-			var drop := ctrl * FRICTION * delta
-			var news := maxf(0.0, spd - drop) / spd
-			velocity.x *= news
-			velocity.z *= news
+		if GameData.movement_profile == "cs2_experimental":
+			velocity = CS2GroundMovement.step(velocity, wish_dir_world, max_spd, delta)
+		else:
+			# PM_Friction
+			var hvel := Vector2(velocity.x, velocity.z)
+			var spd := hvel.length()
+			if spd > 0.001:
+				var ctrl := maxf(spd, STOP_SPEED_MPS)
+				var drop := ctrl * FRICTION * delta
+				var news := maxf(0.0, spd - drop) / spd
+				velocity.x *= news
+				velocity.z *= news
 
-		# SV_Accelerate
-		if wish_dir_world.length_squared() > 0.001:
-			var cur_proj := velocity.dot(wish_dir_world)
-			var add_spd := max_spd - cur_proj
-			if add_spd > 0.0:
-				var acc_spd := minf(add_spd, GROUND_ACCEL * max_spd * delta)
-				velocity.x += wish_dir_world.x * acc_spd
-				velocity.z += wish_dir_world.z * acc_spd
+			# SV_Accelerate
+			if wish_dir_world.length_squared() > 0.001:
+				var cur_proj := velocity.dot(wish_dir_world)
+				var add_spd := max_spd - cur_proj
+				if add_spd > 0.0:
+					var acc_spd := minf(add_spd, GROUND_ACCEL * max_spd * delta)
+					velocity.x += wish_dir_world.x * acc_spd
+					velocity.z += wish_dir_world.z * acc_spd
 
 		if want_jump:
 			velocity.y = JUMP_VEL_MPS * stamina_factor

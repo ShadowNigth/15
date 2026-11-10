@@ -368,6 +368,18 @@ func _build_play_dialog() -> void:
 	_game_mode_opt.add_item("Team Deathmatch (bots)")
 	_game_mode_opt.selected = 1 if GameData.game_mode == "deathmatch" else 0
 	settings_grid.add_child(_game_mode_opt)
+
+	var movement_label := Label.new()
+	movement_label.text = "Movimiento:"
+	settings_grid.add_child(movement_label)
+	var movement_options := OptionButton.new()
+	movement_options.name = "MovementProfile"
+	movement_options.add_item("Estilo CS2 — experimental")
+	movement_options.add_item("GoldSrc — clásico")
+	movement_options.select(0 if GameData.movement_profile == "cs2_experimental" else 1)
+	movement_options.tooltip_text = "Primera etapa: aceleración, frenado y counter-strafe en suelo. No es Rubikon ni subtick. Afecta al jugador y a los bots."
+	movement_options.item_selected.connect(func(index: int): GameData.movement_profile = "cs2_experimental" if index == 0 else "goldsrc")
+	settings_grid.add_child(movement_options)
 	var loadout_label := Label.new()
 	loadout_label.text = "Arma en DM:"
 	settings_grid.add_child(loadout_label)

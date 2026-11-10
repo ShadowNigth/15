@@ -44,6 +44,8 @@ var selected_knife_id: String = "original"
 var _original_knife_spec: Dictionary = {}
 
 # Match / User settings
+# Phase one: only grounded acceleration/braking. Air, jump and BSP movement remain classic.
+var movement_profile: String = "cs2_experimental"
 var game_mode: String = "classic" # classic / deathmatch (team DM)
 var dm_frag_limit: int = 40
 var dm_time_limit: float = 600.0
