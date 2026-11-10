@@ -142,6 +142,12 @@ func _run() -> void:
 			actor._evaluate_character_pose(1.0/60)
 		await get_tree().physics_frame
 	await capture("modern_live_idle")
+	for actor in actors:
+		for sample in [[4.0, "walk"], [4.4, "run"], [4.0, "run"], [3.6, "walk"]]:
+			actor.velocity = Vector3.FORWARD * float(sample[0])
+			actor._evaluate_character_pose(1.0 / 60)
+			expect(String(actor._modern_pose.selected_gait).begins_with(sample[1]), "stable walk/run hysteresis " + str(sample))
+		actor.velocity = Vector3.ZERO
 	for frame in 35:
 		for actor in actors:
 			actor.apply_goldsrc_movement(Vector3.FORWARD, false, false, false, 1.0/60)
