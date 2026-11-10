@@ -23,6 +23,9 @@ func _run() -> void:
 	RoundManager.set_process(false)
 	RoundManager.state = RoundManager.State.LIVE
 	RoundManager.game_world = self
+	expect(GameData.modern_agents.get("agents", {}).size() == 8, "eight genuine modern appearances")
+	expect(GameData.modern_agents.get("classes", {}).size() == 8, "all faction class aliases retained")
+	expect(ModernAgentPose.role("CT", "sas") == "sas" and ModernAgentPose.role("T", "terror") == "phoenix", "original modern SAS and Phoenix retained")
 	var floor_body := StaticBody3D.new()
 	floor_body.collision_layer = 1
 	var collision := CollisionShape3D.new()
