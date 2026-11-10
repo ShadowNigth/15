@@ -193,9 +193,9 @@ func _run() -> void:
 	if not _world.bots.is_empty():
 		var bot := _world.bots[0] as CSActor
 		if bot._held_weapon_model != null:
-			var expected_scale := GameData.get_world_model_scale(bot.weapon_ctrl.current_weapon_id)
+			var expected_scale := GameData.get_world_model_scale(bot.weapon_ctrl.current_weapon_id) * bot._body_root.scale.x
 			_expect(absf(bot._held_weapon_model.global_basis.get_scale().x - expected_scale) < 0.0001,
-				"Third-person hand attachment applies the per-weapon calibrated scale")
+				"Third-person hand attachment applies calibrated weapon scale with bot body enlargement")
 			bot._held_weapon_model.position += Vector3.ONE * 0.25
 			await get_tree().process_frame
 			_expect(bot._held_weapon_model.transform == bot._held_weapon_rest_transform,

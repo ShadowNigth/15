@@ -266,7 +266,7 @@ jobs:
           from pathlib import Path
           path = Path('/tmp/gameworld-smoke.log')
           if path.exists():
-              for line in path.read_text(errors='replace').splitlines()[-120:]:
+              for line in list(dict.fromkeys(path.read_text(errors='replace').splitlines()))[-120:]:
                   escaped = line.replace('%', '%25').replace('\r', '%0D').replace('\n', '%0A')
                   print(f'::notice title=Game world native log::{escaped}')
           PY
