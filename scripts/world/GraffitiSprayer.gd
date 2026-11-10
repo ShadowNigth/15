@@ -48,7 +48,7 @@ func _ready() -> void:
 func _process(delta: float) -> void:
 	cooldown = maxf(0.0, cooldown - delta)
 	_notice_time = maxf(0.0, _notice_time - delta)
-	_notice.visible = _notice_time > 0.0
+	_notice.visible = _notice_time > 0.0 and not GameplayInputGate.blocked()
 	_icon.visible = _notice.visible
 
 func show_notice(text: String, seconds: float = 2.5) -> void:

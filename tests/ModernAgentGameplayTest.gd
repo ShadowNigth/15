@@ -87,6 +87,7 @@ func _run() -> void:
 			expect(clips.has("idle"), "native hold " + wid)
 			if int(spec.get("slot", 0)) in [1, 2]:
 				expect(clips.has("shoot") and clips.has("reload"), "native firearm actions " + wid)
+		actor.weapon_ctrl.reset_loadout(actor.team, false)
 		actor.weapon_ctrl.give_weapon("ak47", 30, 90)
 		actor.weapon_ctrl.equip_weapon_by_id("ak47")
 		actor._modern_pose.action = ""

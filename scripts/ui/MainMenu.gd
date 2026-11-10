@@ -934,6 +934,9 @@ func _load_viewer_player(cid: String) -> void:
 				if a.to_lower() == "idle1" or a.to_lower().begins_with("idle"):
 					_viewer_anim.play(a)
 					break
+		if not skel_list.is_empty() and ModernAgentPose.is_modern(skel_list[0]) and _viewer_anim:
+			var is_ct := cid in ["urban", "gsg9", "sas", "gign"]
+			ModernPreviewGrip.attach(inst, skel_list[0], _viewer_anim, "sas" if is_ct else "phoenix", "m4a1" if is_ct else "ak47")
 	_viewer_stats_lbl.text = "SAS / Phoenix — CS2 agent appearance, native animation packs" if cid not in ["hostage", "scientist", "vip"] else "Classic mission character: " + cid
 
 

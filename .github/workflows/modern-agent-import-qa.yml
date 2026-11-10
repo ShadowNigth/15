@@ -15,6 +15,9 @@ on:
       - 'tests/GraffitiTest*'
       - '.github/workflows/modern-agent-import-qa.yml'
   workflow_dispatch:
+concurrency:
+  group: modern-agents-${{ github.ref }}
+  cancel-in-progress: true
 jobs:
   modern-agents:
     runs-on: ubuntu-latest
@@ -80,6 +83,9 @@ jobs:
       - name: Rendered movement
         if: always()
         run: python tools/publish_modern_capture.py modern_live_run
+      - name: Rendered team selector
+        if: always()
+        run: python tools/publish_modern_capture.py team_selection
       - name: Rendered death
         if: always()
         run: python tools/publish_modern_capture.py modern_live_death

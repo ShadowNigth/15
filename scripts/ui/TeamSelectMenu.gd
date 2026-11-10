@@ -177,6 +177,8 @@ func _build_preview(tm: String) -> void:
 		animation.add_animation_library("team_preview", library)
 		animation.play("team_preview/idle")
 		animation.advance(0.0)
+	if not skeletons.is_empty() and ModernAgentPose.is_modern(skeletons[0]):
+		ModernPreviewGrip.attach(model, skeletons[0], animation, ModernAgentPose.role(tm), "ak47" if tm == "T" else "m4a1")
 
 func _combined_idle(player: AnimationPlayer, skeleton: Skeleton3D, aim_name: String) -> Animation:
 	# GoldSrc splits gait and weapon aim. Playing them sequentially resets the

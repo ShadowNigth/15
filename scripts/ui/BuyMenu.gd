@@ -61,6 +61,7 @@ var _pv_hand: BoneAttachment3D = null
 var _pv_upper_mask: PackedByteArray = PackedByteArray()
 var _pv_tracks: Dictionary = {}  # anim name -> [Animation, [[track, bone, is_pos], ...]]
 var _pv_anim_t: float = 0.0
+var _pv_grip_fit := ClassicPoseFit.new()
 var _pv_class: String = ""
 var _pv_weapon: String = "?"
 var _pv_lower_name: String = ""
@@ -1106,9 +1107,12 @@ func _animate_preview(delta: float) -> void:
 	_pv_pivot.rotation.y = PI + 0.42 + sin(_time * 0.55) * 0.16
 	if _pv_skel == null or _pv_anim == null:
 		return
+	_pv_grip_fit.restore()
 	_pv_anim_t += delta
 	_apply_preview_clip(_pv_lower_name, 0)
 	_apply_preview_clip(_pv_upper_name, 1)
+	if is_instance_valid(player):
+		ModernPreviewGrip.fit_support(_pv_skel, _pv_grip_fit, ModernAgentPose.role(player.team), _pv_weapon)
 
 
 ## Upper body = Bip01 Spine and everything below it in the hierarchy.
