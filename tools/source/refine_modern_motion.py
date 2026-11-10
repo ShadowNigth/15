@@ -55,6 +55,13 @@ def refine():
         neutral = original_pose(target,blob,'ref_aim_carbine')
         srcneutral = original_pose(source,srcblob,'idle1')
         facing=Rotation.from_euler('y',90,degrees=True).as_matrix()
+        previous=[a for a in target['animations'] if a['name'] in CLIPS]
+        if previous:
+            first_accessor=min(s['input'] for a in previous for s in a['samplers'])
+            first_view=target['accessors'][first_accessor]['bufferView']
+            blob=blob[:target['bufferViews'][first_view].get('byteOffset',0)]
+            target['accessors']=target['accessors'][:first_accessor]
+            target['bufferViews']=target['bufferViews'][:first_view]
         target['animations'] = [a for a in target['animations'] if a['name'] not in CLIPS]
         for clip_name in CLIPS:
             clip = next(a for a in source['animations'] if a['name']==clip_name)
@@ -99,7 +106,7 @@ def refine():
         facing=Rotation.from_euler('y',90,degrees=True).as_matrix()
         for wid,entry in sockets[avatar].items():
             spec=weapons[wid]
-            ext='dualpistols' if wid=='elite' else 'onehanded' if spec.get('slot')==2 else 'knife' if wid=='knife' else 'ak47' if wid=='ak47' else 'carbine'
+            ext='dualpistols' if wid=='elite' else 'onehanded' if spec.get('slot')==2 else 'knife' if wid=='knife' else 'ak47' if wid=='ak47' else 'grenade' if spec.get('grenade') else 'c4' if wid=='c4' else 'rifle' if wid in ['awp','scout','g3sg1','sg550'] else 'shotgun' if wid in ['m3','xm1014','mag7','sawedoff'] else 'mp5' if wid in ['mp5navy','mac10','p90','mp7','bizon'] else 'm249' if wid in ['m249','negev'] else 'carbine'
             srcpose=original_pose(source,srcblob,'ref_aim_'+ext)
             pose=original_pose(target,blob,entry['clips']['idle'])
             r=pose[names['hand_R']]; l=pose[names['hand_L']]

@@ -98,7 +98,7 @@ func _run() -> void:
 	# Real socket direction, not just a non-null prop/valid scale. The classic
 	# grip previously passed those checks while aiming ninety degrees sideways.
 	for actor in actors:
-		for wid in ["ak47", "m4a1", "awp", "mp5", "glock18"]:
+		for wid in ["ak47", "m4a1", "awp", "mp5navy", "glock18"]:
 			actor.weapon_ctrl.give_weapon(wid, 30, 90)
 			actor.weapon_ctrl.equip_weapon_by_id(wid)
 			actor._modern_pose.action = ""
