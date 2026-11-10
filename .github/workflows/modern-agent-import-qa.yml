@@ -61,11 +61,13 @@ jobs:
       - name: Headless mission physics and tactical AI
         run: |
           set -o pipefail
+          result=0
           for suite in MissionObjectiveRegressionTest TacticalAIRegressionTest ArchiWeaponRuntimeTest ArchiGameWorldSmokeTest; do
-            timeout 600s godot --headless --path . --fixed-fps 60 res://tests/$suite.tscn 2>&1 | tee /tmp/$suite.log
-            ! grep -Eq 'SCRIPT ERROR:|Parse Error:|Compile Error:|FAIL:' /tmp/$suite.log
-            grep -q 'PASS:' /tmp/$suite.log
+            timeout 600s godot --headless --path . --fixed-fps 60 res://tests/$suite.tscn 2>&1 | tee /tmp/$suite.log || result=1
+            if grep -Eq 'SCRIPT ERROR:|Parse Error:|Compile Error:|FAIL:' /tmp/$suite.log; then result=1; fi
+            grep -q 'PASS:' /tmp/$suite.log || result=1
           done
+          exit "$result"
       - name: Diagnostics
         if: always()
         run: |

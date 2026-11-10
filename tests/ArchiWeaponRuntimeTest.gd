@@ -33,6 +33,9 @@ class FakeActor:
 	extends CharacterBody3D
 	var is_alive := true
 	var is_human := false
+	var is_crouching := false
+	var ui_blocking_input := false
+	var weapon_ctrl: WeaponController
 	var team := "CT"
 	var actor_name := "WeaponTest"
 	var sequences: Array = []
@@ -84,6 +87,7 @@ func _run() -> void:
 	_actor = FakeActor.new()
 	_world.add_child(_actor)
 	_controller = WeaponController.new()
+	_actor.weapon_ctrl = _controller
 	_actor.add_child(_controller)
 	_controller.setup_for_actor(_actor)
 	_controller.set_process(false)
