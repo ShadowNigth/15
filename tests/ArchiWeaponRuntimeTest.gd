@@ -435,7 +435,10 @@ func _test_weapon_skins() -> void:
 		var entry: Dictionary = catalog[wid]
 		var options: Array = []
 		for raw in entry.get("options", []):
-			if not String((raw as Dictionary).get("id", "")).begins_with("sc_"):
+			# Preserve the original BDS-specific six-per-family contract.
+			# The independent ScCsgoKnives and cs2go batches have their own runtime suites.
+			var option_id := String((raw as Dictionary).get("id", ""))
+			if not option_id.begins_with("sc_") and not option_id.begins_with("cs2go_"):
 				options.append(raw)
 		if options.is_empty():
 			continue

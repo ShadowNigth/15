@@ -142,7 +142,7 @@ func run() -> void:
 	player.weapon_ctrl.set_physics_process(false)
 	for wid in ["ak47", "m4a1", "awp"]:
 		player.weapon_ctrl.give_weapon(wid)
-		player.weapon_ctrl.force_equip(wid)
+		expect(player.weapon_ctrl.equip_weapon_by_id(wid), "Production equip " + wid)
 		await get_tree().create_timer(1.5).timeout
 		expect(player._vm_model_root != null, "Production first-person model " + wid)
 		expect(player._vm_anim != null, "Production first-person animation " + wid)
