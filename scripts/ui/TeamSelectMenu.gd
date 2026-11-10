@@ -139,7 +139,7 @@ func _build_preview(tm: String) -> void:
 	var model := scene.instantiate() as Node3D
 	stage.add_child(model)
 	# Classic clips are authored around the GoldSrc hull centre, not the feet.
-	model.position.y = CSActor.MODEL_STAND_OFFSET_Y
+	model.position.y = 0.0
 	model.rotation.y = PI + (-0.14 if tm == "T" else 0.14)
 	_models[tm] = model
 	_style_meshes(model)
@@ -156,14 +156,17 @@ func _build_preview(tm: String) -> void:
 	var skeletons := model.find_children("*", "Skeleton3D", true, false)
 	if not skeletons.is_empty():
 		var skeleton := skeletons[0] as Skeleton3D
-		if skeleton.find_bone("Bip01 R Hand") >= 0:
+		var hand_name := "hand_R" if ModernAgentPose.is_modern(skeleton) else "Bip01 R Hand"
+		if skeleton.find_bone(hand_name) >= 0:
 			var hand := BoneAttachment3D.new()
-			hand.bone_name = "Bip01 R Hand"
+			hand.bone_name = hand_name
 			skeleton.add_child(hand)
 			var weapon := GameData.get_model_scene("weapons/p_ak47" if tm == "T" else "weapons/p_m4a1")
 			if weapon != null:
 				var prop := weapon.instantiate()
 				hand.add_child(prop)
+				if ModernAgentPose.is_modern(skeleton):
+					ModernAgentPose.fit_prop(prop, ModernAgentPose.role(tm), "ak47" if tm == "T" else "m4a1")
 				_style_meshes(prop)
 	if animation.has_animation("idle1"):
 		# Do not mutate the shared imported animation resource.
@@ -180,7 +183,7 @@ func _combined_idle(player: AnimationPlayer, skeleton: Skeleton3D, aim_name: Str
 	# unkeyed upper body to a T-pose; combine disjoint tracks in a PRIVATE clip.
 	var idle := player.get_animation("idle1").duplicate() as Animation
 	var upper: Array[int] = []
-	var spine := skeleton.find_bone("Bip01 Spine")
+	var spine := skeleton.find_bone("spine_0" if ModernAgentPose.is_modern(skeleton) else "Bip01 Spine")
 	for bone in range(skeleton.get_bone_count()):
 		var ancestor := bone
 		while ancestor >= 0:

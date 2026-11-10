@@ -61,6 +61,7 @@ var _bullet_hitboxes: SkeletalHitboxes = null
 var _body_root: Node3D = null
 var _body_anim: AnimationPlayer = null
 var _skel: Skeleton3D = null
+var _modern_pose: ModernAgentPose = null
 var _hand_attachment: BoneAttachment3D = null
 var _held_weapon_model: Node3D = null
 var _classic_pose_fit := ClassicPoseFit.new()
@@ -145,6 +146,7 @@ func set_team_and_class(new_team: String, new_class: String) -> void:
 
 func _rebuild_character_model() -> void:
 	_classic_pose_fit.restore()
+	_modern_pose = null
 	_classic_pose_fit = ClassicPoseFit.new()
 	remove_from_group("skeletal_bullet_actors")
 	if is_instance_valid(_bullet_hitboxes):
@@ -183,14 +185,17 @@ func _rebuild_character_model() -> void:
 		_body_root.add_child(inst)
 		_body_anim = _find_anim(inst)
 		_skel = _find_skeleton(inst)
+		if ModernAgentPose.is_modern(_skel):
+			_modern_pose = ModernAgentPose.new()
 		if _body_anim and _skel:
 			_body_anim.active = false  # Driven directly by GoldSrc 2-layer Gait + Upper-Body blender!
 			_build_skeleton_blend_tables()
-			var rhand_idx := _skel.find_bone("Bip01 R Hand")
+			var hand_name := "hand_R" if _modern_pose != null else "Bip01 R Hand"
+			var rhand_idx := _skel.find_bone(hand_name)
 			if rhand_idx >= 0:
 				_hand_attachment = BoneAttachment3D.new()
 				_hand_attachment.name = "RightHandAttachment"
-				_hand_attachment.bone_name = "Bip01 R Hand"
+				_hand_attachment.bone_name = hand_name
 				_skel.add_child(_hand_attachment)
 
 				_tp_muzzle_sprite = Sprite3D.new()
@@ -218,7 +223,7 @@ func _rebuild_character_model() -> void:
 		if weapon_ctrl:
 			_update_held_weapon_model(weapon_ctrl.current_weapon_id)
 		_evaluate_character_pose(0.0)
-	_body_root.position.y = MODEL_CROUCH_OFFSET_Y if is_crouching else MODEL_STAND_OFFSET_Y
+	_body_root.position.y = 0.0 if _modern_pose != null else (MODEL_CROUCH_OFFSET_Y if is_crouching else MODEL_STAND_OFFSET_Y)
 	_body_root.visible = not is_human
 	if _skel != null:
 		_bullet_hitboxes = SkeletalHitboxes.new()
@@ -233,8 +238,8 @@ func _build_skeleton_blend_tables() -> void:
 	var nb := _skel.get_bone_count()
 	_is_upper_bone.resize(nb)
 	_is_upper_bone.fill(0)
-	_pelvis_bone_idx = _skel.find_bone("Bip01 Pelvis")
-	_spine_bone_idx = _skel.find_bone("Bip01 Spine")
+	_pelvis_bone_idx = _skel.find_bone("pelvis" if _modern_pose != null else "Bip01 Pelvis")
+	_spine_bone_idx = _skel.find_bone("spine_0" if _modern_pose != null else "Bip01 Spine")
 	if _spine_bone_idx >= 0:
 		_is_upper_bone[_spine_bone_idx] = 1
 		for bi in range(nb):
@@ -294,6 +299,8 @@ func _get_weapon_anim_ext(wid: String) -> String:
 
 
 func trigger_upper_body_action(action_kind: String) -> void:
+	if _modern_pose != null:
+		_modern_pose.trigger(self, action_kind)
 	if not is_alive or _anim_res_map.is_empty():
 		return
 	var wid := weapon_ctrl.current_weapon_id if weapon_ctrl else "usp"
@@ -453,6 +460,9 @@ func _tick_corpse_grounding(delta: float) -> void:
 
 
 func _evaluate_character_pose(delta: float) -> void:
+	if _modern_pose != null:
+		_modern_pose.tick(self, delta)
+		return
 	_classic_pose_fit.restore()
 	if _skel == null or _anim_res_map.is_empty():
 		return
@@ -639,6 +649,15 @@ func _update_held_weapon_model(wid: String) -> void:
 		p_inst.scale = Vector3.ONE * GameData.get_world_model_scale(wid)
 		_hand_attachment.add_child(p_inst)
 		_held_weapon_model = p_inst
+		if _modern_pose != null:
+			ModernAgentPose.fit_prop(p_inst, ModernAgentPose.role(team), wid)
+			var socket := ModernAgentPose.socket_basis(ModernAgentPose.role(team), wid)
+			if _tp_muzzle_sprite:
+				_tp_muzzle_sprite.position = socket * Vector3(-0.04, 0.06, -0.58)
+				_tp_muzzle_sprite.scale = Vector3.ONE / 0.0254
+			if _tp_muzzle_light:
+				_tp_muzzle_light.position = socket * Vector3(-0.04, 0.08, -0.62)
+			_modern_pose.trigger(self, "draw")
 		_held_weapon_rest_transform = p_inst.transform
 
 

@@ -915,9 +915,12 @@ func _load_viewer_player(cid: String) -> void:
 					break
 			if not skel_list.is_empty():
 				var sk := skel_list[0] as Skeleton3D
-				if sk and sk.find_bone("Bip01 R Hand") >= 0 and cid not in ["hostage", "scientist"]:
+				var hand_name := "hand_R" if ModernAgentPose.is_modern(sk) else "Bip01 R Hand"
+				if ModernAgentPose.is_modern(sk):
+					inst.position.y -= CSActor.MODEL_STAND_OFFSET_Y * 0.5
+				if sk and sk.find_bone(hand_name) >= 0 and cid not in ["hostage", "scientist"]:
 					var ba := BoneAttachment3D.new()
-					ba.bone_name = "Bip01 R Hand"
+					ba.bone_name = hand_name
 					sk.add_child(ba)
 					var wmdl := "p_usp" if cid == "vip" else ("p_m4a1" if is_ct_mdl else "p_ak47")
 					var wsc := GameData.get_model_scene("weapons/" + wmdl)
@@ -925,11 +928,13 @@ func _load_viewer_player(cid: String) -> void:
 						var wi := wsc.instantiate()
 						_style_viewer_meshes(wi)
 						ba.add_child(wi)
+						if ModernAgentPose.is_modern(sk):
+							ModernAgentPose.fit_prop(wi, "sas" if is_ct_mdl else "phoenix", "m4a1" if is_ct_mdl else "ak47")
 			for a in anim_list:
 				if a.to_lower() == "idle1" or a.to_lower().begins_with("idle"):
 					_viewer_anim.play(a)
 					break
-	_viewer_stats_lbl.text = "Player Model: %s.glb (converted from cstrike/models/player/%s/%s.mdl)" % [cid, cid, cid]
+	_viewer_stats_lbl.text = "SAS / Phoenix — CS2 agent appearance, native animation packs" if cid not in ["hostage", "scientist", "vip"] else "Classic mission character: " + cid
 
 
 func _test_viewer_fire() -> void:

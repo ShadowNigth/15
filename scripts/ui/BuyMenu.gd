@@ -1013,9 +1013,12 @@ func _ensure_preview_model() -> void:
 	if _pv_skel != null:
 		_build_preview_mask()
 		_pv_lower_name = _anim_named(_pv_anim, "idle1")
-		if _pv_skel.find_bone("Bip01 R Hand") >= 0:
+		var hand_name := "hand_R" if ModernAgentPose.is_modern(_pv_skel) else "Bip01 R Hand"
+		if ModernAgentPose.is_modern(_pv_skel):
+			inst.position.y = -CSActor.MODEL_STAND_OFFSET_Y
+		if _pv_skel.find_bone(hand_name) >= 0:
 			_pv_hand = BoneAttachment3D.new()
-			_pv_hand.bone_name = "Bip01 R Hand"
+			_pv_hand.bone_name = hand_name
 			_pv_skel.add_child(_pv_hand)
 		_animate_preview(0.0)
 
@@ -1084,11 +1087,15 @@ func _set_preview_weapon(wid: String) -> void:
 				var p_inst := p_sc.instantiate()
 				_style_meshes(p_inst)
 				_pv_hand.add_child(p_inst)
+				if ModernAgentPose.is_modern(_pv_skel):
+					ModernAgentPose.fit_prop(p_inst, ModernAgentPose.role(player.team), wid)
 	if _pv_anim != null and is_instance_valid(player):
 		var ext := String(player.call("_get_weapon_anim_ext", wid)) if not wid.is_empty() else "carbine"
 		var an := _anim_named(_pv_anim, "ref_aim_" + ext)
 		if an.is_empty():
 			an = _anim_named(_pv_anim, "ref_aim_carbine")
+		if ModernAgentPose.is_modern(_pv_skel) and _pv_anim.has_animation("modern_idle_" + wid):
+			an = "modern_idle_" + wid
 		_pv_upper_name = an
 
 
@@ -1109,7 +1116,7 @@ func _build_preview_mask() -> void:
 	var nb := _pv_skel.get_bone_count()
 	_pv_upper_mask.resize(nb)
 	_pv_upper_mask.fill(0)
-	var spine := _pv_skel.find_bone("Bip01 Spine")
+	var spine := _pv_skel.find_bone("spine_0" if ModernAgentPose.is_modern(_pv_skel) else "Bip01 Spine")
 	if spine < 0:
 		return
 	_pv_upper_mask[spine] = 1

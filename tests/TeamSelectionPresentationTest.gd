@@ -56,12 +56,12 @@ func check_pose_and_frame() -> void:
 		var skeleton := model.find_children("*", "Skeleton3D", true, false)[0] as Skeleton3D
 		var hands: Array[Vector3] = []
 		for side in ["L", "R"]:
-			hands.append(skeleton.get_bone_global_pose(skeleton.find_bone("Bip01 " + side + " Hand")).origin)
+			hands.append(skeleton.global_transform * skeleton.get_bone_global_pose(skeleton.find_bone("hand_" + side)).origin)
 		expect(hands[0].distance_to(hands[1]) < 0.85, "rifle stance, not a T-pose " + tm)
 		var camera := menu._cameras[tm] as Camera3D
 		var viewport := menu._viewports[tm] as SubViewport
 		var frame := Rect2(Vector2(3, 3), Vector2(viewport.size) - Vector2(6, 6))
-		for bone_name in ["Bip01 Head", "Bip01 L Foot", "Bip01 R Foot"]:
+		for bone_name in ["head_0", "ankle_L", "ankle_R"]:
 			var point := skeleton.global_transform * skeleton.get_bone_global_pose(skeleton.find_bone(bone_name)).origin
 			expect(not camera.is_position_behind(point) and frame.has_point(camera.unproject_position(point)), "full-body framing " + tm + " " + bone_name)
 
@@ -81,7 +81,7 @@ func _run() -> void:
 	expect(Input.mouse_mode == Input.MOUSE_MODE_VISIBLE, "visible cursor")
 	expect(not world.hud.visible, "gameplay HUD hidden under clean team presentation")
 	expect(not world.player._vm_layer.visible, "first-person weapon hidden under team presentation")
-	expect(menu._models.size() == 2 and menu._animations.size() == 2, "two genuine animated classic models")
+	expect(menu._models.size() == 2 and menu._animations.size() == 2, "two genuine animated modern models")
 	var count := RoundManager.actors.size()
 	for tm in ["T", "CT"]:
 		expect(menu._models[tm] is Node3D and not menu._models[tm] is CSActor, "cosmetic only " + tm)

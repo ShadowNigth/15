@@ -1,5 +1,5 @@
 extends Node3D
-# Keep the existing scene entry point, now guarding the requested classic rollback.
+# Production modern actors; mission characters and physics stay unchanged.
 var checks := 0
 var failures: Array[String] = []
 
@@ -55,9 +55,9 @@ func _run() -> void:
 		actor.weapon_ctrl.give_weapon("ak47", 30, 90)
 		actor.weapon_ctrl.equip_weapon_by_id("ak47")
 		actors.append(actor)
-		expect(actor._skel.find_bone("Bip01 Head") >= 0, "Actual classic " + role + " skeleton")
-		expect(actor._skel.find_bone("head_0") < 0, "No native tactical rig in live " + role)
-		expect(actor._hand_attachment.bone_name == "Bip01 R Hand", "Classic hand socket")
+		expect(actor._skel.find_bone("head_0") >= 0, "Actual modern " + role + " skeleton")
+		expect(actor._skel.find_bone("Bip01 Head") < 0, "No classic combatant rig in live " + role)
+		expect(actor._hand_attachment.bone_name == "hand_R", "Modern hand socket")
 		expect(actor._bullet_hitboxes.entries.size() == 11, "Skeletal bullet regions retained on classic rig")
 		actor._evaluate_character_pose(0.1)
 		actor._bullet_hitboxes.sync_pose()

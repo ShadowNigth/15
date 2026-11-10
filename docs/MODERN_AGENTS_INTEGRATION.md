@@ -53,3 +53,26 @@ idle, run and crouch clips. This isolated import test does NOT activate them as
 match defaults. Weapon-specific actions/grip calibration, death controller,
 preview integration and moving gameplay QA remain required before replacement.
 The earlier missing `ktx` executable is no longer a blocker.
+
+## Runtime activation
+
+Combat class aliases now resolve to SAS (CT) / Phoenix (T) everywhere, including
+team chooser, buy preview and Arsenal. Random internal class selection remains;
+there is still no manual class-selection step. VIP and hostages stay classic.
+Original classic files remain on disk as research/reference, not default combatants.
+
+ModernAgentPose selects native directional walk/run/crouch/air poses, weapon holds,
+draw/reload/fire upper layers, resets sparse tracks on transitions, applies aim
+pitch/recoil, and disables root displacement. The importer adds common rifle,
+pistol, knife/grenade and weapon-specific action packs. Legacy firearm aliases
+(e.g. P228/P250, M3/Nova, SG550/SCAR) use the corresponding available modern pack.
+Weapon sockets are calibrated per appearance and weapon from the modern hold pose
+against the established p_ mesh orientation. Inch-root scale is cancelled at the
+socket, preserving unchanged weapon geometry and world scale.
+
+Deaths are an original bounded procedural fall from the current live pose, combined
+with existing world corpse grounding and normal weapon drops. They are NOT native
+CS2 death clips or a full joint-by-joint physics ragdoll. No death GLB clips exist
+in the inspected source pack. Resurrection rebuilds the rig and resets this state.
+Animated skeletal bullet regions follow modern bone names. GoldSrc movement,
+first-person models/animations/gloves/skins, mission logic and AI remain unchanged.

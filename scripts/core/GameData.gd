@@ -319,6 +319,11 @@ func get_texture(res_path: String) -> Texture2D:
 
 
 func get_model_scene(rel_path: String) -> PackedScene:
+	# Appearance-only replacement; VIP/hostages and all gameplay class metadata remain.
+	if rel_path in ["players/urban", "players/gsg9", "players/sas", "players/gign"]:
+		rel_path = "modern/sas"
+	elif rel_path in ["players/terror", "players/leet", "players/arctic", "players/guerilla"]:
+		rel_path = "modern/phoenix"
 	var full := rel_path if rel_path.begins_with("res://") else ("res://assets/models/%s.glb" % rel_path)
 	if _scene_cache.has(full):
 		return _scene_cache[full]

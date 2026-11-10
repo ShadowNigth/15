@@ -1,9 +1,13 @@
-name: Modern agent import QA
+name: Modern agents gameplay QA
 on:
   push:
     paths:
       - 'assets/models/modern/**'
-      - 'tests/ModernAgentImportTest*'
+      - 'tests/ModernAgent*'
+      - 'scripts/actors/**'
+      - 'scripts/ui/**'
+      - 'data/modern_agent*'
+      - 'tools/publish_modern_capture.py'
       - 'scripts/actors/PlayerController.gd'
       - 'scripts/core/GameData.gd'
       - 'assets/textures/graffiti/**'
@@ -12,7 +16,7 @@ on:
       - '.github/workflows/modern-agent-import-qa.yml'
   workflow_dispatch:
 jobs:
-  graffiti:
+  modern-agents:
     runs-on: ubuntu-latest
     timeout-minutes: 25
     steps:
@@ -37,32 +41,44 @@ jobs:
           MODERN_CAPTURE_DIR=/tmp/modern-captures LIBGL_ALWAYS_SOFTWARE=1 timeout 180s xvfb-run -a godot --path . --audio-driver Dummy --rendering-method gl_compatibility --fixed-fps 60 res://tests/ModernAgentImportTest.tscn 2>&1 | tee /tmp/graffiti.log
           ! grep -Eq 'SCRIPT ERROR:|Parse Error:|Compile Error:|SHADER ERROR|FAIL:' /tmp/graffiti.log
           grep -q 'PASS:' /tmp/graffiti.log
-      - name: HUD and modal regressions
+      - name: Production characters movement combat death and respawn
         run: |
           set -o pipefail
-          for suite in HudColorTest UICustomizationTest; do
-            LIBGL_ALWAYS_SOFTWARE=1 timeout 300s xvfb-run -a godot --path . --audio-driver Dummy --rendering-method gl_compatibility --fixed-fps 60 res://tests/$suite.tscn 2>&1 | tee /tmp/$suite.log
+          MODERN_CAPTURE_DIR=/tmp/modern-captures LIBGL_ALWAYS_SOFTWARE=1 timeout 240s xvfb-run -a godot --path . --audio-driver Dummy --rendering-method gl_compatibility --fixed-fps 60 res://tests/ModernAgentGameplayTest.tscn 2>&1 | tee /tmp/ModernAgentGameplayTest.log
+          ! grep -Eq 'SCRIPT ERROR:|Parse Error:|Compile Error:|SHADER ERROR|FAIL:' /tmp/ModernAgentGameplayTest.log
+          grep -q 'PASS:' /tmp/ModernAgentGameplayTest.log
+      - name: Gameplay missions menus and HUD regressions
+        run: |
+          set -o pipefail
+          for suite in CombatNativeIntegrationTest TeamSelectionPresentationTest MainMenuPresentationTest BotCombatDisciplineTest SquadGameplayTest MissionObjectiveRegressionTest TacticalAIRegressionTest HudColorTest UICustomizationTest; do
+            TEAM_CAPTURE_DIR=/tmp/modern-captures MENU_CAPTURE_DIR=/tmp/modern-captures LIBGL_ALWAYS_SOFTWARE=1 timeout 360s xvfb-run -a godot --path . --audio-driver Dummy --rendering-method gl_compatibility --fixed-fps 60 res://tests/$suite.tscn 2>&1 | tee /tmp/$suite.log
             ! grep -Eq 'SCRIPT ERROR:|Parse Error:|Compile Error:|FAIL:' /tmp/$suite.log
             grep -q 'PASS:' /tmp/$suite.log
           done
-      - name: Capture preview
+      - name: Diagnostics
         if: always()
         run: |
           python - <<'PY'
-          from PIL import Image
           from pathlib import Path
-          import base64
-          p=Path('/tmp/modern-captures/modern_run.png')
-          if p.exists():
-              im=Image.open(p).convert('RGB'); im.thumbnail((960,540)); im.save('/tmp/graffiti.jpg',quality=72)
-              text=base64.b64encode(Path('/tmp/graffiti.jpg').read_bytes()).decode()
-              for n,i in enumerate(range(0,len(text),3500)):
-                  print(f'::notice title=graffiti-{n}::{text[i:i+3500]}')
+          for p in [Path('/tmp/graffiti-import.log'),Path('/tmp/graffiti.log'),*Path('/tmp').glob('*Test.log')]:
+              if p.exists():
+                  lines=p.read_text(errors='replace').splitlines()
+                  text='\n'.join(x for x in lines if any(k in x for k in ['SCRIPT ERROR','Parse Error','FAIL','PASS:','[MODERN GAMEPLAY]']))[-3500:]
+                  if text: print('::notice title='+p.stem+'::'+text.replace('%','%25').replace('\n','%0A'))
           PY
+      - name: Rendered idle
+        if: always()
+        run: python tools/publish_modern_capture.py modern_live_idle
+      - name: Rendered movement
+        if: always()
+        run: python tools/publish_modern_capture.py modern_live_run
+      - name: Rendered death
+        if: always()
+        run: python tools/publish_modern_capture.py modern_live_death
       - uses: actions/upload-artifact@v4
         if: always()
         with:
-          name: graffiti-evidence
+          name: modern-agent-evidence
           path: |
             /tmp/graffiti*.log
             /tmp/modern-captures/

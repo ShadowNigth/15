@@ -1,0 +1,2360 @@
+{
+  "sas": {
+    "knife": {
+      "basis": [
+        [
+          32.7521095210023,
+          -10.488881164049241,
+          19.164709075369064
+        ],
+        [
+          17.247050180191867,
+          33.61259482000505,
+          -11.07863834247153
+        ],
+        [
+          -13.41051355587504,
+          17.611936735710195,
+          32.557351559779626
+        ]
+      ],
+      "clips": {
+        "idle": "modern_idle_knife",
+        "idle_crouch": "modern_idle_crouch_knife",
+        "shoot": "modern_shoot_knife",
+        "draw": "modern_draw_knife",
+        "draw_crouch": "modern_draw_crouch_knife"
+      }
+    },
+    "usp": {
+      "basis": [
+        [
+          35.106543996317725,
+          -12.970489787454309,
+          12.218890500578514
+        ],
+        [
+          12.555101454323875,
+          -1.1532288979160903,
+          -37.29668888797658
+        ],
+        [
+          12.645310870754397,
+          37.15428129718238,
+          3.1079454041179915
+        ]
+      ],
+      "clips": {
+        "idle": "modern_idle_usp",
+        "idle_crouch": "modern_idle_crouch_usp",
+        "shoot": "modern_shoot_usp",
+        "reload": "modern_reload_usp",
+        "reload_crouch": "modern_reload_crouch_usp",
+        "draw": "modern_draw_usp",
+        "draw_crouch": "modern_draw_crouch_usp"
+      }
+    },
+    "glock18": {
+      "basis": [
+        [
+          36.685981915280536,
+          -8.05573740240574,
+          11.800355257381291
+        ],
+        [
+          11.839441868118,
+          -1.0622596696932982,
+          -37.532692927521744
+        ],
+        [
+          7.998159176504243,
+          38.52247315021154,
+          1.4326968891622252
+        ]
+      ],
+      "clips": {
+        "idle": "modern_idle_glock18",
+        "idle_crouch": "modern_idle_crouch_glock18",
+        "shoot": "modern_shoot_glock18",
+        "reload": "modern_reload_glock18",
+        "reload_crouch": "modern_reload_crouch_glock18",
+        "draw": "modern_draw_glock18",
+        "draw_crouch": "modern_draw_crouch_glock18"
+      }
+    },
+    "deagle": {
+      "basis": [
+        [
+          38.35091469181167,
+          -8.777014965217305,
+          1.4749381674450568
+        ],
+        [
+          -0.41847833184379163,
+          -8.295579534038799,
+          -38.483910413890065
+        ],
+        [
+          8.890215518211347,
+          37.47200639538788,
+          -8.174118547983916
+        ]
+      ],
+      "clips": {
+        "idle": "modern_idle_deagle",
+        "idle_crouch": "modern_idle_crouch_deagle",
+        "shoot": "modern_shoot_deagle",
+        "reload": "modern_reload_deagle",
+        "reload_crouch": "modern_reload_crouch_deagle",
+        "draw": "modern_draw_deagle",
+        "draw_crouch": "modern_draw_crouch_deagle"
+      }
+    },
+    "p228": {
+      "basis": [
+        [
+          35.152837861685605,
+          -12.973261841063607,
+          12.082092984473617
+        ],
+        [
+          12.335308724973459,
+          -1.371794401740863,
+          -37.362578864736
+        ],
+        [
+          12.732722703835728,
+          37.1458853483152,
+          2.839891556771556
+        ]
+      ],
+      "clips": {
+        "idle": "modern_idle_p228",
+        "idle_crouch": "modern_idle_crouch_p228",
+        "shoot": "modern_shoot_p228",
+        "reload": "modern_reload_p228",
+        "reload_crouch": "modern_reload_crouch_p228",
+        "draw": "modern_draw_p228",
+        "draw_crouch": "modern_draw_crouch_p228"
+      }
+    },
+    "elite": {
+      "basis": [
+        [
+          38.203187755060775,
+          -9.445284302665542,
+          1.143382428311608
+        ],
+        [
+          1.1513589776426183,
+          -0.10690886011760654,
+          -39.35310379372386
+        ],
+        [
+          9.444304851635028,
+          38.22014199074566,
+          0.17248393174131751
+        ]
+      ],
+      "clips": {
+        "idle": "modern_idle_elite",
+        "idle_crouch": "modern_idle_crouch_elite",
+        "shoot": "modern_shoot_elite",
+        "reload": "modern_reload_elite",
+        "reload_crouch": "modern_reload_crouch_elite",
+        "draw": "modern_draw_elite",
+        "draw_crouch": "modern_draw_crouch_elite"
+      }
+    },
+    "fiveseven": {
+      "basis": [
+        [
+          35.15283430825557,
+          -12.97326914088905,
+          12.082097871258414
+        ],
+        [
+          12.335314038698694,
+          -1.3718035235463775,
+          -37.36257755073785
+        ],
+        [
+          12.732731807925004,
+          37.145884439244,
+          2.8398878932262455
+        ]
+      ],
+      "clips": {
+        "idle": "modern_idle_fiveseven",
+        "idle_crouch": "modern_idle_crouch_fiveseven",
+        "shoot": "modern_shoot_fiveseven",
+        "reload": "modern_reload_fiveseven",
+        "reload_crouch": "modern_reload_crouch_fiveseven",
+        "draw": "modern_draw_fiveseven",
+        "draw_crouch": "modern_draw_crouch_fiveseven"
+      }
+    },
+    "m3": {
+      "basis": [
+        [
+          39.30339835635256,
+          -2.041468900051768,
+          1.0385921725749327
+        ],
+        [
+          0.7532879841625585,
+          -5.338119172433667,
+          -38.99923186269515
+        ],
+        [
+          2.163052197433603,
+          38.95304947675598,
+          -5.290017972660988
+        ]
+      ],
+      "clips": {
+        "idle": "modern_idle_m3",
+        "idle_crouch": "modern_idle_crouch_m3",
+        "shoot": "modern_shoot_m3",
+        "reload": "modern_reload_m3",
+        "reload_crouch": "modern_reload_crouch_m3",
+        "draw": "modern_draw_m3",
+        "draw_crouch": "modern_draw_crouch_m3"
+      }
+    },
+    "xm1014": {
+      "basis": [
+        [
+          38.47252690727847,
+          -8.092822481778189,
+          2.0913404670907334
+        ],
+        [
+          1.6240987931454312,
+          -2.4251600412734824,
+          -39.26173326713548
+        ],
+        [
+          8.19936835420046,
+          38.45292838724461,
+          -2.0360357735405925
+        ]
+      ],
+      "clips": {
+        "idle": "modern_idle_xm1014",
+        "idle_crouch": "modern_idle_crouch_xm1014",
+        "shoot": "modern_shoot_xm1014",
+        "reload": "modern_reload_xm1014",
+        "reload_crouch": "modern_reload_crouch_xm1014",
+        "draw": "modern_draw_xm1014",
+        "draw_crouch": "modern_draw_crouch_xm1014"
+      }
+    },
+    "mp5navy": {
+      "basis": [
+        [
+          39.320906258134286,
+          0.4078969615315597,
+          1.9244063462313434
+        ],
+        [
+          1.8827950065397117,
+          3.3545271600375597,
+          -39.18170105505964
+        ],
+        [
+          -0.5699171572953834,
+          39.224788308703864,
+          3.3308273140334057
+        ]
+      ],
+      "clips": {
+        "idle": "modern_idle_mp5navy",
+        "idle_crouch": "modern_idle_crouch_mp5navy",
+        "shoot": "modern_shoot_mp5navy",
+        "reload": "modern_reload_mp5navy",
+        "reload_crouch": "modern_reload_crouch_mp5navy",
+        "draw": "modern_draw_mp5navy",
+        "draw_crouch": "modern_draw_crouch_mp5navy"
+      }
+    },
+    "tmp": {
+      "basis": [
+        [
+          35.77992128630853,
+          -14.557360390126606,
+          7.608147180200345
+        ],
+        [
+          10.27350165240594,
+          5.604809473632519,
+          -37.5904783490977
+        ],
+        [
+          12.816219638387988,
+          36.14792330378507,
+          8.892401944255068
+        ]
+      ],
+      "clips": {
+        "idle": "modern_idle_tmp",
+        "idle_crouch": "modern_idle_crouch_tmp",
+        "shoot": "modern_shoot_tmp",
+        "reload": "modern_reload_tmp",
+        "reload_crouch": "modern_reload_crouch_tmp",
+        "draw": "modern_draw_tmp"
+      }
+    },
+    "p90": {
+      "basis": [
+        [
+          35.24082873356659,
+          -14.982642382674891,
+          -9.143711115842603
+        ],
+        [
+          -7.625604991932072,
+          5.403928913144265,
+          -38.24461566441337
+        ],
+        [
+          15.809396472886833,
+          36.00445612787047,
+          1.9351477291641757
+        ]
+      ],
+      "clips": {
+        "idle": "modern_idle_p90",
+        "idle_crouch": "modern_idle_crouch_p90",
+        "shoot": "modern_shoot_p90",
+        "reload": "modern_reload_p90",
+        "reload_crouch": "modern_reload_crouch_p90",
+        "draw": "modern_draw_p90",
+        "draw_crouch": "modern_draw_crouch_p90"
+      }
+    },
+    "mac10": {
+      "basis": [
+        [
+          35.35928063994663,
+          -16.93447001946207,
+          -3.598346901367913
+        ],
+        [
+          -1.5321991664317605,
+          5.089782442957669,
+          -39.00960283596896
+        ],
+        [
+          17.24460484708238,
+          35.17556740914775,
+          3.912205098529339
+        ]
+      ],
+      "clips": {
+        "idle": "modern_idle_mac10",
+        "idle_crouch": "modern_idle_crouch_mac10",
+        "shoot": "modern_shoot_mac10",
+        "reload": "modern_reload_mac10",
+        "draw": "modern_draw_mac10",
+        "draw_crouch": "modern_draw_crouch_mac10"
+      }
+    },
+    "ump45": {
+      "basis": [
+        [
+          37.69312473750442,
+          -10.998379980288503,
+          -2.8752933367678746
+        ],
+        [
+          -1.8341604807907674,
+          3.9435492770467353,
+          -39.1291148400453
+        ],
+        [
+          11.219068077563609,
+          37.59637085327617,
+          3.2631812668584126
+        ]
+      ],
+      "clips": {
+        "idle": "modern_idle_ump45",
+        "idle_crouch": "modern_idle_crouch_ump45",
+        "shoot": "modern_shoot_ump45",
+        "reload": "modern_reload_ump45",
+        "reload_crouch": "modern_reload_crouch_ump45",
+        "draw": "modern_draw_ump45",
+        "draw_crouch": "modern_draw_crouch_ump45"
+      }
+    },
+    "ak47": {
+      "basis": [
+        [
+          35.37252473941077,
+          -17.213792718239468,
+          -1.5726683193449362
+        ],
+        [
+          0.9452662534202614,
+          5.502955427598626,
+          -38.972130284529015
+        ],
+        [
+          17.259611031051765,
+          34.977219610190424,
+          5.357493106814186
+        ]
+      ],
+      "clips": {
+        "idle": "modern_idle_ak47",
+        "idle_crouch": "modern_idle_crouch_ak47",
+        "shoot": "modern_shoot_ak47",
+        "reload": "modern_reload_ak47",
+        "reload_crouch": "modern_reload_crouch_ak47",
+        "draw": "modern_draw_ak47",
+        "draw_crouch": "modern_draw_crouch_ak47"
+      }
+    },
+    "sg552": {
+      "basis": [
+        [
+          38.09939149056558,
+          -9.762430093871522,
+          1.7704949266222443
+        ],
+        [
+          1.7931364970355923,
+          -0.1346385388921487,
+          -39.32898884080929
+        ],
+        [
+          9.758287354149846,
+          38.14026514890716,
+          0.31433978510473787
+        ]
+      ],
+      "clips": {
+        "idle": "modern_idle_sg552",
+        "idle_crouch": "modern_idle_crouch_sg552",
+        "shoot": "modern_shoot_sg552",
+        "reload": "modern_reload_sg552",
+        "reload_crouch": "modern_reload_crouch_sg552",
+        "draw": "modern_draw_sg552",
+        "draw_crouch": "modern_draw_crouch_sg552"
+      }
+    },
+    "m4a1": {
+      "basis": [
+        [
+          39.08579345534456,
+          3.974762581841242,
+          2.5504735643284713
+        ],
+        [
+          2.5437448403045435,
+          0.19550681936943487,
+          -39.287322891238375
+        ],
+        [
+          -3.9790862027772733,
+          39.16842897670398,
+          -0.06272184280968059
+        ]
+      ],
+      "clips": {
+        "idle": "modern_idle_m4a1",
+        "idle_crouch": "modern_idle_crouch_m4a1",
+        "shoot": "modern_shoot_m4a1",
+        "reload": "modern_reload_m4a1",
+        "reload_crouch": "modern_reload_crouch_m4a1",
+        "draw": "modern_draw_m4a1",
+        "draw_crouch": "modern_draw_crouch_m4a1"
+      }
+    },
+    "aug": {
+      "basis": [
+        [
+          35.22028348683572,
+          -16.724417648154144,
+          -5.461558894812291
+        ],
+        [
+          -3.4407716790159446,
+          5.437890884874351,
+          -38.84061466364318
+        ],
+        [
+          17.253858103833707,
+          35.22394090342885,
+          3.403065483474827
+        ]
+      ],
+      "clips": {
+        "idle": "modern_idle_aug",
+        "idle_crouch": "modern_idle_crouch_aug",
+        "shoot": "modern_shoot_aug",
+        "reload": "modern_reload_aug",
+        "reload_crouch": "modern_reload_crouch_aug",
+        "draw": "modern_draw_aug",
+        "draw_crouch": "modern_draw_crouch_aug"
+      }
+    },
+    "scout": {
+      "basis": [
+        [
+          39.08579695758283,
+          3.97473752624651,
+          2.550498515739049
+        ],
+        [
+          2.5437683129641795,
+          0.19551336636327157,
+          -39.28732556952361
+        ],
+        [
+          -3.979057757805065,
+          39.16843464881392,
+          -0.0627160776463624
+        ]
+      ],
+      "clips": {
+        "idle": "modern_idle_scout",
+        "idle_crouch": "modern_idle_crouch_scout",
+        "shoot": "modern_shoot_scout",
+        "reload": "modern_reload_scout",
+        "reload_crouch": "modern_reload_crouch_scout",
+        "draw": "modern_draw_scout",
+        "draw_crouch": "modern_draw_crouch_scout"
+      }
+    },
+    "awp": {
+      "basis": [
+        [
+          38.35723708021426,
+          -5.218485415216472,
+          -7.175869284134111
+        ],
+        [
+          -6.476126163961445,
+          5.299114694729613,
+          -38.47053725967621
+        ],
+        [
+          6.06509735682659,
+          38.66121966111683,
+          4.30437860339895
+        ]
+      ],
+      "clips": {
+        "idle": "modern_idle_awp",
+        "idle_crouch": "modern_idle_crouch_awp",
+        "shoot": "modern_shoot_awp",
+        "reload": "modern_reload_awp",
+        "reload_crouch": "modern_reload_crouch_awp",
+        "draw": "modern_draw_awp",
+        "draw_crouch": "modern_draw_crouch_awp"
+      }
+    },
+    "g3sg1": {
+      "basis": [
+        [
+          38.744742117766144,
+          -5.491915078872816,
+          -4.322886896583439
+        ],
+        [
+          -4.107835600521664,
+          1.807386329129802,
+          -39.1134513220619
+        ],
+        [
+          5.654562589383707,
+          38.94323294239922,
+          1.2056571989804572
+        ]
+      ],
+      "clips": {
+        "idle": "modern_idle_g3sg1",
+        "idle_crouch": "modern_idle_crouch_g3sg1",
+        "shoot": "modern_shoot_g3sg1",
+        "reload": "modern_reload_g3sg1",
+        "reload_crouch": "modern_reload_crouch_g3sg1",
+        "draw": "modern_draw_g3sg1",
+        "draw_crouch": "modern_draw_crouch_g3sg1"
+      }
+    },
+    "sg550": {
+      "basis": [
+        [
+          36.94617485250452,
+          -13.544557202171976,
+          1.2362657224918436
+        ],
+        [
+          2.551541493779338,
+          3.3874189089804143,
+          -39.14099767752354
+        ],
+        [
+          13.3593681767744,
+          36.81131875592628,
+          4.056671678850844
+        ]
+      ],
+      "clips": {
+        "idle": "modern_idle_sg550",
+        "idle_crouch": "modern_idle_crouch_sg550",
+        "shoot": "modern_shoot_sg550",
+        "reload": "modern_reload_sg550",
+        "reload_crouch": "modern_reload_crouch_sg550",
+        "draw": "modern_draw_sg550",
+        "draw_crouch": "modern_draw_crouch_sg550"
+      }
+    },
+    "m249": {
+      "basis": [
+        [
+          38.936486410174666,
+          4.384967705082613,
+          3.8373309859959024
+        ],
+        [
+          2.63773035556579,
+          9.854615390068885,
+          -38.025408118027194
+        ],
+        [
+          -5.195724458424417,
+          37.863721319232454,
+          9.452297824988909
+        ]
+      ],
+      "clips": {
+        "idle": "modern_idle_m249",
+        "idle_crouch": "modern_idle_crouch_m249",
+        "shoot": "modern_shoot_m249",
+        "reload": "modern_reload_m249",
+        "reload_crouch": "modern_reload_crouch_m249",
+        "draw": "modern_draw_m249",
+        "draw_crouch": "modern_draw_crouch_m249"
+      }
+    },
+    "flashbang": {
+      "basis": [
+        [
+          -2.1308455658325696,
+          33.05028962472753,
+          21.287117637195813
+        ],
+        [
+          -7.43182388368717,
+          20.5952871620894,
+          -32.72009562200678
+        ],
+        [
+          -38.60349636754883,
+          -5.789258271394801,
+          5.124157084107118
+        ]
+      ],
+      "clips": {
+        "idle": "modern_idle_flashbang",
+        "idle_crouch": "modern_idle_crouch_flashbang",
+        "draw": "modern_draw_flashbang",
+        "draw_crouch": "modern_draw_crouch_flashbang"
+      }
+    },
+    "hegrenade": {
+      "basis": [
+        [
+          -2.1308455658325696,
+          33.05028962472753,
+          21.287117637195813
+        ],
+        [
+          -7.43182388368717,
+          20.5952871620894,
+          -32.72009562200678
+        ],
+        [
+          -38.60349636754883,
+          -5.789258271394801,
+          5.124157084107118
+        ]
+      ],
+      "clips": {
+        "idle": "modern_idle_hegrenade",
+        "idle_crouch": "modern_idle_crouch_hegrenade",
+        "draw": "modern_draw_hegrenade",
+        "draw_crouch": "modern_draw_crouch_hegrenade"
+      }
+    },
+    "smokegrenade": {
+      "basis": [
+        [
+          -2.1308455658325696,
+          33.05028962472753,
+          21.287117637195813
+        ],
+        [
+          -7.43182388368717,
+          20.5952871620894,
+          -32.72009562200678
+        ],
+        [
+          -38.60349636754883,
+          -5.789258271394801,
+          5.124157084107118
+        ]
+      ],
+      "clips": {
+        "idle": "modern_idle_smokegrenade",
+        "idle_crouch": "modern_idle_crouch_smokegrenade",
+        "draw": "modern_draw_smokegrenade",
+        "draw_crouch": "modern_draw_crouch_smokegrenade"
+      }
+    },
+    "c4": {
+      "basis": [
+        [
+          39.15349587819446,
+          -0.37115884386481185,
+          -4.1072386476319735
+        ],
+        [
+          -4.123060733302266,
+          -2.6953413023371438,
+          -39.060710130386546
+        ],
+        [
+          0.08705596212419998,
+          39.275950551609995,
+          -2.719389190156004
+        ]
+      ],
+      "clips": {
+        "idle": "modern_idle_c4",
+        "idle_crouch": "modern_idle_crouch_c4",
+        "draw": "modern_draw_c4",
+        "draw_crouch": "modern_draw_crouch_c4"
+      }
+    },
+    "p2000": {
+      "basis": [
+        [
+          35.11192517147187,
+          -12.98426410091991,
+          12.188771648724005
+        ],
+        [
+          12.528222212151435,
+          -1.1417758109533915,
+          -37.30608915791284
+        ],
+        [
+          12.657039382291067,
+          37.14982720987161,
+          3.113528307322781
+        ]
+      ],
+      "clips": {
+        "idle": "modern_idle_p2000",
+        "idle_crouch": "modern_idle_crouch_p2000",
+        "shoot": "modern_shoot_p2000",
+        "reload": "modern_reload_p2000",
+        "reload_crouch": "modern_reload_crouch_p2000",
+        "draw": "modern_draw_p2000",
+        "draw_crouch": "modern_draw_crouch_p2000"
+      }
+    },
+    "cz75": {
+      "basis": [
+        [
+          35.289253232625455,
+          -12.608740108844744,
+          12.070325770957648
+        ],
+        [
+          12.413036046693666,
+          -1.0119332772646545,
+          -37.34831345034816
+        ],
+        [
+          12.27148071130634,
+          37.28270194438852,
+          3.0683811132707293
+        ]
+      ],
+      "clips": {
+        "idle": "modern_idle_cz75",
+        "idle_crouch": "modern_idle_crouch_cz75",
+        "shoot": "modern_shoot_cz75",
+        "reload": "modern_reload_cz75",
+        "reload_crouch": "modern_reload_crouch_cz75",
+        "draw": "modern_draw_cz75",
+        "draw_crouch": "modern_draw_crouch_cz75"
+      }
+    },
+    "revolver": {
+      "basis": [
+        [
+          39.24093601859466,
+          -2.3891688589611513,
+          2.108223462532148
+        ],
+        [
+          1.61090633805538,
+          -7.599104620022066,
+          -38.59613836780834
+        ],
+        [
+          2.749107178564018,
+          38.555793058886366,
+          -7.4764177494636685
+        ]
+      ],
+      "clips": {
+        "idle": "modern_idle_revolver",
+        "idle_crouch": "modern_idle_crouch_revolver",
+        "shoot": "modern_shoot_revolver",
+        "reload": "modern_reload_revolver",
+        "reload_crouch": "modern_reload_crouch_revolver",
+        "draw": "modern_draw_revolver",
+        "draw_crouch": "modern_draw_crouch_revolver"
+      }
+    },
+    "tec9": {
+      "basis": [
+        [
+          38.06796902559709,
+          -9.678115826467591,
+          -2.677327749096309
+        ],
+        [
+          -4.156562967195204,
+          -5.631683707645826,
+          -38.74288784017751
+        ],
+        [
+          9.140948700003632,
+          37.74416995387525,
+          -6.467203820384876
+        ]
+      ],
+      "clips": {
+        "idle": "modern_idle_tec9",
+        "idle_crouch": "modern_idle_crouch_tec9",
+        "shoot": "modern_shoot_tec9",
+        "reload": "modern_reload_tec9",
+        "reload_crouch": "modern_reload_crouch_tec9",
+        "draw": "modern_draw_tec9",
+        "draw_crouch": "modern_draw_crouch_tec9"
+      }
+    },
+    "famas": {
+      "basis": [
+        [
+          36.597149489347984,
+          -13.302346112193195,
+          -5.805085128448256
+        ],
+        [
+          -7.128391964416557,
+          -2.7574200044186057,
+          -38.62104632425311
+        ],
+        [
+          12.642674642935328,
+          36.95195405521674,
+          -4.9717571290175755
+        ]
+      ],
+      "clips": {
+        "idle": "modern_idle_famas",
+        "idle_crouch": "modern_idle_crouch_famas",
+        "shoot": "modern_shoot_famas",
+        "reload": "modern_reload_famas",
+        "reload_crouch": "modern_reload_crouch_famas",
+        "draw": "modern_draw_famas",
+        "draw_crouch": "modern_draw_crouch_famas"
+      }
+    },
+    "galil": {
+      "basis": [
+        [
+          36.31719453477894,
+          -13.788656648191639,
+          -6.39825104443568
+        ],
+        [
+          -5.748246852805492,
+          2.8832709893686084,
+          -38.84130897730875
+        ],
+        [
+          14.072032544179567,
+          36.76360450180931,
+          0.646469895837155
+        ]
+      ],
+      "clips": {
+        "idle": "modern_idle_galil",
+        "idle_crouch": "modern_idle_crouch_galil",
+        "shoot": "modern_shoot_galil",
+        "reload": "modern_reload_galil",
+        "reload_crouch": "modern_reload_crouch_galil",
+        "draw": "modern_draw_galil",
+        "draw_crouch": "modern_draw_crouch_galil"
+      }
+    },
+    "m4a4": {
+      "basis": [
+        [
+          36.96286801942237,
+          -13.444209311873886,
+          1.7328734781949016
+        ],
+        [
+          3.0513051774851423,
+          3.348266873740217,
+          -39.108586062431115
+        ],
+        [
+          13.207532521291627,
+          36.85166611801129,
+          4.185506927007895
+        ]
+      ],
+      "clips": {
+        "idle": "modern_idle_m4a4",
+        "idle_crouch": "modern_idle_crouch_m4a4",
+        "shoot": "modern_shoot_m4a4",
+        "reload": "modern_reload_m4a4",
+        "reload_crouch": "modern_reload_crouch_m4a4",
+        "draw": "modern_draw_m4a4",
+        "draw_crouch": "modern_draw_crouch_m4a4"
+      }
+    },
+    "mag7": {
+      "basis": [
+        [
+          33.44628428921014,
+          -8.913657570452347,
+          18.75888693451955
+        ],
+        [
+          20.144823413450194,
+          5.271231462592395,
+          -33.412616291449794
+        ],
+        [
+          5.053222475236303,
+          37.98372920796914,
+          9.039020595653655
+        ]
+      ],
+      "clips": {
+        "idle": "modern_idle_mag7",
+        "idle_crouch": "modern_idle_crouch_mag7",
+        "shoot": "modern_shoot_mag7",
+        "reload": "modern_reload_mag7",
+        "reload_crouch": "modern_reload_crouch_mag7",
+        "draw": "modern_draw_mag7",
+        "draw_crouch": "modern_draw_crouch_mag7"
+      }
+    },
+    "sawedoff": {
+      "basis": [
+        [
+          38.6430465907449,
+          -7.339644616688399,
+          -1.6873922346670351
+        ],
+        [
+          -2.5782183127014306,
+          -4.604712773477564,
+          -39.01476566606294
+        ],
+        [
+          7.076039071490949,
+          38.40480333662284,
+          -5.00033965254792
+        ]
+      ],
+      "clips": {
+        "idle": "modern_idle_sawedoff",
+        "idle_crouch": "modern_idle_crouch_sawedoff",
+        "shoot": "modern_shoot_sawedoff",
+        "reload": "modern_reload_sawedoff",
+        "reload_crouch": "modern_reload_crouch_sawedoff",
+        "draw": "modern_draw_sawedoff",
+        "draw_crouch": "modern_draw_crouch_sawedoff"
+      }
+    },
+    "negev": {
+      "basis": [
+        [
+          38.50889578110164,
+          -8.0617992005708,
+          1.4407864207595362
+        ],
+        [
+          3.043364043712362,
+          7.656961601120198,
+          -38.498205049922454
+        ],
+        [
+          7.603044685605219,
+          37.767464359129534,
+          8.112660008851428
+        ]
+      ],
+      "clips": {
+        "idle": "modern_idle_negev",
+        "idle_crouch": "modern_idle_crouch_negev",
+        "shoot": "modern_shoot_negev",
+        "reload": "modern_reload_negev",
+        "reload_crouch": "modern_reload_crouch_negev",
+        "draw": "modern_draw_negev",
+        "draw_crouch": "modern_draw_crouch_negev"
+      }
+    },
+    "bizon": {
+      "basis": [
+        [
+          35.32863357691938,
+          -17.247982711441487,
+          -2.0972416858155327
+        ],
+        [
+          0.37914226227587705,
+          5.516281464274784,
+          -38.97986536915333
+        ],
+        [
+          17.37087695152309,
+          34.95827380553261,
+          5.116120906338877
+        ]
+      ],
+      "clips": {
+        "idle": "modern_idle_bizon",
+        "idle_crouch": "modern_idle_crouch_bizon",
+        "shoot": "modern_shoot_bizon",
+        "reload": "modern_reload_bizon",
+        "reload_crouch": "modern_reload_crouch_bizon",
+        "draw": "modern_draw_bizon",
+        "draw_crouch": "modern_draw_crouch_bizon"
+      }
+    },
+    "mp7": {
+      "basis": [
+        [
+          35.32849626028221,
+          -17.208049428336132,
+          2.404872300447583
+        ],
+        [
+          3.49878932577267,
+          1.708000308115152,
+          -39.177092620363226
+        ],
+        [
+          17.019363526541213,
+          35.36903486401904,
+          3.0619227893940133
+        ]
+      ],
+      "clips": {
+        "idle": "modern_idle_mp7",
+        "idle_crouch": "modern_idle_crouch_mp7",
+        "shoot": "modern_shoot_mp7",
+        "reload": "modern_reload_mp7",
+        "reload_crouch": "modern_reload_crouch_mp7",
+        "draw": "modern_draw_mp7",
+        "draw_crouch": "modern_draw_crouch_mp7"
+      }
+    },
+    "taser": {
+      "basis": [
+        [
+          37.748553433110324,
+          -10.897112671638972,
+          2.5106031763100387
+        ],
+        [
+          3.085136382623882,
+          1.6525751765782506,
+          -39.21421720250308
+        ],
+        [
+          10.748589208368147,
+          37.79583761942508,
+          2.438429191237828
+        ]
+      ],
+      "clips": {
+        "idle": "modern_idle_taser",
+        "idle_crouch": "modern_idle_crouch_taser",
+        "shoot": "modern_shoot_taser",
+        "draw": "modern_draw_taser",
+        "draw_crouch": "modern_draw_crouch_taser"
+      }
+    },
+    "decoy": {
+      "basis": [
+        [
+          -2.1308455658325696,
+          33.05028962472753,
+          21.287117637195813
+        ],
+        [
+          -7.43182388368717,
+          20.5952871620894,
+          -32.72009562200678
+        ],
+        [
+          -38.60349636754883,
+          -5.789258271394801,
+          5.124157084107118
+        ]
+      ],
+      "clips": {
+        "idle": "modern_idle_decoy",
+        "idle_crouch": "modern_idle_crouch_decoy",
+        "draw": "modern_draw_decoy",
+        "draw_crouch": "modern_draw_crouch_decoy"
+      }
+    },
+    "molotov": {
+      "basis": [
+        [
+          32.17929662980982,
+          5.699880477653774,
+          21.954672465356722
+        ],
+        [
+          8.562921228508834,
+          32.23435013169096,
+          -20.919502454115513
+        ],
+        [
+          -21.00410635644561,
+          21.873742887176846,
+          25.107163204598628
+        ]
+      ],
+      "clips": {
+        "idle": "modern_idle_molotov",
+        "idle_crouch": "modern_idle_crouch_molotov",
+        "draw": "modern_draw_molotov",
+        "draw_crouch": "modern_draw_crouch_molotov"
+      }
+    },
+    "incendiary": {
+      "basis": [
+        [
+          -2.1308455658325696,
+          33.05028962472753,
+          21.287117637195813
+        ],
+        [
+          -7.43182388368717,
+          20.5952871620894,
+          -32.72009562200678
+        ],
+        [
+          -38.60349636754883,
+          -5.789258271394801,
+          5.124157084107118
+        ]
+      ],
+      "clips": {
+        "idle": "modern_idle_incendiary",
+        "idle_crouch": "modern_idle_crouch_incendiary",
+        "draw": "modern_draw_incendiary",
+        "draw_crouch": "modern_draw_crouch_incendiary"
+      }
+    }
+  },
+  "phoenix": {
+    "knife": {
+      "basis": [
+        [
+          32.7521095210023,
+          -10.488881164049241,
+          19.164709075369064
+        ],
+        [
+          17.247050180191867,
+          33.61259482000505,
+          -11.07863834247153
+        ],
+        [
+          -13.41051355587504,
+          17.611936735710195,
+          32.557351559779626
+        ]
+      ],
+      "clips": {
+        "idle": "modern_idle_knife",
+        "idle_crouch": "modern_idle_crouch_knife",
+        "shoot": "modern_shoot_knife",
+        "draw": "modern_draw_knife",
+        "draw_crouch": "modern_draw_crouch_knife"
+      }
+    },
+    "usp": {
+      "basis": [
+        [
+          35.106543996317725,
+          -12.970489787454309,
+          12.218890500578514
+        ],
+        [
+          12.555101454323875,
+          -1.1532288979160903,
+          -37.29668888797658
+        ],
+        [
+          12.645310870754397,
+          37.15428129718238,
+          3.1079454041179915
+        ]
+      ],
+      "clips": {
+        "idle": "modern_idle_usp",
+        "idle_crouch": "modern_idle_crouch_usp",
+        "shoot": "modern_shoot_usp",
+        "reload": "modern_reload_usp",
+        "reload_crouch": "modern_reload_crouch_usp",
+        "draw": "modern_draw_usp",
+        "draw_crouch": "modern_draw_crouch_usp"
+      }
+    },
+    "glock18": {
+      "basis": [
+        [
+          36.685981915280536,
+          -8.05573740240574,
+          11.800355257381291
+        ],
+        [
+          11.839441868118,
+          -1.0622596696932982,
+          -37.532692927521744
+        ],
+        [
+          7.998159176504243,
+          38.52247315021154,
+          1.4326968891622252
+        ]
+      ],
+      "clips": {
+        "idle": "modern_idle_glock18",
+        "idle_crouch": "modern_idle_crouch_glock18",
+        "shoot": "modern_shoot_glock18",
+        "reload": "modern_reload_glock18",
+        "reload_crouch": "modern_reload_crouch_glock18",
+        "draw": "modern_draw_glock18",
+        "draw_crouch": "modern_draw_crouch_glock18"
+      }
+    },
+    "deagle": {
+      "basis": [
+        [
+          38.35091469181167,
+          -8.777014965217305,
+          1.4749381674450568
+        ],
+        [
+          -0.41847833184379163,
+          -8.295579534038799,
+          -38.483910413890065
+        ],
+        [
+          8.890215518211347,
+          37.47200639538788,
+          -8.174118547983916
+        ]
+      ],
+      "clips": {
+        "idle": "modern_idle_deagle",
+        "idle_crouch": "modern_idle_crouch_deagle",
+        "shoot": "modern_shoot_deagle",
+        "reload": "modern_reload_deagle",
+        "reload_crouch": "modern_reload_crouch_deagle",
+        "draw": "modern_draw_deagle",
+        "draw_crouch": "modern_draw_crouch_deagle"
+      }
+    },
+    "p228": {
+      "basis": [
+        [
+          35.152837861685605,
+          -12.973261841063607,
+          12.082092984473617
+        ],
+        [
+          12.335308724973459,
+          -1.371794401740863,
+          -37.362578864736
+        ],
+        [
+          12.732722703835728,
+          37.1458853483152,
+          2.839891556771556
+        ]
+      ],
+      "clips": {
+        "idle": "modern_idle_p228",
+        "idle_crouch": "modern_idle_crouch_p228",
+        "shoot": "modern_shoot_p228",
+        "reload": "modern_reload_p228",
+        "reload_crouch": "modern_reload_crouch_p228",
+        "draw": "modern_draw_p228",
+        "draw_crouch": "modern_draw_crouch_p228"
+      }
+    },
+    "elite": {
+      "basis": [
+        [
+          38.203187755060775,
+          -9.445284302665542,
+          1.143382428311608
+        ],
+        [
+          1.1513589776426183,
+          -0.10690886011760654,
+          -39.35310379372386
+        ],
+        [
+          9.444304851635028,
+          38.22014199074566,
+          0.17248393174131751
+        ]
+      ],
+      "clips": {
+        "idle": "modern_idle_elite",
+        "idle_crouch": "modern_idle_crouch_elite",
+        "shoot": "modern_shoot_elite",
+        "reload": "modern_reload_elite",
+        "reload_crouch": "modern_reload_crouch_elite",
+        "draw": "modern_draw_elite",
+        "draw_crouch": "modern_draw_crouch_elite"
+      }
+    },
+    "fiveseven": {
+      "basis": [
+        [
+          35.15283430825557,
+          -12.97326914088905,
+          12.082097871258414
+        ],
+        [
+          12.335314038698694,
+          -1.3718035235463775,
+          -37.36257755073785
+        ],
+        [
+          12.732731807925004,
+          37.145884439244,
+          2.8398878932262455
+        ]
+      ],
+      "clips": {
+        "idle": "modern_idle_fiveseven",
+        "idle_crouch": "modern_idle_crouch_fiveseven",
+        "shoot": "modern_shoot_fiveseven",
+        "reload": "modern_reload_fiveseven",
+        "reload_crouch": "modern_reload_crouch_fiveseven",
+        "draw": "modern_draw_fiveseven",
+        "draw_crouch": "modern_draw_crouch_fiveseven"
+      }
+    },
+    "m3": {
+      "basis": [
+        [
+          39.30339835635256,
+          -2.041468900051768,
+          1.0385921725749327
+        ],
+        [
+          0.7532879841625585,
+          -5.338119172433667,
+          -38.99923186269515
+        ],
+        [
+          2.163052197433603,
+          38.95304947675598,
+          -5.290017972660988
+        ]
+      ],
+      "clips": {
+        "idle": "modern_idle_m3",
+        "idle_crouch": "modern_idle_crouch_m3",
+        "shoot": "modern_shoot_m3",
+        "reload": "modern_reload_m3",
+        "reload_crouch": "modern_reload_crouch_m3",
+        "draw": "modern_draw_m3",
+        "draw_crouch": "modern_draw_crouch_m3"
+      }
+    },
+    "xm1014": {
+      "basis": [
+        [
+          38.47252690727847,
+          -8.092822481778189,
+          2.0913404670907334
+        ],
+        [
+          1.6240987931454312,
+          -2.4251600412734824,
+          -39.26173326713548
+        ],
+        [
+          8.19936835420046,
+          38.45292838724461,
+          -2.0360357735405925
+        ]
+      ],
+      "clips": {
+        "idle": "modern_idle_xm1014",
+        "idle_crouch": "modern_idle_crouch_xm1014",
+        "shoot": "modern_shoot_xm1014",
+        "reload": "modern_reload_xm1014",
+        "reload_crouch": "modern_reload_crouch_xm1014",
+        "draw": "modern_draw_xm1014",
+        "draw_crouch": "modern_draw_crouch_xm1014"
+      }
+    },
+    "mp5navy": {
+      "basis": [
+        [
+          39.320906258134286,
+          0.4078969615315597,
+          1.9244063462313434
+        ],
+        [
+          1.8827950065397117,
+          3.3545271600375597,
+          -39.18170105505964
+        ],
+        [
+          -0.5699171572953834,
+          39.224788308703864,
+          3.3308273140334057
+        ]
+      ],
+      "clips": {
+        "idle": "modern_idle_mp5navy",
+        "idle_crouch": "modern_idle_crouch_mp5navy",
+        "shoot": "modern_shoot_mp5navy",
+        "reload": "modern_reload_mp5navy",
+        "reload_crouch": "modern_reload_crouch_mp5navy",
+        "draw": "modern_draw_mp5navy",
+        "draw_crouch": "modern_draw_crouch_mp5navy"
+      }
+    },
+    "tmp": {
+      "basis": [
+        [
+          35.77992128630853,
+          -14.557360390126606,
+          7.608147180200345
+        ],
+        [
+          10.27350165240594,
+          5.604809473632519,
+          -37.5904783490977
+        ],
+        [
+          12.816219638387988,
+          36.14792330378507,
+          8.892401944255068
+        ]
+      ],
+      "clips": {
+        "idle": "modern_idle_tmp",
+        "idle_crouch": "modern_idle_crouch_tmp",
+        "shoot": "modern_shoot_tmp",
+        "reload": "modern_reload_tmp",
+        "reload_crouch": "modern_reload_crouch_tmp",
+        "draw": "modern_draw_tmp"
+      }
+    },
+    "p90": {
+      "basis": [
+        [
+          35.24082873356659,
+          -14.982642382674891,
+          -9.143711115842603
+        ],
+        [
+          -7.625604991932072,
+          5.403928913144265,
+          -38.24461566441337
+        ],
+        [
+          15.809396472886833,
+          36.00445612787047,
+          1.9351477291641757
+        ]
+      ],
+      "clips": {
+        "idle": "modern_idle_p90",
+        "idle_crouch": "modern_idle_crouch_p90",
+        "shoot": "modern_shoot_p90",
+        "reload": "modern_reload_p90",
+        "reload_crouch": "modern_reload_crouch_p90",
+        "draw": "modern_draw_p90",
+        "draw_crouch": "modern_draw_crouch_p90"
+      }
+    },
+    "mac10": {
+      "basis": [
+        [
+          35.35928063994663,
+          -16.93447001946207,
+          -3.598346901367913
+        ],
+        [
+          -1.5321991664317605,
+          5.089782442957669,
+          -39.00960283596896
+        ],
+        [
+          17.24460484708238,
+          35.17556740914775,
+          3.912205098529339
+        ]
+      ],
+      "clips": {
+        "idle": "modern_idle_mac10",
+        "idle_crouch": "modern_idle_crouch_mac10",
+        "shoot": "modern_shoot_mac10",
+        "reload": "modern_reload_mac10",
+        "draw": "modern_draw_mac10",
+        "draw_crouch": "modern_draw_crouch_mac10"
+      }
+    },
+    "ump45": {
+      "basis": [
+        [
+          37.69312473750442,
+          -10.998379980288503,
+          -2.8752933367678746
+        ],
+        [
+          -1.8341604807907674,
+          3.9435492770467353,
+          -39.1291148400453
+        ],
+        [
+          11.219068077563609,
+          37.59637085327617,
+          3.2631812668584126
+        ]
+      ],
+      "clips": {
+        "idle": "modern_idle_ump45",
+        "idle_crouch": "modern_idle_crouch_ump45",
+        "shoot": "modern_shoot_ump45",
+        "reload": "modern_reload_ump45",
+        "reload_crouch": "modern_reload_crouch_ump45",
+        "draw": "modern_draw_ump45",
+        "draw_crouch": "modern_draw_crouch_ump45"
+      }
+    },
+    "ak47": {
+      "basis": [
+        [
+          35.37252473941077,
+          -17.213792718239468,
+          -1.5726683193449362
+        ],
+        [
+          0.9452662534202614,
+          5.502955427598626,
+          -38.972130284529015
+        ],
+        [
+          17.259611031051765,
+          34.977219610190424,
+          5.357493106814186
+        ]
+      ],
+      "clips": {
+        "idle": "modern_idle_ak47",
+        "idle_crouch": "modern_idle_crouch_ak47",
+        "shoot": "modern_shoot_ak47",
+        "reload": "modern_reload_ak47",
+        "reload_crouch": "modern_reload_crouch_ak47",
+        "draw": "modern_draw_ak47",
+        "draw_crouch": "modern_draw_crouch_ak47"
+      }
+    },
+    "sg552": {
+      "basis": [
+        [
+          38.09939149056558,
+          -9.762430093871522,
+          1.7704949266222443
+        ],
+        [
+          1.7931364970355923,
+          -0.1346385388921487,
+          -39.32898884080929
+        ],
+        [
+          9.758287354149846,
+          38.14026514890716,
+          0.31433978510473787
+        ]
+      ],
+      "clips": {
+        "idle": "modern_idle_sg552",
+        "idle_crouch": "modern_idle_crouch_sg552",
+        "shoot": "modern_shoot_sg552",
+        "reload": "modern_reload_sg552",
+        "reload_crouch": "modern_reload_crouch_sg552",
+        "draw": "modern_draw_sg552",
+        "draw_crouch": "modern_draw_crouch_sg552"
+      }
+    },
+    "m4a1": {
+      "basis": [
+        [
+          39.08579345534456,
+          3.974762581841242,
+          2.5504735643284713
+        ],
+        [
+          2.5437448403045435,
+          0.19550681936943487,
+          -39.287322891238375
+        ],
+        [
+          -3.9790862027772733,
+          39.16842897670398,
+          -0.06272184280968059
+        ]
+      ],
+      "clips": {
+        "idle": "modern_idle_m4a1",
+        "idle_crouch": "modern_idle_crouch_m4a1",
+        "shoot": "modern_shoot_m4a1",
+        "reload": "modern_reload_m4a1",
+        "reload_crouch": "modern_reload_crouch_m4a1",
+        "draw": "modern_draw_m4a1",
+        "draw_crouch": "modern_draw_crouch_m4a1"
+      }
+    },
+    "aug": {
+      "basis": [
+        [
+          35.22028348683572,
+          -16.724417648154144,
+          -5.461558894812291
+        ],
+        [
+          -3.4407716790159446,
+          5.437890884874351,
+          -38.84061466364318
+        ],
+        [
+          17.253858103833707,
+          35.22394090342885,
+          3.403065483474827
+        ]
+      ],
+      "clips": {
+        "idle": "modern_idle_aug",
+        "idle_crouch": "modern_idle_crouch_aug",
+        "shoot": "modern_shoot_aug",
+        "reload": "modern_reload_aug",
+        "reload_crouch": "modern_reload_crouch_aug",
+        "draw": "modern_draw_aug",
+        "draw_crouch": "modern_draw_crouch_aug"
+      }
+    },
+    "scout": {
+      "basis": [
+        [
+          39.08579695758283,
+          3.97473752624651,
+          2.550498515739049
+        ],
+        [
+          2.5437683129641795,
+          0.19551336636327157,
+          -39.28732556952361
+        ],
+        [
+          -3.979057757805065,
+          39.16843464881392,
+          -0.0627160776463624
+        ]
+      ],
+      "clips": {
+        "idle": "modern_idle_scout",
+        "idle_crouch": "modern_idle_crouch_scout",
+        "shoot": "modern_shoot_scout",
+        "reload": "modern_reload_scout",
+        "reload_crouch": "modern_reload_crouch_scout",
+        "draw": "modern_draw_scout",
+        "draw_crouch": "modern_draw_crouch_scout"
+      }
+    },
+    "awp": {
+      "basis": [
+        [
+          38.35723708021426,
+          -5.218485415216472,
+          -7.175869284134111
+        ],
+        [
+          -6.476126163961445,
+          5.299114694729613,
+          -38.47053725967621
+        ],
+        [
+          6.06509735682659,
+          38.66121966111683,
+          4.30437860339895
+        ]
+      ],
+      "clips": {
+        "idle": "modern_idle_awp",
+        "idle_crouch": "modern_idle_crouch_awp",
+        "shoot": "modern_shoot_awp",
+        "reload": "modern_reload_awp",
+        "reload_crouch": "modern_reload_crouch_awp",
+        "draw": "modern_draw_awp",
+        "draw_crouch": "modern_draw_crouch_awp"
+      }
+    },
+    "g3sg1": {
+      "basis": [
+        [
+          38.744742117766144,
+          -5.491915078872816,
+          -4.322886896583439
+        ],
+        [
+          -4.107835600521664,
+          1.807386329129802,
+          -39.1134513220619
+        ],
+        [
+          5.654562589383707,
+          38.94323294239922,
+          1.2056571989804572
+        ]
+      ],
+      "clips": {
+        "idle": "modern_idle_g3sg1",
+        "idle_crouch": "modern_idle_crouch_g3sg1",
+        "shoot": "modern_shoot_g3sg1",
+        "reload": "modern_reload_g3sg1",
+        "reload_crouch": "modern_reload_crouch_g3sg1",
+        "draw": "modern_draw_g3sg1",
+        "draw_crouch": "modern_draw_crouch_g3sg1"
+      }
+    },
+    "sg550": {
+      "basis": [
+        [
+          36.94617485250452,
+          -13.544557202171976,
+          1.2362657224918436
+        ],
+        [
+          2.551541493779338,
+          3.3874189089804143,
+          -39.14099767752354
+        ],
+        [
+          13.3593681767744,
+          36.81131875592628,
+          4.056671678850844
+        ]
+      ],
+      "clips": {
+        "idle": "modern_idle_sg550",
+        "idle_crouch": "modern_idle_crouch_sg550",
+        "shoot": "modern_shoot_sg550",
+        "reload": "modern_reload_sg550",
+        "reload_crouch": "modern_reload_crouch_sg550",
+        "draw": "modern_draw_sg550",
+        "draw_crouch": "modern_draw_crouch_sg550"
+      }
+    },
+    "m249": {
+      "basis": [
+        [
+          38.936486410174666,
+          4.384967705082613,
+          3.8373309859959024
+        ],
+        [
+          2.63773035556579,
+          9.854615390068885,
+          -38.025408118027194
+        ],
+        [
+          -5.195724458424417,
+          37.863721319232454,
+          9.452297824988909
+        ]
+      ],
+      "clips": {
+        "idle": "modern_idle_m249",
+        "idle_crouch": "modern_idle_crouch_m249",
+        "shoot": "modern_shoot_m249",
+        "reload": "modern_reload_m249",
+        "reload_crouch": "modern_reload_crouch_m249",
+        "draw": "modern_draw_m249",
+        "draw_crouch": "modern_draw_crouch_m249"
+      }
+    },
+    "flashbang": {
+      "basis": [
+        [
+          -2.1308455658325696,
+          33.05028962472753,
+          21.287117637195813
+        ],
+        [
+          -7.43182388368717,
+          20.5952871620894,
+          -32.72009562200678
+        ],
+        [
+          -38.60349636754883,
+          -5.789258271394801,
+          5.124157084107118
+        ]
+      ],
+      "clips": {
+        "idle": "modern_idle_flashbang",
+        "idle_crouch": "modern_idle_crouch_flashbang",
+        "draw": "modern_draw_flashbang",
+        "draw_crouch": "modern_draw_crouch_flashbang"
+      }
+    },
+    "hegrenade": {
+      "basis": [
+        [
+          -2.1308455658325696,
+          33.05028962472753,
+          21.287117637195813
+        ],
+        [
+          -7.43182388368717,
+          20.5952871620894,
+          -32.72009562200678
+        ],
+        [
+          -38.60349636754883,
+          -5.789258271394801,
+          5.124157084107118
+        ]
+      ],
+      "clips": {
+        "idle": "modern_idle_hegrenade",
+        "idle_crouch": "modern_idle_crouch_hegrenade",
+        "draw": "modern_draw_hegrenade",
+        "draw_crouch": "modern_draw_crouch_hegrenade"
+      }
+    },
+    "smokegrenade": {
+      "basis": [
+        [
+          -2.1308455658325696,
+          33.05028962472753,
+          21.287117637195813
+        ],
+        [
+          -7.43182388368717,
+          20.5952871620894,
+          -32.72009562200678
+        ],
+        [
+          -38.60349636754883,
+          -5.789258271394801,
+          5.124157084107118
+        ]
+      ],
+      "clips": {
+        "idle": "modern_idle_smokegrenade",
+        "idle_crouch": "modern_idle_crouch_smokegrenade",
+        "draw": "modern_draw_smokegrenade",
+        "draw_crouch": "modern_draw_crouch_smokegrenade"
+      }
+    },
+    "c4": {
+      "basis": [
+        [
+          39.15349587819446,
+          -0.37115884386481185,
+          -4.1072386476319735
+        ],
+        [
+          -4.123060733302266,
+          -2.6953413023371438,
+          -39.060710130386546
+        ],
+        [
+          0.08705596212419998,
+          39.275950551609995,
+          -2.719389190156004
+        ]
+      ],
+      "clips": {
+        "idle": "modern_idle_c4",
+        "idle_crouch": "modern_idle_crouch_c4",
+        "draw": "modern_draw_c4",
+        "draw_crouch": "modern_draw_crouch_c4"
+      }
+    },
+    "p2000": {
+      "basis": [
+        [
+          35.11192517147187,
+          -12.98426410091991,
+          12.188771648724005
+        ],
+        [
+          12.528222212151435,
+          -1.1417758109533915,
+          -37.30608915791284
+        ],
+        [
+          12.657039382291067,
+          37.14982720987161,
+          3.113528307322781
+        ]
+      ],
+      "clips": {
+        "idle": "modern_idle_p2000",
+        "idle_crouch": "modern_idle_crouch_p2000",
+        "shoot": "modern_shoot_p2000",
+        "reload": "modern_reload_p2000",
+        "reload_crouch": "modern_reload_crouch_p2000",
+        "draw": "modern_draw_p2000",
+        "draw_crouch": "modern_draw_crouch_p2000"
+      }
+    },
+    "cz75": {
+      "basis": [
+        [
+          35.289253232625455,
+          -12.608740108844744,
+          12.070325770957648
+        ],
+        [
+          12.413036046693666,
+          -1.0119332772646545,
+          -37.34831345034816
+        ],
+        [
+          12.27148071130634,
+          37.28270194438852,
+          3.0683811132707293
+        ]
+      ],
+      "clips": {
+        "idle": "modern_idle_cz75",
+        "idle_crouch": "modern_idle_crouch_cz75",
+        "shoot": "modern_shoot_cz75",
+        "reload": "modern_reload_cz75",
+        "reload_crouch": "modern_reload_crouch_cz75",
+        "draw": "modern_draw_cz75",
+        "draw_crouch": "modern_draw_crouch_cz75"
+      }
+    },
+    "revolver": {
+      "basis": [
+        [
+          39.24093601859466,
+          -2.3891688589611513,
+          2.108223462532148
+        ],
+        [
+          1.61090633805538,
+          -7.599104620022066,
+          -38.59613836780834
+        ],
+        [
+          2.749107178564018,
+          38.555793058886366,
+          -7.4764177494636685
+        ]
+      ],
+      "clips": {
+        "idle": "modern_idle_revolver",
+        "idle_crouch": "modern_idle_crouch_revolver",
+        "shoot": "modern_shoot_revolver",
+        "reload": "modern_reload_revolver",
+        "reload_crouch": "modern_reload_crouch_revolver",
+        "draw": "modern_draw_revolver",
+        "draw_crouch": "modern_draw_crouch_revolver"
+      }
+    },
+    "tec9": {
+      "basis": [
+        [
+          38.06796902559709,
+          -9.678115826467591,
+          -2.677327749096309
+        ],
+        [
+          -4.156562967195204,
+          -5.631683707645826,
+          -38.74288784017751
+        ],
+        [
+          9.140948700003632,
+          37.74416995387525,
+          -6.467203820384876
+        ]
+      ],
+      "clips": {
+        "idle": "modern_idle_tec9",
+        "idle_crouch": "modern_idle_crouch_tec9",
+        "shoot": "modern_shoot_tec9",
+        "reload": "modern_reload_tec9",
+        "reload_crouch": "modern_reload_crouch_tec9",
+        "draw": "modern_draw_tec9",
+        "draw_crouch": "modern_draw_crouch_tec9"
+      }
+    },
+    "famas": {
+      "basis": [
+        [
+          36.597149489347984,
+          -13.302346112193195,
+          -5.805085128448256
+        ],
+        [
+          -7.128391964416557,
+          -2.7574200044186057,
+          -38.62104632425311
+        ],
+        [
+          12.642674642935328,
+          36.95195405521674,
+          -4.9717571290175755
+        ]
+      ],
+      "clips": {
+        "idle": "modern_idle_famas",
+        "idle_crouch": "modern_idle_crouch_famas",
+        "shoot": "modern_shoot_famas",
+        "reload": "modern_reload_famas",
+        "reload_crouch": "modern_reload_crouch_famas",
+        "draw": "modern_draw_famas",
+        "draw_crouch": "modern_draw_crouch_famas"
+      }
+    },
+    "galil": {
+      "basis": [
+        [
+          36.31719453477894,
+          -13.788656648191639,
+          -6.39825104443568
+        ],
+        [
+          -5.748246852805492,
+          2.8832709893686084,
+          -38.84130897730875
+        ],
+        [
+          14.072032544179567,
+          36.76360450180931,
+          0.646469895837155
+        ]
+      ],
+      "clips": {
+        "idle": "modern_idle_galil",
+        "idle_crouch": "modern_idle_crouch_galil",
+        "shoot": "modern_shoot_galil",
+        "reload": "modern_reload_galil",
+        "reload_crouch": "modern_reload_crouch_galil",
+        "draw": "modern_draw_galil",
+        "draw_crouch": "modern_draw_crouch_galil"
+      }
+    },
+    "m4a4": {
+      "basis": [
+        [
+          36.96286801942237,
+          -13.444209311873886,
+          1.7328734781949016
+        ],
+        [
+          3.0513051774851423,
+          3.348266873740217,
+          -39.108586062431115
+        ],
+        [
+          13.207532521291627,
+          36.85166611801129,
+          4.185506927007895
+        ]
+      ],
+      "clips": {
+        "idle": "modern_idle_m4a4",
+        "idle_crouch": "modern_idle_crouch_m4a4",
+        "shoot": "modern_shoot_m4a4",
+        "reload": "modern_reload_m4a4",
+        "reload_crouch": "modern_reload_crouch_m4a4",
+        "draw": "modern_draw_m4a4",
+        "draw_crouch": "modern_draw_crouch_m4a4"
+      }
+    },
+    "mag7": {
+      "basis": [
+        [
+          33.44628428921014,
+          -8.913657570452347,
+          18.75888693451955
+        ],
+        [
+          20.144823413450194,
+          5.271231462592395,
+          -33.412616291449794
+        ],
+        [
+          5.053222475236303,
+          37.98372920796914,
+          9.039020595653655
+        ]
+      ],
+      "clips": {
+        "idle": "modern_idle_mag7",
+        "idle_crouch": "modern_idle_crouch_mag7",
+        "shoot": "modern_shoot_mag7",
+        "reload": "modern_reload_mag7",
+        "reload_crouch": "modern_reload_crouch_mag7",
+        "draw": "modern_draw_mag7",
+        "draw_crouch": "modern_draw_crouch_mag7"
+      }
+    },
+    "sawedoff": {
+      "basis": [
+        [
+          38.6430465907449,
+          -7.339644616688399,
+          -1.6873922346670351
+        ],
+        [
+          -2.5782183127014306,
+          -4.604712773477564,
+          -39.01476566606294
+        ],
+        [
+          7.076039071490949,
+          38.40480333662284,
+          -5.00033965254792
+        ]
+      ],
+      "clips": {
+        "idle": "modern_idle_sawedoff",
+        "idle_crouch": "modern_idle_crouch_sawedoff",
+        "shoot": "modern_shoot_sawedoff",
+        "reload": "modern_reload_sawedoff",
+        "reload_crouch": "modern_reload_crouch_sawedoff",
+        "draw": "modern_draw_sawedoff",
+        "draw_crouch": "modern_draw_crouch_sawedoff"
+      }
+    },
+    "negev": {
+      "basis": [
+        [
+          38.50889578110164,
+          -8.0617992005708,
+          1.4407864207595362
+        ],
+        [
+          3.043364043712362,
+          7.656961601120198,
+          -38.498205049922454
+        ],
+        [
+          7.603044685605219,
+          37.767464359129534,
+          8.112660008851428
+        ]
+      ],
+      "clips": {
+        "idle": "modern_idle_negev",
+        "idle_crouch": "modern_idle_crouch_negev",
+        "shoot": "modern_shoot_negev",
+        "reload": "modern_reload_negev",
+        "reload_crouch": "modern_reload_crouch_negev",
+        "draw": "modern_draw_negev",
+        "draw_crouch": "modern_draw_crouch_negev"
+      }
+    },
+    "bizon": {
+      "basis": [
+        [
+          35.32863357691938,
+          -17.247982711441487,
+          -2.0972416858155327
+        ],
+        [
+          0.37914226227587705,
+          5.516281464274784,
+          -38.97986536915333
+        ],
+        [
+          17.37087695152309,
+          34.95827380553261,
+          5.116120906338877
+        ]
+      ],
+      "clips": {
+        "idle": "modern_idle_bizon",
+        "idle_crouch": "modern_idle_crouch_bizon",
+        "shoot": "modern_shoot_bizon",
+        "reload": "modern_reload_bizon",
+        "reload_crouch": "modern_reload_crouch_bizon",
+        "draw": "modern_draw_bizon",
+        "draw_crouch": "modern_draw_crouch_bizon"
+      }
+    },
+    "mp7": {
+      "basis": [
+        [
+          35.32849626028221,
+          -17.208049428336132,
+          2.404872300447583
+        ],
+        [
+          3.49878932577267,
+          1.708000308115152,
+          -39.177092620363226
+        ],
+        [
+          17.019363526541213,
+          35.36903486401904,
+          3.0619227893940133
+        ]
+      ],
+      "clips": {
+        "idle": "modern_idle_mp7",
+        "idle_crouch": "modern_idle_crouch_mp7",
+        "shoot": "modern_shoot_mp7",
+        "reload": "modern_reload_mp7",
+        "reload_crouch": "modern_reload_crouch_mp7",
+        "draw": "modern_draw_mp7",
+        "draw_crouch": "modern_draw_crouch_mp7"
+      }
+    },
+    "taser": {
+      "basis": [
+        [
+          37.748553433110324,
+          -10.897112671638972,
+          2.5106031763100387
+        ],
+        [
+          3.085136382623882,
+          1.6525751765782506,
+          -39.21421720250308
+        ],
+        [
+          10.748589208368147,
+          37.79583761942508,
+          2.438429191237828
+        ]
+      ],
+      "clips": {
+        "idle": "modern_idle_taser",
+        "idle_crouch": "modern_idle_crouch_taser",
+        "shoot": "modern_shoot_taser",
+        "draw": "modern_draw_taser",
+        "draw_crouch": "modern_draw_crouch_taser"
+      }
+    },
+    "decoy": {
+      "basis": [
+        [
+          -2.1308455658325696,
+          33.05028962472753,
+          21.287117637195813
+        ],
+        [
+          -7.43182388368717,
+          20.5952871620894,
+          -32.72009562200678
+        ],
+        [
+          -38.60349636754883,
+          -5.789258271394801,
+          5.124157084107118
+        ]
+      ],
+      "clips": {
+        "idle": "modern_idle_decoy",
+        "idle_crouch": "modern_idle_crouch_decoy",
+        "draw": "modern_draw_decoy",
+        "draw_crouch": "modern_draw_crouch_decoy"
+      }
+    },
+    "molotov": {
+      "basis": [
+        [
+          32.17929662980982,
+          5.699880477653774,
+          21.954672465356722
+        ],
+        [
+          8.562921228508834,
+          32.23435013169096,
+          -20.919502454115513
+        ],
+        [
+          -21.00410635644561,
+          21.873742887176846,
+          25.107163204598628
+        ]
+      ],
+      "clips": {
+        "idle": "modern_idle_molotov",
+        "idle_crouch": "modern_idle_crouch_molotov",
+        "draw": "modern_draw_molotov",
+        "draw_crouch": "modern_draw_crouch_molotov"
+      }
+    },
+    "incendiary": {
+      "basis": [
+        [
+          -2.1308455658325696,
+          33.05028962472753,
+          21.287117637195813
+        ],
+        [
+          -7.43182388368717,
+          20.5952871620894,
+          -32.72009562200678
+        ],
+        [
+          -38.60349636754883,
+          -5.789258271394801,
+          5.124157084107118
+        ]
+      ],
+      "clips": {
+        "idle": "modern_idle_incendiary",
+        "idle_crouch": "modern_idle_crouch_incendiary",
+        "draw": "modern_draw_incendiary",
+        "draw_crouch": "modern_draw_crouch_incendiary"
+      }
+    }
+  }
+}
