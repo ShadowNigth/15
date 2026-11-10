@@ -19,6 +19,7 @@ const STOP_SPEED_MPS: float = 100.0 * (1.0 / 32.0)
 const STAND_HEIGHT: float = 1.88
 const CROUCH_HEIGHT: float = 1.08
 const STEP_HEIGHT: float = 0.54
+const BOT_VISUAL_SCALE: float = 1.08
 const MODEL_STAND_OFFSET_Y: float = 1.125
 const MODEL_CROUCH_OFFSET_Y: float = 0.5625
 
@@ -145,6 +146,8 @@ func set_team_and_class(new_team: String, new_class: String) -> void:
 
 
 func _rebuild_character_model() -> void:
+	# Only scale presentation, never the CharacterBody movement hull or camera.
+	_body_root.scale = Vector3.ONE
 	_classic_pose_fit.restore()
 	_modern_pose = null
 	_classic_pose_fit = ClassicPoseFit.new()
@@ -187,6 +190,8 @@ func _rebuild_character_model() -> void:
 		_body_anim = _find_anim(inst)
 		_skel = _find_skeleton(inst)
 		if ModernAgentPose.is_modern(_skel):
+			if not is_human and not is_vip:
+				_body_root.scale = Vector3.ONE * BOT_VISUAL_SCALE
 			_modern_pose = ModernAgentPose.new()
 		if _body_anim and _skel:
 			_body_anim.active = false  # Driven directly by GoldSrc 2-layer Gait + Upper-Body blender!
@@ -230,7 +235,7 @@ func _rebuild_character_model() -> void:
 		_bullet_hitboxes = SkeletalHitboxes.new()
 		_bullet_hitboxes.name = "SkeletalHitboxes"
 		add_child(_bullet_hitboxes)
-		_bullet_hitboxes.setup(self, _skel)
+		_bullet_hitboxes.setup(self, _skel, _body_root.scale.x)
 
 
 func _build_skeleton_blend_tables() -> void:

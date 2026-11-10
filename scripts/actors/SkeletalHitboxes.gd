@@ -4,6 +4,7 @@ extends Node3D
 var actor: Node3D
 var skeleton: Skeleton3D
 var entries: Array[Dictionary] = []
+var body_scale: float = 1.0
 const REGIONS := [
 	["head_0", "head_0", 0.115, 1], ["spine_1", "spine_3", 0.15, 2],
 	["pelvis", "spine_1", 0.17, 3],
@@ -19,7 +20,8 @@ const CLASSIC_BONES := {
 	"leg_upper_L": "Bip01 L Thigh", "leg_lower_L": "Bip01 L Calf", "ankle_L": "Bip01 L Foot",
 	"leg_upper_R": "Bip01 R Thigh", "leg_lower_R": "Bip01 R Calf", "ankle_R": "Bip01 R Foot"}
 
-func setup(owner_actor: Node3D, rig: Skeleton3D) -> void:
+func setup(owner_actor: Node3D, rig: Skeleton3D, visual_scale: float = 1.0) -> void:
+	body_scale = visual_scale
 	actor = owner_actor
 	skeleton = rig
 	actor.add_to_group("skeletal_bullet_actors")
@@ -37,11 +39,11 @@ func setup(owner_actor: Node3D, rig: Skeleton3D) -> void:
 		add_child(area)
 		var collider := CollisionShape3D.new()
 		var shape := CapsuleShape3D.new()
-		shape.radius = region[2]
-		shape.height = region[2] * 2.0
+		shape.radius = region[2] * body_scale
+		shape.height = shape.radius * 2.0
 		collider.shape = shape
 		area.add_child(collider)
-		entries.append({"area": area, "shape": shape, "a": first, "b": second, "radius": region[2]})
+		entries.append({"area": area, "shape": shape, "a": first, "b": second, "radius": shape.radius})
 	sync_pose()
 
 func sync_pose() -> void:
@@ -54,7 +56,7 @@ func sync_pose() -> void:
 		var a: Vector3 = skeleton.global_transform * skeleton.get_bone_global_pose(entry["a"]).origin
 		var b: Vector3 = skeleton.global_transform * skeleton.get_bone_global_pose(entry["b"]).origin
 		if entry["a"] == entry["b"]:
-			a += Vector3.UP * 0.035
+			a += Vector3.UP * 0.035 * body_scale
 			b = a
 		var distance := a.distance_to(b)
 		var shape: CapsuleShape3D = entry["shape"]

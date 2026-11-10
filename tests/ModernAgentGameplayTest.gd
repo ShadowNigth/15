@@ -70,6 +70,10 @@ func _run() -> void:
 		expect(actor._modern_pose != null and actor._skel.find_bone("head_0") >= 0, "modern default actor")
 		expect(actor._hand_attachment.bone_name == "hand_R", "native socket")
 		expect(actor._bullet_hitboxes.entries.size() == 11, "all bullet regions")
+		expect(actor._body_root.scale.is_equal_approx(Vector3.ONE * 1.08), "bot body enlarged eight percent")
+		expect(actor.scale.is_equal_approx(Vector3.ONE), "GoldSrc movement body not scaled")
+		expect(is_equal_approx(actor._capsule.height, CSActor.STAND_HEIGHT), "original movement hull retained")
+		expect(is_equal_approx(actor._bullet_hitboxes.entries[0].shape.radius, 0.115 * 1.08), "headshot radius follows larger body")
 	await get_tree().physics_frame
 	for actor in actors:
 		for wid in GameData.weapons:
