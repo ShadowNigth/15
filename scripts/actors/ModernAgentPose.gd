@@ -237,8 +237,9 @@ func tick(actor, delta: float) -> void:
 			reaction = ""
 	if upper_parent >= 0 and actor._anim_res_map.has(hold):
 		var gait_parent := rig.get_bone_global_pose(upper_parent).basis
-		var aimed_upper := reference_parent * rig.get_bone_pose(upper_root).basis
-		rig.set_bone_pose_rotation(upper_root, (gait_parent.inverse() * aimed_upper).orthonormalized().get_rotation_quaternion())
+		var rest := rig.get_bone_rest(upper_root).basis
+		var aimed_upper := reference_parent * rest * rig.get_bone_pose(upper_root).basis
+		rig.set_bone_pose_rotation(upper_root, ((gait_parent * rest).inverse() * aimed_upper).orthonormalized().get_rotation_quaternion())
 	# Smooth changes of direction, stance and airborne state without restarting
 	# the stride clock as speed changes. Never crossfade IK-corrected wrists.
 	_blend_time += delta
