@@ -1,0 +1,68 @@
+name: Graffiti prototype QA
+on:
+  push:
+    paths:
+      - 'scripts/world/GraffitiSprayer.gd'
+      - 'scripts/actors/PlayerController.gd'
+      - 'scripts/core/GameData.gd'
+      - 'assets/textures/graffiti/**'
+      - 'data/graffiti.json'
+      - 'tests/GraffitiTest*'
+      - '.github/workflows/graffiti-qa.yml'
+  workflow_dispatch:
+jobs:
+  graffiti:
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install Godot and OpenGL
+        run: |
+          curl -fL --retry 3 -o /tmp/godot.zip https://github.com/godotengine/godot-builds/releases/download/4.3-stable/Godot_v4.3-stable_linux.x86_64.zip
+          unzip -q /tmp/godot.zip -d /tmp/godot
+          sudo install -m 755 /tmp/godot/Godot_v4.3-stable_linux.x86_64 /usr/local/bin/godot
+          sudo apt-get update -qq
+          sudo apt-get install -y -qq xvfb libgl1-mesa-dri
+          pip install pillow gdtoolkit==4.3.4
+      - name: Import and validate
+        run: |
+          set -o pipefail
+          python tools/verify_godot_project.py
+          godot --headless --path . --import 2>&1 | tee /tmp/graffiti-import.log
+          ! grep -Eq 'SCRIPT ERROR:|Parse Error:|Compile Error:' /tmp/graffiti-import.log
+      - name: Render and test graffiti
+        run: |
+          set -o pipefail
+          GRAFFITI_CAPTURE=/tmp/graffiti.png LIBGL_ALWAYS_SOFTWARE=1 timeout 180s xvfb-run -a godot --path . --audio-driver Dummy --rendering-method gl_compatibility --fixed-fps 60 res://tests/GraffitiTest.tscn 2>&1 | tee /tmp/graffiti.log
+          ! grep -Eq 'SCRIPT ERROR:|Parse Error:|Compile Error:|SHADER ERROR|FAIL:' /tmp/graffiti.log
+          grep -q 'PASS:' /tmp/graffiti.log
+      - name: HUD and modal regressions
+        run: |
+          set -o pipefail
+          for suite in HudColorTest UICustomizationTest; do
+            LIBGL_ALWAYS_SOFTWARE=1 timeout 300s xvfb-run -a godot --path . --audio-driver Dummy --rendering-method gl_compatibility --fixed-fps 60 res://tests/$suite.tscn 2>&1 | tee /tmp/$suite.log
+            ! grep -Eq 'SCRIPT ERROR:|Parse Error:|Compile Error:|FAIL:' /tmp/$suite.log
+            grep -q 'PASS:' /tmp/$suite.log
+          done
+      - name: Capture preview
+        if: always()
+        run: |
+          python - <<'PY'
+          from PIL import Image
+          from pathlib import Path
+          import base64
+          p=Path('/tmp/graffiti.png')
+          if p.exists():
+              im=Image.open(p).convert('RGB'); im.thumbnail((960,540)); im.save('/tmp/graffiti.jpg',quality=82)
+              text=base64.b64encode(Path('/tmp/graffiti.jpg').read_bytes()).decode()
+              for n,i in enumerate(range(0,len(text),3500)):
+                  print(f'::notice title=graffiti-{n}::{text[i:i+3500]}')
+          PY
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: graffiti-evidence
+          path: |
+            /tmp/graffiti*.log
+            /tmp/graffiti.png
+            /tmp/*Test.log

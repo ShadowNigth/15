@@ -13,6 +13,7 @@ signal spectator_target_changed(target_name: String)
 var spectator_target: CSActor = null
 
 var camera: Camera3D = null
+var graffiti_sprayer: GraffitiSprayer = null
 var viewmodel_pivot: Node3D = null
 var viewmodel_holder: Node3D = null
 var flashlight_spot: SpotLight3D = null
@@ -92,6 +93,8 @@ func _ready() -> void:
 	camera.position = Vector3(0.0, 1.66, 0.0)
 	camera.current = true
 	add_child(camera)
+	graffiti_sprayer = GraffitiSprayer.new()
+	add_child(graffiti_sprayer)
 
 	# Dedicated transparent SubViewport for CS 1.5 first-person weapon viewmodel:
 	# - Own clean depth buffer -> gun NEVER clips into walls or near-plane!
@@ -334,6 +337,16 @@ func _unhandled_input(event: InputEvent) -> void:
 		elif event.is_action_pressed("attack2"):
 			_cycle_spectator(-1)
 		return
+
+	if Input.mouse_mode == Input.MOUSE_MODE_CAPTURED:
+		if event.is_action_pressed("graffiti_spray"):
+			graffiti_sprayer.spray(camera)
+			get_viewport().set_input_as_handled()
+			return
+		if event.is_action_pressed("graffiti_next"):
+			graffiti_sprayer.cycle()
+			get_viewport().set_input_as_handled()
+			return
 
 	if event is InputEventMouseButton and event.pressed:
 		var mb := event as InputEventMouseButton

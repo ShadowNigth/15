@@ -1,0 +1,44 @@
+{
+  "metadata_source": "https://github.com/ByMykel/CSGO-API",
+  "metadata_commit": "c52da3543f4cb57958d1e5c1847e6b692c02af4c",
+  "image_source": "https://github.com/Rarmash/CS2-Simulator",
+  "image_commit": "bc0d4305a10f06f601e5ba9e29b04835eee61986",
+  "items": [
+    {
+      "id": "graffiti-1653",
+      "name": "Blood Boiler",
+      "texture": "assets/textures/graffiti/1653.webp",
+      "def_index": "1653",
+      "source_image": "https://community.akamai.steamstatic.com/economy/image/i0CoZ81Ui0m-9KwlBY1L_18myuGuq1wfhWSaZgMttyVfPaERSR0Wqmu7LAocGJai0ki7VeTHjMmuOHaC619h7bj540G3EFLzkpnv-R1Z4PuibbYjIqbBDGPGl7p147k-Sn_lxR5z5mXVmdn4J3yXO1MmX5AhE7UNtkW9m8qnab0X0Kv8Bg",
+      "original": {
+        "name": "spray_blood_boiler",
+        "image_inventory": "econ/stickers/community_mix01/blood_boiler"
+      },
+      "sha256": "fa30ce1858181c6c1bddc832082cdf6ee617507984ce972f25beb21e6b802474"
+    },
+    {
+      "id": "graffiti-1654",
+      "name": "Chabo",
+      "texture": "assets/textures/graffiti/1654.webp",
+      "def_index": "1654",
+      "source_image": "https://community.akamai.steamstatic.com/economy/image/i0CoZ81Ui0m-9KwlBY1L_18myuGuq1wfhWSaZgMttyVfPaERSR0Wqmu7LAocGJai0ki7VeTHjMmuOHaC619h7bj540G3EFLylp_j9idVoab4MaU-cKfDXD7Bk-sl5rVsTnnlkUohsW_cnN6rJyiXZ1UhApEkRe8U8k7vVO14c3w",
+      "original": {
+        "name": "spray_chicken",
+        "image_inventory": "econ/stickers/community_mix01/chicken"
+      },
+      "sha256": "2b860de44c5759b13da1b11e65ba7fd323c2ec544358a2c2f81e3532fd8dac4a"
+    },
+    {
+      "id": "graffiti-1656",
+      "name": "Flickshot",
+      "texture": "assets/textures/graffiti/1656.webp",
+      "def_index": "1656",
+      "source_image": "https://community.akamai.steamstatic.com/economy/image/i0CoZ81Ui0m-9KwlBY1L_18myuGuq1wfhWSaZgMttyVfPaERSR0Wqmu7LAocGJai0ki7VeTHjMmuOHaC619h7bj540G3EFL3kp_j9jFT4ObgMaA4dfHEDWTDmeok47dvF37rwxl25zjWz9n7I3mTOlV1X5t4ROEI5A74zIN0x31F_w",
+      "original": {
+        "name": "spray_flickshot",
+        "image_inventory": "econ/stickers/community_mix01/flickshot"
+      },
+      "sha256": "2398f2380e25fafaba74cf29dbc5260bcd4c3a2785fef4ef862b2837b85174a9"
+    }
+  ]
+}
