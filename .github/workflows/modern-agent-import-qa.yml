@@ -76,7 +76,7 @@ jobs:
           for p in [Path('/tmp/graffiti-import.log'),Path('/tmp/graffiti.log'),*Path('/tmp').glob('*Test.log')]:
               if p.exists():
                   lines=p.read_text(errors='replace').splitlines()
-                  text='\n'.join(x for x in lines if any(k in x for k in ['SCRIPT ERROR','Parse Error','FAIL','PASS:','[MODERN GAMEPLAY]']))[-3500:]
+                  text='\n'.join(x for x in lines if any(k in x for k in ['ERROR:', ' at: ', 'FAIL', 'PASS:', '[MODERN GAMEPLAY]', '[ARCHI TEST]', '[ARCHI GAMEWORLD TEST]']))[-3500:]
                   if text: print('::notice title='+p.stem+'::'+text.replace('%','%25').replace('\n','%0A'))
           PY
       - name: Rendered idle
