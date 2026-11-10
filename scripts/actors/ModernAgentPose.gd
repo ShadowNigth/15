@@ -158,8 +158,10 @@ func tick(actor, delta: float) -> void:
 	var wid: String = actor.weapon_ctrl.current_weapon_id
 	var spec: Dictionary = actor.weapon_ctrl.get_current_spec()
 	var family := "knife" if int(spec.get("slot", 0)) == 3 else ("pistol" if int(spec.get("slot", 0)) == 2 else "rifle")
+	# Grenades have weapon-specific upper-body holds but use native rifle legs.
+	# There is no generic grenade gait library; requesting it made bots glide.
 	if bool(spec.get("grenade", false)):
-		family = "grenade"
+		family = "rifle"
 	var horizontal := Vector3(actor.velocity.x, 0, actor.velocity.z)
 	var speed := horizontal.length()
 	var local := Basis(Vector3.UP, actor.look_yaw).inverse() * horizontal
@@ -241,7 +243,7 @@ func tick(actor, delta: float) -> void:
 	# The p_ meshes retain the established classic grip. Fit the support hand
 	# to that grip, not to the differently proportioned source weapon. Reloads,
 	# draws and one-handed tools retain their unpinned native animation.
-	var can_support := int(spec.get("slot", 0)) == 1 and action in ["", "shoot"] and not actor.weapon_ctrl.is_reloading and not actor.weapon_ctrl.is_attaching_silencer and not actor.on_ladder
+	var can_support: bool = int(spec.get("slot", 0)) == 1 and action in ["", "shoot"] and not actor.weapon_ctrl.is_reloading and not actor.weapon_ctrl.is_attaching_silencer and not actor.on_ladder
 	_support_weight = move_toward(_support_weight, 1.0 if can_support else 0.0, delta * 12.0)
 	if int(spec.get("slot", 0)) == 1:
 		fit_support(rig, _support_fit, role(actor.team, actor.class_id), wid, _support_weight)
