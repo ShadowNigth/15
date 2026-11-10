@@ -39,8 +39,9 @@ This is an offline adaptation, not a claim of exact Valve compositor equivalence
 
 Sport material names in the old mesh are contralateral to their bone ownership.
 The converter follows actual bind ownership and hand/finger frames, not just the
-L/R label. Wrist regions use the hand anchor to account for differing forearm
-lengths. There are no geometry substitutions or runtime vertex rebakes.
+L/R label. Bone-owned surface correspondence prevents cross-finger projection;
+local offsets account for Source-inch versus 1/32-unit scale. Wrist regions use
+the hand anchor to account for differing forearm lengths. There are no geometry substitutions or runtime vertex rebakes.
 
 Small agent body files share the existing SAS/Phoenix native animation libraries.
 Paths and sample tables are rebuilt by bone name and cached per appearance, never
@@ -65,10 +66,27 @@ catalog is deliberately not presented as playable content.
 
 `CosmeticExpansionTest` exercises every imported finish/material mode, all Sport
 choices on native binds and all eight agents' animation/hitbox/grip compatibility.
-Rendered evidence covers the agent lineup and moving poses, plus Arsenal previews
-of AK, M4 and AWP with the imported Sport finish. Existing modern gameplay,
+Rendered evidence covers the agent lineup and moving poses, plus production
+first-person AK, M4 and AWP views with the imported Sport finish after their native
+draw animations. Arsenal previews are also retained in the evidence artifact. Existing modern gameplay,
 first-person weapons, UI, hostage/VIP and other native QA suites remain active.
 
 Artwork belongs to Valve/its authors. No general root license was identified for
 cs2go; public downloadability does not establish redistribution permission. Existing
 BDS / CS:GO Ports artwork and credits are preserved separately.
+
+### Executed Godot 4.3 QA
+
+- [Compatible cosmetics](https://github.com/ShadowNigth/15/actions/runs/42895309398):
+  **1,277 checks, zero failures**, real OpenGL captures; code revision `90aa512c`.
+- [Modern agents gameplay](https://github.com/ShadowNigth/15/actions/runs/42895404306):
+  **success**, including 463 movement/combat/death/respawn checks, 723 native import
+  checks and 3,261 preserved weapon/knife/glove regression checks; revision `c938d391`.
+- [Native Godot QA](https://github.com/ShadowNigth/15/actions/runs/42895404284):
+  **success**, including native tests, world assets, gun review and seven rendered
+  gun-plate batches; revision `c938d391`.
+
+`c938d391` differs from `90aa512c` only by three additional agent-roster assertions.
+The final documentation-only update does not change tested runtime code or assets.
+The editable source ZIP contains the Godot project, not an engine or standalone
+executable. Physical Rubikon-style ragdoll simulation is not introduced by this batch.
