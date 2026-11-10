@@ -6,7 +6,7 @@ from pathlib import Path
 from PIL import Image
 name = sys.argv[1]
 page = int(sys.argv[2]) if len(sys.argv) > 2 else None
-limit = 39000 if page is not None else 23000
+limit = 39000 if page is not None else 14000
 assert '/' not in name and '..' not in name
 path = Path('/tmp/modern-captures') / (name + '.png')
 if not path.exists():
@@ -24,7 +24,7 @@ while True:
     image.thumbnail((int(image.width * .85), int(image.height * .85)))
 encoded = base64.b64encode(out.getvalue()).decode()
 parts = [encoded[i:i+3500] for i in range(0, len(encoded), 3500)]
-assert len(parts) <= (15 if page is not None else 9)
+assert len(parts) <= (15 if page is not None else 6)
 for i, part in enumerate(parts):
     if page is not None and i // 8 != page:
         continue
