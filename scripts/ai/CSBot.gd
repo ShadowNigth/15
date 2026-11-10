@@ -66,6 +66,8 @@ var _strafe_dir: float = 1.0
 var _strafe_timer: float = 0.0
 var _burst_stop_timer: float = 0.0
 var _burst_pause_timer: float = 0.0
+var _tactical_burst_shots: int = 0
+var _tactical_burst_weapon: String = ""
 var _knife_rush_timer: float = 0.0
 var _stealth_walk_timer: float = 0.0
 var _corner_check_timer: float = 0.0
@@ -198,6 +200,8 @@ func spawn_for_round(pos: Vector3, yaw_rad: float, reset_weapons: bool) -> void:
 	_crouch_burst_timer = 0.0
 	_burst_stop_timer = 0.0
 	_burst_pause_timer = 0.0
+	_tactical_burst_shots = 0
+	_tactical_burst_weapon = ""
 	_knife_rush_timer = 0.0
 	_stealth_walk_timer = 0.0
 	_corner_check_timer = randf_range(0.8, 2.2)
@@ -615,7 +619,12 @@ func _physics_process(delta: float) -> void:
 		_camp_timer = 0.0
 		_last_enemy_pos = target_enemy.global_position
 		_last_enemy_seen_age = 0.0
-		_engage_enemy(delta)
+		# Continue the existing safe route rather than spend the whole rescue/
+		# plant/defuse window strafing against a distant, already visible contact.
+		if BotCombatDiscipline.advance_objective(global_position.distance_to(target_enemy.global_position), _combat_objective_is_urgent(), _has_goal and not _node_path.is_empty(), weapon_ctrl.is_reloading):
+			_follow_navigation_path(delta)
+		else:
+			_engage_enemy(delta)
 		return
 
 	# Priority 3.5: Flush out an enemy that just ducked behind cover with an HE grenade!
@@ -825,6 +834,10 @@ func _find_cover_direction(threat_pos: Vector3) -> Vector3:
 	return _steer_around_obstacles(best_dir)
 
 
+func _combat_objective_is_urgent() -> bool:
+	return is_vip or _is_assigned_vip_escort() or _is_leading_hostage() or bomb_role == "defuse" or (team == "T" and String(weapon_ctrl.slots.get(5, "")) == "c4")
+
+
 func _engage_enemy(delta: float) -> void:
 	var dist := global_position.distance_to(target_enemy.global_position)
 	_select_usable_gun()
@@ -903,8 +916,14 @@ func _engage_enemy(delta: float) -> void:
 	var track_spd: float = float([6.0, 9.0, 13.5, 18.5][clampi(skill_level, 0, 3)])
 	_look_smoothly_toward(comp_pt, delta * track_spd)
 
+	if wid != _tactical_burst_weapon:
+		_tactical_burst_weapon = wid
+		_tactical_burst_shots = 0
+		_burst_pause_timer = 0.0
 	if _burst_pause_timer > 0.0:
 		_burst_pause_timer = maxf(0.0, _burst_pause_timer - delta)
+		if _burst_pause_timer == 0.0:
+			_tactical_burst_shots = 0
 	if _crouch_burst_timer > 0.0:
 		_crouch_burst_timer = maxf(0.0, _crouch_burst_timer - delta)
 	if _burst_stop_timer > 0.0:
@@ -949,15 +968,17 @@ func _engage_enemy(delta: float) -> void:
 	var to_tgt := (aim_pt - get_eye_position()).normalized()
 	var align_req := 0.965 if (dist > 20.0 or is_sniper) else 0.920
 	if get_look_forward().dot(to_tgt) > align_req:
-		var max_burst := 100
-		if dist > 23.0:
-			max_burst = 3
-		elif dist > 11.5:
-			max_burst = 5
-		if weapon_ctrl.shots_fired >= max_burst:
+		var slot := int(GameData.weapons.get(wid, {}).get("slot", 1))
+		var horizontal_speed := Vector2(velocity.x, velocity.z).length()
+		if not BotCombatDiscipline.stable_enough(dist, horizontal_speed, is_sniper, slot):
+			return
+		if _tactical_burst_shots >= BotCombatDiscipline.burst_limit(dist, is_sniper, slot):
 			_burst_pause_timer = randf_range(0.17, 0.28)
 			return
+		var before_clip := int(weapon_ctrl.clips.get(wid, 0))
 		weapon_ctrl.trigger_primary(false, delta)
+		# Cooldown/reload/empty triggers are not shots. Never change recoil state.
+		_tactical_burst_shots += maxi(0, before_clip - int(weapon_ctrl.clips.get(wid, 0)))
 
 
 func _gun_ammo(wid: String) -> Vector2i:
