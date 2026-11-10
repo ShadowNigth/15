@@ -164,6 +164,12 @@ func _run() -> void:
 		actor.is_crouching = true
 		for frame in 20:
 			actor._evaluate_character_pose(1.0 / 60)
+		var crouch_hand := actor._skel.global_transform * actor._skel.get_bone_global_pose(actor._skel.find_bone("hand_R"))
+		var crouch_axis := (crouch_hand.basis * ModernAgentPose.socket_basis(ModernAgentPose.role(actor.team, actor.class_id), "ak47") * Vector3.FORWARD).normalized()
+		expect(crouch_axis.dot(Vector3.FORWARD) > 0.8, "crouched muzzle remains aimed forward, not into floor")
+		var crouch_support: Array = ModernAgentPose.table(ModernAgentPose.role(actor.team, actor.class_id), "ak47").support
+		var crouch_left := actor._skel.global_transform * actor._skel.get_bone_global_pose(actor._skel.find_bone("hand_L")).origin
+		expect(crouch_left.distance_to(crouch_hand * Vector3(crouch_support[0], crouch_support[1], crouch_support[2])) < 0.075, "crouched foregrip contact")
 	await capture("modern_live_crouch")
 	for actor in actors:
 		actor.is_crouching = false

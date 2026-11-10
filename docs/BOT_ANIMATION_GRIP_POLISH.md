@@ -4,6 +4,9 @@ Works on the existing eight modern CT/T appearances, preserving body size +8%,
 movement profiles, native meshes, original first-person arms/animations and skins.
 
 Corrections:
+- Compose aimed upper-body clips in their calibrated pelvis reference frame while
+  preserving the locomotion/crouch lower body. This fixes downward-pointing guns
+  caused by mixing low-ready crouch holds with standing weapon socket calibration.
 - Apply the current body yaw before world-space spine aiming and support-hand IK,
   removing the previous-frame reference-frame error during turns.
 - Walk/run hysteresis (enter run above 4.3 m/s, return below 3.7 m/s) and diagonal

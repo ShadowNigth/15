@@ -195,9 +195,21 @@ func tick(actor, delta: float) -> void:
 		_blend_time = 0.0
 		_last_gait = selected_gait
 	gait_phase = fposmod(gait_phase + delta * rate / maxf(0.01, clip.length), 1.0)
-	actor._apply_anim_layer(selected_gait, gait_phase * clip.length, 2)
 	var clips: Dictionary = table(role(actor.team, actor.class_id), wid).get("clips", {})
-	var hold: String = clips.get("idle_crouch" if actor.is_crouching else "idle", "idle_" + family)
+	# The calibrated grip uses the aimed standing upper-body frame. Native
+	# low-ready crouch holds are not compatible with that socket calibration.
+	# Preserve crouched legs, but compensate the spine for the gait's pelvis
+	# rotation instead of letting it drag the muzzle toward the floor.
+	var hold: String = clips.get("idle", "idle_" + family)
+	var upper_root := rig.find_bone("spine_0")
+	var upper_parent := rig.get_bone_parent(upper_root) if upper_root >= 0 else -1
+	var reference_parent := Basis.IDENTITY
+	if actor._anim_res_map.has(hold):
+		var reference_clip: Animation = actor._anim_res_map[hold]
+		actor._apply_anim_layer(hold, fposmod(clock, maxf(0.01, reference_clip.length)), 2)
+		if upper_parent >= 0:
+			reference_parent = rig.get_bone_global_pose(upper_parent).basis
+	actor._apply_anim_layer(selected_gait, gait_phase * clip.length, 2)
 	if actor._anim_res_map.has(hold):
 		var held_clip: Animation = actor._anim_res_map[hold]
 		actor._apply_anim_layer(hold, fposmod(clock, maxf(0.01, held_clip.length)), 1)
@@ -205,7 +217,7 @@ func tick(actor, delta: float) -> void:
 		if action_weapon != wid or (action == "reload" and not actor.weapon_ctrl.is_reloading):
 			action = ""
 		else:
-			var key: String = clips.get(action + ("_crouch" if actor.is_crouching else ""), clips.get(action, ""))
+			var key: String = clips.get(action, "")
 			if actor._anim_res_map.has(key):
 				var active_clip: Animation = actor._anim_res_map[key]
 				action_time += delta
@@ -223,6 +235,10 @@ func tick(actor, delta: float) -> void:
 		actor._apply_anim_layer(reaction, reaction_time, 1, weight)
 		if reaction_time >= react_clip.length:
 			reaction = ""
+	if upper_parent >= 0 and actor._anim_res_map.has(hold):
+		var gait_parent := rig.get_bone_global_pose(upper_parent).basis
+		var aimed_upper := reference_parent * rig.get_bone_pose(upper_root).basis
+		rig.set_bone_pose_rotation(upper_root, (gait_parent.inverse() * aimed_upper).orthonormalized().get_rotation_quaternion())
 	# Smooth changes of direction, stance and airborne state without restarting
 	# the stride clock as speed changes. Never crossfade IK-corrected wrists.
 	_blend_time += delta
