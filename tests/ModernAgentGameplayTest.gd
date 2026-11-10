@@ -153,7 +153,8 @@ func _run() -> void:
 	await capture("modern_live_reload")
 	for actor in actors:
 		actor._die(null, "ak47", false)
-		for frame in 60:
+		var death_clip: Animation = actor._anim_res_map[actor._death_anim_key]
+		for frame in int(ceil(death_clip.length * 60)) + 6:
 			actor._evaluate_character_pose(1.0/60)
 		expect(not actor.is_alive and actor._anim_res_map.has(actor._death_anim_key), "skeletal death selected")
 		var pelvis_height := (actor._skel.global_transform * actor._skel.get_bone_global_pose(actor._skel.find_bone("pelvis")).origin).y - actor.global_position.y
@@ -180,10 +181,15 @@ func _run() -> void:
 				actor._evaluate_character_pose(1.0/60)
 			var middle := actor._skel.get_bone_pose_rotation(actor._skel.find_bone("spine_0"))
 			expect(start.angle_to(middle) > 0.02, "death articulates torso " + key)
-			for frame in 100:
+			var death_clip: Animation = actor._anim_res_map[key]
+			for frame in int(ceil(death_clip.length * 60)) + 6:
 				actor._evaluate_character_pose(1.0/60)
 			expect(actor._skel.get_bone_global_pose(actor._skel.find_bone("head_0")).origin.is_finite(), "finite corpse " + key)
 		if key in ["head", "left", "crouch_die"]:
+			# Pose sampling above is manual. Let real dropped bodies fall under
+			# engine physics before recording; do not mistake frozen drops for flight.
+			for frame in 60:
+				await get_tree().physics_frame
 			await capture("modern_death_" + key)
 	for actor in actors:
 		actor.spawn_for_round(Vector3.ZERO, 0, true)
