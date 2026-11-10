@@ -20,7 +20,7 @@ npm, gh, ktx, network access nor WASM. Provenance and SHA256 hashes are recorded
 in `data/modern_agents_import.json`. The earlier external ktx conversion failure
 was superseded by the bundled WASM texture decoder.
 
-Each body currently exposes 341 clips/aliases from default locomotion and
+Each body currently exposes 353 clips/aliases from default locomotion and
 weapon-specific packs. Unused source animation variants are omitted. Non-root
 translation keys are converted to the rig's inch coordinates; root displacement
 is suppressed. The imported forward-axis wrapper is shared by gameplay/previews.
@@ -43,10 +43,9 @@ An original two-bone support-arm correction adapts settled rifle holds to the
 existing weapons in gameplay/previews; native draw/reload actions remain unpinned.
 Animated skeletal bullet regions use the modern bone names.
 
-Deaths use an original bounded procedural fall from the current pose, with existing
-corpse grounding and normal weapon drops. They are **not CS2 death clips or a full
-joint-by-joint physics ragdoll**. No death GLB clips were found in the inspected
-source. Respawning rebuilds the rig and clears the fall state.
+Deaths now use retargeted classic skeletal sequences, detailed in the revision
+section below. They are not native CS2 clips or a full physics ragdoll. Respawning
+rebuilds the rig and clears the animation state.
 
 GoldSrc movement, first-person weapons/animations/gloves/skins, collision hulls,
 round rules and existing mission behavior are preserved.
@@ -79,3 +78,34 @@ Passing structural checks alone is not a claim of perfect visual equivalence to 
 `roster/source.json` attributes artwork to Valve. No general root license was
 identified for cs2go. Public availability is not redistribution permission;
 original conversion tooling does not change the artwork's rights.
+
+## Bot motion / grip revision
+
+The legacy p_ meshes aim along classic +X, while modern characters face -Z.
+Socket calibration now explicitly converts that heading (including the support
+point), rather than copying a classic hand frame unchanged. Support wrists follow
+a stored native relative palm orientation; automatic fire retains two-hand contact.
+Weapon meshes, textures, first-person viewmodels and gameplay physics are unchanged.
+
+Directional gait changes crossfade over 160 ms. Stride phase integrates playback
+rate rather than multiplying accumulated time by speed, avoiding time jumps when
+accelerating. Jump ascent/descent, ladder movement, a subtle landing compression
+and separate head/body hit reactions supplement native weapon actions. Reload/draw
+hands remain free and actions blend out rather than snapping to the hold pose.
+
+Ten classic skeletal death sequences (three general variants, head, gutshot,
+front/back/left/right and crouched) are retargeted to modern proportions. Two hit
+reactions are also retargeted. These are **adapted existing classic animations**, not
+newly sourced CS2 death clips or a physics ragdoll. They replace the rigid whole-body
+rotation; pelvis, torso and limbs animate independently and the corpse support
+plane prevents the lowest tracked joints sinking below the floor.
+
+Reproduce this additional pass with:
+`python -m tools.source.refine_modern_motion` (numpy/scipy). The complete importer
+also invokes it automatically. Source clip hashes/provenance remain unchanged;
+output hashes and retargeted clip names are updated in the import metadata.
+
+Regression coverage now checks barrel heading, actual support-hand distance and
+all ten deforming death variants, rather than only checking weapon scale and a
+rotated corpse root. Rendered head/lateral/crouched corpse captures are included
+in the modern-agent evidence artifact.

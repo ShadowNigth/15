@@ -27,7 +27,7 @@ func _run() -> void:
 	floor_body.collision_layer = 1
 	var collision := CollisionShape3D.new()
 	var shape := BoxShape3D.new()
-	shape.size = Vector3(50, 0.5, 50)
+	shape.size = Vector3(200, 0.5, 200)
 	collision.shape = shape
 	floor_body.position.y = -0.25
 	floor_body.add_child(collision)
@@ -95,6 +95,26 @@ func _run() -> void:
 		actor._skel.force_update_all_bone_transforms()
 		var head := actor._skel.global_transform * actor._skel.get_bone_global_pose(actor._skel.find_bone("head_0")).origin
 		expect(head.y > 1.2 and head.y < 2.2, "standing head height")
+	# Real socket direction, not just a non-null prop/valid scale. The classic
+	# grip previously passed those checks while aiming ninety degrees sideways.
+	for actor in actors:
+		for wid in ["ak47", "m4a1", "awp", "mp5", "glock18"]:
+			actor.weapon_ctrl.give_weapon(wid, 30, 90)
+			actor.weapon_ctrl.equip_weapon_by_id(wid)
+			actor._modern_pose.action = ""
+			for frame in 18:
+				actor._evaluate_character_pose(1.0 / 60)
+			var hand := actor._skel.global_transform * actor._skel.get_bone_global_pose(actor._skel.find_bone("hand_R"))
+			var muzzle_axis := (hand.basis * ModernAgentPose.socket_basis(ModernAgentPose.role(actor.team), wid) * Vector3.FORWARD).normalized()
+			expect(muzzle_axis.dot(Vector3.FORWARD) > 0.86, "barrel faces actor forward " + wid)
+			if int(GameData.weapons[wid].slot) == 1:
+				var support: Array = ModernAgentPose.table(ModernAgentPose.role(actor.team), wid).support
+				var target := hand * Vector3(support[0], support[1], support[2])
+				var left := actor._skel.global_transform * actor._skel.get_bone_global_pose(actor._skel.find_bone("hand_L")).origin
+				expect(target.distance_to(left) < 0.075, "support hand contacts foregrip " + wid + str(target.distance_to(left)))
+		actor.weapon_ctrl.equip_weapon_by_id("ak47")
+		actor._modern_pose.action = ""
+		actor._evaluate_character_pose(0.2)
 	for frame in 10:
 		for actor in actors:
 			actor.apply_goldsrc_movement(Vector3.ZERO, false, false, false, 1.0/60)
@@ -135,12 +155,36 @@ func _run() -> void:
 		actor._die(null, "ak47", false)
 		for frame in 60:
 			actor._evaluate_character_pose(1.0/60)
-		expect(not actor.is_alive and actor._body_root.rotation.x > 1.4, "bounded corpse fall")
+		expect(not actor.is_alive and actor._anim_res_map.has(actor._death_anim_key), "skeletal death selected")
+		var pelvis_height := (actor._skel.global_transform * actor._skel.get_bone_global_pose(actor._skel.find_bone("pelvis")).origin).y - actor.global_position.y
+		expect(pelvis_height < 0.75, "animated corpse pelvis settles")
 		expect(actor._held_weapon_model == null, "death drops held prop")
 		actor._bullet_hitboxes.sync_pose()
 		for entry in actor._bullet_hitboxes.entries:
 			expect(entry.area.collision_layer == 0, "dead hitbox disabled")
 	await capture("modern_live_death")
+	for key in ["head", "gutshot", "back", "forward", "left", "right", "crouch_die", "death1", "death2", "death3"]:
+		for index in actors.size():
+			var actor := actors[index]
+			actor.spawn_for_round(Vector3(-0.8 if index == 0 else 0.8, 0.03, center_z), 0, true)
+			actor.set_process(false)
+			actor.set_physics_process(false)
+			actor.weapon_ctrl.set_process(false)
+			actor._evaluate_character_pose(0.2)
+			actor._die(null, "ak47", key == "head")
+			actor._death_anim_key = key
+			actor._modern_pose.death_time = 0
+			expect(actor._anim_res_map.has(key), "retargeted death available " + key)
+			var start := actor._skel.get_bone_pose_rotation(actor._skel.find_bone("spine_0"))
+			for frame in 32:
+				actor._evaluate_character_pose(1.0/60)
+			var middle := actor._skel.get_bone_pose_rotation(actor._skel.find_bone("spine_0"))
+			expect(start.angle_to(middle) > 0.02, "death articulates torso " + key)
+			for frame in 100:
+				actor._evaluate_character_pose(1.0/60)
+			expect(actor._skel.get_bone_global_pose(actor._skel.find_bone("head_0")).origin.is_finite(), "finite corpse " + key)
+		if key in ["head", "left", "crouch_die"]:
+			await capture("modern_death_" + key)
 	for actor in actors:
 		actor.spawn_for_round(Vector3.ZERO, 0, true)
 		actor._evaluate_character_pose(0.1)

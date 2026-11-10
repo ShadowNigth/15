@@ -98,3 +98,10 @@ func fit(actor, skeleton: Skeleton3D, native_action: bool) -> void:
 func fit_modern_support(skeleton: Skeleton3D, target_world: Vector3) -> bool:
 	_skeleton = skeleton
 	return solve_chain(skeleton.find_bone("arm_upper_L"), skeleton.find_bone("arm_lower_L"), skeleton.find_bone("hand_L"), skeleton.to_local(target_world))
+
+
+func orient_modern_wrist(skeleton: Skeleton3D, target_world: Basis) -> void:
+	_skeleton = skeleton
+	var hand := skeleton.find_bone("hand_L")
+	if hand >= 0:
+		_rotate_to(hand, skeleton.global_basis.inverse() * target_world)

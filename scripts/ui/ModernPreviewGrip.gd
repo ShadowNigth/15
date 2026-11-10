@@ -8,12 +8,7 @@ var weapon := "m4a1"
 var fitter := ClassicPoseFit.new()
 
 static func fit_support(skeleton: Skeleton3D, fit: ClassicPoseFit, appearance: String, wid: String) -> void:
-	if not ModernAgentPose.is_modern(skeleton) or int(GameData.weapons.get(wid, {}).get("slot", 0)) != 1:
-		return
-	var support: Array = ModernAgentPose.table(appearance, wid).get("support", [])
-	if support.size() == 3:
-		var hand := skeleton.global_transform * skeleton.get_bone_global_pose(skeleton.find_bone("hand_R"))
-		fit.fit_modern_support(skeleton, hand * Vector3(support[0], support[1], support[2]))
+	ModernAgentPose.fit_support(skeleton, fit, appearance, wid)
 
 static func attach(model: Node3D, skeleton: Skeleton3D, player: AnimationPlayer, appearance: String, wid: String) -> void:
 	var helper := ModernPreviewGrip.new()

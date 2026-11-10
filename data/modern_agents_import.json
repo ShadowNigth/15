@@ -7,17 +7,45 @@
       "name": "sas",
       "source": "packages/assets/public/models/agents/roster/ctm-sas.glb",
       "source_sha256": "b10208f745425dbfdac470ca1278d2658bd9512967b69c08564c00433d52cc89",
-      "output_sha256": "d99c952584ee7bb66705d81e6d0c7051c4dc4e22f5ebd4206e8ee6f8395bc9df",
+      "output_sha256": "d8dbb67efe9db427a309549ce336241de1b8e19e954aad0fb1eae8e163d8828e",
       "path": "assets/models/modern/sas.glb",
-      "clips": 341
+      "clips": 353,
+      "retargeted_classic_reactions": [
+        "death1",
+        "death2",
+        "death3",
+        "head",
+        "gutshot",
+        "left",
+        "back",
+        "right",
+        "forward",
+        "crouch_die",
+        "head_flinch",
+        "gut_flinch"
+      ]
     },
     {
       "name": "phoenix",
       "source": "packages/assets/public/models/agents/roster/tm-phoenix.glb",
       "source_sha256": "b94b01e69634c22934b911dc8ab1c525533a43fe0060bbb9e86a6428e405d582",
-      "output_sha256": "6b80ff4c2b5f6ff03fa0e7f51907cef974785476b554461410ea120508bebea5",
+      "output_sha256": "2f2f3889326d6a3ca9df7076a69512d933c9f7f945b399230aa6e997fe4c0004",
       "path": "assets/models/modern/phoenix.glb",
-      "clips": 341
+      "clips": 353,
+      "retargeted_classic_reactions": [
+        "death1",
+        "death2",
+        "death3",
+        "head",
+        "gutshot",
+        "left",
+        "back",
+        "right",
+        "forward",
+        "crouch_die",
+        "head_flinch",
+        "gut_flinch"
+      ]
     }
   ],
   "sources": {

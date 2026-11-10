@@ -207,3 +207,7 @@ def main():
 
 if __name__ == '__main__':
     main()
+    import sys
+    sys.path.insert(0, str(ROOT))
+    from tools.source.refine_modern_motion import refine
+    refine()

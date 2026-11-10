@@ -91,6 +91,9 @@ jobs:
       - name: Rendered death
         if: always()
         run: python tools/publish_modern_capture.py modern_live_death
+      - name: Rendered directional skeletal death
+        if: always()
+        run: python tools/publish_modern_capture.py modern_death_left
       - uses: actions/upload-artifact@v4
         if: always()
         with:
