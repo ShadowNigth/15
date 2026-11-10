@@ -1004,6 +1004,7 @@ func _ensure_preview_model() -> void:
 	_pv_model = inst
 	_style_meshes(inst)
 	_pv_pivot.add_child(inst)
+	ModernAgentPose.prepare_model(inst, ModernAgentPose.role(player.team, player.class_id))
 	_pv_anim = _find_node_of(inst, "AnimationPlayer") as AnimationPlayer
 	_pv_skel = _find_node_of(inst, "Skeleton3D") as Skeleton3D
 	if _pv_anim != null:
@@ -1089,7 +1090,7 @@ func _set_preview_weapon(wid: String) -> void:
 				_style_meshes(p_inst)
 				_pv_hand.add_child(p_inst)
 				if ModernAgentPose.is_modern(_pv_skel):
-					ModernAgentPose.fit_prop(p_inst, ModernAgentPose.role(player.team), wid)
+					ModernAgentPose.fit_prop(p_inst, ModernAgentPose.role(player.team, player.class_id), wid)
 	if _pv_anim != null and is_instance_valid(player):
 		var ext := String(player.call("_get_weapon_anim_ext", wid)) if not wid.is_empty() else "carbine"
 		var an := _anim_named(_pv_anim, "ref_aim_" + ext)
@@ -1112,7 +1113,7 @@ func _animate_preview(delta: float) -> void:
 	_apply_preview_clip(_pv_lower_name, 0)
 	_apply_preview_clip(_pv_upper_name, 1)
 	if is_instance_valid(player):
-		ModernPreviewGrip.fit_support(_pv_skel, _pv_grip_fit, ModernAgentPose.role(player.team), _pv_weapon)
+		ModernPreviewGrip.fit_support(_pv_skel, _pv_grip_fit, ModernAgentPose.role(player.team, player.class_id), _pv_weapon)
 
 
 ## Upper body = Bip01 Spine and everything below it in the hierarchy.

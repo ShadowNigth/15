@@ -19,6 +19,7 @@ var ammo_types: Dictionary = {}
 var equipment: Dictionary = {}
 var economy: Dictionary = {}
 var classes: Dictionary = {}
+var modern_agents: Dictionary = {}
 var maps_index: Array = []
 var overviews: Dictionary = {}
 var hud_sprites: Dictionary = {}
@@ -106,6 +107,7 @@ func _load_all_databases() -> void:
 	economy = wdb.get("economy", {})
 
 	classes = _load_json("res://data/classes.json")
+	modern_agents = _load_json("res://data/modern_agents.json")
 	var midx = _load_json("res://data/maps_index.json")
 	if midx is Array:
 		maps_index = midx
@@ -319,11 +321,14 @@ func get_texture(res_path: String) -> Texture2D:
 
 
 func get_model_scene(rel_path: String) -> PackedScene:
-	# Appearance-only replacement; VIP/hostages and all gameplay class metadata remain.
-	if rel_path in ["players/urban", "players/gsg9", "players/sas", "players/gign"]:
-		rel_path = "modern/sas"
-	elif rel_path in ["players/terror", "players/leet", "players/arctic", "players/guerilla"]:
-		rel_path = "modern/phoenix"
+	# Appearance aliases retain class IDs/rules and automatic faction selection.
+	if rel_path.begins_with("players/"):
+		var cid := rel_path.trim_prefix("players/")
+		var avatar := String(modern_agents.get("classes", {}).get(cid, ""))
+		if not avatar.is_empty():
+			var modern_path := "modern/" + avatar
+			if ResourceLoader.exists("res://assets/models/%s.glb" % modern_path):
+				rel_path = modern_path
 	var full := rel_path if rel_path.begins_with("res://") else ("res://assets/models/%s.glb" % rel_path)
 	if _scene_cache.has(full):
 		return _scene_cache[full]

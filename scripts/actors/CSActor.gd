@@ -183,6 +183,7 @@ func _rebuild_character_model() -> void:
 		var inst := sc.instantiate()
 		_configure_character_meshes(inst)
 		_body_root.add_child(inst)
+		ModernAgentPose.prepare_model(inst, ModernAgentPose.role(team, class_id))
 		_body_anim = _find_anim(inst)
 		_skel = _find_skeleton(inst)
 		if ModernAgentPose.is_modern(_skel):
@@ -252,7 +253,7 @@ func _build_skeleton_blend_tables() -> void:
 					break
 				cur = _skel.get_bone_parent(cur)
 
-	var modern_key := ModernAgentPose.role(team)
+	var modern_key := ModernAgentPose.role(team, class_id)
 	if _modern_pose != null and ModernAgentPose.animation_tables.has(modern_key):
 		var cached: Dictionary = ModernAgentPose.animation_tables[modern_key]
 		_anim_res_map = cached.animations.duplicate()
@@ -660,8 +661,8 @@ func _update_held_weapon_model(wid: String) -> void:
 		_hand_attachment.add_child(p_inst)
 		_held_weapon_model = p_inst
 		if _modern_pose != null:
-			ModernAgentPose.fit_prop(p_inst, ModernAgentPose.role(team), wid)
-			var socket := ModernAgentPose.socket_basis(ModernAgentPose.role(team), wid)
+			ModernAgentPose.fit_prop(p_inst, ModernAgentPose.role(team, class_id), wid)
+			var socket := ModernAgentPose.socket_basis(ModernAgentPose.role(team, class_id), wid)
 			if _tp_muzzle_sprite:
 				_tp_muzzle_sprite.position = socket * Vector3(-0.04, 0.06, -0.58)
 				_tp_muzzle_sprite.scale = Vector3.ONE / 0.0254

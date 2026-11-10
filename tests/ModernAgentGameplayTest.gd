@@ -83,7 +83,7 @@ func _run() -> void:
 			if actor._held_weapon_model != null:
 				var scale := actor._held_weapon_model.global_basis.get_scale()
 				expect(scale.is_finite() and scale.length() > 0.05 and scale.length() < 2.0, "metric weapon scale " + wid + str(scale))
-			var clips: Dictionary = ModernAgentPose.table(ModernAgentPose.role(actor.team), wid).get("clips", {})
+			var clips: Dictionary = ModernAgentPose.table(ModernAgentPose.role(actor.team, actor.class_id), wid).get("clips", {})
 			expect(clips.has("idle"), "native hold " + wid)
 			if int(spec.get("slot", 0)) in [1, 2]:
 				expect(clips.has("shoot") and clips.has("reload"), "native firearm actions " + wid)
@@ -105,10 +105,10 @@ func _run() -> void:
 			for frame in 18:
 				actor._evaluate_character_pose(1.0 / 60)
 			var hand := actor._skel.global_transform * actor._skel.get_bone_global_pose(actor._skel.find_bone("hand_R"))
-			var muzzle_axis := (hand.basis * ModernAgentPose.socket_basis(ModernAgentPose.role(actor.team), wid) * Vector3.FORWARD).normalized()
+			var muzzle_axis := (hand.basis * ModernAgentPose.socket_basis(ModernAgentPose.role(actor.team, actor.class_id), wid) * Vector3.FORWARD).normalized()
 			expect(muzzle_axis.dot(Vector3.FORWARD) > 0.86, "barrel faces actor forward " + wid)
 			if int(GameData.weapons[wid].slot) == 1:
-				var support: Array = ModernAgentPose.table(ModernAgentPose.role(actor.team), wid).support
+				var support: Array = ModernAgentPose.table(ModernAgentPose.role(actor.team, actor.class_id), wid).support
 				var target := hand * Vector3(support[0], support[1], support[2])
 				var left := actor._skel.global_transform * actor._skel.get_bone_global_pose(actor._skel.find_bone("hand_L")).origin
 				expect(target.distance_to(left) < 0.075, "support hand contacts foregrip " + wid + str(target.distance_to(left)))

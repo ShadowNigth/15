@@ -11,44 +11,44 @@
     {
       "id": "leet",
       "num": 2,
-      "name": "L337 Krew",
+      "name": "Elite Crew | Variant E",
       "vgui": "640_leet",
       "model": "leet",
-      "description": "Middle Eastern fundamentalist group bent on world domination and various other evil deeds."
+      "description": "Modern agent from cs2go; automatically selected within its faction."
     },
     {
       "id": "arctic",
       "num": 3,
-      "name": "Arctic Avengers",
+      "name": "Dragomir | Sabre",
       "vgui": "640_arctic",
       "model": "arctic",
-      "description": "Swedish terrorist faction founded in 1977. Famous for their bombing of the Canadian embassy in 1990."
+      "description": "Modern agent from cs2go; automatically selected within its faction."
     },
     {
       "id": "guerilla",
       "num": 4,
-      "name": "Guerilla Warfare",
+      "name": "Phoenix | Variant A",
       "vgui": "640_guerilla",
       "model": "guerilla",
-      "description": "A terrorist faction founded in the Middle East, Guerilla Warfare, has a reputation for ruthlessness. Their disgust for the American lifestyle was demonstrated in their 1982 bombing of a school bus full of Rock and Roll musicians."
+      "description": "Modern agent from cs2go; automatically selected within its faction."
     }
   ],
   "CT": [
     {
       "id": "urban",
       "num": 1,
-      "name": "Seal Team 6",
+      "name": "FBI",
       "vgui": "640_urban",
       "model": "urban",
-      "description": "Seal Team 6 (to be known later as DEVGRU) was founded in 1980 under the command of Lieutenant-Commander Richard Marcincko. ST-6 was placed on permanent alert to respond to terrorist attacks against American targets worldwide."
+      "description": "Modern agent from cs2go; automatically selected within its faction."
     },
     {
       "id": "gsg9",
       "num": 2,
-      "name": "GSG-9",
+      "name": "Seal Team 6 Soldier | NSWC SEAL",
       "vgui": "640_gsg9",
       "model": "gsg9",
-      "description": "GSG-9 was born out of the tragic events that led to the death of several Israeli athletes during the 1972 Olympic games in Munich, Germany."
+      "description": "Modern agent from cs2go; automatically selected within its faction."
     },
     {
       "id": "sas",
@@ -61,10 +61,10 @@
     {
       "id": "gign",
       "num": 4,
-      "name": "GIGN",
+      "name": "B Squadron Officer | SAS",
       "vgui": "640_gign",
       "model": "gign",
-      "description": "France's elite Counter-Terrorist unit, the GIGN, was designed to be a fast response force that could decisively react to any large-scale terrorist incident. Consisting of no more than 100 men, the GIGN has earned its reputation through a history of successful ops."
+      "description": "Modern agent from cs2go; automatically selected within its faction."
     }
   ],
   "VIP": {

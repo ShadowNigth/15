@@ -3,6 +3,7 @@ extends RefCounted
 ## Original runtime bridge: native body-only clips; gameplay physics owns motion.
 static var sockets: Dictionary = {}
 static var animation_tables: Dictionary = {}
+static var variant_libraries: Dictionary = {}
 var _support_fit := ClassicPoseFit.new()
 var clock := 0.0
 var action := ""
@@ -23,8 +24,54 @@ var _landing := 1.0
 static func is_modern(skeleton: Skeleton3D) -> bool:
 	return skeleton != null and skeleton.find_bone("root_motion") >= 0 and skeleton.find_bone("hand_R") >= 0
 
-static func role(team: String) -> String:
-	return "sas" if team == "CT" else "phoenix"
+static func role(team: String, class_id: String = "") -> String:
+	return String(GameData.modern_agents.get("classes", {}).get(class_id, "sas" if team == "CT" else "phoenix"))
+
+static func prepare_model(model: Node3D, avatar: String) -> void:
+	# Six small body files share the already-imported native motion resources.
+	# Resolve tracks by bone name, never by SAS/Phoenix's bone indices.
+	if avatar in ["sas", "phoenix"] or model.has_meta("modern_motion_ready"):
+		return
+	var definition: Dictionary = GameData.modern_agents.get("agents", {}).get(avatar, {})
+	if definition.is_empty():
+		return
+	var skeletons := model.find_children("*", "Skeleton3D", true, false)
+	if skeletons.is_empty() or not is_modern(skeletons[0]):
+		return
+	var skeleton := skeletons[0] as Skeleton3D
+	var players := model.find_children("*", "AnimationPlayer", true, false)
+	var player := players[0] as AnimationPlayer if not players.is_empty() else AnimationPlayer.new()
+	if player.get_parent() == null:
+		model.add_child(player)
+	player.active = false
+	if not variant_libraries.has(avatar):
+		var template_scene := GameData.get_model_scene("modern/" + String(definition.family))
+		if template_scene == null:
+			return
+		var template := template_scene.instantiate()
+		var sources := template.find_children("*", "AnimationPlayer", true, false)
+		if sources.is_empty():
+			template.free()
+			return
+		var source := sources[0] as AnimationPlayer
+		var library := AnimationLibrary.new()
+		var root := player.get_node(player.root_node)
+		var path := String(root.get_path_to(skeleton))
+		for key in source.get_animation_list():
+			var clip := source.get_animation(key).duplicate() as Animation
+			for index in range(clip.get_track_count() - 1, -1, -1):
+				var bone := String(clip.track_get_path(index).get_concatenated_subnames())
+				if skeleton.find_bone(bone) < 0:
+					clip.remove_track(index)
+				else:
+					clip.track_set_path(index, NodePath(path + ":" + bone))
+			library.add_animation(String(key), clip)
+		variant_libraries[avatar] = library
+		template.free()
+	for key in player.get_animation_library_list():
+		player.remove_animation_library(key)
+	player.add_animation_library("", variant_libraries[avatar])
+	model.set_meta("modern_motion_ready", true)
 
 static func table(avatar: String, wid: String) -> Dictionary:
 	if sockets.is_empty():
@@ -134,7 +181,7 @@ func tick(actor, delta: float) -> void:
 		_last_gait = selected_gait
 	gait_phase = fposmod(gait_phase + delta * rate / maxf(0.01, clip.length), 1.0)
 	actor._apply_anim_layer(selected_gait, gait_phase * clip.length, 2)
-	var clips: Dictionary = table(role(actor.team), wid).get("clips", {})
+	var clips: Dictionary = table(role(actor.team, actor.class_id), wid).get("clips", {})
 	var hold: String = clips.get("idle_crouch" if actor.is_crouching else "idle", "idle_" + family)
 	if actor._anim_res_map.has(hold):
 		var held_clip: Animation = actor._anim_res_map[hold]
@@ -180,7 +227,7 @@ func tick(actor, delta: float) -> void:
 	# to that grip, not to the differently proportioned source weapon. Reloads,
 	# draws and one-handed tools retain their unpinned native animation.
 	if int(spec.get("slot", 0)) == 1 and action in ["", "shoot"]:
-		fit_support(rig, _support_fit, role(actor.team), wid)
+		fit_support(rig, _support_fit, role(actor.team, actor.class_id), wid)
 	actor._body_root.rotation = Vector3(0, actor.look_yaw, 0)
 	actor._body_root.position = actor.get_visual_world_pos() - actor.global_position
 	if actor.is_on_floor() and not _grounded:

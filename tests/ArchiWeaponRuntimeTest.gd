@@ -541,7 +541,7 @@ func _test_weapon_skins() -> void:
 	awp.free()
 	_expect(GameData.get_weapon_skin_options("c4").is_empty() \
 		and not GameData.select_weapon_skin("c4", "original"), "Unpaintable equipment remains explicitly Original-only")
-	_expect(GameData.get_weapon_skin_options("m4a4").size() == 2 \
+	_expect(GameData.get_weapon_skin_options("m4a4").size() == 4 \
 		and GameData.select_weapon_skin("m4a4", "original"), "M4A4 now exposes its two shipped CS2 finishes and restores Original HD")
 	GameData.selected_weapon_skins = previous
 
@@ -665,7 +665,7 @@ func _sport_front_faces_valid(root: Node) -> bool:
 
 func _test_sport_gloves() -> void:
 	var previous_glove := GameData.selected_glove_id
-	_expect(GameData.get_glove_options().size() == 26, "Sport Gloves catalog exposes all 26 authored finishes")
+	_expect(GameData.get_glove_options().size() == 45, "Sport Gloves preserves 26 authored finishes and adds 19 cs2go finishes")
 	_expect(GameData.sport_gloves.get("models", []).size() == 43, "Sport Gloves catalog covers every distinct viewmodel")
 	var texture_paths: Dictionary = {}
 	for raw in GameData.get_glove_options():
@@ -674,7 +674,7 @@ func _test_sport_gloves() -> void:
 		_expect(GameData.select_glove(option_id), "Sport finish is selectable: " + option_id)
 		for path in option.get("textures", {}).values():
 			texture_paths[path] = true
-	_expect(texture_paths.size() == 130, "Sport catalog references exactly 130 deduplicated texture files")
+	_expect(texture_paths.size() == 320, "Sport retains 130 original textures and adds 190 adapted cs2go maps")
 	for path in texture_paths:
 		_expect(GameData.get_texture(String(path)) != null, "Sport texture imports: " + String(path))
 	_expect(GameData.select_glove("arid_mw"), "The default Arid Minimal Wear finish is selectable")
@@ -708,8 +708,8 @@ func _test_sport_gloves() -> void:
 	var menu := load("res://scenes/MainMenu.tscn").instantiate() as MainMenu
 	_world.add_child(menu)
 	await get_tree().process_frame
-	_expect(menu._glove_opt != null and menu._glove_opt.item_count == 27,
-		"Create Game exposes Original plus all 26 Sport finishes")
+	_expect(menu._glove_opt != null and menu._glove_opt.item_count == 46,
+		"Create Game exposes Original plus all 45 Sport finishes")
 	menu._select_glove_for_match("vice_ww")
 	_expect(GameData.selected_glove_id == "vice_ww" and _sport_composition(menu._viewer_pivot, "vice_ww"),
 		"3D Arsenal previews and stores the selected Vice finish for the match")

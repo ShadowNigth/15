@@ -143,6 +143,34 @@
           "uv_layout": "native_current_hd",
           "uv_algorithm": "native",
           "menu_label": "Vulcan (CS2 catalog)"
+        },
+        {
+          "id": "cs2go_7_1466",
+          "name": "AK-47 | Consequence of the Jinn",
+          "finish": "Consequence of the Jinn",
+          "menu_label": "Consequence of the Jinn (cs2go)",
+          "texture": "res://assets/textures/cs2go/weapons/ak47/7_1466.png",
+          "paint_id": 1466,
+          "uv_layout": "cs2go_hd_to_current",
+          "source": "https://github.com/3kh0/cs2go@fb970df0ee8175d9b212d310f6a928f9f61014f2",
+          "wear": 0.07,
+          "seed": 1,
+          "source_sha256": "1b784d99127660a8e1b596d64c0549dbf9204f16a0a9f31015ed6f986959493f",
+          "uv_algorithm": "cs2go-hd-surface-v1"
+        },
+        {
+          "id": "cs2go_7_1449",
+          "name": "AK-47 | AUTOEXEC",
+          "finish": "AUTOEXEC",
+          "menu_label": "AUTOEXEC (cs2go)",
+          "texture": "res://assets/textures/cs2go/weapons/ak47/7_1449.png",
+          "paint_id": 1449,
+          "uv_layout": "cs2go_hd_to_current",
+          "source": "https://github.com/3kh0/cs2go@fb970df0ee8175d9b212d310f6a928f9f61014f2",
+          "wear": 0.07,
+          "seed": 1,
+          "source_sha256": "02413f29ea919845f2c4c451d9afbc0ffd77de0658c9fb97d66df6abbed3f7e9",
+          "uv_algorithm": "cs2go-hd-surface-v1"
         }
       ]
     },
@@ -225,6 +253,34 @@
           "uv_layout": "legacy_to_current_hd",
           "uv_algorithm": "nwm1-nearest-surface-v5",
           "menu_label": "Akihabara Accept (CS2 catalog)"
+        },
+        {
+          "id": "cs2go_8_1464",
+          "name": "AUG | Lapis Lazuli",
+          "finish": "Lapis Lazuli",
+          "menu_label": "Lapis Lazuli (cs2go)",
+          "texture": "res://assets/textures/cs2go/weapons/aug/8_1464.png",
+          "paint_id": 1464,
+          "uv_layout": "cs2go_hd_to_current",
+          "source": "https://github.com/3kh0/cs2go@fb970df0ee8175d9b212d310f6a928f9f61014f2",
+          "wear": 0.07,
+          "seed": 1,
+          "source_sha256": "d950efa108beffd2f71f57dbaee133610c53c34125739832df9997d700c853d7",
+          "uv_algorithm": "cs2go-hd-surface-v1"
+        },
+        {
+          "id": "cs2go_8_1452",
+          "name": "AUG | Signal Scanner",
+          "finish": "Signal Scanner",
+          "menu_label": "Signal Scanner (cs2go)",
+          "texture": "res://assets/textures/cs2go/weapons/aug/8_1452.png",
+          "paint_id": 1452,
+          "uv_layout": "cs2go_hd_to_current",
+          "source": "https://github.com/3kh0/cs2go@fb970df0ee8175d9b212d310f6a928f9f61014f2",
+          "wear": 0.07,
+          "seed": 1,
+          "source_sha256": "2de0c6ba920b13462c3ddd4c6c8489f2f50e94da1649d50b98e8658660e5cfb2",
+          "uv_algorithm": "cs2go-hd-surface-v1"
         }
       ]
     },
@@ -332,6 +388,34 @@
           "uv_layout": "legacy_to_current_hd",
           "uv_algorithm": "nwm1-nearest-surface-v5",
           "menu_label": "Dragon Lore (CS2 catalog)"
+        },
+        {
+          "id": "cs2go_9_1465",
+          "name": "AWP | Sovereign Flame",
+          "finish": "Sovereign Flame",
+          "menu_label": "Sovereign Flame (cs2go)",
+          "texture": "res://assets/textures/cs2go/weapons/awp/9_1465.png",
+          "paint_id": 1465,
+          "uv_layout": "cs2go_hd_to_current",
+          "source": "https://github.com/3kh0/cs2go@fb970df0ee8175d9b212d310f6a928f9f61014f2",
+          "wear": 0.07,
+          "seed": 1,
+          "source_sha256": "2590f038c440000573a152e79846a941bc76379c937c75a35dc21d8c68e02447",
+          "uv_algorithm": "cs2go-hd-surface-v1"
+        },
+        {
+          "id": "cs2go_9_1467",
+          "name": "AWP | Black Box",
+          "finish": "Black Box",
+          "menu_label": "Black Box (cs2go)",
+          "texture": "res://assets/textures/cs2go/weapons/awp/9_1467.png",
+          "paint_id": 1467,
+          "uv_layout": "cs2go_hd_to_current",
+          "source": "https://github.com/3kh0/cs2go@fb970df0ee8175d9b212d310f6a928f9f61014f2",
+          "wear": 0.07,
+          "seed": 1,
+          "source_sha256": "27aa58773d94ce2d731f0f3001662285a222afac1223660ce95a6af1805fb7c8",
+          "uv_algorithm": "cs2go-hd-surface-v1"
         }
       ]
     },
@@ -413,6 +497,34 @@
           "uv_layout": "legacy_to_current_hd",
           "uv_algorithm": "nwm1-nearest-surface-v5",
           "menu_label": "Printstream (CS2 catalog)"
+        },
+        {
+          "id": "cs2go_1_1458",
+          "name": "Desert Eagle | Eastern Enigma",
+          "finish": "Eastern Enigma",
+          "menu_label": "Eastern Enigma (cs2go)",
+          "texture": "res://assets/textures/cs2go/weapons/deagle/1_1458.png",
+          "paint_id": 1458,
+          "uv_layout": "cs2go_hd_to_current",
+          "source": "https://github.com/3kh0/cs2go@fb970df0ee8175d9b212d310f6a928f9f61014f2",
+          "wear": 0.07,
+          "seed": 1,
+          "source_sha256": "c43cd21c75aa54584af93a981c1d5acf24fd3603ae36d1df40a9f7ad0e28e964",
+          "uv_algorithm": "cs2go-hd-surface-v1"
+        },
+        {
+          "id": "cs2go_1_1430",
+          "name": "Desert Eagle | Firebreathing",
+          "finish": "Firebreathing",
+          "menu_label": "Firebreathing (cs2go)",
+          "texture": "res://assets/textures/cs2go/weapons/deagle/1_1430.png",
+          "paint_id": 1430,
+          "uv_layout": "cs2go_hd_to_current",
+          "source": "https://github.com/3kh0/cs2go@fb970df0ee8175d9b212d310f6a928f9f61014f2",
+          "wear": 0.07,
+          "seed": 1,
+          "source_sha256": "a19bfd4b04fdf9eaa99beb9b348a7744900e0054903f4a353e60cad7e049f978",
+          "uv_algorithm": "cs2go-hd-surface-v1"
         }
       ]
     },
@@ -494,6 +606,34 @@
           "uv_layout": "native_current_hd",
           "uv_algorithm": "native",
           "menu_label": "Drift Wood (CS2 catalog)"
+        },
+        {
+          "id": "cs2go_2_1459",
+          "name": "Dual Berettas | Mystic Conjunction",
+          "finish": "Mystic Conjunction",
+          "menu_label": "Mystic Conjunction (cs2go)",
+          "texture": "res://assets/textures/cs2go/weapons/elite/2_1459.png",
+          "paint_id": 1459,
+          "uv_layout": "cs2go_hd_to_current",
+          "source": "https://github.com/3kh0/cs2go@fb970df0ee8175d9b212d310f6a928f9f61014f2",
+          "wear": 0.07,
+          "seed": 1,
+          "source_sha256": "31a3f87e810e19be55edf06d2c892a7a7ace1fbfdc55743746a4f8a64f2ed0a5",
+          "uv_algorithm": "cs2go-hd-surface-v1"
+        },
+        {
+          "id": "cs2go_2_1373",
+          "name": "Dual Berettas | Silver Pour",
+          "finish": "Silver Pour",
+          "menu_label": "Silver Pour (cs2go)",
+          "texture": "res://assets/textures/cs2go/weapons/elite/2_1373.png",
+          "paint_id": 1373,
+          "uv_layout": "cs2go_hd_to_current",
+          "source": "https://github.com/3kh0/cs2go@fb970df0ee8175d9b212d310f6a928f9f61014f2",
+          "wear": 0.07,
+          "seed": 1,
+          "source_sha256": "69d74261b6ecbdf4b97e28d637646171cd25ccc4bc1442e7afcc0d2c08f6060c",
+          "uv_algorithm": "cs2go-hd-surface-v1"
         }
       ]
     },
@@ -575,6 +715,34 @@
           "uv_layout": "legacy_to_current_hd",
           "uv_algorithm": "nwm1-nearest-surface-v5",
           "menu_label": "Mecha Industries (CS2 catalog)"
+        },
+        {
+          "id": "cs2go_10_1461",
+          "name": "FAMAS | Snake Song",
+          "finish": "Snake Song",
+          "menu_label": "Snake Song (cs2go)",
+          "texture": "res://assets/textures/cs2go/weapons/famas/10_1461.png",
+          "paint_id": 1461,
+          "uv_layout": "cs2go_hd_to_current",
+          "source": "https://github.com/3kh0/cs2go@fb970df0ee8175d9b212d310f6a928f9f61014f2",
+          "wear": 0.07,
+          "seed": 1,
+          "source_sha256": "7e4a11036c819dc01580913662286977d780795ab9d2b5afc7e9178ae7a4ce7d",
+          "uv_algorithm": "cs2go-hd-surface-v1"
+        },
+        {
+          "id": "cs2go_10_1477",
+          "name": "FAMAS | Corp Defense",
+          "finish": "Corp Defense",
+          "menu_label": "Corp Defense (cs2go)",
+          "texture": "res://assets/textures/cs2go/weapons/famas/10_1477.png",
+          "paint_id": 1477,
+          "uv_layout": "cs2go_hd_to_current",
+          "source": "https://github.com/3kh0/cs2go@fb970df0ee8175d9b212d310f6a928f9f61014f2",
+          "wear": 0.07,
+          "seed": 1,
+          "source_sha256": "dcf30016e4596427351345f6ba40c17b082f4fc49520e14a32aea45901f572ea",
+          "uv_algorithm": "cs2go-hd-surface-v1"
         }
       ]
     },
@@ -656,6 +824,34 @@
           "uv_layout": "legacy_to_current_hd",
           "uv_algorithm": "nwm1-nearest-surface-v5",
           "menu_label": "Hyper Beast (CS2 catalog)"
+        },
+        {
+          "id": "cs2go_3_1457",
+          "name": "Five-SeveN | Desert Seal",
+          "finish": "Desert Seal",
+          "menu_label": "Desert Seal (cs2go)",
+          "texture": "res://assets/textures/cs2go/weapons/fiveseven/3_1457.png",
+          "paint_id": 1457,
+          "uv_layout": "cs2go_hd_to_current",
+          "source": "https://github.com/3kh0/cs2go@fb970df0ee8175d9b212d310f6a928f9f61014f2",
+          "wear": 0.07,
+          "seed": 1,
+          "source_sha256": "0d969ff0be18e506c29228bd756ca4bb45d321db310dc41f044f3de5e590fb75",
+          "uv_algorithm": "cs2go-hd-surface-v1"
+        },
+        {
+          "id": "cs2go_3_1429",
+          "name": "Five-SeveN | Dark Polymer",
+          "finish": "Dark Polymer",
+          "menu_label": "Dark Polymer (cs2go)",
+          "texture": "res://assets/textures/cs2go/weapons/fiveseven/3_1429.png",
+          "paint_id": 1429,
+          "uv_layout": "cs2go_hd_to_current",
+          "source": "https://github.com/3kh0/cs2go@fb970df0ee8175d9b212d310f6a928f9f61014f2",
+          "wear": 0.07,
+          "seed": 1,
+          "source_sha256": "83b31bb04c5ee57e7ac376309a0510d64ddc4639a4034e216e4c2023f6326538",
+          "uv_algorithm": "cs2go-hd-surface-v1"
         }
       ]
     },
@@ -737,6 +933,34 @@
           "uv_layout": "native_current_hd",
           "uv_algorithm": "native",
           "menu_label": "Green Apple (CS2 catalog)"
+        },
+        {
+          "id": "cs2go_11_1305",
+          "name": "G3SG1 | Green Cell",
+          "finish": "Green Cell",
+          "menu_label": "Green Cell (cs2go)",
+          "texture": "res://assets/textures/cs2go/weapons/g3sg1/11_1305.png",
+          "paint_id": 1305,
+          "uv_layout": "cs2go_hd_to_current",
+          "source": "https://github.com/3kh0/cs2go@fb970df0ee8175d9b212d310f6a928f9f61014f2",
+          "wear": 0.07,
+          "seed": 1,
+          "source_sha256": "a18f7d5742e5c3a2e28d51acaee9a0061565e207217ffba4dd0ce67b58906efc",
+          "uv_algorithm": "cs2go-hd-surface-v1"
+        },
+        {
+          "id": "cs2go_11_1328",
+          "name": "G3SG1 | Red Jasper",
+          "finish": "Red Jasper",
+          "menu_label": "Red Jasper (cs2go)",
+          "texture": "res://assets/textures/cs2go/weapons/g3sg1/11_1328.png",
+          "paint_id": 1328,
+          "uv_layout": "cs2go_hd_to_current",
+          "source": "https://github.com/3kh0/cs2go@fb970df0ee8175d9b212d310f6a928f9f61014f2",
+          "wear": 0.07,
+          "seed": 1,
+          "source_sha256": "e606b07a7288b4caef04caf2562e07b8ea58b0e132bcf1627f88fb72e0e2c596",
+          "uv_algorithm": "cs2go-hd-surface-v1"
         }
       ]
     },
@@ -818,6 +1042,34 @@
           "uv_layout": "legacy_to_current_hd",
           "uv_algorithm": "nwm1-nearest-surface-v5",
           "menu_label": "Sugar Rush (CS2 catalog)"
+        },
+        {
+          "id": "cs2go_13_1434",
+          "name": "Galil AR | Galigator",
+          "finish": "Galigator",
+          "menu_label": "Galigator (cs2go)",
+          "texture": "res://assets/textures/cs2go/weapons/galil/13_1434.png",
+          "paint_id": 1434,
+          "uv_layout": "cs2go_hd_to_current",
+          "source": "https://github.com/3kh0/cs2go@fb970df0ee8175d9b212d310f6a928f9f61014f2",
+          "wear": 0.07,
+          "seed": 1,
+          "source_sha256": "4c31ddf31186f2d35fdbaa8f2483d25deb8d480161c7d7e52cf035b9c186ca03",
+          "uv_algorithm": "cs2go-hd-surface-v1"
+        },
+        {
+          "id": "cs2go_13_1383",
+          "name": "Galil AR | Sky Mandala",
+          "finish": "Sky Mandala",
+          "menu_label": "Sky Mandala (cs2go)",
+          "texture": "res://assets/textures/cs2go/weapons/galil/13_1383.png",
+          "paint_id": 1383,
+          "uv_layout": "cs2go_hd_to_current",
+          "source": "https://github.com/3kh0/cs2go@fb970df0ee8175d9b212d310f6a928f9f61014f2",
+          "wear": 0.07,
+          "seed": 1,
+          "source_sha256": "6d4369b25efef9703e37a15456b8213346ad8a3397d288bec9e4ce814f848401",
+          "uv_algorithm": "cs2go-hd-surface-v1"
         }
       ]
     },
@@ -899,6 +1151,34 @@
           "uv_layout": "legacy_to_current_hd",
           "uv_algorithm": "nwm1-nearest-surface-v5",
           "menu_label": "Gamma Doppler Emerald (CS2 catalog)"
+        },
+        {
+          "id": "cs2go_4_1460",
+          "name": "Glock-18 | Ifrit Lattice",
+          "finish": "Ifrit Lattice",
+          "menu_label": "Ifrit Lattice (cs2go)",
+          "texture": "res://assets/textures/cs2go/weapons/glock18/4_1460.png",
+          "paint_id": 1460,
+          "uv_layout": "cs2go_hd_to_current",
+          "source": "https://github.com/3kh0/cs2go@fb970df0ee8175d9b212d310f6a928f9f61014f2",
+          "wear": 0.07,
+          "seed": 1,
+          "source_sha256": "faf74f85aef1c663d897e43e77746d01591d2cee8ca10658c49d1f54781437de",
+          "uv_algorithm": "cs2go-hd-surface-v1"
+        },
+        {
+          "id": "cs2go_4_1450",
+          "name": "Glock-18 | Ghost Protocol",
+          "finish": "Ghost Protocol",
+          "menu_label": "Ghost Protocol (cs2go)",
+          "texture": "res://assets/textures/cs2go/weapons/glock18/4_1450.png",
+          "paint_id": 1450,
+          "uv_layout": "cs2go_hd_to_current",
+          "source": "https://github.com/3kh0/cs2go@fb970df0ee8175d9b212d310f6a928f9f61014f2",
+          "wear": 0.07,
+          "seed": 1,
+          "source_sha256": "6b5e2cca35b17729923a175f6e45e0ebfeb501246b87edf6f5e4f74b23e4e96d",
+          "uv_algorithm": "cs2go-hd-surface-v1"
         }
       ]
     },
@@ -980,6 +1260,34 @@
           "uv_layout": "legacy_to_current_hd",
           "uv_algorithm": "nwm1-nearest-surface-v5",
           "menu_label": "Nebula Crusader (CS2 catalog)"
+        },
+        {
+          "id": "cs2go_14_1435",
+          "name": "M249 | Bock Blocks",
+          "finish": "Bock Blocks",
+          "menu_label": "Bock Blocks (cs2go)",
+          "texture": "res://assets/textures/cs2go/weapons/m249/14_1435.png",
+          "paint_id": 1435,
+          "uv_layout": "cs2go_hd_to_current",
+          "source": "https://github.com/3kh0/cs2go@fb970df0ee8175d9b212d310f6a928f9f61014f2",
+          "wear": 0.07,
+          "seed": 1,
+          "source_sha256": "bce72241b80b367ae4777ec8955d82fc9d7f4d0f5f6505bbaeb92f132ce03fbe",
+          "uv_algorithm": "cs2go-hd-surface-v1"
+        },
+        {
+          "id": "cs2go_14_1370",
+          "name": "M249 | Sleet",
+          "finish": "Sleet",
+          "menu_label": "Sleet (cs2go)",
+          "texture": "res://assets/textures/cs2go/weapons/m249/14_1370.png",
+          "paint_id": 1370,
+          "uv_layout": "cs2go_hd_to_current",
+          "source": "https://github.com/3kh0/cs2go@fb970df0ee8175d9b212d310f6a928f9f61014f2",
+          "wear": 0.07,
+          "seed": 1,
+          "source_sha256": "e66f7f7eb30425129b8a1be52150c116d004a2a58f04b1719838d93bf47e530e",
+          "uv_algorithm": "cs2go-hd-surface-v1"
         }
       ]
     },
@@ -1100,6 +1408,34 @@
           "uv_layout": "legacy_to_current_hd",
           "uv_algorithm": "nwm1-nearest-surface-v5",
           "menu_label": "Golden Coil (CS2 catalog)"
+        },
+        {
+          "id": "cs2go_60_1476",
+          "name": "M4A1-S | Fatal Glitch",
+          "finish": "Fatal Glitch",
+          "menu_label": "Fatal Glitch (cs2go)",
+          "texture": "res://assets/textures/cs2go/weapons/m4a1/60_1476.png",
+          "paint_id": 1476,
+          "uv_layout": "cs2go_hd_to_current",
+          "source": "https://github.com/3kh0/cs2go@fb970df0ee8175d9b212d310f6a928f9f61014f2",
+          "wear": 0.07,
+          "seed": 1,
+          "source_sha256": "f5d0fd0ee79b6b2e1806c84b5cf6849e4bacba89b6db323641ca24cbbf317662",
+          "uv_algorithm": "cs2go-hd-surface-v1"
+        },
+        {
+          "id": "cs2go_60_1433",
+          "name": "M4A1-S | Electrum",
+          "finish": "Electrum",
+          "menu_label": "Electrum (cs2go)",
+          "texture": "res://assets/textures/cs2go/weapons/m4a1/60_1433.png",
+          "paint_id": 1433,
+          "uv_layout": "cs2go_hd_to_current",
+          "source": "https://github.com/3kh0/cs2go@fb970df0ee8175d9b212d310f6a928f9f61014f2",
+          "wear": 0.07,
+          "seed": 1,
+          "source_sha256": "2f482f3800f529ce7364f10f725559181bdea6ad3c2d540ec31314fb99adfe73",
+          "uv_algorithm": "cs2go-hd-surface-v1"
         }
       ]
     },
@@ -1181,6 +1517,34 @@
           "uv_layout": "legacy_to_current_hd",
           "uv_algorithm": "nwm1-nearest-surface-v5",
           "menu_label": "Sakkaku (CS2 catalog)"
+        },
+        {
+          "id": "cs2go_17_1454",
+          "name": "MAC-10 | Arabesque Mosaic",
+          "finish": "Arabesque Mosaic",
+          "menu_label": "Arabesque Mosaic (cs2go)",
+          "texture": "res://assets/textures/cs2go/weapons/mac10/17_1454.png",
+          "paint_id": 1454,
+          "uv_layout": "cs2go_hd_to_current",
+          "source": "https://github.com/3kh0/cs2go@fb970df0ee8175d9b212d310f6a928f9f61014f2",
+          "wear": 0.07,
+          "seed": 1,
+          "source_sha256": "b15c4257bc8d3f0da11f959310a9e0efb8d8cc6fb82a9a81162c0fb993f72b97",
+          "uv_algorithm": "cs2go-hd-surface-v1"
+        },
+        {
+          "id": "cs2go_17_1448",
+          "name": "MAC-10 | Video Cam",
+          "finish": "Video Cam",
+          "menu_label": "Video Cam (cs2go)",
+          "texture": "res://assets/textures/cs2go/weapons/mac10/17_1448.png",
+          "paint_id": 1448,
+          "uv_layout": "cs2go_hd_to_current",
+          "source": "https://github.com/3kh0/cs2go@fb970df0ee8175d9b212d310f6a928f9f61014f2",
+          "wear": 0.07,
+          "seed": 1,
+          "source_sha256": "8e7a934458c91fcd375c9cf75ea5ad1263d2802de28d30c1f416700c4bfdb304",
+          "uv_algorithm": "cs2go-hd-surface-v1"
         }
       ]
     },
@@ -1262,6 +1626,34 @@
           "uv_layout": "native_current_hd",
           "uv_algorithm": "native",
           "menu_label": "Smoking Kills (CS2 catalog)"
+        },
+        {
+          "id": "cs2go_33_1468",
+          "name": "MP7 | Base-2",
+          "finish": "Base-2",
+          "menu_label": "Base-2 (cs2go)",
+          "texture": "res://assets/textures/cs2go/weapons/mp7/33_1468.png",
+          "paint_id": 1468,
+          "uv_layout": "cs2go_hd_to_current",
+          "source": "https://github.com/3kh0/cs2go@fb970df0ee8175d9b212d310f6a928f9f61014f2",
+          "wear": 0.07,
+          "seed": 1,
+          "source_sha256": "7358f0aac5ec2516d524dd60ebb8d205e910705c30474f05324019bbd9b9c4e3",
+          "uv_algorithm": "cs2go-hd-surface-v1"
+        },
+        {
+          "id": "cs2go_33_1436",
+          "name": "MP7 | Amberline",
+          "finish": "Amberline",
+          "menu_label": "Amberline (cs2go)",
+          "texture": "res://assets/textures/cs2go/weapons/mp7/33_1436.png",
+          "paint_id": 1436,
+          "uv_layout": "cs2go_hd_to_current",
+          "source": "https://github.com/3kh0/cs2go@fb970df0ee8175d9b212d310f6a928f9f61014f2",
+          "wear": 0.07,
+          "seed": 1,
+          "source_sha256": "2dbbd704305f740e07c3d3cc745718eb9cc4227385e12d48f5ad112f39c17ca1",
+          "uv_algorithm": "cs2go-hd-surface-v1"
         }
       ]
     },
@@ -1343,6 +1735,34 @@
           "uv_layout": "native_current_hd",
           "uv_algorithm": "native",
           "menu_label": "Hot Rod (CS2 catalog)"
+        },
+        {
+          "id": "cs2go_34_1473",
+          "name": "MP9 | Dune Asp",
+          "finish": "Dune Asp",
+          "menu_label": "Dune Asp (cs2go)",
+          "texture": "res://assets/textures/cs2go/weapons/tmp/34_1473.png",
+          "paint_id": 1473,
+          "uv_layout": "cs2go_hd_to_current",
+          "source": "https://github.com/3kh0/cs2go@fb970df0ee8175d9b212d310f6a928f9f61014f2",
+          "wear": 0.07,
+          "seed": 1,
+          "source_sha256": "402dc75d2fbdd47ba38e5a9c2bc58937c1e11af57dcf8d740e8f94979777dcce",
+          "uv_algorithm": "cs2go-hd-surface-v1"
+        },
+        {
+          "id": "cs2go_34_1469",
+          "name": "MP9 | Spy Prototype",
+          "finish": "Spy Prototype",
+          "menu_label": "Spy Prototype (cs2go)",
+          "texture": "res://assets/textures/cs2go/weapons/tmp/34_1469.png",
+          "paint_id": 1469,
+          "uv_layout": "cs2go_hd_to_current",
+          "source": "https://github.com/3kh0/cs2go@fb970df0ee8175d9b212d310f6a928f9f61014f2",
+          "wear": 0.07,
+          "seed": 1,
+          "source_sha256": "22386b034fc2a60a1b444c7ce4df173e689013b8f814fe9972ecbe2550946c1b",
+          "uv_algorithm": "cs2go-hd-surface-v1"
         }
       ]
     },
@@ -1424,6 +1844,34 @@
           "uv_layout": "legacy_to_current_hd",
           "uv_algorithm": "nwm1-nearest-surface-v5",
           "menu_label": "Toy Soldier (CS2 catalog)"
+        },
+        {
+          "id": "cs2go_35_1474",
+          "name": "Nova | Morning Sun",
+          "finish": "Morning Sun",
+          "menu_label": "Morning Sun (cs2go)",
+          "texture": "res://assets/textures/cs2go/weapons/m3/35_1474.png",
+          "paint_id": 1474,
+          "uv_layout": "cs2go_hd_to_current",
+          "source": "https://github.com/3kh0/cs2go@fb970df0ee8175d9b212d310f6a928f9f61014f2",
+          "wear": 0.07,
+          "seed": 1,
+          "source_sha256": "ded1bd9e0a0786925b93140bd3927f6be4120b51cadf5d55c7322038ae169d5b",
+          "uv_algorithm": "cs2go-hd-surface-v1"
+        },
+        {
+          "id": "cs2go_35_1442",
+          "name": "Nova | Smart Gun",
+          "finish": "Smart Gun",
+          "menu_label": "Smart Gun (cs2go)",
+          "texture": "res://assets/textures/cs2go/weapons/m3/35_1442.png",
+          "paint_id": 1442,
+          "uv_layout": "cs2go_hd_to_current",
+          "source": "https://github.com/3kh0/cs2go@fb970df0ee8175d9b212d310f6a928f9f61014f2",
+          "wear": 0.07,
+          "seed": 1,
+          "source_sha256": "3141096bade0838ed82ca83770e25e5e28ce6c6e046f710b4a1f265d9d812f90",
+          "uv_algorithm": "cs2go-hd-surface-v1"
         }
       ]
     },
@@ -1505,6 +1953,34 @@
           "uv_layout": "native_current_hd",
           "uv_algorithm": "native",
           "menu_label": "Whiteout (CS2 catalog)"
+        },
+        {
+          "id": "cs2go_36_1455",
+          "name": "P250 | Lotus Imprint",
+          "finish": "Lotus Imprint",
+          "menu_label": "Lotus Imprint (cs2go)",
+          "texture": "res://assets/textures/cs2go/weapons/p228/36_1455.png",
+          "paint_id": 1455,
+          "uv_layout": "cs2go_hd_to_current",
+          "source": "https://github.com/3kh0/cs2go@fb970df0ee8175d9b212d310f6a928f9f61014f2",
+          "wear": 0.07,
+          "seed": 1,
+          "source_sha256": "f246d5d8d1fdc6f8994f8d47c6d2b3020ccc2e3bbf2ac7b04443e8d24821171d",
+          "uv_algorithm": "cs2go-hd-surface-v1"
+        },
+        {
+          "id": "cs2go_36_1420",
+          "name": "P250 | Kintsugi",
+          "finish": "Kintsugi",
+          "menu_label": "Kintsugi (cs2go)",
+          "texture": "res://assets/textures/cs2go/weapons/p228/36_1420.png",
+          "paint_id": 1420,
+          "uv_layout": "cs2go_hd_to_current",
+          "source": "https://github.com/3kh0/cs2go@fb970df0ee8175d9b212d310f6a928f9f61014f2",
+          "wear": 0.07,
+          "seed": 1,
+          "source_sha256": "af850752306decd5eb26e5bea65fa108d5df059b3cf851e4fc6843bacb1bdf68",
+          "uv_algorithm": "cs2go-hd-surface-v1"
         }
       ]
     },
@@ -1587,6 +2063,34 @@
           "uv_layout": "legacy_to_current_hd",
           "uv_algorithm": "nwm1-nearest-surface-v5",
           "menu_label": "Asiimov (CS2 catalog)"
+        },
+        {
+          "id": "cs2go_19_1419",
+          "name": "P90 | Deathgaze",
+          "finish": "Deathgaze",
+          "menu_label": "Deathgaze (cs2go)",
+          "texture": "res://assets/textures/cs2go/weapons/p90/19_1419.png",
+          "paint_id": 1419,
+          "uv_layout": "cs2go_hd_to_current",
+          "source": "https://github.com/3kh0/cs2go@fb970df0ee8175d9b212d310f6a928f9f61014f2",
+          "wear": 0.07,
+          "seed": 1,
+          "source_sha256": "198d54ed371df8333fbc8a20c7fea78b0b447d55c270662e0bbc1ce5b36edf12",
+          "uv_algorithm": "cs2go-hd-surface-v1"
+        },
+        {
+          "id": "cs2go_19_1361",
+          "name": "P90 | Aeolian Light",
+          "finish": "Aeolian Light",
+          "menu_label": "Aeolian Light (cs2go)",
+          "texture": "res://assets/textures/cs2go/weapons/p90/19_1361.png",
+          "paint_id": 1361,
+          "uv_layout": "cs2go_hd_to_current",
+          "source": "https://github.com/3kh0/cs2go@fb970df0ee8175d9b212d310f6a928f9f61014f2",
+          "wear": 0.07,
+          "seed": 1,
+          "source_sha256": "6b1762b507969f910a404a57ed532a4e622be58b275cb75f0cd02243bf04e375",
+          "uv_algorithm": "cs2go-hd-surface-v1"
         }
       ]
     },
@@ -1668,6 +2172,34 @@
           "uv_layout": "legacy_to_current_hd",
           "uv_algorithm": "nwm1-nearest-surface-v5",
           "menu_label": "Cardiac (CS2 catalog)"
+        },
+        {
+          "id": "cs2go_38_1453",
+          "name": "SCAR-20 | Sirocco Script",
+          "finish": "Sirocco Script",
+          "menu_label": "Sirocco Script (cs2go)",
+          "texture": "res://assets/textures/cs2go/weapons/sg550/38_1453.png",
+          "paint_id": 1453,
+          "uv_layout": "cs2go_hd_to_current",
+          "source": "https://github.com/3kh0/cs2go@fb970df0ee8175d9b212d310f6a928f9f61014f2",
+          "wear": 0.07,
+          "seed": 1,
+          "source_sha256": "c858a73229fe46a3d94b3b91d9cc9754d64e0335001f659809c4ca40f5b1583e",
+          "uv_algorithm": "cs2go-hd-surface-v1"
+        },
+        {
+          "id": "cs2go_38_1470",
+          "name": "SCAR-20 | Arctic Camo Panels",
+          "finish": "Arctic Camo Panels",
+          "menu_label": "Arctic Camo Panels (cs2go)",
+          "texture": "res://assets/textures/cs2go/weapons/sg550/38_1470.png",
+          "paint_id": 1470,
+          "uv_layout": "cs2go_hd_to_current",
+          "source": "https://github.com/3kh0/cs2go@fb970df0ee8175d9b212d310f6a928f9f61014f2",
+          "wear": 0.07,
+          "seed": 1,
+          "source_sha256": "c6c9a1a1c1d95025776fa1cceeb1468ab45595c6921feff452792c31bb9e6152",
+          "uv_algorithm": "cs2go-hd-surface-v1"
         }
       ]
     },
@@ -1749,6 +2281,34 @@
           "uv_layout": "legacy_to_current_hd",
           "uv_algorithm": "nwm1-nearest-surface-v5",
           "menu_label": "Printstream (CS2 catalog)"
+        },
+        {
+          "id": "cs2go_61_1451",
+          "name": "USP-S | Spiral Glitch",
+          "finish": "Spiral Glitch",
+          "menu_label": "Spiral Glitch (cs2go)",
+          "texture": "res://assets/textures/cs2go/weapons/usp/61_1451.png",
+          "paint_id": 1451,
+          "uv_layout": "cs2go_hd_to_current",
+          "source": "https://github.com/3kh0/cs2go@fb970df0ee8175d9b212d310f6a928f9f61014f2",
+          "wear": 0.07,
+          "seed": 1,
+          "source_sha256": "758515883223655599195a9db9e35c7be4af3cfe9b4ef8ca490bcfbe6c6873b3",
+          "uv_algorithm": "cs2go-hd-surface-v1"
+        },
+        {
+          "id": "cs2go_61_1431",
+          "name": "USP-S | Silent Shot",
+          "finish": "Silent Shot",
+          "menu_label": "Silent Shot (cs2go)",
+          "texture": "res://assets/textures/cs2go/weapons/usp/61_1431.png",
+          "paint_id": 1431,
+          "uv_layout": "cs2go_hd_to_current",
+          "source": "https://github.com/3kh0/cs2go@fb970df0ee8175d9b212d310f6a928f9f61014f2",
+          "wear": 0.07,
+          "seed": 1,
+          "source_sha256": "3d461f4e6f497cf76ec3f78b6ee8322bfdc56e7712981869ad56d56aaafcd380",
+          "uv_algorithm": "cs2go-hd-surface-v1"
         }
       ]
     },
@@ -2377,6 +2937,34 @@
           "uv_layout": "legacy_to_current_hd",
           "uv_algorithm": "nwm1-nearest-surface-v5",
           "menu_label": "Howl (CS2 catalog)"
+        },
+        {
+          "id": "cs2go_16_1463",
+          "name": "M4A4 | Falak",
+          "finish": "Falak",
+          "menu_label": "Falak (cs2go)",
+          "texture": "res://assets/textures/cs2go/weapons/m4a4/16_1463.png",
+          "paint_id": 1463,
+          "uv_layout": "cs2go_hd_to_current",
+          "source": "https://github.com/3kh0/cs2go@fb970df0ee8175d9b212d310f6a928f9f61014f2",
+          "wear": 0.07,
+          "seed": 1,
+          "source_sha256": "e5b669beaa9659ba3075ce52d2aceba4a3c12837a82df87d70f714c8198f089a",
+          "uv_algorithm": "cs2go-hd-surface-v1"
+        },
+        {
+          "id": "cs2go_16_1446",
+          "name": "M4A4 | Dark Operative",
+          "finish": "Dark Operative",
+          "menu_label": "Dark Operative (cs2go)",
+          "texture": "res://assets/textures/cs2go/weapons/m4a4/16_1446.png",
+          "paint_id": 1446,
+          "uv_layout": "cs2go_hd_to_current",
+          "source": "https://github.com/3kh0/cs2go@fb970df0ee8175d9b212d310f6a928f9f61014f2",
+          "wear": 0.07,
+          "seed": 1,
+          "source_sha256": "1449f397b5944276e05daa4520c34c321628baf473f692b711e4e0b6981b9c69",
+          "uv_algorithm": "cs2go-hd-surface-v1"
         }
       ]
     },
@@ -2398,6 +2986,34 @@
           "uv_layout": "legacy_to_current_hd",
           "uv_algorithm": "nwm1-nearest-surface-v5",
           "menu_label": "Dragonfire (CS2 catalog)"
+        },
+        {
+          "id": "cs2go_40_1372",
+          "name": "Steyr Scout | Sans Comic",
+          "finish": "Sans Comic",
+          "menu_label": "Sans Comic (cs2go)",
+          "texture": "res://assets/textures/cs2go/weapons/scout/40_1372.png",
+          "paint_id": 1372,
+          "uv_layout": "cs2go_hd_to_current",
+          "source": "https://github.com/3kh0/cs2go@fb970df0ee8175d9b212d310f6a928f9f61014f2",
+          "wear": 0.07,
+          "seed": 1,
+          "source_sha256": "a9ddd7ed72c5cc489c8ca75f800688220bbca78308daf631abe6b13e4911d772",
+          "uv_algorithm": "cs2go-hd-surface-v1"
+        },
+        {
+          "id": "cs2go_40_1379",
+          "name": "Steyr Scout | Calligrafaux",
+          "finish": "Calligrafaux",
+          "menu_label": "Calligrafaux (cs2go)",
+          "texture": "res://assets/textures/cs2go/weapons/scout/40_1379.png",
+          "paint_id": 1379,
+          "uv_layout": "cs2go_hd_to_current",
+          "source": "https://github.com/3kh0/cs2go@fb970df0ee8175d9b212d310f6a928f9f61014f2",
+          "wear": 0.07,
+          "seed": 1,
+          "source_sha256": "ec50f39539aca1ce52cc47a05b70ebe893ff717cb09494882237c974f5153164",
+          "uv_algorithm": "cs2go-hd-surface-v1"
         }
       ]
     },
@@ -2419,6 +3035,34 @@
           "uv_layout": "legacy_to_current_hd",
           "uv_algorithm": "nwm1-nearest-surface-v5",
           "menu_label": "Turf (CS2 catalog)"
+        },
+        {
+          "id": "cs2go_32_1359",
+          "name": "P2000 | Grip Tape",
+          "finish": "Grip Tape",
+          "menu_label": "Grip Tape (cs2go)",
+          "texture": "res://assets/textures/cs2go/weapons/p2000/32_1359.png",
+          "paint_id": 1359,
+          "uv_layout": "cs2go_hd_to_current",
+          "source": "https://github.com/3kh0/cs2go@fb970df0ee8175d9b212d310f6a928f9f61014f2",
+          "wear": 0.07,
+          "seed": 1,
+          "source_sha256": "6e5c8a8ada572beea5de262732f4a9072c8a2df742677734fd895104e09a90b8",
+          "uv_algorithm": "cs2go-hd-surface-v1"
+        },
+        {
+          "id": "cs2go_32_1342",
+          "name": "P2000 | Red Wing",
+          "finish": "Red Wing",
+          "menu_label": "Red Wing (cs2go)",
+          "texture": "res://assets/textures/cs2go/weapons/p2000/32_1342.png",
+          "paint_id": 1342,
+          "uv_layout": "cs2go_hd_to_current",
+          "source": "https://github.com/3kh0/cs2go@fb970df0ee8175d9b212d310f6a928f9f61014f2",
+          "wear": 0.07,
+          "seed": 1,
+          "source_sha256": "4ab3c3128395ea5ddc2dc8b8960d8969a969c081a3aafa7ed088920e7f107d25",
+          "uv_algorithm": "cs2go-hd-surface-v1"
         }
       ]
     },
@@ -2440,6 +3084,34 @@
           "uv_layout": "legacy_to_current_hd",
           "uv_algorithm": "nwm1-nearest-surface-v5",
           "menu_label": "Fuel Injector (CS2 catalog)"
+        },
+        {
+          "id": "cs2go_30_1462",
+          "name": "Tec-9 | Sultan",
+          "finish": "Sultan",
+          "menu_label": "Sultan (cs2go)",
+          "texture": "res://assets/textures/cs2go/weapons/tec9/30_1462.png",
+          "paint_id": 1462,
+          "uv_layout": "cs2go_hd_to_current",
+          "source": "https://github.com/3kh0/cs2go@fb970df0ee8175d9b212d310f6a928f9f61014f2",
+          "wear": 0.07,
+          "seed": 1,
+          "source_sha256": "325c09bddd5150a4a8609da89a415052da1673044ff52174306f0b80ca4ebaa9",
+          "uv_algorithm": "cs2go-hd-surface-v1"
+        },
+        {
+          "id": "cs2go_30_1447",
+          "name": "Tec-9 | Perimeter",
+          "finish": "Perimeter",
+          "menu_label": "Perimeter (cs2go)",
+          "texture": "res://assets/textures/cs2go/weapons/tec9/30_1447.png",
+          "paint_id": 1447,
+          "uv_layout": "cs2go_hd_to_current",
+          "source": "https://github.com/3kh0/cs2go@fb970df0ee8175d9b212d310f6a928f9f61014f2",
+          "wear": 0.07,
+          "seed": 1,
+          "source_sha256": "d56628cf83ae6d328819cb1111836daf39f607de6ea84e75292416ebf23fb6c3",
+          "uv_algorithm": "cs2go-hd-surface-v1"
         }
       ]
     },
@@ -2461,6 +3133,34 @@
           "uv_layout": "legacy_to_current_hd",
           "uv_algorithm": "nwm1-nearest-surface-v5",
           "menu_label": "Pole Position (CS2 catalog)"
+        },
+        {
+          "id": "cs2go_63_1443",
+          "name": "CZ75-Auto | Hydraulics",
+          "finish": "Hydraulics",
+          "menu_label": "Hydraulics (cs2go)",
+          "texture": "res://assets/textures/cs2go/weapons/cz75/63_1443.png",
+          "paint_id": 1443,
+          "uv_layout": "cs2go_hd_to_current",
+          "source": "https://github.com/3kh0/cs2go@fb970df0ee8175d9b212d310f6a928f9f61014f2",
+          "wear": 0.07,
+          "seed": 1,
+          "source_sha256": "985c1fadc33214be3a574ae232a7e878503b8ba0ae7afcf1efdf3e227a338ffa",
+          "uv_algorithm": "cs2go-hd-surface-v1"
+        },
+        {
+          "id": "cs2go_63_1390",
+          "name": "CZ75-Auto | Honey Paisley",
+          "finish": "Honey Paisley",
+          "menu_label": "Honey Paisley (cs2go)",
+          "texture": "res://assets/textures/cs2go/weapons/cz75/63_1390.png",
+          "paint_id": 1390,
+          "uv_layout": "cs2go_hd_to_current",
+          "source": "https://github.com/3kh0/cs2go@fb970df0ee8175d9b212d310f6a928f9f61014f2",
+          "wear": 0.07,
+          "seed": 1,
+          "source_sha256": "4888abfb12f8ea182c75e7fbdf1ca9e7cb6c38593eadad447122fe33f816482c",
+          "uv_algorithm": "cs2go-hd-surface-v1"
         }
       ]
     },
@@ -2482,6 +3182,34 @@
           "uv_layout": "native_current_hd",
           "uv_algorithm": "native",
           "menu_label": "Fade (CS2 catalog)"
+        },
+        {
+          "id": "cs2go_24_1426",
+          "name": "H&K UMP45 | Fragment",
+          "finish": "Fragment",
+          "menu_label": "Fragment (cs2go)",
+          "texture": "res://assets/textures/cs2go/weapons/ump45/24_1426.png",
+          "paint_id": 1426,
+          "uv_layout": "cs2go_hd_to_current",
+          "source": "https://github.com/3kh0/cs2go@fb970df0ee8175d9b212d310f6a928f9f61014f2",
+          "wear": 0.07,
+          "seed": 1,
+          "source_sha256": "c2c2e72d2c3c9188dd3cdddc97beb10c2fe6f8941b90a66ed16318b950f7fcb8",
+          "uv_algorithm": "cs2go-hd-surface-v1"
+        },
+        {
+          "id": "cs2go_24_1387",
+          "name": "H&K UMP45 | Warm Blooded",
+          "finish": "Warm Blooded",
+          "menu_label": "Warm Blooded (cs2go)",
+          "texture": "res://assets/textures/cs2go/weapons/ump45/24_1387.png",
+          "paint_id": 1387,
+          "uv_layout": "cs2go_hd_to_current",
+          "source": "https://github.com/3kh0/cs2go@fb970df0ee8175d9b212d310f6a928f9f61014f2",
+          "wear": 0.07,
+          "seed": 1,
+          "source_sha256": "e6e0f1babe87d1ed0ee4cf8844eb5c1d11b859a0ba105003297a12fcf83b0221",
+          "uv_algorithm": "cs2go-hd-surface-v1"
         }
       ]
     },
@@ -2503,6 +3231,34 @@
           "uv_layout": "legacy_to_current_hd",
           "uv_algorithm": "nwm1-nearest-surface-v5",
           "menu_label": "Judgement of Anubis (CS2 catalog)"
+        },
+        {
+          "id": "cs2go_26_1472",
+          "name": "PP-Bizon | Traitor",
+          "finish": "Traitor",
+          "menu_label": "Traitor (cs2go)",
+          "texture": "res://assets/textures/cs2go/weapons/bizon/26_1472.png",
+          "paint_id": 1472,
+          "uv_layout": "cs2go_hd_to_current",
+          "source": "https://github.com/3kh0/cs2go@fb970df0ee8175d9b212d310f6a928f9f61014f2",
+          "wear": 0.07,
+          "seed": 1,
+          "source_sha256": "fcb1deca659a07bd906ae791deeff82ca6b33da2950626a214d316711b5e897e",
+          "uv_algorithm": "cs2go-hd-surface-v1"
+        },
+        {
+          "id": "cs2go_26_1418",
+          "name": "PP-Bizon | RMX",
+          "finish": "RMX",
+          "menu_label": "RMX (cs2go)",
+          "texture": "res://assets/textures/cs2go/weapons/bizon/26_1418.png",
+          "paint_id": 1418,
+          "uv_layout": "cs2go_hd_to_current",
+          "source": "https://github.com/3kh0/cs2go@fb970df0ee8175d9b212d310f6a928f9f61014f2",
+          "wear": 0.07,
+          "seed": 1,
+          "source_sha256": "95ced8dbca2a766fe8f7e1cc98002190c77354869030f9011e421286fe6e95f6",
+          "uv_algorithm": "cs2go-hd-surface-v1"
         }
       ]
     },
@@ -2524,6 +3280,34 @@
           "uv_layout": "legacy_to_current_hd",
           "uv_algorithm": "nwm1-nearest-surface-v5",
           "menu_label": "Phosphor (CS2 catalog)"
+        },
+        {
+          "id": "cs2go_23_1385",
+          "name": "H&K MP5-Navy | Picnic",
+          "finish": "Picnic",
+          "menu_label": "Picnic (cs2go)",
+          "texture": "res://assets/textures/cs2go/weapons/mp5navy/23_1385.png",
+          "paint_id": 1385,
+          "uv_layout": "cs2go_hd_to_current",
+          "source": "https://github.com/3kh0/cs2go@fb970df0ee8175d9b212d310f6a928f9f61014f2",
+          "wear": 0.07,
+          "seed": 1,
+          "source_sha256": "c44e03ac82a9df6c6f8ab7aa2e2b9ce39735ba29ab6d000acb5bc8dfd8b38082",
+          "uv_algorithm": "cs2go-hd-surface-v1"
+        },
+        {
+          "id": "cs2go_23_1366",
+          "name": "H&K MP5-Navy | Snow Splash",
+          "finish": "Snow Splash",
+          "menu_label": "Snow Splash (cs2go)",
+          "texture": "res://assets/textures/cs2go/weapons/mp5navy/23_1366.png",
+          "paint_id": 1366,
+          "uv_layout": "cs2go_hd_to_current",
+          "source": "https://github.com/3kh0/cs2go@fb970df0ee8175d9b212d310f6a928f9f61014f2",
+          "wear": 0.07,
+          "seed": 1,
+          "source_sha256": "ba562a8e5248412f498ec7b5c11f1e9bae35a0701513678a0f47e013db535726",
+          "uv_algorithm": "cs2go-hd-surface-v1"
         }
       ]
     },
@@ -2545,6 +3329,34 @@
           "uv_layout": "legacy_to_current_hd",
           "uv_algorithm": "nwm1-nearest-surface-v5",
           "menu_label": "Hazard Pay (CS2 catalog)"
+        },
+        {
+          "id": "cs2go_39_1394",
+          "name": "SIG SG-552 Commando | Safari Print",
+          "finish": "Safari Print",
+          "menu_label": "Safari Print (cs2go)",
+          "texture": "res://assets/textures/cs2go/weapons/sg552/39_1394.png",
+          "paint_id": 1394,
+          "uv_layout": "cs2go_hd_to_current",
+          "source": "https://github.com/3kh0/cs2go@fb970df0ee8175d9b212d310f6a928f9f61014f2",
+          "wear": 0.07,
+          "seed": 1,
+          "source_sha256": "9c8519b5ac7f424a3a207e1933115f01c9b260754c014c6412e9850e9d85cef2",
+          "uv_algorithm": "cs2go-hd-surface-v1"
+        },
+        {
+          "id": "cs2go_39_1270",
+          "name": "SIG SG-552 Commando | Night Camo",
+          "finish": "Night Camo",
+          "menu_label": "Night Camo (cs2go)",
+          "texture": "res://assets/textures/cs2go/weapons/sg552/39_1270.png",
+          "paint_id": 1270,
+          "uv_layout": "cs2go_hd_to_current",
+          "source": "https://github.com/3kh0/cs2go@fb970df0ee8175d9b212d310f6a928f9f61014f2",
+          "wear": 0.07,
+          "seed": 1,
+          "source_sha256": "dfe05608cf013d05b783ef5006444028c0d6dddb78bb003f1ada298cebb4ab7c",
+          "uv_algorithm": "cs2go-hd-surface-v1"
         }
       ]
     },
@@ -2566,6 +3378,34 @@
           "uv_layout": "legacy_to_current_hd",
           "uv_algorithm": "nwm1-nearest-surface-v5",
           "menu_label": "Tranquility (CS2 catalog)"
+        },
+        {
+          "id": "cs2go_25_1471",
+          "name": "Benelli XM1014 | Black Site",
+          "finish": "Black Site",
+          "menu_label": "Black Site (cs2go)",
+          "texture": "res://assets/textures/cs2go/weapons/xm1014/25_1471.png",
+          "paint_id": 1471,
+          "uv_layout": "cs2go_hd_to_current",
+          "source": "https://github.com/3kh0/cs2go@fb970df0ee8175d9b212d310f6a928f9f61014f2",
+          "wear": 0.07,
+          "seed": 1,
+          "source_sha256": "01049fbbbe50f7e597099fabbbd1659876208a237bf86f3aab6a6bd645c101d8",
+          "uv_algorithm": "cs2go-hd-surface-v1"
+        },
+        {
+          "id": "cs2go_25_1381",
+          "name": "Benelli XM1014 | XoooM",
+          "finish": "XoooM",
+          "menu_label": "XoooM (cs2go)",
+          "texture": "res://assets/textures/cs2go/weapons/xm1014/25_1381.png",
+          "paint_id": 1381,
+          "uv_layout": "cs2go_hd_to_current",
+          "source": "https://github.com/3kh0/cs2go@fb970df0ee8175d9b212d310f6a928f9f61014f2",
+          "wear": 0.07,
+          "seed": 1,
+          "source_sha256": "c0c539bfdff45bc1bdf43fa0e8a84e55a2ffefdc46acb4b3ee5043a8d8f40a77",
+          "uv_algorithm": "cs2go-hd-surface-v1"
         }
       ]
     },
@@ -2587,6 +3427,34 @@
           "uv_layout": "legacy_to_current_hd",
           "uv_algorithm": "nwm1-nearest-surface-v5",
           "menu_label": "Kiss Love (CS2 catalog)"
+        },
+        {
+          "id": "cs2go_29_1475",
+          "name": "Sawed-Off | Lunar Wyrm",
+          "finish": "Lunar Wyrm",
+          "menu_label": "Lunar Wyrm (cs2go)",
+          "texture": "res://assets/textures/cs2go/weapons/sawedoff/29_1475.png",
+          "paint_id": 1475,
+          "uv_layout": "cs2go_hd_to_current",
+          "source": "https://github.com/3kh0/cs2go@fb970df0ee8175d9b212d310f6a928f9f61014f2",
+          "wear": 0.07,
+          "seed": 1,
+          "source_sha256": "b928bd6b9052d259bb92df522bf431ba82a20fcaf84c2df02edd0ec7ef0b2f94",
+          "uv_algorithm": "cs2go-hd-surface-v1"
+        },
+        {
+          "id": "cs2go_29_1427",
+          "name": "Sawed-Off | Fusion",
+          "finish": "Fusion",
+          "menu_label": "Fusion (cs2go)",
+          "texture": "res://assets/textures/cs2go/weapons/sawedoff/29_1427.png",
+          "paint_id": 1427,
+          "uv_layout": "cs2go_hd_to_current",
+          "source": "https://github.com/3kh0/cs2go@fb970df0ee8175d9b212d310f6a928f9f61014f2",
+          "wear": 0.07,
+          "seed": 1,
+          "source_sha256": "86c760ab8467e5c927bef6c48400d59d5168782571d58d3c8a56dfce772d2d81",
+          "uv_algorithm": "cs2go-hd-surface-v1"
         }
       ]
     },
@@ -2608,6 +3476,34 @@
           "uv_layout": "legacy_to_current_hd",
           "uv_algorithm": "nwm1-nearest-surface-v5",
           "menu_label": "Counter Terrace (CS2 catalog)"
+        },
+        {
+          "id": "cs2go_27_1355",
+          "name": "MAG-7 | MAGnitude",
+          "finish": "MAGnitude",
+          "menu_label": "MAGnitude (cs2go)",
+          "texture": "res://assets/textures/cs2go/weapons/mag7/27_1355.png",
+          "paint_id": 1355,
+          "uv_layout": "cs2go_hd_to_current",
+          "source": "https://github.com/3kh0/cs2go@fb970df0ee8175d9b212d310f6a928f9f61014f2",
+          "wear": 0.07,
+          "seed": 1,
+          "source_sha256": "650312dff332ae5a4afa36a7e8af83fe6e322e0444638e8ef2cdc1e1f29cf072",
+          "uv_algorithm": "cs2go-hd-surface-v1"
+        },
+        {
+          "id": "cs2go_27_1306",
+          "name": "MAG-7 | Copper Oxide",
+          "finish": "Copper Oxide",
+          "menu_label": "Copper Oxide (cs2go)",
+          "texture": "res://assets/textures/cs2go/weapons/mag7/27_1306.png",
+          "paint_id": 1306,
+          "uv_layout": "cs2go_hd_to_current",
+          "source": "https://github.com/3kh0/cs2go@fb970df0ee8175d9b212d310f6a928f9f61014f2",
+          "wear": 0.07,
+          "seed": 1,
+          "source_sha256": "d09ae2cfed14acdbe9ba8aabd22701ba003611cdcae1c95e4a6a9fbce89e0afb",
+          "uv_algorithm": "cs2go-hd-surface-v1"
         }
       ]
     },
@@ -2629,6 +3525,34 @@
           "uv_layout": "legacy_to_current_hd",
           "uv_algorithm": "nwm1-nearest-surface-v5",
           "menu_label": "Mjolnir (CS2 catalog)"
+        },
+        {
+          "id": "cs2go_28_1300",
+          "name": "Negev | Raw Ceramic",
+          "finish": "Raw Ceramic",
+          "menu_label": "Raw Ceramic (cs2go)",
+          "texture": "res://assets/textures/cs2go/weapons/negev/28_1300.png",
+          "paint_id": 1300,
+          "uv_layout": "cs2go_hd_to_current",
+          "source": "https://github.com/3kh0/cs2go@fb970df0ee8175d9b212d310f6a928f9f61014f2",
+          "wear": 0.07,
+          "seed": 1,
+          "source_sha256": "4db31d72b48d79411c4dc94938b5b564ec212bb6b64a00473e50936a61c5fff1",
+          "uv_algorithm": "cs2go-hd-surface-v1"
+        },
+        {
+          "id": "cs2go_28_1260",
+          "name": "Negev | Sour Grapes",
+          "finish": "Sour Grapes",
+          "menu_label": "Sour Grapes (cs2go)",
+          "texture": "res://assets/textures/cs2go/weapons/negev/28_1260.png",
+          "paint_id": 1260,
+          "uv_layout": "cs2go_hd_to_current",
+          "source": "https://github.com/3kh0/cs2go@fb970df0ee8175d9b212d310f6a928f9f61014f2",
+          "wear": 0.07,
+          "seed": 1,
+          "source_sha256": "ae551729a1bbc2c683e85c044c4a9dab8cc05cf151e9f108d066ca0a60bb7f98",
+          "uv_algorithm": "cs2go-hd-surface-v1"
         }
       ]
     },
@@ -2650,6 +3574,34 @@
           "uv_layout": "legacy_to_current_hd",
           "uv_algorithm": "nwm1-nearest-surface-v5",
           "menu_label": "Crazy 8 (CS2 catalog)"
+        },
+        {
+          "id": "cs2go_64_1445",
+          "name": "R8 Revolver | Monarch",
+          "finish": "Monarch",
+          "menu_label": "Monarch (cs2go)",
+          "texture": "res://assets/textures/cs2go/weapons/revolver/64_1445.png",
+          "paint_id": 1445,
+          "uv_layout": "cs2go_hd_to_current",
+          "source": "https://github.com/3kh0/cs2go@fb970df0ee8175d9b212d310f6a928f9f61014f2",
+          "wear": 0.07,
+          "seed": 1,
+          "source_sha256": "c691717234e2b60cf828c2fd8ed2770e46e6b98598fcde570e1269b78c8dc0b6",
+          "uv_algorithm": "cs2go-hd-surface-v1"
+        },
+        {
+          "id": "cs2go_64_1363",
+          "name": "R8 Revolver | Dark Chamber",
+          "finish": "Dark Chamber",
+          "menu_label": "Dark Chamber (cs2go)",
+          "texture": "res://assets/textures/cs2go/weapons/revolver/64_1363.png",
+          "paint_id": 1363,
+          "uv_layout": "cs2go_hd_to_current",
+          "source": "https://github.com/3kh0/cs2go@fb970df0ee8175d9b212d310f6a928f9f61014f2",
+          "wear": 0.07,
+          "seed": 1,
+          "source_sha256": "4c0c723f7ebef0dc6f7a86a6da2fe358776afd852b6aaee18aaa4c671899e9df",
+          "uv_algorithm": "cs2go-hd-surface-v1"
         }
       ]
     },
@@ -2683,5 +3635,13 @@
     "knife_factory_finishes": 22,
     "report": "res://data/shipped_cs2_uv_report.json",
     "limitations": "All shipped baked finishes, not all Valve paint kits; fixed patterns, no official wear/compositor."
+  },
+  "cs2go_batch": {
+    "commit": "fb970df0ee8175d9b212d310f6a928f9f61014f2",
+    "count": 68,
+    "report": "res://data/cs2go_cosmetics.json",
+    "wear": 0.07,
+    "seed": 1,
+    "limitations": "Offline fixed seed/wear bake, UV transfer; no WebGPU runtime or dynamic wear."
   }
 }

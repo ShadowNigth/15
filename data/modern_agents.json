@@ -1,0 +1,86 @@
+{
+  "source": "https://github.com/3kh0/cs2go",
+  "commit": "fb970df0ee8175d9b212d310f6a928f9f61014f2",
+  "classes": {
+    "sas": "sas",
+    "terror": "phoenix",
+    "urban": "fbi",
+    "gsg9": "st6",
+    "gign": "sas_officer",
+    "leet": "leet",
+    "arctic": "dragomir",
+    "guerilla": "phoenix_a"
+  },
+  "agents": {
+    "sas": {
+      "team": "CT",
+      "family": "sas",
+      "name": "SAS"
+    },
+    "phoenix": {
+      "team": "T",
+      "family": "phoenix",
+      "name": "Phoenix"
+    },
+    "fbi": {
+      "team": "CT",
+      "family": "sas",
+      "class": "urban",
+      "name": "FBI",
+      "model": "res://assets/models/modern/fbi.glb",
+      "source": "packages/assets/public/models/agents/roster/ctm-fbi.glb",
+      "source_sha256": "7f841d1513c703c11cdbe650ef10d948032841486d405852549f57dcdd16e371",
+      "sha256": "ac357f382153656a51cccc67d01b9053eb0688ead1ab1bfe6aaf1a4ae5f35fff"
+    },
+    "st6": {
+      "team": "CT",
+      "family": "sas",
+      "class": "gsg9",
+      "name": "Seal Team 6 Soldier | NSWC SEAL",
+      "model": "res://assets/models/modern/st6.glb",
+      "source": "packages/assets/public/models/agents/roster/ctm-st6-variante.glb",
+      "source_sha256": "e820198f3d0ee4e71eed9bd0948e2f1ff8cd4d21fe7bb0d2280ca29b0e072077",
+      "sha256": "2add759e5e36783b051968b73a6f6cbcf5a07a5b94daa6eed94e04d6e0cc3fe6"
+    },
+    "sas_officer": {
+      "team": "CT",
+      "family": "sas",
+      "class": "gign",
+      "name": "B Squadron Officer | SAS",
+      "model": "res://assets/models/modern/sas_officer.glb",
+      "source": "packages/assets/public/models/agents/roster/ctm-sas-variantf.glb",
+      "source_sha256": "3ba0a2220a9703f644343c90297c3e7c0480f1af7a0474631f99bd1e662c0daa",
+      "sha256": "0e55c23e310a48e1719f3c1b78a35df0cc9aa18d5dcd8e281b24d5e7885b2be2"
+    },
+    "leet": {
+      "team": "T",
+      "family": "phoenix",
+      "class": "leet",
+      "name": "Elite Crew | Variant E",
+      "model": "res://assets/models/modern/leet.glb",
+      "source": "packages/assets/public/models/agents/roster/tm-leet-variante.glb",
+      "source_sha256": "2bff3dc73bb0748bd32ba6a3fbc272c1ab31f4e1fbb8ceda40d2249e405a009e",
+      "sha256": "12212762a50db491b32ead32e5c2e762ab111594e3b7648712c3847f03b7d8ed"
+    },
+    "dragomir": {
+      "team": "T",
+      "family": "phoenix",
+      "class": "arctic",
+      "name": "Dragomir | Sabre",
+      "model": "res://assets/models/modern/dragomir.glb",
+      "source": "packages/assets/public/models/agents/roster/tm-balkan-variantf.glb",
+      "source_sha256": "96047fc08b657d48ca104303c0d80ca382e7fe0e35cf34182c0654a411d125e9",
+      "sha256": "7196f144594d57822796a2586a3e0db51a4b9fa615046ec76806e42f89ea7546"
+    },
+    "phoenix_a": {
+      "team": "T",
+      "family": "phoenix",
+      "class": "guerilla",
+      "name": "Phoenix | Variant A",
+      "model": "res://assets/models/modern/phoenix_a.glb",
+      "source": "packages/assets/public/models/agents/roster/tm-phoenix-varianta.glb",
+      "source_sha256": "a802bb477f4cbd49491e49f477e1f3885feeed80fe774fc15b8d61e7f3741550",
+      "sha256": "d806ca3969b1bdaea16a13e2cebf51bbd106e61bd91be80b69f091050299134c"
+    }
+  }
+}

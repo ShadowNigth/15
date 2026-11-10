@@ -138,6 +138,7 @@ func _build_preview(tm: String) -> void:
 		return
 	var model := scene.instantiate() as Node3D
 	stage.add_child(model)
+	ModernAgentPose.prepare_model(model, ModernAgentPose.role(tm, String(PREVIEW_CLASSES[tm])))
 	# Classic clips are authored around the GoldSrc hull centre, not the feet.
 	model.position.y = 0.0
 	model.rotation.y = PI + (-0.14 if tm == "T" else 0.14)
@@ -166,7 +167,7 @@ func _build_preview(tm: String) -> void:
 				var prop := weapon.instantiate()
 				hand.add_child(prop)
 				if ModernAgentPose.is_modern(skeleton):
-					ModernAgentPose.fit_prop(prop, ModernAgentPose.role(tm), "ak47" if tm == "T" else "m4a1")
+					ModernAgentPose.fit_prop(prop, ModernAgentPose.role(tm, String(PREVIEW_CLASSES[tm])), "ak47" if tm == "T" else "m4a1")
 				_style_meshes(prop)
 	if animation.has_animation("idle1"):
 		# Do not mutate the shared imported animation resource.
@@ -178,7 +179,7 @@ func _build_preview(tm: String) -> void:
 		animation.play("team_preview/idle")
 		animation.advance(0.0)
 	if not skeletons.is_empty() and ModernAgentPose.is_modern(skeletons[0]):
-		ModernPreviewGrip.attach(model, skeletons[0], animation, ModernAgentPose.role(tm), "ak47" if tm == "T" else "m4a1")
+		ModernPreviewGrip.attach(model, skeletons[0], animation, ModernAgentPose.role(tm, String(PREVIEW_CLASSES[tm])), "ak47" if tm == "T" else "m4a1")
 
 func _combined_idle(player: AnimationPlayer, skeleton: Skeleton3D, aim_name: String) -> Animation:
 	# GoldSrc splits gait and weapon aim. Playing them sequentially resets the

@@ -885,7 +885,7 @@ func _load_viewer_weapon(wid: String) -> void:
 
 
 func _load_viewer_player(cid: String) -> void:
-	_set_arsenal_heading(cid.to_upper(), "PERSONAJES CLÁSICOS")
+	_set_arsenal_heading(String(GameData.modern_agents.get("agents", {}).get(ModernAgentPose.role("CT" if cid in ["urban", "gsg9", "sas", "gign"] else "T", cid), {}).get("name", cid)), "AGENTES CT / T")
 	if _viewer_camera != null:
 		_viewer_camera.fov = 65.0
 		_viewer_camera.look_at_from_position(Vector3(0.0, 0.35, 1.35), Vector3(0.0, 0.3, 0.0), Vector3.UP)
@@ -899,6 +899,7 @@ func _load_viewer_player(cid: String) -> void:
 		inst.scale = Vector3(0.50, 0.50, 0.50)
 		inst.position = Vector3(0.0, 0.12, 0.0)
 		_viewer_pivot.add_child(inst)
+		ModernAgentPose.prepare_model(inst, ModernAgentPose.role("CT" if cid in ["urban", "gsg9", "sas", "gign"] else "T", cid))
 		_viewer_anim = _find_anim_recursive(inst)
 		_populate_viewer_animations()
 		var skel_list := inst.find_children("*", "Skeleton3D", true, false)
@@ -929,15 +930,15 @@ func _load_viewer_player(cid: String) -> void:
 						_style_viewer_meshes(wi)
 						ba.add_child(wi)
 						if ModernAgentPose.is_modern(sk):
-							ModernAgentPose.fit_prop(wi, "sas" if is_ct_mdl else "phoenix", "m4a1" if is_ct_mdl else "ak47")
+							ModernAgentPose.fit_prop(wi, ModernAgentPose.role("CT" if is_ct_mdl else "T", cid), "m4a1" if is_ct_mdl else "ak47")
 			for a in anim_list:
 				if a.to_lower() == "idle1" or a.to_lower().begins_with("idle"):
 					_viewer_anim.play(a)
 					break
 		if not skel_list.is_empty() and ModernAgentPose.is_modern(skel_list[0]) and _viewer_anim:
 			var is_ct := cid in ["urban", "gsg9", "sas", "gign"]
-			ModernPreviewGrip.attach(inst, skel_list[0], _viewer_anim, "sas" if is_ct else "phoenix", "m4a1" if is_ct else "ak47")
-	_viewer_stats_lbl.text = "SAS / Phoenix — CS2 agent appearance, native animation packs" if cid not in ["hostage", "scientist", "vip"] else "Classic mission character: " + cid
+			ModernPreviewGrip.attach(inst, skel_list[0], _viewer_anim, ModernAgentPose.role("CT" if is_ct else "T", cid), "m4a1" if is_ct else "ak47")
+	_viewer_stats_lbl.text = "Agentes modernos — CS2 agent appearance, native animation packs" if cid not in ["hostage", "scientist", "vip"] else "Classic mission character: " + cid
 
 
 func _test_viewer_fire() -> void:
