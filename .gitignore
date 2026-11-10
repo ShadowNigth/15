@@ -10,3 +10,7 @@ __pycache__/
 
 # Development source caches, never part of editable releases
 .cache/
+
+# Development-only agent conversion dependencies
+node_modules/
+tools/source/modern_agents/msc.cjs

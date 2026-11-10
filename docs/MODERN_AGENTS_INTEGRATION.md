@@ -33,3 +33,23 @@ before firing. Empty/reload/cooldown triggers are not counted. A live urgent
 objective follows its existing safe route rather than repeatedly strafing at a
 visible target beyond 16 metres; close threats and reload cover still interrupt.
 No upstream source code copied and no unseen opponent locations used.
+
+## Compatibility conversion resolved
+
+`tools/source/import_modern_agents.py` now downloads pinned models and the default
+rifle animation pack, decodes Meshopt and BasisU to ordinary geometry/embedded PNG,
+and transfers 21 named source animation clips to each native rig. Non-root local
+translation keys are converted from metres to the rig's inch coordinates; root
+movement is suppressed so it cannot displace gameplay physics. No source TS code
+is copied. The animation conversion is original tooling.
+
+Rebuild: `npm ci --prefix tools/source/modern_agents`, then
+`python tools/source/import_modern_agents.py` (requires authenticated gh). Runtime
+requires neither npm, gh, ktx, network access nor WASM. Provenance and SHA256 hashes
+are in `data/modern_agents_import.json`. Source artwork rights remain unchanged.
+
+Open `tests/ModernAgentImportTest.tscn` to inspect SAS/Phoenix with real native
+idle, run and crouch clips. This isolated import test does NOT activate them as
+match defaults. Weapon-specific actions/grip calibration, death controller,
+preview integration and moving gameplay QA remain required before replacement.
+The earlier missing `ktx` executable is no longer a blocker.

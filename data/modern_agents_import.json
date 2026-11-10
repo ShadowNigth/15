@@ -1,0 +1,69 @@
+{
+  "repository": "https://github.com/3kh0/cs2go",
+  "commit": "fb970df0ee8175d9b212d310f6a928f9f61014f2",
+  "status": "isolated validation; not active gameplay replacement",
+  "models": [
+    {
+      "name": "sas",
+      "source": "packages/assets/public/models/agents/roster/ctm-sas.glb",
+      "source_sha256": "b10208f745425dbfdac470ca1278d2658bd9512967b69c08564c00433d52cc89",
+      "output_sha256": "00672f15c11f66d6c55648d75ffc848308437878d71388fa43851e67d2f3fc72",
+      "path": "assets/models/modern/sas.glb",
+      "clips": [
+        "idle_rifle",
+        "idle_crouch_rifle",
+        "walk_n_rifle",
+        "walk_s_rifle",
+        "walk_e_rifle",
+        "walk_w_rifle",
+        "run_n_rifle",
+        "run_s_rifle",
+        "run_e_rifle",
+        "run_w_rifle",
+        "crouch_n_rifle",
+        "crouch_s_rifle",
+        "crouch_e_rifle",
+        "crouch_w_rifle",
+        "jump_stand_rifle",
+        "jump_n_rifle",
+        "jump_crouch_stand_rifle",
+        "inair_stand_rifle",
+        "inair_crouch_stand_rifle",
+        "turn_left_45_rifle",
+        "turn_right_45_rifle"
+      ]
+    },
+    {
+      "name": "phoenix",
+      "source": "packages/assets/public/models/agents/roster/tm-phoenix.glb",
+      "source_sha256": "b94b01e69634c22934b911dc8ab1c525533a43fe0060bbb9e86a6428e405d582",
+      "output_sha256": "07a2d03000ab9af1ac26cd75ab0e3cb6070bb88e71f1be67222f868590a1a814",
+      "path": "assets/models/modern/phoenix.glb",
+      "clips": [
+        "idle_rifle",
+        "idle_crouch_rifle",
+        "walk_n_rifle",
+        "walk_s_rifle",
+        "walk_e_rifle",
+        "walk_w_rifle",
+        "run_n_rifle",
+        "run_s_rifle",
+        "run_e_rifle",
+        "run_w_rifle",
+        "crouch_n_rifle",
+        "crouch_s_rifle",
+        "crouch_e_rifle",
+        "crouch_w_rifle",
+        "jump_stand_rifle",
+        "jump_n_rifle",
+        "jump_crouch_stand_rifle",
+        "inair_stand_rifle",
+        "inair_crouch_stand_rifle",
+        "turn_left_45_rifle",
+        "turn_right_45_rifle"
+      ]
+    }
+  ],
+  "animation_source": "packages/assets/public/models/agents/inspects/animations/world/rifle/_default_rifle.glb",
+  "animation_sha256": "8ab1645ff996a7469a6e1dc802e1d19dca103272b3d641efb3d16110e2822ff5"
+}
