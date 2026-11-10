@@ -50,8 +50,16 @@ jobs:
       - name: Gameplay missions menus and HUD regressions
         run: |
           set -o pipefail
-          for suite in CombatNativeIntegrationTest TeamSelectionPresentationTest MainMenuPresentationTest BotCombatDisciplineTest SquadGameplayTest MissionObjectiveRegressionTest TacticalAIRegressionTest HudColorTest UICustomizationTest; do
+          for suite in CombatNativeIntegrationTest TeamSelectionPresentationTest MainMenuPresentationTest BotCombatDisciplineTest SquadGameplayTest HudColorTest UICustomizationTest; do
             TEAM_CAPTURE_DIR=/tmp/modern-captures MENU_CAPTURE_DIR=/tmp/modern-captures LIBGL_ALWAYS_SOFTWARE=1 timeout 360s xvfb-run -a godot --path . --audio-driver Dummy --rendering-method gl_compatibility --fixed-fps 60 res://tests/$suite.tscn 2>&1 | tee /tmp/$suite.log
+            ! grep -Eq 'SCRIPT ERROR:|Parse Error:|Compile Error:|FAIL:' /tmp/$suite.log
+            grep -q 'PASS:' /tmp/$suite.log
+          done
+      - name: Headless mission physics and tactical AI
+        run: |
+          set -o pipefail
+          for suite in MissionObjectiveRegressionTest TacticalAIRegressionTest ArchiWeaponRuntimeTest ArchiGameWorldSmokeTest; do
+            timeout 600s godot --headless --path . --fixed-fps 60 res://tests/$suite.tscn 2>&1 | tee /tmp/$suite.log
             ! grep -Eq 'SCRIPT ERROR:|Parse Error:|Compile Error:|FAIL:' /tmp/$suite.log
             grep -q 'PASS:' /tmp/$suite.log
           done

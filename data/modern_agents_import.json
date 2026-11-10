@@ -7,17 +7,17 @@
       "name": "sas",
       "source": "packages/assets/public/models/agents/roster/ctm-sas.glb",
       "source_sha256": "b10208f745425dbfdac470ca1278d2658bd9512967b69c08564c00433d52cc89",
-      "output_sha256": "9fed732e07a8f38707a0fe8d0671021260422204b6a8ae2e9776823090eb0630",
+      "output_sha256": "d99c952584ee7bb66705d81e6d0c7051c4dc4e22f5ebd4206e8ee6f8395bc9df",
       "path": "assets/models/modern/sas.glb",
-      "clips": 785
+      "clips": 341
     },
     {
       "name": "phoenix",
       "source": "packages/assets/public/models/agents/roster/tm-phoenix.glb",
       "source_sha256": "b94b01e69634c22934b911dc8ab1c525533a43fe0060bbb9e86a6428e405d582",
-      "output_sha256": "f306d93f6e4131a20111c0422212e6cf13203abfeef7bd16340be432885409a5",
+      "output_sha256": "6b80ff4c2b5f6ff03fa0e7f51907cef974785476b554461410ea120508bebea5",
       "path": "assets/models/modern/phoenix.glb",
-      "clips": 785
+      "clips": 341
     }
   ],
   "sources": {

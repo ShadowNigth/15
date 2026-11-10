@@ -59,6 +59,8 @@ func _run() -> void:
 		actor.set_team_and_class(actor.team, "urban" if i == 0 else "terror")
 		actor.spawn_for_round(Vector3(-0.8 if i == 0 else 0.8, 0.03, 0), 0, true)
 		actor.set_physics_process(false)
+		actor.set_process(false)
+		actor.weapon_ctrl.set_process(false)
 		actor.weapon_ctrl.give_weapon("m4a1" if i == 0 else "ak47", 30, 90)
 		actor.weapon_ctrl.equip_weapon_by_id("m4a1" if i == 0 else "ak47")
 		actors.append(actor)
@@ -92,6 +94,11 @@ func _run() -> void:
 		actor._skel.force_update_all_bone_transforms()
 		var head := actor._skel.global_transform * actor._skel.get_bone_global_pose(actor._skel.find_bone("head_0")).origin
 		expect(head.y > 1.2 and head.y < 2.2, "standing head height")
+	for frame in 10:
+		for actor in actors:
+			actor.apply_goldsrc_movement(Vector3.ZERO, false, false, false, 1.0/60)
+			actor._evaluate_character_pose(1.0/60)
+		await get_tree().physics_frame
 	await capture("modern_live_idle")
 	for frame in 35:
 		for actor in actors:
@@ -101,6 +108,8 @@ func _run() -> void:
 	for actor in actors:
 		expect(actor.global_position.z < -0.3, "actual GoldSrc movement")
 		expect("run" in actor._modern_pose.selected_gait or "walk" in actor._modern_pose.selected_gait, "moving native gait selected")
+	var center_z := actors[0].global_position.z
+	camera.look_at_from_position(Vector3(3, 2.1, center_z - 4.5), Vector3(0, 0.95, center_z))
 	await capture("modern_live_run")
 	for actor in actors:
 		actor.velocity = Vector3.ZERO

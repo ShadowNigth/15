@@ -182,13 +182,17 @@ def main():
         modern_hand = next(i for i,n in enumerate(doc['nodes']) if n.get('name') == 'hand_R')
         turn = np.diag([-1.,1.,-1.,1.])
         sockets[name] = {}
+        old_left = next(i for i,n in enumerate(old['nodes']) if n.get('name') == 'Bip01 L Hand')
         for wid,spec in weapons.items():
             hold = weapon_clips[wid].get('idle', 'idle_rifle')
             pose = original_pose(doc,binary,hold)[modern_hand]
-            ext = 'onehanded' if spec.get('slot')==2 else 'knife' if wid=='knife' else 'carbine'
+            ext = 'onehanded' if spec.get('slot')==2 else 'knife' if wid=='knife' else 'ak47' if wid == 'ak47' else 'carbine'
             old_pose = original_pose(old,old_binary,'ref_aim_'+ext)[old_hand]
             local = np.linalg.inv((turn@pose)[:3,:3]) @ old_pose[:3,:3]
-            sockets[name][wid] = {'basis':local.tolist(), 'clips':weapon_clips[wid]}
+            old_support = original_pose(old,old_binary,'ref_aim_'+ext)[old_left][:3,3] - old_pose[:3,3]
+            support = np.linalg.inv((turn@pose)[:3,:3]) @ old_support
+            sockets[name][wid] = {'basis':local.tolist(), 'support':support.tolist(), 'clips':weapon_clips[wid]}
+        doc['animations'] = [a for a in doc['animations'] if a['name'].startswith('modern_') or a['name'] in ['idle1','ref_aim_carbine','ref_aim_ak47','ref_aim_onehanded','walk','run','crouch_idle','crouchrun'] or any(a['name'].endswith('_'+f) and a['name'].startswith(('idle_','walk_','run_','crouch_','jump_','inair_')) for f in ['rifle','pistol','knife','grenade'])]
         roots = doc['scenes'][doc.get('scene',0)]['nodes']
         doc['nodes'].append({'name':'GodotForward', 'rotation':[0,1,0,0], 'children':roots})
         doc['scenes'][doc.get('scene',0)]['nodes']=[len(doc['nodes'])-1]

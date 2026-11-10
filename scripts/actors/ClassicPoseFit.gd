@@ -93,3 +93,8 @@ func fit(actor, skeleton: Skeleton3D, native_action: bool) -> void:
 	# Never pull a hand across an incompatible authored pose or a one-handed pistol.
 	if int(actor.weapon_ctrl.get_current_spec().get("slot", 0)) == 1 and target.distance_to(hand) > 0.006 and target.distance_to(hand) < 0.12:
 		solve_chain(skeleton.find_bone("Bip01 L UpperArm"), skeleton.find_bone("Bip01 L Forearm"), left, target)
+
+
+func fit_modern_support(skeleton: Skeleton3D, target_world: Vector3) -> bool:
+	_skeleton = skeleton
+	return solve_chain(skeleton.find_bone("arm_upper_L"), skeleton.find_bone("arm_lower_L"), skeleton.find_bone("hand_L"), skeleton.to_local(target_world))

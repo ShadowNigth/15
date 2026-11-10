@@ -2,6 +2,8 @@ class_name ModernAgentPose
 extends RefCounted
 ## Original runtime bridge: native body-only clips; gameplay physics owns motion.
 static var sockets: Dictionary = {}
+static var animation_tables: Dictionary = {}
+var _support_fit := ClassicPoseFit.new()
 var clock := 0.0
 var action := ""
 var action_time := 0.0
@@ -55,6 +57,7 @@ func tick(actor, delta: float) -> void:
 		actor._body_root.position = Vector3(0, 0.23 * fall, 0)
 		return
 	death_time = 0.0
+	_support_fit.restore()
 	clock += delta
 	# Reset sparse channels so a previous reload cannot leak into a new weapon pose.
 	rig.reset_bone_poses()
@@ -110,5 +113,13 @@ func tick(actor, delta: float) -> void:
 		var pitch := clampf(actor.look_pitch * 0.7 + actor._tp_recoil_pitch, -0.75, 0.75)
 		var aimed := Basis(right, pitch) * spine_world
 		rig.set_bone_pose_rotation(spine, (parent_world.inverse() * aimed).orthonormalized().get_rotation_quaternion())
+	# The p_ meshes retain the established classic grip. Fit the support hand
+	# to that grip, not to the differently proportioned source weapon. Reloads,
+	# draws and one-handed tools retain their unpinned native animation.
+	if int(spec.get("slot", 0)) == 1 and action.is_empty():
+		var support: Array = table(role(actor.team), wid).get("support", [])
+		if support.size() == 3:
+			var hand_world := rig.global_transform * rig.get_bone_global_pose(rig.find_bone("hand_R"))
+			_support_fit.fit_modern_support(rig, hand_world * Vector3(support[0], support[1], support[2]))
 	actor._body_root.rotation = Vector3(0, actor.look_yaw, 0)
 	actor._body_root.position = actor.get_visual_world_pos() - actor.global_position

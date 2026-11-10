@@ -252,6 +252,13 @@ func _build_skeleton_blend_tables() -> void:
 					break
 				cur = _skel.get_bone_parent(cur)
 
+	var modern_key := ModernAgentPose.role(team)
+	if _modern_pose != null and ModernAgentPose.animation_tables.has(modern_key):
+		var cached: Dictionary = ModernAgentPose.animation_tables[modern_key]
+		_anim_res_map = cached.animations.duplicate()
+		_anim_tracks_cache = cached.tracks.duplicate()
+		return
+
 	for aname in _body_anim.get_animation_list():
 		var anim_res := _body_anim.get_animation(aname)
 		if anim_res == null:
@@ -269,6 +276,9 @@ func _build_skeleton_blend_tables() -> void:
 			if bidx >= 0:
 				entries.append([ti, bidx, ttype == Animation.TYPE_POSITION_3D])
 		_anim_tracks_cache[low] = entries
+
+	if _modern_pose != null:
+		ModernAgentPose.animation_tables[modern_key] = {"animations": _anim_res_map.duplicate(), "tracks": _anim_tracks_cache.duplicate()}
 
 
 func _get_weapon_anim_ext(wid: String) -> String:
