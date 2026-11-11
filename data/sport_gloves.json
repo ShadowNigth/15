@@ -968,6 +968,7 @@
     "commit": "fb970df0ee8175d9b212d310f6a928f9f61014f2",
     "count": 19,
     "geometry": "unchanged original Sport meshes",
+    "uv_revision": "single-skin-facing-aware-512-v3",
     "report": "res://data/cs2go_cosmetics.json"
   }
 }

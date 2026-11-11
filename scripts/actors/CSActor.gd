@@ -1033,7 +1033,16 @@ func apply_goldsrc_movement(wish_dir_world: Vector3, want_jump: bool, want_crouc
 			_step_smooth_y = clampf(_step_smooth_y - drop_dy, -0.62, 0.62)
 
 	# GoldSrc PM_StepMove: smoothly climb 90-degree BSP stairs, curbs & crate ledges (up to 18u = 0.54m)
-	if grounded and is_on_wall() and pre_step_vel.length_squared() > 0.02:
+	var step_supported := grounded
+	if CS2ExperimentalPhysics.enabled() and not grounded and is_on_wall() and velocity.y <= 0.1 and prev_vy <= 0.1:
+		# A capsule can rest on sloped BSP trim classified as a wall after a
+		# higher experimental jump. Permit the ordinary bounded step only with
+		# verified support directly under the feet, never while freely airborne.
+		var query := PhysicsRayQueryParameters3D.create(global_position + Vector3.UP * 0.12, global_position - Vector3.UP * 0.18)
+		query.collision_mask = 1
+		var support := get_world_3d().direct_space_state.intersect_ray(query)
+		step_supported = not support.is_empty() and (support.normal as Vector3).y > 0.2
+	if step_supported and is_on_wall() and pre_step_vel.length_squared() > 0.02:
 		_try_step_up(pre_step_vel * delta, pre_step_vel)
 
 	# Fall damage & landing sound (GoldSrc > 580u/s = 18.1 m/s)

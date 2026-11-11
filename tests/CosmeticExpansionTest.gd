@@ -135,7 +135,7 @@ func run() -> void:
 	for wid in ["ak47", "m4a1", "awp"]:
 		var rows: Array = report.weapons.filter(func(row): return row.weapon == wid)
 		GameData.select_weapon_skin(wid, rows[0].id)
-		GameData.select_glove("cs2go_5030_1417")
+		GameData.select_glove({"ak47": "cs2go_5030_1417", "m4a1": "cs2go_5030_1409", "awp": "cs2go_5030_10018"}[wid])
 		menu._load_viewer_weapon(wid)
 		await capture("cosmetic_arsenal_" + wid)
 	menu.free()
@@ -147,6 +147,7 @@ func run() -> void:
 	player.set_process_unhandled_input(false)
 	player.weapon_ctrl.set_physics_process(false)
 	for wid in ["ak47", "m4a1", "awp"]:
+		GameData.select_glove({"ak47": "cs2go_5030_1417", "m4a1": "cs2go_5030_1409", "awp": "cs2go_5030_10018"}[wid])
 		player.weapon_ctrl.give_weapon(wid)
 		expect(player.weapon_ctrl.equip_weapon_by_id(wid), "Production equip " + wid)
 		await get_tree().create_timer(1.5).timeout

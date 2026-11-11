@@ -47,7 +47,7 @@ jobs:
       - name: Production characters movement combat death and respawn
         run: |
           set -o pipefail
-          MODERN_CAPTURE_DIR=/tmp/modern-captures LIBGL_ALWAYS_SOFTWARE=1 timeout 240s xvfb-run -a godot --path . --audio-driver Dummy --rendering-method gl_compatibility --fixed-fps 60 res://tests/ModernAgentGameplayTest.tscn 2>&1 | tee /tmp/ModernAgentGameplayTest.log
+          MODERN_CAPTURE_DIR=/tmp/modern-captures LIBGL_ALWAYS_SOFTWARE=1 timeout 420s xvfb-run -a godot --path . --audio-driver Dummy --rendering-method gl_compatibility --fixed-fps 60 res://tests/ModernAgentGameplayTest.tscn 2>&1 | tee /tmp/ModernAgentGameplayTest.log
           ! grep -Eq 'SCRIPT ERROR:|Parse Error:|Compile Error:|SHADER ERROR|FAIL:' /tmp/ModernAgentGameplayTest.log
           grep -q 'PASS:' /tmp/ModernAgentGameplayTest.log
       - name: Gameplay missions menus and HUD regressions

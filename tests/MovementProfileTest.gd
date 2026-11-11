@@ -101,7 +101,31 @@ func run() -> void:
 			actor.apply_goldsrc_movement(Vector3.ZERO, true, false, false, 1.0 / 60)
 			var jump_speed := CS2ExperimentalPhysics.JUMP_SPEED if profile == "cs2_experimental" else CSActor.JUMP_VEL_MPS
 			expect(absf(actor.velocity.y - jump_speed) < 0.01, profile + " jump impulse selected")
+			actor.position = Vector3(0, 20, 0)
+			actor._corpse_vel = Vector3.ZERO
+			actor._tick_corpse_grounding(1.0 / 60)
+			expect(actor._corpse_vel.y < 0 and actor.position.y < 20, profile + " corpse actually falls")
 			actor.free()
+		var grenade := GrenadeProjectile.new()
+		add_child(grenade)
+		grenade.set_physics_process(false)
+		grenade.position = Vector3(0, 20, 0)
+		grenade.velocity = Vector3(4, 0, 0)
+		grenade._physics_process(1.0 / 60)
+		var grenade_gravity := CS2ExperimentalPhysics.GRENADE_GRAVITY if profile == "cs2_experimental" else 21.0
+		expect(absf(grenade.velocity.y + grenade_gravity / 60.0) < 0.001, profile + " real grenade gravity")
+		expect(grenade.position.x > 0, "real grenade keeps horizontal flight")
+		grenade.free()
+		var drop := DroppedWeapon.new()
+		add_child(drop)
+		drop.set_physics_process(false)
+		drop.position = Vector3(0, 20, 0)
+		drop._vel = Vector3(4, 0, 0)
+		drop._step_swept_physics(get_world_3d().direct_space_state, 1.0 / 60)
+		var drop_gravity := CS2ExperimentalPhysics.OBJECT_GRAVITY if profile == "cs2_experimental" else 21.5
+		expect(absf(drop._vel.y + drop_gravity / 60.0) < 0.001, profile + " real equipment gravity")
+		expect(drop.position.y < 20, "real equipment falls through swept path")
+		drop.free()
 	var menu := load("res://scenes/MainMenu.tscn").instantiate() as MainMenu
 	add_child(menu)
 	var selector := menu.find_child("MovementProfile", true, false) as OptionButton

@@ -86,7 +86,7 @@ def part_name(name,dual=False):
     return prefix+'body'
 
 def surface(document,binary,material,glove=False):
-    positions=[];texcoords=[];triangles=[];owners=[]
+    positions=[];texcoords=[];triangles=[];owners=[];normals=[]
     for mesh in document['meshes']:
         for p in mesh['primitives']:
             if document['materials'][p.get('material',0)].get('name') not in material:continue
@@ -99,9 +99,9 @@ def surface(document,binary,material,glove=False):
                 bone_nodes=document['skins'][0]['joints']
                 labels=[glove_part(document['nodes'][bone_nodes[int(j)]]['name']) if glove else part_name(document['nodes'][bone_nodes[int(j)]]['name'],any('elite' in m.get('name','') for m in document['materials'])) for j in joints[np.arange(len(joints)),weights.argmax(1)]]
             else: labels=['body']*len(v)
-            triangles.extend(faces+len(positions));positions.extend(v);texcoords.extend(t);owners.extend(labels)
+            triangles.extend(faces+len(positions));positions.extend(v);texcoords.extend(t);owners.extend(labels);normals.extend(_accessor(document,binary,a['NORMAL']))
     assert positions,material
-    return {'positions':np.array(positions),'uvs':np.array(texcoords),'faces':np.array(triangles),'owners':np.array(owners)}
+    return {'positions':np.array(positions),'uvs':np.array(texcoords),'faces':np.array(triangles),'owners':np.array(owners),'normals':np.array(normals)}
 
 def correspondence(target, source, size):
     pos,faces=uv._raster_surface(target,size);covered=faces>=0
@@ -109,6 +109,12 @@ def correspondence(target, source, size):
     import trimesh
     points=pos[covered];coords=np.empty((len(points),2),np.float32);distance=np.empty(len(points),np.float32)
     point_owners=target['owners'][target['faces'][faces[covered],0]]
+    normal_points=None
+    if target.get('normal_matching',False):
+        normal_surface=dict(target,positions=target['normals'])
+        normal_image,_=uv._raster_surface(normal_surface,size)
+        normal_points=normal_image[covered]
+        normal_points/=np.maximum(np.linalg.norm(normal_points,axis=1,keepdims=True),1e-10)
     source_owners=source['owners'][source['faces'][:,0]]
     tri=source['positions'][source['faces']]
     valid=np.linalg.norm(np.cross(tri[:,1]-tri[:,0],tri[:,2]-tri[:,0]),axis=1)>1e-12
@@ -119,7 +125,26 @@ def correspondence(target, source, size):
         indexes=np.flatnonzero(point_owners==part)
         for start in range(0,len(indexes),128):
             ix=indexes[start:start+128]
-            closest,dist,face=trimesh.proximity.closest_point(mesh,points[ix])
+            if normal_points is None:
+                closest,dist,face=trimesh.proximity.closest_point(mesh,points[ix])
+            else:
+                # Anatomy alone cannot distinguish back-of-hand from palm.
+                # Evaluate nearby triangles with a same-facing normal penalty.
+                from scipy.spatial import cKDTree
+                if start==0:
+                    tree=cKDTree(mesh.triangles_center)
+                    face_normals=source['normals'][mesh.faces].mean(1)
+                    face_normals/=np.maximum(np.linalg.norm(face_normals,axis=1,keepdims=True),1e-10)
+                _,candidates=tree.query(points[ix],k=min(24,len(mesh.faces)))
+                if candidates.ndim==1:candidates=candidates[:,None]
+                k=candidates.shape[1]
+                samples=np.repeat(points[ix],k,axis=0)
+                near=trimesh.triangles.closest_point(mesh.triangles[candidates.reshape(-1)],samples).reshape(-1,k,3)
+                distances=np.linalg.norm(near-points[ix,None],axis=2)
+                facing=np.einsum('nij,nj->ni',face_normals[candidates],normal_points[ix])
+                score=distances+np.maximum(0,0.3-facing)*0.08
+                pick=score.argmin(1);row=np.arange(len(ix))
+                closest=near[row,pick];dist=distances[row,pick];face=candidates[row,pick]
             bary=trimesh.triangles.points_to_barycentric(mesh.triangles[face],closest)
             coords[ix]=np.einsum('ni,nij->nj',bary,source['uvs'][mesh.faces[face]])
             distance[ix]=dist
@@ -230,6 +255,13 @@ def gloves(selected,report):
     path=ROOT/'data/sport_gloves.json';catalog=json.loads(path.read_text())
     td,tb=read_glb(ROOT/'assets/models/sport_gloves/v_ak47.glb')
     sd,sb=read_glb(decode('models/gloves/5030.glb'))
+    # Never merge worldmodel and viewmodel primitives: they have separate skins
+    # (different joint order/bind space) but duplicate material names. The old
+    # generic surface() silently interpreted both using skin 0, folding paint
+    # onto unrelated fingers/palm triangles. Select one consistent bind domain.
+    source_node=next(n for n in sd['nodes'] if 'viewmodel' in n.get('name','') and 'mesh' in n)
+    sd['meshes']=[sd['meshes'][source_node['mesh']]]
+    sd['skins']=[sd['skins'][source_node['skin']]]
     tn={n.get('name'):i for i,n in enumerate(td['nodes'])};sn={n.get('name'):i for i,n in enumerate(sd['nodes'])}
     tg=matrices(td['nodes']);sg=matrices(sd['nodes'])
     # Installed Sport vertices use native-bind matrices, not the legacy scene's
@@ -252,12 +284,12 @@ def gloves(selected,report):
     joint_nodes=td['skins'][0]['joints'];mappings={};stats={}
     for mat in [m['name'] for m in td['materials']]:
         side='right' if '_l_' in mat else 'left'
-        target=surface(td,tb,[mat],glove=True);canonical=[];canonical_owners=[]
+        target=surface(td,tb,[mat],glove=True);canonical=[];canonical_owners=[];canonical_normals=[]
         # Sport output has one rigid owning joint per vertex, unchanged by this pass.
         matching=[p for m in td['meshes'] for p in m['primitives'] if td['materials'][p['material']]['name']==mat]
         for p in matching:
-            positions=_accessor(td,tb,p['attributes']['POSITION']);joints=_accessor(td,tb,p['attributes']['JOINTS_0'])[:,0]
-            for v,j in zip(positions,joints):
+            positions=_accessor(td,tb,p['attributes']['POSITION']);normals=_accessor(td,tb,p['attributes']['NORMAL']);joints=_accessor(td,tb,p['attributes']['JOINTS_0'])[:,0]
+            for v,j,normal in zip(positions,joints,normals):
                 bone=joint_nodes[int(j)]
                 if 'Forearm' in td['nodes'][bone]['name'] or 'ForeTwist' in td['nodes'][bone]['name']:
                     hand_name=td['nodes'][bone]['name'].replace('_Forearm','_Hand').replace('_ForeTwist','_Hand')
@@ -265,11 +297,16 @@ def gloves(selected,report):
                 source=paired[bone]
                 local=(np.linalg.inv(tg[bone])@np.append(v,1))[:3]@axis * (0.0254 / 0.03125)
                 canonical.append((sg[source]@np.append(local,1))[:3])
+                local_normal=np.linalg.inv(tg[bone])[:3,:3]@normal
+                canonical_normals.append(sg[source][:3,:3]@(local_normal@axis))
                 canonical_owners.append(glove_part(sd['nodes'][source]['name']))
         target['positions']=np.array(canonical)
         target['owners']=np.array(canonical_owners)
+        target['normals']=np.array(canonical_normals)
+        target['normal_matching']=True
         source=surface(sd,sb,['glove_sporty_'+side],glove=True)
-        mappings[mat],stats[mat]=correspondence(target,source,256)
+        mappings[mat],stats[mat]=correspondence(target,source,512)
+        print('SPORT UV',mat,stats[mat],flush=True)
         if stats[mat]['median_distance']>.04:raise ValueError('Unaligned Sport surface '+mat+str(stats[mat]))
     catalog['options']=[o for o in catalog['options'] if not o['id'].startswith('cs2go_')]
     for row in selected:
@@ -283,7 +320,7 @@ def gloves(selected,report):
         option={'id':'cs2go_'+row['id'],'name':row['name']+' — Minimal Wear (cs2go)','family':row['name'].split('|')[-1].strip(),'wear':'Minimal Wear','textures':textures,'source':SOURCE+'@'+PIN,'paint_id':row['paint'],'seed':1,'wear_value':.07}
         catalog['options'].append(option);report['gloves'].append(dict(id=option['id'],name=row['name'],paint_id=row['paint'],uv_report=stats))
         print('GLOVE',row['name'],flush=True)
-    catalog['cs2go_batch']={'commit':PIN,'count':len(report['gloves']),'geometry':'unchanged original Sport meshes','report':'res://data/cs2go_cosmetics.json'}
+    catalog['cs2go_batch']={'commit':PIN,'count':len(report['gloves']),'geometry':'unchanged original Sport meshes','uv_revision':'single-skin-facing-aware-512-v3','report':'res://data/cs2go_cosmetics.json'}
     path.write_text(json.dumps(catalog,indent=2,ensure_ascii=False)+'\n')
 
 def agents(report):

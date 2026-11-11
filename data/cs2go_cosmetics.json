@@ -9412,54 +9412,54 @@
       "paint_id": 1417,
       "uv_report": {
         "sport_glove_l_0": {
-          "median_distance": 0.009333492256700993,
-          "p99_distance": 0.06282782554626465,
-          "covered_pixels": 44285
+          "median_distance": 0.010955347679555416,
+          "p99_distance": 0.0627753734588623,
+          "covered_pixels": 177221
         },
         "sport_glove_l_1": {
-          "median_distance": 0.009234719909727573,
-          "p99_distance": 0.06116384640336037,
-          "covered_pixels": 44575
+          "median_distance": 0.01059423852711916,
+          "p99_distance": 0.06221478432416916,
+          "covered_pixels": 178368
         },
         "sport_glove_l_2": {
-          "median_distance": 0.008133549243211746,
-          "p99_distance": 0.06328918039798737,
-          "covered_pixels": 23252
+          "median_distance": 0.011892379261553288,
+          "p99_distance": 0.06457153707742691,
+          "covered_pixels": 92870
         },
         "sport_glove_l_3": {
-          "median_distance": 0.006503555923700333,
-          "p99_distance": 0.06007560342550278,
-          "covered_pixels": 20912
+          "median_distance": 0.008090558461844921,
+          "p99_distance": 0.06016499921679497,
+          "covered_pixels": 83573
         },
         "sport_glove_l_4": {
-          "median_distance": 0.012948239222168922,
-          "p99_distance": 0.07308144867420197,
-          "covered_pixels": 48916
+          "median_distance": 0.01589886099100113,
+          "p99_distance": 0.08403971791267395,
+          "covered_pixels": 195732
         },
         "sport_glove_r_0": {
-          "median_distance": 0.01671113818883896,
-          "p99_distance": 0.0749676525592804,
-          "covered_pixels": 44285
+          "median_distance": 0.01741049624979496,
+          "p99_distance": 0.07597889751195908,
+          "covered_pixels": 177221
         },
         "sport_glove_r_1": {
-          "median_distance": 0.013176130130887032,
-          "p99_distance": 0.07902868092060089,
-          "covered_pixels": 44575
+          "median_distance": 0.015538918785750866,
+          "p99_distance": 0.07992620766162872,
+          "covered_pixels": 178368
         },
         "sport_glove_r_2": {
-          "median_distance": 0.013713866472244263,
-          "p99_distance": 0.08585632592439651,
-          "covered_pixels": 23252
+          "median_distance": 0.015008745715022087,
+          "p99_distance": 0.09133479744195938,
+          "covered_pixels": 92870
         },
         "sport_glove_r_3": {
-          "median_distance": 0.006376887671649456,
-          "p99_distance": 0.0750310942530632,
-          "covered_pixels": 20912
+          "median_distance": 0.007795219775289297,
+          "p99_distance": 0.07497263699769974,
+          "covered_pixels": 83573
         },
         "sport_glove_r_4": {
-          "median_distance": 0.010247781872749329,
-          "p99_distance": 0.07672923058271408,
-          "covered_pixels": 48916
+          "median_distance": 0.011219554580748081,
+          "p99_distance": 0.07681292295455933,
+          "covered_pixels": 195732
         }
       }
     },
@@ -9469,54 +9469,54 @@
       "paint_id": 1410,
       "uv_report": {
         "sport_glove_l_0": {
-          "median_distance": 0.009333492256700993,
-          "p99_distance": 0.06282782554626465,
-          "covered_pixels": 44285
+          "median_distance": 0.010955347679555416,
+          "p99_distance": 0.0627753734588623,
+          "covered_pixels": 177221
         },
         "sport_glove_l_1": {
-          "median_distance": 0.009234719909727573,
-          "p99_distance": 0.06116384640336037,
-          "covered_pixels": 44575
+          "median_distance": 0.01059423852711916,
+          "p99_distance": 0.06221478432416916,
+          "covered_pixels": 178368
         },
         "sport_glove_l_2": {
-          "median_distance": 0.008133549243211746,
-          "p99_distance": 0.06328918039798737,
-          "covered_pixels": 23252
+          "median_distance": 0.011892379261553288,
+          "p99_distance": 0.06457153707742691,
+          "covered_pixels": 92870
         },
         "sport_glove_l_3": {
-          "median_distance": 0.006503555923700333,
-          "p99_distance": 0.06007560342550278,
-          "covered_pixels": 20912
+          "median_distance": 0.008090558461844921,
+          "p99_distance": 0.06016499921679497,
+          "covered_pixels": 83573
         },
         "sport_glove_l_4": {
-          "median_distance": 0.012948239222168922,
-          "p99_distance": 0.07308144867420197,
-          "covered_pixels": 48916
+          "median_distance": 0.01589886099100113,
+          "p99_distance": 0.08403971791267395,
+          "covered_pixels": 195732
         },
         "sport_glove_r_0": {
-          "median_distance": 0.01671113818883896,
-          "p99_distance": 0.0749676525592804,
-          "covered_pixels": 44285
+          "median_distance": 0.01741049624979496,
+          "p99_distance": 0.07597889751195908,
+          "covered_pixels": 177221
         },
         "sport_glove_r_1": {
-          "median_distance": 0.013176130130887032,
-          "p99_distance": 0.07902868092060089,
-          "covered_pixels": 44575
+          "median_distance": 0.015538918785750866,
+          "p99_distance": 0.07992620766162872,
+          "covered_pixels": 178368
         },
         "sport_glove_r_2": {
-          "median_distance": 0.013713866472244263,
-          "p99_distance": 0.08585632592439651,
-          "covered_pixels": 23252
+          "median_distance": 0.015008745715022087,
+          "p99_distance": 0.09133479744195938,
+          "covered_pixels": 92870
         },
         "sport_glove_r_3": {
-          "median_distance": 0.006376887671649456,
-          "p99_distance": 0.0750310942530632,
-          "covered_pixels": 20912
+          "median_distance": 0.007795219775289297,
+          "p99_distance": 0.07497263699769974,
+          "covered_pixels": 83573
         },
         "sport_glove_r_4": {
-          "median_distance": 0.010247781872749329,
-          "p99_distance": 0.07672923058271408,
-          "covered_pixels": 48916
+          "median_distance": 0.011219554580748081,
+          "p99_distance": 0.07681292295455933,
+          "covered_pixels": 195732
         }
       }
     },
@@ -9526,54 +9526,54 @@
       "paint_id": 1409,
       "uv_report": {
         "sport_glove_l_0": {
-          "median_distance": 0.009333492256700993,
-          "p99_distance": 0.06282782554626465,
-          "covered_pixels": 44285
+          "median_distance": 0.010955347679555416,
+          "p99_distance": 0.0627753734588623,
+          "covered_pixels": 177221
         },
         "sport_glove_l_1": {
-          "median_distance": 0.009234719909727573,
-          "p99_distance": 0.06116384640336037,
-          "covered_pixels": 44575
+          "median_distance": 0.01059423852711916,
+          "p99_distance": 0.06221478432416916,
+          "covered_pixels": 178368
         },
         "sport_glove_l_2": {
-          "median_distance": 0.008133549243211746,
-          "p99_distance": 0.06328918039798737,
-          "covered_pixels": 23252
+          "median_distance": 0.011892379261553288,
+          "p99_distance": 0.06457153707742691,
+          "covered_pixels": 92870
         },
         "sport_glove_l_3": {
-          "median_distance": 0.006503555923700333,
-          "p99_distance": 0.06007560342550278,
-          "covered_pixels": 20912
+          "median_distance": 0.008090558461844921,
+          "p99_distance": 0.06016499921679497,
+          "covered_pixels": 83573
         },
         "sport_glove_l_4": {
-          "median_distance": 0.012948239222168922,
-          "p99_distance": 0.07308144867420197,
-          "covered_pixels": 48916
+          "median_distance": 0.01589886099100113,
+          "p99_distance": 0.08403971791267395,
+          "covered_pixels": 195732
         },
         "sport_glove_r_0": {
-          "median_distance": 0.01671113818883896,
-          "p99_distance": 0.0749676525592804,
-          "covered_pixels": 44285
+          "median_distance": 0.01741049624979496,
+          "p99_distance": 0.07597889751195908,
+          "covered_pixels": 177221
         },
         "sport_glove_r_1": {
-          "median_distance": 0.013176130130887032,
-          "p99_distance": 0.07902868092060089,
-          "covered_pixels": 44575
+          "median_distance": 0.015538918785750866,
+          "p99_distance": 0.07992620766162872,
+          "covered_pixels": 178368
         },
         "sport_glove_r_2": {
-          "median_distance": 0.013713866472244263,
-          "p99_distance": 0.08585632592439651,
-          "covered_pixels": 23252
+          "median_distance": 0.015008745715022087,
+          "p99_distance": 0.09133479744195938,
+          "covered_pixels": 92870
         },
         "sport_glove_r_3": {
-          "median_distance": 0.006376887671649456,
-          "p99_distance": 0.0750310942530632,
-          "covered_pixels": 20912
+          "median_distance": 0.007795219775289297,
+          "p99_distance": 0.07497263699769974,
+          "covered_pixels": 83573
         },
         "sport_glove_r_4": {
-          "median_distance": 0.010247781872749329,
-          "p99_distance": 0.07672923058271408,
-          "covered_pixels": 48916
+          "median_distance": 0.011219554580748081,
+          "p99_distance": 0.07681292295455933,
+          "covered_pixels": 195732
         }
       }
     },
@@ -9583,54 +9583,54 @@
       "paint_id": 1408,
       "uv_report": {
         "sport_glove_l_0": {
-          "median_distance": 0.009333492256700993,
-          "p99_distance": 0.06282782554626465,
-          "covered_pixels": 44285
+          "median_distance": 0.010955347679555416,
+          "p99_distance": 0.0627753734588623,
+          "covered_pixels": 177221
         },
         "sport_glove_l_1": {
-          "median_distance": 0.009234719909727573,
-          "p99_distance": 0.06116384640336037,
-          "covered_pixels": 44575
+          "median_distance": 0.01059423852711916,
+          "p99_distance": 0.06221478432416916,
+          "covered_pixels": 178368
         },
         "sport_glove_l_2": {
-          "median_distance": 0.008133549243211746,
-          "p99_distance": 0.06328918039798737,
-          "covered_pixels": 23252
+          "median_distance": 0.011892379261553288,
+          "p99_distance": 0.06457153707742691,
+          "covered_pixels": 92870
         },
         "sport_glove_l_3": {
-          "median_distance": 0.006503555923700333,
-          "p99_distance": 0.06007560342550278,
-          "covered_pixels": 20912
+          "median_distance": 0.008090558461844921,
+          "p99_distance": 0.06016499921679497,
+          "covered_pixels": 83573
         },
         "sport_glove_l_4": {
-          "median_distance": 0.012948239222168922,
-          "p99_distance": 0.07308144867420197,
-          "covered_pixels": 48916
+          "median_distance": 0.01589886099100113,
+          "p99_distance": 0.08403971791267395,
+          "covered_pixels": 195732
         },
         "sport_glove_r_0": {
-          "median_distance": 0.01671113818883896,
-          "p99_distance": 0.0749676525592804,
-          "covered_pixels": 44285
+          "median_distance": 0.01741049624979496,
+          "p99_distance": 0.07597889751195908,
+          "covered_pixels": 177221
         },
         "sport_glove_r_1": {
-          "median_distance": 0.013176130130887032,
-          "p99_distance": 0.07902868092060089,
-          "covered_pixels": 44575
+          "median_distance": 0.015538918785750866,
+          "p99_distance": 0.07992620766162872,
+          "covered_pixels": 178368
         },
         "sport_glove_r_2": {
-          "median_distance": 0.013713866472244263,
-          "p99_distance": 0.08585632592439651,
-          "covered_pixels": 23252
+          "median_distance": 0.015008745715022087,
+          "p99_distance": 0.09133479744195938,
+          "covered_pixels": 92870
         },
         "sport_glove_r_3": {
-          "median_distance": 0.006376887671649456,
-          "p99_distance": 0.0750310942530632,
-          "covered_pixels": 20912
+          "median_distance": 0.007795219775289297,
+          "p99_distance": 0.07497263699769974,
+          "covered_pixels": 83573
         },
         "sport_glove_r_4": {
-          "median_distance": 0.010247781872749329,
-          "p99_distance": 0.07672923058271408,
-          "covered_pixels": 48916
+          "median_distance": 0.011219554580748081,
+          "p99_distance": 0.07681292295455933,
+          "covered_pixels": 195732
         }
       }
     },
@@ -9640,54 +9640,54 @@
       "paint_id": 1407,
       "uv_report": {
         "sport_glove_l_0": {
-          "median_distance": 0.009333492256700993,
-          "p99_distance": 0.06282782554626465,
-          "covered_pixels": 44285
+          "median_distance": 0.010955347679555416,
+          "p99_distance": 0.0627753734588623,
+          "covered_pixels": 177221
         },
         "sport_glove_l_1": {
-          "median_distance": 0.009234719909727573,
-          "p99_distance": 0.06116384640336037,
-          "covered_pixels": 44575
+          "median_distance": 0.01059423852711916,
+          "p99_distance": 0.06221478432416916,
+          "covered_pixels": 178368
         },
         "sport_glove_l_2": {
-          "median_distance": 0.008133549243211746,
-          "p99_distance": 0.06328918039798737,
-          "covered_pixels": 23252
+          "median_distance": 0.011892379261553288,
+          "p99_distance": 0.06457153707742691,
+          "covered_pixels": 92870
         },
         "sport_glove_l_3": {
-          "median_distance": 0.006503555923700333,
-          "p99_distance": 0.06007560342550278,
-          "covered_pixels": 20912
+          "median_distance": 0.008090558461844921,
+          "p99_distance": 0.06016499921679497,
+          "covered_pixels": 83573
         },
         "sport_glove_l_4": {
-          "median_distance": 0.012948239222168922,
-          "p99_distance": 0.07308144867420197,
-          "covered_pixels": 48916
+          "median_distance": 0.01589886099100113,
+          "p99_distance": 0.08403971791267395,
+          "covered_pixels": 195732
         },
         "sport_glove_r_0": {
-          "median_distance": 0.01671113818883896,
-          "p99_distance": 0.0749676525592804,
-          "covered_pixels": 44285
+          "median_distance": 0.01741049624979496,
+          "p99_distance": 0.07597889751195908,
+          "covered_pixels": 177221
         },
         "sport_glove_r_1": {
-          "median_distance": 0.013176130130887032,
-          "p99_distance": 0.07902868092060089,
-          "covered_pixels": 44575
+          "median_distance": 0.015538918785750866,
+          "p99_distance": 0.07992620766162872,
+          "covered_pixels": 178368
         },
         "sport_glove_r_2": {
-          "median_distance": 0.013713866472244263,
-          "p99_distance": 0.08585632592439651,
-          "covered_pixels": 23252
+          "median_distance": 0.015008745715022087,
+          "p99_distance": 0.09133479744195938,
+          "covered_pixels": 92870
         },
         "sport_glove_r_3": {
-          "median_distance": 0.006376887671649456,
-          "p99_distance": 0.0750310942530632,
-          "covered_pixels": 20912
+          "median_distance": 0.007795219775289297,
+          "p99_distance": 0.07497263699769974,
+          "covered_pixels": 83573
         },
         "sport_glove_r_4": {
-          "median_distance": 0.010247781872749329,
-          "p99_distance": 0.07672923058271408,
-          "covered_pixels": 48916
+          "median_distance": 0.011219554580748081,
+          "p99_distance": 0.07681292295455933,
+          "covered_pixels": 195732
         }
       }
     },
@@ -9697,54 +9697,54 @@
       "paint_id": 1406,
       "uv_report": {
         "sport_glove_l_0": {
-          "median_distance": 0.009333492256700993,
-          "p99_distance": 0.06282782554626465,
-          "covered_pixels": 44285
+          "median_distance": 0.010955347679555416,
+          "p99_distance": 0.0627753734588623,
+          "covered_pixels": 177221
         },
         "sport_glove_l_1": {
-          "median_distance": 0.009234719909727573,
-          "p99_distance": 0.06116384640336037,
-          "covered_pixels": 44575
+          "median_distance": 0.01059423852711916,
+          "p99_distance": 0.06221478432416916,
+          "covered_pixels": 178368
         },
         "sport_glove_l_2": {
-          "median_distance": 0.008133549243211746,
-          "p99_distance": 0.06328918039798737,
-          "covered_pixels": 23252
+          "median_distance": 0.011892379261553288,
+          "p99_distance": 0.06457153707742691,
+          "covered_pixels": 92870
         },
         "sport_glove_l_3": {
-          "median_distance": 0.006503555923700333,
-          "p99_distance": 0.06007560342550278,
-          "covered_pixels": 20912
+          "median_distance": 0.008090558461844921,
+          "p99_distance": 0.06016499921679497,
+          "covered_pixels": 83573
         },
         "sport_glove_l_4": {
-          "median_distance": 0.012948239222168922,
-          "p99_distance": 0.07308144867420197,
-          "covered_pixels": 48916
+          "median_distance": 0.01589886099100113,
+          "p99_distance": 0.08403971791267395,
+          "covered_pixels": 195732
         },
         "sport_glove_r_0": {
-          "median_distance": 0.01671113818883896,
-          "p99_distance": 0.0749676525592804,
-          "covered_pixels": 44285
+          "median_distance": 0.01741049624979496,
+          "p99_distance": 0.07597889751195908,
+          "covered_pixels": 177221
         },
         "sport_glove_r_1": {
-          "median_distance": 0.013176130130887032,
-          "p99_distance": 0.07902868092060089,
-          "covered_pixels": 44575
+          "median_distance": 0.015538918785750866,
+          "p99_distance": 0.07992620766162872,
+          "covered_pixels": 178368
         },
         "sport_glove_r_2": {
-          "median_distance": 0.013713866472244263,
-          "p99_distance": 0.08585632592439651,
-          "covered_pixels": 23252
+          "median_distance": 0.015008745715022087,
+          "p99_distance": 0.09133479744195938,
+          "covered_pixels": 92870
         },
         "sport_glove_r_3": {
-          "median_distance": 0.006376887671649456,
-          "p99_distance": 0.0750310942530632,
-          "covered_pixels": 20912
+          "median_distance": 0.007795219775289297,
+          "p99_distance": 0.07497263699769974,
+          "covered_pixels": 83573
         },
         "sport_glove_r_4": {
-          "median_distance": 0.010247781872749329,
-          "p99_distance": 0.07672923058271408,
-          "covered_pixels": 48916
+          "median_distance": 0.011219554580748081,
+          "p99_distance": 0.07681292295455933,
+          "covered_pixels": 195732
         }
       }
     },
@@ -9754,54 +9754,54 @@
       "paint_id": 1405,
       "uv_report": {
         "sport_glove_l_0": {
-          "median_distance": 0.009333492256700993,
-          "p99_distance": 0.06282782554626465,
-          "covered_pixels": 44285
+          "median_distance": 0.010955347679555416,
+          "p99_distance": 0.0627753734588623,
+          "covered_pixels": 177221
         },
         "sport_glove_l_1": {
-          "median_distance": 0.009234719909727573,
-          "p99_distance": 0.06116384640336037,
-          "covered_pixels": 44575
+          "median_distance": 0.01059423852711916,
+          "p99_distance": 0.06221478432416916,
+          "covered_pixels": 178368
         },
         "sport_glove_l_2": {
-          "median_distance": 0.008133549243211746,
-          "p99_distance": 0.06328918039798737,
-          "covered_pixels": 23252
+          "median_distance": 0.011892379261553288,
+          "p99_distance": 0.06457153707742691,
+          "covered_pixels": 92870
         },
         "sport_glove_l_3": {
-          "median_distance": 0.006503555923700333,
-          "p99_distance": 0.06007560342550278,
-          "covered_pixels": 20912
+          "median_distance": 0.008090558461844921,
+          "p99_distance": 0.06016499921679497,
+          "covered_pixels": 83573
         },
         "sport_glove_l_4": {
-          "median_distance": 0.012948239222168922,
-          "p99_distance": 0.07308144867420197,
-          "covered_pixels": 48916
+          "median_distance": 0.01589886099100113,
+          "p99_distance": 0.08403971791267395,
+          "covered_pixels": 195732
         },
         "sport_glove_r_0": {
-          "median_distance": 0.01671113818883896,
-          "p99_distance": 0.0749676525592804,
-          "covered_pixels": 44285
+          "median_distance": 0.01741049624979496,
+          "p99_distance": 0.07597889751195908,
+          "covered_pixels": 177221
         },
         "sport_glove_r_1": {
-          "median_distance": 0.013176130130887032,
-          "p99_distance": 0.07902868092060089,
-          "covered_pixels": 44575
+          "median_distance": 0.015538918785750866,
+          "p99_distance": 0.07992620766162872,
+          "covered_pixels": 178368
         },
         "sport_glove_r_2": {
-          "median_distance": 0.013713866472244263,
-          "p99_distance": 0.08585632592439651,
-          "covered_pixels": 23252
+          "median_distance": 0.015008745715022087,
+          "p99_distance": 0.09133479744195938,
+          "covered_pixels": 92870
         },
         "sport_glove_r_3": {
-          "median_distance": 0.006376887671649456,
-          "p99_distance": 0.0750310942530632,
-          "covered_pixels": 20912
+          "median_distance": 0.007795219775289297,
+          "p99_distance": 0.07497263699769974,
+          "covered_pixels": 83573
         },
         "sport_glove_r_4": {
-          "median_distance": 0.010247781872749329,
-          "p99_distance": 0.07672923058271408,
-          "covered_pixels": 48916
+          "median_distance": 0.011219554580748081,
+          "p99_distance": 0.07681292295455933,
+          "covered_pixels": 195732
         }
       }
     },
@@ -9811,54 +9811,54 @@
       "paint_id": 10076,
       "uv_report": {
         "sport_glove_l_0": {
-          "median_distance": 0.009333492256700993,
-          "p99_distance": 0.06282782554626465,
-          "covered_pixels": 44285
+          "median_distance": 0.010955347679555416,
+          "p99_distance": 0.0627753734588623,
+          "covered_pixels": 177221
         },
         "sport_glove_l_1": {
-          "median_distance": 0.009234719909727573,
-          "p99_distance": 0.06116384640336037,
-          "covered_pixels": 44575
+          "median_distance": 0.01059423852711916,
+          "p99_distance": 0.06221478432416916,
+          "covered_pixels": 178368
         },
         "sport_glove_l_2": {
-          "median_distance": 0.008133549243211746,
-          "p99_distance": 0.06328918039798737,
-          "covered_pixels": 23252
+          "median_distance": 0.011892379261553288,
+          "p99_distance": 0.06457153707742691,
+          "covered_pixels": 92870
         },
         "sport_glove_l_3": {
-          "median_distance": 0.006503555923700333,
-          "p99_distance": 0.06007560342550278,
-          "covered_pixels": 20912
+          "median_distance": 0.008090558461844921,
+          "p99_distance": 0.06016499921679497,
+          "covered_pixels": 83573
         },
         "sport_glove_l_4": {
-          "median_distance": 0.012948239222168922,
-          "p99_distance": 0.07308144867420197,
-          "covered_pixels": 48916
+          "median_distance": 0.01589886099100113,
+          "p99_distance": 0.08403971791267395,
+          "covered_pixels": 195732
         },
         "sport_glove_r_0": {
-          "median_distance": 0.01671113818883896,
-          "p99_distance": 0.0749676525592804,
-          "covered_pixels": 44285
+          "median_distance": 0.01741049624979496,
+          "p99_distance": 0.07597889751195908,
+          "covered_pixels": 177221
         },
         "sport_glove_r_1": {
-          "median_distance": 0.013176130130887032,
-          "p99_distance": 0.07902868092060089,
-          "covered_pixels": 44575
+          "median_distance": 0.015538918785750866,
+          "p99_distance": 0.07992620766162872,
+          "covered_pixels": 178368
         },
         "sport_glove_r_2": {
-          "median_distance": 0.013713866472244263,
-          "p99_distance": 0.08585632592439651,
-          "covered_pixels": 23252
+          "median_distance": 0.015008745715022087,
+          "p99_distance": 0.09133479744195938,
+          "covered_pixels": 92870
         },
         "sport_glove_r_3": {
-          "median_distance": 0.006376887671649456,
-          "p99_distance": 0.0750310942530632,
-          "covered_pixels": 20912
+          "median_distance": 0.007795219775289297,
+          "p99_distance": 0.07497263699769974,
+          "covered_pixels": 83573
         },
         "sport_glove_r_4": {
-          "median_distance": 0.010247781872749329,
-          "p99_distance": 0.07672923058271408,
-          "covered_pixels": 48916
+          "median_distance": 0.011219554580748081,
+          "p99_distance": 0.07681292295455933,
+          "covered_pixels": 195732
         }
       }
     },
@@ -9868,54 +9868,54 @@
       "paint_id": 10075,
       "uv_report": {
         "sport_glove_l_0": {
-          "median_distance": 0.009333492256700993,
-          "p99_distance": 0.06282782554626465,
-          "covered_pixels": 44285
+          "median_distance": 0.010955347679555416,
+          "p99_distance": 0.0627753734588623,
+          "covered_pixels": 177221
         },
         "sport_glove_l_1": {
-          "median_distance": 0.009234719909727573,
-          "p99_distance": 0.06116384640336037,
-          "covered_pixels": 44575
+          "median_distance": 0.01059423852711916,
+          "p99_distance": 0.06221478432416916,
+          "covered_pixels": 178368
         },
         "sport_glove_l_2": {
-          "median_distance": 0.008133549243211746,
-          "p99_distance": 0.06328918039798737,
-          "covered_pixels": 23252
+          "median_distance": 0.011892379261553288,
+          "p99_distance": 0.06457153707742691,
+          "covered_pixels": 92870
         },
         "sport_glove_l_3": {
-          "median_distance": 0.006503555923700333,
-          "p99_distance": 0.06007560342550278,
-          "covered_pixels": 20912
+          "median_distance": 0.008090558461844921,
+          "p99_distance": 0.06016499921679497,
+          "covered_pixels": 83573
         },
         "sport_glove_l_4": {
-          "median_distance": 0.012948239222168922,
-          "p99_distance": 0.07308144867420197,
-          "covered_pixels": 48916
+          "median_distance": 0.01589886099100113,
+          "p99_distance": 0.08403971791267395,
+          "covered_pixels": 195732
         },
         "sport_glove_r_0": {
-          "median_distance": 0.01671113818883896,
-          "p99_distance": 0.0749676525592804,
-          "covered_pixels": 44285
+          "median_distance": 0.01741049624979496,
+          "p99_distance": 0.07597889751195908,
+          "covered_pixels": 177221
         },
         "sport_glove_r_1": {
-          "median_distance": 0.013176130130887032,
-          "p99_distance": 0.07902868092060089,
-          "covered_pixels": 44575
+          "median_distance": 0.015538918785750866,
+          "p99_distance": 0.07992620766162872,
+          "covered_pixels": 178368
         },
         "sport_glove_r_2": {
-          "median_distance": 0.013713866472244263,
-          "p99_distance": 0.08585632592439651,
-          "covered_pixels": 23252
+          "median_distance": 0.015008745715022087,
+          "p99_distance": 0.09133479744195938,
+          "covered_pixels": 92870
         },
         "sport_glove_r_3": {
-          "median_distance": 0.006376887671649456,
-          "p99_distance": 0.0750310942530632,
-          "covered_pixels": 20912
+          "median_distance": 0.007795219775289297,
+          "p99_distance": 0.07497263699769974,
+          "covered_pixels": 83573
         },
         "sport_glove_r_4": {
-          "median_distance": 0.010247781872749329,
-          "p99_distance": 0.07672923058271408,
-          "covered_pixels": 48916
+          "median_distance": 0.011219554580748081,
+          "p99_distance": 0.07681292295455933,
+          "covered_pixels": 195732
         }
       }
     },
@@ -9925,54 +9925,54 @@
       "paint_id": 10074,
       "uv_report": {
         "sport_glove_l_0": {
-          "median_distance": 0.009333492256700993,
-          "p99_distance": 0.06282782554626465,
-          "covered_pixels": 44285
+          "median_distance": 0.010955347679555416,
+          "p99_distance": 0.0627753734588623,
+          "covered_pixels": 177221
         },
         "sport_glove_l_1": {
-          "median_distance": 0.009234719909727573,
-          "p99_distance": 0.06116384640336037,
-          "covered_pixels": 44575
+          "median_distance": 0.01059423852711916,
+          "p99_distance": 0.06221478432416916,
+          "covered_pixels": 178368
         },
         "sport_glove_l_2": {
-          "median_distance": 0.008133549243211746,
-          "p99_distance": 0.06328918039798737,
-          "covered_pixels": 23252
+          "median_distance": 0.011892379261553288,
+          "p99_distance": 0.06457153707742691,
+          "covered_pixels": 92870
         },
         "sport_glove_l_3": {
-          "median_distance": 0.006503555923700333,
-          "p99_distance": 0.06007560342550278,
-          "covered_pixels": 20912
+          "median_distance": 0.008090558461844921,
+          "p99_distance": 0.06016499921679497,
+          "covered_pixels": 83573
         },
         "sport_glove_l_4": {
-          "median_distance": 0.012948239222168922,
-          "p99_distance": 0.07308144867420197,
-          "covered_pixels": 48916
+          "median_distance": 0.01589886099100113,
+          "p99_distance": 0.08403971791267395,
+          "covered_pixels": 195732
         },
         "sport_glove_r_0": {
-          "median_distance": 0.01671113818883896,
-          "p99_distance": 0.0749676525592804,
-          "covered_pixels": 44285
+          "median_distance": 0.01741049624979496,
+          "p99_distance": 0.07597889751195908,
+          "covered_pixels": 177221
         },
         "sport_glove_r_1": {
-          "median_distance": 0.013176130130887032,
-          "p99_distance": 0.07902868092060089,
-          "covered_pixels": 44575
+          "median_distance": 0.015538918785750866,
+          "p99_distance": 0.07992620766162872,
+          "covered_pixels": 178368
         },
         "sport_glove_r_2": {
-          "median_distance": 0.013713866472244263,
-          "p99_distance": 0.08585632592439651,
-          "covered_pixels": 23252
+          "median_distance": 0.015008745715022087,
+          "p99_distance": 0.09133479744195938,
+          "covered_pixels": 92870
         },
         "sport_glove_r_3": {
-          "median_distance": 0.006376887671649456,
-          "p99_distance": 0.0750310942530632,
-          "covered_pixels": 20912
+          "median_distance": 0.007795219775289297,
+          "p99_distance": 0.07497263699769974,
+          "covered_pixels": 83573
         },
         "sport_glove_r_4": {
-          "median_distance": 0.010247781872749329,
-          "p99_distance": 0.07672923058271408,
-          "covered_pixels": 48916
+          "median_distance": 0.011219554580748081,
+          "p99_distance": 0.07681292295455933,
+          "covered_pixels": 195732
         }
       }
     },
@@ -9982,54 +9982,54 @@
       "paint_id": 10073,
       "uv_report": {
         "sport_glove_l_0": {
-          "median_distance": 0.009333492256700993,
-          "p99_distance": 0.06282782554626465,
-          "covered_pixels": 44285
+          "median_distance": 0.010955347679555416,
+          "p99_distance": 0.0627753734588623,
+          "covered_pixels": 177221
         },
         "sport_glove_l_1": {
-          "median_distance": 0.009234719909727573,
-          "p99_distance": 0.06116384640336037,
-          "covered_pixels": 44575
+          "median_distance": 0.01059423852711916,
+          "p99_distance": 0.06221478432416916,
+          "covered_pixels": 178368
         },
         "sport_glove_l_2": {
-          "median_distance": 0.008133549243211746,
-          "p99_distance": 0.06328918039798737,
-          "covered_pixels": 23252
+          "median_distance": 0.011892379261553288,
+          "p99_distance": 0.06457153707742691,
+          "covered_pixels": 92870
         },
         "sport_glove_l_3": {
-          "median_distance": 0.006503555923700333,
-          "p99_distance": 0.06007560342550278,
-          "covered_pixels": 20912
+          "median_distance": 0.008090558461844921,
+          "p99_distance": 0.06016499921679497,
+          "covered_pixels": 83573
         },
         "sport_glove_l_4": {
-          "median_distance": 0.012948239222168922,
-          "p99_distance": 0.07308144867420197,
-          "covered_pixels": 48916
+          "median_distance": 0.01589886099100113,
+          "p99_distance": 0.08403971791267395,
+          "covered_pixels": 195732
         },
         "sport_glove_r_0": {
-          "median_distance": 0.01671113818883896,
-          "p99_distance": 0.0749676525592804,
-          "covered_pixels": 44285
+          "median_distance": 0.01741049624979496,
+          "p99_distance": 0.07597889751195908,
+          "covered_pixels": 177221
         },
         "sport_glove_r_1": {
-          "median_distance": 0.013176130130887032,
-          "p99_distance": 0.07902868092060089,
-          "covered_pixels": 44575
+          "median_distance": 0.015538918785750866,
+          "p99_distance": 0.07992620766162872,
+          "covered_pixels": 178368
         },
         "sport_glove_r_2": {
-          "median_distance": 0.013713866472244263,
-          "p99_distance": 0.08585632592439651,
-          "covered_pixels": 23252
+          "median_distance": 0.015008745715022087,
+          "p99_distance": 0.09133479744195938,
+          "covered_pixels": 92870
         },
         "sport_glove_r_3": {
-          "median_distance": 0.006376887671649456,
-          "p99_distance": 0.0750310942530632,
-          "covered_pixels": 20912
+          "median_distance": 0.007795219775289297,
+          "p99_distance": 0.07497263699769974,
+          "covered_pixels": 83573
         },
         "sport_glove_r_4": {
-          "median_distance": 0.010247781872749329,
-          "p99_distance": 0.07672923058271408,
-          "covered_pixels": 48916
+          "median_distance": 0.011219554580748081,
+          "p99_distance": 0.07681292295455933,
+          "covered_pixels": 195732
         }
       }
     },
@@ -10039,54 +10039,54 @@
       "paint_id": 10048,
       "uv_report": {
         "sport_glove_l_0": {
-          "median_distance": 0.009333492256700993,
-          "p99_distance": 0.06282782554626465,
-          "covered_pixels": 44285
+          "median_distance": 0.010955347679555416,
+          "p99_distance": 0.0627753734588623,
+          "covered_pixels": 177221
         },
         "sport_glove_l_1": {
-          "median_distance": 0.009234719909727573,
-          "p99_distance": 0.06116384640336037,
-          "covered_pixels": 44575
+          "median_distance": 0.01059423852711916,
+          "p99_distance": 0.06221478432416916,
+          "covered_pixels": 178368
         },
         "sport_glove_l_2": {
-          "median_distance": 0.008133549243211746,
-          "p99_distance": 0.06328918039798737,
-          "covered_pixels": 23252
+          "median_distance": 0.011892379261553288,
+          "p99_distance": 0.06457153707742691,
+          "covered_pixels": 92870
         },
         "sport_glove_l_3": {
-          "median_distance": 0.006503555923700333,
-          "p99_distance": 0.06007560342550278,
-          "covered_pixels": 20912
+          "median_distance": 0.008090558461844921,
+          "p99_distance": 0.06016499921679497,
+          "covered_pixels": 83573
         },
         "sport_glove_l_4": {
-          "median_distance": 0.012948239222168922,
-          "p99_distance": 0.07308144867420197,
-          "covered_pixels": 48916
+          "median_distance": 0.01589886099100113,
+          "p99_distance": 0.08403971791267395,
+          "covered_pixels": 195732
         },
         "sport_glove_r_0": {
-          "median_distance": 0.01671113818883896,
-          "p99_distance": 0.0749676525592804,
-          "covered_pixels": 44285
+          "median_distance": 0.01741049624979496,
+          "p99_distance": 0.07597889751195908,
+          "covered_pixels": 177221
         },
         "sport_glove_r_1": {
-          "median_distance": 0.013176130130887032,
-          "p99_distance": 0.07902868092060089,
-          "covered_pixels": 44575
+          "median_distance": 0.015538918785750866,
+          "p99_distance": 0.07992620766162872,
+          "covered_pixels": 178368
         },
         "sport_glove_r_2": {
-          "median_distance": 0.013713866472244263,
-          "p99_distance": 0.08585632592439651,
-          "covered_pixels": 23252
+          "median_distance": 0.015008745715022087,
+          "p99_distance": 0.09133479744195938,
+          "covered_pixels": 92870
         },
         "sport_glove_r_3": {
-          "median_distance": 0.006376887671649456,
-          "p99_distance": 0.0750310942530632,
-          "covered_pixels": 20912
+          "median_distance": 0.007795219775289297,
+          "p99_distance": 0.07497263699769974,
+          "covered_pixels": 83573
         },
         "sport_glove_r_4": {
-          "median_distance": 0.010247781872749329,
-          "p99_distance": 0.07672923058271408,
-          "covered_pixels": 48916
+          "median_distance": 0.011219554580748081,
+          "p99_distance": 0.07681292295455933,
+          "covered_pixels": 195732
         }
       }
     },
@@ -10096,54 +10096,54 @@
       "paint_id": 10047,
       "uv_report": {
         "sport_glove_l_0": {
-          "median_distance": 0.009333492256700993,
-          "p99_distance": 0.06282782554626465,
-          "covered_pixels": 44285
+          "median_distance": 0.010955347679555416,
+          "p99_distance": 0.0627753734588623,
+          "covered_pixels": 177221
         },
         "sport_glove_l_1": {
-          "median_distance": 0.009234719909727573,
-          "p99_distance": 0.06116384640336037,
-          "covered_pixels": 44575
+          "median_distance": 0.01059423852711916,
+          "p99_distance": 0.06221478432416916,
+          "covered_pixels": 178368
         },
         "sport_glove_l_2": {
-          "median_distance": 0.008133549243211746,
-          "p99_distance": 0.06328918039798737,
-          "covered_pixels": 23252
+          "median_distance": 0.011892379261553288,
+          "p99_distance": 0.06457153707742691,
+          "covered_pixels": 92870
         },
         "sport_glove_l_3": {
-          "median_distance": 0.006503555923700333,
-          "p99_distance": 0.06007560342550278,
-          "covered_pixels": 20912
+          "median_distance": 0.008090558461844921,
+          "p99_distance": 0.06016499921679497,
+          "covered_pixels": 83573
         },
         "sport_glove_l_4": {
-          "median_distance": 0.012948239222168922,
-          "p99_distance": 0.07308144867420197,
-          "covered_pixels": 48916
+          "median_distance": 0.01589886099100113,
+          "p99_distance": 0.08403971791267395,
+          "covered_pixels": 195732
         },
         "sport_glove_r_0": {
-          "median_distance": 0.01671113818883896,
-          "p99_distance": 0.0749676525592804,
-          "covered_pixels": 44285
+          "median_distance": 0.01741049624979496,
+          "p99_distance": 0.07597889751195908,
+          "covered_pixels": 177221
         },
         "sport_glove_r_1": {
-          "median_distance": 0.013176130130887032,
-          "p99_distance": 0.07902868092060089,
-          "covered_pixels": 44575
+          "median_distance": 0.015538918785750866,
+          "p99_distance": 0.07992620766162872,
+          "covered_pixels": 178368
         },
         "sport_glove_r_2": {
-          "median_distance": 0.013713866472244263,
-          "p99_distance": 0.08585632592439651,
-          "covered_pixels": 23252
+          "median_distance": 0.015008745715022087,
+          "p99_distance": 0.09133479744195938,
+          "covered_pixels": 92870
         },
         "sport_glove_r_3": {
-          "median_distance": 0.006376887671649456,
-          "p99_distance": 0.0750310942530632,
-          "covered_pixels": 20912
+          "median_distance": 0.007795219775289297,
+          "p99_distance": 0.07497263699769974,
+          "covered_pixels": 83573
         },
         "sport_glove_r_4": {
-          "median_distance": 0.010247781872749329,
-          "p99_distance": 0.07672923058271408,
-          "covered_pixels": 48916
+          "median_distance": 0.011219554580748081,
+          "p99_distance": 0.07681292295455933,
+          "covered_pixels": 195732
         }
       }
     },
@@ -10153,54 +10153,54 @@
       "paint_id": 10046,
       "uv_report": {
         "sport_glove_l_0": {
-          "median_distance": 0.009333492256700993,
-          "p99_distance": 0.06282782554626465,
-          "covered_pixels": 44285
+          "median_distance": 0.010955347679555416,
+          "p99_distance": 0.0627753734588623,
+          "covered_pixels": 177221
         },
         "sport_glove_l_1": {
-          "median_distance": 0.009234719909727573,
-          "p99_distance": 0.06116384640336037,
-          "covered_pixels": 44575
+          "median_distance": 0.01059423852711916,
+          "p99_distance": 0.06221478432416916,
+          "covered_pixels": 178368
         },
         "sport_glove_l_2": {
-          "median_distance": 0.008133549243211746,
-          "p99_distance": 0.06328918039798737,
-          "covered_pixels": 23252
+          "median_distance": 0.011892379261553288,
+          "p99_distance": 0.06457153707742691,
+          "covered_pixels": 92870
         },
         "sport_glove_l_3": {
-          "median_distance": 0.006503555923700333,
-          "p99_distance": 0.06007560342550278,
-          "covered_pixels": 20912
+          "median_distance": 0.008090558461844921,
+          "p99_distance": 0.06016499921679497,
+          "covered_pixels": 83573
         },
         "sport_glove_l_4": {
-          "median_distance": 0.012948239222168922,
-          "p99_distance": 0.07308144867420197,
-          "covered_pixels": 48916
+          "median_distance": 0.01589886099100113,
+          "p99_distance": 0.08403971791267395,
+          "covered_pixels": 195732
         },
         "sport_glove_r_0": {
-          "median_distance": 0.01671113818883896,
-          "p99_distance": 0.0749676525592804,
-          "covered_pixels": 44285
+          "median_distance": 0.01741049624979496,
+          "p99_distance": 0.07597889751195908,
+          "covered_pixels": 177221
         },
         "sport_glove_r_1": {
-          "median_distance": 0.013176130130887032,
-          "p99_distance": 0.07902868092060089,
-          "covered_pixels": 44575
+          "median_distance": 0.015538918785750866,
+          "p99_distance": 0.07992620766162872,
+          "covered_pixels": 178368
         },
         "sport_glove_r_2": {
-          "median_distance": 0.013713866472244263,
-          "p99_distance": 0.08585632592439651,
-          "covered_pixels": 23252
+          "median_distance": 0.015008745715022087,
+          "p99_distance": 0.09133479744195938,
+          "covered_pixels": 92870
         },
         "sport_glove_r_3": {
-          "median_distance": 0.006376887671649456,
-          "p99_distance": 0.0750310942530632,
-          "covered_pixels": 20912
+          "median_distance": 0.007795219775289297,
+          "p99_distance": 0.07497263699769974,
+          "covered_pixels": 83573
         },
         "sport_glove_r_4": {
-          "median_distance": 0.010247781872749329,
-          "p99_distance": 0.07672923058271408,
-          "covered_pixels": 48916
+          "median_distance": 0.011219554580748081,
+          "p99_distance": 0.07681292295455933,
+          "covered_pixels": 195732
         }
       }
     },
@@ -10210,54 +10210,54 @@
       "paint_id": 10045,
       "uv_report": {
         "sport_glove_l_0": {
-          "median_distance": 0.009333492256700993,
-          "p99_distance": 0.06282782554626465,
-          "covered_pixels": 44285
+          "median_distance": 0.010955347679555416,
+          "p99_distance": 0.0627753734588623,
+          "covered_pixels": 177221
         },
         "sport_glove_l_1": {
-          "median_distance": 0.009234719909727573,
-          "p99_distance": 0.06116384640336037,
-          "covered_pixels": 44575
+          "median_distance": 0.01059423852711916,
+          "p99_distance": 0.06221478432416916,
+          "covered_pixels": 178368
         },
         "sport_glove_l_2": {
-          "median_distance": 0.008133549243211746,
-          "p99_distance": 0.06328918039798737,
-          "covered_pixels": 23252
+          "median_distance": 0.011892379261553288,
+          "p99_distance": 0.06457153707742691,
+          "covered_pixels": 92870
         },
         "sport_glove_l_3": {
-          "median_distance": 0.006503555923700333,
-          "p99_distance": 0.06007560342550278,
-          "covered_pixels": 20912
+          "median_distance": 0.008090558461844921,
+          "p99_distance": 0.06016499921679497,
+          "covered_pixels": 83573
         },
         "sport_glove_l_4": {
-          "median_distance": 0.012948239222168922,
-          "p99_distance": 0.07308144867420197,
-          "covered_pixels": 48916
+          "median_distance": 0.01589886099100113,
+          "p99_distance": 0.08403971791267395,
+          "covered_pixels": 195732
         },
         "sport_glove_r_0": {
-          "median_distance": 0.01671113818883896,
-          "p99_distance": 0.0749676525592804,
-          "covered_pixels": 44285
+          "median_distance": 0.01741049624979496,
+          "p99_distance": 0.07597889751195908,
+          "covered_pixels": 177221
         },
         "sport_glove_r_1": {
-          "median_distance": 0.013176130130887032,
-          "p99_distance": 0.07902868092060089,
-          "covered_pixels": 44575
+          "median_distance": 0.015538918785750866,
+          "p99_distance": 0.07992620766162872,
+          "covered_pixels": 178368
         },
         "sport_glove_r_2": {
-          "median_distance": 0.013713866472244263,
-          "p99_distance": 0.08585632592439651,
-          "covered_pixels": 23252
+          "median_distance": 0.015008745715022087,
+          "p99_distance": 0.09133479744195938,
+          "covered_pixels": 92870
         },
         "sport_glove_r_3": {
-          "median_distance": 0.006376887671649456,
-          "p99_distance": 0.0750310942530632,
-          "covered_pixels": 20912
+          "median_distance": 0.007795219775289297,
+          "p99_distance": 0.07497263699769974,
+          "covered_pixels": 83573
         },
         "sport_glove_r_4": {
-          "median_distance": 0.010247781872749329,
-          "p99_distance": 0.07672923058271408,
-          "covered_pixels": 48916
+          "median_distance": 0.011219554580748081,
+          "p99_distance": 0.07681292295455933,
+          "covered_pixels": 195732
         }
       }
     },
@@ -10267,54 +10267,54 @@
       "paint_id": 10038,
       "uv_report": {
         "sport_glove_l_0": {
-          "median_distance": 0.009333492256700993,
-          "p99_distance": 0.06282782554626465,
-          "covered_pixels": 44285
+          "median_distance": 0.010955347679555416,
+          "p99_distance": 0.0627753734588623,
+          "covered_pixels": 177221
         },
         "sport_glove_l_1": {
-          "median_distance": 0.009234719909727573,
-          "p99_distance": 0.06116384640336037,
-          "covered_pixels": 44575
+          "median_distance": 0.01059423852711916,
+          "p99_distance": 0.06221478432416916,
+          "covered_pixels": 178368
         },
         "sport_glove_l_2": {
-          "median_distance": 0.008133549243211746,
-          "p99_distance": 0.06328918039798737,
-          "covered_pixels": 23252
+          "median_distance": 0.011892379261553288,
+          "p99_distance": 0.06457153707742691,
+          "covered_pixels": 92870
         },
         "sport_glove_l_3": {
-          "median_distance": 0.006503555923700333,
-          "p99_distance": 0.06007560342550278,
-          "covered_pixels": 20912
+          "median_distance": 0.008090558461844921,
+          "p99_distance": 0.06016499921679497,
+          "covered_pixels": 83573
         },
         "sport_glove_l_4": {
-          "median_distance": 0.012948239222168922,
-          "p99_distance": 0.07308144867420197,
-          "covered_pixels": 48916
+          "median_distance": 0.01589886099100113,
+          "p99_distance": 0.08403971791267395,
+          "covered_pixels": 195732
         },
         "sport_glove_r_0": {
-          "median_distance": 0.01671113818883896,
-          "p99_distance": 0.0749676525592804,
-          "covered_pixels": 44285
+          "median_distance": 0.01741049624979496,
+          "p99_distance": 0.07597889751195908,
+          "covered_pixels": 177221
         },
         "sport_glove_r_1": {
-          "median_distance": 0.013176130130887032,
-          "p99_distance": 0.07902868092060089,
-          "covered_pixels": 44575
+          "median_distance": 0.015538918785750866,
+          "p99_distance": 0.07992620766162872,
+          "covered_pixels": 178368
         },
         "sport_glove_r_2": {
-          "median_distance": 0.013713866472244263,
-          "p99_distance": 0.08585632592439651,
-          "covered_pixels": 23252
+          "median_distance": 0.015008745715022087,
+          "p99_distance": 0.09133479744195938,
+          "covered_pixels": 92870
         },
         "sport_glove_r_3": {
-          "median_distance": 0.006376887671649456,
-          "p99_distance": 0.0750310942530632,
-          "covered_pixels": 20912
+          "median_distance": 0.007795219775289297,
+          "p99_distance": 0.07497263699769974,
+          "covered_pixels": 83573
         },
         "sport_glove_r_4": {
-          "median_distance": 0.010247781872749329,
-          "p99_distance": 0.07672923058271408,
-          "covered_pixels": 48916
+          "median_distance": 0.011219554580748081,
+          "p99_distance": 0.07681292295455933,
+          "covered_pixels": 195732
         }
       }
     },
@@ -10324,54 +10324,54 @@
       "paint_id": 10037,
       "uv_report": {
         "sport_glove_l_0": {
-          "median_distance": 0.009333492256700993,
-          "p99_distance": 0.06282782554626465,
-          "covered_pixels": 44285
+          "median_distance": 0.010955347679555416,
+          "p99_distance": 0.0627753734588623,
+          "covered_pixels": 177221
         },
         "sport_glove_l_1": {
-          "median_distance": 0.009234719909727573,
-          "p99_distance": 0.06116384640336037,
-          "covered_pixels": 44575
+          "median_distance": 0.01059423852711916,
+          "p99_distance": 0.06221478432416916,
+          "covered_pixels": 178368
         },
         "sport_glove_l_2": {
-          "median_distance": 0.008133549243211746,
-          "p99_distance": 0.06328918039798737,
-          "covered_pixels": 23252
+          "median_distance": 0.011892379261553288,
+          "p99_distance": 0.06457153707742691,
+          "covered_pixels": 92870
         },
         "sport_glove_l_3": {
-          "median_distance": 0.006503555923700333,
-          "p99_distance": 0.06007560342550278,
-          "covered_pixels": 20912
+          "median_distance": 0.008090558461844921,
+          "p99_distance": 0.06016499921679497,
+          "covered_pixels": 83573
         },
         "sport_glove_l_4": {
-          "median_distance": 0.012948239222168922,
-          "p99_distance": 0.07308144867420197,
-          "covered_pixels": 48916
+          "median_distance": 0.01589886099100113,
+          "p99_distance": 0.08403971791267395,
+          "covered_pixels": 195732
         },
         "sport_glove_r_0": {
-          "median_distance": 0.01671113818883896,
-          "p99_distance": 0.0749676525592804,
-          "covered_pixels": 44285
+          "median_distance": 0.01741049624979496,
+          "p99_distance": 0.07597889751195908,
+          "covered_pixels": 177221
         },
         "sport_glove_r_1": {
-          "median_distance": 0.013176130130887032,
-          "p99_distance": 0.07902868092060089,
-          "covered_pixels": 44575
+          "median_distance": 0.015538918785750866,
+          "p99_distance": 0.07992620766162872,
+          "covered_pixels": 178368
         },
         "sport_glove_r_2": {
-          "median_distance": 0.013713866472244263,
-          "p99_distance": 0.08585632592439651,
-          "covered_pixels": 23252
+          "median_distance": 0.015008745715022087,
+          "p99_distance": 0.09133479744195938,
+          "covered_pixels": 92870
         },
         "sport_glove_r_3": {
-          "median_distance": 0.006376887671649456,
-          "p99_distance": 0.0750310942530632,
-          "covered_pixels": 20912
+          "median_distance": 0.007795219775289297,
+          "p99_distance": 0.07497263699769974,
+          "covered_pixels": 83573
         },
         "sport_glove_r_4": {
-          "median_distance": 0.010247781872749329,
-          "p99_distance": 0.07672923058271408,
-          "covered_pixels": 48916
+          "median_distance": 0.011219554580748081,
+          "p99_distance": 0.07681292295455933,
+          "covered_pixels": 195732
         }
       }
     },
@@ -10381,54 +10381,54 @@
       "paint_id": 10019,
       "uv_report": {
         "sport_glove_l_0": {
-          "median_distance": 0.009333492256700993,
-          "p99_distance": 0.06282782554626465,
-          "covered_pixels": 44285
+          "median_distance": 0.010955347679555416,
+          "p99_distance": 0.0627753734588623,
+          "covered_pixels": 177221
         },
         "sport_glove_l_1": {
-          "median_distance": 0.009234719909727573,
-          "p99_distance": 0.06116384640336037,
-          "covered_pixels": 44575
+          "median_distance": 0.01059423852711916,
+          "p99_distance": 0.06221478432416916,
+          "covered_pixels": 178368
         },
         "sport_glove_l_2": {
-          "median_distance": 0.008133549243211746,
-          "p99_distance": 0.06328918039798737,
-          "covered_pixels": 23252
+          "median_distance": 0.011892379261553288,
+          "p99_distance": 0.06457153707742691,
+          "covered_pixels": 92870
         },
         "sport_glove_l_3": {
-          "median_distance": 0.006503555923700333,
-          "p99_distance": 0.06007560342550278,
-          "covered_pixels": 20912
+          "median_distance": 0.008090558461844921,
+          "p99_distance": 0.06016499921679497,
+          "covered_pixels": 83573
         },
         "sport_glove_l_4": {
-          "median_distance": 0.012948239222168922,
-          "p99_distance": 0.07308144867420197,
-          "covered_pixels": 48916
+          "median_distance": 0.01589886099100113,
+          "p99_distance": 0.08403971791267395,
+          "covered_pixels": 195732
         },
         "sport_glove_r_0": {
-          "median_distance": 0.01671113818883896,
-          "p99_distance": 0.0749676525592804,
-          "covered_pixels": 44285
+          "median_distance": 0.01741049624979496,
+          "p99_distance": 0.07597889751195908,
+          "covered_pixels": 177221
         },
         "sport_glove_r_1": {
-          "median_distance": 0.013176130130887032,
-          "p99_distance": 0.07902868092060089,
-          "covered_pixels": 44575
+          "median_distance": 0.015538918785750866,
+          "p99_distance": 0.07992620766162872,
+          "covered_pixels": 178368
         },
         "sport_glove_r_2": {
-          "median_distance": 0.013713866472244263,
-          "p99_distance": 0.08585632592439651,
-          "covered_pixels": 23252
+          "median_distance": 0.015008745715022087,
+          "p99_distance": 0.09133479744195938,
+          "covered_pixels": 92870
         },
         "sport_glove_r_3": {
-          "median_distance": 0.006376887671649456,
-          "p99_distance": 0.0750310942530632,
-          "covered_pixels": 20912
+          "median_distance": 0.007795219775289297,
+          "p99_distance": 0.07497263699769974,
+          "covered_pixels": 83573
         },
         "sport_glove_r_4": {
-          "median_distance": 0.010247781872749329,
-          "p99_distance": 0.07672923058271408,
-          "covered_pixels": 48916
+          "median_distance": 0.011219554580748081,
+          "p99_distance": 0.07681292295455933,
+          "covered_pixels": 195732
         }
       }
     },
@@ -10438,54 +10438,54 @@
       "paint_id": 10018,
       "uv_report": {
         "sport_glove_l_0": {
-          "median_distance": 0.009333492256700993,
-          "p99_distance": 0.06282782554626465,
-          "covered_pixels": 44285
+          "median_distance": 0.010955347679555416,
+          "p99_distance": 0.0627753734588623,
+          "covered_pixels": 177221
         },
         "sport_glove_l_1": {
-          "median_distance": 0.009234719909727573,
-          "p99_distance": 0.06116384640336037,
-          "covered_pixels": 44575
+          "median_distance": 0.01059423852711916,
+          "p99_distance": 0.06221478432416916,
+          "covered_pixels": 178368
         },
         "sport_glove_l_2": {
-          "median_distance": 0.008133549243211746,
-          "p99_distance": 0.06328918039798737,
-          "covered_pixels": 23252
+          "median_distance": 0.011892379261553288,
+          "p99_distance": 0.06457153707742691,
+          "covered_pixels": 92870
         },
         "sport_glove_l_3": {
-          "median_distance": 0.006503555923700333,
-          "p99_distance": 0.06007560342550278,
-          "covered_pixels": 20912
+          "median_distance": 0.008090558461844921,
+          "p99_distance": 0.06016499921679497,
+          "covered_pixels": 83573
         },
         "sport_glove_l_4": {
-          "median_distance": 0.012948239222168922,
-          "p99_distance": 0.07308144867420197,
-          "covered_pixels": 48916
+          "median_distance": 0.01589886099100113,
+          "p99_distance": 0.08403971791267395,
+          "covered_pixels": 195732
         },
         "sport_glove_r_0": {
-          "median_distance": 0.01671113818883896,
-          "p99_distance": 0.0749676525592804,
-          "covered_pixels": 44285
+          "median_distance": 0.01741049624979496,
+          "p99_distance": 0.07597889751195908,
+          "covered_pixels": 177221
         },
         "sport_glove_r_1": {
-          "median_distance": 0.013176130130887032,
-          "p99_distance": 0.07902868092060089,
-          "covered_pixels": 44575
+          "median_distance": 0.015538918785750866,
+          "p99_distance": 0.07992620766162872,
+          "covered_pixels": 178368
         },
         "sport_glove_r_2": {
-          "median_distance": 0.013713866472244263,
-          "p99_distance": 0.08585632592439651,
-          "covered_pixels": 23252
+          "median_distance": 0.015008745715022087,
+          "p99_distance": 0.09133479744195938,
+          "covered_pixels": 92870
         },
         "sport_glove_r_3": {
-          "median_distance": 0.006376887671649456,
-          "p99_distance": 0.0750310942530632,
-          "covered_pixels": 20912
+          "median_distance": 0.007795219775289297,
+          "p99_distance": 0.07497263699769974,
+          "covered_pixels": 83573
         },
         "sport_glove_r_4": {
-          "median_distance": 0.010247781872749329,
-          "p99_distance": 0.07672923058271408,
-          "covered_pixels": 48916
+          "median_distance": 0.011219554580748081,
+          "p99_distance": 0.07681292295455933,
+          "covered_pixels": 195732
         }
       }
     }
