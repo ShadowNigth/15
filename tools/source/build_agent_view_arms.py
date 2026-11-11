@@ -46,7 +46,7 @@ def build(avatar,path,td,tb):
     if not path.startswith('gloves/'):
         raise ValueError('Only dedicated first-person packages are allowed: '+path)
     sd,sb=read_glb(decode('models/'+path+'.glb'))
-    selected=[n for n in sd['nodes'] if 'mesh' in n and (('viewmodel' in n.get('name','')) if avatar=='sport' else n.get('name','').startswith('agent_sleeves_'))]
+    selected=[n for n in sd['nodes'] if 'mesh' in n and (('viewmodel' in n.get('name','')) if avatar=='sport' else n.get('name','').startswith(('agent_sleeves_','agent_hands_')))]
     if not selected:raise ValueError('Missing intended arms '+avatar)
     target_skin=td['skins'][0];target_nodes=target_skin['joints'];target_names=[td['nodes'][i]['name'] for i in target_nodes]
     target_by_native={native(name):i for i,name in enumerate(target_names) if native(name)}
@@ -59,8 +59,18 @@ def build(avatar,path,td,tb):
       for p in sd['meshes'][node['mesh']]['primitives']:
         mat=sd['materials'][p['material']];name=mat.get('name','')
         if avatar=='sport' and not name.startswith('glove_sporty_'):continue
+        forearm_only=node.get('name','').startswith('agent_hands_')
+        if forearm_only and not name.startswith('bare_arm'):continue
         a=p['attributes'];v=_accessor(sd,sb,a['POSITION']);norm=_accessor(sd,sb,a['NORMAL']);uv=_accessor(sd,sb,a['TEXCOORD_0']);j=_accessor(sd,sb,a['JOINTS_0']);w=_accessor(sd,sb,a['WEIGHTS_0']);faces=_accessor(sd,sb,p['indices']).reshape(-1,3)
         bone_names=[sd['nodes'][n]['name'] for n in skin['joints']]
+        if forearm_only:
+          # Dedicated first-person packages sometimes put exposed forearms in
+          # their hands meshgroup. Retain only arm-weighted triangles, never
+          # its default hands/gloves: Arsenal's selected glove stays independent.
+          arm_weight=np.zeros(len(v))
+          for k in range(4):
+            arm_weight+=w[:,k]*np.array([bone_names[int(x)].startswith(('arm_upper_','arm_lower_')) for x in j[:,k]])
+          faces=faces[arm_weight[faces].min(1)>.5]
         if len(faces)==0:continue
         ids,indices=np.unique(faces,return_inverse=True);v=v[ids];norm=norm[ids];uv=uv[ids];j=j[ids];w=w[ids]
         result=np.zeros_like(v);rn=np.zeros_like(norm);rj=np.zeros_like(j,dtype=np.uint16);rw=np.zeros_like(w)
