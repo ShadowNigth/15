@@ -190,7 +190,7 @@ func _build_home_agent() -> void:
 	var camera := Camera3D.new()
 	view.add_child(camera)
 	camera.fov = 35
-	camera.look_at_from_position(Vector3(0, 1.05, 3.6), Vector3(0, 0.98, 0))
+	camera.look_at_from_position(Vector3(0, 1.05, 4.25), Vector3(0, 0.98, 0))
 	var light := DirectionalLight3D.new()
 	light.rotation_degrees = Vector3(-25, -30, 0)
 	light.light_energy = 1.6
@@ -205,7 +205,7 @@ func _build_home_agent() -> void:
 	var model := scene.instantiate() as Node3D
 	view.add_child(model)
 	model.position.y = 0.0
-	model.rotation.y = 0.15
+	model.rotation.y = PI + 0.15
 	_style_viewer_meshes(model)
 	var animation := _find_anim_recursive(model)
 	var rigs := model.find_children("*", "Skeleton3D", true, false)
