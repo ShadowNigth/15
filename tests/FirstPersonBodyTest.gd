@@ -17,6 +17,7 @@ func capture(label: String) -> void:
 	DirAccess.make_dir_recursive_absolute("/tmp/modern-captures")
 	expect(get_viewport().get_texture().get_image().save_png("/tmp/modern-captures/" + label + ".png") == OK, "actual Godot body capture " + label)
 func run() -> void:
+	test_waist_cap()
 	RoundManager.set_process(false)
 	RoundManager.state = RoundManager.State.LIVE
 	RoundManager.game_world = self
@@ -77,3 +78,31 @@ func run() -> void:
 	player.free()
 	print("[LOCAL BODY] ", "PASS: " if failures == 0 else "FAIL: ", checks, " checks; ", failures, " failures")
 	get_tree().quit(0 if failures == 0 else 1)
+
+func test_waist_cap() -> void:
+	var arrays := []
+	arrays.resize(Mesh.ARRAY_MAX)
+	var vertices := PackedVector3Array()
+	var normals := PackedVector3Array()
+	var bones := PackedInt32Array()
+	var weights := PackedFloat32Array()
+	var indices := PackedInt32Array()
+	for ring in 2:
+		for index in 8:
+			var angle := TAU * float(index) / 8.0
+			vertices.append(Vector3(cos(angle), float(ring), sin(angle)))
+			normals.append(Vector3.UP)
+			bones.append_array(PackedInt32Array([2, 0, 0, 0]))
+			weights.append_array(PackedFloat32Array([1, 0, 0, 0]))
+	for index in 8:
+		var next := (index + 1) % 8
+		indices.append_array(PackedInt32Array([index, next, index + 8, next, next + 8, index + 8]))
+	arrays[Mesh.ARRAY_VERTEX] = vertices
+	arrays[Mesh.ARRAY_NORMAL] = normals
+	arrays[Mesh.ARRAY_BONES] = bones
+	arrays[Mesh.ARRAY_WEIGHTS] = weights
+	arrays[Mesh.ARRAY_INDEX] = indices
+	var capped := FirstPersonBody.cap_waist(arrays, 4)
+	expect((capped[Mesh.ARRAY_VERTEX] as PackedVector3Array).size() == 17, "waist closure adds only upper loop center, never foot cap")
+	expect((capped[Mesh.ARRAY_INDEX] as PackedInt32Array).size() == 72, "waist closure fills all eight boundary edges")
+	expect((capped[Mesh.ARRAY_WEIGHTS] as PackedFloat32Array)[64] == 1.0, "waist cap retains normalized pelvis skinning")

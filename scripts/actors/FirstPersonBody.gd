@@ -133,8 +133,8 @@ static func cap_waist(arrays: Array, stride: int) -> Array:
 			average /= float(loop.size())
 			values.append(Vector3.UP if channel == Mesh.ARRAY_NORMAL else average)
 			arrays[channel] = values
-		var tangents: PackedFloat32Array = arrays[Mesh.ARRAY_TANGENT]
-		if not tangents.is_empty():
+		var tangents = arrays[Mesh.ARRAY_TANGENT]
+		if tangents != null and not tangents.is_empty():
 			tangents.append_array(PackedFloat32Array([1, 0, 0, 1]))
 			arrays[Mesh.ARRAY_TANGENT] = tangents
 		for index in loop.size():
