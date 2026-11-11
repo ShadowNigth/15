@@ -6,7 +6,7 @@ from pathlib import Path
 from PIL import Image
 name = sys.argv[1]
 page = int(sys.argv[2]) if len(sys.argv) > 2 else None
-limit = 39000 if page is not None else 14000
+limit = 39000 if page is not None else (9000 if name.startswith("agent_arms_") else 14000)
 assert '/' not in name and '..' not in name
 path = Path('/tmp/modern-captures') / (name + '.png')
 if not path.exists():

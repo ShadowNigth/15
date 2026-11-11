@@ -67,6 +67,18 @@ func _run() -> void:
 	await settle()
 	expect(menu._arsenal_panel.visible and menu._modal_shade.visible, "arsenal opens above modal shield")
 	expect(menu._viewer_anim != null and menu._viewer_anim.is_playing(), "native weapon preview animated")
+	var sleeve_choice := menu.find_child("AgentArmsSelector", true, false) as OptionButton
+	expect(sleeve_choice != null and sleeve_choice.item_count == 8, "all actual agent arms selectable in Arsenal")
+	var kept_glove := GameData.selected_glove_id
+	if sleeve_choice != null:
+		for index in sleeve_choice.item_count:
+			var agent: Dictionary = sleeve_choice.get_item_metadata(index)
+			if agent["class"] == "leet":
+				sleeve_choice.select(index)
+				sleeve_choice.item_selected.emit(index)
+				expect(menu._viewer_pivot.get_child(0).get_meta("view_agent", "") == "leet", "preview uses actual selected agent arms")
+				expect(GameData.selected_glove_id == kept_glove, "preview agent switch preserves glove selection")
+
 	expect(menu._arsenal_tabs.get_tab_count() == 4, "finishes animations sound and details separated")
 	expect(menu._arsenal_list.item_count == menu._arsenal_entries.size(), "all catalogue items available")
 	var seen: Dictionary = {}
