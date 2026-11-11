@@ -154,6 +154,10 @@ func run() -> void:
 		expect(player._vm_model_root != null, "Production first-person model " + wid)
 		expect(player._vm_anim != null, "Production first-person animation " + wid)
 		await capture("cosmetic_" + wid)
+		player._try_inspect_viewmodel()
+		expect(not player._available_inspection_clips().is_empty(), "glove inspection available " + wid)
+		await get_tree().create_timer(1.2).timeout
+		await capture("cosmetic_gloves_inspect_" + wid)
 	player.free()
 	GameData.selected_weapon_skins = selected
 	GameData.selected_glove_id = old_glove
