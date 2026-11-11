@@ -48,6 +48,7 @@ var _arsenal_count: Label
 var _arsenal_title: Label
 var _arsenal_kind: Label
 var _arsenal_tabs: TabContainer
+var _home_background: MenuBackdrop
 var _modal_shade: ColorRect
 
 
@@ -119,92 +120,111 @@ func _open_arsenal() -> void:
 
 func _build_main_screen() -> void:
 	set_anchors_preset(Control.PRESET_FULL_RECT)
-	var backdrop := ColorRect.new()
-	backdrop.set_anchors_preset(Control.PRESET_FULL_RECT)
-	backdrop.color = Color(0.045, 0.065, 0.08)
-	backdrop.mouse_filter = Control.MOUSE_FILTER_IGNORE
-	add_child(backdrop)
-	var artwork := TextureRect.new()
-	artwork.set_anchors_preset(Control.PRESET_FULL_RECT)
-	artwork.texture = GameData.get_texture("res://assets/ui/shell/splash.png")
-	artwork.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
-	artwork.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_COVERED
-	artwork.modulate = Color(0.32, 0.38, 0.43, 0.5)
-	artwork.mouse_filter = Control.MOUSE_FILTER_IGNORE
-	add_child(artwork)
-	var shade := ColorRect.new()
-	shade.set_anchors_preset(Control.PRESET_FULL_RECT)
-	shade.mouse_filter = Control.MOUSE_FILTER_IGNORE
-	var shader := Shader.new()
-	shader.code = "shader_type canvas_item; void fragment(){float a=mix(0.96,0.16,smoothstep(0.12,0.95,UV.x)); COLOR=vec4(0.025,0.045,0.065,a);}"
-	var material := ShaderMaterial.new()
-	material.shader = shader
-	shade.material = material
-	add_child(shade)
-
-	var header := HBoxContainer.new()
-	header.anchor_right = 1.0
-	header.offset_left = 36
-	header.offset_right = -36
-	header.offset_top = 24
-	header.offset_bottom = 78
-	header.add_theme_constant_override("separation", 12)
-	add_child(header)
-	var brand := _menu_label("CS / RETAIL", 26, AMBER)
-	brand.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-	header.add_child(brand)
-	header.add_child(_nav_button("JUGAR", func(): _show_subpanel(_play_panel)))
-	header.add_child(_nav_button("ARSENAL", _open_arsenal))
-	header.add_child(_nav_button("AJUSTES", func(): _show_subpanel(_options_panel)))
-	header.add_child(_nav_button("SALIR", func(): get_tree().quit()))
-
-	var hero := VBoxContainer.new()
-	hero.anchor_left = 0.065
-	hero.anchor_right = 0.59
-	hero.anchor_top = 0.28
-	hero.anchor_bottom = 0.86
-	hero.add_theme_constant_override("separation", 14)
-	add_child(hero)
-	hero.add_child(_menu_label("EL CLÁSICO. TU PARTIDA.", 14, AMBER))
-	hero.add_child(_menu_label("COUNTER\nSTRIKE", 64))
-	var description := _menu_label("Jugabilidad clásica. Un nuevo punto de encuentro.\nConfigura tus bots, elige tu mapa y entra en acción.", 17, Color(0.65, 0.72, 0.77))
-	description.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
-	hero.add_child(description)
-	var actions := HBoxContainer.new()
-	actions.add_theme_constant_override("separation", 12)
-	hero.add_child(actions)
-	actions.add_child(_nav_button("CREAR PARTIDA  →", func(): _show_subpanel(_play_panel), true))
-	actions.add_child(_nav_button("EXPLORAR ARSENAL", _open_arsenal))
-	var quick := _nav_button("PARTIDA RÁPIDA  /  DUST II", func():
-		GameData.selected_map = "de_dust2"
-		_start_selected_game()
-	)
-	quick.size_flags_horizontal = Control.SIZE_SHRINK_BEGIN
-	hero.add_child(quick)
-
-	var edition := VBoxContainer.new()
-	edition.anchor_left = 0.74
-	edition.anchor_right = 0.96
-	edition.anchor_top = 0.52
-	edition.anchor_bottom = 0.84
-	edition.add_theme_constant_override("separation", 12)
-	add_child(edition)
-	edition.add_child(_menu_label("01 / LISTO PARA JUGAR", 12, AMBER))
-	edition.add_child(_menu_label("26 MAPAS\n43 ARMAS", 30))
-	edition.add_child(_menu_label("BOTS LOCALES\nSIN CONEXIÓN", 14, Color(0.62, 0.70, 0.76)))
-	var footer := _menu_label("COUNTER-STRIKE 1.5  /  GODOT     •     EXPERIENCIA LOCAL CON BOTS", 12, Color(0.51, 0.60, 0.66))
+	_home_background = MenuBackdrop.new()
+	_home_background.set_anchors_preset(Control.PRESET_FULL_RECT)
+	add_child(_home_background)
+	_build_home_agent()
+	var top := PanelContainer.new()
+	top.anchor_right = 1.0
+	top.offset_bottom = 64
+	top.add_theme_stylebox_override("panel", _menu_box(Color(0.09, 0.11, 0.12, 0.65), Color(1, 1, 1, 0.08)))
+	add_child(top)
+	var row := HBoxContainer.new()
+	row.add_theme_constant_override("separation", 10)
+	top.add_child(row)
+	row.add_child(_home_nav("⌂", _close_panels))
+	row.add_child(_home_nav("AJUSTES", func(): _show_subpanel(_options_panel)))
+	row.add_child(_home_nav("SALIR", func(): get_tree().quit()))
+	var spacer := Control.new()
+	spacer.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	row.add_child(spacer)
+	row.add_child(_home_nav("INVENTARIO", _open_arsenal))
+	row.add_child(_home_nav("EQUIPAMIENTO", _open_arsenal))
+	row.add_child(_home_nav("JUGAR", func(): _show_subpanel(_play_panel)))
+	var end := Control.new()
+	end.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	row.add_child(end)
+	var profile := PanelContainer.new()
+	profile.anchor_left = 0.5
+	profile.anchor_right = 0.5
+	profile.anchor_top = 1.0
+	profile.anchor_bottom = 1.0
+	profile.offset_left = -135
+	profile.offset_right = 135
+	profile.offset_top = -108
+	profile.offset_bottom = -42
+	profile.add_theme_stylebox_override("panel", _menu_box(Color(0.10, 0.12, 0.13, 0.6), Color(1, 1, 1, 0.12)))
+	add_child(profile)
+	var identity := _menu_label("COUNTER-STRIKE\nPARTIDA LOCAL · LISTO PARA JUGAR", 14)
+	identity.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	profile.add_child(identity)
+	var footer := _menu_label("CS / RETAIL     •     SIN CONEXIÓN", 11)
 	footer.anchor_top = 1.0
 	footer.anchor_bottom = 1.0
-	footer.offset_left = 36
-	footer.offset_right = 1000
-	footer.offset_top = -36
-	footer.offset_bottom = -12
+	footer.offset_left = 20
+	footer.offset_top = -26
 	add_child(footer)
 	_modal_shade = ColorRect.new()
 	_modal_shade.set_anchors_preset(Control.PRESET_FULL_RECT)
-	_modal_shade.color = Color(0.01, 0.02, 0.03, 0.88)
+	_modal_shade.color = Color(0.01, 0.02, 0.03, 0.55)
 	_modal_shade.visible = false
 	add_child(_modal_shade)
+
+func _home_nav(text: String, callback: Callable) -> Button:
+	var button := _nav_button(text, callback)
+	button.custom_minimum_size = Vector2(0, 38)
+	button.add_theme_font_size_override("font_size", 16)
+	button.add_theme_stylebox_override("normal", StyleBoxEmpty.new())
+	return button
+
+func _build_home_agent() -> void:
+	var container := SubViewportContainer.new()
+	container.set_anchors_preset(Control.PRESET_FULL_RECT)
+	container.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	container.stretch = true
+	add_child(container)
+	var view := SubViewport.new()
+	view.own_world_3d = true
+	view.transparent_bg = true
+	container.add_child(view)
+	var camera := Camera3D.new()
+	view.add_child(camera)
+	camera.fov = 35
+	camera.look_at_from_position(Vector3(0, 1.05, 3.6), Vector3(0, 0.98, 0))
+	var light := DirectionalLight3D.new()
+	light.rotation_degrees = Vector3(-25, -30, 0)
+	light.light_energy = 1.6
+	view.add_child(light)
+	var fill := OmniLight3D.new()
+	fill.position = Vector3(-2, 2, 2)
+	fill.light_energy = 1.7
+	view.add_child(fill)
+	var scene := GameData.get_model_scene("players/sas")
+	if not scene:
+		return
+	var model := scene.instantiate() as Node3D
+	view.add_child(model)
+	model.position.y = CSActor.MODEL_STAND_OFFSET_Y
+	model.rotation.y = 0.15
+	_style_viewer_meshes(model)
+	var animation := _find_anim_recursive(model)
+	var rigs := model.find_children("*", "Skeleton3D", true, false)
+	if animation and not rigs.is_empty():
+		var rig := rigs[0] as Skeleton3D
+		var clip: String = ModernAgentPose.table("sas", "m4a1").get("clips", {}).get("idle", "")
+		if animation.has_animation(clip):
+			animation.get_animation(clip).loop_mode = Animation.LOOP_LINEAR
+			animation.play(clip)
+		var attachment := BoneAttachment3D.new()
+		attachment.bone_name = "hand_R"
+		rig.add_child(attachment)
+		var weapon := GameData.get_model_scene("weapons/p_m4a1")
+		if weapon:
+			var prop := weapon.instantiate() as Node3D
+			attachment.add_child(prop)
+			_style_viewer_meshes(prop)
+			ModernAgentPose.fit_prop(prop, "sas", "m4a1")
+		ModernPreviewGrip.attach(model, rig, animation, "sas", "m4a1")
 
 func _close_panels() -> void:
 	for panel in [_play_panel, _arsenal_panel, _options_panel]:
@@ -1003,6 +1023,27 @@ func _build_options_dialog() -> void:
 	grid.add_theme_constant_override("h_separation", 18)
 	grid.add_theme_constant_override("v_separation", 8)
 	content.add_child(grid)
+
+	var background_label := Label.new()
+	background_label.text = "Fondo del menú de inicio"
+	grid.add_child(background_label)
+	var backgrounds := OptionButton.new()
+	backgrounds.name = "MenuBackgroundSelector"
+	for text in MenuBackdrop.LABELS:
+		backgrounds.add_item(text)
+	backgrounds.select(MenuBackdrop.MAPS.find(_home_background.selection))
+	backgrounds.item_selected.connect(func(index: int): _home_background.change_background(MenuBackdrop.MAPS[index]))
+	grid.add_child(backgrounds)
+	var motion_label := Label.new()
+	motion_label.text = "Movimiento del fondo"
+	grid.add_child(motion_label)
+	var motion := CheckBox.new()
+	motion.button_pressed = _home_background.motion
+	motion.toggled.connect(func(enabled: bool):
+		_home_background.motion = enabled
+		_home_background.save_preferences()
+	)
+	grid.add_child(motion)
 
 	var editor_button := Button.new()
 	editor_button.text = "Editor de mira y HUD"

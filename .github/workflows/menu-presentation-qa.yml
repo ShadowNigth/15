@@ -3,6 +3,7 @@ on:
   push:
     paths:
       - 'scripts/ui/MainMenu.gd'
+      - 'scripts/ui/MenuBackdrop.gd'
       - 'tests/MainMenuPresentationTest*'
       - 'tools/publish_menu_capture.py'
       - '.github/workflows/menu-presentation-qa.yml'

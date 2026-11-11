@@ -36,6 +36,23 @@ func _run() -> void:
 	add_child(menu)
 	await settle()
 	expect(not menu._modal_shade.visible and not menu._arsenal_panel.visible, "home opens without modal")
+	expect(menu._home_background.camera != null, "live 3D background initialized")
+	var original := menu._home_background.selection
+	for map_id in MenuBackdrop.MAPS:
+		menu._home_background.change_background(map_id, false)
+		await settle()
+		expect(menu._home_background.selection == map_id and menu._home_background.viewport.get_child_count() == 1, "background replacement without retained worlds " + map_id)
+		await capture("menu_background_" + map_id)
+	menu._home_background.change_background(original, false)
+	menu._home_background.motion = true
+	var before := menu._home_background.camera.rotation
+	menu._home_background._process(1.0)
+	expect(not menu._home_background.camera.rotation.is_equal_approx(before), "cinematic background moves")
+	menu._home_background.motion = false
+	before = menu._home_background.camera.rotation
+	menu._home_background._process(1.0)
+	expect(menu._home_background.camera.rotation.is_equal_approx(before), "reduced motion stops camera")
+	menu._home_background.motion = true
 	await capture("menu_home")
 	menu._open_arsenal()
 	await settle()
