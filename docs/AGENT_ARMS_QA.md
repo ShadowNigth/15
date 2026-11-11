@@ -105,3 +105,20 @@ cloth/glove intersections. No new acceptance claim is inferred from them.
 
 GitHub run 43097312462 remained queued; downloading the earlier workflow artifact
 also returned HTTP 502. Actual mid/late engine capture acceptance remains open.
+
+
+## Engine visual follow-up completed for the reported Karambit cases
+
+The old blocked publication was superseded by
+[run 43119313928](https://github.com/ShadowNigth/15/actions/runs/43119313928).
+Import, 132 local-body checks and 2153 cosmetic checks passed. Actual Godot
+midpoint captures were inspected for native Sport/SAS, native Sport/Leet and
+legacy Sport/SAS, plus the late native Sport/SAS inspection pose. The large
+forearm detachment/root-binding failure is absent in those reviewed frames.
+Selected engine captures are retained in `docs/evidence/`. Independent cosmetic
+and complete native Godot workflows passed for implementation `644b2204`.
+
+This closes the earlier inability to inspect actual engine wrist evidence; it
+does not certify continuous triangle collision freedom for every agent/weapon/
+glove combination. The dedicated first-person source policy and independent
+Arsenal glove selection are unchanged. See FIRST_PERSON_BODY.md for local legs.

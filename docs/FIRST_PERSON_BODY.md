@@ -8,9 +8,14 @@ meshes or write glove selection.
 `FirstPersonBody` retains only triangles whose three vertices each have at least
 90% lower-body influence (pelvis, base spine, legs, ankles/toes; classic equivalents
 supported). Upper torso, head, arms and held weapons are not part of the local
-copy. Materials, UVs, weights, bind poses, mesh transform and actual animated
-Skeleton3D are shared, not approximated by a second animation clock. No locomotion
+copy. Materials, UVs, weights, bind poses, mesh transform are preserved. A local Skeleton3D copies every actual animated bone pose each
+render frame, not an approximation driven by a second animation clock. The local
+copy is offset 0.22 m behind the camera-facing body origin so the camera does not
+look directly into the top of the trousers. Physics, bullet hitboxes and the world
+body remain at their original positions. No locomotion
 collision, camera FOV or weapon animation changes are used to position the legs.
+Upper boundary loops are closed with normalized skinned caps using Godot clockwise
+front faces; foot/ankle boundaries are not arbitrarily sealed.
 
 Visibility layers:
 - 1/2: world and external characters (unchanged for bots).
@@ -28,5 +33,20 @@ filtering and look-down framing require real Godot rendering validation, not jus
 successful scene loading. `FirstPersonBodyTest` exercises all eight agents with
 actual movement and crouching, plus respawn/layer/skeleton/death checks.
 `first-person-body-qa.yml` also reruns native/legacy wrist inspection captures.
-At initial implementation these new Godot checks have not executed; no claim of
-final visual acceptance is made until they do.
+Validated implementation: `644b22046fcb705b14d7aeeab16522b33400a9cf`.
+
+- [Local body + wrist QA](https://github.com/ShadowNigth/15/actions/runs/43119313928):
+  **132 lower-body checks + 2153 cosmetic checks, zero failures**. All eight agents
+  exercised with real walking, crouching, jumping and respawn/death presentation.
+  Checks include exact bone-pose synchronization and waist-cap winding/skinning.
+- [Native Godot QA](https://github.com/ShadowNigth/15/actions/runs/43119313861): passed.
+- [Independent cosmetic QA](https://github.com/ShadowNigth/15/actions/runs/43119314070): passed.
+
+Real Godot source-of-truth captures were reviewed for SAS/Leet walking, FBI crouch,
+and Karambit native/legacy glove inspections at midpoint and native late pose.
+Selected final captures are retained in `docs/evidence/`; full captures and logs are
+in the local-body workflow artifact. These are isolated rendering regressions, not
+a claim to have manually played every map, movement angle or glove combination.
+First-person waist caps use interpolated source UVs; they are not new bespoke
+first-person torso artwork. Minor pose-dependent intersections remain possible
+outside the reviewed combinations.

@@ -1,6 +1,6 @@
 class_name FirstPersonBody
 extends RefCounted
-## A local-only lower-body mesh sharing the actual agent's animated skeleton.
+## Local lower-body meshes copying the actual agent's exact skeletal pose.
 ## No extra animation clock, movement hull, arms, head or first-person gloves.
 const LOCAL_LAYER := 8
 const HIDDEN_BODY_LAYER := 16
