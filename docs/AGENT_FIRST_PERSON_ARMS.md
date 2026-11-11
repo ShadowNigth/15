@@ -41,5 +41,6 @@ Unsupported models retain the original viewmodel surfaces. Native arm/glove
 materials bypass the old chrome pass to preserve cloth/leather artwork.
 
 Verification must include real rendered inspection and reload frames, not only
-successful resource loading. Existing experimental cs_estate navigation limitation
-is unrelated and remains documented in CS2_MOVEMENT_EXPERIMENT.md.
+successful resource loading. The experimental cs_estate trim-support regression
+was corrected and the full physical mission suite now passes; see
+CS2_MOVEMENT_EXPERIMENT.md and AGENT_ARMS_QA.md for executed evidence.

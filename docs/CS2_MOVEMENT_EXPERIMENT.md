@@ -44,7 +44,7 @@ GoldSrc keeps its original movement, grenade, dropped-item and corpse equations.
 The runtime tests exercise both real human/bot jumps and ground paths plus air
 projection/rate stability, energy-losing impact response, and profile selection.
 
-## Executed QA and known limitation (this experimental revision)
+## Historical QA (before the trim-support correction)
 
 - Runtime force/real actor, grenade, equipment and corpse checks: **63 passed**,
   zero failures ([run 42952845554](https://github.com/ShadowNigth/15/actions/runs/42952845554)).
@@ -61,3 +61,25 @@ projection/rate stability, energy-losing impact response, and profile selection.
 Source parameters remain editable; no claim of Valve-equivalent grenade/object
 or corpse simulation is made. Dynamic map props and articulated ragdolls remain
 outside this implementation.
+
+
+## Trim-support correction — validated at e6c3463c
+
+A capsule resting on steep BSP doorway trim can report a wall rather than a
+floor. Its centre-foot ray can also miss the supporting edge. The experimental
+step fallback now checks the capsule footprint and actual upward-facing contacts
+on its lower hemisphere. It still requires nonascending movement and uses the
+ordinary bounded 0.54 m step, not a teleport or larger step height. Contacts outside
+the current footprint are rejected after relocation. GoldSrc equations are unchanged.
+
+- [Movement QA](https://github.com/ShadowNigth/15/actions/runs/43047962948):
+  **75 checks, zero failures**, including no support in free air or beyond the footprint.
+- [Squad QA](https://github.com/ShadowNigth/15/actions/runs/43047963208):
+  **55 physical mission checks passed**, including Estate, 747 and OilRig.
+- [Modern agents QA](https://github.com/ShadowNigth/15/actions/runs/43047963158): passed.
+- [Native Godot QA](https://github.com/ShadowNigth/15/actions/runs/43047963211): passed,
+  including the separate Estate rescue regression.
+
+The previously documented Estate stall is no longer reproduced by these tests.
+This does not certify every possible bot route or make the experimental profile
+Valve-equivalent. GoldSrc remains selectable.
