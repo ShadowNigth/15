@@ -28,3 +28,19 @@ assets are introduced. Verification expands native held-weapon/foregrip checks
 from five weapons to all 43 slots, audits socket frames across all eight appearances,
 and checks sharp aimed turns and real reload timing. Rendered gameplay captures
 continue to cover idle, running, crouching, shooting, reloading and death.
+
+## Executed verification
+
+Runtime code revision `055496ab`:
+- [Modern agent gameplay](https://github.com/ShadowNigth/15/actions/runs/42927524703):
+  **587 checks, zero failures**, including all-weapon socket/foregrip checks,
+  sharp aimed turns, crouched muzzle direction/contact and magazine timing.
+  Actual rendered crouch, firing and reload captures were inspected; crouched
+  rifles now stay raised and aimed rather than pointing into the floor.
+- [Cosmetic expansion](https://github.com/ShadowNigth/15/actions/runs/42927524857):
+  **success**, including per-weapon frame audits across all eight appearances.
+- [Native Godot regression](https://github.com/ShadowNigth/15/actions/runs/42927524739):
+  **success**.
+- Experimental movement and squad/interaction workflows also completed successfully.
+
+The final documentation-only commit leaves the tested runtime code unchanged.
