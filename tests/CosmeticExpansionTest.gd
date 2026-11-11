@@ -158,6 +158,16 @@ func run() -> void:
 		expect(not player._available_inspection_clips().is_empty(), "glove inspection available " + wid)
 		await get_tree().create_timer(1.2).timeout
 		await capture("cosmetic_gloves_inspect_" + wid)
+		for clip in player._available_inspection_clips():
+			player._vm_anim.play(clip)
+			player._vm_anim.pause()
+			for sample in 9:
+				player._vm_anim.seek(player._vm_anim.get_animation(clip).length * float(sample) / 9.0, true)
+				var rig := SportGloves._find_skeleton(player._vm_model_root)
+				rig.force_update_all_bone_transforms()
+				validate_animated_arms(player._vm_model_root, rig)
+		player._play_idle_viewmodel()
+
 	# Every actual agent: production first-person arm swap, same selected gloves.
 	GameData.select_glove("cs2go_5030_1417")
 	player.weapon_ctrl.give_weapon("ak47")
