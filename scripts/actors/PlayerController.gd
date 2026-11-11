@@ -12,6 +12,7 @@ signal spectator_target_changed(target_name: String)
 ## Current chase-cam spectator actor (null while dead in deathcam / alive / no target).
 var spectator_target: CSActor = null
 
+var _first_person_body: FirstPersonBody = null
 var camera: Camera3D = null
 var graffiti_sprayer: GraffitiSprayer = null
 var viewmodel_pivot: Node3D = null
@@ -89,7 +90,7 @@ func _ready() -> void:
 	camera.fov = GameData.fov
 	camera.near = 0.05
 	camera.far = 1600.0
-	camera.cull_mask = 3  # Layers 1 (World) + 2 (Characters/Props); Layer 3 (mask 4) is rendered by _vm_camera!
+	camera.cull_mask = 3 | FirstPersonBody.LOCAL_LAYER  # Layers 1 (World) + 2 (Characters/Props); Layer 3 (mask 4) is rendered by _vm_camera!
 	camera.position = Vector3(0.0, 1.66, 0.0)
 	camera.current = true
 	add_child(camera)
@@ -280,6 +281,8 @@ func _create_chrome_studio_panorama() -> ImageTexture:
 
 func spawn_for_round(pos: Vector3, yaw_rad: float, reset_weapons: bool) -> void:
 	super.spawn_for_round(pos, yaw_rad, reset_weapons)
+	if _first_person_body != null:
+		_first_person_body.sync(_body_root, is_alive)
 	if reset_weapons:
 		_native_cz_spare_removed = false
 	camera.top_level = false
@@ -401,6 +404,8 @@ func _cycle_weapon_slot(step: int) -> void:
 
 func _process(delta: float) -> void:
 	super._process(delta)
+	if _first_person_body != null:
+		_first_person_body.sync(_body_root, is_alive)
 
 	if _muzzle_timer > 0.0:
 		_muzzle_timer -= delta
@@ -672,6 +677,13 @@ func _on_player_damaged_from(source_pos: Vector3, dmg_amount: int, directional: 
 
 func apply_camera_shake(intensity: float) -> void:
 	_shake_trauma = clampf(_shake_trauma + intensity, 0.0, 1.35)
+
+
+func _rebuild_character_model() -> void:
+	super._rebuild_character_model()
+	_first_person_body = FirstPersonBody.new()
+	_first_person_body.install(_body_root, _skel)
+	_first_person_body.sync(_body_root, is_alive)
 
 
 func set_team_and_class(new_team: String, new_class: String) -> void:

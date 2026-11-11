@@ -690,8 +690,8 @@ func _stabilize_held_weapon() -> void:
 func _configure_character_meshes(n: Node, material_mode: String = "char") -> void:
 	if n is MeshInstance3D:
 		var mi := n as MeshInstance3D
-		mi.layers = 2
-		mi.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
+		mi.layers = FirstPersonBody.HIDDEN_BODY_LAYER if is_human and is_alive else 2
+		mi.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_SHADOWS_ONLY if is_human and is_alive else GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
 		if mi.mesh:
 			for s in range(mi.mesh.get_surface_count()):
 				var mat := mi.mesh.surface_get_material(s)
