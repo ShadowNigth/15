@@ -64,7 +64,7 @@ func _run() -> void:
 		_expect(_surface_count(player._vm_model_root, "sc_cs2_" + key) > 0, key + " renders its distinct knife material and geometry")
 		for clip in ["draw", "idle", "slash1", "slash2", "midslash1", "midslash2", "stab_miss", "stab", "inspect"]:
 			_expect(player._vm_anim.has_animation(clip), key + " retains animation " + clip)
-		_expect(_surface_count(player._vm_model_root, "ct_arms.bmp") > 0, key + " preserves original arms")
+		_expect(_has_agent_arms(player._vm_model_root), key + " preserves original arms")
 		_expect(_surface_count(player._vm_model_root, "ct_base_glove.bmp") > 0, key + " preserves original gloves")
 		for frame in range(int(ceil(player._vm_anim.get_animation("draw").length * 60.0)) + 5):
 			await get_tree().physics_frame
@@ -97,7 +97,7 @@ func _run() -> void:
 		GameData.select_glove(String(glove["id"]))
 		player._rebuild_viewmodel("knife")
 		_expect(_has_sport_glove(player._vm_model_root), key + " supports real Sport Glove geometry")
-		_expect(_surface_count(player._vm_model_root, "ct_base_glove.bmp") == 0 and _surface_count(player._vm_model_root, "ct_arms.bmp") > 0, key + " swaps only gloves, never arms")
+		_expect(_surface_count(player._vm_model_root, "ct_base_glove.bmp") == 0 and _has_agent_arms(player._vm_model_root), key + " swaps only gloves, never arms")
 		world.queue_free()
 		AudioManager.stop_all()
 		await get_tree().process_frame
@@ -145,3 +145,13 @@ func _save_capture(name: String) -> void:
 		image.resize(480, 270, Image.INTERPOLATE_LANCZOS)
 		_expect(image.save_jpg(_output.path_join(name + ".jpg"), 0.35) == OK, "Save review JPEG " + name)
 	get_tree().paused = false
+
+
+func _has_agent_arms(root: Node) -> bool:
+	if root == null or String(root.get_meta("view_agent", "")).is_empty():
+		return false
+	for node in root.find_children("*", "MeshInstance3D", true, false):
+		var mesh := node as MeshInstance3D
+		if mesh.has_meta("agent_arms") and String(mesh.get_meta("agent_arms")) != "sport" and mesh.mesh != null and mesh.skin != null:
+			return true
+	return false

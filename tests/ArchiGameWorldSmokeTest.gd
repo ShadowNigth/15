@@ -342,7 +342,7 @@ func _player_original_arms_only(player: PlayerController) -> bool:
 		for surface in range(mesh.mesh.get_surface_count()):
 			var material := mesh.mesh.surface_get_material(surface)
 			var material_name := material.resource_name.to_lower() if material != null else ""
-			if material_name == "ct_arms.bmp":
+			if material_name == "ct_arms.bmp" or mesh.has_meta("agent_arms") and String(mesh.get_meta("agent_arms")) != "sport":
 				original_arms = true
 			elif material_name == "ct_base_glove.bmp":
 				original_gloves = true
@@ -374,7 +374,7 @@ func _player_sport_gloves(player: PlayerController, expected_id: String) -> bool
 		for surface in range(mesh.mesh.get_surface_count()):
 			var material := mesh.mesh.surface_get_material(surface)
 			var material_name := material.resource_name.to_lower() if material != null else ""
-			if material_name == "ct_arms.bmp":
+			if material_name == "ct_arms.bmp" or mesh.has_meta("agent_arms") and String(mesh.get_meta("agent_arms")) != "sport":
 				original_arms = true
 			elif material_name == "ct_base_glove.bmp":
 				original_glove = true

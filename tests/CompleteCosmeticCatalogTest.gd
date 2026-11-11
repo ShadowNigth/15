@@ -51,7 +51,7 @@ func _run() -> void:
 		player.weapon_ctrl.equip_slot(3)
 		await get_tree().process_frame
 		_expect(player._cur_vm_model_name == String(option["v_model"]) and player._vm_anim != null, key + " real viewmodel")
-		_expect(_material(player._vm_model_root, "ct_arms.bmp") != null, key + " original arms")
+		_expect(_has_agent_arms(player._vm_model_root), key + " original arms")
 		_expect(_material(player._vm_model_root, "ct_base_glove.bmp") != null, key + " original gloves")
 		var native_meta: Dictionary = GameData.models_meta["weapons/" + String(option["v_model"])]
 		_expect(bool(native_meta.get("native_cs2_animation", false)), key + " model-specific native animation")
@@ -205,3 +205,13 @@ func _save(name: String) -> void:
 		image.resize(480, 270, Image.INTERPOLATE_LANCZOS)
 		_expect(image.save_jpg(_output.path_join(name + ".jpg"), 0.35) == OK, "Review JPEG " + name)
 	get_tree().paused = false
+
+
+func _has_agent_arms(root: Node) -> bool:
+	if root == null or String(root.get_meta("view_agent", "")).is_empty():
+		return false
+	for node in root.find_children("*", "MeshInstance3D", true, false):
+		var mesh := node as MeshInstance3D
+		if mesh.has_meta("agent_arms") and String(mesh.get_meta("agent_arms")) != "sport" and mesh.mesh != null and mesh.skin != null:
+			return true
+	return false
