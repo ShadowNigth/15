@@ -51,8 +51,11 @@ def build(avatar,path,td,tb):
     target_by_native={native(name):i for i,name in enumerate(target_names) if native(name)}
     tf=target_frames(td,tb);writer=GlbWriter();primitives=[];materials=[];images=[];textures=[];stats=[]
     for node in selected:
-      skin=sd['skins'][node['skin']];sf=frame(sd,sb,node['skin']);axis=axis_between(sf,tf);axis[:3,:3]*=1/0.8128
-      if is_full:axis[:3,:3]*=np.linalg.norm(next(iter(sf.values()))[:3,0])
+      skin=sd['skins'][node['skin']];sf=frame(sd,sb,node['skin']);axes={}
+      for side in ['L','R']:
+        axes[side]=axis_between({n:m for n,m in sf.items() if n.endswith('_'+side)},{n:m for n,m in tf.items() if n.endswith('_'+side)})
+        axes[side][:3,:3]*=1/0.8128
+        if is_full:axes[side][:3,:3]*=np.linalg.norm(next(iter(sf.values()))[:3,0])
       for p in sd['meshes'][node['mesh']]['primitives']:
         mat=sd['materials'][p['material']];name=mat.get('name','')
         if avatar=='sport' and not name.startswith('glove_sporty_'):continue
@@ -79,7 +82,7 @@ def build(avatar,path,td,tb):
             if mapped not in target_by_native:raise ValueError((avatar,bn,mapped))
             # Collapsed helper/upper-arm uses its surviving ancestor's frame.
             ref=mapped if mapped in sf else bn
-            x=tf[mapped]@axis@np.linalg.inv(sf[ref]);points=np.c_[v[mask],np.ones(mask.sum())]
+            axis=axes['L' if mapped.endswith('_L') else 'R'];x=tf[mapped]@axis@np.linalg.inv(sf[ref]);points=np.c_[v[mask],np.ones(mask.sum())]
             result[mask]+=(points@x.T)[:,:3]*w[mask,col,None]
             rn[mask]+=(norm[mask]@np.linalg.inv(x[:3,:3]))*w[mask,col,None]
             rj[mask,col]=target_by_native[mapped];rw[mask,col]=w[mask,col]
@@ -118,12 +121,12 @@ def main():
     for avatar,path in SOURCES.items():report['agents'][avatar]=build(avatar,path,td,tb);print('BUILT',avatar,flush=True)
     cf=target_frames(td,tb);canonical=frame(td,tb,0)
     for model in json.loads((ROOT/'data/sport_gloves.json').read_text())['models']:
-      d,b=read_glb(ROOT/f'assets/models/weapons/{model}.glb');tf=target_frames(d,b);axis=axis_between(cf,tf)
+      d,b=read_glb(ROOT/f'assets/models/weapons/{model}.glb');tf=target_frames(d,b);axes={side:axis_between({n:m for n,m in cf.items() if n.endswith('_'+side)},{n:m for n,m in tf.items() if n.endswith('_'+side)}) for side in ['L','R']}
       names={native(n):n for n in frame(d,b,0) if native(n)};xforms={};binds={}
       for name,matrix in canonical.items():
         nn=native(name)
         if nn not in tf:continue
-        x=tf[nn]@axis@np.linalg.inv(matrix)
+        axis=axes['L' if nn.endswith('_L') else 'R'];x=tf[nn]@axis@np.linalg.inv(matrix)
         xforms[name]={'target':names[nn],'matrix':x[:3,:].reshape(-1).tolist(),'bind':np.linalg.inv(tf[nn])[:3,:].reshape(-1).tolist()}
       report['targets'][model]=xforms
     (ROOT/'data/agent_view_arms.json').write_text(json.dumps(report,separators=(',',':'))+'\n')
