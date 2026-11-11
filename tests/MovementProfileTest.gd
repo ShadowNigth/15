@@ -81,6 +81,15 @@ func run() -> void:
 				await get_tree().physics_frame
 				actor.apply_goldsrc_movement(Vector3.ZERO, false, false, false, 1.0 / 60)
 			expect(actor.is_on_floor(), profile + " actual floor contact")
+			var supported_position := actor.global_position
+			actor.global_position = Vector3(50.15, 0.03, 0)
+			expect(actor._has_nearby_step_support(), "capsule edge support found when centre ray misses")
+			actor.global_position = Vector3(50.6, 0.03, 0)
+			expect(not actor._has_nearby_step_support(), "no support beyond capsule footprint")
+			actor.global_position = Vector3(0, 0.8, 0)
+			expect(not actor._has_nearby_step_support(), "airborne actor cannot step on a distant floor")
+			actor.global_position = supported_position
+
 			actor.velocity = Vector3(4, 0, 0)
 			actor.stamina_factor = 1.0
 			var max_speed := actor.weapon_ctrl.get_max_speed_gs() * GameData.SCALE

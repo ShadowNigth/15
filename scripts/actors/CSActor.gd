@@ -1038,10 +1038,7 @@ func apply_goldsrc_movement(wish_dir_world: Vector3, want_jump: bool, want_crouc
 		# A capsule can rest on sloped BSP trim classified as a wall after a
 		# higher experimental jump. Permit the ordinary bounded step only with
 		# verified support directly under the feet, never while freely airborne.
-		var query := PhysicsRayQueryParameters3D.create(global_position + Vector3.UP * 0.12, global_position - Vector3.UP * 0.18)
-		query.collision_mask = 1
-		var support := get_world_3d().direct_space_state.intersect_ray(query)
-		step_supported = not support.is_empty() and (support.normal as Vector3).y > 0.2
+		step_supported = _has_nearby_step_support()
 	if step_supported and is_on_wall() and pre_step_vel.length_squared() > 0.02:
 		_try_step_up(pre_step_vel * delta, pre_step_vel)
 
@@ -1103,6 +1100,21 @@ func _tick_footsteps(delta: float, climbing_ladder: bool) -> void:
 		else:
 			var mchar := _sample_floor_material()
 			AudioManager.play_footstep(mchar, global_position, team)
+
+
+func _has_nearby_step_support() -> bool:
+	# A capsule can rest on the edge of sloped trim while the ray beneath
+	# its centre sees empty space. Probe its footprint, not just the centre.
+	# The short depth and upward-normal requirement exclude free fall/walls.
+	for offset in [Vector3.ZERO, Vector3(0.30, 0, 0), Vector3(-0.30, 0, 0), Vector3(0, 0, 0.30), Vector3(0, 0, -0.30), Vector3(0.21, 0, 0.21), Vector3(-0.21, 0, 0.21), Vector3(0.21, 0, -0.21), Vector3(-0.21, 0, -0.21)]:
+		var point: Vector3 = global_position + offset
+		var query := PhysicsRayQueryParameters3D.create(point + Vector3.UP * 0.18, point - Vector3.UP * 0.18)
+		query.collision_mask = 1
+		query.exclude = [get_rid()]
+		var support := get_world_3d().direct_space_state.intersect_ray(query)
+		if not support.is_empty() and (support.normal as Vector3).y > 0.2:
+			return true
+	return false
 
 
 func _try_step_up(horiz_motion: Vector3, preserve_hvel: Vector3) -> void:
