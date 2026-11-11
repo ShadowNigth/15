@@ -123,14 +123,23 @@ func _build_main_screen() -> void:
 	_home_background = MenuBackdrop.new()
 	_home_background.set_anchors_preset(Control.PRESET_FULL_RECT)
 	add_child(_home_background)
+	var atmosphere := ColorRect.new()
+	atmosphere.set_anchors_preset(Control.PRESET_FULL_RECT)
+	atmosphere.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	var gradient := Shader.new()
+	gradient.code = "shader_type canvas_item; void fragment(){float edge=pow(abs(UV.x-0.5)*2.0,2.0); float bottom=smoothstep(0.55,1.0,UV.y); COLOR=vec4(0.015,0.025,0.035,0.16+edge*0.3+bottom*0.2);}"
+	var atmosphere_material := ShaderMaterial.new()
+	atmosphere_material.shader = gradient
+	atmosphere.material = atmosphere_material
+	add_child(atmosphere)
 	_build_home_agent()
 	var top := PanelContainer.new()
 	top.anchor_right = 1.0
-	top.offset_bottom = 64
+	top.offset_bottom = 76
 	top.add_theme_stylebox_override("panel", _menu_box(Color(0.09, 0.11, 0.12, 0.65), Color(1, 1, 1, 0.08)))
 	add_child(top)
 	var row := HBoxContainer.new()
-	row.add_theme_constant_override("separation", 10)
+	row.add_theme_constant_override("separation", 18)
 	top.add_child(row)
 	row.add_child(_home_nav("⌂", _close_panels))
 	row.add_child(_home_nav("AJUSTES", func(): _show_subpanel(_options_panel)))
@@ -145,19 +154,34 @@ func _build_main_screen() -> void:
 	end.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	row.add_child(end)
 	var profile := PanelContainer.new()
-	profile.anchor_left = 0.5
-	profile.anchor_right = 0.5
+	profile.anchor_left = 0.0
+	profile.anchor_right = 0.0
 	profile.anchor_top = 1.0
 	profile.anchor_bottom = 1.0
-	profile.offset_left = -135
-	profile.offset_right = 135
-	profile.offset_top = -108
+	profile.offset_left = 30
+	profile.offset_right = 325
+	profile.offset_top = -132
 	profile.offset_bottom = -42
 	profile.add_theme_stylebox_override("panel", _menu_box(Color(0.10, 0.12, 0.13, 0.6), Color(1, 1, 1, 0.12)))
 	add_child(profile)
-	var identity := _menu_label("COUNTER-STRIKE\nPARTIDA LOCAL · LISTO PARA JUGAR", 14)
+	var identity := _menu_label("COUNTER-STRIKE / RETAIL\n26 MAPAS  ·  43 ARMAS  ·  BOTS LOCALES", 15)
 	identity.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	profile.add_child(identity)
+	var launch := _nav_button("JUGAR  →", func(): _show_subpanel(_play_panel), true)
+	launch.anchor_left = 1.0
+	launch.anchor_right = 1.0
+	launch.anchor_top = 1.0
+	launch.anchor_bottom = 1.0
+	launch.offset_left = -260
+	launch.offset_right = -30
+	launch.offset_top = -118
+	launch.offset_bottom = -46
+	launch.add_theme_font_size_override("font_size", 24)
+	add_child(launch)
+	var scene_name := _menu_label("ESCENARIO EN VIVO  /  PERSONALÍZALO EN AJUSTES", 12, Color(0.8, 0.85, 0.88))
+	scene_name.offset_left = 30
+	scene_name.offset_top = 92
+	add_child(scene_name)
 	var footer := _menu_label("CS / RETAIL     •     SIN CONEXIÓN", 11)
 	footer.anchor_top = 1.0
 	footer.anchor_bottom = 1.0
@@ -173,7 +197,7 @@ func _build_main_screen() -> void:
 func _home_nav(text: String, callback: Callable) -> Button:
 	var button := _nav_button(text, callback)
 	button.custom_minimum_size = Vector2(0, 38)
-	button.add_theme_font_size_override("font_size", 16)
+	button.add_theme_font_size_override("font_size", 18)
 	button.add_theme_stylebox_override("normal", StyleBoxEmpty.new())
 	return button
 

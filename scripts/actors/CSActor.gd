@@ -438,7 +438,7 @@ func _tick_corpse_grounding(delta: float) -> void:
 		_corpse_settled = true
 		return
 	var space := w3d.direct_space_state
-	_corpse_vel.y -= GRAVITY_MPS2 * delta
+	_corpse_vel.y -= (CS2ExperimentalPhysics.GRAVITY if CS2ExperimentalPhysics.enabled() else GRAVITY_MPS2) * delta
 	var cur := global_position
 	var step := _corpse_vel * delta
 	if step.length_squared() > 0.00001:
@@ -448,8 +448,11 @@ func _tick_corpse_grounding(delta: float) -> void:
 		if not h_move.is_empty():
 			var nrm: Vector3 = h_move["normal"]
 			if nrm.y < 0.55:
-				_corpse_vel.x = 0.0
-				_corpse_vel.z = 0.0
+				if CS2ExperimentalPhysics.enabled():
+					_corpse_vel = CS2ExperimentalPhysics.impact(_corpse_vel, nrm, 0.12, 0.35)
+				else:
+					_corpse_vel.x = 0.0
+					_corpse_vel.z = 0.0
 			else:
 				global_position = (h_move["position"] as Vector3) - Vector3(0.0, 0.42, 0.0)
 		else:
@@ -463,7 +466,7 @@ func _tick_corpse_grounding(delta: float) -> void:
 		var fn: Vector3 = h_flr["normal"]
 		global_position.y = fp.y + 0.02
 		_corpse_vel.y = 0.0
-		var drag: float = maxf(0.0, 1.0 - 9.5 * delta)
+		var drag: float = exp(-CS2ExperimentalPhysics.CORPSE_DRAG * delta) if CS2ExperimentalPhysics.enabled() else maxf(0.0, 1.0 - 9.5 * delta)
 		_corpse_vel.x *= drag
 		_corpse_vel.z *= drag
 		if not _corpse_blood_spawned and is_instance_valid(RoundManager.game_world):
@@ -854,7 +857,7 @@ func apply_goldsrc_movement(wish_dir_world: Vector3, want_jump: bool, want_crouc
 		velocity.x = 0.0
 		velocity.z = 0.0
 		if not is_on_floor():
-			velocity.y -= GRAVITY_MPS2 * delta
+			velocity.y -= (CS2ExperimentalPhysics.GRAVITY if CS2ExperimentalPhysics.enabled() else GRAVITY_MPS2) * delta
 		move_and_slide()
 		return
 
@@ -992,11 +995,13 @@ func apply_goldsrc_movement(wish_dir_world: Vector3, want_jump: bool, want_crouc
 					velocity.z += wish_dir_world.z * acc_spd
 
 		if want_jump:
-			velocity.y = JUMP_VEL_MPS * stamina_factor
+			velocity.y = CS2ExperimentalPhysics.JUMP_SPEED if CS2ExperimentalPhysics.enabled() else JUMP_VEL_MPS * stamina_factor
 			stamina_factor = maxf(0.68, stamina_factor - 0.22)  # CS 1.5 stamina anti-bhop cap!
 	else:
 		# SV_AirAccelerate (GoldSrc air-strafe physics!)
-		if wish_dir_world.length_squared() > 0.001:
+		if CS2ExperimentalPhysics.enabled() and not in_water:
+			velocity = CS2ExperimentalPhysics.air_step(velocity, wish_dir_world, max_spd, delta)
+		elif wish_dir_world.length_squared() > 0.001:
 			var air_cap := minf(max_spd, 30.0 * GameData.SCALE)
 			var cur_proj := velocity.dot(wish_dir_world)
 			var add_spd := air_cap - cur_proj
@@ -1014,7 +1019,7 @@ func apply_goldsrc_movement(wish_dir_world: Vector3, want_jump: bool, want_crouc
 			if want_jump:
 				velocity.y = 3.4
 		else:
-			velocity.y -= GRAVITY_MPS2 * delta
+			velocity.y -= (CS2ExperimentalPhysics.GRAVITY if CS2ExperimentalPhysics.enabled() else GRAVITY_MPS2) * delta
 
 	var prev_vy := velocity.y
 	var pre_move_y := global_position.y

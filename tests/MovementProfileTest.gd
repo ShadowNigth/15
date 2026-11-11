@@ -42,6 +42,20 @@ func run() -> void:
 			diagonal = CS2GroundMovement.step(diagonal, Vector3(1, 0, 1), speed, 1.0 / 128)
 		expect(absf(straight.length() - speed) < 0.001, "weapon maximum respected")
 		expect(absf(diagonal.length() - straight.length()) < 0.001, "no diagonal speed boost")
+	for rate in [30.0, 60.0, 128.0]:
+		var air := Vector3(4, 2, 0)
+		for tick in int(rate):
+			air = CS2ExperimentalPhysics.air_step(air, Vector3.FORWARD, cap, 1.0 / rate)
+		expect(absf(air.y - 2) < 0.0001, "air steering preserves vertical component")
+		expect(absf(air.x - 4) < 0.0001, "air steering preserves perpendicular momentum")
+		expect(absf(air.z + CS2ExperimentalPhysics.AIR_WISH_CAP) < 0.001, "air projection cap at " + str(rate))
+	var incoming := Vector3(5, -8, 2)
+	for restitution in [CS2ExperimentalPhysics.GRENADE_RESTITUTION, CS2ExperimentalPhysics.OBJECT_RESTITUTION]:
+		var bounce := CS2ExperimentalPhysics.impact(incoming, Vector3.UP, restitution)
+		expect(bounce.y > 0 and bounce.length() < incoming.length(), "experimental impact loses energy and leaves surface")
+		expect(CS2ExperimentalPhysics.impact(Vector3.UP, Vector3.UP, restitution) == Vector3.UP, "separating contact never reflects twice")
+	expect(CS2ExperimentalPhysics.GRENADE_GRAVITY < CS2ExperimentalPhysics.GRAVITY, "grenade arc has independent gravity")
+	expect(absf(CS2ExperimentalPhysics.JUMP_SPEED * CS2ExperimentalPhysics.JUMP_SPEED / (2 * CS2ExperimentalPhysics.GRAVITY) - 1.7812) < 0.01, "experimental ballistic apex approximately 57 map units")
 	var floor_body := StaticBody3D.new()
 	var collision := CollisionShape3D.new()
 	var box := BoxShape3D.new()
@@ -85,7 +99,8 @@ func run() -> void:
 			actor.stamina_factor = 1.0
 			await get_tree().physics_frame
 			actor.apply_goldsrc_movement(Vector3.ZERO, true, false, false, 1.0 / 60)
-			expect(absf(actor.velocity.y - CSActor.JUMP_VEL_MPS) < 0.01, "jump impulse unchanged")
+			var jump_speed := CS2ExperimentalPhysics.JUMP_SPEED if profile == "cs2_experimental" else CSActor.JUMP_VEL_MPS
+			expect(absf(actor.velocity.y - jump_speed) < 0.01, profile + " jump impulse selected")
 			actor.free()
 	var menu := load("res://scenes/MainMenu.tscn").instantiate() as MainMenu
 	add_child(menu)

@@ -314,7 +314,7 @@ func _physics_process(delta: float) -> void:
 
 
 func _step_swept_physics(space: PhysicsDirectSpaceState3D, delta: float) -> void:
-	_vel.y -= 21.5 * delta
+	_vel.y -= (CS2ExperimentalPhysics.OBJECT_GRAVITY if CS2ExperimentalPhysics.enabled() else 21.5) * delta
 	var cur_pos: Vector3 = global_position
 
 	# 1. Continuous Substepped 3D Swept Sphere Collision against BSP Floors, Walls, Crates & Doors!
@@ -385,16 +385,19 @@ func _step_swept_physics(space: PhysicsDirectSpaceState3D, delta: float) -> void
 				if hit_n.y > 0.58:
 					# Floor / slope / crate-top bounce & surface friction
 					var rest_y: float = 0.42 if _is_grenade else 0.28
-					_vel = _vel.bounce(hit_n)
-					_vel.y *= rest_y
-					_vel.x *= 0.74
-					_vel.z *= 0.74
+					if CS2ExperimentalPhysics.enabled():
+						_vel = CS2ExperimentalPhysics.impact(_vel, hit_n, CS2ExperimentalPhysics.OBJECT_RESTITUTION, 0.3)
+					else:
+						_vel = _vel.bounce(hit_n)
+						_vel.y *= rest_y
+						_vel.x *= 0.74
+						_vel.z *= 0.74
 					_ang_vel *= 0.64
 					if impact_spd > 1.85:
 						_play_bounce_clatter(cur_pos, impact_spd)
 				else:
 					# Wall / crate-side / ceiling ricochet
-					_vel = _vel.bounce(hit_n) * (0.54 if _is_grenade else 0.46)
+					_vel = CS2ExperimentalPhysics.impact(_vel, hit_n, CS2ExperimentalPhysics.OBJECT_RESTITUTION, 0.15) if CS2ExperimentalPhysics.enabled() else _vel.bounce(hit_n) * (0.54 if _is_grenade else 0.46)
 					_ang_vel.y = -_ang_vel.y * 0.60
 					_ang_vel.x *= 0.55
 					_ang_vel.z *= 0.55

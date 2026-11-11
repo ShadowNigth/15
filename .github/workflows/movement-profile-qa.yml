@@ -3,6 +3,8 @@ on:
   push:
     paths:
       - 'scripts/actors/**'
+      - 'scripts/world/GrenadeProjectile.gd'
+      - 'scripts/world/DroppedWeapon.gd'
       - 'scripts/core/GameData.gd'
       - 'scripts/ui/MainMenu.gd'
       - 'tests/MovementProfileTest*'

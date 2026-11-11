@@ -253,7 +253,7 @@ func _physics_process(delta: float) -> void:
 			_detonate()
 			return
 
-	velocity.y -= 21.0 * delta  # GoldSrc ~0.55 * 800u gravity on grenades
+	velocity.y -= (CS2ExperimentalPhysics.GRENADE_GRAVITY if CS2ExperimentalPhysics.enabled() else 21.0) * delta  # GoldSrc ~0.55 * 800u gravity on grenades
 	var space := get_world_3d().direct_space_state
 	var rem_dt: float = delta
 
@@ -306,10 +306,13 @@ func _physics_process(delta: float) -> void:
 
 		var impact_n_spd: float = absf(velocity.dot(n))
 		if n.y > 0.65:
-			velocity = velocity.bounce(n)
-			velocity.y *= 0.42
-			velocity.x *= 0.74
-			velocity.z *= 0.74
+			if CS2ExperimentalPhysics.enabled():
+				velocity = CS2ExperimentalPhysics.impact(velocity, n, CS2ExperimentalPhysics.GRENADE_RESTITUTION)
+			else:
+				velocity = velocity.bounce(n)
+				velocity.y *= 0.42
+				velocity.x *= 0.74
+				velocity.z *= 0.74
 			_ang_vel *= 0.65
 			if velocity.length() < 1.05 and absf(velocity.y) < 0.55:
 				velocity = Vector3.ZERO
@@ -317,7 +320,7 @@ func _physics_process(delta: float) -> void:
 				rotation.x = 0.0
 				rotation.z = 0.0
 		else:
-			velocity = velocity.bounce(n) * 0.56
+			velocity = CS2ExperimentalPhysics.impact(velocity, n, CS2ExperimentalPhysics.GRENADE_RESTITUTION, 0.08) if CS2ExperimentalPhysics.enabled() else velocity.bounce(n) * 0.56
 			_ang_vel = Vector3(-_ang_vel.x * 0.7, _ang_vel.y + randf_range(-4.0, 4.0), -_ang_vel.z * 0.7)
 
 		if impact_n_spd > 1.35 and _bounces < 6:
