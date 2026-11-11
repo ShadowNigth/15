@@ -1110,8 +1110,9 @@ func _has_nearby_step_support() -> bool:
 	# An existing upward-facing lower contact is stronger evidence than a ray.
 	for index in get_slide_collision_count():
 		var contact := get_slide_collision(index)
-		var height := contact.get_position().y - global_position.y
-		if height >= -0.06 and height <= 0.36 and contact.get_normal().y > 0.2:
+		var relative := contact.get_position() - global_position
+		var footprint_distance := Vector2(relative.x, relative.z).length()
+		if relative.y >= -0.06 and relative.y <= 0.36 and footprint_distance <= 0.42 and contact.get_normal().y > 0.2:
 			return true
 	for offset in [Vector3.ZERO, Vector3(0.30, 0, 0), Vector3(-0.30, 0, 0), Vector3(0, 0, 0.30), Vector3(0, 0, -0.30), Vector3(0.21, 0, 0.21), Vector3(-0.21, 0, 0.21), Vector3(0.21, 0, -0.21), Vector3(-0.21, 0, -0.21)]:
 		var point: Vector3 = global_position + offset
