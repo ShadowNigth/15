@@ -47,3 +47,37 @@ source cloth RGB tint and rejects full-body source paths.
 These are intentionally similar first-person substitutes, not claimed exact
 first-person copies of FBI base, Leet E or Phoenix A. Phoenix A and base Phoenix
 now share their dedicated first-person sleeves/forearms.
+
+## Inspection regression correction — implementation 6b30ab7b
+
+User gameplay screenshots invalidated the earlier static-fit acceptance. Two actual
+retargeting faults were found and corrected:
+
+- `Forearm` and `ForeTwist` were collapsed into the same native semantic key;
+  insertion order selected the twist helper instead of the animated forearm.
+  They now remain distinct in source geometry and all target transforms.
+- Knife skins omit canonical upper-arm joints. Their weighted sleeve vertices
+  previously fell through to an identity bind on bone zero. They now explicitly
+  collapse to the appropriate animated forearm, using that forearm's canonical
+  reference. Runtime conversion rejects any still-unmapped weighted bind.
+
+All nine canonical assets were regenerated. Exposed dedicated forearms are included
+for Leet/Phoenix/Phoenix A; long closed sleeves do not receive an unnecessary hidden
+skin shell. Sleeve/skin wrist endpoints are compressed only within the final 8 cm
+to stay behind the glove wrist plane, retaining source UVs and weights.
+
+[Executed runtime regression](https://github.com/ShadowNigth/15/actions/runs/43091598151):
+726 arm checks and 2153 cosmetic checks passed, including nine sampled points per
+inspection clip for AK/M4/AWP and Karambit with native and legacy Sport finishes,
+SAS and Leet, plus explicit no-root-weight checks. A separate numerical source audit
+confirmed complete weighted-bind coverage for all 387 canonical-asset/weapon pairs.
+These are sampled timelines, not exhaustive continuous collision detection.
+
+The rendered initial native Karambit pose was reviewed. Mid/late native, legacy,
+and bare-forearm captures were generated and retained in the successful workflow's
+`compatible-cosmetics-evidence` artifact. Their first annotation publication was
+truncated by GitHub's per-step limit. A separate publication workflow retrieves that
+same artifact; its run 43097312462 was still queued when this note was written.
+A later full workflow (43093596116) passed the import and runtime steps but failed
+its artifact upload and had not finalized. Consequently this correction is NOT
+claimed to have completed visual acceptance of every inspection/wrist join yet.
