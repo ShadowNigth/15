@@ -106,3 +106,9 @@ func test_waist_cap() -> void:
 	expect((capped[Mesh.ARRAY_VERTEX] as PackedVector3Array).size() == 17, "waist closure adds only upper loop center, never foot cap")
 	expect((capped[Mesh.ARRAY_INDEX] as PackedInt32Array).size() == 72, "waist closure fills all eight boundary edges")
 	expect((capped[Mesh.ARRAY_WEIGHTS] as PackedFloat32Array)[64] == 1.0, "waist cap retains normalized pelvis skinning")
+	var capped_vertices: PackedVector3Array = capped[Mesh.ARRAY_VERTEX]
+	var capped_indices: PackedInt32Array = capped[Mesh.ARRAY_INDEX]
+	var a := capped_vertices[capped_indices[48]]
+	var b := capped_vertices[capped_indices[49]]
+	var c := capped_vertices[capped_indices[50]]
+	expect((b - a).cross(c - a).y < 0, "waist cap uses Godot clockwise front faces visible from above")

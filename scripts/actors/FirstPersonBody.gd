@@ -140,7 +140,8 @@ static func cap_waist(arrays: Array, stride: int) -> Array:
 		for index in loop.size():
 			var a := loop[index]
 			var b := loop[(index + 1) % loop.size()]
-			if (vertices[a] - center).cross(vertices[b] - center).y < 0:
+			# Godot ArrayMesh front faces are clockwise, unlike glTF source faces.
+			if (vertices[a] - center).cross(vertices[b] - center).y > 0:
 				indices.append_array(PackedInt32Array([center_index, b, a]))
 			else:
 				indices.append_array(PackedInt32Array([center_index, a, b]))
