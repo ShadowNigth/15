@@ -81,3 +81,27 @@ same artifact; its run 43097312462 was still queued when this note was written.
 A later full workflow (43093596116) passed the import and runtime steps but failed
 its artifact upload and had not finalized. Consequently this correction is NOT
 claimed to have completed visual acceptance of every inspection/wrist join yet.
+
+## Follow-up while rendered evidence remains queued
+
+Added `tools/source/audit_wrist_motion.py`, an independent offline evaluator of
+the shipped GLB animation channels, canonical conversion and weighted skinning.
+Run with the existing source-tool dependencies:
+
+```
+python -m tools.source.audit_wrist_motion --output /tmp/wrist-audit
+# Optional flat-color diagnostic images/GIFs, explicitly not engine captures:
+python -m tools.source.audit_wrist_motion --output /tmp/wrist-audit --render
+```
+
+Executed: **32 animation/agent combinations, 31 samples each (992 poses)** across
+Karambit/AK/M4/AWP and SAS/FBI/Leet/Phoenix A. Evaluations were finite and the
+combined glove/sleeve extent stayed below the 3 m catastrophic-deformation bound.
+Missing weighted mappings fail evaluation rather than silently using a root.
+The rendered source-geometry midpoint diagnostics for SAS/Leet were reviewed;
+these are flat-color, depth-sorted source diagnostics, NOT Godot framebuffers and
+not evidence of texture correctness, per-pixel occlusion or absence of small
+cloth/glove intersections. No new acceptance claim is inferred from them.
+
+GitHub run 43097312462 remained queued; downloading the earlier workflow artifact
+also returned HTTP 502. Actual mid/late engine capture acceptance remains open.
