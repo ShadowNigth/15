@@ -1,6 +1,6 @@
 # Native Sport / independent agent arms: executed QA
 
-Validated implementation: `e6c3463c007cd32d403c4240fe3fb319046bd409`.
+Historical validation before the dedicated-substitute revision: `e6c3463c007cd32d403c4240fe3fb319046bd409`.
 
 | Workflow | Result | Evidence |
 |---|---|---|
@@ -16,9 +16,9 @@ Rendered cosmetic evidence includes eight actual player agent swaps, inspection,
 SAS and Leet reload frames, and native-UV gloves on AK/M4/AWP. Source annotations
 and downloadable render artifacts are attached to the workflows. Earlier rendered
 frames were inspected during integration; numerical pass counts alone are not
-claimed as aesthetic approval. FBI, Leet and Phoenix A use their own extracted
-third-person arms and retain the lower-detail limitation documented in
-AGENT_FIRST_PERSON_ARMS.md.
+claimed as aesthetic approval. The later dedicated-substitute revision replaces FBI, Leet and Phoenix A with
+first-person packs 5308, 5105 and 5200; the table above does not validate that
+new revision. See AGENT_FIRST_PERSON_ARMS.md for current source assignments.
 
 Legacy regressions that required `ct_arms.bmp` on an actual player or Arsenal
 preview now require installed skinned agent arms, while direct original-asset,

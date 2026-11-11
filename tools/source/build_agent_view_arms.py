@@ -10,7 +10,7 @@ from .import_modern_agents import read_glb,write_glb
 from .build_sport_gloves import _accessor
 from .smd_converter import GlbWriter
 OUT=ROOT/'assets/models/agent_arms'
-SOURCES={'sas':'gloves/agents/5600','phoenix':'gloves/agents/5200','st6':'gloves/agents/5401','dragomir':'gloves/agents/5500','sas_officer':'gloves/agents/5601','fbi':'agents/roster/ctm-fbi','leet':'agents/roster/tm-leet-variante','phoenix_a':'agents/roster/tm-phoenix-varianta','sport':'gloves/5030'}
+SOURCES={'sas':'gloves/agents/5600','phoenix':'gloves/agents/5200','st6':'gloves/agents/5401','dragomir':'gloves/agents/5500','sas_officer':'gloves/agents/5601','fbi':'gloves/agents/5308','leet':'gloves/agents/5105','phoenix_a':'gloves/agents/5200','sport':'gloves/5030'}
 
 def native(name):
     result=glove_bone(name)
@@ -43,9 +43,10 @@ def target_frames(doc,blob):
     return {native(n):v for n,v in f.items() if native(n)}
 
 def build(avatar,path,td,tb):
+    if not path.startswith('gloves/'):
+        raise ValueError('Only dedicated first-person packages are allowed: '+path)
     sd,sb=read_glb(decode('models/'+path+'.glb'))
-    is_full='/roster/' in path
-    selected=[n for n in sd['nodes'] if 'mesh' in n and (('viewmodel' in n.get('name','')) if avatar=='sport' else ('thirdperson_body' in n.get('name','') if is_full else n.get('name','').startswith('agent_sleeves_')))]
+    selected=[n for n in sd['nodes'] if 'mesh' in n and (('viewmodel' in n.get('name','')) if avatar=='sport' else n.get('name','').startswith('agent_sleeves_'))]
     if not selected:raise ValueError('Missing intended arms '+avatar)
     target_skin=td['skins'][0];target_nodes=target_skin['joints'];target_names=[td['nodes'][i]['name'] for i in target_nodes]
     target_by_native={native(name):i for i,name in enumerate(target_names) if native(name)}
@@ -55,19 +56,11 @@ def build(avatar,path,td,tb):
       for side in ['L','R']:
         axes[side]=axis_between({n:m for n,m in sf.items() if n.endswith('_'+side)},{n:m for n,m in tf.items() if n.endswith('_'+side)})
         axes[side][:3,:3]*=1/0.8128
-        if is_full:axes[side][:3,:3]*=np.linalg.norm(next(iter(sf.values()))[:3,0])
       for p in sd['meshes'][node['mesh']]['primitives']:
         mat=sd['materials'][p['material']];name=mat.get('name','')
         if avatar=='sport' and not name.startswith('glove_sporty_'):continue
         a=p['attributes'];v=_accessor(sd,sb,a['POSITION']);norm=_accessor(sd,sb,a['NORMAL']);uv=_accessor(sd,sb,a['TEXCOORD_0']);j=_accessor(sd,sb,a['JOINTS_0']);w=_accessor(sd,sb,a['WEIGHTS_0']);faces=_accessor(sd,sb,p['indices']).reshape(-1,3)
         bone_names=[sd['nodes'][n]['name'] for n in skin['joints']]
-        arm_weight=np.zeros(len(v));finger_weight=np.zeros(len(v))
-        for k in range(4):
-          arm_weight+=w[:,k]*np.array([('arm_upper_' in bone_names[int(x)] or 'arm_lower_' in bone_names[int(x)]) for x in j[:,k]])
-          finger_weight+=w[:,k]*np.array([('finger_' in bone_names[int(x)] or bone_names[int(x)].startswith('hand_')) for x in j[:,k]])
-        if is_full:
-          # Extract actual agent arm triangles, never substitute a similar agent.
-          faces=faces[(arm_weight[faces].min(1)>.75)&(finger_weight[faces].max(1)<.25)]
         if len(faces)==0:continue
         ids,indices=np.unique(faces,return_inverse=True);v=v[ids];norm=norm[ids];uv=uv[ids];j=j[ids];w=w[ids]
         result=np.zeros_like(v);rn=np.zeros_like(norm);rj=np.zeros_like(j,dtype=np.uint16);rw=np.zeros_like(w)
@@ -91,7 +84,7 @@ def build(avatar,path,td,tb):
         tex=mat.get('pbrMetallicRoughness',{}).get('baseColorTexture',{})
         transform=tex.get('extensions',{}).get('KHR_texture_transform',{})
         uv=uv*np.array(transform.get('scale',[1,1]))+np.array(transform.get('offset',[0,0]))
-        material={'name':name,'doubleSided':True,'pbrMetallicRoughness':{'metallicFactor':0,'roughnessFactor':.85}}
+        material={'name':name,'doubleSided':True,'pbrMetallicRoughness':{'metallicFactor':0,'roughnessFactor':.85,'baseColorFactor':mat.get('pbrMetallicRoughness',{}).get('baseColorFactor',[1,1,1,1])[:3]+[1]}}
         if 'index' in tex:
           texture=sd['textures'][tex['index']];image_id=texture.get('source',texture.get('extensions',{}).get('EXT_texture_webp',{}).get('source'));image=sd['images'][image_id];view=sd['bufferViews'][image['bufferView']];raw=sb[view.get('byteOffset',0):view.get('byteOffset',0)+view['byteLength']]
           im=Image.open(io.BytesIO(raw));im.thumbnail((1024,1024));out=io.BytesIO();im.save(out,format='PNG')
@@ -113,7 +106,7 @@ def build(avatar,path,td,tb):
     tglobal=frame(td,tb,0);ib=np.array([np.linalg.inv(tglobal[name]).T for name in target_names],dtype='<f4')
     output={'asset':{'version':'2.0','generator':'Canonical agent arms, original native UVs'},'scene':0,'scenes':[{'nodes':[0]}],'nodes':nodes,'meshes':[{'primitives':primitives}],'materials':materials,'images':images,'textures':textures,'skins':[dict(target_skin,inverseBindMatrices=writer.acc(ib.reshape(-1,16),5126,'MAT4'))],'bufferViews':writer.views,'accessors':writer.accessors}
     file=OUT/(avatar+'.glb');write_glb(file,output,writer.bin)
-    return {'model':'res://assets/models/agent_arms/'+file.name,'source':'models/'+path+'.glb','extracted_from_body':is_full,'surfaces':stats,'sha256':hashlib.sha256(file.read_bytes()).hexdigest(),'uv_sha256':hashlib.sha256(b''.join(_accessor(output,writer.bin,q['attributes']['TEXCOORD_0']).tobytes() for q in primitives)).hexdigest()}
+    return {'model':'res://assets/models/agent_arms/'+file.name,'source':'models/'+path+'.glb','extracted_from_body':False,'dedicated_first_person':True,'visual_substitute':avatar in {'fbi','leet','phoenix_a'},'surfaces':stats,'sha256':hashlib.sha256(file.read_bytes()).hexdigest(),'uv_sha256':hashlib.sha256(b''.join(_accessor(output,writer.bin,q['attributes']['TEXCOORD_0']).tobytes() for q in primitives)).hexdigest()}
 
 def main():
     OUT.mkdir(parents=True,exist_ok=True);td,tb=read_glb(ROOT/'assets/models/weapons/v_ak47.glb')

@@ -10,13 +10,17 @@ No new rights or redistribution permissions are inferred from public availabilit
 | ST6 Soldier | gloves/agents/5401 |
 | Dragomir | gloves/agents/5500 |
 | SAS Officer | gloves/agents/5601 |
-| FBI | arm-weighted triangles from its own ctm-fbi body |
-| Leet E | arm-weighted triangles from its own tm-leet-variante body |
-| Phoenix A | arm-weighted triangles from its own tm-phoenix-varianta body |
+| FBI | dedicated FBI variant B sleeves, gloves/agents/5308 (dark blue FBI cloth) |
+| Leet E | dedicated Leet variant G sleeves, gloves/agents/5105 (tan rolled sleeves) |
+| Phoenix A | dedicated Phoenix sleeves/forearms, gloves/agents/5200 |
 
-The last three are extracted third-person arm geometry, not a falsely labelled
-first-person pack from a similar agent. Their original UVs and appearance remain;
-they may have less first-person detail than the five dedicated sleeve meshes.
+The last three intentionally use visually similar **dedicated first-person**
+packages, per the user's revised choice. They are substitutes, not exact
+first-person editions of the selected third-person agent. No arm triangles are
+extracted from any full-body model. The builder rejects non-glove-package inputs;
+the three old extracted GLBs have been replaced. Native UVs, embedded textures,
+and cloth RGB tint (notably FBI blue) are retained. Phoenix's base agent already
+uses dedicated package 5200; Phoenix A now shares that first-person appearance.
 
 Arsenal → **Brazos del agente** changes weapon preview sleeves independently of
 Gloves. Selecting an agent in Arsenal updates the same preview context. In a match,

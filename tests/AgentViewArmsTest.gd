@@ -16,8 +16,14 @@ func run() -> void:
 		if String(option.id).begins_with("cs2go_"):
 			expect(bool(option.get("native_uv", false)), "new Sport finish uses native UV, never projected atlas")
 	for avatar in config.agents:
+		expect(not bool(config.agents[avatar].get("extracted_from_body", true)), "no third-person arm extraction: " + avatar)
+		expect(String(config.agents[avatar].source).begins_with("models/gloves/"), "dedicated first-person source: " + avatar)
 		var scene := load(String(config.agents[avatar].model)) as PackedScene
 		expect(scene != null, "actual mesh " + avatar)
+	var substitutes := {"fbi": "5308", "leet": "5105", "phoenix_a": "5200"}
+	for avatar in substitutes:
+		expect(String(config.agents[avatar].source) == "models/gloves/agents/" + String(substitutes[avatar]) + ".glb", "documented dedicated substitute: " + avatar)
+		expect(bool(config.agents[avatar].get("dedicated_first_person", false)), "replacement is a dedicated sleeve pack: " + avatar)
 	for model in config.targets:
 		var root := GameData.get_model_scene("weapons/" + String(model)).instantiate() as Node3D
 		add_child(root)
