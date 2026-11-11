@@ -54,10 +54,99 @@ static func filtered(source: MeshInstance3D, rig: Skeleton3D) -> ArrayMesh:
 		if selected.is_empty():
 			continue
 		arrays[Mesh.ARRAY_INDEX] = selected
+		arrays = cap_waist(arrays, stride)
 		result.add_surface_from_arrays(Mesh.PRIMITIVE_TRIANGLES, arrays)
 		result.surface_set_material(result.get_surface_count() - 1, source.get_active_material(surface))
 	_meshes[key] = result
 	return result
+
+static func cap_waist(arrays: Array, stride: int) -> Array:
+	# Skin-weight filtering opens the waist. Weld UV seam duplicates only for
+	# boundary discovery, then close upper boundary loops with a skinned fan.
+	var vertices: PackedVector3Array = arrays[Mesh.ARRAY_VERTEX]
+	var indices: PackedInt32Array = arrays[Mesh.ARRAY_INDEX]
+	var canonical: Dictionary = {}
+	var representatives: Dictionary = {}
+	var extent := AABB(vertices[0], Vector3.ZERO)
+	for vertex in vertices:
+		extent = extent.expand(vertex)
+	var tolerance := maxf(extent.size.length() * 0.00001, 0.000001)
+	for index in vertices.size():
+		var key := vertices[index].snapped(Vector3.ONE * tolerance)
+		if not representatives.has(key):
+			representatives[key] = index
+		canonical[index] = representatives[key]
+	var edges: Dictionary = {}
+	for index in range(0, indices.size(), 3):
+		for slot in 3:
+			var a: int = canonical[indices[index + slot]]
+			var b: int = canonical[indices[index + (slot + 1) % 3]]
+			var key := Vector2i(mini(a, b), maxi(a, b))
+			edges[key] = int(edges.get(key, 0)) + 1
+	var neighbors: Dictionary = {}
+	for edge in edges:
+		if edges[edge] != 1:
+			continue
+		if not neighbors.has(edge.x): neighbors[edge.x] = []
+		if not neighbors.has(edge.y): neighbors[edge.y] = []
+		neighbors[edge.x].append(edge.y)
+		neighbors[edge.y].append(edge.x)
+	var seen: Dictionary = {}
+	for start in neighbors:
+		if seen.has(start): continue
+		var loop: Array[int] = []
+		var current: int = start
+		var previous := -1
+		while not seen.has(current) and neighbors[current].size() == 2:
+			seen[current] = true
+			loop.append(current)
+			var next: int = neighbors[current][0] if neighbors[current][0] != previous else neighbors[current][1]
+			previous = current
+			current = next
+		if current != start or loop.size() < 6: continue
+		var center := Vector3.ZERO
+		for index in loop: center += vertices[index]
+		center /= float(loop.size())
+		if center.y < extent.position.y + extent.size.y * 0.45: continue
+		var center_index: int = (arrays[Mesh.ARRAY_VERTEX] as PackedVector3Array).size()
+		var influence: Dictionary = {}
+		var bones: PackedInt32Array = arrays[Mesh.ARRAY_BONES]
+		var weights: PackedFloat32Array = arrays[Mesh.ARRAY_WEIGHTS]
+		for index in loop:
+			for slot in stride:
+				var bind := bones[index * stride + slot]
+				influence[bind] = float(influence.get(bind, 0.0)) + weights[index * stride + slot]
+		var ranked := influence.keys()
+		ranked.sort_custom(func(a, b): return influence[a] > influence[b])
+		var total := 0.0
+		for slot in mini(stride, ranked.size()): total += influence[ranked[slot]]
+		for slot in stride:
+			bones.append(ranked[slot] if slot < ranked.size() else 0)
+			weights.append(float(influence[ranked[slot]]) / maxf(total, 0.000001) if slot < ranked.size() else 0.0)
+		arrays[Mesh.ARRAY_BONES] = bones
+		arrays[Mesh.ARRAY_WEIGHTS] = weights
+		for channel in [Mesh.ARRAY_VERTEX, Mesh.ARRAY_NORMAL, Mesh.ARRAY_TEX_UV, Mesh.ARRAY_TEX_UV2, Mesh.ARRAY_COLOR]:
+			var values = arrays[channel]
+			if values == null or values.is_empty(): continue
+			var average = values[loop[0]] * 0.0
+			for index in loop: average += values[index]
+			average /= float(loop.size())
+			values.append(Vector3.UP if channel == Mesh.ARRAY_NORMAL else average)
+			arrays[channel] = values
+		var tangents: PackedFloat32Array = arrays[Mesh.ARRAY_TANGENT]
+		if not tangents.is_empty():
+			tangents.append_array(PackedFloat32Array([1, 0, 0, 1]))
+			arrays[Mesh.ARRAY_TANGENT] = tangents
+		for index in loop.size():
+			var a := loop[index]
+			var b := loop[(index + 1) % loop.size()]
+			if (vertices[a] - center).cross(vertices[b] - center).y < 0:
+				indices.append_array(PackedInt32Array([center_index, b, a]))
+			else:
+				indices.append_array(PackedInt32Array([center_index, a, b]))
+	arrays[Mesh.ARRAY_INDEX] = indices
+	return arrays
+
 
 func install(root: Node3D, rig: Skeleton3D) -> void:
 	if root == null or rig == null:
