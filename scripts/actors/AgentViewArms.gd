@@ -3,7 +3,6 @@ extends RefCounted
 ## Independent cosmetic sleeves and native-UV gloves on existing animation rigs.
 static var _catalog: Dictionary = {}
 static var _mesh_cache: Dictionary = {}
-static var _source_cache: Dictionary = {}
 
 static func catalog() -> Dictionary:
 	if _catalog.is_empty():
@@ -74,6 +73,13 @@ static func _converted(source: MeshInstance3D, rig: Skeleton3D, model: String, a
 		arrays[Mesh.ARRAY_TANGENT] = null
 		mesh.add_surface_from_arrays(Mesh.PRIMITIVE_TRIANGLES, arrays)
 		mesh.surface_set_material(surface, source.mesh.surface_get_material(surface))
+	var finished := ArrayMesh.new()
+	for surface in mesh.get_surface_count():
+		var tool := SurfaceTool.new()
+		tool.create_from(mesh, surface)
+		tool.generate_tangents()
+		tool.commit(finished)
+	mesh = finished
 	_mesh_cache[key] = mesh
 	return {"mesh": mesh, "skin": mapped}
 

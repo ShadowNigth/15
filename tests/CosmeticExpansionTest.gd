@@ -158,6 +158,26 @@ func run() -> void:
 		expect(not player._available_inspection_clips().is_empty(), "glove inspection available " + wid)
 		await get_tree().create_timer(1.2).timeout
 		await capture("cosmetic_gloves_inspect_" + wid)
+	# Every actual agent: production first-person arm swap, same selected gloves.
+	GameData.select_glove("cs2go_5030_1417")
+	player.weapon_ctrl.give_weapon("ak47")
+	player.weapon_ctrl.equip_weapon_by_id("ak47")
+	for faction in ["CT", "T"]:
+		for info in GameData.classes[faction]:
+			player.set_team_and_class(faction, String(info.id))
+			await get_tree().create_timer(0.3).timeout
+			expect(player._vm_model_root.get_meta("view_agent", "") == ModernAgentPose.role(faction, info.id), "production agent sleeves " + info.id)
+			expect(GameData.selected_glove_id == "cs2go_5030_1417", "production agent preserves selected gloves " + info.id)
+			player._try_inspect_viewmodel()
+			await get_tree().create_timer(1.2).timeout
+			await capture("agent_arms_" + info.id)
+			player.weapon_ctrl.clips["ak47"] = 1
+			player.weapon_ctrl.ammo_pool[String(player.weapon_ctrl.get_current_spec().ammo_type)] = 90
+			player.weapon_ctrl.start_reload()
+			expect(player.weapon_ctrl.is_reloading, "production sleeve reload " + info.id)
+			await get_tree().create_timer(0.8).timeout
+			await capture("agent_arms_reload_" + info.id)
+			player.weapon_ctrl.is_reloading = false
 	player.free()
 	GameData.selected_weapon_skins = selected
 	GameData.selected_glove_id = old_glove

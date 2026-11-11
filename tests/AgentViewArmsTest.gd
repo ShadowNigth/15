@@ -10,9 +10,11 @@ func _ready() -> void:
 	run.call_deferred()
 func run() -> void:
 	var original_glove := GameData.selected_glove_id
-	var original_models: Dictionary = {}
 	var config := AgentViewArms.catalog()
 	expect(config.agents.size() == 9, "eight real agent arms and native Sport geometry")
+	for option in GameData.get_glove_options():
+		if String(option.id).begins_with("cs2go_"):
+			expect(bool(option.get("native_uv", false)), "new Sport finish uses native UV, never projected atlas")
 	for avatar in config.agents:
 		var scene := load(String(config.agents[avatar].model)) as PackedScene
 		expect(scene != null, "actual mesh " + avatar)
@@ -22,14 +24,16 @@ func run() -> void:
 		var animation := SportGloves._find_skeleton(root)
 		expect(animation != null, "original weapon rig " + model)
 		var bones := animation.get_bone_count()
-		GameData.select_glove("classic")
+		GameData.select_glove("cs2go_5030_1417")
+		expect(SportGloves.apply(root, model), "native Sport on every original weapon " + model)
+		expect(root.get_meta("native_sport", "") == "sport", "native geometry not projected legacy fallback " + model)
 		expect(AgentViewArms.install(root, model, "sas"), "sleeves on " + model)
 		expect(animation.get_bone_count() == bones, "original skeleton untouched " + model)
 		var meshes := SportGloves._find_meshes(root)
 		var actual := false
 		for mesh in meshes:
 			if mesh.has_meta("agent_arms"):
-				actual = true
+				actual = actual or mesh.get_meta("agent_arms") == "sas"
 				expect(mesh.mesh.get_aabb().size.length() < 4, "bounded sleeve geometry " + model)
 		expect(actual, "sleeve mesh installed " + model)
 		root.free()

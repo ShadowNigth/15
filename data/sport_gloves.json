@@ -562,7 +562,12 @@
       "source": "https://github.com/3kh0/cs2go@fb970df0ee8175d9b212d310f6a928f9f61014f2",
       "paint_id": 1417,
       "seed": 1,
-      "wear_value": 0.07
+      "wear_value": 0.07,
+      "native_textures": {
+        "glove_sporty_left": "res://assets/textures/native_sport/5030_1417/glove_sporty_left.webp",
+        "glove_sporty_right": "res://assets/textures/native_sport/5030_1417/glove_sporty_right.webp"
+      },
+      "native_uv": true
     },
     {
       "id": "cs2go_5030_1410",
@@ -584,7 +589,12 @@
       "source": "https://github.com/3kh0/cs2go@fb970df0ee8175d9b212d310f6a928f9f61014f2",
       "paint_id": 1410,
       "seed": 1,
-      "wear_value": 0.07
+      "wear_value": 0.07,
+      "native_textures": {
+        "glove_sporty_left": "res://assets/textures/native_sport/5030_1410/glove_sporty_left.webp",
+        "glove_sporty_right": "res://assets/textures/native_sport/5030_1410/glove_sporty_right.webp"
+      },
+      "native_uv": true
     },
     {
       "id": "cs2go_5030_1409",
@@ -606,7 +616,12 @@
       "source": "https://github.com/3kh0/cs2go@fb970df0ee8175d9b212d310f6a928f9f61014f2",
       "paint_id": 1409,
       "seed": 1,
-      "wear_value": 0.07
+      "wear_value": 0.07,
+      "native_textures": {
+        "glove_sporty_left": "res://assets/textures/native_sport/5030_1409/glove_sporty_left.webp",
+        "glove_sporty_right": "res://assets/textures/native_sport/5030_1409/glove_sporty_right.webp"
+      },
+      "native_uv": true
     },
     {
       "id": "cs2go_5030_1408",
@@ -628,7 +643,12 @@
       "source": "https://github.com/3kh0/cs2go@fb970df0ee8175d9b212d310f6a928f9f61014f2",
       "paint_id": 1408,
       "seed": 1,
-      "wear_value": 0.07
+      "wear_value": 0.07,
+      "native_textures": {
+        "glove_sporty_left": "res://assets/textures/native_sport/5030_1408/glove_sporty_left.webp",
+        "glove_sporty_right": "res://assets/textures/native_sport/5030_1408/glove_sporty_right.webp"
+      },
+      "native_uv": true
     },
     {
       "id": "cs2go_5030_1407",
@@ -650,7 +670,12 @@
       "source": "https://github.com/3kh0/cs2go@fb970df0ee8175d9b212d310f6a928f9f61014f2",
       "paint_id": 1407,
       "seed": 1,
-      "wear_value": 0.07
+      "wear_value": 0.07,
+      "native_textures": {
+        "glove_sporty_left": "res://assets/textures/native_sport/5030_1407/glove_sporty_left.webp",
+        "glove_sporty_right": "res://assets/textures/native_sport/5030_1407/glove_sporty_right.webp"
+      },
+      "native_uv": true
     },
     {
       "id": "cs2go_5030_1406",
@@ -672,7 +697,12 @@
       "source": "https://github.com/3kh0/cs2go@fb970df0ee8175d9b212d310f6a928f9f61014f2",
       "paint_id": 1406,
       "seed": 1,
-      "wear_value": 0.07
+      "wear_value": 0.07,
+      "native_textures": {
+        "glove_sporty_left": "res://assets/textures/native_sport/5030_1406/glove_sporty_left.webp",
+        "glove_sporty_right": "res://assets/textures/native_sport/5030_1406/glove_sporty_right.webp"
+      },
+      "native_uv": true
     },
     {
       "id": "cs2go_5030_1405",
@@ -694,7 +724,12 @@
       "source": "https://github.com/3kh0/cs2go@fb970df0ee8175d9b212d310f6a928f9f61014f2",
       "paint_id": 1405,
       "seed": 1,
-      "wear_value": 0.07
+      "wear_value": 0.07,
+      "native_textures": {
+        "glove_sporty_left": "res://assets/textures/native_sport/5030_1405/glove_sporty_left.webp",
+        "glove_sporty_right": "res://assets/textures/native_sport/5030_1405/glove_sporty_right.webp"
+      },
+      "native_uv": true
     },
     {
       "id": "cs2go_5030_10076",
@@ -716,7 +751,12 @@
       "source": "https://github.com/3kh0/cs2go@fb970df0ee8175d9b212d310f6a928f9f61014f2",
       "paint_id": 10076,
       "seed": 1,
-      "wear_value": 0.07
+      "wear_value": 0.07,
+      "native_textures": {
+        "glove_sporty_left": "res://assets/textures/native_sport/5030_10076/glove_sporty_left.webp",
+        "glove_sporty_right": "res://assets/textures/native_sport/5030_10076/glove_sporty_right.webp"
+      },
+      "native_uv": true
     },
     {
       "id": "cs2go_5030_10075",
@@ -738,7 +778,12 @@
       "source": "https://github.com/3kh0/cs2go@fb970df0ee8175d9b212d310f6a928f9f61014f2",
       "paint_id": 10075,
       "seed": 1,
-      "wear_value": 0.07
+      "wear_value": 0.07,
+      "native_textures": {
+        "glove_sporty_left": "res://assets/textures/native_sport/5030_10075/glove_sporty_left.webp",
+        "glove_sporty_right": "res://assets/textures/native_sport/5030_10075/glove_sporty_right.webp"
+      },
+      "native_uv": true
     },
     {
       "id": "cs2go_5030_10074",
@@ -760,7 +805,12 @@
       "source": "https://github.com/3kh0/cs2go@fb970df0ee8175d9b212d310f6a928f9f61014f2",
       "paint_id": 10074,
       "seed": 1,
-      "wear_value": 0.07
+      "wear_value": 0.07,
+      "native_textures": {
+        "glove_sporty_left": "res://assets/textures/native_sport/5030_10074/glove_sporty_left.webp",
+        "glove_sporty_right": "res://assets/textures/native_sport/5030_10074/glove_sporty_right.webp"
+      },
+      "native_uv": true
     },
     {
       "id": "cs2go_5030_10073",
@@ -782,7 +832,12 @@
       "source": "https://github.com/3kh0/cs2go@fb970df0ee8175d9b212d310f6a928f9f61014f2",
       "paint_id": 10073,
       "seed": 1,
-      "wear_value": 0.07
+      "wear_value": 0.07,
+      "native_textures": {
+        "glove_sporty_left": "res://assets/textures/native_sport/5030_10073/glove_sporty_left.webp",
+        "glove_sporty_right": "res://assets/textures/native_sport/5030_10073/glove_sporty_right.webp"
+      },
+      "native_uv": true
     },
     {
       "id": "cs2go_5030_10048",
@@ -804,7 +859,12 @@
       "source": "https://github.com/3kh0/cs2go@fb970df0ee8175d9b212d310f6a928f9f61014f2",
       "paint_id": 10048,
       "seed": 1,
-      "wear_value": 0.07
+      "wear_value": 0.07,
+      "native_textures": {
+        "glove_sporty_left": "res://assets/textures/native_sport/5030_10048/glove_sporty_left.webp",
+        "glove_sporty_right": "res://assets/textures/native_sport/5030_10048/glove_sporty_right.webp"
+      },
+      "native_uv": true
     },
     {
       "id": "cs2go_5030_10047",
@@ -826,7 +886,12 @@
       "source": "https://github.com/3kh0/cs2go@fb970df0ee8175d9b212d310f6a928f9f61014f2",
       "paint_id": 10047,
       "seed": 1,
-      "wear_value": 0.07
+      "wear_value": 0.07,
+      "native_textures": {
+        "glove_sporty_left": "res://assets/textures/native_sport/5030_10047/glove_sporty_left.webp",
+        "glove_sporty_right": "res://assets/textures/native_sport/5030_10047/glove_sporty_right.webp"
+      },
+      "native_uv": true
     },
     {
       "id": "cs2go_5030_10046",
@@ -848,7 +913,12 @@
       "source": "https://github.com/3kh0/cs2go@fb970df0ee8175d9b212d310f6a928f9f61014f2",
       "paint_id": 10046,
       "seed": 1,
-      "wear_value": 0.07
+      "wear_value": 0.07,
+      "native_textures": {
+        "glove_sporty_left": "res://assets/textures/native_sport/5030_10046/glove_sporty_left.webp",
+        "glove_sporty_right": "res://assets/textures/native_sport/5030_10046/glove_sporty_right.webp"
+      },
+      "native_uv": true
     },
     {
       "id": "cs2go_5030_10045",
@@ -870,7 +940,12 @@
       "source": "https://github.com/3kh0/cs2go@fb970df0ee8175d9b212d310f6a928f9f61014f2",
       "paint_id": 10045,
       "seed": 1,
-      "wear_value": 0.07
+      "wear_value": 0.07,
+      "native_textures": {
+        "glove_sporty_left": "res://assets/textures/native_sport/5030_10045/glove_sporty_left.webp",
+        "glove_sporty_right": "res://assets/textures/native_sport/5030_10045/glove_sporty_right.webp"
+      },
+      "native_uv": true
     },
     {
       "id": "cs2go_5030_10038",
@@ -892,7 +967,12 @@
       "source": "https://github.com/3kh0/cs2go@fb970df0ee8175d9b212d310f6a928f9f61014f2",
       "paint_id": 10038,
       "seed": 1,
-      "wear_value": 0.07
+      "wear_value": 0.07,
+      "native_textures": {
+        "glove_sporty_left": "res://assets/textures/native_sport/5030_10038/glove_sporty_left.webp",
+        "glove_sporty_right": "res://assets/textures/native_sport/5030_10038/glove_sporty_right.webp"
+      },
+      "native_uv": true
     },
     {
       "id": "cs2go_5030_10037",
@@ -914,7 +994,12 @@
       "source": "https://github.com/3kh0/cs2go@fb970df0ee8175d9b212d310f6a928f9f61014f2",
       "paint_id": 10037,
       "seed": 1,
-      "wear_value": 0.07
+      "wear_value": 0.07,
+      "native_textures": {
+        "glove_sporty_left": "res://assets/textures/native_sport/5030_10037/glove_sporty_left.webp",
+        "glove_sporty_right": "res://assets/textures/native_sport/5030_10037/glove_sporty_right.webp"
+      },
+      "native_uv": true
     },
     {
       "id": "cs2go_5030_10019",
@@ -936,7 +1021,12 @@
       "source": "https://github.com/3kh0/cs2go@fb970df0ee8175d9b212d310f6a928f9f61014f2",
       "paint_id": 10019,
       "seed": 1,
-      "wear_value": 0.07
+      "wear_value": 0.07,
+      "native_textures": {
+        "glove_sporty_left": "res://assets/textures/native_sport/5030_10019/glove_sporty_left.webp",
+        "glove_sporty_right": "res://assets/textures/native_sport/5030_10019/glove_sporty_right.webp"
+      },
+      "native_uv": true
     },
     {
       "id": "cs2go_5030_10018",
@@ -958,7 +1048,12 @@
       "source": "https://github.com/3kh0/cs2go@fb970df0ee8175d9b212d310f6a928f9f61014f2",
       "paint_id": 10018,
       "seed": 1,
-      "wear_value": 0.07
+      "wear_value": 0.07,
+      "native_textures": {
+        "glove_sporty_left": "res://assets/textures/native_sport/5030_10018/glove_sporty_left.webp",
+        "glove_sporty_right": "res://assets/textures/native_sport/5030_10018/glove_sporty_right.webp"
+      },
+      "native_uv": true
     }
   ],
   "rig": "Rootns Rig",
@@ -970,5 +1065,6 @@
     "geometry": "unchanged original Sport meshes",
     "uv_revision": "single-skin-facing-aware-512-v3",
     "report": "res://data/cs2go_cosmetics.json"
-  }
+  },
+  "native_uv_revision": "cs2go-viewmodel-original-uv-v1"
 }

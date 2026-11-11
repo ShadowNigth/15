@@ -48,6 +48,7 @@ var _arsenal_count: Label
 var _arsenal_title: Label
 var _arsenal_kind: Label
 var _arsenal_tabs: TabContainer
+var _agent_arms_opt: OptionButton
 var _preview_agent_class := "sas"
 var _preview_agent_team := "CT"
 var _home_background: MenuBackdrop
@@ -56,6 +57,8 @@ var _modal_shade: ColorRect
 
 func _ready() -> void:
 	Input.set_mouse_mode(Input.MOUSE_MODE_VISIBLE)
+	_preview_agent_class = GameData.view_agent_class
+	_preview_agent_team = GameData.view_agent_team
 	_install_menu_theme()
 	_build_main_screen()
 	_build_play_dialog()
@@ -623,6 +626,7 @@ func _build_arsenal_dialog() -> void:
 	var agent_row := HBoxContainer.new()
 	agent_row.add_child(_menu_label("BRAZOS DEL AGENTE", 13))
 	var agent_choice := OptionButton.new()
+	_agent_arms_opt = agent_choice
 	agent_choice.name = "AgentArmsSelector"
 	for faction in ["CT", "T"]:
 		for info in GameData.classes.get(faction, []):
@@ -634,6 +638,8 @@ func _build_arsenal_dialog() -> void:
 		var selected: Dictionary = agent_choice.get_item_metadata(index)
 		_preview_agent_team = selected.team
 		_preview_agent_class = selected["class"]
+		GameData.view_agent_class = _preview_agent_class
+		GameData.view_agent_team = _preview_agent_team
 		if not _viewer_current_wid.is_empty():
 			_load_viewer_weapon(_viewer_current_wid)
 	)
@@ -978,6 +984,12 @@ func _load_viewer_weapon(wid: String) -> void:
 func _load_viewer_player(cid: String) -> void:
 	_preview_agent_class = cid
 	_preview_agent_team = "CT" if cid in ["urban", "gsg9", "sas", "gign"] else "T"
+	GameData.view_agent_class = _preview_agent_class
+	GameData.view_agent_team = _preview_agent_team
+	if _agent_arms_opt != null:
+		for index in _agent_arms_opt.item_count:
+			if String(_agent_arms_opt.get_item_metadata(index).get("class", "")) == cid:
+				_agent_arms_opt.select(index)
 	_set_arsenal_heading(String(GameData.modern_agents.get("agents", {}).get(ModernAgentPose.role("CT" if cid in ["urban", "gsg9", "sas", "gign"] else "T", cid), {}).get("name", cid)), "AGENTES CT / T")
 	if _viewer_camera != null:
 		_viewer_camera.fov = 65.0

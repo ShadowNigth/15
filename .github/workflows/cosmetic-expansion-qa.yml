@@ -54,7 +54,7 @@ jobs:
         run: |
           python - <<'PY'
           from pathlib import Path
-          for name in ['cosmetics-import','cosmetics']:
+          for name in ['cosmetics-import','cosmetics','agent-arms']:
               p=Path('/tmp/'+name+'.log')
               if p.exists():
                   lines=p.read_text(errors='replace').splitlines()
@@ -85,6 +85,36 @@ jobs:
       - name: Inspect Superconductor glove projection
         if: always()
         run: python tools/publish_modern_capture.py cosmetic_gloves_inspect_awp
+      - name: Actual sas first-person sleeves
+        if: always()
+        run: python tools/publish_modern_capture.py agent_arms_sas
+      - name: Actual terror first-person sleeves
+        if: always()
+        run: python tools/publish_modern_capture.py agent_arms_terror
+      - name: Actual urban first-person sleeves
+        if: always()
+        run: python tools/publish_modern_capture.py agent_arms_urban
+      - name: Actual gsg9 first-person sleeves
+        if: always()
+        run: python tools/publish_modern_capture.py agent_arms_gsg9
+      - name: Actual gign first-person sleeves
+        if: always()
+        run: python tools/publish_modern_capture.py agent_arms_gign
+      - name: Actual leet first-person sleeves
+        if: always()
+        run: python tools/publish_modern_capture.py agent_arms_leet
+      - name: Actual arctic first-person sleeves
+        if: always()
+        run: python tools/publish_modern_capture.py agent_arms_arctic
+      - name: Actual guerilla first-person sleeves
+        if: always()
+        run: python tools/publish_modern_capture.py agent_arms_guerilla
+      - name: Actual sas sleeve reload
+        if: always()
+        run: python tools/publish_modern_capture.py agent_arms_reload_sas
+      - name: Actual leet sleeve reload
+        if: always()
+        run: python tools/publish_modern_capture.py agent_arms_reload_leet
       - uses: actions/upload-artifact@v4
         if: always()
         with:

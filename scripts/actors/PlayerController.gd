@@ -676,6 +676,8 @@ func apply_camera_shake(intensity: float) -> void:
 
 func set_team_and_class(new_team: String, new_class: String) -> void:
 	super.set_team_and_class(new_team, new_class)
+	GameData.view_agent_class = new_class
+	GameData.view_agent_team = new_team
 	if is_instance_valid(viewmodel_holder) and weapon_ctrl != null and not weapon_ctrl.current_weapon_id.is_empty():
 		_rebuild_viewmodel(weapon_ctrl.current_weapon_id)
 
