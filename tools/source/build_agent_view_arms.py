@@ -13,6 +13,8 @@ OUT=ROOT/'assets/models/agent_arms'
 SOURCES={'sas':'gloves/agents/5600','phoenix':'gloves/agents/5200','st6':'gloves/agents/5401','dragomir':'gloves/agents/5500','sas_officer':'gloves/agents/5601','fbi':'gloves/agents/5308','leet':'gloves/agents/5105','phoenix_a':'gloves/agents/5200','sport':'gloves/5030'}
 
 def native(name):
+    # Twist helpers are not the forearm: merging them moves the cuff in poses.
+    if name.endswith('_ForeTwist'):return 'arm_twist_'+('L' if '_L_' in name else 'R')
     result=glove_bone(name)
     if result:return result
     if 'UpperArm' in name:return 'arm_upper_'+('L' if '_L_' in name else 'R')
@@ -60,7 +62,7 @@ def build(avatar,path,td,tb):
         mat=sd['materials'][p['material']];name=mat.get('name','')
         if avatar=='sport' and not name.startswith('glove_sporty_'):continue
         forearm_only=node.get('name','').startswith('agent_hands_')
-        if forearm_only and not name.startswith('bare_arm'):continue
+        if forearm_only and (not name.startswith('bare_arm') or avatar not in {'leet','phoenix','phoenix_a'}):continue
         a=p['attributes'];v=_accessor(sd,sb,a['POSITION']);norm=_accessor(sd,sb,a['NORMAL']);uv=_accessor(sd,sb,a['TEXCOORD_0']);j=_accessor(sd,sb,a['JOINTS_0']);w=_accessor(sd,sb,a['WEIGHTS_0']);faces=_accessor(sd,sb,p['indices']).reshape(-1,3)
         bone_names=[sd['nodes'][n]['name'] for n in skin['joints']]
         if forearm_only:
@@ -89,6 +91,21 @@ def build(avatar,path,td,tb):
             result[mask]+=(points@x.T)[:,:3]*w[mask,col,None]
             rn[mask]+=(norm[mask]@np.linalg.inv(x[:3,:3]))*w[mask,col,None]
             rj[mask,col]=target_by_native[mapped];rw[mask,col]=w[mask,col]
+        if avatar!='sport':
+          # Keep the sleeve/skin endpoint behind the glove's wrist plane.
+          # Compress only the last 8 cm, retaining UVs and anatomical weights.
+          dominant=np.argmax(rw,axis=1)
+          sides=np.array(['L' if '_L_' in target_names[int(rj[i,k])] else 'R' for i,k in enumerate(dominant)])
+          for side in ['L','R']:
+            mask=sides==side
+            if not mask.any():continue
+            wrist=tf['hand_'+side][:3,3];elbow=tf['arm_lower_'+side][:3,3]
+            direction=wrist-elbow;direction/=np.linalg.norm(direction)
+            u=(result[mask]-wrist)@direction
+            if u.max()>-.008:
+              scale=.072/(u.max()+.08)
+              end=np.maximum(u+.08,0)
+              result[mask]-=end[:,None]*(1-scale)*direction
         rn/=np.maximum(np.linalg.norm(rn,axis=1,keepdims=True),1e-8)
         # Keep the native texture transforms and repeat UVs; no resampling atlas.
         tex=mat.get('pbrMetallicRoughness',{}).get('baseColorTexture',{})
@@ -128,8 +145,15 @@ def main():
       names={native(n):n for n in frame(d,b,0) if native(n)};xforms={};binds={}
       for name,matrix in canonical.items():
         nn=native(name)
-        if nn not in tf:continue
-        axis=axes['L' if nn.endswith('_L') else 'R'];x=tf[nn]@axis@np.linalg.inv(matrix)
+        if not nn:continue
+        reference=matrix
+        if nn not in tf:
+          if not nn.startswith('arm_upper_'):continue
+          # Knife skins omit upper-arm binds. Collapse to the animated forearm,
+          # preserving each vertex's offset relative to that canonical forearm.
+          nn='arm_lower_'+nn[-1]
+          reference=cf[nn]
+        axis=axes['L' if nn.endswith('_L') else 'R'];x=tf[nn]@axis@np.linalg.inv(reference)
         xforms[name]={'target':names[nn],'matrix':x[:3,:].reshape(-1).tolist(),'bind':np.linalg.inv(tf[nn])[:3,:].reshape(-1).tolist()}
       report['targets'][model]=xforms
     (ROOT/'data/agent_view_arms.json').write_text(json.dumps(report,separators=(',',':'))+'\n')

@@ -61,6 +61,12 @@ jobs:
                   text='\n'.join(x for x in lines if any(k in x for k in ['SCRIPT ERROR','ERROR:','at:','PASS:']))[-6000:]
                   if text:print('::notice title='+name+'::'+text.replace('%','%25').replace('\n','%0A'))
           PY
+      - name: Karambit animated wrist evidence
+        if: always()
+        run: |
+          for name in wrist_sas_cs2go_5030_1417_inspect_0 wrist_sas_cs2go_5030_1417_inspect_4 wrist_sas_cs2go_5030_1417_inspect_8 wrist_leet_cs2go_5030_1417_inspect_4 wrist_sas_arid_mw_inspect_4; do
+            python tools/publish_modern_capture.py "$name"
+          done
       - name: Actual sas first-person sleeves
         if: always()
         run: python tools/publish_modern_capture.py agent_arms_sas

@@ -25,6 +25,12 @@ func run() -> void:
 		expect(String(config.agents[avatar].source) == "models/gloves/agents/" + String(substitutes[avatar]) + ".glb", "documented dedicated substitute: " + avatar)
 		expect(bool(config.agents[avatar].get("dedicated_first_person", false)), "replacement is a dedicated sleeve pack: " + avatar)
 	for model in config.targets:
+		for side in ["L", "R"]:
+			var entries: Dictionary = config.targets[model]
+			var forearm := "v_weapon.Bip01_" + side + "_Forearm"
+			expect(String(entries[forearm].target).ends_with("_Forearm"), "forearm never aliases twist helper " + model)
+			var upper := "v_weapon.Bip01_" + side + "_UpperArm"
+			expect(entries.has(upper), "upper-arm weights have an animated target, including knives " + model)
 		var root := GameData.get_model_scene("weapons/" + String(model)).instantiate() as Node3D
 		add_child(root)
 		var animation := SportGloves._find_skeleton(root)

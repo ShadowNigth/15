@@ -31,17 +31,20 @@ static func _converted(source: MeshInstance3D, rig: Skeleton3D, model: String, a
 		return {}
 	var transforms: Array[Transform3D] = []
 	var mapped := Skin.new()
+	var supported: Array[bool] = []
 	for index in source.skin.get_bind_count():
 		var name := String(source.skin.get_bind_name(index))
 		var entry := _entry(targets, name)
 		# Unused weapon/root binds are retained but do not influence these meshes.
 		if entry.is_empty():
+			supported.append(false)
 			transforms.append(Transform3D.IDENTITY)
 			mapped.add_bind(0, Transform3D.IDENTITY)
 			continue
 		var target := _bone(rig, String(entry.target))
 		if target < 0:
 			return {}
+		supported.append(true)
 		transforms.append(matrix(entry.matrix))
 		mapped.add_bind(target, matrix(entry.bind))
 	if _mesh_cache.has(key):
@@ -62,6 +65,9 @@ static func _converted(source: MeshInstance3D, rig: Skeleton3D, model: String, a
 				var weight := weights[offset]
 				if weight <= 0:
 					continue
+				if bones[offset] >= supported.size() or not supported[bones[offset]]:
+					# Never bind a weighted arm vertex to the weapon/root silently.
+					return {}
 				var transform := transforms[bones[offset]]
 				point += (transform * vertices[vertex]) * weight
 				normal += (transform.basis.inverse().transposed() * normals[vertex]) * weight

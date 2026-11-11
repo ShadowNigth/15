@@ -178,8 +178,53 @@ func run() -> void:
 			await get_tree().create_timer(0.8).timeout
 			await capture("agent_arms_reload_" + info.id)
 			player.weapon_ctrl.is_reloading = false
+	# Full inspection timelines on the reported knife, native and legacy gloves.
+	var old_knife := GameData.selected_knife_id
+	for glove in ["cs2go_5030_1417", "arid_mw"]:
+		GameData.select_glove(glove)
+		GameData.select_knife("karambit")
+		player.weapon_ctrl.equip_weapon_by_id("knife")
+		for cls in ["sas", "leet"]:
+			player.set_team_and_class("CT" if cls == "sas" else "T", cls)
+			player._rebuild_viewmodel("knife")
+			expect(player._vm_model_root.get_meta("view_agent", "") == cls, "knife inspection retains agent sleeves")
+			for clip in player._available_inspection_clips():
+				player._vm_anim.play(clip)
+				player._vm_anim.pause()
+				for sample in 9:
+					player._vm_anim.seek(player._vm_anim.get_animation(clip).length * float(sample) / 9.0, true)
+					var rig := SportGloves._find_skeleton(player._vm_model_root)
+					rig.force_update_all_bone_transforms()
+					validate_animated_arms(player._vm_model_root, rig)
+					if sample in [0, 4, 8]:
+						await capture("wrist_" + cls + "_" + glove + "_" + String(clip).replace("/", "_") + "_" + str(sample))
+	GameData.select_knife(old_knife)
 	player.free()
 	GameData.selected_weapon_skins = selected
 	GameData.selected_glove_id = old_glove
 	print("PASS: Cosmetics ", checks, " checks; ", failures, " failures")
 	get_tree().quit(0 if failures == 0 else 1)
+
+func validate_animated_arms(root: Node3D, rig: Skeleton3D) -> void:
+	for mesh in SportGloves._find_meshes(root):
+		if not mesh.has_meta("agent_arms"):
+			continue
+		var valid := true
+		for surface in mesh.mesh.get_surface_count():
+			var arrays := mesh.mesh.surface_get_arrays(surface)
+			var vertices: PackedVector3Array = arrays[Mesh.ARRAY_VERTEX]
+			var bones: PackedInt32Array = arrays[Mesh.ARRAY_BONES]
+			var weights: PackedFloat32Array = arrays[Mesh.ARRAY_WEIGHTS]
+			var stride := bones.size() / maxi(1, vertices.size())
+			for vertex in range(0, vertices.size(), maxi(1, vertices.size() / 96)):
+				var point := Vector3.ZERO
+				for slot in stride:
+					var offset := vertex * stride + slot
+					if weights[offset] <= 0:
+						continue
+					var bind := bones[offset]
+					var bone := mesh.skin.get_bind_bone(bind)
+					valid = valid and bone > 0
+					point += (rig.get_bone_global_pose(bone) * mesh.skin.get_bind_pose(bind) * vertices[vertex]) * weights[offset]
+				valid = valid and point.is_finite() and point.length() < 4.0
+		expect(valid, "animated sleeve has no root-bound or exploding vertices " + String(mesh.name))
