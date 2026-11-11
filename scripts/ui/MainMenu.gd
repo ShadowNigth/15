@@ -204,7 +204,7 @@ func _build_home_agent() -> void:
 		return
 	var model := scene.instantiate() as Node3D
 	view.add_child(model)
-	model.position.y = CSActor.MODEL_STAND_OFFSET_Y
+	model.position.y = 0.0
 	model.rotation.y = 0.15
 	_style_viewer_meshes(model)
 	var animation := _find_anim_recursive(model)
@@ -215,6 +215,17 @@ func _build_home_agent() -> void:
 		if animation.has_animation(clip):
 			animation.get_animation(clip).loop_mode = Animation.LOOP_LINEAR
 			animation.play(clip)
+			animation.advance(0)
+		# Native agent origins differ from classic actors. Frame the evaluated
+		# skeleton instead of applying gameplay's classic origin offset.
+		var ankle := rig.find_bone("ankle_L")
+		var head := rig.find_bone("head_0")
+		if ankle >= 0 and head >= 0:
+			var foot_y := (model.global_transform.affine_inverse() * rig.global_transform * rig.get_bone_global_pose(ankle).origin).y
+			var head_y := (model.global_transform.affine_inverse() * rig.global_transform * rig.get_bone_global_pose(head).origin).y
+			var factor := 1.7 / maxf(0.1, head_y - foot_y)
+			model.scale = Vector3.ONE * factor
+			model.position.y = -foot_y * factor + 0.06
 		var attachment := BoneAttachment3D.new()
 		attachment.bone_name = "hand_R"
 		rig.add_child(attachment)

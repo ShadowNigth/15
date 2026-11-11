@@ -63,6 +63,8 @@ func change_background(map_id: String, persist: bool = true) -> void:
 					mat.set_shader_parameter("lightmap_tex", lightmap)
 					mesh.set_surface_override_material(index, mat)
 	var spawn: Dictionary = data.t_spawns[0]
+	if map_id == "de_dust2":
+		spawn = {"pos": [25.0, 5.5, 23.0], "yaw": 0.0}
 	var p: Array = spawn.pos
 	origin = Vector3(p[0], p[1] + 1.65, p[2])
 	yaw = float(spawn.yaw)
