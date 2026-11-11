@@ -83,6 +83,16 @@ func run() -> void:
 				player.apply_goldsrc_movement(Vector3.ZERO, false, true, false, 1.0 / 60)
 			await capture("local_body_" + info.id + "_crouch")
 			expect(player.is_crouching, "physical crouch retained with visible legs")
+			for tick in 20:
+				await get_tree().physics_frame
+				player.apply_goldsrc_movement(Vector3.ZERO, false, false, false, 1.0 / 60)
+			var ground_y := player.global_position.y
+			for tick in 15:
+				await get_tree().physics_frame
+				player.apply_goldsrc_movement(Vector3.FORWARD, tick == 0, false, false, 1.0 / 60)
+			expect(player.global_position.y > ground_y + 0.15, "actual jump retains attached lower body " + info.id)
+			await capture("local_body_" + info.id + "_jump")
+
 			player._first_person_body.sync(player._body_root, false)
 			for part in player._first_person_body.parts:
 				expect(not part.visible, "local lower body hidden in death/spectator")
