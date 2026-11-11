@@ -36,7 +36,20 @@ func run() -> void:
 	collision.shape = box
 	floor.position.y = -0.1
 	floor.add_child(collision)
+	var floor_visual := MeshInstance3D.new()
+	var floor_box := BoxMesh.new()
+	floor_box.size = box.size
+	floor_visual.mesh = floor_box
+	var floor_material := StandardMaterial3D.new()
+	floor_material.albedo_color = Color(0.36, 0.40, 0.42)
+	floor_visual.material_override = floor_material
+	floor.add_child(floor_visual)
 	add_child(floor)
+	var light := DirectionalLight3D.new()
+	light.rotation_degrees = Vector3(-65, -25, 0)
+	light.shadow_enabled = true
+	light.light_energy = 0.8
+	add_child(light)
 	var player := PlayerController.new()
 	add_child(player)
 	player.set_physics_process(false)
