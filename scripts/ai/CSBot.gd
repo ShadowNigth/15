@@ -24,6 +24,10 @@ var target_enemy: CSActor = null
 
 # YaPB directed node-graph navigation state
 var traffic := TeammateTraffic.new()
+var _experimental_progress_pos := Vector3.ZERO
+var _experimental_stall_time := 0.0
+var _experimental_retreat_time := 0.0
+var _experimental_retreat_dir := Vector3.ZERO
 var bomb_role: String = "none"
 var _bomb_role_node: int = -1
 var _bomb_role_epoch: int = 0
@@ -2933,6 +2937,31 @@ func _maybe_share_loadout() -> void:
 
 
 func apply_goldsrc_movement(wish_dir_world: Vector3, want_jump: bool, want_crouch: bool, want_walk: bool, delta: float) -> void:
+	if CS2ExperimentalPhysics.enabled() and not RoundManager.is_movement_frozen() and not on_ladder:
+		if _experimental_retreat_time > 0:
+			_experimental_retreat_time -= delta
+			super.apply_goldsrc_movement(_experimental_retreat_dir, false, true, false, delta)
+			return
+		if wish_dir_world.length_squared() < 0.05 or global_position.distance_to(_experimental_progress_pos) > 0.45:
+			_experimental_stall_time = 0
+			_experimental_progress_pos = global_position
+		else:
+			_experimental_stall_time += delta
+		if _experimental_stall_time > 2.5:
+			# Higher experimental arcs can wedge the capsule under BSP trim.
+			# Back out physically before replanning; no teleport or floor spoof.
+			_experimental_retreat_dir = -Vector3(wish_dir_world.x, 0, wish_dir_world.z).normalized()
+			_experimental_retreat_time = 1.1
+			_experimental_stall_time = 0
+			_node_path = PackedInt32Array()
+			_clear_hostage_direct()
+			_hostage_repath = 0
+			_has_goal = false
+			super.apply_goldsrc_movement(_experimental_retreat_dir, false, true, false, delta)
+			return
+	else:
+		_experimental_stall_time = 0
+		_experimental_retreat_time = 0
 	# Preserve the existing CT hostage mission controller end-to-end. Its exact
 	# approach steering is not interchangeable with free corridor negotiation.
 	if team == "CT" and RoundManager.map_mode == "cs":
