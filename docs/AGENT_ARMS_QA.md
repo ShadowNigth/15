@@ -27,3 +27,23 @@ workflow's separate release-only export and knife-review jobs were skipped by it
 conditions; no new standalone executable is claimed. Godot's dummy renderer still
 emits `Parameter "m" is null` warnings in some headless suites despite passing
 assertions; this report does not claim warning-free logs.
+
+## Dedicated substitutes — validated at 4ee88d39
+
+FBI now uses dedicated first-person package 5308 (FBI variant B), Leet uses
+5105 (Leet variant G), and Phoenix A uses 5200 (base Phoenix). No third-person
+body is used as an arm source. Exposed forearms in a dedicated package's hands
+meshgroup are retained by arm weights; bundled fingers/default gloves are omitted.
+The selected Arsenal glove remains independent. The generator also preserves
+source cloth RGB tint and rejects full-body source paths.
+
+- [Cosmetics and arm QA](https://github.com/ShadowNigth/15/actions/runs/43054516223):
+  **2011 cosmetic checks + 554 arm checks passed**, zero failures. Includes explicit
+  dedicated-source assertions, independent glove selection, eight player swaps,
+  inspection and reload evidence. Rendered FBI, Leet and Phoenix A frames reviewed.
+- [Native Godot QA](https://github.com/ShadowNigth/15/actions/runs/43054516361):
+  passed, including weapon/knife/catalog and physical mission regressions.
+
+These are intentionally similar first-person substitutes, not claimed exact
+first-person copies of FBI base, Leet E or Phoenix A. Phoenix A and base Phoenix
+now share their dedicated first-person sleeves/forearms.
