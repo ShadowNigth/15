@@ -6,6 +6,10 @@ const LOCAL_LAYER := 8
 const HIDDEN_BODY_LAYER := 16
 static var _meshes: Dictionary = {}
 var parts: Array[MeshInstance3D] = []
+var sources: Array[MeshInstance3D] = []
+var source_rig: Skeleton3D = null
+var local_rig: Skeleton3D = null
+const CAMERA_BODY_OFFSET := 0.22
 var _alive := false
 var _initialized := false
 
@@ -152,6 +156,14 @@ static func cap_waist(arrays: Array, stride: int) -> Array:
 func install(root: Node3D, rig: Skeleton3D) -> void:
 	if root == null or rig == null:
 		return
+	source_rig = rig
+	local_rig = Skeleton3D.new()
+	local_rig.name = "LocalLowerBodyPose"
+	root.add_child(local_rig)
+	for index in rig.get_bone_count():
+		local_rig.add_bone(rig.get_bone_name(index))
+		local_rig.set_bone_parent(index, rig.get_bone_parent(index))
+		local_rig.set_bone_rest(index, rig.get_bone_rest(index))
 	# Snapshot before adding the local copies. Existing third-person assets stay intact.
 	for raw in root.find_children("*", "MeshInstance3D", true, false):
 		var source := raw as MeshInstance3D
@@ -167,13 +179,16 @@ func install(root: Node3D, rig: Skeleton3D) -> void:
 		copy.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
 		copy.set_meta("first_person_lower_body", true)
 		source.get_parent().add_child(copy)
-		copy.skeleton = copy.get_path_to(rig)
+		copy.skeleton = copy.get_path_to(local_rig)
 		parts.append(copy)
+		sources.append(source)
 
 func sync(root: Node3D, alive: bool) -> void:
 	if root == null:
 		return
 	root.visible = true
+	if alive:
+		update_pose(root)
 	if _initialized and _alive == alive:
 		return
 	_alive = alive
@@ -187,3 +202,20 @@ func sync(root: Node3D, alive: bool) -> void:
 			continue
 		mesh.layers = HIDDEN_BODY_LAYER if alive else 2
 		mesh.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_SHADOWS_ONLY if alive else GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
+
+func update_pose(root: Node3D) -> void:
+	if not is_instance_valid(source_rig) or not is_instance_valid(local_rig):
+		return
+	# The camera is ahead of the chest. Keep the local waist behind it rather
+	# than looking straight into the top of the trousers. No physics/hitbox shift.
+	var offset := root.global_basis.z.normalized() * CAMERA_BODY_OFFSET
+	local_rig.global_transform = source_rig.global_transform
+	local_rig.global_position += offset
+	for index in source_rig.get_bone_count():
+		local_rig.set_bone_pose_position(index, source_rig.get_bone_pose_position(index))
+		local_rig.set_bone_pose_rotation(index, source_rig.get_bone_pose_rotation(index))
+		local_rig.set_bone_pose_scale(index, source_rig.get_bone_pose_scale(index))
+	for index in parts.size():
+		if is_instance_valid(parts[index]) and is_instance_valid(sources[index]):
+			parts[index].global_transform = sources[index].global_transform
+			parts[index].global_position += offset

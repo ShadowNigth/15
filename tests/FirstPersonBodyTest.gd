@@ -67,7 +67,7 @@ func run() -> void:
 			expect(player.camera.cull_mask & FirstPersonBody.LOCAL_LAYER != 0, "world camera sees own legs")
 			expect(player._vm_camera.cull_mask & FirstPersonBody.LOCAL_LAYER == 0, "weapon camera never draws legs")
 			for part in player._first_person_body.parts:
-				expect(part.skin != null and part.get_node(part.skeleton) == player._skel, "legs share actual animated agent skeleton")
+				expect(part.skin != null and part.get_node(part.skeleton) == player._first_person_body.local_rig, "legs use synchronized agent pose skeleton")
 				expect(part.layers == FirstPersonBody.LOCAL_LAYER, "local copy excluded from other actor camera masks")
 				expect(part.mesh.get_surface_count() > 0, "lower body triangles exist")
 			for tick in 30:
@@ -78,6 +78,13 @@ func run() -> void:
 				await get_tree().physics_frame
 				player.apply_goldsrc_movement(Vector3.FORWARD, false, false, false, 1.0 / 60)
 			await capture("local_body_" + info.id + "_walk")
+			var body := player._first_person_body
+			expect(body.local_rig.get_bone_count() == player._skel.get_bone_count(), "local pose includes all agent joints")
+			var identical := true
+			for index in player._skel.get_bone_count():
+				identical = identical and body.local_rig.get_bone_pose_rotation(index).is_equal_approx(player._skel.get_bone_pose_rotation(index))
+			expect(identical, "local legs copy exact gait without a second animation clock")
+
 			for tick in 20:
 				await get_tree().physics_frame
 				player.apply_goldsrc_movement(Vector3.ZERO, false, true, false, 1.0 / 60)
