@@ -15,6 +15,8 @@ static func apply(root: Node3D, viewmodel_name: String) -> bool:
 	var glove_model := GameData.get_knife_glove_model(viewmodel_name)
 	if option.is_empty() or not glove_model in GameData.sport_gloves.get("models", []):
 		return false
+	if bool(option.get("native_uv", false)):
+		return AgentViewArms.install(root, glove_model, "sport", option.get("native_textures", {}))
 	var skeleton := _find_skeleton(root)
 	if skeleton == null:
 		return false

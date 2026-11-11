@@ -48,6 +48,8 @@ var _arsenal_count: Label
 var _arsenal_title: Label
 var _arsenal_kind: Label
 var _arsenal_tabs: TabContainer
+var _preview_agent_class := "sas"
+var _preview_agent_team := "CT"
 var _home_background: MenuBackdrop
 var _modal_shade: ColorRect
 
@@ -618,6 +620,25 @@ func _build_arsenal_dialog() -> void:
 	_arsenal_panel = res[0]
 	var vbox: VBoxContainer = res[1]
 
+	var agent_row := HBoxContainer.new()
+	agent_row.add_child(_menu_label("BRAZOS DEL AGENTE", 13))
+	var agent_choice := OptionButton.new()
+	agent_choice.name = "AgentArmsSelector"
+	for faction in ["CT", "T"]:
+		for info in GameData.classes.get(faction, []):
+			agent_choice.add_item(faction + " / " + String(info.name))
+			agent_choice.set_item_metadata(agent_choice.item_count - 1, {"team": faction, "class": info.id})
+			if info.id == _preview_agent_class:
+				agent_choice.select(agent_choice.item_count - 1)
+	agent_choice.item_selected.connect(func(index: int):
+		var selected: Dictionary = agent_choice.get_item_metadata(index)
+		_preview_agent_team = selected.team
+		_preview_agent_class = selected["class"]
+		if not _viewer_current_wid.is_empty():
+			_load_viewer_weapon(_viewer_current_wid)
+	)
+	agent_row.add_child(agent_choice)
+	vbox.add_child(agent_row)
 	var body := HBoxContainer.new()
 	body.size_flags_vertical = Control.SIZE_EXPAND_FILL
 	body.add_theme_constant_override("separation", 12)
@@ -860,6 +881,8 @@ func _populate_viewer_animations() -> void:
 func _style_viewer_meshes(n: Node, mode: String = "char", native_arms: bool = false, native_gun: bool = false) -> void:
 	if n is MeshInstance3D:
 		var mi := n as MeshInstance3D
+		if mi.has_meta("native_view_cosmetic"):
+			return
 		if mi.mesh:
 			for s in range(mi.mesh.get_surface_count()):
 				var original := mi.get_active_material(s)
@@ -931,6 +954,7 @@ func _load_viewer_weapon(wid: String) -> void:
 		inst.rotation_degrees = Vector3(0.0, 25.0, 0.0)
 		_viewer_pivot.add_child(inst)
 		SportGloves.apply(inst, String(spec.get("v_model", "v_ak47")))
+		AgentViewArms.apply(inst, String(spec.get("v_model", "v_ak47")), _preview_agent_team, _preview_agent_class)
 		var vm_meta: Dictionary = GameData.models_meta.get("weapons/" + String(spec.get("v_model", "")), {})
 		_style_viewer_meshes(inst, "vm", bool(vm_meta.get("native_cs2_animation", false)), bool(vm_meta.get("native_gun_animations", false)))
 		_viewer_anim = _find_anim_recursive(inst)
@@ -952,6 +976,8 @@ func _load_viewer_weapon(wid: String) -> void:
 
 
 func _load_viewer_player(cid: String) -> void:
+	_preview_agent_class = cid
+	_preview_agent_team = "CT" if cid in ["urban", "gsg9", "sas", "gign"] else "T"
 	_set_arsenal_heading(String(GameData.modern_agents.get("agents", {}).get(ModernAgentPose.role("CT" if cid in ["urban", "gsg9", "sas", "gign"] else "T", cid), {}).get("name", cid)), "AGENTES CT / T")
 	if _viewer_camera != null:
 		_viewer_camera.fov = 65.0

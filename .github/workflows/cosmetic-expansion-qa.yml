@@ -3,6 +3,9 @@ on:
   push:
     paths:
       - 'assets/models/modern/**'
+      - 'assets/models/agent_arms/**'
+      - 'assets/textures/native_sport/**'
+      - 'tests/AgentViewArmsTest*'
       - 'assets/textures/cs2go/**'
       - 'data/**'
       - 'scripts/actors/**'
@@ -40,6 +43,12 @@ jobs:
           MODERN_CAPTURE_DIR=/tmp/modern-captures LIBGL_ALWAYS_SOFTWARE=1 timeout 600s xvfb-run -a godot --path . --audio-driver Dummy --rendering-method gl_compatibility --fixed-fps 60 res://tests/CosmeticExpansionTest.tscn 2>&1 | tee /tmp/cosmetics.log
           ! grep -Eq 'SCRIPT ERROR:|Parse Error:|Compile Error:|SHADER ERROR|FAIL:' /tmp/cosmetics.log
           grep -q 'PASS: Cosmetics' /tmp/cosmetics.log
+      - name: Independent agent arms on every weapon rig
+        run: |
+          set -o pipefail
+          timeout 420s godot --headless --path . res://tests/AgentViewArmsTest.tscn 2>&1 | tee /tmp/agent-arms.log
+          ! grep -Eq 'SCRIPT ERROR:|Parse Error:|Compile Error:|FAIL:' /tmp/agent-arms.log
+          grep -q '\[AGENT ARMS\] PASS:' /tmp/agent-arms.log
       - name: Actionable diagnostics
         if: always()
         run: |

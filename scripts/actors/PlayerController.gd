@@ -674,6 +674,12 @@ func apply_camera_shake(intensity: float) -> void:
 	_shake_trauma = clampf(_shake_trauma + intensity, 0.0, 1.35)
 
 
+func set_team_and_class(new_team: String, new_class: String) -> void:
+	super.set_team_and_class(new_team, new_class)
+	if is_instance_valid(viewmodel_holder) and weapon_ctrl != null and not weapon_ctrl.current_weapon_id.is_empty():
+		_rebuild_viewmodel(weapon_ctrl.current_weapon_id)
+
+
 func _rebuild_viewmodel(wid: String) -> void:
 	_vm_model_root = null
 	_vm_model_rest_transform = Transform3D.IDENTITY
@@ -706,6 +712,7 @@ func _rebuild_viewmodel(wid: String) -> void:
 	_vm_container.scale = Vector2(-1.0 if mirror else 1.0, 1.0)
 	viewmodel_holder.add_child(inst)
 	SportGloves.apply(inst, v_name)
+	AgentViewArms.apply(inst, v_name, team, class_id)
 	_prepare_viewmodel_materials(inst, native_knife)
 	_vm_model_root = inst as Node3D
 	if _vm_model_root != null:
@@ -915,6 +922,8 @@ func _prepare_viewmodel_materials(n: Node, native_arms: bool = false) -> void:
 		var mi := n as MeshInstance3D
 		mi.layers = 4  # Visual Layer 3: rendered exclusively by _vm_camera!
 		mi.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
+		if mi.has_meta("native_view_cosmetic"):
+			return
 		if mi.mesh:
 			for s in range(mi.mesh.get_surface_count()):
 				var mat := mi.get_active_material(s)
