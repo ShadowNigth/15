@@ -37,6 +37,17 @@ func run() -> void:
 				expect(mesh.mesh.get_aabb().size.length() < 4, "bounded sleeve geometry " + model)
 		expect(actual, "sleeve mesh installed " + model)
 		root.free()
+	for option in GameData.get_knife_options():
+		var model := String(option.get("v_model", ""))
+		if model.is_empty():
+			continue
+		var root := GameData.get_model_scene("weapons/" + model).instantiate() as Node3D
+		add_child(root)
+		GameData.select_glove("cs2go_5030_1417")
+		expect(SportGloves.apply(root, model), "native Sport on knife " + model)
+		expect(AgentViewArms.apply(root, model, "T", "leet"), "agent sleeves on knife " + model)
+		expect(root.get_meta("view_agent", "") == "leet", "knife does not silently retain original sleeves")
+		root.free()
 	for cls in GameData.modern_agents.classes:
 		var avatar: String = GameData.modern_agents.classes[cls]
 		for glove in ["classic", "arid_mw", "cs2go_5030_1417"]:

@@ -1,6 +1,6 @@
 {
   "classic_id": "classic",
-  "conversion": "Offline rigid native binds; per-target GoldSrc-to-Source hand axes; original arms and animations unchanged",
+  "conversion": "Older Sport finishes retain their original meshes; 19 cs2go finishes use the authorized native Sport mesh and original UVs; agent sleeves are independent.",
   "default": "arid_mw",
   "models": [
     "v_ak47",

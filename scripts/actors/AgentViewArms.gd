@@ -157,4 +157,4 @@ static func install(root: Node3D, model: String, avatar: String, native_textures
 	return true
 
 static func apply(root: Node3D, model: String, team: String, class_id: String) -> bool:
-	return install(root, model, ModernAgentPose.role(team, class_id))
+	return install(root, GameData.get_knife_glove_model(model), ModernAgentPose.role(team, class_id))
