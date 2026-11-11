@@ -21,3 +21,11 @@ models, cosmetics and movement profiles are unchanged.
 
 QA includes rendered 16:9/4:3 menu and Arsenal captures, all three backgrounds,
 bounded movement/reduced motion, persistence/reload and existing Arsenal routing.
+
+## Design refinement
+
+The latest layout adds a subtle cinematic vignette, larger top navigation,
+a clear amber Play action at lower right and a lower-left information card
+instead of obscuring the agent's legs. Existing background selection remains.
+Rendered home/Arsenal routing tests: **200 passed**, run
+[42951008173](https://github.com/ShadowNigth/15/actions/runs/42951008173).

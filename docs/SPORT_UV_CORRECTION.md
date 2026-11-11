@@ -16,3 +16,9 @@ This remains a geometric texture adaptation across different meshes, not an exac
 Valve-native UV layout. The build report records distance statistics rather than
 claiming exact correspondence. Production first-person capture covers Occult,
 Red Racer and Superconductor on AK/M4/AWP; catalog checks cover all 19 finishes.
+
+Executed cosmetic QA: **1971 checks, zero failures**, run
+[42955243661](https://github.com/ShadowNigth/15/actions/runs/42955243661).
+Rendered production inspections were reviewed for all three finishes above.
+This verifies installation/material routing and sampled appearance; it is not a
+claim of pixel-exact art matching on every pose or at every UV seam.

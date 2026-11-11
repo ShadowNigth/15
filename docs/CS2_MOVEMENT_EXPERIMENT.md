@@ -43,3 +43,21 @@ requests use the new impulse, but route planning remains the existing system.
 GoldSrc keeps its original movement, grenade, dropped-item and corpse equations.
 The runtime tests exercise both real human/bot jumps and ground paths plus air
 projection/rate stability, energy-losing impact response, and profile selection.
+
+## Executed QA and known limitation (this experimental revision)
+
+- Runtime force/real actor, grenade, equipment and corpse checks: **63 passed**,
+  zero failures ([run 42952845554](https://github.com/ShadowNigth/15/actions/runs/42952845554)).
+- Modern agent animation/gameplay sub-suite: **587 passed**, zero failures;
+  full modern workflow is **not green**, because its mission sub-suite fails.
+- **Known experimental navigation regression:** full `cs_estate` rescue can stall
+  at BSP doorway trim and leave a hostage unrescued. Both the squad workflow and
+  full modern workflow report this failure. The old baseline Estate comparison
+  passes. A physical retreat/replan attempt does not resolve it reliably.
+- Therefore this revision is for experimentation, not a fully certified gameplay
+  release. GoldSrc remains selectable before creating a match. Do not interpret
+  the 63 force/physics checks as proof that every mission or bot route is valid.
+
+Source parameters remain editable; no claim of Valve-equivalent grenade/object
+or corpse simulation is made. Dynamic map props and articulated ragdolls remain
+outside this implementation.
