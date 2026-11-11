@@ -27,9 +27,9 @@ func run() -> void:
 	for model in config.targets:
 		for side in ["L", "R"]:
 			var entries: Dictionary = config.targets[model]
-			var forearm := "v_weapon.Bip01_" + side + "_Forearm"
+			var forearm: String = "v_weapon.Bip01_" + side + "_Forearm"
 			expect(String(entries[forearm].target).ends_with("_Forearm"), "forearm never aliases twist helper " + model)
-			var upper := "v_weapon.Bip01_" + side + "_UpperArm"
+			var upper: String = "v_weapon.Bip01_" + side + "_UpperArm"
 			expect(entries.has(upper), "upper-arm weights have an animated target, including knives " + model)
 		var root := GameData.get_model_scene("weapons/" + String(model)).instantiate() as Node3D
 		add_child(root)
