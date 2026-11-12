@@ -13,3 +13,9 @@ En ejecución se retira toda la lógica de intercambio/reflexión anterior. La g
 ## Evidencia
 
 Validación estática de la reconstrucción: 60 scripts, 53 referencias, 43 armas, 26 mapas, 392 GLB y 1021 WAV, sin errores. Ejecución renderizada [43302805116](https://github.com/ShadowNigth/15/actions/runs/43302805116), revisión `655a277e`: 14912 comprobaciones del flujo de guantes y 855 de compatibilidad, sin fallos. La captura completa de esta revisión está en `docs/evidence/glove-orientation/arsenal-rebuilt.jpg`; se actualizaron también las capturas de detalle y Glock. Se entregan para revisión visual del usuario, no como aprobación visual implícita.
+
+## Ajuste de presentación solicitado: intercambio y palmas abajo
+
+A continuación el usuario pidió intercambiar de lugar los dos guantes y girarlos con las palmas hacia abajo. El Arsenal ahora hornea exclusivamente su pose de exposición, separa cada mano completa, intercambia sus posiciones horizontales y orienta rígidamente las bases anatómicas para mostrar ambos dorsos con las palmas hacia el suelo. La inclinación de exposición permite apreciar el acabado. No refleja texturas ni cambia vínculos de dedos o animaciones del juego. La inspección de exposición anima cada mano completa y regresa a su pose inicial; la rotación y el zoom manual siguen independientes.
+
+Validación renderizada: https://github.com/ShadowNigth/15/actions/runs/43307142396 — 14917 comprobaciones del flujo de guantes y 855 de compatibilidad, sin fallos. Captura completa nueva: `docs/evidence/glove-orientation/arsenal-swapped-palm-down.jpg`; detalle: `gloves-swapped-palm-down.jpg`.
