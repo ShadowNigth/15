@@ -62,36 +62,21 @@ jobs:
                   text = '\n'.join(x for x in lines if any(k in x for k in ['ERROR', 'Error', 'FAIL', 'PASS:']))[-6500:]
                   print('::notice title='+filename+'::'+text.replace('%','%25').replace('\n','%0A'))
           PY
+      - name: Glove inspection framebuffer
+        if: always()
+        run: python tools/publish_menu_capture.py menu_gloves_inspect
+      - name: Relaxed agent framebuffer
+        if: always()
+        run: python tools/publish_menu_capture.py menu_agent_relaxed
       - name: Weapon skin framebuffer
         if: always()
         run: python tools/publish_menu_capture.py menu_weapon_skin
       - name: Knife skin framebuffer
         if: always()
         run: python tools/publish_menu_capture.py menu_knife_skin
-      - name: Utility framebuffer
-        if: always()
-        run: python tools/publish_menu_capture.py menu_utility
       - name: Settings framebuffer
         if: always()
         run: python tools/publish_menu_capture.py menu_settings
-      - name: Relaxed agent framebuffer
-        if: always()
-        run: python tools/publish_menu_capture.py menu_agent_relaxed
-      - name: Glove inspection framebuffer
-        if: always()
-        run: python tools/publish_menu_capture.py menu_gloves_inspect
-      - name: Home framebuffer
-        if: always()
-        run: python tools/publish_menu_capture.py menu_home
-      - name: Arsenal framebuffer
-        if: always()
-        run: python tools/publish_menu_capture.py menu_arsenal
-      - name: Arsenal 4x3 framebuffer
-        if: always()
-        run: python tools/publish_menu_capture.py menu_arsenal_4x3
-      - name: Home 4x3 framebuffer
-        if: always()
-        run: python tools/publish_menu_capture.py menu_home_4x3
       - uses: actions/upload-artifact@v4
         if: always()
         with:

@@ -19,7 +19,9 @@ func capture(label: String) -> void:
 	if output.is_empty() or DisplayServer.get_name() == "headless":
 		return
 	DirAccess.make_dir_recursive_absolute(output)
-	await settle()
+	# Let the 220ms panel entrance finish before capturing its final opacity.
+	for frame in range(20):
+		await get_tree().process_frame
 	RenderingServer.force_draw(false)
 	expect(get_tree().root.get_texture().get_image().save_png(output.path_join(label + ".png")) == OK, "framebuffer " + label)
 
