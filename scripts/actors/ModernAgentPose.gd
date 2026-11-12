@@ -24,6 +24,12 @@ var reaction := ""
 var reaction_time := 0.0
 var _grounded := true
 var _landing := 1.0
+var _gait_elapsed := 0.0
+var _transition_duration := 0.16
+var _landing_strength := 0.0
+var _prior_vertical_speed := 0.0
+var _secondary_gait := ""
+var _direction_weight := 0.0
 
 static func is_modern(skeleton: Skeleton3D) -> bool:
 	return skeleton != null and skeleton.find_bone("root_motion") >= 0 and skeleton.find_bone("hand_R") >= 0
@@ -180,6 +186,8 @@ func tick(actor, delta: float) -> void:
 	elif not actor.is_on_floor():
 		var stance := "crouch_stand_" if actor.is_crouching else "stand_"
 		selected_gait = ("jump_" if actor.velocity.y > 0.4 else "inair_") + stance + family
+		if actor.velocity.y > 0.4 and not actor.is_crouching and speed > 0.8:
+			selected_gait = "jump_n_" + family
 	elif actor.is_crouching:
 		selected_gait = "crouch_" + _direction + "_" + family if speed > 0.3 else "idle_crouch_" + family
 		rate = clampf(speed / 2.5, 0.5, 1.5) if speed > 0.3 else 1.0
@@ -193,8 +201,25 @@ func tick(actor, delta: float) -> void:
 		_blend_pos = prior_pos
 		_blend_rot = prior_rot
 		_blend_time = 0.0
+		_transition_duration = 0.20 if "crouch" in selected_gait or "crouch" in _last_gait else 0.12
+		if selected_gait.begins_with("jump_") or selected_gait.begins_with("inair_"):
+			_transition_duration = 0.10
+		_gait_elapsed = 0.0
 		_last_gait = selected_gait
-	gait_phase = fposmod(gait_phase + delta * rate / maxf(0.01, clip.length), 1.0)
+	_gait_elapsed += delta * rate
+	var airborne_clip := selected_gait.begins_with("jump_") or selected_gait.begins_with("inair_")
+	var sample := minf(_gait_elapsed, maxf(0.0, clip.length - 0.001)) if airborne_clip else fposmod(gait_phase * clip.length + delta * rate, maxf(0.01, clip.length))
+	gait_phase = sample / maxf(0.01, clip.length)
+	# Blend the two native cardinal gaits at diagonals instead of choosing one
+	# axis and snapping at 45 degrees. Preserve their normalized stride phase.
+	_secondary_gait = ""
+	_direction_weight = 0.0
+	if actor.is_on_floor() and not actor.on_ladder and speed > 0.3:
+		var secondary := ("n" if local.z < 0 else "s") if _direction in ["e", "w"] else ("e" if local.x > 0 else "w")
+		var secondary_speed := absf(local.z) if _direction in ["e", "w"] else absf(local.x)
+		_direction_weight = clampf(secondary_speed / maxf(0.001, absf(local.x) + absf(local.z)), 0, 0.5)
+		var prefix := "crouch_" if actor.is_crouching else ("run_" if _running else "walk_")
+		_secondary_gait = prefix + secondary + "_" + family
 	var clips: Dictionary = table(role(actor.team, actor.class_id), wid).get("clips", {})
 	# The calibrated grip uses the aimed standing upper-body frame. Native
 	# low-ready crouch holds are not compatible with that socket calibration.
@@ -209,7 +234,10 @@ func tick(actor, delta: float) -> void:
 		actor._apply_anim_layer(hold, fposmod(clock, maxf(0.01, reference_clip.length)), 2)
 		if upper_parent >= 0:
 			reference_parent = rig.get_bone_global_pose(upper_parent).basis
-	actor._apply_anim_layer(selected_gait, gait_phase * clip.length, 2)
+	actor._apply_anim_layer(selected_gait, sample, 2)
+	if _direction_weight > 0.001 and actor._anim_res_map.has(_secondary_gait):
+		var second: Animation = actor._anim_res_map[_secondary_gait]
+		actor._apply_anim_layer(_secondary_gait, gait_phase * second.length, 2, _direction_weight)
 	if actor._anim_res_map.has(hold):
 		var held_clip: Animation = actor._anim_res_map[hold]
 		actor._apply_anim_layer(hold, fposmod(clock, maxf(0.01, held_clip.length)), 1)
@@ -222,8 +250,8 @@ func tick(actor, delta: float) -> void:
 				var active_clip: Animation = actor._anim_res_map[key]
 				action_time += delta
 				var duration := action_duration if action == "reload" and action_duration > 0.0 else active_clip.length
-				var sample := clampf(action_time / maxf(0.01, duration), 0.0, 1.0) * active_clip.length
-				actor._apply_anim_layer(key, sample, 1, minf(minf(1.0, action_time / 0.045), maxf(0.0, (duration - action_time) / 0.10)))
+				var action_sample := clampf(action_time / maxf(0.01, duration), 0.0, 1.0) * active_clip.length
+				actor._apply_anim_layer(key, action_sample, 1, minf(minf(1.0, action_time / 0.045), maxf(0.0, (duration - action_time) / 0.10)))
 				if action_time >= duration:
 					action = ""
 			else:
@@ -243,7 +271,7 @@ func tick(actor, delta: float) -> void:
 	# Smooth changes of direction, stance and airborne state without restarting
 	# the stride clock as speed changes. Never crossfade IK-corrected wrists.
 	_blend_time += delta
-	var blend := smoothstep(0.0, 0.16, _blend_time)
+	var blend := smoothstep(0.0, _transition_duration, _blend_time)
 	if blend < 1.0 and _blend_pos.size() == rig.get_bone_count():
 		for bone in rig.get_bone_count():
 			rig.set_bone_pose_position(bone, _blend_pos[bone].lerp(rig.get_bone_pose_position(bone), blend))
@@ -268,6 +296,8 @@ func tick(actor, delta: float) -> void:
 	actor._body_root.position = actor.get_visual_world_pos() - actor.global_position
 	if actor.is_on_floor() and not _grounded:
 		_landing = 0.0
+		_landing_strength = clampf(absf(_prior_vertical_speed) / 7.5, 0.15, 1.0)
+	_prior_vertical_speed = actor.velocity.y
 	_grounded = actor.is_on_floor()
 	_landing = minf(1.0, _landing + delta / 0.22)
-	actor._body_root.position.y -= sin(_landing * PI) * 0.035
+	actor._body_root.position.y -= sin(_landing * PI) * 0.045 * _landing_strength

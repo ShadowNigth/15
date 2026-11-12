@@ -390,8 +390,8 @@ func get_styled_model_material(orig: Material, mode: String) -> Material:
 		glass.shader = MOLOTOV_GLASS_FLIP_SHADER if mode == "vm_flip" else MOLOTOV_GLASS_SHADER
 		glass.set_shader_parameter("bottle_texture", hd_albedo)
 		glass.set_shader_parameter("bottle_tint", source.albedo_color)
-		glass.set_shader_parameter("glass_tint", Vector3(0.82, 1.04, 0.88))
-		glass.set_shader_parameter("glass_opacity", 0.48 if material_name == "weapon_molotov" else 0.36)
+		glass.set_shader_parameter("glass_tint", Vector3(0.46, 1.12, 0.56))
+		glass.set_shader_parameter("glass_opacity", 0.72 if material_name == "weapon_molotov" else 0.58)
 		glass.set_shader_parameter("refraction_strength", 0.018 if material_name == "weapon_molotov" else 0.012)
 		glass.set_shader_parameter("brightness", 1.12 if mode in ["vm", "vm_flip"] else 1.06)
 		# Draw the liquid first, then the intermediate green surface, then the

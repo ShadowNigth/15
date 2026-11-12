@@ -75,6 +75,9 @@ var _deathcam_timer: float = 0.0
 var _deathcam_killer: Node3D = null
 var _elite_muzzle_left: bool = false
 var _defusing_c4: PlantedC4 = null
+var _c4_display: C4Display
+var _vm_move_blend := 0.0
+var _vm_strafe_blend := 0.0
 var _spec_index: int = 0
 var ui_blocking_input: bool = false
 
@@ -465,6 +468,9 @@ func _process(delta: float) -> void:
 	if _vm_camera:
 		_vm_camera.global_transform = camera.global_transform
 
+	if is_instance_valid(_c4_display):
+		_c4_display.set_progress(weapon_ctrl.plant_progress)
+
 	# Viewmodel bobbing, mouse sway, airborne inertia, crouch cant, draw spring & recoil kickback at full render FPS
 	_sway_offset = _sway_offset.lerp(Vector2.ZERO, minf(1.0, 9.0 * delta))
 	_vm_kick_z = lerpf(_vm_kick_z, 0.0, minf(1.0, 18.0 * delta))
@@ -479,11 +485,14 @@ func _process(delta: float) -> void:
 		_bob_phase += delta * hspd * 1.42
 	else:
 		_bob_phase += delta * 1.35
-	var move_fac := clampf(hspd / 7.0, 0.0, 1.0)
+	var target_move := clampf(hspd / 7.0, 0.0, 1.0) if is_on_floor() else 0.0
+	_vm_move_blend = lerpf(_vm_move_blend, target_move, 1.0 - exp(-10.0 * delta))
+	_vm_strafe_blend = lerpf(_vm_strafe_blend, _last_in_x, 1.0 - exp(-12.0 * delta))
+	var move_fac := _vm_move_blend * lerpf(1.0, 0.55, _visual_crouch_t)
 	var bob_x := sin(_bob_phase) * (0.0060 * move_fac + 0.0007)
 	var bob_y := absf(cos(_bob_phase)) * (-0.0072 * move_fac) + sin(_bob_phase * 0.5) * 0.0008 - _land_dip * 0.68 + _vm_vert_lag
 	var crouch_ofs := Vector3(-0.005, -0.007, 0.005) * _visual_crouch_t
-	var strafe_roll := -_last_in_x * deg_to_rad(0.85) * move_fac - _sway_offset.x * 0.85 + deg_to_rad(1.2) * _visual_crouch_t + _vm_kick_roll
+	var strafe_roll := -_vm_strafe_blend * deg_to_rad(0.85) * move_fac - _sway_offset.x * 0.85 + deg_to_rad(1.2) * _visual_crouch_t + _vm_kick_roll
 	var native_vm := bool((GameData.models_meta.get("weapons/" + _cur_vm_model_name, {}) as Dictionary).get("native_cs2_animation", false))
 	var draw_dip := 0.0 if native_vm else _vm_draw_offset
 	viewmodel_holder.scale = Vector3.ONE
@@ -695,6 +704,7 @@ func set_team_and_class(new_team: String, new_class: String) -> void:
 
 
 func _rebuild_viewmodel(wid: String) -> void:
+	_c4_display = null
 	_vm_model_root = null
 	_vm_model_rest_transform = Transform3D.IDENTITY
 	var old_children := viewmodel_holder.get_children()
@@ -728,6 +738,8 @@ func _rebuild_viewmodel(wid: String) -> void:
 	SportGloves.apply(inst, v_name)
 	AgentViewArms.apply(inst, v_name, team, class_id)
 	_prepare_viewmodel_materials(inst, native_knife)
+	if wid == "c4":
+		_c4_display = C4Display.install(inst)
 	_vm_model_root = inst as Node3D
 	if _vm_model_root != null:
 		_vm_model_rest_transform = _vm_model_root.transform
