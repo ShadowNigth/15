@@ -34,8 +34,24 @@ static func _hand_frame(skin: Skin, binds: Dictionary, prefix: String) -> Transf
 	x = (x - y * x.dot(y)).normalized()
 	return Transform3D(Basis(x, y, x.cross(y)), wrist)
 
+static func _palm_roll(wrist: Vector3, finger: Vector3) -> Transform3D:
+	# A rigid half-turn of the WHOLE glove, not a UV flip or camera change.
+	var rotation := Basis((finger - wrist).normalized(), PI)
+	return Transform3D(rotation, wrist - rotation * wrist)
+
+static func _surface_palm_roll(source: MeshInstance3D, surface: int, targets: Dictionary) -> Transform3D:
+	# Models remain exchanged: source-right occupies the destination-left rig.
+	var material := source.mesh.surface_get_material(surface)
+	var side := "R" if material.resource_name.ends_with("left") else "L"
+	var prefix := "v_weapon.Bip01_" + side + "_"
+	var hand := _entry(targets, prefix + "Hand")
+	var middle := _entry(targets, prefix + "Finger2")
+	if hand.is_empty() or middle.is_empty():
+		return Transform3D.IDENTITY
+	return _palm_roll(matrix(hand.bind).affine_inverse().origin, matrix(middle.bind).affine_inverse().origin)
+
 static func _converted(source: MeshInstance3D, rig: Skeleton3D, model: String, avatar: String) -> Dictionary:
-	var key := model + ":" + avatar + (":exchanged-models-v5" if avatar == "sport" else "")
+	var key := model + ":" + avatar + (":exchanged-palm-roll-v6" if avatar == "sport" else "")
 	var targets: Dictionary = catalog().get("targets", {}).get(model, {})
 	if targets.is_empty() or source.skin == null:
 		return {}
@@ -105,6 +121,10 @@ static func _converted(source: MeshInstance3D, rig: Skeleton3D, model: String, a
 			vertices[vertex] = point
 			normals[vertex] = normal.normalized()
 		if avatar == "sport":
+			var roll := _surface_palm_roll(source, surface, targets)
+			for vertex in vertices.size():
+				vertices[vertex] = roll * vertices[vertex]
+				normals[vertex] = (roll.basis * normals[vertex]).normalized()
 			var indices: PackedInt32Array = arrays[Mesh.ARRAY_INDEX]
 			if indices.is_empty():
 				for vertex in vertices.size(): indices.append(vertex)
@@ -156,7 +176,7 @@ static func install(root: Node3D, model: String, avatar: String, native_textures
 	copy.set_meta("agent_arms", avatar)
 	if avatar == "sport":
 		copy.set_meta("sport_gloves", true)
-		copy.set_meta("handedness", "exchanged-models-v5")
+		copy.set_meta("handedness", "exchanged-palm-roll-v6")
 		copy.set_meta("sport_glove_id", GameData.selected_glove_id)
 	for surface in copy.mesh.get_surface_count():
 		var material := copy.mesh.surface_get_material(surface).duplicate() as BaseMaterial3D

@@ -45,7 +45,7 @@ func run() -> void:
 		var actual := false
 		for mesh in meshes:
 			if mesh.has_meta("sport_gloves"):
-				expect(mesh.get_meta("handedness", "") == "exchanged-models-v5", "rebuilt native glove integration " + model)
+				expect(mesh.get_meta("handedness", "") == "exchanged-palm-roll-v6", "rebuilt native glove integration " + model)
 				for surface in mesh.mesh.get_surface_count():
 					var mat := mesh.mesh.surface_get_material(surface)
 					var expected := "_R_" if mat.resource_name.ends_with("left") else "_L_"

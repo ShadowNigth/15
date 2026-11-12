@@ -16,6 +16,16 @@ func capture(label: String, viewport: Viewport = null) -> void:
 	var target := get_viewport() if viewport == null else viewport
 	expect(target.get_texture().get_image().save_png("/tmp/modern-captures/"+label+".png")==OK,"render " + label)
 func test_anatomy() -> void:
+	var wrist := Vector3(0.3, -0.2, 0.1)
+	var finger := wrist + Vector3(0.2, 0.8, -0.3)
+	var roll := AgentViewArms._palm_roll(wrist, finger)
+	var along := (finger - wrist).normalized()
+	var depth := along.cross(Vector3.RIGHT).normalized()
+	expect((roll * wrist).is_equal_approx(wrist), "roll keeps wrist anchor")
+	expect((roll * finger).is_equal_approx(finger), "roll keeps finger axis")
+	expect((roll.basis * depth).is_equal_approx(-depth), "dorsal side becomes palm side")
+	expect(is_equal_approx(roll.basis.determinant(), 1.0), "whole-model rotation, not reflection")
+	expect((roll * roll).is_equal_approx(Transform3D.IDENTITY), "two half-turns restore model")
 	var definition: Dictionary = AgentViewArms.catalog().agents.sport
 	expect(definition.get("retarget", "") == "anatomical-same-side-v3", "fresh native source integration")
 	var scene := load(String(definition.model)) as PackedScene
@@ -111,7 +121,7 @@ func _run() -> void:
 				rig.force_update_all_bone_transforms()
 				for mesh in SportGloves._find_meshes(player._vm_model_root):
 					if mesh.get_meta("agent_arms","") != "sport": continue
-					expect(mesh.get_meta("handedness","")=="exchanged-models-v5","new anatomical conversion active")
+					expect(mesh.get_meta("handedness","")=="exchanged-palm-roll-v6","new anatomical conversion active")
 				if choice=="original" and phase==0.5:
 					await capture("glove_"+glove+"_inspect")
 		GameData.right_hand = false
