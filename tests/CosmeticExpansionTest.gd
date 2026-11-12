@@ -22,7 +22,7 @@ func run() -> void:
 	RoundManager.game_world = self
 	var report: Dictionary = JSON.parse_string(FileAccess.get_file_as_string("res://data/cs2go_cosmetics.json"))
 	expect(report.weapons.size() == 68, "68 new gun finishes")
-	expect(report.gloves.size() == 19, "19 Sport finishes")
+	expect(report.gloves.is_empty(), "new native Sport finishes removed")
 	expect(report.agents.size() == 6, "six additional agents")
 	var selected := GameData.selected_weapon_skins.duplicate()
 	for row in report.weapons:
@@ -135,7 +135,7 @@ func run() -> void:
 	for wid in ["ak47", "m4a1", "awp"]:
 		var rows: Array = report.weapons.filter(func(row): return row.weapon == wid)
 		GameData.select_weapon_skin(wid, rows[0].id)
-		GameData.select_glove({"ak47": "cs2go_5030_1417", "m4a1": "cs2go_5030_1409", "awp": "cs2go_5030_10018"}[wid])
+		GameData.select_glove("classic")
 		menu._load_viewer_weapon(wid)
 		await capture("cosmetic_arsenal_" + wid)
 	menu.free()
@@ -147,7 +147,7 @@ func run() -> void:
 	player.set_process_unhandled_input(false)
 	player.weapon_ctrl.set_physics_process(false)
 	for wid in ["ak47", "m4a1", "awp"]:
-		GameData.select_glove({"ak47": "cs2go_5030_1417", "m4a1": "cs2go_5030_1409", "awp": "cs2go_5030_10018"}[wid])
+		GameData.select_glove("classic")
 		player.weapon_ctrl.give_weapon(wid)
 		expect(player.weapon_ctrl.equip_weapon_by_id(wid), "Production equip " + wid)
 		await get_tree().create_timer(1.5).timeout
@@ -169,7 +169,7 @@ func run() -> void:
 		player._play_idle_viewmodel()
 
 	# Every actual agent: production first-person arm swap, same selected gloves.
-	GameData.select_glove("cs2go_5030_1417")
+	GameData.select_glove("classic")
 	player.weapon_ctrl.give_weapon("ak47")
 	player.weapon_ctrl.equip_weapon_by_id("ak47")
 	for faction in ["CT", "T"]:
@@ -177,7 +177,7 @@ func run() -> void:
 			player.set_team_and_class(faction, String(info.id))
 			await get_tree().create_timer(0.3).timeout
 			expect(player._vm_model_root.get_meta("view_agent", "") == ModernAgentPose.role(faction, info.id), "production agent sleeves " + info.id)
-			expect(GameData.selected_glove_id == "cs2go_5030_1417", "production agent preserves selected gloves " + info.id)
+			expect(GameData.selected_glove_id == "classic", "production agent preserves selected gloves " + info.id)
 			player._try_inspect_viewmodel()
 			await get_tree().create_timer(1.2).timeout
 			await capture("agent_arms_" + info.id)
@@ -190,7 +190,7 @@ func run() -> void:
 			player.weapon_ctrl.is_reloading = false
 	# Full inspection timelines on the reported knife, native and legacy gloves.
 	var old_knife := GameData.selected_knife_id
-	for glove in ["cs2go_5030_1417", "arid_mw"]:
+	for glove in ["classic", "arid_mw"]:
 		GameData.select_glove(glove)
 		GameData.select_knife("karambit")
 		player.weapon_ctrl.equip_weapon_by_id("knife")

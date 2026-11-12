@@ -1,7 +1,7 @@
 {
   "classic_id": "classic",
-  "conversion": "Older Sport finishes retain their original meshes; 19 cs2go finishes use the authorized native Sport mesh and original UVs; agent sleeves are independent.",
-  "default": "arid_mw",
+  "conversion": "Original gloves by default; older optional Sport finishes retained. Native cs2go Sport gloves removed at user request.",
+  "default": "classic",
   "models": [
     "v_ak47",
     "v_aug",
@@ -51,7 +51,7 @@
     {
       "family": "Amphibious",
       "id": "amphibious_bs",
-      "name": "Sport Gloves | Amphibious — Battle-Scarred",
+      "name": "Sport Gloves | Amphibious \u2014 Battle-Scarred",
       "textures": {
         "sport_glove_l_0": "res://assets/textures/sport_gloves/amphibious_bs/l_0.jpg",
         "sport_glove_l_1": "res://assets/textures/sport_gloves/amphibious_bs/l_1.jpg",
@@ -70,7 +70,7 @@
     {
       "family": "Amphibious",
       "id": "amphibious_ft",
-      "name": "Sport Gloves | Amphibious — Field-Tested",
+      "name": "Sport Gloves | Amphibious \u2014 Field-Tested",
       "textures": {
         "sport_glove_l_0": "res://assets/textures/sport_gloves/amphibious_ft/l_0.jpg",
         "sport_glove_l_1": "res://assets/textures/sport_gloves/amphibious_ft/l_1.jpg",
@@ -89,7 +89,7 @@
     {
       "family": "Amphibious",
       "id": "amphibious_ww",
-      "name": "Sport Gloves | Amphibious — Well-Worn",
+      "name": "Sport Gloves | Amphibious \u2014 Well-Worn",
       "textures": {
         "sport_glove_l_0": "res://assets/textures/sport_gloves/amphibious_ww/l_0.jpg",
         "sport_glove_l_1": "res://assets/textures/sport_gloves/amphibious_ww/l_1.jpg",
@@ -108,7 +108,7 @@
     {
       "family": "Arid",
       "id": "arid_bs",
-      "name": "Sport Gloves | Arid — Battle-Scarred",
+      "name": "Sport Gloves | Arid \u2014 Battle-Scarred",
       "textures": {
         "sport_glove_l_0": "res://assets/textures/sport_gloves/arid_bs/l_0.jpg",
         "sport_glove_l_1": "res://assets/textures/sport_gloves/arid_bs/l_1.jpg",
@@ -127,7 +127,7 @@
     {
       "family": "Arid",
       "id": "arid_ft",
-      "name": "Sport Gloves | Arid — Field-Tested",
+      "name": "Sport Gloves | Arid \u2014 Field-Tested",
       "textures": {
         "sport_glove_l_0": "res://assets/textures/sport_gloves/arid_ft/l_0.jpg",
         "sport_glove_l_1": "res://assets/textures/sport_gloves/arid_ft/l_1.jpg",
@@ -146,7 +146,7 @@
     {
       "family": "Arid",
       "id": "arid_mw",
-      "name": "Sport Gloves | Arid — Minimal Wear",
+      "name": "Sport Gloves | Arid \u2014 Minimal Wear",
       "textures": {
         "sport_glove_l_0": "res://assets/textures/sport_gloves/arid_mw/l_0.jpg",
         "sport_glove_l_1": "res://assets/textures/sport_gloves/arid_mw/l_1.jpg",
@@ -165,7 +165,7 @@
     {
       "family": "Arid",
       "id": "arid_ww",
-      "name": "Sport Gloves | Arid — Well-Worn",
+      "name": "Sport Gloves | Arid \u2014 Well-Worn",
       "textures": {
         "sport_glove_l_0": "res://assets/textures/sport_gloves/arid_ww/l_0.jpg",
         "sport_glove_l_1": "res://assets/textures/sport_gloves/arid_ww/l_1.jpg",
@@ -184,7 +184,7 @@
     {
       "family": "Bronze Morph",
       "id": "bronze_morph_bs",
-      "name": "Sport Gloves | Bronze Morph — Battle-Scarred",
+      "name": "Sport Gloves | Bronze Morph \u2014 Battle-Scarred",
       "textures": {
         "sport_glove_l_0": "res://assets/textures/sport_gloves/bronze_morph_bs/l_0.jpg",
         "sport_glove_l_1": "res://assets/textures/sport_gloves/bronze_morph_bs/l_1.jpg",
@@ -203,7 +203,7 @@
     {
       "family": "Bronze Morph",
       "id": "bronze_morph_ft",
-      "name": "Sport Gloves | Bronze Morph — Field-Tested",
+      "name": "Sport Gloves | Bronze Morph \u2014 Field-Tested",
       "textures": {
         "sport_glove_l_0": "res://assets/textures/sport_gloves/bronze_morph_ft/l_0.jpg",
         "sport_glove_l_1": "res://assets/textures/sport_gloves/bronze_morph_ft/l_1.jpg",
@@ -222,7 +222,7 @@
     {
       "family": "Bronze Morph",
       "id": "bronze_morph_mw",
-      "name": "Sport Gloves | Bronze Morph — Minimal Wear",
+      "name": "Sport Gloves | Bronze Morph \u2014 Minimal Wear",
       "textures": {
         "sport_glove_l_0": "res://assets/textures/sport_gloves/bronze_morph_mw/l_0.jpg",
         "sport_glove_l_1": "res://assets/textures/sport_gloves/bronze_morph_mw/l_1.jpg",
@@ -241,7 +241,7 @@
     {
       "family": "Bronze Morph",
       "id": "bronze_morph_ww",
-      "name": "Sport Gloves | Bronze Morph — Well-Worn",
+      "name": "Sport Gloves | Bronze Morph \u2014 Well-Worn",
       "textures": {
         "sport_glove_l_0": "res://assets/textures/sport_gloves/bronze_morph_ww/l_0.jpg",
         "sport_glove_l_1": "res://assets/textures/sport_gloves/bronze_morph_ww/l_1.jpg",
@@ -260,7 +260,7 @@
     {
       "family": "Hedge Maze",
       "id": "hedge_maze_bs",
-      "name": "Sport Gloves | Hedge Maze — Battle-Scarred",
+      "name": "Sport Gloves | Hedge Maze \u2014 Battle-Scarred",
       "textures": {
         "sport_glove_l_0": "res://assets/textures/sport_gloves/hedge_maze_bs/l_0.jpg",
         "sport_glove_l_1": "res://assets/textures/sport_gloves/hedge_maze_bs/l_1.jpg",
@@ -279,7 +279,7 @@
     {
       "family": "Hedge Maze",
       "id": "hedge_maze_ft",
-      "name": "Sport Gloves | Hedge Maze — Field-Tested",
+      "name": "Sport Gloves | Hedge Maze \u2014 Field-Tested",
       "textures": {
         "sport_glove_l_0": "res://assets/textures/sport_gloves/hedge_maze_ft/l_0.jpg",
         "sport_glove_l_1": "res://assets/textures/sport_gloves/hedge_maze_ft/l_1.jpg",
@@ -298,7 +298,7 @@
     {
       "family": "Hedge Maze",
       "id": "hedge_maze_ww",
-      "name": "Sport Gloves | Hedge Maze — Well-Worn",
+      "name": "Sport Gloves | Hedge Maze \u2014 Well-Worn",
       "textures": {
         "sport_glove_l_0": "res://assets/textures/sport_gloves/hedge_maze_ww/l_0.jpg",
         "sport_glove_l_1": "res://assets/textures/sport_gloves/hedge_maze_ww/l_1.jpg",
@@ -317,7 +317,7 @@
     {
       "family": "Omega",
       "id": "omega_bs",
-      "name": "Sport Gloves | Omega — Battle-Scarred",
+      "name": "Sport Gloves | Omega \u2014 Battle-Scarred",
       "textures": {
         "sport_glove_l_0": "res://assets/textures/sport_gloves/omega_bs/l_0.jpg",
         "sport_glove_l_1": "res://assets/textures/sport_gloves/omega_bs/l_1.jpg",
@@ -336,7 +336,7 @@
     {
       "family": "Omega",
       "id": "omega_ft",
-      "name": "Sport Gloves | Omega — Field-Tested",
+      "name": "Sport Gloves | Omega \u2014 Field-Tested",
       "textures": {
         "sport_glove_l_0": "res://assets/textures/sport_gloves/omega_ft/l_0.jpg",
         "sport_glove_l_1": "res://assets/textures/sport_gloves/omega_ft/l_1.jpg",
@@ -355,7 +355,7 @@
     {
       "family": "Omega",
       "id": "omega_mw",
-      "name": "Sport Gloves | Omega — Minimal Wear",
+      "name": "Sport Gloves | Omega \u2014 Minimal Wear",
       "textures": {
         "sport_glove_l_0": "res://assets/textures/sport_gloves/omega_mw/l_0.jpg",
         "sport_glove_l_1": "res://assets/textures/sport_gloves/omega_mw/l_1.jpg",
@@ -374,7 +374,7 @@
     {
       "family": "Omega",
       "id": "omega_ww",
-      "name": "Sport Gloves | Omega — Well-Worn",
+      "name": "Sport Gloves | Omega \u2014 Well-Worn",
       "textures": {
         "sport_glove_l_0": "res://assets/textures/sport_gloves/omega_ww/l_0.jpg",
         "sport_glove_l_1": "res://assets/textures/sport_gloves/omega_ww/l_1.jpg",
@@ -393,7 +393,7 @@
     {
       "family": "Pandora's Box",
       "id": "pandora_s_box_bs",
-      "name": "Sport Gloves | Pandora's Box — Battle-Scarred",
+      "name": "Sport Gloves | Pandora's Box \u2014 Battle-Scarred",
       "textures": {
         "sport_glove_l_0": "res://assets/textures/sport_gloves/pandora_s_box_bs/l_0.jpg",
         "sport_glove_l_1": "res://assets/textures/sport_gloves/pandora_s_box_bs/l_1.jpg",
@@ -412,7 +412,7 @@
     {
       "family": "Pandora's Box",
       "id": "pandora_s_box_ft",
-      "name": "Sport Gloves | Pandora's Box — Field-Tested",
+      "name": "Sport Gloves | Pandora's Box \u2014 Field-Tested",
       "textures": {
         "sport_glove_l_0": "res://assets/textures/sport_gloves/pandora_s_box_ft/l_0.jpg",
         "sport_glove_l_1": "res://assets/textures/sport_gloves/pandora_s_box_ft/l_1.jpg",
@@ -431,7 +431,7 @@
     {
       "family": "Superconductor",
       "id": "superconductor_bs",
-      "name": "Sport Gloves | Superconductor — Battle-Scarred",
+      "name": "Sport Gloves | Superconductor \u2014 Battle-Scarred",
       "textures": {
         "sport_glove_l_0": "res://assets/textures/sport_gloves/superconductor_bs/l_0.jpg",
         "sport_glove_l_1": "res://assets/textures/sport_gloves/superconductor_bs/l_1.jpg",
@@ -450,7 +450,7 @@
     {
       "family": "Superconductor",
       "id": "superconductor_ft",
-      "name": "Sport Gloves | Superconductor — Field-Tested",
+      "name": "Sport Gloves | Superconductor \u2014 Field-Tested",
       "textures": {
         "sport_glove_l_0": "res://assets/textures/sport_gloves/superconductor_ft/l_0.jpg",
         "sport_glove_l_1": "res://assets/textures/sport_gloves/superconductor_ft/l_1.jpg",
@@ -469,7 +469,7 @@
     {
       "family": "Superconductor",
       "id": "superconductor_ww",
-      "name": "Sport Gloves | Superconductor — Well-Worn",
+      "name": "Sport Gloves | Superconductor \u2014 Well-Worn",
       "textures": {
         "sport_glove_l_0": "res://assets/textures/sport_gloves/superconductor_ww/l_0.jpg",
         "sport_glove_l_1": "res://assets/textures/sport_gloves/superconductor_ww/l_1.jpg",
@@ -488,7 +488,7 @@
     {
       "family": "Vice",
       "id": "vice_bs",
-      "name": "Sport Gloves | Vice — Battle-Scarred",
+      "name": "Sport Gloves | Vice \u2014 Battle-Scarred",
       "textures": {
         "sport_glove_l_0": "res://assets/textures/sport_gloves/vice_bs/l_0.jpg",
         "sport_glove_l_1": "res://assets/textures/sport_gloves/vice_bs/l_1.jpg",
@@ -507,7 +507,7 @@
     {
       "family": "Vice",
       "id": "vice_ft",
-      "name": "Sport Gloves | Vice — Field-Tested",
+      "name": "Sport Gloves | Vice \u2014 Field-Tested",
       "textures": {
         "sport_glove_l_0": "res://assets/textures/sport_gloves/vice_ft/l_0.jpg",
         "sport_glove_l_1": "res://assets/textures/sport_gloves/vice_ft/l_1.jpg",
@@ -526,7 +526,7 @@
     {
       "family": "Vice",
       "id": "vice_ww",
-      "name": "Sport Gloves | Vice — Well-Worn",
+      "name": "Sport Gloves | Vice \u2014 Well-Worn",
       "textures": {
         "sport_glove_l_0": "res://assets/textures/sport_gloves/vice_ww/l_0.jpg",
         "sport_glove_l_1": "res://assets/textures/sport_gloves/vice_ww/l_1.jpg",
@@ -541,519 +541,6 @@
       },
       "wear": "Well-Worn",
       "wear_code": "WW"
-    },
-    {
-      "id": "cs2go_5030_1417",
-      "name": "Sport Gloves | Occult — Minimal Wear (cs2go)",
-      "family": "Occult",
-      "wear": "Minimal Wear",
-      "textures": {
-        "sport_glove_l_0": "res://assets/textures/cs2go/gloves/5030_1417/sport_glove_l_0.png",
-        "sport_glove_l_1": "res://assets/textures/cs2go/gloves/5030_1417/sport_glove_l_1.png",
-        "sport_glove_l_2": "res://assets/textures/cs2go/gloves/5030_1417/sport_glove_l_2.png",
-        "sport_glove_l_3": "res://assets/textures/cs2go/gloves/5030_1417/sport_glove_l_3.png",
-        "sport_glove_l_4": "res://assets/textures/cs2go/gloves/5030_1417/sport_glove_l_4.png",
-        "sport_glove_r_0": "res://assets/textures/cs2go/gloves/5030_1417/sport_glove_r_0.png",
-        "sport_glove_r_1": "res://assets/textures/cs2go/gloves/5030_1417/sport_glove_r_1.png",
-        "sport_glove_r_2": "res://assets/textures/cs2go/gloves/5030_1417/sport_glove_r_2.png",
-        "sport_glove_r_3": "res://assets/textures/cs2go/gloves/5030_1417/sport_glove_r_3.png",
-        "sport_glove_r_4": "res://assets/textures/cs2go/gloves/5030_1417/sport_glove_r_4.png"
-      },
-      "source": "https://github.com/3kh0/cs2go@fb970df0ee8175d9b212d310f6a928f9f61014f2",
-      "paint_id": 1417,
-      "seed": 1,
-      "wear_value": 0.07,
-      "native_textures": {
-        "glove_sporty_left": "res://assets/textures/native_sport/5030_1417/glove_sporty_left.webp",
-        "glove_sporty_right": "res://assets/textures/native_sport/5030_1417/glove_sporty_right.webp"
-      },
-      "native_uv": true
-    },
-    {
-      "id": "cs2go_5030_1410",
-      "name": "Sport Gloves | Ultra Violent — Minimal Wear (cs2go)",
-      "family": "Ultra Violent",
-      "wear": "Minimal Wear",
-      "textures": {
-        "sport_glove_l_0": "res://assets/textures/cs2go/gloves/5030_1410/sport_glove_l_0.png",
-        "sport_glove_l_1": "res://assets/textures/cs2go/gloves/5030_1410/sport_glove_l_1.png",
-        "sport_glove_l_2": "res://assets/textures/cs2go/gloves/5030_1410/sport_glove_l_2.png",
-        "sport_glove_l_3": "res://assets/textures/cs2go/gloves/5030_1410/sport_glove_l_3.png",
-        "sport_glove_l_4": "res://assets/textures/cs2go/gloves/5030_1410/sport_glove_l_4.png",
-        "sport_glove_r_0": "res://assets/textures/cs2go/gloves/5030_1410/sport_glove_r_0.png",
-        "sport_glove_r_1": "res://assets/textures/cs2go/gloves/5030_1410/sport_glove_r_1.png",
-        "sport_glove_r_2": "res://assets/textures/cs2go/gloves/5030_1410/sport_glove_r_2.png",
-        "sport_glove_r_3": "res://assets/textures/cs2go/gloves/5030_1410/sport_glove_r_3.png",
-        "sport_glove_r_4": "res://assets/textures/cs2go/gloves/5030_1410/sport_glove_r_4.png"
-      },
-      "source": "https://github.com/3kh0/cs2go@fb970df0ee8175d9b212d310f6a928f9f61014f2",
-      "paint_id": 1410,
-      "seed": 1,
-      "wear_value": 0.07,
-      "native_textures": {
-        "glove_sporty_left": "res://assets/textures/native_sport/5030_1410/glove_sporty_left.webp",
-        "glove_sporty_right": "res://assets/textures/native_sport/5030_1410/glove_sporty_right.webp"
-      },
-      "native_uv": true
-    },
-    {
-      "id": "cs2go_5030_1409",
-      "name": "Sport Gloves | Red Racer — Minimal Wear (cs2go)",
-      "family": "Red Racer",
-      "wear": "Minimal Wear",
-      "textures": {
-        "sport_glove_l_0": "res://assets/textures/cs2go/gloves/5030_1409/sport_glove_l_0.png",
-        "sport_glove_l_1": "res://assets/textures/cs2go/gloves/5030_1409/sport_glove_l_1.png",
-        "sport_glove_l_2": "res://assets/textures/cs2go/gloves/5030_1409/sport_glove_l_2.png",
-        "sport_glove_l_3": "res://assets/textures/cs2go/gloves/5030_1409/sport_glove_l_3.png",
-        "sport_glove_l_4": "res://assets/textures/cs2go/gloves/5030_1409/sport_glove_l_4.png",
-        "sport_glove_r_0": "res://assets/textures/cs2go/gloves/5030_1409/sport_glove_r_0.png",
-        "sport_glove_r_1": "res://assets/textures/cs2go/gloves/5030_1409/sport_glove_r_1.png",
-        "sport_glove_r_2": "res://assets/textures/cs2go/gloves/5030_1409/sport_glove_r_2.png",
-        "sport_glove_r_3": "res://assets/textures/cs2go/gloves/5030_1409/sport_glove_r_3.png",
-        "sport_glove_r_4": "res://assets/textures/cs2go/gloves/5030_1409/sport_glove_r_4.png"
-      },
-      "source": "https://github.com/3kh0/cs2go@fb970df0ee8175d9b212d310f6a928f9f61014f2",
-      "paint_id": 1409,
-      "seed": 1,
-      "wear_value": 0.07,
-      "native_textures": {
-        "glove_sporty_left": "res://assets/textures/native_sport/5030_1409/glove_sporty_left.webp",
-        "glove_sporty_right": "res://assets/textures/native_sport/5030_1409/glove_sporty_right.webp"
-      },
-      "native_uv": true
-    },
-    {
-      "id": "cs2go_5030_1408",
-      "name": "Sport Gloves | Creme Pinstripe — Minimal Wear (cs2go)",
-      "family": "Creme Pinstripe",
-      "wear": "Minimal Wear",
-      "textures": {
-        "sport_glove_l_0": "res://assets/textures/cs2go/gloves/5030_1408/sport_glove_l_0.png",
-        "sport_glove_l_1": "res://assets/textures/cs2go/gloves/5030_1408/sport_glove_l_1.png",
-        "sport_glove_l_2": "res://assets/textures/cs2go/gloves/5030_1408/sport_glove_l_2.png",
-        "sport_glove_l_3": "res://assets/textures/cs2go/gloves/5030_1408/sport_glove_l_3.png",
-        "sport_glove_l_4": "res://assets/textures/cs2go/gloves/5030_1408/sport_glove_l_4.png",
-        "sport_glove_r_0": "res://assets/textures/cs2go/gloves/5030_1408/sport_glove_r_0.png",
-        "sport_glove_r_1": "res://assets/textures/cs2go/gloves/5030_1408/sport_glove_r_1.png",
-        "sport_glove_r_2": "res://assets/textures/cs2go/gloves/5030_1408/sport_glove_r_2.png",
-        "sport_glove_r_3": "res://assets/textures/cs2go/gloves/5030_1408/sport_glove_r_3.png",
-        "sport_glove_r_4": "res://assets/textures/cs2go/gloves/5030_1408/sport_glove_r_4.png"
-      },
-      "source": "https://github.com/3kh0/cs2go@fb970df0ee8175d9b212d310f6a928f9f61014f2",
-      "paint_id": 1408,
-      "seed": 1,
-      "wear_value": 0.07,
-      "native_textures": {
-        "glove_sporty_left": "res://assets/textures/native_sport/5030_1408/glove_sporty_left.webp",
-        "glove_sporty_right": "res://assets/textures/native_sport/5030_1408/glove_sporty_right.webp"
-      },
-      "native_uv": true
-    },
-    {
-      "id": "cs2go_5030_1407",
-      "name": "Sport Gloves | Blaze — Minimal Wear (cs2go)",
-      "family": "Blaze",
-      "wear": "Minimal Wear",
-      "textures": {
-        "sport_glove_l_0": "res://assets/textures/cs2go/gloves/5030_1407/sport_glove_l_0.png",
-        "sport_glove_l_1": "res://assets/textures/cs2go/gloves/5030_1407/sport_glove_l_1.png",
-        "sport_glove_l_2": "res://assets/textures/cs2go/gloves/5030_1407/sport_glove_l_2.png",
-        "sport_glove_l_3": "res://assets/textures/cs2go/gloves/5030_1407/sport_glove_l_3.png",
-        "sport_glove_l_4": "res://assets/textures/cs2go/gloves/5030_1407/sport_glove_l_4.png",
-        "sport_glove_r_0": "res://assets/textures/cs2go/gloves/5030_1407/sport_glove_r_0.png",
-        "sport_glove_r_1": "res://assets/textures/cs2go/gloves/5030_1407/sport_glove_r_1.png",
-        "sport_glove_r_2": "res://assets/textures/cs2go/gloves/5030_1407/sport_glove_r_2.png",
-        "sport_glove_r_3": "res://assets/textures/cs2go/gloves/5030_1407/sport_glove_r_3.png",
-        "sport_glove_r_4": "res://assets/textures/cs2go/gloves/5030_1407/sport_glove_r_4.png"
-      },
-      "source": "https://github.com/3kh0/cs2go@fb970df0ee8175d9b212d310f6a928f9f61014f2",
-      "paint_id": 1407,
-      "seed": 1,
-      "wear_value": 0.07,
-      "native_textures": {
-        "glove_sporty_left": "res://assets/textures/native_sport/5030_1407/glove_sporty_left.webp",
-        "glove_sporty_right": "res://assets/textures/native_sport/5030_1407/glove_sporty_right.webp"
-      },
-      "native_uv": true
-    },
-    {
-      "id": "cs2go_5030_1406",
-      "name": "Sport Gloves | Frosty — Minimal Wear (cs2go)",
-      "family": "Frosty",
-      "wear": "Minimal Wear",
-      "textures": {
-        "sport_glove_l_0": "res://assets/textures/cs2go/gloves/5030_1406/sport_glove_l_0.png",
-        "sport_glove_l_1": "res://assets/textures/cs2go/gloves/5030_1406/sport_glove_l_1.png",
-        "sport_glove_l_2": "res://assets/textures/cs2go/gloves/5030_1406/sport_glove_l_2.png",
-        "sport_glove_l_3": "res://assets/textures/cs2go/gloves/5030_1406/sport_glove_l_3.png",
-        "sport_glove_l_4": "res://assets/textures/cs2go/gloves/5030_1406/sport_glove_l_4.png",
-        "sport_glove_r_0": "res://assets/textures/cs2go/gloves/5030_1406/sport_glove_r_0.png",
-        "sport_glove_r_1": "res://assets/textures/cs2go/gloves/5030_1406/sport_glove_r_1.png",
-        "sport_glove_r_2": "res://assets/textures/cs2go/gloves/5030_1406/sport_glove_r_2.png",
-        "sport_glove_r_3": "res://assets/textures/cs2go/gloves/5030_1406/sport_glove_r_3.png",
-        "sport_glove_r_4": "res://assets/textures/cs2go/gloves/5030_1406/sport_glove_r_4.png"
-      },
-      "source": "https://github.com/3kh0/cs2go@fb970df0ee8175d9b212d310f6a928f9f61014f2",
-      "paint_id": 1406,
-      "seed": 1,
-      "wear_value": 0.07,
-      "native_textures": {
-        "glove_sporty_left": "res://assets/textures/native_sport/5030_1406/glove_sporty_left.webp",
-        "glove_sporty_right": "res://assets/textures/native_sport/5030_1406/glove_sporty_right.webp"
-      },
-      "native_uv": true
-    },
-    {
-      "id": "cs2go_5030_1405",
-      "name": "Sport Gloves | Violet Beadwork — Minimal Wear (cs2go)",
-      "family": "Violet Beadwork",
-      "wear": "Minimal Wear",
-      "textures": {
-        "sport_glove_l_0": "res://assets/textures/cs2go/gloves/5030_1405/sport_glove_l_0.png",
-        "sport_glove_l_1": "res://assets/textures/cs2go/gloves/5030_1405/sport_glove_l_1.png",
-        "sport_glove_l_2": "res://assets/textures/cs2go/gloves/5030_1405/sport_glove_l_2.png",
-        "sport_glove_l_3": "res://assets/textures/cs2go/gloves/5030_1405/sport_glove_l_3.png",
-        "sport_glove_l_4": "res://assets/textures/cs2go/gloves/5030_1405/sport_glove_l_4.png",
-        "sport_glove_r_0": "res://assets/textures/cs2go/gloves/5030_1405/sport_glove_r_0.png",
-        "sport_glove_r_1": "res://assets/textures/cs2go/gloves/5030_1405/sport_glove_r_1.png",
-        "sport_glove_r_2": "res://assets/textures/cs2go/gloves/5030_1405/sport_glove_r_2.png",
-        "sport_glove_r_3": "res://assets/textures/cs2go/gloves/5030_1405/sport_glove_r_3.png",
-        "sport_glove_r_4": "res://assets/textures/cs2go/gloves/5030_1405/sport_glove_r_4.png"
-      },
-      "source": "https://github.com/3kh0/cs2go@fb970df0ee8175d9b212d310f6a928f9f61014f2",
-      "paint_id": 1405,
-      "seed": 1,
-      "wear_value": 0.07,
-      "native_textures": {
-        "glove_sporty_left": "res://assets/textures/native_sport/5030_1405/glove_sporty_left.webp",
-        "glove_sporty_right": "res://assets/textures/native_sport/5030_1405/glove_sporty_right.webp"
-      },
-      "native_uv": true
-    },
-    {
-      "id": "cs2go_5030_10076",
-      "name": "Sport Gloves | Nocts — Minimal Wear (cs2go)",
-      "family": "Nocts",
-      "wear": "Minimal Wear",
-      "textures": {
-        "sport_glove_l_0": "res://assets/textures/cs2go/gloves/5030_10076/sport_glove_l_0.png",
-        "sport_glove_l_1": "res://assets/textures/cs2go/gloves/5030_10076/sport_glove_l_1.png",
-        "sport_glove_l_2": "res://assets/textures/cs2go/gloves/5030_10076/sport_glove_l_2.png",
-        "sport_glove_l_3": "res://assets/textures/cs2go/gloves/5030_10076/sport_glove_l_3.png",
-        "sport_glove_l_4": "res://assets/textures/cs2go/gloves/5030_10076/sport_glove_l_4.png",
-        "sport_glove_r_0": "res://assets/textures/cs2go/gloves/5030_10076/sport_glove_r_0.png",
-        "sport_glove_r_1": "res://assets/textures/cs2go/gloves/5030_10076/sport_glove_r_1.png",
-        "sport_glove_r_2": "res://assets/textures/cs2go/gloves/5030_10076/sport_glove_r_2.png",
-        "sport_glove_r_3": "res://assets/textures/cs2go/gloves/5030_10076/sport_glove_r_3.png",
-        "sport_glove_r_4": "res://assets/textures/cs2go/gloves/5030_10076/sport_glove_r_4.png"
-      },
-      "source": "https://github.com/3kh0/cs2go@fb970df0ee8175d9b212d310f6a928f9f61014f2",
-      "paint_id": 10076,
-      "seed": 1,
-      "wear_value": 0.07,
-      "native_textures": {
-        "glove_sporty_left": "res://assets/textures/native_sport/5030_10076/glove_sporty_left.webp",
-        "glove_sporty_right": "res://assets/textures/native_sport/5030_10076/glove_sporty_right.webp"
-      },
-      "native_uv": true
-    },
-    {
-      "id": "cs2go_5030_10075",
-      "name": "Sport Gloves | Scarlet Shamagh — Minimal Wear (cs2go)",
-      "family": "Scarlet Shamagh",
-      "wear": "Minimal Wear",
-      "textures": {
-        "sport_glove_l_0": "res://assets/textures/cs2go/gloves/5030_10075/sport_glove_l_0.png",
-        "sport_glove_l_1": "res://assets/textures/cs2go/gloves/5030_10075/sport_glove_l_1.png",
-        "sport_glove_l_2": "res://assets/textures/cs2go/gloves/5030_10075/sport_glove_l_2.png",
-        "sport_glove_l_3": "res://assets/textures/cs2go/gloves/5030_10075/sport_glove_l_3.png",
-        "sport_glove_l_4": "res://assets/textures/cs2go/gloves/5030_10075/sport_glove_l_4.png",
-        "sport_glove_r_0": "res://assets/textures/cs2go/gloves/5030_10075/sport_glove_r_0.png",
-        "sport_glove_r_1": "res://assets/textures/cs2go/gloves/5030_10075/sport_glove_r_1.png",
-        "sport_glove_r_2": "res://assets/textures/cs2go/gloves/5030_10075/sport_glove_r_2.png",
-        "sport_glove_r_3": "res://assets/textures/cs2go/gloves/5030_10075/sport_glove_r_3.png",
-        "sport_glove_r_4": "res://assets/textures/cs2go/gloves/5030_10075/sport_glove_r_4.png"
-      },
-      "source": "https://github.com/3kh0/cs2go@fb970df0ee8175d9b212d310f6a928f9f61014f2",
-      "paint_id": 10075,
-      "seed": 1,
-      "wear_value": 0.07,
-      "native_textures": {
-        "glove_sporty_left": "res://assets/textures/native_sport/5030_10075/glove_sporty_left.webp",
-        "glove_sporty_right": "res://assets/textures/native_sport/5030_10075/glove_sporty_right.webp"
-      },
-      "native_uv": true
-    },
-    {
-      "id": "cs2go_5030_10074",
-      "name": "Sport Gloves | Big Game — Minimal Wear (cs2go)",
-      "family": "Big Game",
-      "wear": "Minimal Wear",
-      "textures": {
-        "sport_glove_l_0": "res://assets/textures/cs2go/gloves/5030_10074/sport_glove_l_0.png",
-        "sport_glove_l_1": "res://assets/textures/cs2go/gloves/5030_10074/sport_glove_l_1.png",
-        "sport_glove_l_2": "res://assets/textures/cs2go/gloves/5030_10074/sport_glove_l_2.png",
-        "sport_glove_l_3": "res://assets/textures/cs2go/gloves/5030_10074/sport_glove_l_3.png",
-        "sport_glove_l_4": "res://assets/textures/cs2go/gloves/5030_10074/sport_glove_l_4.png",
-        "sport_glove_r_0": "res://assets/textures/cs2go/gloves/5030_10074/sport_glove_r_0.png",
-        "sport_glove_r_1": "res://assets/textures/cs2go/gloves/5030_10074/sport_glove_r_1.png",
-        "sport_glove_r_2": "res://assets/textures/cs2go/gloves/5030_10074/sport_glove_r_2.png",
-        "sport_glove_r_3": "res://assets/textures/cs2go/gloves/5030_10074/sport_glove_r_3.png",
-        "sport_glove_r_4": "res://assets/textures/cs2go/gloves/5030_10074/sport_glove_r_4.png"
-      },
-      "source": "https://github.com/3kh0/cs2go@fb970df0ee8175d9b212d310f6a928f9f61014f2",
-      "paint_id": 10074,
-      "seed": 1,
-      "wear_value": 0.07,
-      "native_textures": {
-        "glove_sporty_left": "res://assets/textures/native_sport/5030_10074/glove_sporty_left.webp",
-        "glove_sporty_right": "res://assets/textures/native_sport/5030_10074/glove_sporty_right.webp"
-      },
-      "native_uv": true
-    },
-    {
-      "id": "cs2go_5030_10073",
-      "name": "Sport Gloves | Slingshot — Minimal Wear (cs2go)",
-      "family": "Slingshot",
-      "wear": "Minimal Wear",
-      "textures": {
-        "sport_glove_l_0": "res://assets/textures/cs2go/gloves/5030_10073/sport_glove_l_0.png",
-        "sport_glove_l_1": "res://assets/textures/cs2go/gloves/5030_10073/sport_glove_l_1.png",
-        "sport_glove_l_2": "res://assets/textures/cs2go/gloves/5030_10073/sport_glove_l_2.png",
-        "sport_glove_l_3": "res://assets/textures/cs2go/gloves/5030_10073/sport_glove_l_3.png",
-        "sport_glove_l_4": "res://assets/textures/cs2go/gloves/5030_10073/sport_glove_l_4.png",
-        "sport_glove_r_0": "res://assets/textures/cs2go/gloves/5030_10073/sport_glove_r_0.png",
-        "sport_glove_r_1": "res://assets/textures/cs2go/gloves/5030_10073/sport_glove_r_1.png",
-        "sport_glove_r_2": "res://assets/textures/cs2go/gloves/5030_10073/sport_glove_r_2.png",
-        "sport_glove_r_3": "res://assets/textures/cs2go/gloves/5030_10073/sport_glove_r_3.png",
-        "sport_glove_r_4": "res://assets/textures/cs2go/gloves/5030_10073/sport_glove_r_4.png"
-      },
-      "source": "https://github.com/3kh0/cs2go@fb970df0ee8175d9b212d310f6a928f9f61014f2",
-      "paint_id": 10073,
-      "seed": 1,
-      "wear_value": 0.07,
-      "native_textures": {
-        "glove_sporty_left": "res://assets/textures/native_sport/5030_10073/glove_sporty_left.webp",
-        "glove_sporty_right": "res://assets/textures/native_sport/5030_10073/glove_sporty_right.webp"
-      },
-      "native_uv": true
-    },
-    {
-      "id": "cs2go_5030_10048",
-      "name": "Sport Gloves | Vice — Minimal Wear (cs2go)",
-      "family": "Vice",
-      "wear": "Minimal Wear",
-      "textures": {
-        "sport_glove_l_0": "res://assets/textures/cs2go/gloves/5030_10048/sport_glove_l_0.png",
-        "sport_glove_l_1": "res://assets/textures/cs2go/gloves/5030_10048/sport_glove_l_1.png",
-        "sport_glove_l_2": "res://assets/textures/cs2go/gloves/5030_10048/sport_glove_l_2.png",
-        "sport_glove_l_3": "res://assets/textures/cs2go/gloves/5030_10048/sport_glove_l_3.png",
-        "sport_glove_l_4": "res://assets/textures/cs2go/gloves/5030_10048/sport_glove_l_4.png",
-        "sport_glove_r_0": "res://assets/textures/cs2go/gloves/5030_10048/sport_glove_r_0.png",
-        "sport_glove_r_1": "res://assets/textures/cs2go/gloves/5030_10048/sport_glove_r_1.png",
-        "sport_glove_r_2": "res://assets/textures/cs2go/gloves/5030_10048/sport_glove_r_2.png",
-        "sport_glove_r_3": "res://assets/textures/cs2go/gloves/5030_10048/sport_glove_r_3.png",
-        "sport_glove_r_4": "res://assets/textures/cs2go/gloves/5030_10048/sport_glove_r_4.png"
-      },
-      "source": "https://github.com/3kh0/cs2go@fb970df0ee8175d9b212d310f6a928f9f61014f2",
-      "paint_id": 10048,
-      "seed": 1,
-      "wear_value": 0.07,
-      "native_textures": {
-        "glove_sporty_left": "res://assets/textures/native_sport/5030_10048/glove_sporty_left.webp",
-        "glove_sporty_right": "res://assets/textures/native_sport/5030_10048/glove_sporty_right.webp"
-      },
-      "native_uv": true
-    },
-    {
-      "id": "cs2go_5030_10047",
-      "name": "Sport Gloves | Omega — Minimal Wear (cs2go)",
-      "family": "Omega",
-      "wear": "Minimal Wear",
-      "textures": {
-        "sport_glove_l_0": "res://assets/textures/cs2go/gloves/5030_10047/sport_glove_l_0.png",
-        "sport_glove_l_1": "res://assets/textures/cs2go/gloves/5030_10047/sport_glove_l_1.png",
-        "sport_glove_l_2": "res://assets/textures/cs2go/gloves/5030_10047/sport_glove_l_2.png",
-        "sport_glove_l_3": "res://assets/textures/cs2go/gloves/5030_10047/sport_glove_l_3.png",
-        "sport_glove_l_4": "res://assets/textures/cs2go/gloves/5030_10047/sport_glove_l_4.png",
-        "sport_glove_r_0": "res://assets/textures/cs2go/gloves/5030_10047/sport_glove_r_0.png",
-        "sport_glove_r_1": "res://assets/textures/cs2go/gloves/5030_10047/sport_glove_r_1.png",
-        "sport_glove_r_2": "res://assets/textures/cs2go/gloves/5030_10047/sport_glove_r_2.png",
-        "sport_glove_r_3": "res://assets/textures/cs2go/gloves/5030_10047/sport_glove_r_3.png",
-        "sport_glove_r_4": "res://assets/textures/cs2go/gloves/5030_10047/sport_glove_r_4.png"
-      },
-      "source": "https://github.com/3kh0/cs2go@fb970df0ee8175d9b212d310f6a928f9f61014f2",
-      "paint_id": 10047,
-      "seed": 1,
-      "wear_value": 0.07,
-      "native_textures": {
-        "glove_sporty_left": "res://assets/textures/native_sport/5030_10047/glove_sporty_left.webp",
-        "glove_sporty_right": "res://assets/textures/native_sport/5030_10047/glove_sporty_right.webp"
-      },
-      "native_uv": true
-    },
-    {
-      "id": "cs2go_5030_10046",
-      "name": "Sport Gloves | Bronze Morph — Minimal Wear (cs2go)",
-      "family": "Bronze Morph",
-      "wear": "Minimal Wear",
-      "textures": {
-        "sport_glove_l_0": "res://assets/textures/cs2go/gloves/5030_10046/sport_glove_l_0.png",
-        "sport_glove_l_1": "res://assets/textures/cs2go/gloves/5030_10046/sport_glove_l_1.png",
-        "sport_glove_l_2": "res://assets/textures/cs2go/gloves/5030_10046/sport_glove_l_2.png",
-        "sport_glove_l_3": "res://assets/textures/cs2go/gloves/5030_10046/sport_glove_l_3.png",
-        "sport_glove_l_4": "res://assets/textures/cs2go/gloves/5030_10046/sport_glove_l_4.png",
-        "sport_glove_r_0": "res://assets/textures/cs2go/gloves/5030_10046/sport_glove_r_0.png",
-        "sport_glove_r_1": "res://assets/textures/cs2go/gloves/5030_10046/sport_glove_r_1.png",
-        "sport_glove_r_2": "res://assets/textures/cs2go/gloves/5030_10046/sport_glove_r_2.png",
-        "sport_glove_r_3": "res://assets/textures/cs2go/gloves/5030_10046/sport_glove_r_3.png",
-        "sport_glove_r_4": "res://assets/textures/cs2go/gloves/5030_10046/sport_glove_r_4.png"
-      },
-      "source": "https://github.com/3kh0/cs2go@fb970df0ee8175d9b212d310f6a928f9f61014f2",
-      "paint_id": 10046,
-      "seed": 1,
-      "wear_value": 0.07,
-      "native_textures": {
-        "glove_sporty_left": "res://assets/textures/native_sport/5030_10046/glove_sporty_left.webp",
-        "glove_sporty_right": "res://assets/textures/native_sport/5030_10046/glove_sporty_right.webp"
-      },
-      "native_uv": true
-    },
-    {
-      "id": "cs2go_5030_10045",
-      "name": "Sport Gloves | Amphibious — Minimal Wear (cs2go)",
-      "family": "Amphibious",
-      "wear": "Minimal Wear",
-      "textures": {
-        "sport_glove_l_0": "res://assets/textures/cs2go/gloves/5030_10045/sport_glove_l_0.png",
-        "sport_glove_l_1": "res://assets/textures/cs2go/gloves/5030_10045/sport_glove_l_1.png",
-        "sport_glove_l_2": "res://assets/textures/cs2go/gloves/5030_10045/sport_glove_l_2.png",
-        "sport_glove_l_3": "res://assets/textures/cs2go/gloves/5030_10045/sport_glove_l_3.png",
-        "sport_glove_l_4": "res://assets/textures/cs2go/gloves/5030_10045/sport_glove_l_4.png",
-        "sport_glove_r_0": "res://assets/textures/cs2go/gloves/5030_10045/sport_glove_r_0.png",
-        "sport_glove_r_1": "res://assets/textures/cs2go/gloves/5030_10045/sport_glove_r_1.png",
-        "sport_glove_r_2": "res://assets/textures/cs2go/gloves/5030_10045/sport_glove_r_2.png",
-        "sport_glove_r_3": "res://assets/textures/cs2go/gloves/5030_10045/sport_glove_r_3.png",
-        "sport_glove_r_4": "res://assets/textures/cs2go/gloves/5030_10045/sport_glove_r_4.png"
-      },
-      "source": "https://github.com/3kh0/cs2go@fb970df0ee8175d9b212d310f6a928f9f61014f2",
-      "paint_id": 10045,
-      "seed": 1,
-      "wear_value": 0.07,
-      "native_textures": {
-        "glove_sporty_left": "res://assets/textures/native_sport/5030_10045/glove_sporty_left.webp",
-        "glove_sporty_right": "res://assets/textures/native_sport/5030_10045/glove_sporty_right.webp"
-      },
-      "native_uv": true
-    },
-    {
-      "id": "cs2go_5030_10038",
-      "name": "Sport Gloves | Hedge Maze — Minimal Wear (cs2go)",
-      "family": "Hedge Maze",
-      "wear": "Minimal Wear",
-      "textures": {
-        "sport_glove_l_0": "res://assets/textures/cs2go/gloves/5030_10038/sport_glove_l_0.png",
-        "sport_glove_l_1": "res://assets/textures/cs2go/gloves/5030_10038/sport_glove_l_1.png",
-        "sport_glove_l_2": "res://assets/textures/cs2go/gloves/5030_10038/sport_glove_l_2.png",
-        "sport_glove_l_3": "res://assets/textures/cs2go/gloves/5030_10038/sport_glove_l_3.png",
-        "sport_glove_l_4": "res://assets/textures/cs2go/gloves/5030_10038/sport_glove_l_4.png",
-        "sport_glove_r_0": "res://assets/textures/cs2go/gloves/5030_10038/sport_glove_r_0.png",
-        "sport_glove_r_1": "res://assets/textures/cs2go/gloves/5030_10038/sport_glove_r_1.png",
-        "sport_glove_r_2": "res://assets/textures/cs2go/gloves/5030_10038/sport_glove_r_2.png",
-        "sport_glove_r_3": "res://assets/textures/cs2go/gloves/5030_10038/sport_glove_r_3.png",
-        "sport_glove_r_4": "res://assets/textures/cs2go/gloves/5030_10038/sport_glove_r_4.png"
-      },
-      "source": "https://github.com/3kh0/cs2go@fb970df0ee8175d9b212d310f6a928f9f61014f2",
-      "paint_id": 10038,
-      "seed": 1,
-      "wear_value": 0.07,
-      "native_textures": {
-        "glove_sporty_left": "res://assets/textures/native_sport/5030_10038/glove_sporty_left.webp",
-        "glove_sporty_right": "res://assets/textures/native_sport/5030_10038/glove_sporty_right.webp"
-      },
-      "native_uv": true
-    },
-    {
-      "id": "cs2go_5030_10037",
-      "name": "Sport Gloves | Pandora's Box — Minimal Wear (cs2go)",
-      "family": "Pandora's Box",
-      "wear": "Minimal Wear",
-      "textures": {
-        "sport_glove_l_0": "res://assets/textures/cs2go/gloves/5030_10037/sport_glove_l_0.png",
-        "sport_glove_l_1": "res://assets/textures/cs2go/gloves/5030_10037/sport_glove_l_1.png",
-        "sport_glove_l_2": "res://assets/textures/cs2go/gloves/5030_10037/sport_glove_l_2.png",
-        "sport_glove_l_3": "res://assets/textures/cs2go/gloves/5030_10037/sport_glove_l_3.png",
-        "sport_glove_l_4": "res://assets/textures/cs2go/gloves/5030_10037/sport_glove_l_4.png",
-        "sport_glove_r_0": "res://assets/textures/cs2go/gloves/5030_10037/sport_glove_r_0.png",
-        "sport_glove_r_1": "res://assets/textures/cs2go/gloves/5030_10037/sport_glove_r_1.png",
-        "sport_glove_r_2": "res://assets/textures/cs2go/gloves/5030_10037/sport_glove_r_2.png",
-        "sport_glove_r_3": "res://assets/textures/cs2go/gloves/5030_10037/sport_glove_r_3.png",
-        "sport_glove_r_4": "res://assets/textures/cs2go/gloves/5030_10037/sport_glove_r_4.png"
-      },
-      "source": "https://github.com/3kh0/cs2go@fb970df0ee8175d9b212d310f6a928f9f61014f2",
-      "paint_id": 10037,
-      "seed": 1,
-      "wear_value": 0.07,
-      "native_textures": {
-        "glove_sporty_left": "res://assets/textures/native_sport/5030_10037/glove_sporty_left.webp",
-        "glove_sporty_right": "res://assets/textures/native_sport/5030_10037/glove_sporty_right.webp"
-      },
-      "native_uv": true
-    },
-    {
-      "id": "cs2go_5030_10019",
-      "name": "Sport Gloves | Arid — Minimal Wear (cs2go)",
-      "family": "Arid",
-      "wear": "Minimal Wear",
-      "textures": {
-        "sport_glove_l_0": "res://assets/textures/cs2go/gloves/5030_10019/sport_glove_l_0.png",
-        "sport_glove_l_1": "res://assets/textures/cs2go/gloves/5030_10019/sport_glove_l_1.png",
-        "sport_glove_l_2": "res://assets/textures/cs2go/gloves/5030_10019/sport_glove_l_2.png",
-        "sport_glove_l_3": "res://assets/textures/cs2go/gloves/5030_10019/sport_glove_l_3.png",
-        "sport_glove_l_4": "res://assets/textures/cs2go/gloves/5030_10019/sport_glove_l_4.png",
-        "sport_glove_r_0": "res://assets/textures/cs2go/gloves/5030_10019/sport_glove_r_0.png",
-        "sport_glove_r_1": "res://assets/textures/cs2go/gloves/5030_10019/sport_glove_r_1.png",
-        "sport_glove_r_2": "res://assets/textures/cs2go/gloves/5030_10019/sport_glove_r_2.png",
-        "sport_glove_r_3": "res://assets/textures/cs2go/gloves/5030_10019/sport_glove_r_3.png",
-        "sport_glove_r_4": "res://assets/textures/cs2go/gloves/5030_10019/sport_glove_r_4.png"
-      },
-      "source": "https://github.com/3kh0/cs2go@fb970df0ee8175d9b212d310f6a928f9f61014f2",
-      "paint_id": 10019,
-      "seed": 1,
-      "wear_value": 0.07,
-      "native_textures": {
-        "glove_sporty_left": "res://assets/textures/native_sport/5030_10019/glove_sporty_left.webp",
-        "glove_sporty_right": "res://assets/textures/native_sport/5030_10019/glove_sporty_right.webp"
-      },
-      "native_uv": true
-    },
-    {
-      "id": "cs2go_5030_10018",
-      "name": "Sport Gloves | Superconductor — Minimal Wear (cs2go)",
-      "family": "Superconductor",
-      "wear": "Minimal Wear",
-      "textures": {
-        "sport_glove_l_0": "res://assets/textures/cs2go/gloves/5030_10018/sport_glove_l_0.png",
-        "sport_glove_l_1": "res://assets/textures/cs2go/gloves/5030_10018/sport_glove_l_1.png",
-        "sport_glove_l_2": "res://assets/textures/cs2go/gloves/5030_10018/sport_glove_l_2.png",
-        "sport_glove_l_3": "res://assets/textures/cs2go/gloves/5030_10018/sport_glove_l_3.png",
-        "sport_glove_l_4": "res://assets/textures/cs2go/gloves/5030_10018/sport_glove_l_4.png",
-        "sport_glove_r_0": "res://assets/textures/cs2go/gloves/5030_10018/sport_glove_r_0.png",
-        "sport_glove_r_1": "res://assets/textures/cs2go/gloves/5030_10018/sport_glove_r_1.png",
-        "sport_glove_r_2": "res://assets/textures/cs2go/gloves/5030_10018/sport_glove_r_2.png",
-        "sport_glove_r_3": "res://assets/textures/cs2go/gloves/5030_10018/sport_glove_r_3.png",
-        "sport_glove_r_4": "res://assets/textures/cs2go/gloves/5030_10018/sport_glove_r_4.png"
-      },
-      "source": "https://github.com/3kh0/cs2go@fb970df0ee8175d9b212d310f6a928f9f61014f2",
-      "paint_id": 10018,
-      "seed": 1,
-      "wear_value": 0.07,
-      "native_textures": {
-        "glove_sporty_left": "res://assets/textures/native_sport/5030_10018/glove_sporty_left.webp",
-        "glove_sporty_right": "res://assets/textures/native_sport/5030_10018/glove_sporty_right.webp"
-      },
-      "native_uv": true
     }
   ],
   "rig": "Rootns Rig",

@@ -1,6 +1,6 @@
 class_name AgentViewArms
 extends RefCounted
-## Independent cosmetic sleeves and native-UV gloves on existing animation rigs.
+## Independent dedicated agent sleeves on existing animation rigs.
 static var _catalog: Dictionary = {}
 static var _mesh_cache: Dictionary = {}
 
@@ -24,52 +24,16 @@ static func _bone(rig: Skeleton3D, name: String) -> int:
 	var bone := rig.find_bone(name)
 	return bone if bone >= 0 else rig.find_bone(name.replace(".", "_"))
 
-static func _hand_frame(skin: Skin, binds: Dictionary, prefix: String) -> Transform3D:
-	var wrist := skin.get_bind_pose(int(binds[prefix + "Hand"])).affine_inverse().origin
-	var middle := skin.get_bind_pose(int(binds[prefix + "Finger2"])).affine_inverse().origin
-	var index := skin.get_bind_pose(int(binds[prefix + "Finger1"])).affine_inverse().origin
-	var pinky := skin.get_bind_pose(int(binds[prefix + "Finger4"])).affine_inverse().origin
-	var y := (middle - wrist).normalized()
-	var x := index - pinky
-	x = (x - y * x.dot(y)).normalized()
-	return Transform3D(Basis(x, y, x.cross(y)), wrist)
-
-static func _palm_roll(wrist: Vector3, finger: Vector3) -> Transform3D:
-	# A rigid half-turn of the WHOLE glove, not a UV flip or camera change.
-	var rotation := Basis((finger - wrist).normalized(), PI)
-	return Transform3D(rotation, wrist - rotation * wrist)
-
 static func _converted(source: MeshInstance3D, rig: Skeleton3D, model: String, avatar: String) -> Dictionary:
-	var key := model + ":" + avatar + (":exchanged-palm-roll-v7" if avatar == "sport" else "")
+	var key := model + ":" + avatar
 	var targets: Dictionary = catalog().get("targets", {}).get(model, {})
 	if targets.is_empty() or source.skin == null:
 		return {}
 	var transforms: Array[Transform3D] = []
 	var mapped := Skin.new()
 	var supported: Array[bool] = []
-	var source_binds: Dictionary = {}
-	for index in source.skin.get_bind_count():
-		source_binds[String(source.skin.get_bind_name(index))] = index
 	for index in source.skin.get_bind_count():
 		var name := String(source.skin.get_bind_name(index))
-		var correction := Transform3D.IDENTITY
-		if avatar == "sport" and ("_L_" in name or "_R_" in name):
-			var opposite := name.replace("_L_", "_R_") if "_L_" in name else name.replace("_R_", "_L_")
-			if not source_binds.has(opposite):
-				return {}
-			# Transfer the complete source glove's bone-local geometry to the
-			# opposite hand before applying that weapon's normal rig conversion.
-			# Material/UV identity stays with the SOURCE model, not destination.
-			var prefix := name.substr(0, name.find("_L_") + 3) if "_L_" in name else name.substr(0, name.find("_R_") + 3)
-			var other_prefix := prefix.replace("_L_", "_R_") if "_L_" in prefix else prefix.replace("_R_", "_L_")
-			var source_wrist := source.skin.get_bind_pose(int(source_binds[prefix + "Hand"]))
-			var destination_wrist := source.skin.get_bind_pose(int(source_binds[other_prefix + "Hand"]))
-			# Calibrate left/right exporter conventions ONCE at the wrist.
-			# Applying raw joint rolls independently twists finger seams apart.
-			var exchange := _hand_frame(source.skin, source_binds, other_prefix) * Transform3D(Basis.FLIP_Z, Vector3.ZERO) * _hand_frame(source.skin, source_binds, prefix).affine_inverse()
-			var local_exchange := destination_wrist * exchange * source_wrist.affine_inverse()
-			correction = source.skin.get_bind_pose(int(source_binds[opposite])).affine_inverse() * local_exchange * source.skin.get_bind_pose(index)
-			name = opposite
 		var entry := _entry(targets, name)
 		# Unused weapon/root binds are retained but do not influence these meshes.
 		if entry.is_empty():
@@ -81,7 +45,7 @@ static func _converted(source: MeshInstance3D, rig: Skeleton3D, model: String, a
 		if target < 0:
 			return {}
 		supported.append(true)
-		transforms.append(matrix(entry.matrix) * correction)
+		transforms.append(matrix(entry.matrix))
 		mapped.add_bind(target, matrix(entry.bind))
 	if _mesh_cache.has(key):
 		return {"mesh": _mesh_cache[key], "skin": mapped}
@@ -109,15 +73,6 @@ static func _converted(source: MeshInstance3D, rig: Skeleton3D, model: String, a
 				normal += (transform.basis.inverse().transposed() * normals[vertex]) * weight
 			vertices[vertex] = point
 			normals[vertex] = normal.normalized()
-		if avatar == "sport":
-			var indices: PackedInt32Array = arrays[Mesh.ARRAY_INDEX]
-			if indices.is_empty():
-				for vertex in vertices.size(): indices.append(vertex)
-			for triangle in range(0, indices.size(), 3):
-				var second := indices[triangle + 1]
-				indices[triangle + 1] = indices[triangle + 2]
-				indices[triangle + 2] = second
-			arrays[Mesh.ARRAY_INDEX] = indices
 		arrays[Mesh.ARRAY_VERTEX] = vertices
 		arrays[Mesh.ARRAY_NORMAL] = normals
 		# Tangents from the source bind pose are not valid after retargeting.
@@ -159,23 +114,8 @@ static func install(root: Node3D, model: String, avatar: String, native_textures
 	copy.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
 	copy.set_meta("native_view_cosmetic", true)
 	copy.set_meta("agent_arms", avatar)
-	if avatar == "sport":
-		copy.set_meta("sport_gloves", true)
-		copy.set_meta("handedness", "exchanged-palm-roll-v7")
-		copy.set_meta("sport_glove_id", GameData.selected_glove_id)
 	for surface in copy.mesh.get_surface_count():
 		var material := copy.mesh.surface_get_material(surface).duplicate() as BaseMaterial3D
-		if avatar == "sport":
-			var path := String(native_textures.get(material.resource_name, ""))
-			if path.is_empty():
-				copy.free()
-				source.free()
-				return false
-			material.albedo_texture = GameData.get_texture(path)
-			if material.albedo_texture == null:
-				copy.free()
-				source.free()
-				return false
 		material.cull_mode = BaseMaterial3D.CULL_DISABLED
 		material.roughness = 0.85
 		material.metallic = 0
@@ -204,11 +144,6 @@ static func install(root: Node3D, model: String, avatar: String, native_textures
 	root.add_child(copy)
 	copy.global_transform = rig.global_transform
 	copy.skeleton = copy.get_path_to(rig)
-	if avatar == "sport":
-		var rolled := GlovePalmRoll.new()
-		rolled.name = "GlovePalmRoll"
-		root.add_child(rolled)
-		rolled.configure(copy, rig)
 	source.free()
 	root.set_meta("view_agent" if avatar != "sport" else "native_sport", avatar)
 	return true

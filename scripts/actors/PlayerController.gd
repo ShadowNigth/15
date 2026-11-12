@@ -285,7 +285,7 @@ func _create_chrome_studio_panorama() -> ImageTexture:
 func spawn_for_round(pos: Vector3, yaw_rad: float, reset_weapons: bool) -> void:
 	super.spawn_for_round(pos, yaw_rad, reset_weapons)
 	if _first_person_body != null:
-		_first_person_body.sync(_body_root, is_alive)
+		_first_person_body.sync(_body_root, is_alive, look_yaw)
 	if reset_weapons:
 		_native_cz_spare_removed = false
 	camera.top_level = false
@@ -408,7 +408,7 @@ func _cycle_weapon_slot(step: int) -> void:
 func _process(delta: float) -> void:
 	super._process(delta)
 	if _first_person_body != null:
-		_first_person_body.sync(_body_root, is_alive)
+		_first_person_body.sync(_body_root, is_alive, look_yaw)
 
 	if _muzzle_timer > 0.0:
 		_muzzle_timer -= delta
@@ -692,7 +692,7 @@ func _rebuild_character_model() -> void:
 	super._rebuild_character_model()
 	_first_person_body = FirstPersonBody.new()
 	_first_person_body.install(_body_root, _skel)
-	_first_person_body.sync(_body_root, is_alive)
+	_first_person_body.sync(_body_root, is_alive, look_yaw)
 
 
 func set_team_and_class(new_team: String, new_class: String) -> void:

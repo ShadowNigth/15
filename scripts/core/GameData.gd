@@ -130,7 +130,7 @@ func _load_all_databases() -> void:
 	var archi_db: Dictionary = _load_json("res://data/archi_materials.json")
 	archi_materials = archi_db.get("materials", {})
 	sport_gloves = _load_json("res://data/sport_gloves.json")
-	if selected_glove_id.is_empty():
+	if selected_glove_id.is_empty() or selected_glove_id.begins_with("cs2go_5030_"):
 		selected_glove_id = String(sport_gloves.get("default", "classic"))
 	native_audio = _load_json("res://data/native_audio.json")
 	_apply_native_audio()

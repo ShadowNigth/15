@@ -10,7 +10,7 @@ from .import_modern_agents import read_glb,write_glb
 from .build_sport_gloves import _accessor
 from .smd_converter import GlbWriter
 OUT=ROOT/'assets/models/agent_arms'
-SOURCES={'sas':'gloves/agents/5600','phoenix':'gloves/agents/5200','st6':'gloves/agents/5401','dragomir':'gloves/agents/5500','sas_officer':'gloves/agents/5601','fbi':'gloves/agents/5308','leet':'gloves/agents/5105','phoenix_a':'gloves/agents/5200','sport':'gloves/5030'}
+SOURCES={'sas':'gloves/agents/5600','phoenix':'gloves/agents/5200','st6':'gloves/agents/5401','dragomir':'gloves/agents/5500','sas_officer':'gloves/agents/5601','fbi':'gloves/agents/5308','leet':'gloves/agents/5105','phoenix_a':'gloves/agents/5200'}
 
 def native(name):
     # Twist helpers are not the forearm: merging them moves the cuff in poses.

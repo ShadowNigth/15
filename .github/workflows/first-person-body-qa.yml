@@ -39,6 +39,11 @@ jobs:
           LIBGL_ALWAYS_SOFTWARE=1 timeout 360s xvfb-run -a godot --path . --audio-driver Dummy --rendering-method gl_compatibility --fixed-fps 60 --resolution 960x540 res://tests/FirstPersonBodyTest.tscn 2>&1 | tee /tmp/local-body.log
           ! grep -Eq 'SCRIPT ERROR:|Parse Error:|Compile Error:|FAIL:' /tmp/local-body.log
           grep -q '\[LOCAL BODY\] PASS:' /tmp/local-body.log
+      - name: Dedicated sleeve and original glove regression
+        run: |
+          set -o pipefail
+          LIBGL_ALWAYS_SOFTWARE=1 timeout 600s xvfb-run -a godot --path . --audio-driver Dummy --rendering-method gl_compatibility res://tests/AgentViewArmsTest.tscn 2>&1 | tee /tmp/local-arms.log
+          grep -q '\[AGENT ARMS\] PASS:' /tmp/local-arms.log
       - name: Actual weapon and knife wrist inspections
         run: |
           set -o pipefail
@@ -50,7 +55,7 @@ jobs:
         run: |
           python - <<'PY'
           from pathlib import Path
-          for name in ['local-import','local-body','local-wrist']:
+          for name in ['local-import','local-body','local-wrist','local-arms']:
               p=Path('/tmp/'+name+'.log')
               if p.exists():
                   lines=p.read_text(errors='replace').splitlines()
@@ -68,10 +73,10 @@ jobs:
         run: python tools/publish_modern_capture.py local_body_leet_walk
       - name: Glock wrist and gloves
         if: always()
-        run: python tools/publish_modern_capture.py wrist_sas_cs2go_5030_1417_inspect_4
+        run: python tools/publish_modern_capture.py wrist_sas_classic_inspect_4
       - name: Native late knife inspection
         if: always()
-        run: python tools/publish_modern_capture.py wrist_sas_cs2go_5030_1417_inspect_8
+        run: python tools/publish_modern_capture.py wrist_sas_classic_inspect_8
       - uses: actions/upload-artifact@v4
         if: always()
         timeout-minutes: 3

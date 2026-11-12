@@ -1,6 +1,6 @@
 class_name FirstPersonBody
 extends RefCounted
-## Local continuous torso/legs copying the actual agent's exact skeletal pose.
+## Local pelvis/legs copying the actual agent's exact skeletal pose.
 ## No extra animation clock, movement hull, arms, head or first-person gloves.
 const LOCAL_LAYER := 8
 const HIDDEN_BODY_LAYER := 16
@@ -9,13 +9,13 @@ var parts: Array[MeshInstance3D] = []
 var sources: Array[MeshInstance3D] = []
 var source_rig: Skeleton3D = null
 var local_rig: Skeleton3D = null
-const CAMERA_BODY_OFFSET := 0.52
+const CAMERA_BODY_OFFSET := 0.12
 var _alive := false
 var _initialized := false
 
 static func lower_bone(name: String) -> bool:
 	var lower := name.to_lower()
-	return lower == "pelvis" or lower.begins_with("spine_") or lower.begins_with("clavicle_") or lower.ends_with(" spine") or " spine1" in lower or " spine2" in lower or lower.begins_with("leg_") or lower.begins_with("ankle_") or lower.begins_with("toe_") or lower.begins_with("ball_") or lower.ends_with(" pelvis") or lower.ends_with(" thigh") or lower.ends_with(" calf") or lower.ends_with(" foot") or "toe0" in lower
+	return lower == "pelvis" or lower == "spine_0" or lower.ends_with(" spine") or lower.begins_with("leg_") or lower.begins_with("ankle_") or lower.begins_with("toe_") or lower.begins_with("ball_") or lower.ends_with(" pelvis") or lower.ends_with(" thigh") or lower.ends_with(" calf") or lower.ends_with(" foot") or "toe0" in lower
 
 static func filtered(source: MeshInstance3D, rig: Skeleton3D) -> ArrayMesh:
 	if source.mesh == null or source.skin == null:
@@ -58,7 +58,7 @@ static func filtered(source: MeshInstance3D, rig: Skeleton3D) -> ArrayMesh:
 		if selected.is_empty():
 			continue
 		arrays[Mesh.ARRAY_INDEX] = selected
-		# Keep the real continuous torso instead of cutting/capping the waist.
+		# Keep original lower-abdomen/pelvis geometry; never fabricate a waist disk.
 		# A fan using averaged trouser UVs created the black concentric disk.
 		result.add_surface_from_arrays(Mesh.PRIMITIVE_TRIANGLES, arrays)
 		result.surface_set_material(result.get_surface_count() - 1, source.get_active_material(surface))
@@ -184,12 +184,12 @@ func install(root: Node3D, rig: Skeleton3D) -> void:
 		parts.append(copy)
 		sources.append(source)
 
-func sync(root: Node3D, alive: bool) -> void:
+func sync(root: Node3D, alive: bool, view_yaw: float = 0.0) -> void:
 	if root == null:
 		return
 	root.visible = true
 	if alive:
-		update_pose(root)
+		update_pose(root, view_yaw)
 	if _initialized and _alive == alive:
 		return
 	_alive = alive
@@ -204,12 +204,12 @@ func sync(root: Node3D, alive: bool) -> void:
 		mesh.layers = HIDDEN_BODY_LAYER if alive else 2
 		mesh.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_SHADOWS_ONLY if alive else GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
 
-func update_pose(root: Node3D) -> void:
+func update_pose(root: Node3D, view_yaw: float = 0.0) -> void:
 	if not is_instance_valid(source_rig) or not is_instance_valid(local_rig):
 		return
 	# The camera is ahead of the chest. Keep the local waist behind it rather
 	# than looking straight into the top of the trousers. No physics/hitbox shift.
-	var offset := root.global_basis.z.normalized() * CAMERA_BODY_OFFSET
+	var offset := Basis(Vector3.UP, view_yaw).z * CAMERA_BODY_OFFSET
 	local_rig.global_transform = source_rig.global_transform
 	local_rig.global_position += offset
 	for index in source_rig.get_bone_count():

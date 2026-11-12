@@ -1330,7 +1330,6 @@ func _load_viewer_gloves() -> void:
 			mesh.hide()
 		else:
 			mesh.mesh = filtered
-	_arrange_gloves_palm_down(inst)
 	_frame_inspection(inst)
 	_glove_inspection = true
 	_inspect_button.show()
@@ -1339,102 +1338,32 @@ func _load_viewer_gloves() -> void:
 	_set_arsenal_heading(GameData.get_glove_display_name(), "GUANTES")
 
 
-func _arrange_gloves_palm_down(root: Node3D) -> void:
-	# Bake only the Arsenal display pose. Never exchange gameplay bone bindings
-	# or mirror UVs: each complete hand remains anatomically intact.
-	var rig := SportGloves._find_skeleton(root)
-	if rig == null:
-		return
-	rig.force_update_all_bone_transforms()
-	for source in SportGloves._find_meshes(root):
-		if not source.visible or source.skin == null:
-			continue
-		var display_rig := source.get_node_or_null(source.skeleton) as Skeleton3D
-		if display_rig == null:
-			continue
-		display_rig.force_update_all_bone_transforms()
-		var binds: Array[Transform3D] = []
-		for bind in source.skin.get_bind_count():
-			var name := String(source.skin.get_bind_name(bind))
-			var bone := display_rig.find_bone(name) if not name.is_empty() else source.skin.get_bind_bone(bind)
-			binds.append(display_rig.get_bone_global_pose(bone) * source.skin.get_bind_pose(bind))
-		for surface in source.mesh.get_surface_count():
-			var arrays := source.mesh.surface_get_arrays(surface)
-			var vertices: PackedVector3Array = arrays[Mesh.ARRAY_VERTEX]
-			var normals: PackedVector3Array = arrays[Mesh.ARRAY_NORMAL]
-			var bones: PackedInt32Array = arrays[Mesh.ARRAY_BONES]
-			var weights: PackedFloat32Array = arrays[Mesh.ARRAY_WEIGHTS]
-			var stride: int = bones.size() / maxi(1, vertices.size())
-			for vertex in vertices.size():
-				var point := Vector3.ZERO
-				var normal := Vector3.ZERO
-				for slot in stride:
-					var offset := vertex * stride + slot
-					point += (binds[bones[offset]] * vertices[vertex]) * weights[offset]
-					normal += (binds[bones[offset]].basis * normals[vertex]) * weights[offset]
-				vertices[vertex] = point
-				normals[vertex] = normal.normalized()
-			var bounds := AABB(vertices[0], Vector3.ZERO)
-			for point in vertices: bounds = bounds.expand(point)
-			var center := bounds.get_center()
-			var material := source.get_active_material(surface)
-			var side := "R" if material.resource_name.ends_with("left") else "L"
-			var prefix := "v_weapon.Bip01_" + side + "_"
-			var wrist := AgentViewArms._bone(rig, prefix + "Hand")
-			var middle := AgentViewArms._bone(rig, prefix + "Finger2")
-			var index_bone := AgentViewArms._bone(rig, prefix + "Finger1")
-			var pinky := AgentViewArms._bone(rig, prefix + "Finger4")
-			var roll := Basis(Vector3.UP, PI)
-			if wrist >= 0 and middle >= 0 and index_bone >= 0 and pinky >= 0:
-				var forward := (rig.get_bone_global_pose(middle).origin - rig.get_bone_global_pose(wrist).origin).normalized()
-				var lateral := rig.get_bone_global_pose(index_bone).origin - rig.get_bone_global_pose(pinky).origin
-				lateral = (lateral - forward * lateral.dot(forward)).normalized()
-				var dorsal := lateral.cross(forward).normalized() * (1.0 if side == "L" else -1.0)
-				var right := forward.cross(dorsal).normalized()
-				# Palms face the floor; the display is pitched slightly toward
-				# the viewer so both backs and all fingers remain readable.
-				var target_dorsal := Vector3(0, 0.8, 0.6)
-				var target_forward := Vector3(0, 0.6, -0.8)
-				roll = Basis(target_forward.cross(target_dorsal), target_forward, target_dorsal) * Basis(right, forward, dorsal).transposed()
-			for vertex in vertices.size():
-				vertices[vertex] = roll * (vertices[vertex] - center)
-				normals[vertex] = roll * normals[vertex]
-			arrays[Mesh.ARRAY_VERTEX] = vertices
-			arrays[Mesh.ARRAY_NORMAL] = normals
-			arrays[Mesh.ARRAY_BONES] = null
-			arrays[Mesh.ARRAY_WEIGHTS] = null
-			arrays[Mesh.ARRAY_TANGENT] = null
-			var mesh := ArrayMesh.new()
-			mesh.add_surface_from_arrays(Mesh.PRIMITIVE_TRIANGLES, arrays)
-			mesh.surface_set_material(0, source.get_active_material(surface))
-			var hand := MeshInstance3D.new()
-			hand.mesh = mesh
-			hand.layers = source.layers
-			hand.position = center
-			if source.has_meta("palm_roll_degrees"):
-				# Keep the rolled silhouettes apart in the display; the actual
-				# model exchange and roll still come from the gameplay installer.
-				hand.position = Vector3(-0.16 if side == "L" else 0.16, 0, 0)
-			hand.set_meta("arsenal_glove_pose", true)
-			hand.set_meta("home_rotation", hand.rotation)
-			root.add_child(hand)
-		source.hide()
-	root.set_meta("glove_display_pose", "exchanged-models-palm-down")
-
 func _inspect_gloves() -> void:
 	if not _glove_inspection:
 		return
 	if _glove_tween:
 		_glove_tween.kill()
 	_glove_tween = create_tween()
-	var hands: Array[MeshInstance3D] = []
-	for mesh in SportGloves._find_meshes(_viewer_pivot):
-		if mesh.has_meta("arsenal_glove_pose"):
-			hands.append(mesh)
-	# Display-only rigid inspection returns to exactly the palm-down home pose.
+	# Animate the actual wrists, not the camera/orbit. This keeps manual rotation
+	# independent and never borrows weapon sound or event tracks.
+	var rig := SportGloves._find_skeleton(_viewer_pivot)
+	if rig == null:
+		return
+	var hands: Array[int] = []
+	var rotations: Array[Quaternion] = []
+	for names in [["hand_L", "Bip01 L Hand", "v_weapon.Bip01_L_Hand"], ["hand_R", "Bip01 R Hand", "v_weapon.Bip01_R_Hand"]]:
+		for name in names:
+			var bone := rig.find_bone(name)
+			if bone >= 0:
+				hands.append(bone)
+				rotations.append(rig.get_bone_pose_rotation(bone))
+				break
 	var pose := func(phase: float):
+		if not is_instance_valid(rig):
+			return
 		for index in hands.size():
-			if is_instance_valid(hands[index]):
-				var home: Vector3 = hands[index].get_meta("home_rotation")
-				hands[index].rotation = home + Vector3(sin(phase * PI) * 0.3, sin(phase * TAU) * 0.55 * (-1.0 if index == 0 else 1.0), 0)
+			var sign_side := -1.0 if index == 0 else 1.0
+			var twist := Quaternion(Vector3.RIGHT, sin(phase * TAU) * 0.55 * sign_side)
+			var flex := Quaternion(Vector3.FORWARD, sin(phase * PI) * 0.3)
+			rig.set_bone_pose_rotation(hands[index], rotations[index] * twist * flex)
 	_glove_tween.tween_method(pose, 0.0, 1.0, 2.4)

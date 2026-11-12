@@ -41,8 +41,6 @@ def prepare():
         existing={o.get('finish','').casefold() for o in old['weapons'].get(wid,{}).get('options',[]) if not o['id'].startswith('cs2go_')}
         rows=[s for s in skins if int(s['id'].split('_')[0])==item and s['body']=='hd' and s['name'].casefold() not in existing]
         for s in rows[:2]:selected.append(dict(s,kind='weapon',wid=wid,model=model,paint_path='skins/paints/'+s['id']+'.json'))
-    for g in gloves:
-        if g['item']==5030:selected.append(dict(g,kind='glove',paint_path='skins/gloves/paints/'+g['id']+'.json'))
     def load(s):return json.loads(fetch(PUBLIC+s['paint_path']).read_text())
     with futures.ThreadPoolExecutor(max_workers=8) as pool: paints=list(pool.map(load,selected))
     assets=set()
@@ -345,7 +343,7 @@ def agents(report):
 def build():
     selected=prepare()
     report={'source':SOURCE,'commit':PIN,'wear':.07,'seed':1,'weapons':[],'gloves':[],'agents':[],'rights':'Valve/asset author rights remain separate. No general cs2go root license identified. Public access does not grant redistribution permission.','conversion':'Offline WebGPU paint compositing and geometric UV reprojection; fixed seed/wear; original runtime geometry/animations preserved.'}
-    weapons(selected,report);gloves(selected,report);agents(report)
+    weapons(selected,report);agents(report)
     (ROOT/'data/cs2go_cosmetics.json').write_text(json.dumps(report,indent=2,ensure_ascii=False)+'\n')
 
 if __name__=='__main__':build()

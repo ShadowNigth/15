@@ -11,10 +11,7 @@ func _ready() -> void:
 func run() -> void:
 	var original_glove := GameData.selected_glove_id
 	var config := AgentViewArms.catalog()
-	expect(config.agents.size() == 9, "eight real agent arms and native Sport geometry")
-	for option in GameData.get_glove_options():
-		if String(option.id).begins_with("cs2go_"):
-			expect(bool(option.get("native_uv", false)), "new Sport finish uses native UV, never projected atlas")
+	expect(config.agents.size() == 8, "eight dedicated agent sleeve packages")
 	for avatar in config.agents:
 		expect(not bool(config.agents[avatar].get("extracted_from_body", true)), "no third-person arm extraction: " + avatar)
 		expect(String(config.agents[avatar].source).begins_with("models/gloves/"), "dedicated first-person source: " + avatar)
@@ -36,28 +33,14 @@ func run() -> void:
 		var animation := SportGloves._find_skeleton(root)
 		expect(animation != null, "original weapon rig " + model)
 		var bones := animation.get_bone_count()
-		GameData.select_glove("cs2go_5030_1417")
-		expect(SportGloves.apply(root, model), "native Sport on every original weapon " + model)
-		expect(root.get_meta("native_sport", "") == "sport", "native geometry not projected legacy fallback " + model)
+		GameData.select_glove("classic")
+		expect(not SportGloves.apply(root, model), "original gloves do not install a replacement " + model)
+		expect(not root.has_meta("native_sport"), "retired glove conversion absent " + model)
 		expect(AgentViewArms.install(root, model, "sas"), "sleeves on " + model)
 		expect(animation.get_bone_count() == bones, "original skeleton untouched " + model)
 		var meshes := SportGloves._find_meshes(root)
 		var actual := false
 		for mesh in meshes:
-			if mesh.has_meta("sport_gloves"):
-				expect(mesh.get_meta("handedness", "") == "exchanged-palm-roll-v7", "rebuilt native glove integration " + model)
-				for surface in mesh.mesh.get_surface_count():
-					var mat := mesh.mesh.surface_get_material(surface)
-					var expected := "_R_" if mat.resource_name.ends_with("left") else "_L_"
-					var arrays := mesh.mesh.surface_get_arrays(surface)
-					var indices: PackedInt32Array = arrays[Mesh.ARRAY_BONES]
-					var weights: PackedFloat32Array = arrays[Mesh.ARRAY_WEIGHTS]
-					var correct := true
-					for slot in indices.size():
-						if weights[slot] > 0.00001:
-							var bone := mesh.skin.get_bind_bone(indices[slot])
-							correct = correct and expected in animation.get_bone_name(bone)
-					expect(correct, "each native glove/finger follows the opposite animated hand " + model + mat.resource_name)
 			if mesh.has_meta("agent_arms"):
 				actual = actual or mesh.get_meta("agent_arms") == "sas"
 				expect(mesh.mesh.get_aabb().size.length() < 4, "bounded sleeve geometry " + model)
@@ -69,14 +52,14 @@ func run() -> void:
 			continue
 		var root := GameData.get_model_scene("weapons/" + model).instantiate() as Node3D
 		add_child(root)
-		GameData.select_glove("cs2go_5030_1417")
-		expect(SportGloves.apply(root, model), "native Sport on knife " + model)
+		GameData.select_glove("classic")
+		expect(not SportGloves.apply(root, model), "original gloves retained on knife " + model)
 		expect(AgentViewArms.apply(root, model, "T", "leet"), "agent sleeves on knife " + model)
 		expect(root.get_meta("view_agent", "") == "leet", "knife does not silently retain original sleeves")
 		root.free()
 	for cls in GameData.modern_agents.classes:
 		var avatar: String = GameData.modern_agents.classes[cls]
-		for glove in ["classic", "arid_mw", "cs2go_5030_1417"]:
+		for glove in ["classic", "arid_mw"]:
 			expect(GameData.select_glove(glove), "independent glove selection " + glove)
 			var root := GameData.get_model_scene("weapons/v_ak47").instantiate() as Node3D
 			add_child(root)

@@ -17,7 +17,7 @@ func capture(label: String) -> void:
 	DirAccess.make_dir_recursive_absolute("/tmp/modern-captures")
 	expect(get_viewport().get_texture().get_image().save_png("/tmp/modern-captures/" + label + ".png") == OK, "actual Godot body capture " + label)
 func run() -> void:
-	test_continuous_torso()
+	test_lower_body()
 	RoundManager.set_process(false)
 	RoundManager.state = RoundManager.State.LIVE
 	RoundManager.game_world = self
@@ -56,7 +56,7 @@ func run() -> void:
 	player.set_process_unhandled_input(false)
 	player.weapon_ctrl.set_physics_process(false)
 	var glove := GameData.selected_glove_id
-	GameData.select_glove("cs2go_5030_10045")
+	GameData.select_glove("classic")
 	for faction in ["CT", "T"]:
 		for info in GameData.classes[faction]:
 			player.set_team_and_class(faction, String(info.id))
@@ -115,9 +115,14 @@ func run() -> void:
 	print("[LOCAL BODY] ", "PASS: " if failures == 0 else "FAIL: ", checks, " checks; ", failures, " failures")
 	get_tree().quit(0 if failures == 0 else 1)
 
-func test_continuous_torso() -> void:
-	expect(FirstPersonBody.lower_bone("spine_2"), "chest kept continuous with pelvis; no waist opening")
-	expect(FirstPersonBody.lower_bone("spine_1"), "abdomen retained")
+func test_lower_body() -> void:
+	expect(not FirstPersonBody.lower_bone("spine_2"), "upper chest excluded from look-down camera")
+	expect(FirstPersonBody.lower_bone("spine_0"), "lower abdomen remains attached to pelvis")
+	expect(not FirstPersonBody.lower_bone("clavicle_L"), "shoulder equipment excluded")
+	expect(not GameData.select_glove("cs2go_5030_10046"), "removed native gloves cannot be equipped")
+	expect(GameData.select_glove("classic"), "original gloves restored")
+	for option in GameData.get_glove_options():
+		expect(not bool(option.get("native_uv", false)), "removed gloves absent from Arsenal")
 	expect(not FirstPersonBody.lower_bone("head_0") and not FirstPersonBody.lower_bone("arm_upper_L"), "no duplicate head or first-person arms")
 	var scene := GameData.get_model_scene("players/sas").instantiate() as Node3D
 	add_child(scene)
