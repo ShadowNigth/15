@@ -1209,9 +1209,9 @@ func _relax_agent(root: Node3D) -> void:
 			var parent_basis := rig.get_bone_global_pose(parent).basis if parent >= 0 else Basis.IDENTITY
 			var current := rig.get_bone_global_pose(upper)
 			var direction := (rig.get_bone_global_pose(lower).origin - current.origin).normalized()
-			var relaxed := root.global_basis.inverse() * Vector3(-0.08 if side == "L" else 0.08, -1.0, 0.04).normalized()
+			var relaxed := rig.global_basis.inverse() * Vector3(-0.08 if side == "L" else 0.08, -1.0, 0.04).normalized()
 			var target := Basis(Quaternion(direction, relaxed)) * current.basis
-			var local := rig.get_bone_rest(upper).basis.inverse() * parent_basis.inverse() * target
+			var local := parent_basis.inverse() * target
 			rig.set_bone_pose_rotation(upper, local.orthonormalized().get_rotation_quaternion())
 			rig.force_update_all_bone_transforms()
 
@@ -1351,7 +1351,7 @@ func _inspect_gloves() -> void:
 		return
 	var hands: Array[int] = []
 	var rotations: Array[Quaternion] = []
-	for names in [["hand_L", "Bip01 L Hand"], ["hand_R", "Bip01 R Hand"]]:
+	for names in [["hand_L", "Bip01 L Hand", "v_weapon.Bip01_L_Hand"], ["hand_R", "Bip01 R Hand", "v_weapon.Bip01_R_Hand"]]:
 		for name in names:
 			var bone := rig.find_bone(name)
 			if bone >= 0:

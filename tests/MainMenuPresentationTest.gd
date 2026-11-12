@@ -158,7 +158,9 @@ func _run() -> void:
 	await capture("menu_utility")
 	menu._load_viewer_gloves()
 	var glove_rig := SportGloves._find_skeleton(menu._viewer_pivot)
-	var hand := glove_rig.find_bone("Bip01 L Hand")
+	var hand := glove_rig.find_bone("v_weapon.Bip01_L_Hand")
+	if hand < 0:
+		hand = glove_rig.find_bone("Bip01 L Hand")
 	if hand < 0:
 		hand = glove_rig.find_bone("hand_L")
 	expect(hand >= 0, "glove inspection has wrist bones")
