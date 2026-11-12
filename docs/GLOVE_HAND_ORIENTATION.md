@@ -27,3 +27,11 @@ La solicitud siguiente aclaró que no bastaba intercambiar posiciones en el viso
 El Arsenal usa esta misma conversión y se elimina el desplazamiento horizontal artificial anterior. Su orientación de exposición toma ahora el lado DESTINO, no el nombre del material de origen. Las pruebas de las 43 armas comprueban que cada superficie y todos sus dedos están vinculados al lado opuesto al modelo de origen.
 
 Revisión renderizada `25bddba7`: https://github.com/ShadowNigth/15/actions/runs/43315967390 — 14917 comprobaciones del flujo de guantes y 855 de compatibilidad, sin fallos. Capturas nuevas: `arsenal-exchanged-models.jpg`, `exchanged-models-detail.jpg`, `exchanged-models-glock.jpg`. Se revisaron el detalle del Arsenal y la Glock; se entregan para revisión del usuario.
+
+## Giro dorso → palma solicitado después del intercambio
+
+Se mantiene el intercambio real L/R. `GlovePalmRoll` aplica además un medio giro rígido alrededor del eje muñeca–dedos a cada modelo completo **después** de calcular su pose animada. Usa dos esqueletos cosméticos que siguen al rig original con el mismo giro global para todos los huesos de cada mano; no altera el rig del arma, sus pistas ni las mangas. Evita el método descartado de girar los vértices antes de la animación, que deformaba los dedos. No se cambian las UVs ni se intercambian imágenes de palma/dorso.
+
+La exposición del Arsenal toma la pose ya girada y separa las siluetas para que no se superpongan. Este cambio es un giro literal del modelo completo; no es una reautoría de los agarres de cada arma. Capturas nuevas: `arsenal-dorsum-to-palm.jpg`, `dorsum-to-palm-detail.jpg`, `dorsum-to-palm-glock.jpg`.
+
+Ejecución renderizada de `7f2cb7fc`: https://github.com/ShadowNigth/15/actions/runs/43322183905 — 14958 comprobaciones del flujo de guantes y 1113 de compatibilidad sin fallos. El cierre del test de guantes también advierte de dos recursos aún en uso; no se presenta como ejecución sin advertencias. La prueba geométrica verifica que el medio giro mantiene el anclaje de muñeca y eje longitudinal, invierte el lado perpendicular, tiene determinante positivo y se deshace con un segundo medio giro. Las capturas se entregan para revisión visual del usuario.
