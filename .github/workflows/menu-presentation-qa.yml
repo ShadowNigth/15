@@ -62,6 +62,12 @@ jobs:
                   text = '\n'.join(x for x in lines if any(k in x for k in ['ERROR', 'Error', 'FAIL', 'PASS:']))[-6500:]
                   print('::notice title='+filename+'::'+text.replace('%','%25').replace('\n','%0A'))
           PY
+      - name: Relaxed agent framebuffer
+        if: always()
+        run: python tools/publish_menu_capture.py menu_agent_relaxed
+      - name: Glove inspection framebuffer
+        if: always()
+        run: python tools/publish_menu_capture.py menu_gloves_inspect
       - name: Home framebuffer
         if: always()
         run: python tools/publish_menu_capture.py menu_home

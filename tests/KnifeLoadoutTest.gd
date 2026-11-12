@@ -33,7 +33,7 @@ func _run() -> void:
 	add_child(menu)
 	_expect(menu._knife_opt != null and menu._knife_opt.item_count == 23, "Create Game exposes all knife choices")
 	menu._select_knife_for_match("m9")
-	_expect(GameData.selected_knife_id == "m9" and menu._viewer_anim != null, "Arsenal selection configures a real animated knife preview")
+	_expect(GameData.selected_knife_id == "m9" and menu._viewer_anim == null and menu._viewer_pivot.get_child_count() == 1, "Arsenal selection configures an isolated static knife preview")
 	menu.queue_free()
 	await get_tree().process_frame
 	for key in ["karambit", "m9", "bayonet"]:
