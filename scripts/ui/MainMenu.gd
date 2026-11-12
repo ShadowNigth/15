@@ -879,6 +879,8 @@ func _load_viewer_weapon(wid: String) -> void:
 		_viewer_pivot.add_child(inst)
 		_style_viewer_meshes(inst, "world")
 		_freeze_preview(inst)
+		# Source world weapons use Z-up: present the broad side, not the thin top.
+		inst.rotation_degrees = Vector3(-90, -12, 0)
 		_frame_inspection(inst)
 
 	_viewer_stats_lbl.text = "%s  |  Precio: $%d  |  Daño: %d  |  Velocidad: %.0f u/s  |  Intervalo: %.3fs\n%s" % [
