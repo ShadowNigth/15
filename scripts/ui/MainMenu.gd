@@ -54,6 +54,12 @@ var _preview_agent_team := "CT"
 var _home_background: MenuBackdrop
 var _inspection_drag := false
 var _inspection_distance := 1.5
+var _inspection_home_distance := 1.5
+var _inspection_size := Vector3.ONE
+var _inspection_view_size := Vector2i.ZERO
+var _glove_tween: Tween
+var _inspect_button: Button
+var _skin_row: HBoxContainer
 var _panel_tween: Tween
 var _glove_inspection := false
 var _modal_shade: ColorRect
@@ -737,10 +743,13 @@ func _build_arsenal_dialog() -> void:
 	_arsenal_tabs.add_child(detail_scroll)
 	finish_tab.add_child(_menu_label("Arrastra para girar · Rueda para acercar · Doble clic para restablecer", 13))
 	var inspect := Button.new()
+	_inspect_button = inspect
+	inspect.visible = false
 	inspect.text = "INSPECCIONAR GUANTES"
 	inspect.pressed.connect(_inspect_gloves)
 	finish_tab.add_child(inspect)
 	var skin_row := HBoxContainer.new()
+	_skin_row = skin_row
 	skin_row.add_theme_constant_override("separation", 8)
 	var skin_label := Label.new()
 	skin_label.text = "Acabado para la próxima partida"
@@ -790,6 +799,10 @@ func _clear_viewer_pivot() -> void:
 		c.queue_free()
 	_viewer_anim = null
 	_glove_inspection = false
+	if _glove_tween:
+		_glove_tween.kill()
+	_inspect_button.hide()
+	_skin_row.visible = true
 	_viewer_pivot.rotation = Vector3.ZERO
 	if _viewer_animation_opt != null:
 		_viewer_animation_opt.clear()
@@ -916,7 +929,9 @@ func _load_viewer_player(cid: String) -> void:
 		_style_viewer_meshes(inst)
 		_freeze_preview(inst)
 		_relax_agent(inst)
+		inst.rotation.y = PI
 		_frame_inspection(inst)
+	_skin_row.hide()
 	_viewer_stats_lbl.text = "Agente equipado · Vista de cuerpo completo, sin armas."
 
 
@@ -978,7 +993,7 @@ func _build_options_dialog() -> void:
 	editor_button.pressed.connect(func(): UICustomizationEditor.open(self))
 	content.add_child(editor_button)
 
-	var cosmetic_labels := ["Original casings + native ejection timing", "Low-ammunition warning colors", "Native dropped defuse-kit model"]
+	var cosmetic_labels := ["Casquillos y expulsión originales", "Aviso de munición baja", "Modelo original del kit de desactivación"]
 	var keys: Array = GameData.COSMETIC_KEYS.duplicate()
 	keys.erase("native_ammo_icons")
 	keys.erase("ambient_chickens_enabled")
@@ -993,17 +1008,17 @@ func _build_options_dialog() -> void:
 		grid.add_child(check)
 
 	var voice_label := Label.new()
-	voice_label.text = "Radio voices:"
+	voice_label.text = "Voces de radio"
 	grid.add_child(voice_label)
 	var voice_options := OptionButton.new()
-	voice_options.add_item("English (CT / T)")
-	voice_options.add_item("Chinese (CT / T)")
+	voice_options.add_item("Inglés (CT / T)")
+	voice_options.add_item("Chino (CT / T)")
 	voice_options.select(1 if GameData.voice_language == "zh" else 0)
 	voice_options.item_selected.connect(func(index: int): GameData.voice_language = "zh" if index == 1 else "en")
 	grid.add_child(voice_options)
 
 	var sl := Label.new()
-	sl.text = "Mouse Sensitivity:"
+	sl.text = "Sensibilidad del ratón"
 	grid.add_child(sl)
 	var sens_slider := HSlider.new()
 	sens_slider.min_value = 0.04
@@ -1015,7 +1030,7 @@ func _build_options_dialog() -> void:
 	grid.add_child(sens_slider)
 
 	var il := Label.new()
-	il.text = "Invert Mouse Y-Axis:"
+	il.text = "Invertir eje vertical del ratón"
 	grid.add_child(il)
 	var inv_chk := CheckBox.new()
 	inv_chk.button_pressed = GameData.invert_mouse_y
@@ -1023,7 +1038,7 @@ func _build_options_dialog() -> void:
 	grid.add_child(inv_chk)
 
 	var vl := Label.new()
-	vl.text = "Master Volume (dB):"
+	vl.text = "Volumen general (dB)"
 	grid.add_child(vl)
 	var vol_slider := HSlider.new()
 	vol_slider.min_value = -24.0
@@ -1034,7 +1049,7 @@ func _build_options_dialog() -> void:
 	grid.add_child(vol_slider)
 
 	var rl := Label.new()
-	rl.text = "Right-Handed Viewmodel (cl_righthand 1):"
+	rl.text = "Arma en la mano derecha"
 	grid.add_child(rl)
 	var rh_chk := CheckBox.new()
 	rh_chk.button_pressed = GameData.right_hand
@@ -1194,7 +1209,7 @@ func _relax_agent(root: Node3D) -> void:
 			var parent_basis := rig.get_bone_global_pose(parent).basis if parent >= 0 else Basis.IDENTITY
 			var current := rig.get_bone_global_pose(upper)
 			var direction := (rig.get_bone_global_pose(lower).origin - current.origin).normalized()
-			var relaxed := Vector3(-0.12 if side == "L" else 0.12, -1.0, 0.04).normalized()
+			var relaxed := root.global_basis.inverse() * Vector3(-0.08 if side == "L" else 0.08, -1.0, 0.04).normalized()
 			var target := Basis(Quaternion(direction, relaxed)) * current.basis
 			var local := rig.get_bone_rest(upper).basis.inverse() * parent_basis.inverse() * target
 			rig.set_bone_pose_rotation(upper, local.orthonormalized().get_rotation_quaternion())
@@ -1207,7 +1222,7 @@ func _frame_inspection(root: Node3D) -> void:
 	for mesh in SportGloves._find_meshes(root):
 		if not mesh.visible or mesh.mesh == null:
 			continue
-		var box: AABB = (_viewer_pivot.global_transform.inverse() * mesh.global_transform) * mesh.get_aabb()
+		var box := _posed_mesh_bounds(mesh)
 		bounds = box if first else bounds.merge(box)
 		first = false
 	if first:
@@ -1217,9 +1232,55 @@ func _frame_inspection(root: Node3D) -> void:
 	root.scale *= 1.0 / maxf(extent, 0.001)
 	# Scale the centering offset too, keeping the orbit centre on the object.
 	root.position /= maxf(extent, 0.001)
-	_inspection_distance = 1.65
+	_inspection_size = bounds.size / maxf(extent, 0.001)
+	_fit_inspection_camera()
+
+
+func _fit_inspection_camera() -> void:
+	_inspection_view_size = _viewer_viewport.size
+	var aspect := float(_inspection_view_size.x) / maxf(1.0, _inspection_view_size.y)
+	_viewer_camera.keep_aspect = Camera3D.KEEP_WIDTH
 	_viewer_camera.fov = 48.0
+	_inspection_home_distance = maxf(_inspection_size.x, _inspection_size.y * aspect) * 0.62 / tan(deg_to_rad(24.0)) + _inspection_size.z * 0.5
+	_inspection_distance = _inspection_home_distance
 	_viewer_camera.look_at_from_position(Vector3(0, 0, _inspection_distance), Vector3.ZERO)
+
+
+func _process(_delta: float) -> void:
+	if _arsenal_panel and _arsenal_panel.visible and _viewer_viewport.size != _inspection_view_size:
+		_fit_inspection_camera()
+
+
+func _posed_mesh_bounds(mesh: MeshInstance3D) -> AABB:
+	var to_pivot := _viewer_pivot.global_transform.affine_inverse()
+	var rig := mesh.get_node_or_null(mesh.skeleton) as Skeleton3D
+	if rig == null or mesh.skin == null:
+		return (to_pivot * mesh.global_transform) * mesh.get_aabb()
+	rig.force_update_all_bone_transforms()
+	var binds: Array[Transform3D] = []
+	for index in mesh.skin.get_bind_count():
+		var name := String(mesh.skin.get_bind_name(index))
+		var bone := rig.find_bone(name) if not name.is_empty() else mesh.skin.get_bind_bone(index)
+		binds.append(to_pivot * rig.global_transform * rig.get_bone_global_pose(bone) * mesh.skin.get_bind_pose(index) if bone >= 0 else Transform3D.IDENTITY)
+	var bounds := AABB()
+	var first := true
+	for surface in mesh.mesh.get_surface_count():
+		var arrays := mesh.mesh.surface_get_arrays(surface)
+		var vertices: PackedVector3Array = arrays[Mesh.ARRAY_VERTEX]
+		var bones: PackedInt32Array = arrays[Mesh.ARRAY_BONES]
+		var weights: PackedFloat32Array = arrays[Mesh.ARRAY_WEIGHTS]
+		var stride: int = bones.size() / maxi(1, vertices.size())
+		for index in vertices.size():
+			var point := Vector3.ZERO
+			if stride == 0:
+				point = to_pivot * mesh.global_transform * vertices[index]
+			for slot in stride:
+				var offset := index * stride + slot
+				if bones[offset] < binds.size():
+					point += (binds[bones[offset]] * vertices[index]) * weights[offset]
+			bounds = AABB(point, Vector3.ZERO) if first else bounds.expand(point)
+			first = false
+	return bounds
 
 
 func _inspection_input(event: InputEvent) -> void:
@@ -1228,9 +1289,9 @@ func _inspection_input(event: InputEvent) -> void:
 			_inspection_drag = event.pressed
 			if event.double_click:
 				_viewer_pivot.rotation = Vector3.ZERO
-				_inspection_distance = 1.65
+				_inspection_distance = _inspection_home_distance
 		if event.pressed and event.button_index in [MOUSE_BUTTON_WHEEL_UP, MOUSE_BUTTON_WHEEL_DOWN]:
-			_inspection_distance = clampf(_inspection_distance * (0.9 if event.button_index == MOUSE_BUTTON_WHEEL_UP else 1.1), 0.65, 3.5)
+			_inspection_distance = clampf(_inspection_distance * (0.9 if event.button_index == MOUSE_BUTTON_WHEEL_UP else 1.1), _inspection_home_distance * 0.4, _inspection_home_distance * 2.5)
 		_viewer_camera.position = Vector3(0, 0, _inspection_distance)
 	elif event is InputEventMouseMotion and (event.button_mask & MOUSE_BUTTON_MASK_LEFT) != 0:
 		_viewer_pivot.rotation.y += event.relative.x * 0.008
@@ -1271,6 +1332,8 @@ func _load_viewer_gloves() -> void:
 			mesh.mesh = filtered
 	_frame_inspection(inst)
 	_glove_inspection = true
+	_inspect_button.show()
+	_skin_row.hide()
 	_viewer_stats_lbl.text = "Guantes equipados: " + GameData.get_glove_display_name() + "\nInspecciona el acabado o gira el modelo libremente."
 	_set_arsenal_heading(GameData.get_glove_display_name(), "GUANTES")
 
@@ -1278,7 +1341,29 @@ func _load_viewer_gloves() -> void:
 func _inspect_gloves() -> void:
 	if not _glove_inspection:
 		return
-	var turn := create_tween()
-	turn.tween_property(_viewer_pivot, "rotation:z", -0.45, 0.5).set_trans(Tween.TRANS_SINE)
-	turn.tween_property(_viewer_pivot, "rotation:z", 0.45, 1.0).set_trans(Tween.TRANS_SINE)
-	turn.tween_property(_viewer_pivot, "rotation:z", 0.0, 0.5).set_trans(Tween.TRANS_SINE)
+	if _glove_tween:
+		_glove_tween.kill()
+	_glove_tween = create_tween()
+	# Animate the actual wrists, not the camera/orbit. This keeps manual rotation
+	# independent and never borrows weapon sound or event tracks.
+	var rig := SportGloves._find_skeleton(_viewer_pivot)
+	if rig == null:
+		return
+	var hands: Array[int] = []
+	var rotations: Array[Quaternion] = []
+	for names in [["hand_L", "Bip01 L Hand"], ["hand_R", "Bip01 R Hand"]]:
+		for name in names:
+			var bone := rig.find_bone(name)
+			if bone >= 0:
+				hands.append(bone)
+				rotations.append(rig.get_bone_pose_rotation(bone))
+				break
+	var pose := func(phase: float):
+		if not is_instance_valid(rig):
+			return
+		for index in hands.size():
+			var sign_side := -1.0 if index == 0 else 1.0
+			var twist := Quaternion(Vector3.RIGHT, sin(phase * TAU) * 0.55 * sign_side)
+			var flex := Quaternion(Vector3.FORWARD, sin(phase * PI) * 0.3)
+			rig.set_bone_pose_rotation(hands[index], rotations[index] * twist * flex)
+	_glove_tween.tween_method(pose, 0.0, 1.0, 2.4)

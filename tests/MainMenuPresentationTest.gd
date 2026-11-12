@@ -110,7 +110,7 @@ func _run() -> void:
 	wheel.button_index = MOUSE_BUTTON_WHEEL_UP
 	wheel.pressed = true
 	menu._inspection_input(wheel)
-	expect(menu._inspection_distance < 1.65, "wheel zooms in")
+	expect(menu._inspection_distance < menu._inspection_home_distance, "wheel zooms in")
 	get_tree().root.size = Vector2i(1024, 768)
 	await settle()
 	var panel := menu._arsenal_panel.get_global_rect()
@@ -127,15 +127,51 @@ func _run() -> void:
 	menu._refresh_arsenal_list()
 	var restored := menu._arsenal_list.get_selected_items()
 	expect(not restored.is_empty() and menu._arsenal_list.get_item_metadata(restored[0]) == remembered, "equipment selection survives filtering")
-	menu._load_viewer_player("sas")
-	await settle()
-	expect(menu._viewer_anim == null, "agent remains posed without weapon")
-	await capture("menu_agent_relaxed")
+	for cid in ["sas", "urban", "gsg9", "gign", "terror", "leet", "arctic", "guerilla"]:
+		menu._load_viewer_player(cid)
+		await settle()
+		expect(menu._viewer_anim == null, "agent remains posed without weapon " + cid)
+		var rig := SportGloves._find_skeleton(menu._viewer_pivot)
+		expect(rig != null, "agent rig " + cid)
+		if rig:
+			for side in ["L", "R"]:
+				var upper := rig.find_bone("arm_upper_" + side)
+				var lower := rig.find_bone("arm_lower_" + side)
+				if upper >= 0 and lower >= 0:
+					var arm := rig.global_basis * (rig.get_bone_global_pose(lower).origin - rig.get_bone_global_pose(upper).origin)
+					expect(arm.normalized().dot(Vector3.DOWN) > 0.95, "arm lowered " + cid + side)
+		if cid == "sas":
+			await capture("menu_agent_relaxed")
+	for wid in GameData.weapons:
+		menu._load_viewer_weapon(wid)
+		expect(menu._viewer_pivot.get_child_count() == 1 and menu._viewer_anim == null, "isolated static model " + String(wid))
+	var previous_skin := GameData.get_selected_weapon_skin_id("ak47")
+	GameData.select_weapon_skin("ak47", "redline")
+	menu._load_viewer_weapon("ak47")
+	await capture("menu_weapon_skin")
+	GameData.select_weapon_skin("ak47", previous_skin)
+	var previous_knife := GameData.selected_knife_id
+	menu._select_knife_for_match("karambit")
+	await capture("menu_knife_skin")
+	GameData.select_knife(previous_knife)
+	menu._load_viewer_weapon("hegrenade")
+	await capture("menu_utility")
 	menu._load_viewer_gloves()
+	var glove_rig := SportGloves._find_skeleton(menu._viewer_pivot)
+	var hand := glove_rig.find_bone("Bip01 L Hand")
+	if hand < 0:
+		hand = glove_rig.find_bone("hand_L")
+	expect(hand >= 0, "glove inspection has wrist bones")
+	var rotation := glove_rig.get_bone_pose_rotation(hand) if hand >= 0 else Quaternion.IDENTITY
 	menu._inspect_gloves()
+	for frame in range(32):
+		await get_tree().process_frame
+	if hand >= 0:
+		expect(not glove_rig.get_bone_pose_rotation(hand).is_equal_approx(rotation), "inspection moves actual wrist")
 	await capture("menu_gloves_inspect")
 	menu._show_subpanel(menu._options_panel)
 	expect(not menu._arsenal_panel.visible and menu._options_panel.visible, "only one modal visible")
+	await capture("menu_settings")
 	var escape := InputEventKey.new()
 	escape.keycode = KEY_ESCAPE
 	escape.pressed = true

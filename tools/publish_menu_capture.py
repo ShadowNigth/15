@@ -5,7 +5,7 @@ import sys
 from pathlib import Path
 from PIL import Image
 name = sys.argv[1]
-assert name in {'menu_agent_relaxed', 'menu_gloves_inspect', 'menu_home', 'menu_arsenal', 'menu_arsenal_4x3', 'menu_home_4x3'}
+assert name in {'menu_settings', 'menu_weapon_skin', 'menu_knife_skin', 'menu_utility', 'menu_agent_relaxed', 'menu_gloves_inspect', 'menu_home', 'menu_arsenal', 'menu_arsenal_4x3', 'menu_home_4x3'}
 path = Path('/tmp/menu-captures') / (name + '.png')
 if not path.exists():
     raise SystemExit(0)
