@@ -132,6 +132,8 @@ func actor_at(cid: String, pos: Vector3, classic: bool = false) -> CSBot:
 		expect(actor._ragdoll.links.size()==11,"all eleven body segments " + cid)
 		expect(actor._ragdoll.get_children().filter(func(n):return n is ConeTwistJoint3D).size()==10,"ten limited joints " + cid)
 		for link in actor._ragdoll.links:
+			var gravity: float = CS2ExperimentalPhysics.GRAVITY if CS2ExperimentalPhysics.enabled() else CSActor.GRAVITY_MPS2
+			expect(is_equal_approx(link.body.gravity_scale * float(ProjectSettings.get_setting("physics/3d/default_gravity",9.8)),gravity),"selected gravity retained " + cid)
 			expect(link.body.global_basis.get_scale().is_equal_approx(Vector3.ONE),"metric physics body " + cid)
 	return actor
 func _run() -> void:
@@ -179,7 +181,7 @@ func _run() -> void:
 	await capture("ragdoll_start")
 	for frame in 240:
 		await get_tree().physics_frame
-		if frame==50: await capture("ragdoll_falling")
+		if frame==18: await capture("ragdoll_falling")
 	await capture("ragdoll_rest")
 	for actor in [first,second]:
 		for link in actor._ragdoll.links:
@@ -191,6 +193,7 @@ func _run() -> void:
 		actor._ragdoll.apply_explosion_impulse(pelvis.global_position-Vector3(1,0,0),5,10)
 	await get_tree().physics_frame
 	expect(first._ragdoll.links[0].body.linear_velocity.length()>0.1,"impacts wake articulated corpse")
+	for frame in 15: await get_tree().physics_frame
 	await capture("ragdoll_impulse")
 	first.spawn_for_round(Vector3(0,0.1,0),0,true)
 	expect(not is_instance_valid(first._ragdoll),"respawn removes ragdoll")

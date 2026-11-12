@@ -44,6 +44,8 @@ func start(actor, skeleton: Skeleton3D, initial_velocity: Vector3, impulse: Vect
 		var body := RigidBody3D.new()
 		body.name = "Ragdoll_" + String(part[0])
 		body.mass = part[4]
+		var gravity: float = CS2ExperimentalPhysics.GRAVITY if CS2ExperimentalPhysics.enabled() else actor.GRAVITY_MPS2
+		body.gravity_scale = gravity / maxf(0.01, float(ProjectSettings.get_setting("physics/3d/default_gravity", 9.8)))
 		body.collision_layer = 4
 		body.collision_mask = 1
 		body.continuous_cd = true
