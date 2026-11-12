@@ -3,6 +3,7 @@ on:
   push:
     paths:
       - 'scripts/actors/AgentViewArms.gd'
+      - 'scripts/actors/GlovePalmRoll.gd'
       - 'scripts/ui/MainMenu.gd'
       - 'tests/GloveHandOrientationTest*'
       - 'tests/AgentViewArmsTest*'

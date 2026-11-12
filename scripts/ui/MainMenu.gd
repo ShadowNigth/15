@@ -1349,11 +1349,15 @@ func _arrange_gloves_palm_down(root: Node3D) -> void:
 	for source in SportGloves._find_meshes(root):
 		if not source.visible or source.skin == null:
 			continue
+		var display_rig := source.get_node_or_null(source.skeleton) as Skeleton3D
+		if display_rig == null:
+			continue
+		display_rig.force_update_all_bone_transforms()
 		var binds: Array[Transform3D] = []
 		for bind in source.skin.get_bind_count():
 			var name := String(source.skin.get_bind_name(bind))
-			var bone := rig.find_bone(name) if not name.is_empty() else source.skin.get_bind_bone(bind)
-			binds.append(rig.get_bone_global_pose(bone) * source.skin.get_bind_pose(bind))
+			var bone := display_rig.find_bone(name) if not name.is_empty() else source.skin.get_bind_bone(bind)
+			binds.append(display_rig.get_bone_global_pose(bone) * source.skin.get_bind_pose(bind))
 		for surface in source.mesh.get_surface_count():
 			var arrays := source.mesh.surface_get_arrays(surface)
 			var vertices: PackedVector3Array = arrays[Mesh.ARRAY_VERTEX]
