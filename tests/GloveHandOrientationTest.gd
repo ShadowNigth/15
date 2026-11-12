@@ -111,7 +111,7 @@ func _run() -> void:
 				rig.force_update_all_bone_transforms()
 				for mesh in SportGloves._find_meshes(player._vm_model_root):
 					if mesh.get_meta("agent_arms","") != "sport": continue
-					expect(mesh.get_meta("handedness","")=="anatomical-same-side-v3","new anatomical conversion active")
+					expect(mesh.get_meta("handedness","")=="exchanged-models-v4","new anatomical conversion active")
 				if choice=="original" and phase==0.5:
 					await capture("glove_"+glove+"_inspect")
 		GameData.right_hand = false

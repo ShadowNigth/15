@@ -1374,7 +1374,7 @@ func _arrange_gloves_palm_down(root: Node3D) -> void:
 			for point in vertices: bounds = bounds.expand(point)
 			var center := bounds.get_center()
 			var material := source.get_active_material(surface)
-			var side := "L" if material.resource_name.ends_with("left") else "R"
+			var side := "R" if material.resource_name.ends_with("left") else "L"
 			var prefix := "v_weapon.Bip01_" + side + "_"
 			var wrist := AgentViewArms._bone(rig, prefix + "Hand")
 			var middle := AgentViewArms._bone(rig, prefix + "Finger2")
@@ -1406,12 +1406,12 @@ func _arrange_gloves_palm_down(root: Node3D) -> void:
 			var hand := MeshInstance3D.new()
 			hand.mesh = mesh
 			hand.layers = source.layers
-			hand.position = Vector3(-center.x, center.y, center.z)
+			hand.position = center
 			hand.set_meta("arsenal_glove_pose", true)
 			hand.set_meta("home_rotation", hand.rotation)
 			root.add_child(hand)
 		source.hide()
-	root.set_meta("glove_display_pose", "swapped-palm-down")
+	root.set_meta("glove_display_pose", "exchanged-models-palm-down")
 
 func _inspect_gloves() -> void:
 	if not _glove_inspection:

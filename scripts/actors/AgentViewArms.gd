@@ -25,16 +25,28 @@ static func _bone(rig: Skeleton3D, name: String) -> int:
 	return bone if bone >= 0 else rig.find_bone(name.replace(".", "_"))
 
 static func _converted(source: MeshInstance3D, rig: Skeleton3D, model: String, avatar: String) -> Dictionary:
-	var key := model + ":" + avatar + (":rebuilt-native-v3" if avatar == "sport" else "")
+	var key := model + ":" + avatar + (":exchanged-models-v4" if avatar == "sport" else "")
 	var targets: Dictionary = catalog().get("targets", {}).get(model, {})
 	if targets.is_empty() or source.skin == null:
 		return {}
 	var transforms: Array[Transform3D] = []
 	var mapped := Skin.new()
 	var supported: Array[bool] = []
+	var source_binds: Dictionary = {}
+	for index in source.skin.get_bind_count():
+		source_binds[String(source.skin.get_bind_name(index))] = index
 	for index in source.skin.get_bind_count():
 		var name := String(source.skin.get_bind_name(index))
 		var correction := Transform3D.IDENTITY
+		if avatar == "sport" and ("_L_" in name or "_R_" in name):
+			var opposite := name.replace("_L_", "_R_") if "_L_" in name else name.replace("_R_", "_L_")
+			if not source_binds.has(opposite):
+				return {}
+			# Transfer the complete source glove's bone-local geometry to the
+			# opposite hand before applying that weapon's normal rig conversion.
+			# Material/UV identity stays with the SOURCE model, not destination.
+			correction = source.skin.get_bind_pose(int(source_binds[opposite])).affine_inverse() * source.skin.get_bind_pose(index)
+			name = opposite
 		var entry := _entry(targets, name)
 		# Unused weapon/root binds are retained but do not influence these meshes.
 		if entry.is_empty():
@@ -117,7 +129,7 @@ static func install(root: Node3D, model: String, avatar: String, native_textures
 	copy.set_meta("agent_arms", avatar)
 	if avatar == "sport":
 		copy.set_meta("sport_gloves", true)
-		copy.set_meta("handedness", "anatomical-same-side-v3")
+		copy.set_meta("handedness", "exchanged-models-v4")
 		copy.set_meta("sport_glove_id", GameData.selected_glove_id)
 	for surface in copy.mesh.get_surface_count():
 		var material := copy.mesh.surface_get_material(surface).duplicate() as BaseMaterial3D
