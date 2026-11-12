@@ -136,7 +136,7 @@ def main():
         path = ROOT/f'assets/models/weapons/{model}.glb'
         doc, blob = read_glb(path)
         mapping = config['targets']['v_knife' if model.startswith('v_knife_') else model]
-        gloves = list(primitives(ROOT/'assets/models/agent_arms/sport.glb', mapping))
+        gloves = [p for p in primitives(path) if p['material'] == 'ct_base_glove.bmp']
         weapon = list(primitives(path, omit=('ct_arms.bmp', 'ct_base_glove.bmp')))
         for avatar in ['sas', 'leet', 'phoenix_a', 'fbi']:
             sleeves = list(primitives(ROOT/f'assets/models/agent_arms/{avatar}.glb', mapping))

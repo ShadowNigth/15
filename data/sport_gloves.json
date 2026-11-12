@@ -545,13 +545,5 @@
   ],
   "rig": "Rootns Rig",
   "source": "ShadowNigth/archi/Sport_gloves",
-  "source_commit": "43b46172606a31759637c90378782390f374c1ee",
-  "cs2go_batch": {
-    "commit": "fb970df0ee8175d9b212d310f6a928f9f61014f2",
-    "count": 19,
-    "geometry": "unchanged original Sport meshes",
-    "uv_revision": "single-skin-facing-aware-512-v3",
-    "report": "res://data/cs2go_cosmetics.json"
-  },
-  "native_uv_revision": "cs2go-viewmodel-original-uv-v1"
+  "source_commit": "43b46172606a31759637c90378782390f374c1ee"
 }
