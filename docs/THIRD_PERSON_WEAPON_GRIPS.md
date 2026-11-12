@@ -28,4 +28,15 @@ Se recupera un marco anatómico con las bases de los dedos índice, medio y meñ
 
 Suite `HeldWeaponGripTest`: todos los slots en SAS/Phoenix, muestras en los otros seis agentes, todas las opciones de cuchillo, anclaje de muñeca, escalas métricas uniformes, dirección de geometría real y separación de la pieza izquierda; capturas del renderer de Godot, incluyendo cambio de postura y giro. Las hojas de contacto se generan exclusivamente a partir de esos framebuffers.
 
-Resultado renderizado pendiente. Verificación estática inicial: 59 scripts, 53 referencias, 43 armas, 26 mapas, 392 GLB y 1021 WAV, sin errores.
+[Ejecución renderizada final](https://github.com/ShadowNigth/15/actions/runs/43247021458), implementación `7036f1a5`, pruebas ampliadas `3fd5444e`: **931 comprobaciones, 0 fallos**, Godot 4.3 / GL compatibility / software GL, paso fijo 60 FPS. Incluye caminar, disparar, recargar, agacharse y girar; no son capturas limitadas a idle. El análisis offline adicional comprobó 1205 condiciones de geometría, ausencia de brazos/guantes, matrices finitas, escala uniforme y las huellas de los 65 viewmodels de origen, sin cambios en esos archivos.
+
+Verificación estática: 59 scripts, 53 referencias, 43 armas, 26 mapas, 392 GLB y 1021 WAV, sin errores. Las suites de movimiento experimental, hitboxes/precisión, escuadras, mira/HUD y movimiento/molotov/C4 también pasaron sobre la implementación `7036f1a5`. No se afirma que toda la CI del repositorio esté aprobada: la suite general de agentes y Native Godot seguían pendientes al cerrar este informe, y había fallos generales documentados antes de esta revisión. Persisten avisos del importador y de VSync.
+
+Capturas reales del renderer:
+
+- [Armas de fuego](evidence/held-grips/held_firearms.jpg).
+- [Granadas, molotov, C4 y postura agachada](evidence/held-grips/held_tools.jpg).
+- [Variantes de cuchillo, incluidas las dos Shadow Daggers](evidence/held-grips/held_knives.jpg).
+- [Caminar, disparar y recargar](evidence/held-grips/held_motion_crop.jpg): recorte de la primera fila recuperable de la hoja de contacto, cuyo envío por anotaciones quedó incompleto; no contiene imágenes generadas.
+
+Los PNG individuales originales, con mayor resolución y completos, están en el artefacto `third-person-grip-evidence` de la ejecución enlazada. Las escenas de prueba son un entorno aislado, no una grabación de una partida completa.
