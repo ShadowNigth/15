@@ -16,7 +16,7 @@ concurrency:
 jobs:
   presentation:
     runs-on: ubuntu-latest
-    timeout-minutes: 30
+    timeout-minutes: 40
     steps:
       - uses: actions/checkout@v4
       - name: Install engine and renderer
@@ -36,7 +36,7 @@ jobs:
       - name: Render all firearms utility and knife grips
         run: |
           set -o pipefail
-          LIBGL_ALWAYS_SOFTWARE=1 timeout 600s xvfb-run -a godot --path . --audio-driver Dummy --rendering-method gl_compatibility --fixed-fps 60 --resolution 960x540 res://tests/HeldWeaponGripTest.tscn 2>&1 | tee /tmp/held-grip.log
+          LIBGL_ALWAYS_SOFTWARE=1 timeout 1200s xvfb-run -a godot --path . --audio-driver Dummy --rendering-method gl_compatibility --fixed-fps 60 --resolution 960x540 res://tests/HeldWeaponGripTest.tscn 2>&1 | tee /tmp/held-grip.log
           ! grep -Eq 'SCRIPT ERROR:|Parse Error:|Compile Error:|SHADER ERROR|FAIL:' /tmp/held-grip.log
           grep -q '\[HELD GRIP\] PASS:' /tmp/held-grip.log
       - name: Diagnostics
@@ -51,14 +51,33 @@ jobs:
                   text='\n'.join(x for x in lines if any(k in x for k in ['[HELD GRIP]','SCRIPT ERROR','ERROR:',' at: ','Error:']))[-6000:]
                   print('::notice title='+name+'::'+text.replace('%','%25').replace('\n','%0A'))
           PY
-      - name: Evidence contact sheets
+      - name: Build rendered evidence sheets
         if: always()
-        run: |
-          python tools/publish_held_grips.py
-          for name in held_firearms held_tools held_knives; do
-            python tools/publish_modern_capture.py "$name" 0
-            python tools/publish_modern_capture.py "$name" 1
-          done
+        run: python tools/publish_held_grips.py
+      - name: Rendered firearms page 0
+        if: always()
+        run: python tools/publish_modern_capture.py held_firearms 0
+      - name: Rendered firearms page 1
+        if: always()
+        run: python tools/publish_modern_capture.py held_firearms 1
+      - name: Rendered tools page 0
+        if: always()
+        run: python tools/publish_modern_capture.py held_tools 0
+      - name: Rendered tools page 1
+        if: always()
+        run: python tools/publish_modern_capture.py held_tools 1
+      - name: Rendered knives page 0
+        if: always()
+        run: python tools/publish_modern_capture.py held_knives 0
+      - name: Rendered knives page 1
+        if: always()
+        run: python tools/publish_modern_capture.py held_knives 1
+      - name: Rendered motion page 0
+        if: always()
+        run: python tools/publish_modern_capture.py held_motion 0
+      - name: Rendered motion page 1
+        if: always()
+        run: python tools/publish_modern_capture.py held_motion 1
       - uses: actions/upload-artifact@v4
         if: always()
         with:

@@ -23,8 +23,8 @@ func equip(actor: CSActor, wid: String) -> void:
 	actor.weapon_ctrl.equip_weapon_by_id(wid)
 	actor._update_held_weapon_model(wid)
 	actor._modern_pose.action = ""
-	for frame in 24:
-		actor._evaluate_character_pose(1.0 / 60)
+	for frame in 3:
+		actor._evaluate_character_pose(0.12)
 	actor._skel.force_update_all_bone_transforms()
 	await get_tree().process_frame
 	actor._stabilize_held_weapon()
@@ -40,7 +40,6 @@ func equip(actor: CSActor, wid: String) -> void:
 	if int(GameData.weapons[wid].slot) in [1,2]:
 		var tip: Array = info.parts.R.tip
 		var forward := prop.global_basis * Vector3(tip[0],tip[1],tip[2])
-		print("[HELD GRIP] DIRECTION ", actor.class_id, " ", wid, " ", forward.normalized())
 		expect(forward.normalized().dot(Vector3.FORWARD) > 0.5, "actual geometry faces forward " + wid)
 	if info.parts.has("L"):
 		expect(is_instance_valid(actor._held_left_attachment), "independent left prop " + wid)
@@ -66,6 +65,15 @@ func _run() -> void:
 	sun.rotation_degrees = Vector3(-35,-30,0)
 	sun.light_energy = 1.5
 	add_child(sun)
+	var floor_body := StaticBody3D.new()
+	var collider := CollisionShape3D.new()
+	var floor_shape := BoxShape3D.new()
+	floor_shape.size = Vector3(100,0.5,100)
+	collider.shape = floor_shape
+	floor_body.position.y = -0.25
+	floor_body.add_child(collider)
+	add_child(floor_body)
+	await get_tree().physics_frame
 	for cid in GameData.modern_agents.classes:
 		var actor := CSBot.new()
 		var avatar: String = GameData.modern_agents.classes[cid]
@@ -76,6 +84,11 @@ func _run() -> void:
 		actor.set_physics_process(false)
 		actor.set_process(false)
 		actor.weapon_ctrl.set_process(false)
+		for step in 4:
+			actor.velocity = Vector3(0,-5,0)
+			actor.move_and_slide()
+			await get_tree().physics_frame
+		actor.velocity = Vector3.ZERO
 		var roster: Array = GameData.weapons.keys() if cid in ["sas","terror"] else ["ak47","awp","glock18","mp5navy","knife","hegrenade","molotov","elite"]
 		for wid in roster:
 			await equip(actor,wid)
@@ -88,12 +101,26 @@ func _run() -> void:
 				await capture("knife_"+option.id)
 			GameData.select_knife("original")
 		await equip(actor,"ak47")
+		if cid == "sas":
+			actor.velocity = Vector3(0,0,-2.0)
+			for frame in 8: actor._evaluate_character_pose(0.06)
+			await capture("walking")
+			actor.velocity = Vector3.ZERO
+			actor._modern_pose.trigger(actor,"shoot")
+			for frame in 3: actor._evaluate_character_pose(0.04)
+			await capture("firing")
+			actor.weapon_ctrl.is_reloading = true
+			actor.weapon_ctrl.reload_timer = 2.0
+			actor._modern_pose.trigger(actor,"reload")
+			for frame in 8: actor._evaluate_character_pose(0.08)
+			await capture("reload")
+			actor.weapon_ctrl.is_reloading = false
 		actor.is_crouching = true
 		actor._modern_pose.action = ""
-		for frame in 24: actor._evaluate_character_pose(1.0/60)
+		for frame in 3: actor._evaluate_character_pose(0.12)
 		actor.look_yaw = 0.5
 		actor.look_pitch = -0.25
-		for frame in 24: actor._evaluate_character_pose(1.0/60)
+		for frame in 3: actor._evaluate_character_pose(0.12)
 		if cid == "sas": await capture("crouch_turn")
 		actor.queue_free()
 		await get_tree().process_frame

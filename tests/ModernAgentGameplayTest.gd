@@ -116,7 +116,7 @@ func _run() -> void:
 			if int(GameData.weapons[wid].get("slot", 0)) in [1, 2]:
 				expect(muzzle_axis.dot(Vector3.FORWARD) > 0.80, "barrel faces actor forward " + wid)
 			if int(GameData.weapons[wid].slot) == 1:
-				var support: Array = ModernAgentPose.table(ModernAgentPose.role(actor.team, actor.class_id), wid).support
+				var support: Array = HeldWeaponGrip.support(ModernAgentPose.role(actor.team, actor.class_id), wid)
 				var target := hand * Vector3(support[0], support[1], support[2])
 				var left := actor._skel.global_transform * actor._skel.get_bone_global_pose(actor._skel.find_bone("hand_L")).origin
 				expect(target.distance_to(left) < 0.075, "support hand contacts foregrip " + wid + str(target.distance_to(left)))
@@ -129,7 +129,7 @@ func _run() -> void:
 		actor._evaluate_character_pose(1.0 / 60)
 		expect(absf(actor._body_root.rotation.y - actor.look_yaw) < 0.001, "same-frame turn orientation")
 		var turn_hand := actor._skel.global_transform * actor._skel.get_bone_global_pose(actor._skel.find_bone("hand_R"))
-		var turn_support: Array = ModernAgentPose.table(ModernAgentPose.role(actor.team, actor.class_id), "ak47").support
+		var turn_support: Array = HeldWeaponGrip.support(ModernAgentPose.role(actor.team, actor.class_id), "ak47")
 		var turn_target := turn_hand * Vector3(turn_support[0], turn_support[1], turn_support[2])
 		var turn_left := actor._skel.global_transform * actor._skel.get_bone_global_pose(actor._skel.find_bone("hand_L")).origin
 		expect(turn_left.distance_to(turn_target) < 0.075, "support grip stays attached during sharp aimed turn")
@@ -167,7 +167,7 @@ func _run() -> void:
 		var crouch_hand := actor._skel.global_transform * actor._skel.get_bone_global_pose(actor._skel.find_bone("hand_R"))
 		var crouch_axis := (crouch_hand.basis * ModernAgentPose.socket_basis(ModernAgentPose.role(actor.team, actor.class_id), "ak47") * Vector3.FORWARD).normalized()
 		expect(crouch_axis.dot(Vector3.FORWARD) > 0.8, "crouched muzzle remains aimed forward, not into floor")
-		var crouch_support: Array = ModernAgentPose.table(ModernAgentPose.role(actor.team, actor.class_id), "ak47").support
+		var crouch_support: Array = HeldWeaponGrip.support(ModernAgentPose.role(actor.team, actor.class_id), "ak47")
 		var crouch_left := actor._skel.global_transform * actor._skel.get_bone_global_pose(actor._skel.find_bone("hand_L")).origin
 		expect(crouch_left.distance_to(crouch_hand * Vector3(crouch_support[0], crouch_support[1], crouch_support[2])) < 0.075, "crouched foregrip contact")
 	await capture("modern_live_crouch")

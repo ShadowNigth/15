@@ -3,6 +3,7 @@ from PIL import Image, ImageDraw
 from pathlib import Path
 root=Path('/tmp/modern-captures')
 groups={
+ 'motion':['walking','firing','reload','crouch_turn','phoenix_mp5navy','phoenix_tec9','phoenix_knife','phoenix_molotov','elite'],
  'firearms':['ak47','m4a1','awp','mp5navy','tec9','mag7','glock18','elite','m249'],
  'tools':['hegrenade','flashbang','smokegrenade','molotov','incendiary','decoy','knife','c4','crouch_turn'],
  'knives':['knife_karambit','knife_m9','knife_bayonet','knife_push','knife_butterfly','knife_talon','knife_kukri','knife_css','knife_stiletto']}
