@@ -92,6 +92,7 @@ var _death_anim_key: String = ""
 var _death_anim_time: float = 0.0
 var _death_from_pos: Array[Vector3] = []
 var _death_from_rot: Array[Quaternion] = []
+var _ragdoll: ActorRagdoll = null
 var _corpse_vel: Vector3 = Vector3.ZERO
 var _corpse_settled: bool = true
 var _corpse_blood_spawned: bool = false
@@ -147,6 +148,7 @@ func set_team_and_class(new_team: String, new_class: String) -> void:
 
 
 func _rebuild_character_model() -> void:
+	_clear_ragdoll()
 	# Only scale presentation, never the CharacterBody movement hull or camera.
 	_body_root.scale = Vector3.ONE
 	_classic_pose_fit.restore()
@@ -480,6 +482,9 @@ func _tick_corpse_grounding(delta: float) -> void:
 
 
 func _evaluate_character_pose(delta: float) -> void:
+	if not is_alive and is_instance_valid(_ragdoll):
+		_ragdoll.sync_pose()
+		return
 	if _modern_pose != null:
 		_modern_pose.tick(self, delta)
 		return
@@ -741,6 +746,7 @@ func _find_anim(n: Node) -> AnimationPlayer:
 
 
 func spawn_for_round(pos: Vector3, yaw_rad: float, reset_weapons: bool) -> void:
+	_clear_ragdoll()
 	var was_alive := is_alive
 	if is_human:
 		AudioManager.play_2d(AudioManager.cue_path("respawn"), -8.0)
@@ -1413,10 +1419,29 @@ func _die(killer: Node3D, weapon_id: String, headshot: bool, kill_context: Dicti
 				_death_anim_key = "left" if dr > 0.0 else "right"
 	if _death_anim_key.is_empty() or not _anim_res_map.has(_death_anim_key):
 		_death_anim_key = "death%d" % randi_range(1, 3)
-	_evaluate_character_pose(0.0)
+	var push := Vector3.ZERO
+	if is_instance_valid(killer) and killer != self:
+		push = (global_position - killer.global_position).normalized() * (35.0 if headshot else 22.0)
+	if is_instance_valid(_skel):
+		_ragdoll = ActorRagdoll.new()
+		add_child(_ragdoll)
+		if _ragdoll.start(self, _skel, velocity, push + Vector3.UP * 5.0):
+			_corpse_settled = true
+		else:
+			_clear_ragdoll()
+	if not is_instance_valid(_ragdoll):
+		_evaluate_character_pose(0.0)
 
 	RoundManager.notify_actor_killed(self, killer, weapon_id, headshot, kill_context)
 	actor_died.emit(self, killer)
+
+
+func _clear_ragdoll() -> void:
+	if is_instance_valid(_ragdoll):
+		_ragdoll.stop()
+		remove_child(_ragdoll)
+		_ragdoll.queue_free()
+	_ragdoll = null
 
 
 func drop_current_weapon() -> void:

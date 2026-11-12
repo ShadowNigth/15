@@ -766,6 +766,10 @@ func _fire_penetrating_ray(
 		if col is Area3D and col.has_meta("bullet_actor"):
 			col = col.get_meta("bullet_actor")
 
+		if col is RigidBody3D and col.has_meta("actor_ragdoll"):
+			col.get_meta("actor_ragdoll").apply_bullet_impulse(col, hit_pos, dir, dmg_at_dist)
+			break
+
 		if col is DroppedWeapon:
 			(col as DroppedWeapon).apply_bullet_impulse(hit_pos, dir, dmg_at_dist)
 			if is_instance_valid(RoundManager.game_world):
@@ -998,6 +1002,9 @@ func _swing_knife(heavy_stab: bool) -> void:
 	if col is Area3D and col.has_meta("bullet_actor"):
 		col = col.get_meta("bullet_actor")
 	var hpos: Vector3 = hit["position"]
+	if col is RigidBody3D and col.has_meta("actor_ragdoll"):
+		col.get_meta("actor_ragdoll").apply_bullet_impulse(col, hpos, dir, 55.0 if heavy_stab else 28.0)
+		return
 	if col is DroppedWeapon:
 		(col as DroppedWeapon).apply_bullet_impulse(hpos, dir, 55.0 if heavy_stab else 28.0)
 		return

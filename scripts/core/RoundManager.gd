@@ -178,6 +178,8 @@ func unregister_smoke_volume(vol: Node3D) -> void:
 
 
 func apply_world_explosion_physics(blast_pos: Vector3, blast_radius: float, weapon_peak_speed: float = 16.5, smoke_strength: float = 1.0) -> void:
+	for ragdoll in get_tree().get_nodes_in_group("actor_ragdolls"):
+		ragdoll.apply_explosion_impulse(blast_pos, blast_radius, weapon_peak_speed)
 	for item in dropped_items:
 		if is_instance_valid(item) and item.has_method("apply_explosion_impulse"):
 			item.call("apply_explosion_impulse", blast_pos, blast_radius, weapon_peak_speed)

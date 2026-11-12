@@ -2,7 +2,7 @@ class_name DroppedWeapon
 extends StaticBody3D
 ## Interactive physical dropped weapon / grenade / C4 backpack / Defuse thighpack on the ground.
 ## Features:
-##   - Exact mesh-AABB geometric centering & per-weapon rotated BoxShape3D hitbox on Layer 4
+##   - Mesh-triangle centering and exact rotated surface collision on Layer 4
 ##   - Substepped 3D swept sphere continuous collision (cast_motion + get_rest_info depenetration) on Layer 1
 ##   - Oriented barrel/stock/flank endpoint wall & crate push-out with natural wall-parallel yaw torque
 ##   - 3-point floor/stair/ramp support (stock + receiver + muzzle) so long rifles never clip into steps/slopes
@@ -13,6 +13,7 @@ var clip_ammo: int = 0
 var reserve_ammo: int = 0
 var silenced: bool = false
 
+static var _collision_cache: Dictionary = {}
 var _visual_root: Node3D = null
 var _hit_col: CollisionShape3D = null
 var _hit_box: BoxShape3D = null
@@ -99,10 +100,21 @@ func setup_drop(id: String, clip: int, reserve: int, throw_vel: Vector3, is_sile
 		var raw_aabb := _compute_local_mesh_aabb(inst, Transform3D.IDENTITY)
 		if raw_aabb.size.length_squared() > 0.0001:
 			var center_local: Vector3 = raw_aabb.position + raw_aabb.size * 0.5
-			inst.scale = Vector3.ONE * mdl_scale
-			inst.position = -center_local * mdl_scale
+			# Premultiply: retain authored root rotation/scale (notably the native kit).
+			inst.transform = Transform3D(Basis.IDENTITY.scaled(Vector3.ONE * mdl_scale), -center_local * mdl_scale) * inst.transform
 			_half_extents = (raw_aabb.size * mdl_scale) * 0.5
 		_visual_root.add_child(inst)
+		var cache_key := sc.resource_path + ":" + str(mdl_scale)
+		if not _collision_cache.has(cache_key):
+			var faces := PackedVector3Array()
+			_collect_mesh_faces(inst, Transform3D.IDENTITY, faces)
+			if not faces.is_empty():
+				var exact := ConcavePolygonShape3D.new()
+				exact.set_faces(faces)
+				exact.backface_collision = true
+				_collision_cache[cache_key] = exact
+		if _collision_cache.has(cache_key):
+			_hit_col.shape = _collision_cache[cache_key]
 	else:
 		var mi := MeshInstance3D.new()
 		mi.layers = 2
@@ -118,13 +130,10 @@ func setup_drop(id: String, clip: int, reserve: int, throw_vel: Vector3, is_sile
 	if _core_shape != null:
 		_core_shape.radius = _core_radius
 
-	# Fit bullet/knife Layer-4 BoxShape3D tightly to the centered weapon with generous vertical/lateral grab margin
-	if _hit_box != null:
-		_hit_box.size = Vector3(
-			maxf(0.22, _half_extents.x * 2.04),
-			maxf(0.13, _half_extents.y * 2.35 + 0.05),
-			maxf(0.18, _half_extents.z * 2.08)
-		)
+	# Pickups retain their independent proximity rule. Bullet/knife rays use
+	# the actual triangles, never an enlarged pickup box around empty space.
+	if _hit_col.shape == _hit_box:
+		_hit_box.size = _half_extents * 2.0
 
 	# Soft floor contact shadow quad so dropped weapons & grenades sit visibly grounded on surfaces
 	_shadow_mi = MeshInstance3D.new()
@@ -142,6 +151,17 @@ func setup_drop(id: String, clip: int, reserve: int, throw_vel: Vector3, is_sile
 	add_child(_shadow_mi)
 
 	_sync_visual_and_hitbox()
+
+
+func _collect_mesh_faces(node: Node, parent_transform: Transform3D, faces: PackedVector3Array) -> void:
+	var xf := parent_transform
+	if node is Node3D:
+		xf *= (node as Node3D).transform
+	if node is MeshInstance3D and (node as MeshInstance3D).mesh != null:
+		for vertex in (node as MeshInstance3D).mesh.get_faces():
+			faces.append(xf * vertex)
+	for child in node.get_children():
+		_collect_mesh_faces(child, xf, faces)
 
 
 func _compute_local_mesh_aabb(node: Node, accum_xf: Transform3D) -> AABB:
