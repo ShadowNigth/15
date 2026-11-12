@@ -2,7 +2,7 @@ class_name WeaponController
 extends Node
 ## Authentic Counter-Strike 1.5 weapon mechanics:
 ##   - Exact cs_i386.so GetMaxSpeed, cycle_time, damage, armor_ratio, range_modifier
-##   - Cubic spray accuracy (shots_fired^3 / 200) + recoil punch kickback
+##   - Bounded stance/movement accuracy, deterministic weapon spray and timed recovery
 ##   - Detachable silencer (M4A1, USP), Glock18 3-round burst, Sniper/Tactical zoom
 ##   - Pump/Auto shotgun shell-by-shell reload interruptible by firing
 ##   - Wallbang bullet penetration, Knife slash & 195-dmg backstab, Grenades, C4 plant
@@ -40,6 +40,8 @@ var is_reloading: bool = false
 var is_attaching_silencer: bool = false
 var shots_fired: int = 0
 var decay_timer: float = 0.0
+var accuracy_heat: float = 0.0
+var _accuracy_rng := RandomNumberGenerator.new()
 var burst_remaining: int = 0
 var burst_tick: float = 0.0
 ## Which shot of the current Glock burst (1..3) — cycles shoot/shoot2/shoot3
@@ -62,6 +64,7 @@ var punch_angles: Vector2 = Vector2.ZERO
 
 func setup_for_actor(owner_actor: CharacterBody3D) -> void:
 	actor = owner_actor
+	_accuracy_rng.randomize()
 
 
 func reset_loadout(team: String, is_vip: bool = false) -> void:
@@ -97,6 +100,8 @@ func _reset_states() -> void:
 	reload_timer = 0.0
 	fire_cooldown = 0.0
 	shots_fired = 0
+	accuracy_heat = 0.0
+	decay_timer = 0.0
 	burst_remaining = 0
 	_revolver_windup = 0.0
 	revolver_alt_fire = false
@@ -256,11 +261,17 @@ func _process(delta: float) -> void:
 	if not is_instance_valid(actor) or not bool(actor.get("is_alive")):
 		return
 
-	# Smooth recoil punch recovery
-	if fire_cooldown <= 0.0:
-		punch_angles *= exp(-11.0 * delta)
-		if punch_angles.length_squared() < 0.00001:
-			punch_angles = Vector2.ZERO
+	# Recovery is based on time since the actual shot, never frame/cooldown edges.
+	var previous_idle := decay_timer
+	decay_timer += maxf(delta, 0.0)
+	var recovery_dt := maxf(0.0, decay_timer - 0.16) - maxf(0.0, previous_idle - 0.16)
+	if recovery_dt > 0:
+		punch_angles *= exp(-6.5 * recovery_dt)
+		accuracy_heat *= exp(-5.0 * recovery_dt)
+		if punch_angles.length_squared() < 0.00001: punch_angles = Vector2.ZERO
+		if accuracy_heat < 0.10:
+			accuracy_heat = 0.0
+			shots_fired = 0
 
 	if fire_cooldown > 0.0:
 		fire_cooldown -= delta
@@ -304,13 +315,6 @@ func _process(delta: float) -> void:
 			burst_tick = float(burst_spec.get("burst_interval", 0.055))
 			glock_burst_frame += 1
 			_execute_bullet_shot(burst_spec, true)
-
-	# Decay shots_fired when not shooting
-	if fire_cooldown <= 0.0 and shots_fired > 0:
-		decay_timer += delta
-		if decay_timer >= 0.22:
-			decay_timer = 0.0
-			shots_fired = maxi(0, shots_fired - 2)
 
 	# Reloading / Silencer toggle timer
 	if is_reloading or is_attaching_silencer:
@@ -634,6 +638,7 @@ func _execute_bullet_shot(spec: Dictionary, is_burst_subshot: bool) -> void:
 	var shot_context := KillContext.capture(actor, spec, zoom_index)
 	clips[current_weapon_id] = cur_clip - 1
 	shots_fired += 1
+	accuracy_heat = minf(20.0, accuracy_heat + 1.0)
 	decay_timer = 0.0
 
 	var is_revolver_alt := current_weapon_id == "revolver" and revolver_alt_fire
@@ -667,21 +672,8 @@ func _execute_bullet_shot(spec: Dictionary, is_burst_subshot: bool) -> void:
 	_spawn_brass_casing(spec)
 	_emit_ammo()
 
-	# Calculate authentic CS 1.5 spread
-	var spread := float(spec.get("alt_spread", spec.get("spread_base", 0.01))) if is_revolver_alt else float(spec.get("spread_base", 0.01))
-	if bool(spec.get("sniper_scope", false)) and zoom_index == -1:
-		spread = float(spec.get("spread_unscoped", 0.06))
 	var horiz_spd := Vector2(actor.velocity.x, actor.velocity.z).length() / GameData.SCALE
-	if horiz_spd > 15.0:
-		spread += float(spec.get("spread_move", 0.07)) * clampf(horiz_spd / 220.0, 0.2, 1.35)
-	if not actor.is_on_floor():
-		spread *= 2.35
-	elif bool(actor.get("is_crouching")):
-		spread *= 0.68
-
-	# Cubic spray inaccuracy from cs_i386.so!
-	var cubic := float(shots_fired * shots_fired * shots_fired) / 210.0
-	spread += clampf(cubic * 0.0085, 0.0, 0.075)
+	var spread := WeaponAccuracy.cone(spec, horiz_spd, actor.is_on_floor(), bool(actor.get("is_crouching")), zoom_index >= 0, accuracy_heat, is_revolver_alt)
 
 	var pellets := int(spec.get("pellets", 1))
 	var base_dmg := float(spec.get("silenced_damage", spec.get("damage", 30))) if is_sil else float(spec.get("damage", 30))
@@ -696,8 +688,9 @@ func _execute_bullet_shot(spec: Dictionary, is_burst_subshot: bool) -> void:
 	var aim_basis: Basis = actor.call("get_aim_basis", punch_angles)
 
 	for _p in range(pellets):
-		var rx := randfn(0.0, spread)
-		var ry := randfn(0.0, spread)
+		var offset := WeaponAccuracy.sample_disk(_accuracy_rng, spread)
+		var rx := offset.x
+		var ry := offset.y
 		var dir := (-aim_basis.z + aim_basis.x * rx + aim_basis.y * ry).normalized()
 		_fire_penetrating_ray(eye_pos, dir, max_range_m, base_dmg, armor_ratio, range_mod, pen, shot_context)
 
@@ -706,6 +699,7 @@ func _execute_bullet_shot(spec: Dictionary, is_burst_subshot: bool) -> void:
 			"physics_frame": Engine.get_physics_frames(), "clip_before": cur_clip,
 			"clip_after": int(clips[current_weapon_id]), "sound": shot_sound,
 			"eye": eye_pos, "aim": -aim_basis.z, "pellets": pellets,
+			"cone": spread, "heat": accuracy_heat, "recoil": punch_angles,
 			"burst_followup": is_burst_subshot, "silenced": is_sil})
 
 	# Reproducible spray and stance response, separate from random spread.

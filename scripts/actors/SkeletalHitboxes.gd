@@ -43,7 +43,9 @@ func setup(owner_actor: Node3D, rig: Skeleton3D, visual_scale: float = 1.0) -> v
 		shape.height = shape.radius * 2.0
 		collider.shape = shape
 		area.add_child(collider)
-		entries.append({"area": area, "shape": shape, "a": first, "b": second, "radius": shape.radius})
+		entries.append({"area": area, "shape": shape, "a": first, "b": second, "radius": shape.radius, "hitgroup": int(region[3])})
+		if int(region[3]) == 1:
+			fit_head(entries[-1])
 	sync_pose()
 
 func sync_pose() -> void:
@@ -55,14 +57,77 @@ func sync_pose() -> void:
 		area.collision_layer = 16 if actor.is_alive else 0
 		var a: Vector3 = skeleton.global_transform * skeleton.get_bone_global_pose(entry["a"]).origin
 		var b: Vector3 = skeleton.global_transform * skeleton.get_bone_global_pose(entry["b"]).origin
-		if entry["a"] == entry["b"]:
-			a += Vector3.UP * 0.035 * body_scale
+		if entry.has("head_center"):
+			var frame := skeleton.global_transform * skeleton.get_bone_global_pose(entry["a"])
+			var center: Vector3 = frame * entry["head_center"]
+			var axis: Vector3 = (frame.basis * entry["head_axis"]).normalized()
+			a = center - axis * float(entry["head_segment"]) * 0.5
+			b = center + axis * float(entry["head_segment"]) * 0.5
+		elif entry["a"] == entry["b"]:
+			# Fallback offset rotates with the head, not with world-up.
+			var frame := skeleton.global_transform * skeleton.get_bone_global_pose(entry["a"])
+			a = frame * Vector3(0, 0.035, 0)
 			b = a
 		var distance := a.distance_to(b)
 		var shape: CapsuleShape3D = entry["shape"]
 		shape.height = maxf(entry["radius"] * 2.0, distance + entry["radius"] * 2.0)
 		var rotation := Quaternion(Vector3.UP, (b - a).normalized()) if distance > 0.0001 else Quaternion.IDENTITY
 		area.global_transform = Transform3D(Basis(rotation), (a + b) * 0.5)
+
+func fit_head(entry: Dictionary) -> void:
+	var head: int = entry["a"]
+	var bounds := AABB()
+	var samples := 0
+	var rest_inverse := skeleton.get_bone_global_rest(head).affine_inverse()
+	for raw in actor._body_root.find_children("*", "MeshInstance3D", true, false):
+		var mesh := raw as MeshInstance3D
+		if mesh.skin == null or mesh.mesh == null or mesh.has_meta("first_person_lower_body"):
+			continue
+		var head_bindings: Array[bool] = []
+		for bind in mesh.skin.get_bind_count():
+			var name := String(mesh.skin.get_bind_name(bind))
+			var bone := skeleton.find_bone(name) if not name.is_empty() else mesh.skin.get_bind_bone(bind)
+			var descendant := bone == head
+			while bone >= 0 and not descendant:
+				bone = skeleton.get_bone_parent(bone)
+				descendant = bone == head
+			head_bindings.append(descendant)
+		var transform := rest_inverse * skeleton.global_transform.affine_inverse() * mesh.global_transform
+		for surface in mesh.mesh.get_surface_count():
+			var arrays := mesh.mesh.surface_get_arrays(surface)
+			var vertices: PackedVector3Array = arrays[Mesh.ARRAY_VERTEX]
+			var bones: PackedInt32Array = arrays[Mesh.ARRAY_BONES]
+			var weights: PackedFloat32Array = arrays[Mesh.ARRAY_WEIGHTS]
+			if bones.is_empty(): continue
+			var stride: int = bones.size() / maxi(1, vertices.size())
+			for vertex in vertices.size():
+				var influence := 0.0
+				for slot in stride:
+					var offset := vertex * stride + slot
+					if bones[offset] < head_bindings.size() and head_bindings[bones[offset]]:
+						influence += weights[offset]
+				if influence < 0.65: continue
+				var point := transform * vertices[vertex]
+				bounds = AABB(point, Vector3.ZERO) if samples == 0 else bounds.expand(point)
+				samples += 1
+	if samples < 12: return
+	var scale := (skeleton.global_transform * skeleton.get_bone_global_rest(head)).basis.get_scale().abs()
+	var size := bounds.size * scale
+	var axis_index := size.max_axis_index()
+	var axis := Vector3.ZERO
+	axis[axis_index] = 1.0
+	var widths: Array[float] = []
+	for index in 3:
+		if index != axis_index: widths.append(size[index])
+	var radius := clampf(maxf(widths[0], widths[1]) * 0.48, 0.065 * body_scale, 0.145 * body_scale)
+	var height := clampf(size[axis_index], radius * 2.0, 0.34 * body_scale)
+	entry["radius"] = radius
+	entry["head_center"] = bounds.get_center()
+	entry["head_axis"] = axis
+	entry["head_segment"] = maxf(0, height - radius * 2.0)
+	entry["fitted_vertices"] = samples
+	(entry["shape"] as CapsuleShape3D).radius = radius
+
 
 static func exclusions(tree: SceneTree, shooter: CollisionObject3D) -> Array[RID]:
 	var result: Array[RID] = [shooter.get_rid()]

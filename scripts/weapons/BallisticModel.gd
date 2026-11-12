@@ -35,11 +35,25 @@ static func find_exit(space: PhysicsDirectSpaceState3D, entry: Dictionary, direc
 static func damage_retention(profile_value: Vector2, thickness: float) -> float:
 	return clampf(profile_value.y * (1.0 - 0.65 * thickness / maxf(0.001, profile_value.x)), 0.05, 0.95)
 
-static func spray_kick(spec: Dictionary, shot: int, crouching: bool, alternate: bool = false) -> Vector2:
+static func spray_target(spec: Dictionary, shot: int, alternate: bool = false) -> Vector2:
+	if shot <= 0: return Vector2.ZERO
 	var up := float(spec.get("alt_recoil", spec.get("recoil_up", 1.8))) if alternate else float(spec.get("recoil_up", 1.8))
 	var side := float(spec.get("recoil_lat", 0.5))
-	# Reproducible per-weapon lateral reversals; spread remains independent.
-	var identity := int(String(spec.get("id", "weapon")).hash() & 255)
-	var phase := float(shot - 1) * 0.63 + float(identity) * 0.11
+	var key := String(spec.get("id", ""))
+	var knots := [0.0, 0.08, -0.35, 1.5, -1.6, 1.8, -0.7]
+	if key == "ak47": knots = [0.0, 0.1, -0.3, 2.0, -2.0, 2.5, -1.2]
+	elif key in ["m4a1", "m4a4", "aug", "sg552"]: knots = [0.0, 0.05, 0.3, -1.3, 1.8, -1.0, 0.8]
+	var times := [0, 3, 7, 12, 17, 23, 30]
+	var yaw := 0.0
+	for index in range(1, times.size()):
+		if shot <= times[index]:
+			yaw = lerpf(knots[index - 1], knots[index], float(shot - times[index - 1]) / float(times[index] - times[index - 1]))
+			break
+	if shot > 30:
+		yaw = float(knots[-1]) + 0.8 * sin(float(shot - 30) * 0.4)
+	var pitch := up * 3.0 * (1.0 - exp(-float(shot) * 0.18))
+	return Vector2(pitch, yaw * side)
+
+static func spray_kick(spec: Dictionary, shot: int, crouching: bool, alternate: bool = false) -> Vector2:
 	var factor := 0.80 if crouching else 1.0
-	return Vector2(up * lerpf(0.72, 1.0, minf(1.0, float(shot) / 8.0)), side * sin(phase)) * factor
+	return (spray_target(spec, shot, alternate) - spray_target(spec, shot - 1, alternate)) * factor
