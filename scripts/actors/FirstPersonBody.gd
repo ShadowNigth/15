@@ -1,6 +1,6 @@
 class_name FirstPersonBody
 extends RefCounted
-## Local pelvis/legs copying the actual agent's exact skeletal pose.
+## Local continuous abdomen/legs copying the actual agent's exact skeletal pose.
 ## No extra animation clock, movement hull, arms, head or first-person gloves.
 const LOCAL_LAYER := 8
 const HIDDEN_BODY_LAYER := 16
@@ -9,13 +9,13 @@ var parts: Array[MeshInstance3D] = []
 var sources: Array[MeshInstance3D] = []
 var source_rig: Skeleton3D = null
 var local_rig: Skeleton3D = null
-const CAMERA_BODY_OFFSET := 0.12
+const CAMERA_BODY_OFFSET := 0.32
 var _alive := false
 var _initialized := false
 
 static func lower_bone(name: String) -> bool:
 	var lower := name.to_lower()
-	return lower == "pelvis" or lower == "spine_0" or lower.ends_with(" spine") or lower.begins_with("leg_") or lower.begins_with("ankle_") or lower.begins_with("toe_") or lower.begins_with("ball_") or lower.ends_with(" pelvis") or lower.ends_with(" thigh") or lower.ends_with(" calf") or lower.ends_with(" foot") or "toe0" in lower
+	return lower == "pelvis" or lower.begins_with("spine_") or lower.ends_with(" spine") or " spine1" in lower or " spine2" in lower or lower.begins_with("leg_") or lower.begins_with("ankle_") or lower.begins_with("toe_") or lower.begins_with("ball_") or lower.ends_with(" pelvis") or lower.ends_with(" thigh") or lower.ends_with(" calf") or lower.ends_with(" foot") or "toe0" in lower
 
 static func filtered(source: MeshInstance3D, rig: Skeleton3D) -> ArrayMesh:
 	if source.mesh == null or source.skin == null:

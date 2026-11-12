@@ -116,7 +116,7 @@ func run() -> void:
 	get_tree().quit(0 if failures == 0 else 1)
 
 func test_lower_body() -> void:
-	expect(not FirstPersonBody.lower_bone("spine_2"), "upper chest excluded from look-down camera")
+	expect(FirstPersonBody.lower_bone("spine_2"), "continuous torso prevents an exposed waist opening")
 	expect(FirstPersonBody.lower_bone("spine_0"), "lower abdomen remains attached to pelvis")
 	expect(not FirstPersonBody.lower_bone("clavicle_L"), "shoulder equipment excluded")
 	expect(not GameData.select_glove("cs2go_5030_10046"), "removed native gloves cannot be equipped")
