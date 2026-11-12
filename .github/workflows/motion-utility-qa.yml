@@ -57,13 +57,16 @@ jobs:
         run: python tools/publish_modern_capture.py c4_digits_15
       - name: C4 LCD final code
         if: always()
-        run: python tools/publish_modern_capture.py c4_digits_29
+        run: python tools/publish_modern_capture.py c4_digits_17
       - name: Green molotov
         if: always()
         run: python tools/publish_modern_capture.py molotov_green
       - name: Crouch jump
         if: always()
-        run: python tools/publish_modern_capture.py motion_crouch_jump
+        run: python tools/publish_modern_capture.py motion_crouch_jump_mid
+      - name: Normal jump
+        if: always()
+        run: python tools/publish_modern_capture.py motion_jump
       - name: Diagonal locomotion
         if: always()
         run: python tools/publish_modern_capture.py motion_diagonal

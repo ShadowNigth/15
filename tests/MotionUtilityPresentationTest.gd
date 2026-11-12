@@ -17,10 +17,10 @@ func capture(label: String) -> void:
 	await RenderingServer.frame_post_draw
 	DirAccess.make_dir_recursive_absolute("/tmp/modern-captures")
 	expect(get_viewport().get_texture().get_image().save_png("/tmp/modern-captures/" + label + ".png") == OK, "capture " + label)
-func step(actor: CSActor, direction: Vector3, jump: bool, crouch: bool, count: int) -> void:
+func step(actor: CSActor, direction: Vector3, jump: bool, crouch: bool, count: int, walking: bool = false) -> void:
 	for frame in count:
 		await get_tree().physics_frame
-		actor.apply_goldsrc_movement(direction, jump and frame == 0, crouch, false, 1.0 / 60)
+		actor.apply_goldsrc_movement(direction, jump and frame == 0, crouch, walking, 1.0 / 60)
 		actor._evaluate_character_pose(1.0 / 60)
 func run() -> void:
 	RoundManager.set_process(false)
@@ -71,6 +71,14 @@ func run() -> void:
 			if info.id == "sas":
 				camera.look_at_from_position(actor.global_position + Vector3(3, 1.9, -4), actor.global_position + Vector3.UP)
 				await capture("motion_diagonal")
+			await step(actor, Vector3.FORWARD, false, false, 25, true)
+			expect(actor._modern_pose.selected_gait.begins_with("walk_"), "slow walking uses native walk " + info.id)
+			await step(actor, Vector3.FORWARD, true, false, 8)
+			expect(not actor.is_on_floor() and actor._modern_pose.selected_gait.begins_with("jump_"), "normal forward takeoff " + info.id)
+			if info.id == "sas":
+				camera.look_at_from_position(actor.global_position + Vector3(3, 1.9, -4), actor.global_position + Vector3.UP)
+				await capture("motion_jump")
+			await step(actor, Vector3.ZERO, false, false, 60)
 			await step(actor, Vector3.ZERO, false, true, 20)
 			expect("crouch" in actor._modern_pose.selected_gait, "crouched gait " + info.id)
 			if info.id == "sas":
@@ -81,6 +89,10 @@ func run() -> void:
 			if info.id == "sas":
 				camera.look_at_from_position(actor.global_position + Vector3(3, 1.9, -4), actor.global_position + Vector3.UP)
 				await capture("motion_crouch_jump")
+			await step(actor, Vector3.FORWARD, false, true, 6)
+			if info.id == "sas":
+				camera.look_at_from_position(actor.global_position + Vector3(3, 1.9, -4), actor.global_position + Vector3.UP)
+				await capture("motion_crouch_jump_mid")
 			await step(actor, Vector3.ZERO, false, false, 60)
 			expect(actor.is_on_floor(), "landed " + info.id)
 			# While falling for longer than a clip, never wrap back into takeoff.
@@ -102,9 +114,9 @@ func run() -> void:
 	expect(player._c4_display != null, "actual C4 has omitted native LCD mesh")
 	player.play_viewmodel_sequence(["pressbutton"])
 	player._vm_anim.pause()
-	for t in [0.0, 1.5, 2.9]:
+	for t in [0.0, 1.5, 1.7, 2.9]:
 		player.weapon_ctrl.plant_progress = t
-		player._vm_anim.seek(t, true)
+		player._vm_anim.seek(t * player._vm_anim.get_animation("pressbutton").length / 3.0, true)
 		player._c4_display.set_progress(t)
 		expect(player._c4_display.row >= 0, "LCD row " + str(t))
 		await capture("c4_digits_" + str(int(t * 10)))

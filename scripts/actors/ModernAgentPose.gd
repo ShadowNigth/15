@@ -186,7 +186,7 @@ func tick(actor, delta: float) -> void:
 	elif not actor.is_on_floor():
 		var stance := "crouch_stand_" if actor.is_crouching else "stand_"
 		selected_gait = ("jump_" if actor.velocity.y > 0.4 else "inair_") + stance + family
-		if actor.velocity.y > 0.4 and not actor.is_crouching and speed > 0.8:
+		if actor.velocity.y > 0.4 and not actor.is_crouching and speed > 0.8 and local.z < -0.4:
 			selected_gait = "jump_n_" + family
 	elif actor.is_crouching:
 		selected_gait = "crouch_" + _direction + "_" + family if speed > 0.3 else "idle_crouch_" + family
