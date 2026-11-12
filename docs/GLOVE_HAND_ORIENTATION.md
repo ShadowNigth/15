@@ -1,26 +1,15 @@
-# Intercambio anatómico de los guantes Sport nuevos
+# Reconstrucción de los guantes Sport
 
-## Problema señalado
+La conversión anterior fue rechazada visualmente por el usuario. Se elimina el intercambio de huesos y la reflexión de la palma introducidos en esa revisión; sus resultados técnicos no se consideran aprobación visual.
 
-La captura del usuario corresponde a la inspección de Bronze Morph en el Arsenal. La revisión anterior cambiaba L/R en los binds y trasladaba los vértices a la mano contraria, pero conservaba su orientación local de origen. Cambiar los índices y posiciones de los huesos no cambia la quiralidad de una mano: puede conservar el pulgar/palma del lado incorrecto.
+## Implementación nueva
 
-## Cambio
+`python -m tools.source.rebuild_native_sport` reconstruye `assets/models/agent_arms/sport.glb` desde el mesh **viewmodel** original de `models/gloves/5030.glb` de cs2go, revisión fijada en el importador. No mezcla el mesh worldmodel ni reutiliza los vértices del Sport convertido anteriormente.
 
-`AgentViewArms` mantiene el intercambio completo de las manos de los Sport nuevos, pero ahora calcula un marco anatómico en cada muñeca y falange:
+La calibración usa muñeca, índice, meñique y segmentos reales de los dedos para crear bases anatómicas completas en origen y destino. Evita inferir la rotación únicamente a partir de ejes longitudinales casi paralelos de los dedos, que dejan ambiguo el giro de palma/dorso. La base completa de la palma se expresa en coordenadas locales de la muñeca para calibrar las convenciones de los huesos, sin orientar cada falange por separado. Conserva correspondencia del mismo lado, UVs, pesos, matrices de bind y materiales nativos. El factor de unidades sigue siendo el del paquete dedicado.
 
-- Eje longitudinal siguiendo la cadena del dedo.
-- Eje lateral a partir del índice y meñique.
-- Eje perpendicular de palma/dorso, que se refleja para cambiar la quiralidad al pasar a la mano opuesta.
-- Anclaje en el hueso de destino; se mantienen los pesos de cada vértice vinculados al dedo correspondiente de la mano contraria.
+En ejecución se retira toda la lógica de intercambio/reflexión anterior. La geometría nueva usa el retarget compartido hacia cada rig de arma/cuchillo, sin modificar sus animaciones ni las mangas independientes. Los 19 acabados nativos usan la nueva geometría.
 
-La corrección incluye normales por inversa transpuesta, inversión del orden de los triángulos y regeneración de tangentes. No se limita a desactivar el culling para ocultar una malla del revés. La versión de la caché de geometría también cambia para no reutilizar la conversión anterior.
+## Evidencia
 
-No se espeja la cámara/Arsenal para disimular el problema. Las preferencias de mano derecha/izquierda del jugador conservan su comportamiento independiente. No se alteran texturas, UVs, pinturas, poses ni pistas de animación de armas/cuchillos, y no se intercambian las mangas de los agentes. Se aplica a la geometría compartida por los 19 acabados Sport nuevos con `native_uv`; los guantes clásicos y la conversión Sport anterior conservan su ruta existente.
-
-## Validación
-
-`GloveHandOrientationTest` comprueba anclajes, dirección de las falanges, cambio de quiralidad y reversibilidad del intercambio. Captura el **Bronze Morph `cs2go_5030_10046` de la incidencia** en el Arsenal, incluidos momentos distintos de su inspección. También comprueba primera persona con Glock, inspección de cuchillo original, Karambit y Shadow Daggers, Amphibious y la preferencia de mano izquierda.
-
-`AgentViewArmsTest` conserva la comprobación de cada arma y cuchillo y de las mangas independientes. Estas comprobaciones son regresiones técnicas, no sustituyen la revisión visual de las capturas.
-
-Ejecución renderizada [43296464936](https://github.com/ShadowNigth/15/actions/runs/43296464936): **234 comprobaciones de orientación y 855 de compatibilidad, sin fallos**. Se revisaron las capturas reales de Bronze Morph en Arsenal, inspección/palma y Glock; se incluyen en `docs/evidence/glove-orientation/`. Verificación estática inicial: 60 scripts, 53 referencias, 43 armas, 26 mapas, 392 GLB y 1021 WAV, sin errores. La revisión técnica no implica aprobación visual del usuario.
+Validación estática de la reconstrucción: 60 scripts, 53 referencias, 43 armas, 26 mapas, 392 GLB y 1021 WAV, sin errores. Ejecución renderizada [43302805116](https://github.com/ShadowNigth/15/actions/runs/43302805116), revisión `655a277e`: 14912 comprobaciones del flujo de guantes y 855 de compatibilidad, sin fallos. La captura completa de esta revisión está en `docs/evidence/glove-orientation/arsenal-rebuilt.jpg`; se actualizaron también las capturas de detalle y Glock. Se entregan para revisión visual del usuario, no como aprobación visual implícita.
