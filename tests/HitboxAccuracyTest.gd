@@ -15,6 +15,13 @@ func trace(from: Vector3, to: Vector3) -> Dictionary:
 func run() -> void:
 	RoundManager.set_process(false)
 	RoundManager.state = RoundManager.State.LIVE
+	if OS.get_cmdline_user_args().has("--capture"):
+		var environment := WorldEnvironment.new()
+		environment.environment = Environment.new()
+		environment.environment.ambient_light_source = Environment.AMBIENT_SOURCE_COLOR
+		environment.environment.ambient_light_color = Color.WHITE
+		environment.environment.ambient_light_energy = 0.9
+		add_child(environment)
 	RoundManager.game_world = self
 	var rng := RandomNumberGenerator.new()
 	rng.seed = 29410
@@ -66,6 +73,8 @@ func run() -> void:
 						await get_tree().physics_frame
 						await get_tree().physics_frame
 						var area: Area3D = head.area
+						if yaw == 0.0 and OS.get_cmdline_user_args().has("--capture"):
+							await capture_head(area, "hitbox_" + ("modern_" if modern else "classic_") + String(info.id) + ("_duck" if crouch else "_stand"))
 						var direction := Vector3(sin(yaw), 0, cos(yaw))
 						var hit := trace(area.global_position + direction, area.global_position - direction)
 						expect(not hit.is_empty() and int(hit.collider.get_meta("hitgroup", 0)) == 1, "head ray is head: " + info.id + " duck=" + str(crouch) + " yaw=" + str(yaw))
@@ -112,3 +121,28 @@ func run() -> void:
 	actor.free()
 	print("[HITBOX ACCURACY] ", "PASS: " if failures == 0 else "FAIL: ", checks, " checks; ", failures, " failures")
 	get_tree().quit(0 if failures == 0 else 1)
+
+func capture_head(area: Area3D, label: String) -> void:
+	var capsule := CapsuleMesh.new()
+	var shape := area.get_child(0).shape as CapsuleShape3D
+	capsule.radius = shape.radius
+	capsule.height = shape.height
+	var visual := MeshInstance3D.new()
+	visual.mesh = capsule
+	var material := StandardMaterial3D.new()
+	material.shading_mode = BaseMaterial3D.SHADING_MODE_UNSHADED
+	material.transparency = BaseMaterial3D.TRANSPARENCY_ALPHA
+	material.albedo_color = Color(1.0, 0.12, 0.04, 0.28)
+	visual.material_override = material
+	area.add_child(visual)
+	var camera := Camera3D.new()
+	add_child(camera)
+	camera.fov = 42
+	camera.current = true
+	camera.look_at_from_position(area.global_position + Vector3(0.55, 0.12, 1.5), area.global_position)
+	for frame in 3: await get_tree().process_frame
+	await RenderingServer.frame_post_draw
+	DirAccess.make_dir_recursive_absolute("/tmp/modern-captures")
+	expect(get_viewport().get_texture().get_image().save_png("/tmp/modern-captures/" + label + ".png") == OK, "actual fitted head capture " + label)
+	camera.free()
+	visual.free()
