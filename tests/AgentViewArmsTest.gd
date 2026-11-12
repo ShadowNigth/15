@@ -44,6 +44,20 @@ func run() -> void:
 		var meshes := SportGloves._find_meshes(root)
 		var actual := false
 		for mesh in meshes:
+			if mesh.has_meta("sport_gloves"):
+				expect(mesh.get_meta("handedness", "") == "opposite-native-bind-space-v1", "new gloves explicitly exchange hand geometry " + model)
+				for surface in mesh.mesh.get_surface_count():
+					var mat := mesh.mesh.surface_get_material(surface)
+					var expected := "_R_" if mat.resource_name.ends_with("left") else "_L_"
+					var arrays := mesh.mesh.surface_get_arrays(surface)
+					var indices: PackedInt32Array = arrays[Mesh.ARRAY_BONES]
+					var weights: PackedFloat32Array = arrays[Mesh.ARRAY_WEIGHTS]
+					var correct := true
+					for slot in indices.size():
+						if weights[slot] > 0.00001:
+							var bone := mesh.skin.get_bind_bone(indices[slot])
+							correct = correct and expected in animation.get_bone_name(bone)
+					expect(correct, "each native glove/finger follows opposite animated hand " + model + mat.resource_name)
 			if mesh.has_meta("agent_arms"):
 				actual = actual or mesh.get_meta("agent_arms") == "sas"
 				expect(mesh.mesh.get_aabb().size.length() < 4, "bounded sleeve geometry " + model)

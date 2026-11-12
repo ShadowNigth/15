@@ -17,7 +17,7 @@ func capture(label: String) -> void:
 	DirAccess.make_dir_recursive_absolute("/tmp/modern-captures")
 	expect(get_viewport().get_texture().get_image().save_png("/tmp/modern-captures/" + label + ".png") == OK, "actual Godot body capture " + label)
 func run() -> void:
-	test_waist_cap()
+	test_continuous_torso()
 	RoundManager.set_process(false)
 	RoundManager.state = RoundManager.State.LIVE
 	RoundManager.game_world = self
@@ -62,6 +62,8 @@ func run() -> void:
 			player.set_team_and_class(faction, String(info.id))
 			player.spawn_for_round(Vector3.ZERO, 0, true)
 			player.look_pitch = -1.25
+			player.weapon_ctrl.give_weapon("glock18", 20, 120)
+			player.weapon_ctrl.equip_weapon_by_id("glock18")
 			expect(player._body_root.visible, "local body remains visible after respawn " + info.id)
 			expect(player._first_person_body != null and not player._first_person_body.parts.is_empty(), "agent has actual lower-body geometry " + info.id)
 			expect(player.camera.cull_mask & FirstPersonBody.LOCAL_LAYER != 0, "world camera sees own legs")
@@ -74,6 +76,10 @@ func run() -> void:
 				await get_tree().physics_frame
 				player.apply_goldsrc_movement(Vector3.ZERO, false, false, false, 1.0 / 60)
 			await capture("local_body_" + info.id + "_idle")
+			for pitch in [70, 89]:
+				player.look_pitch = -deg_to_rad(float(pitch))
+				await capture("local_body_" + info.id + "_down_" + str(pitch))
+			player.look_pitch = -1.25
 			for tick in 45:
 				await get_tree().physics_frame
 				player.apply_goldsrc_movement(Vector3.FORWARD, false, false, false, 1.0 / 60)
@@ -109,36 +115,20 @@ func run() -> void:
 	print("[LOCAL BODY] ", "PASS: " if failures == 0 else "FAIL: ", checks, " checks; ", failures, " failures")
 	get_tree().quit(0 if failures == 0 else 1)
 
-func test_waist_cap() -> void:
-	var arrays := []
-	arrays.resize(Mesh.ARRAY_MAX)
-	var vertices := PackedVector3Array()
-	var normals := PackedVector3Array()
-	var bones := PackedInt32Array()
-	var weights := PackedFloat32Array()
-	var indices := PackedInt32Array()
-	for ring in 2:
-		for index in 8:
-			var angle := TAU * float(index) / 8.0
-			vertices.append(Vector3(cos(angle), float(ring), sin(angle)))
-			normals.append(Vector3.UP)
-			bones.append_array(PackedInt32Array([2, 0, 0, 0]))
-			weights.append_array(PackedFloat32Array([1, 0, 0, 0]))
-	for index in 8:
-		var next := (index + 1) % 8
-		indices.append_array(PackedInt32Array([index, next, index + 8, next, next + 8, index + 8]))
-	arrays[Mesh.ARRAY_VERTEX] = vertices
-	arrays[Mesh.ARRAY_NORMAL] = normals
-	arrays[Mesh.ARRAY_BONES] = bones
-	arrays[Mesh.ARRAY_WEIGHTS] = weights
-	arrays[Mesh.ARRAY_INDEX] = indices
-	var capped := FirstPersonBody.cap_waist(arrays, 4)
-	expect((capped[Mesh.ARRAY_VERTEX] as PackedVector3Array).size() == 17, "waist closure adds only upper loop center, never foot cap")
-	expect((capped[Mesh.ARRAY_INDEX] as PackedInt32Array).size() == 72, "waist closure fills all eight boundary edges")
-	expect((capped[Mesh.ARRAY_WEIGHTS] as PackedFloat32Array)[64] == 1.0, "waist cap retains normalized pelvis skinning")
-	var capped_vertices: PackedVector3Array = capped[Mesh.ARRAY_VERTEX]
-	var capped_indices: PackedInt32Array = capped[Mesh.ARRAY_INDEX]
-	var a := capped_vertices[capped_indices[48]]
-	var b := capped_vertices[capped_indices[49]]
-	var c := capped_vertices[capped_indices[50]]
-	expect((b - a).cross(c - a).y < 0, "waist cap uses Godot clockwise front faces visible from above")
+func test_continuous_torso() -> void:
+	expect(FirstPersonBody.lower_bone("spine_2"), "chest kept continuous with pelvis; no waist opening")
+	expect(FirstPersonBody.lower_bone("spine_1"), "abdomen retained")
+	expect(not FirstPersonBody.lower_bone("head_0") and not FirstPersonBody.lower_bone("arm_upper_L"), "no duplicate head or first-person arms")
+	var scene := GameData.get_model_scene("players/sas").instantiate() as Node3D
+	add_child(scene)
+	var rig := SportGloves._find_skeleton(scene)
+	for mesh in SportGloves._find_meshes(scene):
+		var filtered := FirstPersonBody.filtered(mesh, rig)
+		if filtered == null:
+			continue
+		for surface in filtered.get_surface_count():
+			var arrays := filtered.surface_get_arrays(surface)
+			var original := mesh.mesh.surface_get_arrays(surface)
+			expect((arrays[Mesh.ARRAY_VERTEX] as PackedVector3Array).size() == (original[Mesh.ARRAY_VERTEX] as PackedVector3Array).size(), "body contains no fabricated waist fan vertices")
+			expect(arrays[Mesh.ARRAY_TEX_UV] == original[Mesh.ARRAY_TEX_UV], "original torso and trouser UVs preserved")
+	scene.free()

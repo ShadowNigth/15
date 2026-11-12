@@ -3,6 +3,7 @@ on:
   push:
     paths:
       - 'scripts/actors/FirstPersonBody.gd'
+      - 'scripts/actors/AgentViewArms.gd'
       - 'scripts/actors/PlayerController.gd'
       - 'tests/FirstPersonBodyTest*'
       - '.github/workflows/first-person-body-qa.yml'
@@ -56,27 +57,21 @@ jobs:
                   text='\n'.join(x for x in lines if any(k in x for k in ['SCRIPT ERROR','ERROR:','at:','PASS:']))[-6000:]
                   if text: print('::notice title='+name+'::'+text.replace('%','%25').replace('\n','%0A'))
           PY
-      - name: SAS walking legs
+      - name: SAS straight down Glock
         if: always()
-        run: python tools/publish_modern_capture.py local_body_sas_walk
-      - name: FBI crouching legs
+        run: python tools/publish_modern_capture.py local_body_sas_down_89
+      - name: Phoenix straight down Glock
         if: always()
-        run: python tools/publish_modern_capture.py local_body_urban_crouch
-      - name: Leet walking legs
+        run: python tools/publish_modern_capture.py local_body_terror_down_89
+      - name: Leet walking Glock
         if: always()
         run: python tools/publish_modern_capture.py local_body_leet_walk
-      - name: Native wrist inspection
+      - name: Glock wrist and gloves
         if: always()
         run: python tools/publish_modern_capture.py wrist_sas_cs2go_5030_1417_inspect_4
-      - name: Native wrist late inspection
+      - name: Native late knife inspection
         if: always()
         run: python tools/publish_modern_capture.py wrist_sas_cs2go_5030_1417_inspect_8
-      - name: Exposed forearm inspection
-        if: always()
-        run: python tools/publish_modern_capture.py wrist_leet_cs2go_5030_1417_inspect_4
-      - name: Legacy wrist inspection
-        if: always()
-        run: python tools/publish_modern_capture.py wrist_sas_arid_mw_inspect_4
       - uses: actions/upload-artifact@v4
         if: always()
         timeout-minutes: 3

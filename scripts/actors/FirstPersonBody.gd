@@ -1,6 +1,6 @@
 class_name FirstPersonBody
 extends RefCounted
-## Local lower-body meshes copying the actual agent's exact skeletal pose.
+## Local continuous torso/legs copying the actual agent's exact skeletal pose.
 ## No extra animation clock, movement hull, arms, head or first-person gloves.
 const LOCAL_LAYER := 8
 const HIDDEN_BODY_LAYER := 16
@@ -15,7 +15,7 @@ var _initialized := false
 
 static func lower_bone(name: String) -> bool:
 	var lower := name.to_lower()
-	return lower == "pelvis" or lower == "spine_0" or lower.begins_with("leg_") or lower.begins_with("ankle_") or lower.begins_with("toe_") or lower.begins_with("ball_") or lower.ends_with(" pelvis") or lower.ends_with(" thigh") or lower.ends_with(" calf") or lower.ends_with(" foot") or "toe0" in lower
+	return lower == "pelvis" or lower.begins_with("spine_") or lower.begins_with("clavicle_") or lower.ends_with(" spine") or " spine1" in lower or " spine2" in lower or lower.begins_with("leg_") or lower.begins_with("ankle_") or lower.begins_with("toe_") or lower.begins_with("ball_") or lower.ends_with(" pelvis") or lower.ends_with(" thigh") or lower.ends_with(" calf") or lower.ends_with(" foot") or "toe0" in lower
 
 static func filtered(source: MeshInstance3D, rig: Skeleton3D) -> ArrayMesh:
 	if source.mesh == null or source.skin == null:
@@ -58,7 +58,8 @@ static func filtered(source: MeshInstance3D, rig: Skeleton3D) -> ArrayMesh:
 		if selected.is_empty():
 			continue
 		arrays[Mesh.ARRAY_INDEX] = selected
-		arrays = cap_waist(arrays, stride)
+		# Keep the real continuous torso instead of cutting/capping the waist.
+		# A fan using averaged trouser UVs created the black concentric disk.
 		result.add_surface_from_arrays(Mesh.PRIMITIVE_TRIANGLES, arrays)
 		result.surface_set_material(result.get_surface_count() - 1, source.get_active_material(surface))
 	_meshes[key] = result

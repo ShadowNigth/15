@@ -25,15 +25,29 @@ static func _bone(rig: Skeleton3D, name: String) -> int:
 	return bone if bone >= 0 else rig.find_bone(name.replace(".", "_"))
 
 static func _converted(source: MeshInstance3D, rig: Skeleton3D, model: String, avatar: String) -> Dictionary:
-	var key := model + ":" + avatar
+	var key := model + ":" + avatar + (":opposite-hands-v1" if avatar == "sport" else "")
 	var targets: Dictionary = catalog().get("targets", {}).get(model, {})
 	if targets.is_empty() or source.skin == null:
 		return {}
 	var transforms: Array[Transform3D] = []
 	var mapped := Skin.new()
 	var supported: Array[bool] = []
+	var source_binds: Dictionary = {}
+	for index in source.skin.get_bind_count():
+		source_binds[String(source.skin.get_bind_name(index))] = index
 	for index in source.skin.get_bind_count():
 		var name := String(source.skin.get_bind_name(index))
+		var correction := Transform3D.IDENTITY
+		# The native Sport package uses the opposite anatomical hand convention
+		# to these weapon rigs. Swap the complete meshes/weights in bind space,
+		# not textures, screen coordinates, or just the skeleton indices.
+		if avatar == "sport" and ("_L_" in name or "_R_" in name):
+			var opposite := name.replace("_L_", "_R_") if "_L_" in name else name.replace("_R_", "_L_")
+			if not source_binds.has(opposite):
+				return {}
+			var other: int = source_binds[opposite]
+			correction = source.skin.get_bind_pose(other).affine_inverse() * source.skin.get_bind_pose(index)
+			name = opposite
 		var entry := _entry(targets, name)
 		# Unused weapon/root binds are retained but do not influence these meshes.
 		if entry.is_empty():
@@ -45,7 +59,7 @@ static func _converted(source: MeshInstance3D, rig: Skeleton3D, model: String, a
 		if target < 0:
 			return {}
 		supported.append(true)
-		transforms.append(matrix(entry.matrix))
+		transforms.append(matrix(entry.matrix) * correction)
 		mapped.add_bind(target, matrix(entry.bind))
 	if _mesh_cache.has(key):
 		return {"mesh": _mesh_cache[key], "skin": mapped}
@@ -116,6 +130,7 @@ static func install(root: Node3D, model: String, avatar: String, native_textures
 	copy.set_meta("agent_arms", avatar)
 	if avatar == "sport":
 		copy.set_meta("sport_gloves", true)
+		copy.set_meta("handedness", "opposite-native-bind-space-v1")
 		copy.set_meta("sport_glove_id", GameData.selected_glove_id)
 	for surface in copy.mesh.get_surface_count():
 		var material := copy.mesh.surface_get_material(surface).duplicate() as BaseMaterial3D
