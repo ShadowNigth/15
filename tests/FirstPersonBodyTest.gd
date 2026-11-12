@@ -118,7 +118,7 @@ func run() -> void:
 func test_lower_body() -> void:
 	expect(FirstPersonBody.lower_bone("spine_2"), "continuous torso prevents an exposed waist opening")
 	expect(FirstPersonBody.lower_bone("spine_0"), "lower abdomen remains attached to pelvis")
-	expect(not FirstPersonBody.lower_bone("clavicle_L"), "shoulder equipment excluded")
+	expect(FirstPersonBody.lower_bone("clavicle_L"), "mixed chest weights kept to avoid a cut-off torso")
 	expect(not GameData.select_glove("cs2go_5030_10046"), "removed native gloves cannot be equipped")
 	expect(GameData.select_glove("classic"), "original gloves restored")
 	for option in GameData.get_glove_options():
