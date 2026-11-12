@@ -43,6 +43,13 @@ func _run() -> void:
 	for frame in 4: await get_tree().process_frame
 	menu._open_arsenal()
 	menu._load_viewer_gloves()
+	var display_hands := 0
+	for mesh in SportGloves._find_meshes(menu._viewer_pivot):
+		if mesh.has_meta("arsenal_glove_pose"):
+			display_hands += 1
+			expect(mesh.skin == null, "display pose independent of gameplay rig")
+			expect(mesh.mesh.get_aabb().size.length() > 0.01, "complete display hand")
+	expect(display_hands == 2, "two independently positioned palm-down gloves")
 	for frame in 20: await get_tree().process_frame
 	await capture("glove_bronze_arsenal_full")
 	await capture("glove_bronze_arsenal",menu._viewer_viewport)

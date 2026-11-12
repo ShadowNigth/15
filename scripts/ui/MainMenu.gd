@@ -1376,10 +1376,10 @@ func _arrange_gloves_palm_down(root: Node3D) -> void:
 			var material := source.get_active_material(surface)
 			var side := "L" if material.resource_name.ends_with("left") else "R"
 			var prefix := "v_weapon.Bip01_" + side + "_"
-			var wrist := rig.find_bone(prefix + "Hand")
-			var middle := rig.find_bone(prefix + "Finger2")
-			var index_bone := rig.find_bone(prefix + "Finger1")
-			var pinky := rig.find_bone(prefix + "Finger4")
+			var wrist := AgentViewArms._bone(rig, prefix + "Hand")
+			var middle := AgentViewArms._bone(rig, prefix + "Finger2")
+			var index_bone := AgentViewArms._bone(rig, prefix + "Finger1")
+			var pinky := AgentViewArms._bone(rig, prefix + "Finger4")
 			var roll := Basis(Vector3.UP, PI)
 			if wrist >= 0 and middle >= 0 and index_bone >= 0 and pinky >= 0:
 				var forward := (rig.get_bone_global_pose(middle).origin - rig.get_bone_global_pose(wrist).origin).normalized()
