@@ -24,7 +24,7 @@ func bone(name: String) -> int:
 	var classic := {"spine_2":"Bip01 Spine2", "neck_0":"Bip01 Neck"}
 	return rig.find_bone(classic.get(name, SkeletalHitboxes.CLASSIC_BONES.get(name, name)) if rig.find_bone("Bip01 Pelvis") >= 0 else name)
 
-func start(actor: Node3D, skeleton: Skeleton3D, initial_velocity: Vector3, impulse: Vector3) -> bool:
+func start(actor, skeleton: Skeleton3D, initial_velocity: Vector3, impulse: Vector3) -> bool:
 	owner_actor = actor
 	rig = skeleton
 	if not is_instance_valid(rig) or bone("pelvis") < 0:
