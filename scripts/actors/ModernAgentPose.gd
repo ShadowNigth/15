@@ -101,11 +101,13 @@ static func fit_prop(prop: Node3D, avatar: String, wid: String) -> void:
 static func fit_support(skeleton: Skeleton3D, fit: ClassicPoseFit, appearance: String, wid: String, weight: float = 1.0) -> void:
 	if weight <= 0.0 or not ModernAgentPose.is_modern(skeleton) or int(GameData.weapons.get(wid, {}).get("slot", 0)) != 1:
 		return
-	var support: Array = ModernAgentPose.table(appearance, wid).get("support", [])
+	var support: Array = HeldWeaponGrip.support(appearance, wid)
+	if support.is_empty():
+		support = ModernAgentPose.table(appearance, wid).get("support", [])
 	if support.size() == 3:
 		var hand := skeleton.global_transform * skeleton.get_bone_global_pose(skeleton.find_bone("hand_R"))
 		fit.fit_modern_support(skeleton, hand * Vector3(support[0], support[1], support[2]), weight)
-		var rotation: Array = ModernAgentPose.table(appearance, wid).get("support_rotation", [])
+		var rotation: Array = [] if not HeldWeaponGrip.support(appearance, wid).is_empty() else ModernAgentPose.table(appearance, wid).get("support_rotation", [])
 		if rotation.size() == 4:
 			fit.orient_modern_wrist(skeleton, hand.basis.orthonormalized() * Basis(Quaternion(rotation[0], rotation[1], rotation[2], rotation[3])), weight)
 

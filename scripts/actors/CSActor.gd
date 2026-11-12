@@ -65,6 +65,7 @@ var _skel: Skeleton3D = null
 var _modern_pose: ModernAgentPose = null
 var _hand_attachment: BoneAttachment3D = null
 var _held_weapon_model: Node3D = null
+var _held_left_attachment: BoneAttachment3D = null
 var _classic_pose_fit := ClassicPoseFit.new()
 var _held_weapon_rest_transform: Transform3D = Transform3D.IDENTITY
 var _tp_muzzle_sprite: Sprite3D = null
@@ -647,6 +648,10 @@ func _on_actor_weapon_switched(wid: String, _spec: Dictionary) -> void:
 
 func _update_held_weapon_model(wid: String) -> void:
 	_held_weapon_model = null
+	if is_instance_valid(_held_left_attachment):
+		_held_left_attachment.get_parent().remove_child(_held_left_attachment)
+		_held_left_attachment.queue_free()
+	_held_left_attachment = null
 	if _hand_attachment == null:
 		return
 	var old_w := _hand_attachment.get_children()
@@ -659,7 +664,8 @@ func _update_held_weapon_model(wid: String) -> void:
 		return
 	var spec: Dictionary = GameData.weapons[wid]
 	var p_name := String(spec.get("p_model", "p_" + wid))
-	var p_sc := GameData.get_model_scene("weapons/" + p_name)
+	var held_path := HeldWeaponGrip.model(wid) if _modern_pose != null else ""
+	var p_sc := GameData.get_model_scene(held_path if not held_path.is_empty() else "weapons/" + p_name)
 	if p_sc:
 		var p_inst := p_sc.instantiate() as Node3D
 		if p_inst == null:
@@ -669,13 +675,35 @@ func _update_held_weapon_model(wid: String) -> void:
 		_hand_attachment.add_child(p_inst)
 		_held_weapon_model = p_inst
 		if _modern_pose != null:
-			ModernAgentPose.fit_prop(p_inst, ModernAgentPose.role(team, class_id), wid)
-			var socket := ModernAgentPose.socket_basis(ModernAgentPose.role(team, class_id), wid)
+			var avatar := ModernAgentPose.role(team, class_id)
+			if held_path.is_empty():
+				ModernAgentPose.fit_prop(p_inst, avatar, wid)
+			else:
+				HeldWeaponGrip.fit(p_inst, avatar, wid)
+				var left_path := HeldWeaponGrip.model(wid, "L")
+				if not left_path.is_empty():
+					var left_scene := GameData.get_model_scene(left_path)
+					if left_scene:
+						_held_left_attachment = BoneAttachment3D.new()
+						_held_left_attachment.bone_name = "hand_L"
+						_skel.add_child(_held_left_attachment)
+						var left_prop := left_scene.instantiate() as Node3D
+						_held_left_attachment.add_child(left_prop)
+						_configure_character_meshes(left_prop, "w_held")
+						HeldWeaponGrip.fit(left_prop, avatar, wid, "L")
+			var socket := ModernAgentPose.socket_basis(avatar, wid)
 			if _tp_muzzle_sprite:
 				_tp_muzzle_sprite.position = socket * Vector3(-0.04, 0.06, -0.58)
 				_tp_muzzle_sprite.scale = Vector3.ONE / 0.0254
 			if _tp_muzzle_light:
 				_tp_muzzle_light.position = socket * Vector3(-0.04, 0.08, -0.62)
+			if not held_path.is_empty():
+				var tip: Array = HeldWeaponGrip.entry(wid).parts.R.tip
+				var muzzle := p_inst.transform * Vector3(tip[0], tip[1], tip[2])
+				if _tp_muzzle_sprite:
+					_tp_muzzle_sprite.position = muzzle
+				if _tp_muzzle_light:
+					_tp_muzzle_light.position = muzzle
 			_modern_pose.trigger(self, "draw")
 		_held_weapon_rest_transform = p_inst.transform
 
@@ -1342,6 +1370,10 @@ func _die(killer: Node3D, weapon_id: String, headshot: bool, kill_context: Dicti
 			_hand_attachment.remove_child(c)
 			c.queue_free()
 	_held_weapon_model = null
+	if is_instance_valid(_held_left_attachment):
+		_held_left_attachment.get_parent().remove_child(_held_left_attachment)
+		_held_left_attachment.queue_free()
+	_held_left_attachment = null
 
 	# Snapshot current live bone pose so death animation crossfades smoothly without popping!
 	_death_from_pos.clear()
