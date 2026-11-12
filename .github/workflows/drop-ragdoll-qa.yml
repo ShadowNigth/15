@@ -51,6 +51,9 @@ jobs:
                   text='\n'.join(x for x in lines if any(k in x for k in ['[DROP RAGDOLL]','SCRIPT ERROR','ERROR:',' at: ','Error:']))[-6000:]
                   print('::notice title='+name+'::'+text.replace('%','%25').replace('\n','%0A'))
           PY
+      - name: Model surface collision overlay
+        if: always()
+        run: python tools/publish_modern_capture.py drop_surface_collisions
       - name: Rendered ragdoll_start
         if: always()
         run: python tools/publish_modern_capture.py ragdoll_start
