@@ -40,39 +40,58 @@ func run() -> void:
 	var target := Vector2.ZERO
 	for shot in range(1, 31): target += BallisticModel.spray_kick(GameData.weapons.ak47, shot, false)
 	expect(target.is_equal_approx(BallisticModel.spray_target(GameData.weapons.ak47, 30)), "AK kick deltas reproduce its full spray target")
-	for faction in ["CT", "T"]:
-		for info in GameData.classes[faction]:
-			var actor := CSActor.new()
-			actor.is_alive = true
-			add_child(actor)
-			actor.set_physics_process(false)
-			actor.set_process(false)
-			actor.weapon_ctrl.set_process(false)
-			actor.set_team_and_class(faction, String(info.id))
-			var hitboxes := actor._bullet_hitboxes
-			expect(hitboxes != null and hitboxes.entries.size() == 11, "complete regions " + info.id)
-			var head: Dictionary = hitboxes.entries[0]
-			expect(int(head.get("fitted_vertices", 0)) >= 12, "head fitted from actual agent mesh " + info.id)
-			for crouch in [false, true]:
-				for yaw in [0.0, PI * 0.5, PI]:
-					actor.is_crouching = crouch
-					actor._visual_crouch_t = 1.0 if crouch else 0.0
-					actor.look_yaw = yaw
-					actor._evaluate_character_pose(0.2)
-					hitboxes.sync_pose()
-					await get_tree().physics_frame
-					await get_tree().physics_frame
-					var area: Area3D = head.area
-					var direction := Vector3(sin(yaw), 0, cos(yaw))
-					var hit := trace(area.global_position + direction, area.global_position - direction)
-					expect(not hit.is_empty() and int(hit.collider.get_meta("hitgroup", 0)) == 1, "head ray is head: " + info.id + " duck=" + str(crouch) + " yaw=" + str(yaw))
-					var chest: Area3D = hitboxes.entries[1].area
-					hit = trace(chest.global_position + direction, chest.global_position - direction)
-					expect(not hit.is_empty() and int(hit.collider.get_meta("hitgroup", 0)) != 1, "chest must not become head " + info.id)
-			actor.is_alive = false
-			hitboxes.sync_pose()
-			expect((head.area as Area3D).collision_layer == 0, "dead actor hitboxes disabled")
-			actor.free()
+	var original_classes: Dictionary = GameData.modern_agents.classes.duplicate()
+	for modern in [true, false]:
+		GameData.modern_agents.classes = original_classes if modern else {}
+		for faction in ["CT", "T"]:
+			for info in GameData.classes[faction]:
+				var actor := CSActor.new()
+				actor.is_alive = true
+				add_child(actor)
+				actor.set_physics_process(false)
+				actor.set_process(false)
+				actor.weapon_ctrl.set_process(false)
+				actor.set_team_and_class(faction, String(info.id))
+				var hitboxes := actor._bullet_hitboxes
+				expect(hitboxes != null and hitboxes.entries.size() == 11, "complete regions " + info.id)
+				var head: Dictionary = hitboxes.entries[0]
+				expect(int(head.get("fitted_vertices", 0)) >= 12, "head fitted from actual agent mesh " + info.id)
+				for crouch in [false, true]:
+					for yaw in [0.0, PI * 0.5, PI]:
+						actor.is_crouching = crouch
+						actor._visual_crouch_t = 1.0 if crouch else 0.0
+						actor.look_yaw = yaw
+						actor._evaluate_character_pose(0.2)
+						hitboxes.sync_pose()
+						await get_tree().physics_frame
+						await get_tree().physics_frame
+						var area: Area3D = head.area
+						var direction := Vector3(sin(yaw), 0, cos(yaw))
+						var hit := trace(area.global_position + direction, area.global_position - direction)
+						expect(not hit.is_empty() and int(hit.collider.get_meta("hitgroup", 0)) == 1, "head ray is head: " + info.id + " duck=" + str(crouch) + " yaw=" + str(yaw))
+						if not hit.is_empty():
+							actor.health = 100
+							actor.armor = 0
+							actor.take_bullet_damage(null, 5, 1.0, int(hit.collider.get_meta("hitgroup", 0)), "ak47", hit.position)
+							expect(actor.health == 80, "actual head ray applies headshot damage " + info.id)
+						var chest: Area3D = hitboxes.entries[1].area
+						hit = trace(chest.global_position + direction, chest.global_position - direction)
+						expect(not hit.is_empty() and int(hit.collider.get_meta("hitgroup", 0)) != 1, "chest must not become head " + info.id)
+				actor.is_alive = false
+				hitboxes.sync_pose()
+				expect((head.area as Area3D).collision_layer == 0, "dead actor hitboxes disabled")
+				actor.free()
+	GameData.modern_agents.classes = original_classes
+	var vip := CSActor.new()
+	vip.is_vip = true
+	vip.is_alive = true
+	add_child(vip)
+	vip.set_physics_process(false)
+	vip.set_process(false)
+	vip.weapon_ctrl.set_process(false)
+	vip.set_team_and_class("CT", "urban")
+	expect(int(vip._bullet_hitboxes.entries[0].get("fitted_vertices", 0)) >= 12, "VIP head is fitted too")
+	vip.free()
 	var controller := WeaponController.new()
 	var actor := CSActor.new()
 	actor.is_alive = true

@@ -45,7 +45,7 @@ jobs:
               p = Path('/tmp/' + name + '.log')
               if p.exists():
                   lines = list(dict.fromkeys(p.read_text(errors='replace').splitlines()))
-                  lines = [x for x in lines if any(k in x for k in ['[MOVEMENT]', 'ERROR:', ' at: ', 'Error:'])]
+                  lines = [x for x in lines if any(k in x for k in ['[HITBOX ACCURACY]', 'ERROR:', ' at: ', 'Error:'])]
                   text = '\n'.join(lines)[-6000:].replace('%', '%25').replace('\n', '%0A').replace('\r', '%0D')
                   print('::notice title=' + name + '::' + text)
           PY
