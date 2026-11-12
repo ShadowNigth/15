@@ -9,7 +9,7 @@ var parts: Array[MeshInstance3D] = []
 var sources: Array[MeshInstance3D] = []
 var source_rig: Skeleton3D = null
 var local_rig: Skeleton3D = null
-const CAMERA_BODY_OFFSET := 0.22
+const CAMERA_BODY_OFFSET := 0.52
 var _alive := false
 var _initialized := false
 

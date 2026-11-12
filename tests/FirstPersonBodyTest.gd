@@ -56,7 +56,7 @@ func run() -> void:
 	player.set_process_unhandled_input(false)
 	player.weapon_ctrl.set_physics_process(false)
 	var glove := GameData.selected_glove_id
-	GameData.select_glove("cs2go_5030_1417")
+	GameData.select_glove("cs2go_5030_10045")
 	for faction in ["CT", "T"]:
 		for info in GameData.classes[faction]:
 			player.set_team_and_class(faction, String(info.id))
@@ -128,7 +128,13 @@ func test_continuous_torso() -> void:
 			continue
 		for surface in filtered.get_surface_count():
 			var arrays := filtered.surface_get_arrays(surface)
-			var original := mesh.mesh.surface_get_arrays(surface)
-			expect((arrays[Mesh.ARRAY_VERTEX] as PackedVector3Array).size() == (original[Mesh.ARRAY_VERTEX] as PackedVector3Array).size(), "body contains no fabricated waist fan vertices")
-			expect(arrays[Mesh.ARRAY_TEX_UV] == original[Mesh.ARRAY_TEX_UV], "original torso and trouser UVs preserved")
+			var vertices_match := false
+			var uv_match := false
+			for original_surface in mesh.mesh.get_surface_count():
+				var original := mesh.mesh.surface_get_arrays(original_surface)
+				if arrays[Mesh.ARRAY_VERTEX] == original[Mesh.ARRAY_VERTEX]:
+					vertices_match = true
+					uv_match = arrays[Mesh.ARRAY_TEX_UV] == original[Mesh.ARRAY_TEX_UV]
+			expect(vertices_match, "body contains only untouched original vertices, never a fabricated waist fan")
+			expect(uv_match, "original torso and trouser UVs preserved")
 	scene.free()
