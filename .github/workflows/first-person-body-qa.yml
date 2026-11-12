@@ -62,6 +62,12 @@ jobs:
                   text='\n'.join(x for x in lines if any(k in x for k in ['SCRIPT ERROR','ERROR:','at:','PASS:']))[-6000:]
                   if text: print('::notice title='+name+'::'+text.replace('%','%25').replace('\n','%0A'))
           PY
+      - name: Phoenix natural look down Glock
+        if: always()
+        run: python tools/publish_modern_capture.py local_body_terror_down_70
+      - name: SAS natural look down Glock
+        if: always()
+        run: python tools/publish_modern_capture.py local_body_sas_down_70
       - name: SAS straight down Glock
         if: always()
         run: python tools/publish_modern_capture.py local_body_sas_down_89
