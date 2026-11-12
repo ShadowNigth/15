@@ -66,20 +66,8 @@ func _run() -> void:
 	menu._open_arsenal()
 	await settle()
 	expect(menu._arsenal_panel.visible and menu._modal_shade.visible, "arsenal opens above modal shield")
-	expect(menu._viewer_anim != null and menu._viewer_anim.is_playing(), "native weapon preview animated")
-	var sleeve_choice := menu.find_child("AgentArmsSelector", true, false) as OptionButton
-	expect(sleeve_choice != null and sleeve_choice.item_count == 8, "all actual agent arms selectable in Arsenal")
-	var kept_glove := GameData.selected_glove_id
-	if sleeve_choice != null:
-		for index in sleeve_choice.item_count:
-			var agent: Dictionary = sleeve_choice.get_item_metadata(index)
-			if agent["class"] == "leet":
-				sleeve_choice.select(index)
-				sleeve_choice.item_selected.emit(index)
-				expect(menu._viewer_pivot.get_child(0).get_meta("view_agent", "") == "leet", "preview uses actual selected agent arms")
-				expect(GameData.selected_glove_id == kept_glove, "preview agent switch preserves glove selection")
-
-	expect(menu._arsenal_tabs.get_tab_count() == 4, "finishes animations sound and details separated")
+	expect(menu._viewer_anim == null, "weapon inspection is static")
+	expect(menu._arsenal_tabs.get_tab_count() == 2, "only finishes and information retained")
 	expect(menu._arsenal_list.item_count == menu._arsenal_entries.size(), "all catalogue items available")
 	var seen: Dictionary = {}
 	for entry in menu._arsenal_entries:
@@ -113,22 +101,25 @@ func _run() -> void:
 	menu._arsenal_search.text = ""
 	menu._refresh_arsenal_list()
 	expect(menu._arsenal_list.item_count == menu._arsenal_entries.size(), "clearing search restores collection")
-	menu._arsenal_tabs.current_tab = 1
-	await settle()
-	expect(menu._viewer_animation_opt.item_count == menu._viewer_anim.get_animation_list().size(), "all native clips exposed")
-	menu._test_viewer_fire()
-	await settle()
-	expect(menu._viewer_anim.is_playing(), "preview action plays after redesign")
+	var drag := InputEventMouseMotion.new()
+	drag.button_mask = MOUSE_BUTTON_MASK_LEFT
+	drag.relative = Vector2(35, 20)
+	menu._inspection_input(drag)
+	expect(menu._viewer_pivot.rotation.length() > 0.1, "drag rotates model")
+	var wheel := InputEventMouseButton.new()
+	wheel.button_index = MOUSE_BUTTON_WHEEL_UP
+	wheel.pressed = true
+	menu._inspection_input(wheel)
+	expect(menu._inspection_distance < 1.65, "wheel zooms in")
 	get_tree().root.size = Vector2i(1024, 768)
 	await settle()
 	var panel := menu._arsenal_panel.get_global_rect()
 	expect(inside(Rect2(Vector2.ZERO, Vector2(1024, 768)), panel), "4:3 arsenal fits viewport")
 	expect(inside(panel, menu._arsenal_list.get_global_rect()), "4:3 catalogue remains inside panel")
 	expect(inside(panel, menu._arsenal_tabs.get_global_rect()), "4:3 tabs remain inside panel")
-	expect(inside(panel, menu._viewer_animation_opt.get_global_rect()), "4:3 animation selector not clipped")
 	await capture("menu_arsenal_4x3")
 	# Non-weapon selection also survives filtering to zero results and back.
-	var remembered := "native:defuser_item"
+	var remembered := "player:sas"
 	menu._arsenal_selected_meta = remembered
 	menu._arsenal_search.text = "no-such-item"
 	menu._refresh_arsenal_list()
@@ -138,7 +129,11 @@ func _run() -> void:
 	expect(not restored.is_empty() and menu._arsenal_list.get_item_metadata(restored[0]) == remembered, "equipment selection survives filtering")
 	menu._load_viewer_player("sas")
 	await settle()
-	expect(menu._viewer_anim != null and menu._viewer_anim.is_playing(), "classic player preview remains animated")
+	expect(menu._viewer_anim == null, "agent remains posed without weapon")
+	await capture("menu_agent_relaxed")
+	menu._load_viewer_gloves()
+	menu._inspect_gloves()
+	await capture("menu_gloves_inspect")
 	menu._show_subpanel(menu._options_panel)
 	expect(not menu._arsenal_panel.visible and menu._options_panel.visible, "only one modal visible")
 	var escape := InputEventKey.new()

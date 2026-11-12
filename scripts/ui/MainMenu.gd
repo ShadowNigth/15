@@ -52,6 +52,10 @@ var _agent_arms_opt: OptionButton
 var _preview_agent_class := "sas"
 var _preview_agent_team := "CT"
 var _home_background: MenuBackdrop
+var _inspection_drag := false
+var _inspection_distance := 1.5
+var _panel_tween: Tween
+var _glove_inspection := false
 var _modal_shade: ColorRect
 
 
@@ -146,14 +150,13 @@ func _build_main_screen() -> void:
 	var row := HBoxContainer.new()
 	row.add_theme_constant_override("separation", 18)
 	top.add_child(row)
-	row.add_child(_home_nav("⌂", _close_panels))
+	row.add_child(_home_nav("INICIO", _close_panels))
 	row.add_child(_home_nav("AJUSTES", func(): _show_subpanel(_options_panel)))
 	row.add_child(_home_nav("SALIR", func(): get_tree().quit()))
 	var spacer := Control.new()
 	spacer.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	row.add_child(spacer)
-	row.add_child(_home_nav("INVENTARIO", _open_arsenal))
-	row.add_child(_home_nav("EQUIPAMIENTO", _open_arsenal))
+	row.add_child(_home_nav("ARSENAL", _open_arsenal))
 	row.add_child(_home_nav("JUGAR", func(): _show_subpanel(_play_panel)))
 	var end := Control.new()
 	end.size_flags_horizontal = Control.SIZE_EXPAND_FILL
@@ -169,7 +172,7 @@ func _build_main_screen() -> void:
 	profile.offset_bottom = -42
 	profile.add_theme_stylebox_override("panel", _menu_box(Color(0.10, 0.12, 0.13, 0.6), Color(1, 1, 1, 0.12)))
 	add_child(profile)
-	var identity := _menu_label("COUNTER-STRIKE / RETAIL\n26 MAPAS  ·  43 ARMAS  ·  BOTS LOCALES", 15)
+	var identity := _menu_label("COUNTER-STRIKE / RETAIL\nPARTIDAS LOCALES · JUEGA A TU RITMO", 15)
 	identity.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	profile.add_child(identity)
 	var launch := _nav_button("JUGAR  →", func(): _show_subpanel(_play_panel), true)
@@ -196,6 +199,11 @@ func _build_main_screen() -> void:
 	_modal_shade = ColorRect.new()
 	_modal_shade.set_anchors_preset(Control.PRESET_FULL_RECT)
 	_modal_shade.color = Color(0.01, 0.02, 0.03, 0.55)
+	var blur := Shader.new()
+	blur.code = "shader_type canvas_item; uniform sampler2D screen_texture : hint_screen_texture, filter_linear_mipmap; uniform float strength = 2.0; void fragment(){ vec3 scene = textureLod(screen_texture, SCREEN_UV, strength).rgb; COLOR = vec4(scene * 0.48, 1.0); }"
+	var blur_material := ShaderMaterial.new()
+	blur_material.shader = blur
+	_modal_shade.material = blur_material
 	_modal_shade.visible = false
 	add_child(_modal_shade)
 
@@ -329,6 +337,12 @@ func _make_modal_panel(title_txt: String) -> Array:
 
 func _show_subpanel(target: PanelContainer) -> void:
 	_modal_shade.show()
+	(_modal_shade.material as ShaderMaterial).set_shader_parameter("strength", 3.0 if target == _options_panel else 1.8)
+	if _panel_tween:
+		_panel_tween.kill()
+	target.modulate.a = 0.0
+	_panel_tween = create_tween()
+	_panel_tween.tween_property(target, "modulate:a", 1.0, 0.22).set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_OUT)
 	for p in [_play_panel, _arsenal_panel, _options_panel]:
 		if p:
 			p.visible = (p == target)
@@ -623,28 +637,6 @@ func _build_arsenal_dialog() -> void:
 	_arsenal_panel = res[0]
 	var vbox: VBoxContainer = res[1]
 
-	var agent_row := HBoxContainer.new()
-	agent_row.add_child(_menu_label("BRAZOS DEL AGENTE", 13))
-	var agent_choice := OptionButton.new()
-	_agent_arms_opt = agent_choice
-	agent_choice.name = "AgentArmsSelector"
-	for faction in ["CT", "T"]:
-		for info in GameData.classes.get(faction, []):
-			agent_choice.add_item(faction + " / " + String(info.name))
-			agent_choice.set_item_metadata(agent_choice.item_count - 1, {"team": faction, "class": info.id})
-			if info.id == _preview_agent_class:
-				agent_choice.select(agent_choice.item_count - 1)
-	agent_choice.item_selected.connect(func(index: int):
-		var selected: Dictionary = agent_choice.get_item_metadata(index)
-		_preview_agent_team = selected.team
-		_preview_agent_class = selected["class"]
-		GameData.view_agent_class = _preview_agent_class
-		GameData.view_agent_team = _preview_agent_team
-		if not _viewer_current_wid.is_empty():
-			_load_viewer_weapon(_viewer_current_wid)
-	)
-	agent_row.add_child(agent_choice)
-	vbox.add_child(agent_row)
 	var body := HBoxContainer.new()
 	body.size_flags_vertical = Control.SIZE_EXPAND_FILL
 	body.add_theme_constant_override("separation", 12)
@@ -661,7 +653,7 @@ func _build_arsenal_dialog() -> void:
 	library.add_child(_arsenal_search)
 	_arsenal_category = OptionButton.new()
 	_arsenal_category.fit_to_longest_item = false
-	for category in ["TODO", "RIFLES", "PISTOLAS", "SUBFUSILES", "FRANCOTIRADORES", "ESCOPETAS", "AMETRALLADORAS", "UTILIDAD", "CUCHILLOS", "GUANTES", "PERSONAJES", "EQUIPO"]:
+	for category in ["TODO", "RIFLES", "PISTOLAS", "SUBFUSILES", "FRANCOTIRADORES", "ESCOPETAS", "AMETRALLADORAS", "UTILIDAD", "CUCHILLOS", "GUANTES", "AGENTES"]:
 		_arsenal_category.add_item(category)
 	library.add_child(_arsenal_category)
 	_arsenal_count = _menu_label("", 12, Color(0.57, 0.66, 0.72))
@@ -691,6 +683,8 @@ func _build_arsenal_dialog() -> void:
 
 	var svc := SubViewportContainer.new()
 	svc.stretch = true
+	svc.mouse_filter = Control.MOUSE_FILTER_STOP
+	svc.gui_input.connect(_inspection_input)
 	svc.custom_minimum_size = Vector2(280, 180)
 	svc.size_flags_vertical = Control.SIZE_EXPAND_FILL
 	right.add_child(svc)
@@ -737,87 +731,15 @@ func _build_arsenal_dialog() -> void:
 	var finish_tab := VBoxContainer.new()
 	finish_tab.name = "Acabados"
 	_arsenal_tabs.add_child(finish_tab)
-	var animation_tab := VBoxContainer.new()
-	animation_tab.name = "Animaciones"
-	_arsenal_tabs.add_child(animation_tab)
-	var sound_tab := VBoxContainer.new()
-	sound_tab.name = "Sonidos"
-	_arsenal_tabs.add_child(sound_tab)
 	var detail_scroll := ScrollContainer.new()
-	detail_scroll.name = "Detalles"
+	detail_scroll.name = "Información"
 	detail_scroll.horizontal_scroll_mode = ScrollContainer.SCROLL_MODE_DISABLED
 	_arsenal_tabs.add_child(detail_scroll)
-
-	var btn_row := HBoxContainer.new()
-	btn_row.add_theme_constant_override("separation", 8)
-	var fire_btn := Button.new()
-	fire_btn.text = "PROBAR DISPARO"
-	fire_btn.pressed.connect(_test_viewer_fire)
-	var rel_btn := Button.new()
-	rel_btn.text = "RECARGA / MOVIMIENTO"
-	rel_btn.pressed.connect(func():
-		if _viewer_anim:
-			for a in _viewer_anim.get_animation_list():
-				if "reload" in a.to_lower() or a.to_lower() == "run":
-					_viewer_anim.play(a)
-					break
-	)
-	btn_row.add_child(fire_btn)
-	btn_row.add_child(rel_btn)
-	animation_tab.add_child(btn_row)
-
-	var animation_row := HBoxContainer.new()
-	var animation_label := Label.new()
-	animation_label.text = "Secuencia"
-	animation_row.add_child(animation_label)
-	_viewer_animation_opt = OptionButton.new()
-	_viewer_animation_opt.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-	_viewer_animation_opt.fit_to_longest_item = false
-	_viewer_animation_opt.clip_text = true
-	_viewer_animation_opt.item_selected.connect(func(index: int):
-		if _viewer_anim != null and index >= 0:
-			_viewer_anim.stop()
-			_viewer_anim.speed_scale = 1.0
-			_viewer_anim.play(String(_viewer_animation_opt.get_item_metadata(index)))
-			_viewer_anim.advance(0.0)
-	)
-	animation_row.add_child(_viewer_animation_opt)
-	animation_tab.add_child(animation_row)
-
-	var audio_row := HBoxContainer.new()
-	var audio_options := OptionButton.new()
-	audio_options.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-	audio_options.clip_text = true
-	audio_options.fit_to_longest_item = false
-	audio_options.get_popup().max_size = Vector2i(0, 500)
-	audio_options.tooltip_text = "All 649 pinned source recordings, including languages and effects without a current gameplay equivalent."
-	var manifest: Dictionary = GameData._load_json("res://data/native_audio_manifest.json")
-	for entry in manifest.get("files", []):
-		audio_options.add_item(String(entry["path"]).trim_prefix("native/"))
-		audio_options.set_item_metadata(audio_options.item_count - 1, entry["path"])
-	var audition := AudioStreamPlayer.new()
-	audio_row.add_child(audition)
-	var listen := Button.new()
-	listen.text = "ESCUCHAR"
-	listen.pressed.connect(func():
-		audition.stop()
-		audition.stream = GameData.get_sound(String(audio_options.get_item_metadata(audio_options.selected)))
-		audition.volume_db = -5.0 + GameData.master_volume_db + GameData.sound_gain_db(String(audio_options.get_item_metadata(audio_options.selected)))
-		audition.play()
-	)
-	var stop_audio := Button.new()
-	stop_audio.text = "DETENER"
-	stop_audio.pressed.connect(audition.stop)
-	audio_row.add_child(audio_options)
-	audio_row.add_child(listen)
-	audio_row.add_child(stop_audio)
-	sound_tab.add_child(audio_row)
-	_arsenal_tabs.tab_changed.connect(func(_tab: int): audition.stop())
-	_arsenal_panel.visibility_changed.connect(func():
-		if not _arsenal_panel.visible:
-			audition.stop()
-	)
-
+	finish_tab.add_child(_menu_label("Arrastra para girar · Rueda para acercar · Doble clic para restablecer", 13))
+	var inspect := Button.new()
+	inspect.text = "INSPECCIONAR GUANTES"
+	inspect.pressed.connect(_inspect_gloves)
+	finish_tab.add_child(inspect)
 	var skin_row := HBoxContainer.new()
 	skin_row.add_theme_constant_override("separation", 8)
 	var skin_label := Label.new()
@@ -858,7 +780,7 @@ func _select_glove_for_match(option_id: String) -> void:
 		return
 	_sync_glove_option()
 	AudioManager.play_ui("launch_select1.wav")
-	_load_viewer_weapon("ak47")
+	_load_viewer_gloves()
 
 
 func _clear_viewer_pivot() -> void:
@@ -867,6 +789,8 @@ func _clear_viewer_pivot() -> void:
 		_viewer_pivot.remove_child(c)
 		c.queue_free()
 	_viewer_anim = null
+	_glove_inspection = false
+	_viewer_pivot.rotation = Vector3.ZERO
 	if _viewer_animation_opt != null:
 		_viewer_animation_opt.clear()
 
@@ -946,29 +870,18 @@ func _on_viewer_skin_selected(index: int) -> void:
 func _load_viewer_weapon(wid: String) -> void:
 	_set_arsenal_heading(String(GameData.weapons.get(wid, {}).get("name", wid)), _weapon_category(wid))
 	_viewer_current_wid = wid
-	if _viewer_camera != null:
-		_viewer_camera.fov = 48.0
-		_viewer_camera.look_at_from_position(Vector3(0.85, 0.45, 1.25), Vector3(-0.08, -0.03, 0.35), Vector3.UP)
 	_populate_viewer_skin_options(wid)
 	_clear_viewer_pivot()
-	_viewer_pivot.rotation = Vector3.ZERO
 	var spec: Dictionary = GameData.weapons.get(wid, {})
-	var sc := GameData.get_model_scene("weapons/" + String(spec.get("v_model", "v_ak47")))
+	var sc := GameData.get_model_scene("weapons/" + String(spec.get("w_model", "w_ak47")))
 	if sc:
-		var inst := sc.instantiate()
-		inst.position = Vector3(-0.08, 0.12, 0.65)
-		inst.rotation_degrees = Vector3(0.0, 25.0, 0.0)
+		var inst := sc.instantiate() as Node3D
 		_viewer_pivot.add_child(inst)
-		SportGloves.apply(inst, String(spec.get("v_model", "v_ak47")))
-		AgentViewArms.apply(inst, String(spec.get("v_model", "v_ak47")), _preview_agent_team, _preview_agent_class)
-		var vm_meta: Dictionary = GameData.models_meta.get("weapons/" + String(spec.get("v_model", "")), {})
-		_style_viewer_meshes(inst, "vm", bool(vm_meta.get("native_cs2_animation", false)), bool(vm_meta.get("native_gun_animations", false)))
-		_viewer_anim = _find_anim_recursive(inst)
-		_populate_viewer_animations()
-		if _viewer_anim and not _viewer_anim.get_animation_list().is_empty():
-			_viewer_anim.play("idle" if _viewer_anim.has_animation("idle") else _viewer_anim.get_animation_list()[0])
+		_style_viewer_meshes(inst, "world")
+		_freeze_preview(inst)
+		_frame_inspection(inst)
 
-	_viewer_stats_lbl.text = "%s  |  Price: $%d  |  Damage: %d  |  MaxSpeed (cs_i386.so): %.0f u/s  |  Cycle: %.3fs\n%s" % [
+	_viewer_stats_lbl.text = "%s  |  Precio: $%d  |  Daño: %d  |  Velocidad: %.0f u/s  |  Intervalo: %.3fs\n%s" % [
 		String(spec.get("name", wid)),
 		int(spec.get("price", 0)),
 		int(spec.get("damage", 0)),
@@ -976,9 +889,9 @@ func _load_viewer_weapon(wid: String) -> void:
 		float(spec.get("cycle_time", 0.1)),
 		String(spec.get("description", "")),
 	]
-	_viewer_stats_lbl.text += "\nFirst-person gloves for the next match: " + GameData.get_glove_display_name()
+	_viewer_stats_lbl.text += "\nGuantes equipados: " + GameData.get_glove_display_name()
 	if not GameData.get_weapon_skin_options(wid).is_empty():
-		_viewer_stats_lbl.text += "\nWeapon finish for the next match: " + GameData.get_weapon_skin_display_name(wid)
+		_viewer_stats_lbl.text += "\nAcabado equipado: " + GameData.get_weapon_skin_display_name(wid)
 
 
 func _load_viewer_player(cid: String) -> void:
@@ -991,73 +904,18 @@ func _load_viewer_player(cid: String) -> void:
 			if String(_agent_arms_opt.get_item_metadata(index).get("class", "")) == cid:
 				_agent_arms_opt.select(index)
 	_set_arsenal_heading(String(GameData.modern_agents.get("agents", {}).get(ModernAgentPose.role("CT" if cid in ["urban", "gsg9", "sas", "gign"] else "T", cid), {}).get("name", cid)), "AGENTES CT / T")
-	if _viewer_camera != null:
-		_viewer_camera.fov = 65.0
-		_viewer_camera.look_at_from_position(Vector3(0.0, 0.35, 1.35), Vector3(0.0, 0.3, 0.0), Vector3.UP)
 	_viewer_current_wid = ""
 	_populate_viewer_skin_options("")
 	_clear_viewer_pivot()
 	var sc := GameData.get_model_scene("players/" + cid)
 	if sc:
-		var inst := sc.instantiate()
-		_style_viewer_meshes(inst)
-		inst.scale = Vector3(0.50, 0.50, 0.50)
-		inst.position = Vector3(0.0, 0.12, 0.0)
+		var inst := sc.instantiate() as Node3D
 		_viewer_pivot.add_child(inst)
-		ModernAgentPose.prepare_model(inst, ModernAgentPose.role("CT" if cid in ["urban", "gsg9", "sas", "gign"] else "T", cid))
-		_viewer_anim = _find_anim_recursive(inst)
-		_populate_viewer_animations()
-		var skel_list := inst.find_children("*", "Skeleton3D", true, false)
-		if _viewer_anim:
-			GameData.ensure_looping_animations(_viewer_anim)
-			# Apply upper-body rifle aim pose first so lower-only gait clips keep arms in rifle stance!
-			var anim_list := _viewer_anim.get_animation_list()
-			var is_ct_mdl := cid in ["urban", "gsg9", "sas", "gign", "vip"]
-			var aim_cand := "ref_aim_onehanded" if cid == "vip" else ("ref_aim_carbine" if is_ct_mdl else "ref_aim_ak47")
-			for a in anim_list:
-				if a.to_lower() == aim_cand:
-					_viewer_anim.play(a)
-					_viewer_anim.advance(0.0)
-					break
-			if not skel_list.is_empty():
-				var sk := skel_list[0] as Skeleton3D
-				var hand_name := "hand_R" if ModernAgentPose.is_modern(sk) else "Bip01 R Hand"
-				if ModernAgentPose.is_modern(sk):
-					inst.position.y -= CSActor.MODEL_STAND_OFFSET_Y * 0.5
-				if sk and sk.find_bone(hand_name) >= 0 and cid not in ["hostage", "scientist"]:
-					var ba := BoneAttachment3D.new()
-					ba.bone_name = hand_name
-					sk.add_child(ba)
-					var wmdl := "p_usp" if cid == "vip" else ("p_m4a1" if is_ct_mdl else "p_ak47")
-					var wsc := GameData.get_model_scene("weapons/" + wmdl)
-					if wsc:
-						var wi := wsc.instantiate()
-						_style_viewer_meshes(wi)
-						ba.add_child(wi)
-						if ModernAgentPose.is_modern(sk):
-							ModernAgentPose.fit_prop(wi, ModernAgentPose.role("CT" if is_ct_mdl else "T", cid), "m4a1" if is_ct_mdl else "ak47")
-			for a in anim_list:
-				if a.to_lower() == "idle1" or a.to_lower().begins_with("idle"):
-					_viewer_anim.play(a)
-					break
-		if not skel_list.is_empty() and ModernAgentPose.is_modern(skel_list[0]) and _viewer_anim:
-			var is_ct := cid in ["urban", "gsg9", "sas", "gign"]
-			ModernPreviewGrip.attach(inst, skel_list[0], _viewer_anim, ModernAgentPose.role("CT" if is_ct else "T", cid), "m4a1" if is_ct else "ak47")
-	_viewer_stats_lbl.text = "Agentes modernos — CS2 agent appearance, native animation packs" if cid not in ["hostage", "scientist", "vip"] else "Classic mission character: " + cid
-
-
-func _test_viewer_fire() -> void:
-	if not _viewer_current_wid.is_empty() and GameData.weapons.has(_viewer_current_wid):
-		var sp: Dictionary = GameData.weapons[_viewer_current_wid]
-		var fs: Array = sp.get("fire_sounds", [])
-		if not fs.is_empty():
-			AudioManager.play_2d(String(fs[0]), -2.0)
-	if _viewer_anim:
-		for a in _viewer_anim.get_animation_list():
-			if "shoot" in a.to_lower():
-				_viewer_anim.stop()
-				_viewer_anim.play(a)
-				break
+		_style_viewer_meshes(inst)
+		_freeze_preview(inst)
+		_relax_agent(inst)
+		_frame_inspection(inst)
+	_viewer_stats_lbl.text = "Agente equipado · Vista de cuerpo completo, sin armas."
 
 
 func _find_anim_recursive(n: Node) -> AnimationPlayer:
@@ -1068,11 +926,6 @@ func _find_anim_recursive(n: Node) -> AnimationPlayer:
 		if r:
 			return r
 	return null
-
-
-func _process(delta: float) -> void:
-	if _arsenal_panel and _arsenal_panel.visible and _viewer_pivot and _viewer_current_wid.is_empty():
-		_viewer_pivot.rotate_y(delta * 0.85)
 
 
 func _build_options_dialog() -> void:
@@ -1260,7 +1113,7 @@ func _build_arsenal_catalogue() -> void:
 		_arsenal_entries.append({"name": String(spec.get("name", wid)), "category": _weapon_category(String(wid)), "meta": String(wid)})
 	for team in ["CT", "T"]:
 		for info in GameData.classes.get(team, []):
-			_arsenal_entries.append({"name": team + " / " + String(info["name"]), "category": "PERSONAJES", "meta": "player:" + String(info["id"])})
+			_arsenal_entries.append({"name": team + " / " + String(info["name"]), "category": "AGENTES", "meta": "player:" + String(info["id"])})
 	for raw in GameData.get_knife_options():
 		var option := raw as Dictionary
 		if String(option["id"]) != "original":
@@ -1269,7 +1122,7 @@ func _build_arsenal_catalogue() -> void:
 	for raw in GameData.get_glove_options():
 		var option := raw as Dictionary
 		_arsenal_entries.append({"name": "%s / %s" % [String(option.get("family", "Sport")), String(option.get("wear_code", ""))], "category": "GUANTES", "meta": "glove:" + String(option.get("id", ""))})
-	_arsenal_entries.append({"name": "Kit de desactivación", "category": "EQUIPO", "meta": "native:defuser_item"})
+
 
 func _refresh_arsenal_list() -> void:
 	var previous := _arsenal_selected_meta
@@ -1312,3 +1165,118 @@ func _set_arsenal_heading(title: String, category: String) -> void:
 		_arsenal_title.text = title
 	if _arsenal_kind != null:
 		_arsenal_kind.text = category + "  /  INSPECCIÓN 3D"
+
+
+func _freeze_preview(root: Node) -> void:
+	for player in root.find_children("*", "AnimationPlayer", true, false):
+		player.stop()
+		player.active = false
+	for audio in root.find_children("*", "AudioStreamPlayer3D", true, false):
+		audio.stop()
+		audio.process_mode = Node.PROCESS_MODE_DISABLED
+
+
+func _relax_agent(root: Node3D) -> void:
+	for raw in root.find_children("*", "Skeleton3D", true, false):
+		var rig := raw as Skeleton3D
+		rig.reset_bone_poses()
+		for side in ["L", "R"]:
+			var upper := rig.find_bone("arm_upper_" + side)
+			var lower := rig.find_bone("arm_lower_" + side)
+			if upper < 0:
+				upper = rig.find_bone("Bip01 " + side + " UpperArm")
+				lower = rig.find_bone("Bip01 " + side + " Forearm")
+			if upper < 0 or lower < 0:
+				continue
+			var parent := rig.get_bone_parent(upper)
+			var parent_basis := rig.get_bone_global_pose(parent).basis if parent >= 0 else Basis.IDENTITY
+			var current := rig.get_bone_global_pose(upper)
+			var direction := (rig.get_bone_global_pose(lower).origin - current.origin).normalized()
+			var relaxed := Vector3(-0.12 if side == "L" else 0.12, -1.0, 0.04).normalized()
+			var target := Basis(Quaternion(direction, relaxed)) * current.basis
+			var local := rig.get_bone_rest(upper).basis.inverse() * parent_basis.inverse() * target
+			rig.set_bone_pose_rotation(upper, local.orthonormalized().get_rotation_quaternion())
+			rig.force_update_all_bone_transforms()
+
+
+func _frame_inspection(root: Node3D) -> void:
+	var bounds := AABB()
+	var first := true
+	for mesh in SportGloves._find_meshes(root):
+		if not mesh.visible or mesh.mesh == null:
+			continue
+		var box: AABB = (_viewer_pivot.global_transform.inverse() * mesh.global_transform) * mesh.get_aabb()
+		bounds = box if first else bounds.merge(box)
+		first = false
+	if first:
+		return
+	var extent := maxf(bounds.size.x, maxf(bounds.size.y, bounds.size.z))
+	root.position -= bounds.get_center()
+	root.scale *= 1.0 / maxf(extent, 0.001)
+	# Scale the centering offset too, keeping the orbit centre on the object.
+	root.position /= maxf(extent, 0.001)
+	_inspection_distance = 1.65
+	_viewer_camera.fov = 48.0
+	_viewer_camera.look_at_from_position(Vector3(0, 0, _inspection_distance), Vector3.ZERO)
+
+
+func _inspection_input(event: InputEvent) -> void:
+	if event is InputEventMouseButton:
+		if event.button_index == MOUSE_BUTTON_LEFT:
+			_inspection_drag = event.pressed
+			if event.double_click:
+				_viewer_pivot.rotation = Vector3.ZERO
+				_inspection_distance = 1.65
+		if event.pressed and event.button_index in [MOUSE_BUTTON_WHEEL_UP, MOUSE_BUTTON_WHEEL_DOWN]:
+			_inspection_distance = clampf(_inspection_distance * (0.9 if event.button_index == MOUSE_BUTTON_WHEEL_UP else 1.1), 0.65, 3.5)
+		_viewer_camera.position = Vector3(0, 0, _inspection_distance)
+	elif event is InputEventMouseMotion and (event.button_mask & MOUSE_BUTTON_MASK_LEFT) != 0:
+		_viewer_pivot.rotation.y += event.relative.x * 0.008
+		_viewer_pivot.rotation.x = clampf(_viewer_pivot.rotation.x + event.relative.y * 0.008, -1.4, 1.4)
+
+
+func _load_viewer_gloves() -> void:
+	_clear_viewer_pivot()
+	_viewer_current_wid = ""
+	_populate_viewer_skin_options("")
+	var scene := GameData.get_model_scene("weapons/v_knife")
+	if scene == null:
+		return
+	var inst := scene.instantiate() as Node3D
+	_viewer_pivot.add_child(inst)
+	SportGloves.apply(inst, "v_knife")
+	_style_viewer_meshes(inst, "vm")
+	_viewer_anim = _find_anim_recursive(inst)
+	if _viewer_anim:
+		for clip in _viewer_anim.get_animation_list():
+			if "idle" in clip.to_lower():
+				_viewer_anim.play(clip)
+				_viewer_anim.advance(0.0)
+				_viewer_anim.pause()
+				break
+	# Keep only glove surfaces; never expose the knife or sleeves in this view.
+	for mesh in SportGloves._find_meshes(inst):
+		var filtered := ArrayMesh.new()
+		for surface in mesh.mesh.get_surface_count():
+			var mat := mesh.get_active_material(surface)
+			var glove := mesh.has_meta("sport_gloves") or mesh.has_meta("native_view_cosmetic") or (mat != null and mat.resource_name.to_lower().contains("glove"))
+			if glove:
+				filtered.add_surface_from_arrays(Mesh.PRIMITIVE_TRIANGLES, mesh.mesh.surface_get_arrays(surface))
+				filtered.surface_set_material(filtered.get_surface_count() - 1, mat)
+		if filtered.get_surface_count() == 0:
+			mesh.hide()
+		else:
+			mesh.mesh = filtered
+	_frame_inspection(inst)
+	_glove_inspection = true
+	_viewer_stats_lbl.text = "Guantes equipados: " + GameData.get_glove_display_name() + "\nInspecciona el acabado o gira el modelo libremente."
+	_set_arsenal_heading(GameData.get_glove_display_name(), "GUANTES")
+
+
+func _inspect_gloves() -> void:
+	if not _glove_inspection:
+		return
+	var turn := create_tween()
+	turn.tween_property(_viewer_pivot, "rotation:z", -0.45, 0.5).set_trans(Tween.TRANS_SINE)
+	turn.tween_property(_viewer_pivot, "rotation:z", 0.45, 1.0).set_trans(Tween.TRANS_SINE)
+	turn.tween_property(_viewer_pivot, "rotation:z", 0.0, 0.5).set_trans(Tween.TRANS_SINE)
