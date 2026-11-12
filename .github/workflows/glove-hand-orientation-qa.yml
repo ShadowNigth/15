@@ -3,6 +3,7 @@ on:
   push:
     paths:
       - 'scripts/actors/AgentViewArms.gd'
+      - 'scripts/ui/MainMenu.gd'
       - 'tests/GloveHandOrientationTest*'
       - 'tests/AgentViewArmsTest*'
       - '.github/workflows/glove-hand-orientation-qa.yml'
