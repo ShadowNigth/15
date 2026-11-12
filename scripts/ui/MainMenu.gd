@@ -1411,6 +1411,10 @@ func _arrange_gloves_palm_down(root: Node3D) -> void:
 			hand.mesh = mesh
 			hand.layers = source.layers
 			hand.position = center
+			if source.has_meta("palm_roll_degrees"):
+				# Keep the rolled silhouettes apart in the display; the actual
+				# model exchange and roll still come from the gameplay installer.
+				hand.position = Vector3(-0.16 if side == "L" else 0.16, 0, 0)
 			hand.set_meta("arsenal_glove_pose", true)
 			hand.set_meta("home_rotation", hand.rotation)
 			root.add_child(hand)
