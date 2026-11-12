@@ -33,39 +33,24 @@ def anatomical(frames, name):
     return result
 
 def main():
-    # The shared importer only handles UV/material preservation and GLB writing.
-    # Replace its bone-roll calibration for this one fresh mesh build.
-    original_frame = arms.frame
     td,tb=read_glb(arms.ROOT/'assets/models/weapons/v_ak47.glb')
-    # Build a fresh source using explicit anatomical bind matrices on both rigs.
-    def frames(doc, blob, skin):
-        raw = original_frame(doc,blob,skin)
-        # Source has native names; destination is translated by target_frames.
-        native = {arms.native(n) or n:m for n,m in raw.items()}
-        result={}
-        for n,m in raw.items():
-            key=arms.native(n) or n
-            if key.endswith(('_L','_R')) and key in native and ('hand_'+key[-1]) in native:
-                result[n]=anatomical(native,key)
-            else: result[n]=m
+    def calibration(source, target):
+        side=next(n[-1] for n in source if n.startswith('hand_'))
+        key='hand_'+side
+        # Compare complete palm bases in each wrist's LOCAL coordinates.
+        # The resulting constant basis converts the exporter conventions for
+        # all joints; per-finger world frames would fold the weighted mesh.
+        a=np.linalg.inv(source[key]) @ anatomical(source,key)
+        b=np.linalg.inv(target[key]) @ anatomical(target,key)
+        result=np.eye(4)
+        result[:3,:3]=b[:3,:3] @ a[:3,:3].T
         return result
-    arms.frame=frames
-    # Anatomical bases are already aligned: only the documented unit scale remains.
-    arms.axis_between=lambda a,b:np.eye(4)
+    original_axis=arms.axis_between
+    arms.axis_between=calibration
     report=json.loads((arms.ROOT/'data/agent_view_arms.json').read_text())
     report['agents']['sport']=arms.build('sport','gloves/5030',td,tb)
-    # Output skin must retain the real target bind, not the calibration frames.
-    from .import_modern_agents import write_glb
-    from .smd_converter import GlbWriter
+    arms.axis_between=original_axis
     path=arms.OUT/'sport.glb'
-    doc,blob=read_glb(path)
-    actual=original_frame(td,tb,0)
-    skin=doc['skins'][0]
-    inv=np.array([np.linalg.inv(actual[td['nodes'][i]['name']]).T for i in skin['joints']],dtype='<f4')
-    writer=GlbWriter();writer.bin=bytearray(blob);writer.views=doc['bufferViews'];writer.accessors=doc['accessors']
-    skin['inverseBindMatrices']=writer.acc(inv.reshape(-1,16),5126,'MAT4')
-    doc['asset']['generator']='Sport rebuild: anatomical same-side retarget, native UV'
-    write_glb(path,doc,writer.bin)
     import hashlib
     report['agents']['sport']['sha256']=hashlib.sha256(path.read_bytes()).hexdigest()
     report['agents']['sport']['retarget']='anatomical-same-side-v3'
