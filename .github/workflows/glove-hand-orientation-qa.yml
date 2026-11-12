@@ -1,0 +1,81 @@
+name: Glove anatomical hand exchange QA
+on:
+  push:
+    paths:
+      - 'scripts/actors/AgentViewArms.gd'
+      - 'tests/GloveHandOrientationTest*'
+      - 'tests/AgentViewArmsTest*'
+      - '.github/workflows/glove-hand-orientation-qa.yml'
+  workflow_dispatch:
+concurrency:
+  group: glove-hands-${{ github.ref }}
+  cancel-in-progress: true
+jobs:
+  presentation:
+    runs-on: ubuntu-latest
+    timeout-minutes: 40
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install engine and renderer
+        run: |
+          curl -fL --retry 3 -o /tmp/godot.zip https://github.com/godotengine/godot-builds/releases/download/4.3-stable/Godot_v4.3-stable_linux.x86_64.zip
+          unzip -q /tmp/godot.zip -d /tmp/godot
+          sudo install -m 755 /tmp/godot/Godot_v4.3-stable_linux.x86_64 /usr/local/bin/godot
+          sudo apt-get update -qq
+          sudo apt-get install -y -qq xvfb libgl1-mesa-dri
+          pip install pillow gdtoolkit==4.3.4
+      - name: Validate and import
+        run: |
+          set -o pipefail
+          python tools/verify_godot_project.py
+          godot --headless --path . --import 2>&1 | tee /tmp/glove-import.log
+          ! grep -Eq 'SCRIPT ERROR:|Parse Error:|Compile Error:' /tmp/glove-import.log
+      - name: Render reported Bronze Morph and native glove inspections
+        run: |
+          set -o pipefail
+          LIBGL_ALWAYS_SOFTWARE=1 timeout 1200s xvfb-run -a godot --path . --audio-driver Dummy --rendering-method gl_compatibility --fixed-fps 60 --resolution 960x540 res://tests/GloveHandOrientationTest.tscn 2>&1 | tee /tmp/glove-hands.log
+          ! grep -Eq 'SCRIPT ERROR:|Parse Error:|Compile Error:|SHADER ERROR|FAIL:' /tmp/glove-hands.log
+          grep -q '\[GLOVE HANDS\] PASS:' /tmp/glove-hands.log
+      - name: All weapon hand bindings and independent sleeves
+        run: |
+          set -o pipefail
+          LIBGL_ALWAYS_SOFTWARE=1 timeout 600s xvfb-run -a godot --path . --audio-driver Dummy --rendering-method gl_compatibility --fixed-fps 60 res://tests/AgentViewArmsTest.tscn 2>&1 | tee /tmp/glove-bindings.log
+          ! grep -Eq 'SCRIPT ERROR:|Parse Error:|Compile Error:|FAIL:' /tmp/glove-bindings.log
+          grep -q '\[AGENT ARMS\] PASS:' /tmp/glove-bindings.log
+      - name: Diagnostics
+        if: always()
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          for name in ['glove-import','glove-hands','glove-bindings']:
+              p=Path('/tmp/'+name+'.log')
+              if p.exists():
+                  lines=list(dict.fromkeys(p.read_text(errors='replace').splitlines()))
+                  text='\n'.join(x for x in lines if any(k in x for k in ['[GLOVE HANDS]','[AGENT ARMS]','SCRIPT ERROR','ERROR:',' at: ','Error:']))[-6000:]
+                  print('::notice title='+name+'::'+text.replace('%','%25').replace('\n','%0A'))
+          PY
+      - name: Rendered glove_bronze_arsenal
+        if: always()
+        run: python tools/publish_modern_capture.py glove_bronze_arsenal
+      - name: Rendered glove_bronze_arsenal_inspect
+        if: always()
+        run: python tools/publish_modern_capture.py glove_bronze_arsenal_inspect
+      - name: Rendered glove_bronze_arsenal_palm
+        if: always()
+        run: python tools/publish_modern_capture.py glove_bronze_arsenal_palm
+      - name: Rendered glove_cs2go_5030_10046_glock
+        if: always()
+        run: python tools/publish_modern_capture.py glove_cs2go_5030_10046_glock
+      - name: Rendered glove_cs2go_5030_10046_inspect
+        if: always()
+        run: python tools/publish_modern_capture.py glove_cs2go_5030_10046_inspect
+      - name: Rendered glove_cs2go_5030_10045_inspect
+        if: always()
+        run: python tools/publish_modern_capture.py glove_cs2go_5030_10045_inspect
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: glove-anatomical-exchange-evidence
+          path: |
+            /tmp/glove-*.log
+            /tmp/modern-captures/
