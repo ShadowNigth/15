@@ -16,25 +16,18 @@ func capture(label: String, viewport: Viewport = null) -> void:
 	var target := get_viewport() if viewport == null else viewport
 	expect(target.get_texture().get_image().save_png("/tmp/modern-captures/"+label+".png")==OK,"render " + label)
 func test_anatomy() -> void:
-	var scene := load("res://assets/models/agent_arms/sport.glb") as PackedScene
+	var definition: Dictionary = AgentViewArms.catalog().agents.sport
+	expect(definition.get("retarget", "") == "anatomical-same-side-v3", "fresh native source integration")
+	var scene := load(String(definition.model)) as PackedScene
 	var source := scene.instantiate() as Node3D
 	var mesh: MeshInstance3D = SportGloves._find_meshes(source)[0]
-	var skin := mesh.skin
-	var binds: Dictionary = {}
-	for i in skin.get_bind_count(): binds[String(skin.get_bind_name(i))] = i
-	for name in binds:
-		if not ("_L_" in name or "_R_" in name): continue
-		var opposite: String = name.replace("_L_","_R_") if "_L_" in name else name.replace("_R_","_L_")
-		if not binds.has(opposite): continue
-		var exchange := AgentViewArms._exchange_glove_bind(skin,binds,name,opposite)
-		var back := AgentViewArms._exchange_glove_bind(skin,binds,opposite,name)
-		var from := AgentViewArms._glove_bind_frame(skin,binds,name)
-		var to := AgentViewArms._glove_bind_frame(skin,binds,opposite)
-		expect(exchange.basis.determinant() < -0.99,"opposite chirality " + name)
-		expect((exchange*from.origin).distance_to(to.origin)<0.00001,"wrist/finger anchor " + name)
-		expect((exchange.basis*from.basis.y).dot(to.basis.y)>0.99,"finger points along destination finger " + name)
-		expect((exchange.basis*from.basis.z).dot(to.basis.z)<-0.99,"palm depth changes side " + name)
-		expect((back*exchange).is_equal_approx(Transform3D.IDENTITY),"exchange is reversible " + name)
+	expect(mesh.mesh.get_surface_count() == 2, "two independent native glove surfaces")
+	for surface in mesh.mesh.get_surface_count():
+		var arrays := mesh.mesh.surface_get_arrays(surface)
+		var vertices: PackedVector3Array = arrays[Mesh.ARRAY_VERTEX]
+		expect(vertices.size() > 1000, "native hand detail preserved")
+		for point in vertices:
+			expect(point.is_finite(), "finite rebuilt vertex")
 	source.free()
 func _run() -> void:
 	RoundManager.set_process(false)
@@ -51,6 +44,7 @@ func _run() -> void:
 	menu._open_arsenal()
 	menu._load_viewer_gloves()
 	for frame in 20: await get_tree().process_frame
+	await capture("glove_bronze_arsenal_full")
 	await capture("glove_bronze_arsenal",menu._viewer_viewport)
 	menu._inspect_gloves()
 	menu._glove_tween.pause()
@@ -110,7 +104,7 @@ func _run() -> void:
 				rig.force_update_all_bone_transforms()
 				for mesh in SportGloves._find_meshes(player._vm_model_root):
 					if mesh.get_meta("agent_arms","") != "sport": continue
-					expect(mesh.get_meta("handedness","")=="opposite-anatomical-reflection-v2","new anatomical conversion active")
+					expect(mesh.get_meta("handedness","")=="anatomical-same-side-v3","new anatomical conversion active")
 				if choice=="original" and phase==0.5:
 					await capture("glove_"+glove+"_inspect")
 		GameData.right_hand = false

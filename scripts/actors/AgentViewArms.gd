@@ -24,77 +24,17 @@ static func _bone(rig: Skeleton3D, name: String) -> int:
 	var bone := rig.find_bone(name)
 	return bone if bone >= 0 else rig.find_bone(name.replace(".", "_"))
 
-static func _glove_bind_frame(skin: Skin, binds: Dictionary, name: String) -> Transform3D:
-	# Anatomical axes, not the exporter-dependent bone roll. A left/right hand
-	# exchange needs opposite chirality as well as a different bone index.
-	var split := name.find("_L_")
-	if split < 0:
-		split = name.find("_R_")
-	var prefix := name.substr(0, split + 3)
-	var origin := skin.get_bind_pose(int(binds[name])).affine_inverse().origin
-	var hand_name := prefix + "Hand"
-	var middle_name := prefix + "Finger2"
-	var index_name := prefix + "Finger1"
-	var pinky_name := prefix + "Finger4"
-	if not binds.has(hand_name) or not binds.has(middle_name) or not binds.has(index_name) or not binds.has(pinky_name):
-		return skin.get_bind_pose(int(binds[name])).affine_inverse().orthonormalized()
-	var wrist := skin.get_bind_pose(int(binds[hand_name])).affine_inverse().origin
-	var middle := skin.get_bind_pose(int(binds[middle_name])).affine_inverse().origin
-	var index := skin.get_bind_pose(int(binds[index_name])).affine_inverse().origin
-	var pinky := skin.get_bind_pose(int(binds[pinky_name])).affine_inverse().origin
-	var along := middle - wrist
-	if "Finger" in name:
-		var finger := name.substr(name.find("Finger") + 6)
-		var child := prefix + "Finger" + (finger + "1" if finger.length() == 1 else finger.substr(0, 1) + "2")
-		if child != name and binds.has(child):
-			along = skin.get_bind_pose(int(binds[child])).affine_inverse().origin - origin
-		elif finger.length() == 2:
-			var parent := prefix + "Finger" + finger.substr(0, 1) + "1"
-			if binds.has(parent):
-				along = origin - skin.get_bind_pose(int(binds[parent])).affine_inverse().origin
-	elif name != hand_name:
-		along = wrist - origin
-	if along.length_squared() < 0.0000001:
-		along = middle - wrist
-	var y := along.normalized()
-	var x := (index - pinky) - y * (index - pinky).dot(y)
-	if x.length_squared() < 0.0000001:
-		x = (middle - wrist) - y * (middle - wrist).dot(y)
-	if x.length_squared() < 0.0000001:
-		x = y.cross(Vector3.UP if absf(y.dot(Vector3.UP)) < 0.9 else Vector3.RIGHT)
-	x = x.normalized()
-	return Transform3D(Basis(x, y, x.cross(y).normalized()), origin)
-
-static func _exchange_glove_bind(skin: Skin, binds: Dictionary, source: String, destination: String) -> Transform3D:
-	var from := _glove_bind_frame(skin, binds, source)
-	var to := _glove_bind_frame(skin, binds, destination)
-	# Reflect the palm-depth axis so the thumb and palm retain their anatomical
-	# side after exchanging hands. UVs, paints and animation tracks stay intact.
-	return to * Transform3D(Basis.FLIP_Z, Vector3.ZERO) * from.affine_inverse()
-
-
 static func _converted(source: MeshInstance3D, rig: Skeleton3D, model: String, avatar: String) -> Dictionary:
-	var key := model + ":" + avatar + (":opposite-anatomical-v2" if avatar == "sport" else "")
+	var key := model + ":" + avatar + (":rebuilt-native-v3" if avatar == "sport" else "")
 	var targets: Dictionary = catalog().get("targets", {}).get(model, {})
 	if targets.is_empty() or source.skin == null:
 		return {}
 	var transforms: Array[Transform3D] = []
 	var mapped := Skin.new()
 	var supported: Array[bool] = []
-	var source_binds: Dictionary = {}
-	for index in source.skin.get_bind_count():
-		source_binds[String(source.skin.get_bind_name(index))] = index
 	for index in source.skin.get_bind_count():
 		var name := String(source.skin.get_bind_name(index))
 		var correction := Transform3D.IDENTITY
-		# Exchange the complete left/right glove with anatomical palm/finger
-		# frames. Merely changing bind indices preserves the wrong chirality.
-		if avatar == "sport" and ("_L_" in name or "_R_" in name):
-			var opposite := name.replace("_L_", "_R_") if "_L_" in name else name.replace("_R_", "_L_")
-			if not source_binds.has(opposite):
-				return {}
-			correction = _exchange_glove_bind(source.skin, source_binds, name, opposite)
-			name = opposite
 		var entry := _entry(targets, name)
 		# Unused weapon/root binds are retained but do not influence these meshes.
 		if entry.is_empty():
@@ -134,17 +74,6 @@ static func _converted(source: MeshInstance3D, rig: Skeleton3D, model: String, a
 				normal += (transform.basis.inverse().transposed() * normals[vertex]) * weight
 			vertices[vertex] = point
 			normals[vertex] = normal.normalized()
-		if avatar == "sport":
-			# The anatomical exchange is a reflection. Reverse the winding too;
-			# disabling culling alone hides inside-out geometry/normal problems.
-			var indices: PackedInt32Array = arrays[Mesh.ARRAY_INDEX]
-			if indices.is_empty():
-				for vertex in vertices.size(): indices.append(vertex)
-			for triangle in range(0, indices.size(), 3):
-				var second := indices[triangle + 1]
-				indices[triangle + 1] = indices[triangle + 2]
-				indices[triangle + 2] = second
-			arrays[Mesh.ARRAY_INDEX] = indices
 		arrays[Mesh.ARRAY_VERTEX] = vertices
 		arrays[Mesh.ARRAY_NORMAL] = normals
 		# Tangents from the source bind pose are not valid after retargeting.
@@ -188,7 +117,7 @@ static func install(root: Node3D, model: String, avatar: String, native_textures
 	copy.set_meta("agent_arms", avatar)
 	if avatar == "sport":
 		copy.set_meta("sport_gloves", true)
-		copy.set_meta("handedness", "opposite-anatomical-reflection-v2")
+		copy.set_meta("handedness", "anatomical-same-side-v3")
 		copy.set_meta("sport_glove_id", GameData.selected_glove_id)
 	for surface in copy.mesh.get_surface_count():
 		var material := copy.mesh.surface_get_material(surface).duplicate() as BaseMaterial3D
