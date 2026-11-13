@@ -137,6 +137,21 @@ static func install(root: Node3D, model: String, avatar: String, native_textures
 		material.cull_mode = BaseMaterial3D.CULL_DISABLED
 		material.roughness = 0.85
 		material.metallic = 0
+		if is_glove:
+			var maps: Dictionary = definition.get("native_maps", {}).get(material.resource_name, {})
+			material.normal_texture = GameData.get_texture(String(maps.get("normal", "")))
+			material.normal_enabled = material.normal_texture != null
+			var orm := GameData.get_texture(String(maps.get("orm", "")))
+			material.roughness_texture = orm
+			material.roughness_texture_channel = BaseMaterial3D.TEXTURE_CHANNEL_GREEN
+			material.metallic_texture = orm
+			material.metallic_texture_channel = BaseMaterial3D.TEXTURE_CHANNEL_BLUE
+			material.ao_texture = orm
+			material.ao_texture_channel = BaseMaterial3D.TEXTURE_CHANNEL_RED
+			material.ao_enabled = orm != null
+			material.roughness = 1.0
+			material.metallic = 1.0
+			material.set_meta("native_moto_pbr", true)
 		copy.set_surface_override_material(surface, material)
 	var remove := "ct_base_glove.bmp" if is_glove else "ct_arms.bmp"
 	var replaced := 0

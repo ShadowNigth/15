@@ -414,6 +414,13 @@ func get_styled_model_material(orig: Material, mode: String) -> Material:
 
 	var dup := orig.duplicate() as BaseMaterial3D
 	dup.texture_filter = BaseMaterial3D.TEXTURE_FILTER_LINEAR_WITH_MIPMAPS_ANISOTROPIC
+	if bool(orig.get_meta("native_moto_pbr", false)):
+		# The native paint supplies normal, roughness, metal and AO maps.
+		# Do not replace its leather/pad response with the old glove scalar.
+		dup.diffuse_mode = BaseMaterial3D.DIFFUSE_BURLEY
+		dup.specular_mode = BaseMaterial3D.SPECULAR_SCHLICK_GGX
+		_styled_mat_cache[key] = dup
+		return dup
 	dup.diffuse_mode = BaseMaterial3D.DIFFUSE_LAMBERT_WRAP
 	dup.roughness = 0.92
 	dup.metallic = 0.0

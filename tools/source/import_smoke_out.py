@@ -86,6 +86,7 @@ def main():
     (CACHE/'bake-jobs.json').write_text(json.dumps([{'id':ID,'paint':paint_path}]))
     subprocess.run(['node','tools/source/cosmetics/bake.mjs',str(CACHE)],cwd=ROOT,check=True)
     textures = {}
+    native_maps = {}
     directory = ROOT/'assets/textures/moto_smoke_out'
     directory.mkdir(parents=True,exist_ok=True)
     baked = CACHE/'baked'/ID
@@ -101,12 +102,29 @@ def main():
             path = directory/(name+'.webp')
             image.save(path,format='WEBP',lossless=True)
             textures[name] = 'res://'+path.relative_to(ROOT).as_posix()
+            def pixels(key):
+                raw=(baked/maps[key]).read_bytes()
+                width=int((len(raw)//4)**.5)
+                return np.array(Image.frombytes('RGBA',(width,width),raw).resize((1024,1024),Image.Resampling.LANCZOS))
+            normal=pixels('g_tNormal')
+            xy=normal[:,:,:2].astype(float)/127.5-1
+            z=(np.sqrt(np.maximum(0,1-(xy*xy).sum(2)))*.5+.5)*255
+            normal_rgb=np.dstack([normal[:,:,0],normal[:,:,1],z.astype('uint8')])
+            normal_path=directory/(name+'_normal.webp')
+            Image.fromarray(normal_rgb).save(normal_path,format='WEBP',lossless=True)
+            ao=pixels('g_tAmbientOcclusion')[:,:,0]
+            metal=pixels('g_tMetalness')[:,:,0]
+            orm=np.dstack([ao,normal[:,:,2],metal])
+            orm_path=directory/(name+'_orm.webp')
+            Image.fromarray(orm).save(orm_path,format='WEBP',lossless=True)
+            native_maps[name]={'normal':'res://'+normal_path.relative_to(ROOT).as_posix(),'orm':'res://'+orm_path.relative_to(ROOT).as_posix()}
+
     td,tb = read_glb(ROOT/'assets/models/weapons/v_ak47.glb')
     original = arms.axis_between
     arms.axis_between = calibration
     try: definition = arms.build('moto_smoke_out','gloves/5033',td,tb,glove_prefix='glove_motorcycle_',bone_transform=bone_transform)
     finally: arms.axis_between = original
-    definition.update({'native_glove':True,'item':5033,'paint':10078,'textures':textures,'retarget':'anatomical-same-side','commit':PIN})
+    definition.update({'native_glove':True,'item':5033,'paint':10078,'textures':textures,'native_maps':native_maps,'retarget':'anatomical-same-side','commit':PIN})
     path = ROOT/'data/agent_view_arms.json'
     catalog = json.loads(path.read_text())
     catalog.setdefault('gloves',{})['moto_smoke_out'] = definition

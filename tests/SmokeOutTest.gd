@@ -27,6 +27,7 @@ func validate(root: Node3D, avatar: String) -> void:
 			for surface in mesh.mesh.get_surface_count():
 				var material := mesh.get_active_material(surface) as BaseMaterial3D
 				expect(material.albedo_texture != null, "native Smoke Out paint")
+				expect(material.normal_enabled and material.normal_texture != null and material.roughness_texture != null, "matching Smoke Out normal and packed material maps")
 				var side := "_L_" if material.resource_name.ends_with("left") else "_R_"
 				var arrays := mesh.mesh.surface_get_arrays(surface)
 				var bones: PackedInt32Array = arrays[Mesh.ARRAY_BONES]
@@ -56,6 +57,12 @@ func run() -> void:
 	RoundManager.game_world = self
 	expect(GameData.select_glove("5033_10078"), "requested Moto Smoke Out selectable")
 	expect(not GameData.select_glove("cs2go_5030_10046"), "removed Sport batch stays removed")
+	for model in AgentViewArms.catalog().targets:
+		var root := GameData.get_model_scene("weapons/" + String(model)).instantiate() as Node3D
+		add_child(root)
+		expect(SportGloves.apply(root, String(model)), "Smoke Out binds on " + String(model))
+		expect(AgentViewArms.install(root, String(model), "sas"), "Smoke Out with independent sleeve on " + String(model))
+		root.free()
 	var menu := load("res://scenes/MainMenu.tscn").instantiate() as MainMenu
 	add_child(menu)
 	await get_tree().process_frame
