@@ -1,6 +1,6 @@
 # Counter-Strike 1.5 Retail — Remake en Godot 4 (GDScript)
 
-Remake jugable de **Counter-Strike 1.5 Retail** construido íntegramente en **Godot 4.x (GDScript)**. Los mapas, texturas de mundo, personajes, HUD, radio y constantes clásicas proceden de [`Ch0wW/counterstrike-betas` (`cs15_retail`)](https://github.com/Ch0wW/counterstrike-betas/tree/cs15_retail). Los **43 slots de armas** conservan modelos, texturas e iconos convertidos desde [`ShadowNigth/archi`](https://github.com/ShadowNigth/archi), con audio específico complementado por [`Source2Sounds/cs2`](https://github.com/Source2Sounds/cs2). Las armas/utilidades y los 22 cuchillos añadidos usan ahora animaciones nativas por modelo de [`zh667/ScCsgoKnives`](https://github.com/zh667/ScCsgoKnives), adaptadas a nuestros modelos y brazos originales.
+Remake jugable de **Counter-Strike 1.5 Retail** construido íntegramente en **Godot 4.x (GDScript)**. Los mapas, texturas de mundo, personajes, HUD, radio y constantes clásicas proceden de [`Ch0wW/counterstrike-betas` (`cs15_retail`)](https://github.com/Ch0wW/counterstrike-betas/tree/cs15_retail). Los **43 slots de armas** conservan modelos, texturas e iconos convertidos desde [`ShadowNigth/archi`](https://github.com/ShadowNigth/archi), con audio específico complementado por [`Source2Sounds/cs2`](https://github.com/Source2Sounds/cs2). Las armas/utilidades y los 22 cuchillos añadidos usan ahora animaciones nativas por modelo de [`zh667/ScCsgoKnives`](https://github.com/zh667/ScCsgoKnives), adaptadas a nuestros modelos; los brazos y manos visibles usan ahora esqueletos originales de cs2go conducidos por esos movimientos.
 
 ---
 
@@ -100,7 +100,7 @@ Todo el contenido de `cstrike/` fue procesado mediante la suite de ingeniería i
   - **Presentación y materiales corregidos**: las armas conservan tamaño normal (`1.0`), las granadas en mano/proyectil usan `0.90` y las soltadas en el piso `1.0`. M4A1/USP mantienen el acople con las manos al inspeccionar, la corredera de Glock se mueve al disparar y el silenciador permanece visible durante su animación de montaje/desmontaje, ocultándose únicamente en estado desmontado. Las máscaras de tinte y lentes negras se conservan, el acabado de primera persona es más brillante/metálico y el Molotov combina vidrio verde y líquido translúcidos con etiqueta y trapo legibles.
   - **Inspecciones alternativas y materiales HD**: `T` rota las inspecciones auténticas disponibles. Deagle añade su secuencia larga con nueve eventos de foley, C4 añade dos variantes y las seis granadas añaden una segunda; recarga y plantado siguen bloqueando la inspección. 54 materiales comparten 136 texturas de color, normales y rugosidad derivada de Phong, con resolución de hasta 2K y sin alterar los brazos, guantes, tintes ni acabados ya calibrados.
   - **Selector de skins auténticas**: el 3D Arsenal ofrece seis acabados identificados para cada una de 20 familias (120 en total), con vista previa inmediata y selección independiente por arma para la próxima partida. Los PNG conservan los mapas UV originales de 512px, no son recolores procedurales; se aplican al viewmodel, tercera persona y drops sin reemplazar geometría, normales, roughness, miras, animaciones ni audio. Cada opción registra su paint-kit oficial, cotejado con `items_game.txt` y `csgo_english.txt` de GameTracking-CS2. Los créditos y términos de Valve/CS:GO Ports/BDS se conservan en `data/weapon_skins.json` y `tools/source/README.md`.
-  - **Brazos originales y Sport Gloves opcionales**: los 43 viewmodels conservan sus brazos originales `ct_arms.bmp`. Se puede elegir el guante clásico o uno de 26 acabados Sport con binds nativos y winding exterior corregido; no se utiliza MultiRig ni retargeting híbrido.
+  - **Brazos y manos nativos cs2go**: los viewmodels conservan las animaciones de sus armas, pero las superficies antiguas `ct_arms.bmp`/`ct_base_glove.bmp` se retiran de la instancia. Brazos y guantes usan sus esqueletos, pesos e inverse binds originales independientes. Se conservan los 26 IDs Sport opcionales, migrados al Sport nativo, y Moto Gloves | Smoke Out. Véase [la migración y su QA](docs/NATIVE_VIEW_RIG_MIGRATION.md).
 - **Economía, Rondas y Objetivos (`RoundManager.gd`, `BuyMenu.gd`)**:
   - Freeze time, Buy time en `func_buyzone`, menú VGUI clásico con previsualización de armas y **atajos rápidos clásicos** (ej. `B-4-1` AK-47, `B-4-3` M4A1, `B-4-6` AWP, `B-8-2` Kevlar+Casco, `,` y `.` para munición primaria/secundaria).
   - Plantado y desactivación del **C4** (`de_*`, 5s con Defuse Kit / 10s sin Kit), rescate de **Rehenes** (`cs_*` con `E`) y escolta de **VIP** (`as_*`).
@@ -192,9 +192,8 @@ los **44 acabados de armas** disponibles en el mismo catálogo fuente.
 
 El chrome PBR de los cuchillos es discreto y queda subordinado a la textura;
 normal/ORM cambian junto al acabado. Las poses de manos, dedos, hojas y bisagras
-proceden de los clips propios de cada modelo. Se conserva y retargetea la
-geometría de brazos y guantes existente; no se instala la malla de brazos nativa
-del port. Los Shadow Daggers tienen geometría y movimiento separados para ambas
+proceden de los clips propios de cada modelo. Los movimientos conducen los esqueletos originales de brazos y guantes cs2go;
+no se cambian las pistas de las armas ni se hornean los vértices a su esqueleto. Los Shadow Daggers tienen geometría y movimiento separados para ambas
 manos en primera persona.
 Se conserva el daño, velocidad, ranura y economía del cuchillo clásico.
 
@@ -203,9 +202,9 @@ Se conserva el daño, velocidad, ranura y economía del cuchillo clásico.
 
 Los 22 cuchillos CS2 usan ahora sus propios clips de equipar, reposo, ataques e
 inspección, incluidas variantes disponibles en el catálogo. Ya no comparten las
-poses del Kukri. Las poses nativas se retargetean a la geometría de brazos y
-Sport Gloves existente; no se reemplazan sus texturas ni los rigs de armas de
-fuego. Se corrige la inversión doble de mano y se conserva el encuadre del origen.
+poses del Kukri. Las poses animadas conducen los huesos originales cs2go de brazos y guantes,
+con adaptación de reposo por arma; los rigs y eventos de las armas de fuego
+se conservan. Se corrige la inversión doble de mano y se conserva el encuadre del origen.
 Los datos y limitaciones de conversión figuran en `docs/KNIFE_ASSET_NOTICES.md`
 y `data/native_knife_animation_report.json`.
 

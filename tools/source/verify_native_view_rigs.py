@@ -29,6 +29,15 @@ def main():
         target=ROOT/entry['model'][6:]
         assert hashlib.sha256(target.read_bytes()).hexdigest()==entry['sha256']
         td,tb=read_glb(target)
+        source_nodes={n['name']:n for n in sd['nodes']}
+        source_parents={sd['nodes'][c]['name']:n['name'] for n in sd['nodes'] for c in n.get('children',[])}
+        target_parents={td['nodes'][c]['name']:n['name'] for n in td['nodes'] for c in n.get('children',[])}
+        for skin in td['skins']:
+            for index in skin['joints']:
+                node=td['nodes'][index];name=node['name'];original_node=source_nodes[name]
+                assert source_parents.get(name)==target_parents.get(name),(key,name,'parent hierarchy')
+                for attribute,default in [('translation',[0,0,0]),('rotation',[0,0,0,1]),('scale',[1,1,1])]:
+                    assert np.allclose(node.get(attribute,default),original_node.get(attribute,default),atol=1e-6),(key,name,attribute)
         original=primitive_table(sd,sb)
         imported=primitive_table(td,tb)
         assert imported
