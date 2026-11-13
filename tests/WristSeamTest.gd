@@ -72,7 +72,15 @@ func validate(root: Node3D, baseline: Node3D, label: String) -> void:
 			for surface in mesh.mesh.get_surface_count():
 				var arrays := mesh.mesh.surface_get_arrays(surface)
 				var vertices: PackedVector3Array = arrays[Mesh.ARRAY_VERTEX]
+				var binds: PackedInt32Array = arrays[Mesh.ARRAY_BONES]
+				var weights: PackedFloat32Array = arrays[Mesh.ARRAY_WEIGHTS]
+				var stride: int = binds.size() / vertices.size()
 				for vertex in vertices.size():
+					var dominant := 0
+					for slot in stride:
+						if weights[vertex * stride + slot] > weights[vertex * stride + dominant]: dominant = slot
+					var bone := mesh.skin.get_bind_bone(binds[vertex * stride + dominant])
+					if not ("_" + String(side) + "_") in rig.get_bone_name(bone): continue
 					var along := (vertices[vertex] - wrist.origin).dot(direction)
 					if along < -0.04 or along > 0.02 or vertices[vertex].distance_to(wrist.origin) > 0.12: continue
 					count += 1
