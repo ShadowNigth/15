@@ -142,6 +142,9 @@ static func fit(root: Node3D, rig: Skeleton3D, mesh: ArrayMesh, skin: Skin, key:
 				var delta: Vector3 = vertices[index] - wrists[side]
 				var along := delta.dot(axis)
 				var radial := delta - axis * along
+				# Ignore interior palm/closure vertices: the arm passes through
+				# the cuff opening, not the glove's internal seam near its axis.
+				if radial.length() < 0.027: continue
 				profiles[side].start = minf(float(profiles[side].start), along)
 				candidates[side].append({"along": along, "direction": radial.normalized(), "radius": radial.length()})
 			for side in ["L", "R"]:
