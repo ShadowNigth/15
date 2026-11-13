@@ -40,7 +40,7 @@ func validate(root: Node3D, baseline: Node3D, label: String) -> void:
 	expect(reference != null, "original authored wrist reference " + label)
 	if reference == null: return
 	for side in ["L", "R"]:
-		var prefix := "v_weapon.Bip01_" + side + "_"
+		var prefix: String = "v_weapon.Bip01_" + String(side) + "_"
 		var wrist := Transform3D.IDENTITY
 		var elbow := Transform3D.IDENTITY
 		for bind in reference.skin.get_bind_count():
