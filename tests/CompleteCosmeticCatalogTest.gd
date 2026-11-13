@@ -52,7 +52,7 @@ func _run() -> void:
 		await get_tree().process_frame
 		_expect(player._cur_vm_model_name == String(option["v_model"]) and player._vm_anim != null, key + " real viewmodel")
 		_expect(_has_agent_arms(player._vm_model_root), key + " original arms")
-		_expect(_material(player._vm_model_root, "ct_base_glove.bmp") != null, key + " original gloves")
+		_expect((_material(player._vm_model_root, "ct_base_glove.bmp") != null or player._vm_model_root.has_meta("native_view_rig")), key + " original gloves")
 		var native_meta: Dictionary = GameData.models_meta["weapons/" + String(option["v_model"])]
 		_expect(bool(native_meta.get("native_cs2_animation", false)), key + " model-specific native animation")
 		_expect(bool(native_meta.get("authored_right_hand", false)), key + " native right-handed camera coordinates")

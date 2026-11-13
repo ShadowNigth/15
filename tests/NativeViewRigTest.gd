@@ -91,6 +91,16 @@ func run() -> void:
 	player._vm_anim.seek(player._vm_anim.get_animation("inspect").length * 0.5, true)
 	validate(player._vm_model_root)
 	await capture("native_karambit_inspect")
+	GameData.select_glove("amphibious_ft")
+	player.set_team_and_class("T", "leet")
+	player.weapon_ctrl.equip_weapon_by_id("ak47")
+	player._rebuild_viewmodel("ak47")
+	player._vm_anim.play("idle")
+	player._vm_anim.advance(0)
+	player._vm_anim.pause()
+	validate(player._vm_model_root)
+	await capture("native_existing_sport_ak47")
+	GameData.select_glove("5033_10078")
 	player.free()
 	var menu := load("res://scenes/MainMenu.tscn").instantiate() as MainMenu
 	add_child(menu)
@@ -103,6 +113,22 @@ func run() -> void:
 	menu._glove_tween.custom_step(0.9)
 	await capture("native_arsenal_inspect", menu._viewer_viewport)
 	menu.free()
+	# Every pre-existing optional Sport finish keeps its ID, matching native
+	# model, paint, wear and independent skin instead of silently using defaults.
+	for option in GameData.get_glove_options():
+		expect(GameData.select_glove(String(option.id)), "retained finish selectable " + String(option.id))
+		for avatar in ["sas", "leet"]:
+			var root := GameData.get_model_scene("weapons/v_ak47").instantiate() as Node3D
+			add_child(root)
+			expect(NativeViewRig.install(root, "v_ak47", avatar), "retained native finish " + String(option.id) + avatar)
+			validate(root)
+			for mesh in SportGloves._find_meshes(root):
+				if not mesh.visible or not mesh.has_meta("native_source_skin"): continue
+				for surface in mesh.mesh.get_surface_count():
+					var material := mesh.get_active_material(surface) as BaseMaterial3D
+					if material.resource_name.begins_with("glove_"):
+						expect(material.albedo_texture == GameData.get_texture(String(option.native_textures.get(material.resource_name, ""))), "selected finish texture, not default")
+			root.free()
 	if "--pilot-only" in OS.get_cmdline_user_args():
 		print("[NATIVE VIEW] ", "PASS: " if failures == 0 else "FAIL: ", checks, " pilot checks; ", failures, " failures")
 		get_tree().quit(0 if failures == 0 else 1)
@@ -112,7 +138,7 @@ func run() -> void:
 	var models: Array = AgentViewArms.catalog().targets.keys()
 	for option in GameData.get_knife_options():
 		if not String(option.v_model) in models: models.append(String(option.v_model))
-	for glove in ["classic", "5033_10078"]:
+	for glove in ["classic", "5033_10078", "amphibious_ft"]:
 		GameData.select_glove(glove)
 		for model in models:
 			for avatar in NativeViewRig.catalog().agents:

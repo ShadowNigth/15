@@ -1,6 +1,6 @@
 {
   "classic_id": "classic",
-  "conversion": "Original gloves by default; older optional Sport finishes retained. Native cs2go Sport gloves removed at user request.",
+  "conversion": "Original cs2go skeletons: existing optional Sport IDs preserved, Smoke Out added separately. No removed catalogue options restored.",
   "default": "classic",
   "models": [
     "v_ak47",
@@ -65,7 +65,24 @@
         "sport_glove_r_4": "res://assets/textures/sport_gloves/amphibious_bs/l_4.jpg"
       },
       "wear": "Battle-Scarred",
-      "wear_code": "BS"
+      "wear_code": "BS",
+      "native_model": "sport_native",
+      "native_textures": {
+        "glove_sporty_left": "res://assets/textures/native_sport/amphibious_bs/glove_sporty_left.webp",
+        "glove_sporty_right": "res://assets/textures/native_sport/amphibious_bs/glove_sporty_right.webp"
+      },
+      "native_maps": {
+        "glove_sporty_left": {
+          "normal": "res://assets/textures/native_sport/amphibious_bs/glove_sporty_left_normal.webp",
+          "orm": "res://assets/textures/native_sport/amphibious_bs/glove_sporty_left_orm.webp"
+        },
+        "glove_sporty_right": {
+          "normal": "res://assets/textures/native_sport/amphibious_bs/glove_sporty_right_normal.webp",
+          "orm": "res://assets/textures/native_sport/amphibious_bs/glove_sporty_right_orm.webp"
+        }
+      },
+      "native_source_finish": "5030_10045",
+      "native_wear": 0.8
     },
     {
       "family": "Amphibious",
@@ -84,7 +101,24 @@
         "sport_glove_r_4": "res://assets/textures/sport_gloves/amphibious_ft/l_4.jpg"
       },
       "wear": "Field-Tested",
-      "wear_code": "FT"
+      "wear_code": "FT",
+      "native_model": "sport_native",
+      "native_textures": {
+        "glove_sporty_left": "res://assets/textures/native_sport/amphibious_ft/glove_sporty_left.webp",
+        "glove_sporty_right": "res://assets/textures/native_sport/amphibious_ft/glove_sporty_right.webp"
+      },
+      "native_maps": {
+        "glove_sporty_left": {
+          "normal": "res://assets/textures/native_sport/amphibious_ft/glove_sporty_left_normal.webp",
+          "orm": "res://assets/textures/native_sport/amphibious_ft/glove_sporty_left_orm.webp"
+        },
+        "glove_sporty_right": {
+          "normal": "res://assets/textures/native_sport/amphibious_ft/glove_sporty_right_normal.webp",
+          "orm": "res://assets/textures/native_sport/amphibious_ft/glove_sporty_right_orm.webp"
+        }
+      },
+      "native_source_finish": "5030_10045",
+      "native_wear": 0.25
     },
     {
       "family": "Amphibious",
@@ -103,7 +137,24 @@
         "sport_glove_r_4": "res://assets/textures/sport_gloves/amphibious_ww/l_4.jpg"
       },
       "wear": "Well-Worn",
-      "wear_code": "WW"
+      "wear_code": "WW",
+      "native_model": "sport_native",
+      "native_textures": {
+        "glove_sporty_left": "res://assets/textures/native_sport/amphibious_ww/glove_sporty_left.webp",
+        "glove_sporty_right": "res://assets/textures/native_sport/amphibious_ww/glove_sporty_right.webp"
+      },
+      "native_maps": {
+        "glove_sporty_left": {
+          "normal": "res://assets/textures/native_sport/amphibious_ww/glove_sporty_left_normal.webp",
+          "orm": "res://assets/textures/native_sport/amphibious_ww/glove_sporty_left_orm.webp"
+        },
+        "glove_sporty_right": {
+          "normal": "res://assets/textures/native_sport/amphibious_ww/glove_sporty_right_normal.webp",
+          "orm": "res://assets/textures/native_sport/amphibious_ww/glove_sporty_right_orm.webp"
+        }
+      },
+      "native_source_finish": "5030_10045",
+      "native_wear": 0.4
     },
     {
       "family": "Arid",
@@ -122,7 +173,24 @@
         "sport_glove_r_4": "res://assets/textures/sport_gloves/arid_bs/l_4.jpg"
       },
       "wear": "Battle-Scarred",
-      "wear_code": "BS"
+      "wear_code": "BS",
+      "native_model": "sport_native",
+      "native_textures": {
+        "glove_sporty_left": "res://assets/textures/native_sport/arid_bs/glove_sporty_left.webp",
+        "glove_sporty_right": "res://assets/textures/native_sport/arid_bs/glove_sporty_right.webp"
+      },
+      "native_maps": {
+        "glove_sporty_left": {
+          "normal": "res://assets/textures/native_sport/arid_bs/glove_sporty_left_normal.webp",
+          "orm": "res://assets/textures/native_sport/arid_bs/glove_sporty_left_orm.webp"
+        },
+        "glove_sporty_right": {
+          "normal": "res://assets/textures/native_sport/arid_bs/glove_sporty_right_normal.webp",
+          "orm": "res://assets/textures/native_sport/arid_bs/glove_sporty_right_orm.webp"
+        }
+      },
+      "native_source_finish": "5030_10019",
+      "native_wear": 0.8
     },
     {
       "family": "Arid",
@@ -141,7 +209,24 @@
         "sport_glove_r_4": "res://assets/textures/sport_gloves/arid_ft/l_4.jpg"
       },
       "wear": "Field-Tested",
-      "wear_code": "FT"
+      "wear_code": "FT",
+      "native_model": "sport_native",
+      "native_textures": {
+        "glove_sporty_left": "res://assets/textures/native_sport/arid_ft/glove_sporty_left.webp",
+        "glove_sporty_right": "res://assets/textures/native_sport/arid_ft/glove_sporty_right.webp"
+      },
+      "native_maps": {
+        "glove_sporty_left": {
+          "normal": "res://assets/textures/native_sport/arid_ft/glove_sporty_left_normal.webp",
+          "orm": "res://assets/textures/native_sport/arid_ft/glove_sporty_left_orm.webp"
+        },
+        "glove_sporty_right": {
+          "normal": "res://assets/textures/native_sport/arid_ft/glove_sporty_right_normal.webp",
+          "orm": "res://assets/textures/native_sport/arid_ft/glove_sporty_right_orm.webp"
+        }
+      },
+      "native_source_finish": "5030_10019",
+      "native_wear": 0.25
     },
     {
       "family": "Arid",
@@ -160,7 +245,24 @@
         "sport_glove_r_4": "res://assets/textures/sport_gloves/arid_mw/l_4.jpg"
       },
       "wear": "Minimal Wear",
-      "wear_code": "MW"
+      "wear_code": "MW",
+      "native_model": "sport_native",
+      "native_textures": {
+        "glove_sporty_left": "res://assets/textures/native_sport/arid_mw/glove_sporty_left.webp",
+        "glove_sporty_right": "res://assets/textures/native_sport/arid_mw/glove_sporty_right.webp"
+      },
+      "native_maps": {
+        "glove_sporty_left": {
+          "normal": "res://assets/textures/native_sport/arid_mw/glove_sporty_left_normal.webp",
+          "orm": "res://assets/textures/native_sport/arid_mw/glove_sporty_left_orm.webp"
+        },
+        "glove_sporty_right": {
+          "normal": "res://assets/textures/native_sport/arid_mw/glove_sporty_right_normal.webp",
+          "orm": "res://assets/textures/native_sport/arid_mw/glove_sporty_right_orm.webp"
+        }
+      },
+      "native_source_finish": "5030_10019",
+      "native_wear": 0.12
     },
     {
       "family": "Arid",
@@ -179,7 +281,24 @@
         "sport_glove_r_4": "res://assets/textures/sport_gloves/arid_ww/l_4.jpg"
       },
       "wear": "Well-Worn",
-      "wear_code": "WW"
+      "wear_code": "WW",
+      "native_model": "sport_native",
+      "native_textures": {
+        "glove_sporty_left": "res://assets/textures/native_sport/arid_ww/glove_sporty_left.webp",
+        "glove_sporty_right": "res://assets/textures/native_sport/arid_ww/glove_sporty_right.webp"
+      },
+      "native_maps": {
+        "glove_sporty_left": {
+          "normal": "res://assets/textures/native_sport/arid_ww/glove_sporty_left_normal.webp",
+          "orm": "res://assets/textures/native_sport/arid_ww/glove_sporty_left_orm.webp"
+        },
+        "glove_sporty_right": {
+          "normal": "res://assets/textures/native_sport/arid_ww/glove_sporty_right_normal.webp",
+          "orm": "res://assets/textures/native_sport/arid_ww/glove_sporty_right_orm.webp"
+        }
+      },
+      "native_source_finish": "5030_10019",
+      "native_wear": 0.4
     },
     {
       "family": "Bronze Morph",
@@ -198,7 +317,24 @@
         "sport_glove_r_4": "res://assets/textures/sport_gloves/bronze_morph_bs/l_4.jpg"
       },
       "wear": "Battle-Scarred",
-      "wear_code": "BS"
+      "wear_code": "BS",
+      "native_model": "sport_native",
+      "native_textures": {
+        "glove_sporty_left": "res://assets/textures/native_sport/bronze_morph_bs/glove_sporty_left.webp",
+        "glove_sporty_right": "res://assets/textures/native_sport/bronze_morph_bs/glove_sporty_right.webp"
+      },
+      "native_maps": {
+        "glove_sporty_left": {
+          "normal": "res://assets/textures/native_sport/bronze_morph_bs/glove_sporty_left_normal.webp",
+          "orm": "res://assets/textures/native_sport/bronze_morph_bs/glove_sporty_left_orm.webp"
+        },
+        "glove_sporty_right": {
+          "normal": "res://assets/textures/native_sport/bronze_morph_bs/glove_sporty_right_normal.webp",
+          "orm": "res://assets/textures/native_sport/bronze_morph_bs/glove_sporty_right_orm.webp"
+        }
+      },
+      "native_source_finish": "5030_10046",
+      "native_wear": 0.8
     },
     {
       "family": "Bronze Morph",
@@ -217,7 +353,24 @@
         "sport_glove_r_4": "res://assets/textures/sport_gloves/bronze_morph_ft/l_4.jpg"
       },
       "wear": "Field-Tested",
-      "wear_code": "FT"
+      "wear_code": "FT",
+      "native_model": "sport_native",
+      "native_textures": {
+        "glove_sporty_left": "res://assets/textures/native_sport/bronze_morph_ft/glove_sporty_left.webp",
+        "glove_sporty_right": "res://assets/textures/native_sport/bronze_morph_ft/glove_sporty_right.webp"
+      },
+      "native_maps": {
+        "glove_sporty_left": {
+          "normal": "res://assets/textures/native_sport/bronze_morph_ft/glove_sporty_left_normal.webp",
+          "orm": "res://assets/textures/native_sport/bronze_morph_ft/glove_sporty_left_orm.webp"
+        },
+        "glove_sporty_right": {
+          "normal": "res://assets/textures/native_sport/bronze_morph_ft/glove_sporty_right_normal.webp",
+          "orm": "res://assets/textures/native_sport/bronze_morph_ft/glove_sporty_right_orm.webp"
+        }
+      },
+      "native_source_finish": "5030_10046",
+      "native_wear": 0.25
     },
     {
       "family": "Bronze Morph",
@@ -236,7 +389,24 @@
         "sport_glove_r_4": "res://assets/textures/sport_gloves/bronze_morph_mw/l_4.jpg"
       },
       "wear": "Minimal Wear",
-      "wear_code": "MW"
+      "wear_code": "MW",
+      "native_model": "sport_native",
+      "native_textures": {
+        "glove_sporty_left": "res://assets/textures/native_sport/bronze_morph_mw/glove_sporty_left.webp",
+        "glove_sporty_right": "res://assets/textures/native_sport/bronze_morph_mw/glove_sporty_right.webp"
+      },
+      "native_maps": {
+        "glove_sporty_left": {
+          "normal": "res://assets/textures/native_sport/bronze_morph_mw/glove_sporty_left_normal.webp",
+          "orm": "res://assets/textures/native_sport/bronze_morph_mw/glove_sporty_left_orm.webp"
+        },
+        "glove_sporty_right": {
+          "normal": "res://assets/textures/native_sport/bronze_morph_mw/glove_sporty_right_normal.webp",
+          "orm": "res://assets/textures/native_sport/bronze_morph_mw/glove_sporty_right_orm.webp"
+        }
+      },
+      "native_source_finish": "5030_10046",
+      "native_wear": 0.12
     },
     {
       "family": "Bronze Morph",
@@ -255,7 +425,24 @@
         "sport_glove_r_4": "res://assets/textures/sport_gloves/bronze_morph_ww/l_4.jpg"
       },
       "wear": "Well-Worn",
-      "wear_code": "WW"
+      "wear_code": "WW",
+      "native_model": "sport_native",
+      "native_textures": {
+        "glove_sporty_left": "res://assets/textures/native_sport/bronze_morph_ww/glove_sporty_left.webp",
+        "glove_sporty_right": "res://assets/textures/native_sport/bronze_morph_ww/glove_sporty_right.webp"
+      },
+      "native_maps": {
+        "glove_sporty_left": {
+          "normal": "res://assets/textures/native_sport/bronze_morph_ww/glove_sporty_left_normal.webp",
+          "orm": "res://assets/textures/native_sport/bronze_morph_ww/glove_sporty_left_orm.webp"
+        },
+        "glove_sporty_right": {
+          "normal": "res://assets/textures/native_sport/bronze_morph_ww/glove_sporty_right_normal.webp",
+          "orm": "res://assets/textures/native_sport/bronze_morph_ww/glove_sporty_right_orm.webp"
+        }
+      },
+      "native_source_finish": "5030_10046",
+      "native_wear": 0.4
     },
     {
       "family": "Hedge Maze",
@@ -274,7 +461,24 @@
         "sport_glove_r_4": "res://assets/textures/sport_gloves/hedge_maze_bs/l_4.jpg"
       },
       "wear": "Battle-Scarred",
-      "wear_code": "BS"
+      "wear_code": "BS",
+      "native_model": "sport_native",
+      "native_textures": {
+        "glove_sporty_left": "res://assets/textures/native_sport/hedge_maze_bs/glove_sporty_left.webp",
+        "glove_sporty_right": "res://assets/textures/native_sport/hedge_maze_bs/glove_sporty_right.webp"
+      },
+      "native_maps": {
+        "glove_sporty_left": {
+          "normal": "res://assets/textures/native_sport/hedge_maze_bs/glove_sporty_left_normal.webp",
+          "orm": "res://assets/textures/native_sport/hedge_maze_bs/glove_sporty_left_orm.webp"
+        },
+        "glove_sporty_right": {
+          "normal": "res://assets/textures/native_sport/hedge_maze_bs/glove_sporty_right_normal.webp",
+          "orm": "res://assets/textures/native_sport/hedge_maze_bs/glove_sporty_right_orm.webp"
+        }
+      },
+      "native_source_finish": "5030_10038",
+      "native_wear": 0.8
     },
     {
       "family": "Hedge Maze",
@@ -293,7 +497,24 @@
         "sport_glove_r_4": "res://assets/textures/sport_gloves/hedge_maze_ft/l_4.jpg"
       },
       "wear": "Field-Tested",
-      "wear_code": "FT"
+      "wear_code": "FT",
+      "native_model": "sport_native",
+      "native_textures": {
+        "glove_sporty_left": "res://assets/textures/native_sport/hedge_maze_ft/glove_sporty_left.webp",
+        "glove_sporty_right": "res://assets/textures/native_sport/hedge_maze_ft/glove_sporty_right.webp"
+      },
+      "native_maps": {
+        "glove_sporty_left": {
+          "normal": "res://assets/textures/native_sport/hedge_maze_ft/glove_sporty_left_normal.webp",
+          "orm": "res://assets/textures/native_sport/hedge_maze_ft/glove_sporty_left_orm.webp"
+        },
+        "glove_sporty_right": {
+          "normal": "res://assets/textures/native_sport/hedge_maze_ft/glove_sporty_right_normal.webp",
+          "orm": "res://assets/textures/native_sport/hedge_maze_ft/glove_sporty_right_orm.webp"
+        }
+      },
+      "native_source_finish": "5030_10038",
+      "native_wear": 0.25
     },
     {
       "family": "Hedge Maze",
@@ -312,7 +533,24 @@
         "sport_glove_r_4": "res://assets/textures/sport_gloves/hedge_maze_ww/l_4.jpg"
       },
       "wear": "Well-Worn",
-      "wear_code": "WW"
+      "wear_code": "WW",
+      "native_model": "sport_native",
+      "native_textures": {
+        "glove_sporty_left": "res://assets/textures/native_sport/hedge_maze_ww/glove_sporty_left.webp",
+        "glove_sporty_right": "res://assets/textures/native_sport/hedge_maze_ww/glove_sporty_right.webp"
+      },
+      "native_maps": {
+        "glove_sporty_left": {
+          "normal": "res://assets/textures/native_sport/hedge_maze_ww/glove_sporty_left_normal.webp",
+          "orm": "res://assets/textures/native_sport/hedge_maze_ww/glove_sporty_left_orm.webp"
+        },
+        "glove_sporty_right": {
+          "normal": "res://assets/textures/native_sport/hedge_maze_ww/glove_sporty_right_normal.webp",
+          "orm": "res://assets/textures/native_sport/hedge_maze_ww/glove_sporty_right_orm.webp"
+        }
+      },
+      "native_source_finish": "5030_10038",
+      "native_wear": 0.4
     },
     {
       "family": "Omega",
@@ -331,7 +569,24 @@
         "sport_glove_r_4": "res://assets/textures/sport_gloves/omega_bs/l_4.jpg"
       },
       "wear": "Battle-Scarred",
-      "wear_code": "BS"
+      "wear_code": "BS",
+      "native_model": "sport_native",
+      "native_textures": {
+        "glove_sporty_left": "res://assets/textures/native_sport/omega_bs/glove_sporty_left.webp",
+        "glove_sporty_right": "res://assets/textures/native_sport/omega_bs/glove_sporty_right.webp"
+      },
+      "native_maps": {
+        "glove_sporty_left": {
+          "normal": "res://assets/textures/native_sport/omega_bs/glove_sporty_left_normal.webp",
+          "orm": "res://assets/textures/native_sport/omega_bs/glove_sporty_left_orm.webp"
+        },
+        "glove_sporty_right": {
+          "normal": "res://assets/textures/native_sport/omega_bs/glove_sporty_right_normal.webp",
+          "orm": "res://assets/textures/native_sport/omega_bs/glove_sporty_right_orm.webp"
+        }
+      },
+      "native_source_finish": "5030_10047",
+      "native_wear": 0.8
     },
     {
       "family": "Omega",
@@ -350,7 +605,24 @@
         "sport_glove_r_4": "res://assets/textures/sport_gloves/omega_ft/l_4.jpg"
       },
       "wear": "Field-Tested",
-      "wear_code": "FT"
+      "wear_code": "FT",
+      "native_model": "sport_native",
+      "native_textures": {
+        "glove_sporty_left": "res://assets/textures/native_sport/omega_ft/glove_sporty_left.webp",
+        "glove_sporty_right": "res://assets/textures/native_sport/omega_ft/glove_sporty_right.webp"
+      },
+      "native_maps": {
+        "glove_sporty_left": {
+          "normal": "res://assets/textures/native_sport/omega_ft/glove_sporty_left_normal.webp",
+          "orm": "res://assets/textures/native_sport/omega_ft/glove_sporty_left_orm.webp"
+        },
+        "glove_sporty_right": {
+          "normal": "res://assets/textures/native_sport/omega_ft/glove_sporty_right_normal.webp",
+          "orm": "res://assets/textures/native_sport/omega_ft/glove_sporty_right_orm.webp"
+        }
+      },
+      "native_source_finish": "5030_10047",
+      "native_wear": 0.25
     },
     {
       "family": "Omega",
@@ -369,7 +641,24 @@
         "sport_glove_r_4": "res://assets/textures/sport_gloves/omega_mw/l_4.jpg"
       },
       "wear": "Minimal Wear",
-      "wear_code": "MW"
+      "wear_code": "MW",
+      "native_model": "sport_native",
+      "native_textures": {
+        "glove_sporty_left": "res://assets/textures/native_sport/omega_mw/glove_sporty_left.webp",
+        "glove_sporty_right": "res://assets/textures/native_sport/omega_mw/glove_sporty_right.webp"
+      },
+      "native_maps": {
+        "glove_sporty_left": {
+          "normal": "res://assets/textures/native_sport/omega_mw/glove_sporty_left_normal.webp",
+          "orm": "res://assets/textures/native_sport/omega_mw/glove_sporty_left_orm.webp"
+        },
+        "glove_sporty_right": {
+          "normal": "res://assets/textures/native_sport/omega_mw/glove_sporty_right_normal.webp",
+          "orm": "res://assets/textures/native_sport/omega_mw/glove_sporty_right_orm.webp"
+        }
+      },
+      "native_source_finish": "5030_10047",
+      "native_wear": 0.12
     },
     {
       "family": "Omega",
@@ -388,7 +677,24 @@
         "sport_glove_r_4": "res://assets/textures/sport_gloves/omega_ww/l_4.jpg"
       },
       "wear": "Well-Worn",
-      "wear_code": "WW"
+      "wear_code": "WW",
+      "native_model": "sport_native",
+      "native_textures": {
+        "glove_sporty_left": "res://assets/textures/native_sport/omega_ww/glove_sporty_left.webp",
+        "glove_sporty_right": "res://assets/textures/native_sport/omega_ww/glove_sporty_right.webp"
+      },
+      "native_maps": {
+        "glove_sporty_left": {
+          "normal": "res://assets/textures/native_sport/omega_ww/glove_sporty_left_normal.webp",
+          "orm": "res://assets/textures/native_sport/omega_ww/glove_sporty_left_orm.webp"
+        },
+        "glove_sporty_right": {
+          "normal": "res://assets/textures/native_sport/omega_ww/glove_sporty_right_normal.webp",
+          "orm": "res://assets/textures/native_sport/omega_ww/glove_sporty_right_orm.webp"
+        }
+      },
+      "native_source_finish": "5030_10047",
+      "native_wear": 0.4
     },
     {
       "family": "Pandora's Box",
@@ -407,7 +713,24 @@
         "sport_glove_r_4": "res://assets/textures/sport_gloves/pandora_s_box_bs/l_4.jpg"
       },
       "wear": "Battle-Scarred",
-      "wear_code": "BS"
+      "wear_code": "BS",
+      "native_model": "sport_native",
+      "native_textures": {
+        "glove_sporty_left": "res://assets/textures/native_sport/pandora_s_box_bs/glove_sporty_left.webp",
+        "glove_sporty_right": "res://assets/textures/native_sport/pandora_s_box_bs/glove_sporty_right.webp"
+      },
+      "native_maps": {
+        "glove_sporty_left": {
+          "normal": "res://assets/textures/native_sport/pandora_s_box_bs/glove_sporty_left_normal.webp",
+          "orm": "res://assets/textures/native_sport/pandora_s_box_bs/glove_sporty_left_orm.webp"
+        },
+        "glove_sporty_right": {
+          "normal": "res://assets/textures/native_sport/pandora_s_box_bs/glove_sporty_right_normal.webp",
+          "orm": "res://assets/textures/native_sport/pandora_s_box_bs/glove_sporty_right_orm.webp"
+        }
+      },
+      "native_source_finish": "5030_10037",
+      "native_wear": 0.8
     },
     {
       "family": "Pandora's Box",
@@ -426,7 +749,24 @@
         "sport_glove_r_4": "res://assets/textures/sport_gloves/pandora_s_box_ft/l_4.jpg"
       },
       "wear": "Field-Tested",
-      "wear_code": "FT"
+      "wear_code": "FT",
+      "native_model": "sport_native",
+      "native_textures": {
+        "glove_sporty_left": "res://assets/textures/native_sport/pandora_s_box_ft/glove_sporty_left.webp",
+        "glove_sporty_right": "res://assets/textures/native_sport/pandora_s_box_ft/glove_sporty_right.webp"
+      },
+      "native_maps": {
+        "glove_sporty_left": {
+          "normal": "res://assets/textures/native_sport/pandora_s_box_ft/glove_sporty_left_normal.webp",
+          "orm": "res://assets/textures/native_sport/pandora_s_box_ft/glove_sporty_left_orm.webp"
+        },
+        "glove_sporty_right": {
+          "normal": "res://assets/textures/native_sport/pandora_s_box_ft/glove_sporty_right_normal.webp",
+          "orm": "res://assets/textures/native_sport/pandora_s_box_ft/glove_sporty_right_orm.webp"
+        }
+      },
+      "native_source_finish": "5030_10037",
+      "native_wear": 0.25
     },
     {
       "family": "Superconductor",
@@ -445,7 +785,24 @@
         "sport_glove_r_4": "res://assets/textures/sport_gloves/superconductor_bs/l_4.jpg"
       },
       "wear": "Battle-Scarred",
-      "wear_code": "BS"
+      "wear_code": "BS",
+      "native_model": "sport_native",
+      "native_textures": {
+        "glove_sporty_left": "res://assets/textures/native_sport/superconductor_bs/glove_sporty_left.webp",
+        "glove_sporty_right": "res://assets/textures/native_sport/superconductor_bs/glove_sporty_right.webp"
+      },
+      "native_maps": {
+        "glove_sporty_left": {
+          "normal": "res://assets/textures/native_sport/superconductor_bs/glove_sporty_left_normal.webp",
+          "orm": "res://assets/textures/native_sport/superconductor_bs/glove_sporty_left_orm.webp"
+        },
+        "glove_sporty_right": {
+          "normal": "res://assets/textures/native_sport/superconductor_bs/glove_sporty_right_normal.webp",
+          "orm": "res://assets/textures/native_sport/superconductor_bs/glove_sporty_right_orm.webp"
+        }
+      },
+      "native_source_finish": "5030_10018",
+      "native_wear": 0.8
     },
     {
       "family": "Superconductor",
@@ -464,7 +821,24 @@
         "sport_glove_r_4": "res://assets/textures/sport_gloves/superconductor_ft/l_4.jpg"
       },
       "wear": "Field-Tested",
-      "wear_code": "FT"
+      "wear_code": "FT",
+      "native_model": "sport_native",
+      "native_textures": {
+        "glove_sporty_left": "res://assets/textures/native_sport/superconductor_ft/glove_sporty_left.webp",
+        "glove_sporty_right": "res://assets/textures/native_sport/superconductor_ft/glove_sporty_right.webp"
+      },
+      "native_maps": {
+        "glove_sporty_left": {
+          "normal": "res://assets/textures/native_sport/superconductor_ft/glove_sporty_left_normal.webp",
+          "orm": "res://assets/textures/native_sport/superconductor_ft/glove_sporty_left_orm.webp"
+        },
+        "glove_sporty_right": {
+          "normal": "res://assets/textures/native_sport/superconductor_ft/glove_sporty_right_normal.webp",
+          "orm": "res://assets/textures/native_sport/superconductor_ft/glove_sporty_right_orm.webp"
+        }
+      },
+      "native_source_finish": "5030_10018",
+      "native_wear": 0.25
     },
     {
       "family": "Superconductor",
@@ -483,7 +857,24 @@
         "sport_glove_r_4": "res://assets/textures/sport_gloves/superconductor_ww/l_4.jpg"
       },
       "wear": "Well-Worn",
-      "wear_code": "WW"
+      "wear_code": "WW",
+      "native_model": "sport_native",
+      "native_textures": {
+        "glove_sporty_left": "res://assets/textures/native_sport/superconductor_ww/glove_sporty_left.webp",
+        "glove_sporty_right": "res://assets/textures/native_sport/superconductor_ww/glove_sporty_right.webp"
+      },
+      "native_maps": {
+        "glove_sporty_left": {
+          "normal": "res://assets/textures/native_sport/superconductor_ww/glove_sporty_left_normal.webp",
+          "orm": "res://assets/textures/native_sport/superconductor_ww/glove_sporty_left_orm.webp"
+        },
+        "glove_sporty_right": {
+          "normal": "res://assets/textures/native_sport/superconductor_ww/glove_sporty_right_normal.webp",
+          "orm": "res://assets/textures/native_sport/superconductor_ww/glove_sporty_right_orm.webp"
+        }
+      },
+      "native_source_finish": "5030_10018",
+      "native_wear": 0.4
     },
     {
       "family": "Vice",
@@ -502,7 +893,24 @@
         "sport_glove_r_4": "res://assets/textures/sport_gloves/vice_bs/l_4.jpg"
       },
       "wear": "Battle-Scarred",
-      "wear_code": "BS"
+      "wear_code": "BS",
+      "native_model": "sport_native",
+      "native_textures": {
+        "glove_sporty_left": "res://assets/textures/native_sport/vice_bs/glove_sporty_left.webp",
+        "glove_sporty_right": "res://assets/textures/native_sport/vice_bs/glove_sporty_right.webp"
+      },
+      "native_maps": {
+        "glove_sporty_left": {
+          "normal": "res://assets/textures/native_sport/vice_bs/glove_sporty_left_normal.webp",
+          "orm": "res://assets/textures/native_sport/vice_bs/glove_sporty_left_orm.webp"
+        },
+        "glove_sporty_right": {
+          "normal": "res://assets/textures/native_sport/vice_bs/glove_sporty_right_normal.webp",
+          "orm": "res://assets/textures/native_sport/vice_bs/glove_sporty_right_orm.webp"
+        }
+      },
+      "native_source_finish": "5030_10048",
+      "native_wear": 0.8
     },
     {
       "family": "Vice",
@@ -521,7 +929,24 @@
         "sport_glove_r_4": "res://assets/textures/sport_gloves/vice_ft/l_4.jpg"
       },
       "wear": "Field-Tested",
-      "wear_code": "FT"
+      "wear_code": "FT",
+      "native_model": "sport_native",
+      "native_textures": {
+        "glove_sporty_left": "res://assets/textures/native_sport/vice_ft/glove_sporty_left.webp",
+        "glove_sporty_right": "res://assets/textures/native_sport/vice_ft/glove_sporty_right.webp"
+      },
+      "native_maps": {
+        "glove_sporty_left": {
+          "normal": "res://assets/textures/native_sport/vice_ft/glove_sporty_left_normal.webp",
+          "orm": "res://assets/textures/native_sport/vice_ft/glove_sporty_left_orm.webp"
+        },
+        "glove_sporty_right": {
+          "normal": "res://assets/textures/native_sport/vice_ft/glove_sporty_right_normal.webp",
+          "orm": "res://assets/textures/native_sport/vice_ft/glove_sporty_right_orm.webp"
+        }
+      },
+      "native_source_finish": "5030_10048",
+      "native_wear": 0.25
     },
     {
       "family": "Vice",
@@ -540,7 +965,24 @@
         "sport_glove_r_4": "res://assets/textures/sport_gloves/vice_ww/l_4.jpg"
       },
       "wear": "Well-Worn",
-      "wear_code": "WW"
+      "wear_code": "WW",
+      "native_model": "sport_native",
+      "native_textures": {
+        "glove_sporty_left": "res://assets/textures/native_sport/vice_ww/glove_sporty_left.webp",
+        "glove_sporty_right": "res://assets/textures/native_sport/vice_ww/glove_sporty_right.webp"
+      },
+      "native_maps": {
+        "glove_sporty_left": {
+          "normal": "res://assets/textures/native_sport/vice_ww/glove_sporty_left_normal.webp",
+          "orm": "res://assets/textures/native_sport/vice_ww/glove_sporty_left_orm.webp"
+        },
+        "glove_sporty_right": {
+          "normal": "res://assets/textures/native_sport/vice_ww/glove_sporty_right_normal.webp",
+          "orm": "res://assets/textures/native_sport/vice_ww/glove_sporty_right_orm.webp"
+        }
+      },
+      "native_source_finish": "5030_10048",
+      "native_wear": 0.4
     },
     {
       "id": "5033_10078",

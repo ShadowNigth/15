@@ -29,7 +29,7 @@ func sync_pose() -> void:
 			rig.set_bone_global_pose_override(driver.source, pose, 1.0, true)
 		rig.force_update_all_bone_transforms()
 
-func _prepare(definition: Dictionary, model: String, gloves: bool, smoke: bool) -> bool:
+func _prepare(definition: Dictionary, model: String, gloves: bool, custom_glove: bool) -> bool:
 	var packed := load(String(definition.model)) as PackedScene
 	if packed == null or not definition.drivers.has(model):
 		return false
@@ -41,7 +41,7 @@ func _prepare(definition: Dictionary, model: String, gloves: bool, smoke: bool) 
 	for mesh in SportGloves._find_meshes(source):
 		# A full-cover native glove includes its matching forearm endpoint.
 		# Never render the default agent hands underneath a second pair.
-		if smoke and not gloves and String(mesh.name).begins_with("agent_hands_"):
+		if custom_glove and not gloves and String(mesh.name).begins_with("agent_hands_"):
 			mesh.hide()
 			continue
 		var rig := mesh.get_node_or_null(mesh.skeleton) as Skeleton3D
@@ -54,7 +54,7 @@ func _prepare(definition: Dictionary, model: String, gloves: bool, smoke: bool) 
 			if mat == null:
 				return false
 			var name_lower := mat.resource_name.to_lower()
-			if smoke and not gloves and name_lower.contains("glove"):
+			if custom_glove and not gloves and name_lower.contains("glove"):
 				continue
 			var arrays := mesh.mesh.surface_get_arrays(surface)
 			var bones: PackedInt32Array = arrays[Mesh.ARRAY_BONES]
@@ -75,13 +75,15 @@ func _prepare(definition: Dictionary, model: String, gloves: bool, smoke: bool) 
 			material.albedo_color.a = 1.0
 			material.transparency = BaseMaterial3D.TRANSPARENCY_DISABLED
 			material.cull_mode = BaseMaterial3D.CULL_DISABLED
-			if gloves and name_lower.begins_with("glove_motorcycle_"):
+			if gloves and name_lower.begins_with("glove_"):
 				material.albedo_color = Color.WHITE # Replace unpainted native black factor as well as texture.
 				var option := GameData.get_selected_glove()
 				material.albedo_texture = GameData.get_texture(String(option.get("native_textures", {}).get(material.resource_name, "")))
 				if material.albedo_texture == null:
 					return false
-				var maps: Dictionary = AgentViewArms.catalog().gloves.moto_smoke_out.native_maps.get(material.resource_name, {})
+				var maps: Dictionary = option.get("native_maps", {}).get(material.resource_name, {})
+				if maps.is_empty() and String(option.get("native_model", "")) == "moto_smoke_out":
+					maps = AgentViewArms.catalog().gloves.moto_smoke_out.native_maps.get(material.resource_name, {})
 				material.normal_texture = GameData.get_texture(String(maps.get("normal", "")))
 				material.normal_enabled = material.normal_texture != null
 				var orm := GameData.get_texture(String(maps.get("orm", "")))
@@ -114,13 +116,13 @@ func _prepare(definition: Dictionary, model: String, gloves: bool, smoke: bool) 
 				return false
 			drivers.append({"source": bone, "target": destination, "correction": AgentViewArms.matrix(entry.correction)})
 		bindings.append({"rig": rig, "drivers": drivers})
-	return found or (smoke and not gloves)
+	return found or (custom_glove and not gloves)
 
 static func install(root: Node3D, model: String, avatar: String) -> bool:
 	var target_rig := SportGloves._find_skeleton(root)
 	var definition: Dictionary = catalog().agents.get(avatar, {})
 	var selected := GameData.get_selected_glove()
-	var smoke := String(selected.get("id", "")) == "5033_10078"
+	var custom_glove := selected.has("native_model")
 	if target_rig == null or definition.is_empty():
 		return false
 	var replacement := NativeViewRig.new()
@@ -128,12 +130,17 @@ static func install(root: Node3D, model: String, avatar: String) -> bool:
 	replacement.target = target_rig
 	replacement.process_priority = 100
 	root.add_child(replacement)
-	var ok := replacement._prepare(definition, model, false, smoke)
-	if ok and smoke:
-		ok = replacement._prepare(catalog().gloves.moto_smoke_out, model, true, true)
+	var ok := replacement._prepare(definition, model, false, custom_glove)
+	if ok and custom_glove:
+		ok = replacement._prepare(catalog().gloves.get(String(selected.native_model), {}), model, true, true)
 	if not ok:
 		replacement.free()
 		return false
+	for mesh in SportGloves._find_meshes(replacement):
+		mesh.set_meta("agent_arms", avatar)
+	if custom_glove:
+		replacement.set_meta("sport_gloves", true) # Compatibility: equipped non-default gloves.
+	root.set_meta("native_glove", String(selected.get("native_model", "default")))
 	# Transaction: original meshes remain intact until every native bind passed.
 	var previous := root.get_meta("native_view_rig") as NativeViewRig if root.has_meta("native_view_rig") else null
 	if is_instance_valid(previous):

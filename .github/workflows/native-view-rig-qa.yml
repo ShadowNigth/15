@@ -4,6 +4,7 @@ on:
     paths:
       - 'assets/models/native_view/**'
       - 'data/native_view_rigs.json'
+      - 'assets/textures/native_sport/**'
       - 'scripts/actors/NativeViewRig.gd'
       - 'tests/NativeViewRigTest*'
       - 'data/agent_view_arms.json'
@@ -93,6 +94,9 @@ jobs:
       - name: Render native_arsenal_inspect
         if: always()
         run: python tools/publish_modern_capture.py native_arsenal_inspect
+      - name: Render native_existing_sport_ak47
+        if: always()
+        run: python tools/publish_modern_capture.py native_existing_sport_ak47
       - name: Full native weapon knife and agent animation matrix
         run: |
           set -o pipefail

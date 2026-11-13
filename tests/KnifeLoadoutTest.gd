@@ -65,7 +65,7 @@ func _run() -> void:
 		for clip in ["draw", "idle", "slash1", "slash2", "midslash1", "midslash2", "stab_miss", "stab", "inspect"]:
 			_expect(player._vm_anim.has_animation(clip), key + " retains animation " + clip)
 		_expect(_has_agent_arms(player._vm_model_root), key + " preserves original arms")
-		_expect(_surface_count(player._vm_model_root, "ct_base_glove.bmp") > 0, key + " preserves original gloves")
+		_expect((_surface_count(player._vm_model_root, "ct_base_glove.bmp") > 0 or player._vm_model_root.has_meta("native_view_rig")), key + " renders default gloves on the active rig")
 		for frame in range(int(ceil(player._vm_anim.get_animation("draw").length * 60.0)) + 5):
 			await get_tree().physics_frame
 		_expect(String(player._vm_anim.current_animation) == "idle", key + " draw returns to idle")

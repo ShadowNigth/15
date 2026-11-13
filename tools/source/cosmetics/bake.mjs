@@ -34,7 +34,7 @@ for(const job of JSON.parse(fs.readFileSync(path.join(root,'bake-jobs.json')))){
  const output=path.join(root,'baked',job.id);fs.mkdirSync(output,{recursive:true});
  if(fs.existsSync(path.join(output,'manifest.json')))continue;
  const paint=JSON.parse(fs.readFileSync(path.join(root,'packages/assets/public',job.paint)));
- const result=await bakeSkin(paint,1,0.07);
+ const result=await bakeSkin(paint,job.seed ?? 1,job.wear ?? 0.07);
  const manifest=[];
  for(let i=0;i<result.length;i++){
   const item=result[i],maps={};
