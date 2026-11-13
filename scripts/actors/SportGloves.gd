@@ -11,6 +11,8 @@ static var _filtered_meshes: Dictionary = {}
 static func apply(root: Node3D, viewmodel_name: String) -> bool:
 	if root == null:
 		return false
+	if NativeViewRig.enabled:
+		return NativeViewRig.install(root, GameData.get_knife_glove_model(viewmodel_name), "sas")
 	var option := GameData.get_selected_glove()
 	var glove_model := GameData.get_knife_glove_model(viewmodel_name)
 	if option.is_empty() or not glove_model in GameData.sport_gloves.get("models", []):
