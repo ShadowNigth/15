@@ -83,6 +83,27 @@ jobs:
       - name: Render native_ak47_inspect
         if: always()
         run: python tools/publish_modern_capture.py native_ak47_inspect
+      - name: Render native_ak47_reload_start
+        if: always()
+        run: python tools/publish_modern_capture.py native_ak47_reload_start
+      - name: Render native_ak47_reload_end
+        if: always()
+        run: python tools/publish_modern_capture.py native_ak47_reload_end
+      - name: Render native_ak47_inspect_start
+        if: always()
+        run: python tools/publish_modern_capture.py native_ak47_inspect_start
+      - name: Render native_ak47_inspect_end
+        if: always()
+        run: python tools/publish_modern_capture.py native_ak47_inspect_end
+      - name: Render native_karambit_inspect_start
+        if: always()
+        run: python tools/publish_modern_capture.py native_karambit_inspect_start
+      - name: Render native_karambit_inspect_mid
+        if: always()
+        run: python tools/publish_modern_capture.py native_karambit_inspect_mid
+      - name: Render native_karambit_inspect_end
+        if: always()
+        run: python tools/publish_modern_capture.py native_karambit_inspect_end
       - name: Render native_leet_ak47_idle
         if: always()
         run: python tools/publish_modern_capture.py native_leet_ak47_idle
@@ -92,6 +113,33 @@ jobs:
       - name: Render native_arsenal_gloves
         if: always()
         run: python tools/publish_modern_capture.py native_arsenal_gloves
+      - name: Render native_arsenal_gloves_left
+        if: always()
+        run: python tools/publish_modern_capture.py native_arsenal_gloves_left
+      - name: Render native_arsenal_gloves_right
+        if: always()
+        run: python tools/publish_modern_capture.py native_arsenal_gloves_right
+      - name: Render native_arsenal_gloves_back
+        if: always()
+        run: python tools/publish_modern_capture.py native_arsenal_gloves_back
+      - name: Render native_arsenal_gloves_top
+        if: always()
+        run: python tools/publish_modern_capture.py native_arsenal_gloves_top
+      - name: Render native_arsenal_gloves_bottom
+        if: always()
+        run: python tools/publish_modern_capture.py native_arsenal_gloves_bottom
+      - name: Render native_arsenal_gloves_closeup
+        if: always()
+        run: python tools/publish_modern_capture.py native_arsenal_gloves_closeup
+      - name: Render native_arsenal_inspect_start
+        if: always()
+        run: python tools/publish_modern_capture.py native_arsenal_inspect_start
+      - name: Render native_arsenal_inspect_mid
+        if: always()
+        run: python tools/publish_modern_capture.py native_arsenal_inspect_mid
+      - name: Render native_arsenal_inspect_end
+        if: always()
+        run: python tools/publish_modern_capture.py native_arsenal_inspect_end
       - name: Render native_arsenal_inspect
         if: always()
         run: python tools/publish_modern_capture.py native_arsenal_inspect

@@ -85,6 +85,9 @@ func run() -> void:
 			player._vm_anim.seek(player._vm_anim.get_animation(clip).length * phase, true)
 			validate(player._vm_model_root)
 			if phase == 0.5: await capture("native_ak47_" + action)
+			if action in ["reload", "inspect"] and phase in [0.0, 0.95]:
+				var suffix := "start" if phase == 0.0 else "end"
+				await capture("native_ak47_" + action + "_" + suffix)
 	player.set_team_and_class("T", "leet")
 	player._rebuild_viewmodel("ak47")
 	player._vm_anim.play("idle")
@@ -98,9 +101,11 @@ func run() -> void:
 	player._rebuild_viewmodel("knife")
 	player._vm_anim.play("inspect")
 	player._vm_anim.pause()
-	player._vm_anim.seek(player._vm_anim.get_animation("inspect").length * 0.5, true)
-	validate(player._vm_model_root)
-	await capture("native_karambit_inspect")
+	for phase in [0.0, 0.5, 0.95]:
+		player._vm_anim.seek(player._vm_anim.get_animation("inspect").length * phase, true)
+		validate(player._vm_model_root)
+		var suffix := "start" if phase == 0.0 else ("mid" if phase == 0.5 else "end")
+		await capture("native_karambit_inspect_" + suffix)
 	GameData.select_glove("amphibious_ft")
 	player.set_team_and_class("T", "leet")
 	player.weapon_ctrl.equip_weapon_by_id("ak47")
@@ -118,6 +123,25 @@ func run() -> void:
 	menu._open_arsenal()
 	menu._load_viewer_gloves()
 	await capture("native_arsenal_gloves", menu._viewer_viewport)
+	# Multi-angle Arsenal takes: same native preview pose, different orbit
+	# positions so the formed palm, fingers and swapped artwork can be checked
+	# from the front, both profiles, the reverse side and above/below.
+	var arsenal_views := {
+		"left": Vector3(-0.18, -1.05, 0.0),
+		"right": Vector3(-0.18, 1.05, 0.0),
+		"back": Vector3(0.0, PI, 0.0),
+		"top": Vector3(-1.15, 0.0, 0.0),
+		"bottom": Vector3(1.15, 0.0, 0.0),
+	}
+	for view_name in arsenal_views:
+		var view_rotation: Vector3 = arsenal_views[view_name]
+		menu._viewer_pivot.rotation = view_rotation
+		await capture("native_arsenal_gloves_" + view_name, menu._viewer_viewport)
+	menu._viewer_pivot.rotation = Vector3(-0.32, 0.42, 0.0)
+	menu._viewer_camera.position = Vector3(0, 0, menu._inspection_home_distance * 0.58)
+	await capture("native_arsenal_gloves_closeup", menu._viewer_viewport)
+	menu._viewer_pivot.rotation = Vector3.ZERO
+	menu._viewer_camera.position = Vector3(0, 0, menu._inspection_home_distance)
 	for root in menu._viewer_pivot.get_children():
 		if not root.has_meta("native_view_rig"): continue
 		var native := root.get_meta("native_view_rig") as NativeViewRig
@@ -138,6 +162,14 @@ func run() -> void:
 					var original := hand_rest.affine_inverse() * rest
 					var actual := rig.get_bone_global_pose(hand).affine_inverse() * rig.get_bone_global_pose(bone)
 					expect(actual.origin.distance_to(original.origin) < 0.0001, "preview keeps native 3D shape, not a squashed weapon pose")
+	for root in menu._viewer_pivot.get_children():
+		if not root.has_meta("native_view_rig"): continue
+		var native := root.get_meta("native_view_rig") as NativeViewRig
+		for phase in [0.0, 0.5, 1.0]:
+			native.preview_phase = phase
+			native.sync_pose()
+			var suffix := "start" if phase == 0.0 else ("mid" if phase == 0.5 else "end")
+			await capture("native_arsenal_inspect_" + suffix, menu._viewer_viewport)
 	menu._inspect_gloves()
 	menu._glove_tween.pause()
 	menu._glove_tween.custom_step(0.9)
