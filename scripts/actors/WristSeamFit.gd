@@ -4,6 +4,7 @@ extends RefCounted
 ## Dedicated agent forearms remain proximal; their texture continues over cuff.
 static var enabled := true
 static var cache: Dictionary = {}
+static var profiles_by_key: Dictionary = {}
 
 static func vertex(arrays: Array, index: int, mapped: Array[int] = []) -> Dictionary:
 	var vertices: PackedVector3Array = arrays[Mesh.ARRAY_VERTEX]
@@ -65,7 +66,26 @@ static func side_of(data: Dictionary, skin: Skin, rig: Skeleton3D) -> String:
 	var name := rig.get_bone_name(skin.get_bind_bone(dominant))
 	return "L" if "_L_" in name else "R"
 
-static func fit(root: Node3D, rig: Skeleton3D, mesh: ArrayMesh, skin: Skin, key: String) -> ArrayMesh:
+static func is_bare(avatar: String) -> bool:
+	return avatar in ["leet", "phoenix", "phoenix_a"]
+
+static func layer_point(point: Vector3, wrist: Vector3, axis: Vector3, profile: Dictionary, bare: bool) -> Vector3:
+	var along := (point - wrist).dot(axis)
+	var radial := point - wrist - axis * along
+	if radial.length_squared() < 0.000001: return point
+	var direction := radial.normalized()
+	var radius := 0.05
+	var nearest := -2.0
+	for sample in profile.points:
+		var dot_value: float = direction.dot(sample.direction)
+		if dot_value > nearest:
+			nearest = dot_value
+			radius = sample.radius
+	var target_radius := maxf(0.02, radius - 0.007) if bare else radius + 0.006
+	var blend := smoothstep(float(profile.start) - 0.09, float(profile.start) + 0.008, along)
+	return wrist + axis * along + direction * lerpf(radial.length(), target_radius, blend)
+
+static func fit(root: Node3D, rig: Skeleton3D, mesh: ArrayMesh, skin: Skin, key: String, avatar: String = "sas") -> ArrayMesh:
 	var wrists: Dictionary = {}
 	var axes: Dictionary = {}
 	var references: Array[Dictionary] = []
@@ -98,6 +118,42 @@ static func fit(root: Node3D, rig: Skeleton3D, mesh: ArrayMesh, skin: Skin, key:
 		for surface in original.mesh.get_surface_count():
 			if original.mesh.surface_get_material(surface).resource_name == "ct_arms.bmp":
 				references.append({"arrays": original.mesh.surface_get_arrays(surface), "mapped": mapped})
+	var profiles: Dictionary = {}
+	for side in ["L", "R"]:
+		profiles[side] = {"start": INF, "points": []}
+	# Read the actually selected glove, not a fixed Sport or classic radius.
+	for glove in SportGloves._find_meshes(root):
+		if glove.skin == null: continue
+		for surface in glove.mesh.get_surface_count():
+			var material := glove.mesh.surface_get_material(surface)
+			if not glove.has_meta("sport_gloves") and material.resource_name != "ct_base_glove.bmp": continue
+			var arrays := glove.mesh.surface_get_arrays(surface)
+			var vertices: PackedVector3Array = arrays[Mesh.ARRAY_VERTEX]
+			var binds: PackedInt32Array = arrays[Mesh.ARRAY_BONES]
+			var weights: PackedFloat32Array = arrays[Mesh.ARRAY_WEIGHTS]
+			var stride: int = binds.size() / vertices.size()
+			var candidates: Dictionary = {"L": [], "R": []}
+			for index in vertices.size():
+				var dominant := 0
+				for slot in stride:
+					if weights[index * stride + slot] > weights[index * stride + dominant]: dominant = slot
+				var bind := binds[index * stride + dominant]
+				var name := String(glove.skin.get_bind_name(bind))
+				var bone := AgentViewArms._bone(rig, name) if not name.is_empty() else glove.skin.get_bind_bone(bind)
+				var side := "L" if "_L_" in rig.get_bone_name(bone) else "R"
+				var axis: Vector3 = axes[side]
+				var delta: Vector3 = vertices[index] - wrists[side]
+				var along := delta.dot(axis)
+				var radial := delta - axis * along
+				profiles[side].start = minf(float(profiles[side].start), along)
+				candidates[side].append({"along": along, "direction": radial.normalized(), "radius": radial.length()})
+			for side in ["L", "R"]:
+				for sample in candidates[side]:
+					if float(sample.along) < float(profiles[side].start) + 0.018:
+						profiles[side].points.append(sample)
+	for side in ["L", "R"]:
+		if not is_finite(float(profiles[side].start)): profiles[side].start = -0.05
+	profiles_by_key[key] = {"profiles": profiles, "wrists": wrists, "axes": axes, "bare": is_bare(avatar)}
 	if cache.has(key): return cache[key]
 	if references.is_empty(): return mesh
 	var result := ArrayMesh.new()
@@ -146,13 +202,18 @@ static func fit(root: Node3D, rig: Skeleton3D, mesh: ArrayMesh, skin: Skin, key:
 							chosen = sample
 					item.uv = chosen.data.uv
 					material = chosen.material
+				if side_of(item, skin, rig) == side:
+					item.p = layer_point(item.p, wrists[side], axes[side], profiles[side], is_bare(avatar))
 				data.append(item)
 			var indices: PackedInt32Array = arrays[Mesh.ARRAY_INDEX]
 			for index in range(0, indices.size(), 3):
 				var triangle: Array = [data[indices[index]], data[indices[index + 1]], data[indices[index + 2]]]
 				if side_of(triangle[0], skin, rig) != side: continue
-				emit(tool, clip(triangle, wrists[side], axes[side], -0.15, true))
+				var end: float = float(profiles[side].start) + (0.028 if is_bare(avatar) else 0.018)
+				var polygon := clip(triangle, wrists[side], axes[side], -0.15, true)
+				emit(tool, clip(polygon, wrists[side], axes[side], end, false))
 		tool.set_material(material)
+		tool.generate_normals()
 		tool.generate_tangents()
 		tool.commit(result)
 	cache[key] = result

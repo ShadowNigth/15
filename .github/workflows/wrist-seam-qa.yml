@@ -5,6 +5,8 @@ on:
       - 'assets/models/agent_arms/**'
       - 'data/agent_view_arms.json'
       - 'tests/WristSeamTest*'
+      - 'tests/SmokeOutTest*'
+      - 'data/sport_gloves.json'
       - 'scripts/actors/AgentViewArms.gd'
       - 'scripts/actors/WristSeamFit.gd'
       - 'scripts/actors/PlayerController.gd'
@@ -18,7 +20,7 @@ permissions:
 jobs:
   local-body:
     runs-on: ubuntu-latest
-    timeout-minutes: 25
+    timeout-minutes: 40
     steps:
       - uses: actions/checkout@v4
       - name: Install Godot and rendering dependencies
@@ -46,12 +48,18 @@ jobs:
           set -o pipefail
           LIBGL_ALWAYS_SOFTWARE=1 timeout 600s xvfb-run -a godot --path . --audio-driver Dummy --rendering-method gl_compatibility res://tests/AgentViewArmsTest.tscn 2>&1 | tee /tmp/local-arms.log
           grep -q '\[AGENT ARMS\] PASS:' /tmp/local-arms.log
+      - name: Native Smoke Out Arsenal and sleeve layering
+        run: |
+          set -o pipefail
+          LIBGL_ALWAYS_SOFTWARE=1 timeout 600s xvfb-run -a godot --path . --audio-driver Dummy --rendering-method gl_compatibility --fixed-fps 60 --resolution 960x540 res://tests/SmokeOutTest.tscn 2>&1 | tee /tmp/local-smoke.log
+          ! grep -Eq 'SCRIPT ERROR:|Parse Error:|Compile Error:|FAIL:' /tmp/local-smoke.log
+          grep -q '\[SMOKE OUT\] PASS:' /tmp/local-smoke.log
       - name: Execution diagnostics
         if: always()
         run: |
           python - <<'PY'
           from pathlib import Path
-          for name in ['local-import','local-seam','local-arms']:
+          for name in ['local-import','local-seam','local-arms','local-smoke']:
               p=Path('/tmp/'+name+'.log')
               if p.exists():
                   lines=p.read_text(errors='replace').splitlines()
@@ -70,6 +78,21 @@ jobs:
       - name: Render wrist_seam_phoenix_knife_inspect
         if: always()
         run: python tools/publish_modern_capture.py wrist_seam_phoenix_knife_inspect
+      - name: Render smoke_out_arsenal
+        if: always()
+        run: python tools/publish_modern_capture.py smoke_out_arsenal
+      - name: Render smoke_out_detail
+        if: always()
+        run: python tools/publish_modern_capture.py smoke_out_detail
+      - name: Render smoke_out_sas_ak47_idle
+        if: always()
+        run: python tools/publish_modern_capture.py smoke_out_sas_ak47_idle
+      - name: Render smoke_out_leet_ak47_idle
+        if: always()
+        run: python tools/publish_modern_capture.py smoke_out_leet_ak47_idle
+      - name: Render smoke_out_terror_knife_inspect
+        if: always()
+        run: python tools/publish_modern_capture.py smoke_out_terror_knife_inspect
       - uses: actions/upload-artifact@v4
         if: always()
         timeout-minutes: 3

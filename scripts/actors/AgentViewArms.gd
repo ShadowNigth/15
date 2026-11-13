@@ -91,7 +91,8 @@ static func _converted(source: MeshInstance3D, rig: Skeleton3D, model: String, a
 
 static func install(root: Node3D, model: String, avatar: String, native_textures: Dictionary = {}) -> bool:
 	var rig := SportGloves._find_skeleton(root)
-	var definition: Dictionary = catalog().get("agents", {}).get(avatar, {})
+	var is_glove: bool = catalog().get("gloves", {}).has(avatar)
+	var definition: Dictionary = catalog().get("gloves" if is_glove else "agents", {}).get(avatar, {})
 	if rig == null or definition.is_empty():
 		return false
 	var packed := load(String(definition.model)) as PackedScene
@@ -107,24 +108,37 @@ static func install(root: Node3D, model: String, avatar: String, native_textures
 		source.free()
 		return false
 	var copy := MeshInstance3D.new()
-	copy.name = "NativeSportGloves" if avatar == "sport" else "AgentSleeves_" + avatar
+	copy.name = "NativeMotoGloves" if is_glove else "AgentSleeves_" + avatar
 	copy.mesh = converted.mesh
-	if WristSeamFit.enabled:
-		copy.mesh = WristSeamFit.fit(root, rig, converted.mesh, converted.skin, model + ":" + avatar + ":" + root.scene_file_path)
+	var seam_key := model + ":" + avatar + ":" + root.scene_file_path + ":" + GameData.selected_glove_id
+	if WristSeamFit.enabled and not is_glove:
+		copy.mesh = WristSeamFit.fit(root, rig, converted.mesh, converted.skin, seam_key, avatar)
 	copy.skin = converted.skin
 	copy.layers = 4
 	copy.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
 	copy.set_meta("native_view_cosmetic", true)
 	copy.set_meta("agent_arms", avatar)
-	if WristSeamFit.enabled:
-		copy.set_meta("wrist_seam_fit", "authored-cuff-v4")
+	if is_glove:
+		copy.set_meta("sport_gloves", true)
+		copy.set_meta("native_glove", avatar)
+		copy.set_meta("sport_glove_id", GameData.selected_glove_id)
+	if WristSeamFit.enabled and not is_glove:
+		copy.set_meta("wrist_seam_fit", "layered-cuff-v5")
+		copy.set_meta("cuff_layer", "inside_glove" if WristSeamFit.is_bare(avatar) else "outside_glove")
+		copy.set_meta("cuff_fit", WristSeamFit.profiles_by_key.get(seam_key, {}))
 	for surface in copy.mesh.get_surface_count():
 		var material := copy.mesh.surface_get_material(surface).duplicate() as BaseMaterial3D
+		if is_glove:
+			material.albedo_texture = GameData.get_texture(String(native_textures.get(material.resource_name, "")))
+			if material.albedo_texture == null:
+				copy.free()
+				source.free()
+				return false
 		material.cull_mode = BaseMaterial3D.CULL_DISABLED
 		material.roughness = 0.85
 		material.metallic = 0
 		copy.set_surface_override_material(surface, material)
-	var remove := "ct_base_glove.bmp" if avatar == "sport" else "ct_arms.bmp"
+	var remove := "ct_base_glove.bmp" if is_glove else "ct_arms.bmp"
 	var replaced := 0
 	for instance in SportGloves._find_meshes(root):
 		if instance.has_meta("native_view_cosmetic") or instance.has_meta("sport_gloves"):
@@ -149,7 +163,7 @@ static func install(root: Node3D, model: String, avatar: String, native_textures
 	copy.global_transform = rig.global_transform
 	copy.skeleton = copy.get_path_to(rig)
 	source.free()
-	root.set_meta("view_agent" if avatar != "sport" else "native_sport", avatar)
+	root.set_meta("native_glove" if is_glove else "view_agent", avatar)
 	return true
 
 static func apply(root: Node3D, model: String, team: String, class_id: String) -> bool:

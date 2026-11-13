@@ -13,7 +13,7 @@ func capture(label: String) -> void:
 	await RenderingServer.frame_post_draw
 	DirAccess.make_dir_recursive_absolute("/tmp/modern-captures")
 	expect(get_viewport().get_texture().get_image().save_png("/tmp/modern-captures/" + label + ".png") == OK, "render " + label)
-func point(mesh: MeshInstance3D, arrays: Array, vertex: int, rig: Skeleton3D) -> Vector3:
+func point(mesh: MeshInstance3D, arrays: Array, vertex: int, rig: Skeleton3D, rest: Vector3 = Vector3.INF) -> Vector3:
 	var vertices: PackedVector3Array = arrays[Mesh.ARRAY_VERTEX]
 	var bones: PackedInt32Array = arrays[Mesh.ARRAY_BONES]
 	var weights: PackedFloat32Array = arrays[Mesh.ARRAY_WEIGHTS]
@@ -25,7 +25,7 @@ func point(mesh: MeshInstance3D, arrays: Array, vertex: int, rig: Skeleton3D) ->
 		var bind := bones[offset]
 		var name := String(mesh.skin.get_bind_name(bind))
 		var bone := AgentViewArms._bone(rig, name) if not name.is_empty() else mesh.skin.get_bind_bone(bind)
-		result += (rig.get_bone_global_pose(bone) * mesh.skin.get_bind_pose(bind) * vertices[vertex]) * weights[offset]
+		result += (rig.get_bone_global_pose(bone) * mesh.skin.get_bind_pose(bind) * (vertices[vertex] if not rest.is_finite() else rest)) * weights[offset]
 	return result
 func validate(root: Node3D, baseline: Node3D, label: String) -> void:
 	var rig := SportGloves._find_skeleton(root)
@@ -39,6 +39,11 @@ func validate(root: Node3D, baseline: Node3D, label: String) -> void:
 				reference_arrays = mesh.mesh.surface_get_arrays(surface)
 	expect(reference != null, "original authored wrist reference " + label)
 	if reference == null: return
+	var fit: Dictionary = {}
+	for mesh in SportGloves._find_meshes(root):
+		if mesh.has_meta("cuff_fit"): fit = mesh.get_meta("cuff_fit")
+	expect(not fit.is_empty(), "layering profile installed " + label)
+	if fit.is_empty(): return
 	for side in ["L", "R"]:
 		var prefix: String = "v_weapon.Bip01_" + String(side) + "_"
 		var wrist := Transform3D.IDENTITY
@@ -62,13 +67,13 @@ func validate(root: Node3D, baseline: Node3D, label: String) -> void:
 			var original_bone := AgentViewArms._bone(rig, name) if not name.is_empty() else reference.skin.get_bind_bone(bind)
 			if not ("_" + String(side) + "_") in rig.get_bone_name(original_bone): continue
 			var along := (rv[vertex] - wrist.origin).dot(direction)
-			if along < -0.065 or along > 0.025 or rv[vertex].distance_to(wrist.origin) > 0.12: continue
-			reference_points.append(point(reference, reference_arrays, vertex, rig))
+			if along < -0.10 or along > 0.05 or rv[vertex].distance_to(wrist.origin) > 0.12: continue
+			reference_points.append(point(reference, reference_arrays, vertex, rig, WristSeamFit.layer_point(rv[vertex], fit.wrists[side], fit.axes[side], fit.profiles[side], fit.bare)))
 		var count := 0
 		var worst := 0.0
 		for mesh in SportGloves._find_meshes(root):
-			if not mesh.has_meta("agent_arms"): continue
-			expect(mesh.get_meta("wrist_seam_fit", "") == "authored-cuff-v4", "destination rig wrist fit active " + label)
+			if not mesh.has_meta("cuff_fit"): continue
+			expect(mesh.get_meta("wrist_seam_fit", "") == "layered-cuff-v5", "destination rig wrist fit active " + label)
 			for surface in mesh.mesh.get_surface_count():
 				var arrays := mesh.mesh.surface_get_arrays(surface)
 				var vertices: PackedVector3Array = arrays[Mesh.ARRAY_VERTEX]
@@ -82,7 +87,9 @@ func validate(root: Node3D, baseline: Node3D, label: String) -> void:
 					var bone := mesh.skin.get_bind_bone(binds[vertex * stride + dominant])
 					if not ("_" + String(side) + "_") in rig.get_bone_name(bone): continue
 					var along := (vertices[vertex] - wrist.origin).dot(direction)
-					if along < -0.04 or along > 0.02 or vertices[vertex].distance_to(wrist.origin) > 0.12: continue
+					var end: float = float(fit.profiles[side].start) + (0.028 if fit.bare else 0.018)
+					if absf(along - end) < 0.0001: continue
+					if along < float(fit.profiles[side].start) - 0.005 or along > end or vertices[vertex].distance_to(wrist.origin) > 0.12: continue
 					count += 1
 					var posed := point(mesh, arrays, vertex, rig)
 					var nearest := INF
@@ -91,7 +98,7 @@ func validate(root: Node3D, baseline: Node3D, label: String) -> void:
 		# Measure against the original forearm envelope through the actual pose,
 		# not just finite/bounded vertices or successful model installation.
 		expect(count > 0 and not reference_points.is_empty(), "both cuff boundaries sampled " + label + side)
-		expect(worst < 0.001, "animated cuff stays in original wrist envelope " + label + side + " distance=" + str(worst))
+		expect(worst < 0.001, "animated layered cuff follows authored wrist binds " + label + side + " distance=" + str(worst))
 func run() -> void:
 	expect(WristSeamFit.enabled, "production wrist repair enabled by default")
 	RoundManager.set_process(false)

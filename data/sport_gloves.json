@@ -541,6 +541,20 @@
       },
       "wear": "Well-Worn",
       "wear_code": "WW"
+    },
+    {
+      "id": "5033_10078",
+      "name": "Moto Gloves | Smoke Out",
+      "family": "Smoke Out",
+      "native_model": "moto_smoke_out",
+      "native_textures": {
+        "glove_motorcycle_left": "res://assets/textures/moto_smoke_out/glove_motorcycle_left.webp",
+        "glove_motorcycle_right": "res://assets/textures/moto_smoke_out/glove_motorcycle_right.webp"
+      },
+      "item": 5033,
+      "paint": 10078,
+      "wear": 0.07,
+      "seed": 1
     }
   ],
   "rig": "Rootns Rig",

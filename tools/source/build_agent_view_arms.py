@@ -44,11 +44,12 @@ def target_frames(doc,blob):
     f=frame(doc,blob,0)
     return {native(n):v for n,v in f.items() if native(n)}
 
-def build(avatar,path,td,tb):
+def build(avatar,path,td,tb,glove_prefix=""):
+    is_glove = avatar == "sport" or bool(glove_prefix)
     if not path.startswith('gloves/'):
         raise ValueError('Only dedicated first-person packages are allowed: '+path)
     sd,sb=read_glb(decode('models/'+path+'.glb'))
-    selected=[n for n in sd['nodes'] if 'mesh' in n and (('viewmodel' in n.get('name','')) if avatar=='sport' else n.get('name','').startswith(('agent_sleeves_','agent_hands_')))]
+    selected=[n for n in sd['nodes'] if 'mesh' in n and (('viewmodel' in n.get('name','')) if is_glove else n.get('name','').startswith(('agent_sleeves_','agent_hands_')))]
     if not selected:raise ValueError('Missing intended arms '+avatar)
     target_skin=td['skins'][0];target_nodes=target_skin['joints'];target_names=[td['nodes'][i]['name'] for i in target_nodes]
     target_by_native={native(name):i for i,name in enumerate(target_names) if native(name)}
@@ -60,7 +61,7 @@ def build(avatar,path,td,tb):
         axes[side][:3,:3]*=1/0.8128
       for p in sd['meshes'][node['mesh']]['primitives']:
         mat=sd['materials'][p['material']];name=mat.get('name','')
-        if avatar=='sport' and not name.startswith('glove_sporty_'):continue
+        if is_glove and not name.startswith(glove_prefix or 'glove_sporty_'):continue
         forearm_only=node.get('name','').startswith('agent_hands_')
         if forearm_only and (not name.startswith('bare_arm') or avatar not in {'leet','phoenix','phoenix_a'}):continue
         a=p['attributes'];v=_accessor(sd,sb,a['POSITION']);norm=_accessor(sd,sb,a['NORMAL']);uv=_accessor(sd,sb,a['TEXCOORD_0']);j=_accessor(sd,sb,a['JOINTS_0']);w=_accessor(sd,sb,a['WEIGHTS_0']);faces=_accessor(sd,sb,p['indices']).reshape(-1,3)
@@ -91,7 +92,7 @@ def build(avatar,path,td,tb):
             result[mask]+=(points@x.T)[:,:3]*w[mask,col,None]
             rn[mask]+=(norm[mask]@np.linalg.inv(x[:3,:3]))*w[mask,col,None]
             rj[mask,col]=target_by_native[mapped];rw[mask,col]=w[mask,col]
-        if avatar!='sport':
+        if not is_glove:
           # Keep the sleeve/skin endpoint behind the glove's wrist plane.
           # Compress only the last 8 cm, retaining UVs and anatomical weights.
           dominant=np.argmax(rw,axis=1)
