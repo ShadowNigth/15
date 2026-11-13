@@ -25,7 +25,7 @@ func sync_pose() -> void:
 		# skeleton's coordinates, not in the camera or mesh coordinates.
 		var space := rig.global_transform.affine_inverse() * target.global_transform
 		for driver in binding.drivers:
-			var pose := space * target.get_bone_global_pose(driver.target) * driver.correction
+			var pose: Transform3D = space * target.get_bone_global_pose(driver.target) * driver.correction
 			rig.set_bone_global_pose_override(driver.source, pose, 1.0, true)
 		rig.force_update_all_bone_transforms()
 

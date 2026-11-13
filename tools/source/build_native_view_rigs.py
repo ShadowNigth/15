@@ -19,6 +19,8 @@ def export(key, path, glove=False):
         if 'mesh' not in node: continue
         name=node.get('name','')
         keep=('viewmodel' in name) if glove else name.startswith(('agent_hands_', 'agent_sleeves_'))
+        if key == 'leet' and name.startswith('agent_sleeves_'):
+            keep=False # Native Leet sleeve group is torso/neck clothing, not bare arms.
         if keep:
             chosen.append(i)
             if glove:
@@ -45,6 +47,9 @@ def export(key, path, glove=False):
         for name,rest in source_frames.items():
             mapped=name
             reference=name
+            if name.startswith('attachHand_'):
+                reference='hand_'+name[-1]
+                mapped=reference
             if '_TWIST' in name and name.startswith('arm_'):
                 reference=name.split('_TWIST')[0]
                 mapped=reference
