@@ -52,6 +52,7 @@ func validate(root: Node3D, avatar: String) -> void:
 					expect(delta.length() < float(sample.radius) - 0.004 if bare else delta.length() > float(sample.radius) + 0.004, "skin inside / sleeve outside cuff clearance")
 	expect(gloves == 1 and sleeves == 1, "one independent glove pair and agent arms")
 func run() -> void:
+	NativeViewRig.enabled = false # Historical legacy-pipeline regression only.
 	RoundManager.set_process(false)
 	RoundManager.state = RoundManager.State.LIVE
 	RoundManager.game_world = self

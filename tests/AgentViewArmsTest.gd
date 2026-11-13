@@ -9,6 +9,7 @@ func expect(ok: bool, message: String) -> void:
 func _ready() -> void:
 	run.call_deferred()
 func run() -> void:
+	NativeViewRig.enabled = false # Historical legacy-pipeline regression only.
 	var original_glove := GameData.selected_glove_id
 	var config := AgentViewArms.catalog()
 	expect(config.agents.size() == 8, "eight dedicated agent sleeve packages")

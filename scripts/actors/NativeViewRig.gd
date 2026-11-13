@@ -2,7 +2,7 @@ class_name NativeViewRig
 extends Node3D
 ## Independent original cs2go skeletons driven by the existing weapon animation.
 ## Geometry, source bone names, skin inverse binds and weights are never remapped.
-static var enabled := false # Promotion requires rendered pilot + full matrix QA.
+static var enabled := true # Original source skins; legacy path retained only for historical tests.
 static var _catalog: Dictionary = {}
 var target: Skeleton3D
 var bindings: Array[Dictionary] = []
@@ -135,7 +135,7 @@ static func install(root: Node3D, model: String, avatar: String) -> bool:
 		replacement.free()
 		return false
 	# Transaction: original meshes remain intact until every native bind passed.
-	var previous := root.get_meta("native_view_rig", null) as NativeViewRig
+	var previous := root.get_meta("native_view_rig") as NativeViewRig if root.has_meta("native_view_rig") else null
 	if is_instance_valid(previous):
 		previous.free()
 	for mesh in SportGloves._find_meshes(root):
@@ -144,13 +144,19 @@ static func install(root: Node3D, model: String, avatar: String) -> bool:
 		if mesh.has_meta("native_view_cosmetic") or mesh.has_meta("sport_gloves"):
 			mesh.visible = false
 			continue
+		var filtered := ArrayMesh.new()
+		var removed := false
 		for surface in mesh.mesh.get_surface_count():
-			var material := mesh.mesh.surface_get_material(surface)
+			var material := mesh.get_active_material(surface)
 			if material != null and material.resource_name.to_lower() in ["ct_arms.bmp", "ct_base_glove.bmp"]:
-				var hidden := StandardMaterial3D.new()
-				hidden.transparency = BaseMaterial3D.TRANSPARENCY_ALPHA
-				hidden.albedo_color = Color(0, 0, 0, 0)
-				mesh.set_surface_override_material(surface, hidden)
+				removed = true
+				continue
+			filtered.add_surface_from_arrays(Mesh.PRIMITIVE_TRIANGLES, mesh.mesh.surface_get_arrays(surface))
+			filtered.surface_set_material(filtered.get_surface_count() - 1, material)
+		if removed:
+			for surface in mesh.mesh.get_surface_count(): mesh.set_surface_override_material(surface, null)
+			mesh.mesh = filtered
+			mesh.visible = filtered.get_surface_count() > 0
 	root.set_meta("native_view_rig", replacement)
 	root.set_meta("view_agent", avatar)
 	replacement.sync_pose()

@@ -9,11 +9,12 @@ func expect(ok: bool, message: String) -> void:
 		push_error("[NATIVE VIEW] " + message)
 func _ready() -> void:
 	run.call_deferred()
-func capture(label: String) -> void:
+func capture(label: String, viewport: Viewport = null) -> void:
 	for frame in 3: await get_tree().process_frame
 	await RenderingServer.frame_post_draw
 	DirAccess.make_dir_recursive_absolute("/tmp/modern-captures")
-	expect(get_viewport().get_texture().get_image().save_png("/tmp/modern-captures/" + label + ".png") == OK, "capture " + label)
+	var target_view := get_viewport() if viewport == null else viewport
+	expect(target_view.get_texture().get_image().save_png("/tmp/modern-captures/" + label + ".png") == OK, "capture " + label)
 func validate(root: Node3D) -> void:
 	var replacement := root.get_meta("native_view_rig", null) as NativeViewRig
 	expect(replacement != null, "independent source rig installed")
@@ -91,6 +92,17 @@ func run() -> void:
 	validate(player._vm_model_root)
 	await capture("native_karambit_inspect")
 	player.free()
+	var menu := load("res://scenes/MainMenu.tscn").instantiate() as MainMenu
+	add_child(menu)
+	await get_tree().process_frame
+	menu._open_arsenal()
+	menu._load_viewer_gloves()
+	await capture("native_arsenal_gloves", menu._viewer_viewport)
+	menu._inspect_gloves()
+	menu._glove_tween.pause()
+	menu._glove_tween.custom_step(0.9)
+	await capture("native_arsenal_inspect", menu._viewer_viewport)
+	menu.free()
 	if "--pilot-only" in OS.get_cmdline_user_args():
 		print("[NATIVE VIEW] ", "PASS: " if failures == 0 else "FAIL: ", checks, " pilot checks; ", failures, " failures")
 		get_tree().quit(0 if failures == 0 else 1)

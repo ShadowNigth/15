@@ -1217,6 +1217,9 @@ func _relax_agent(root: Node3D) -> void:
 
 
 func _frame_inspection(root: Node3D) -> void:
+	var native := root.get_meta("native_view_rig") as NativeViewRig if root.has_meta("native_view_rig") else null
+	if is_instance_valid(native):
+		native.sync_pose()
 	var bounds := AABB()
 	var first := true
 	for mesh in SportGloves._find_meshes(root):
@@ -1270,7 +1273,16 @@ func _posed_mesh_bounds(mesh: MeshInstance3D) -> AABB:
 		var bones: PackedInt32Array = arrays[Mesh.ARRAY_BONES]
 		var weights: PackedFloat32Array = arrays[Mesh.ARRAY_WEIGHTS]
 		var stride: int = bones.size() / maxi(1, vertices.size())
-		for index in vertices.size():
+		var referenced: Dictionary = {}
+		var indices: PackedInt32Array = arrays[Mesh.ARRAY_INDEX]
+		if indices.is_empty():
+			for index in vertices.size(): referenced[index] = true
+		else:
+			for index in indices: referenced[index] = true
+		# Native primitives can share one accessor across hands and arms.
+		# Unreferenced vertices must not enlarge the glove-only orbit bounds.
+		for reference in referenced:
+			var index: int = reference
 			var point := Vector3.ZERO
 			if stride == 0:
 				point = to_pivot * mesh.global_transform * vertices[index]
@@ -1353,7 +1365,7 @@ func _inspect_gloves() -> void:
 	var rotations: Array[Quaternion] = []
 	for names in [["hand_L", "Bip01 L Hand", "v_weapon.Bip01_L_Hand"], ["hand_R", "Bip01 R Hand", "v_weapon.Bip01_R_Hand"]]:
 		for name in names:
-			var bone := rig.find_bone(name)
+			var bone := AgentViewArms._bone(rig, name)
 			if bone >= 0:
 				hands.append(bone)
 				rotations.append(rig.get_bone_pose_rotation(bone))

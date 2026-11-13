@@ -100,6 +100,7 @@ func validate(root: Node3D, baseline: Node3D, label: String) -> void:
 		expect(count > 0 and not reference_points.is_empty(), "both cuff boundaries sampled " + label + side)
 		expect(worst < 0.001, "animated layered cuff follows authored wrist binds " + label + side + " distance=" + str(worst))
 func run() -> void:
+	NativeViewRig.enabled = false # Historical legacy-pipeline regression only.
 	expect(WristSeamFit.enabled, "production wrist repair enabled by default")
 	RoundManager.set_process(false)
 	RoundManager.state = RoundManager.State.LIVE
