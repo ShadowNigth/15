@@ -79,16 +79,28 @@ func run() -> void:
 	player._vm_anim.pause()
 	validate(player._vm_model_root)
 	await capture("native_leet_ak47_idle")
+	player.set_team_and_class("CT", "sas")
+	GameData.select_knife("karambit")
+	player.weapon_ctrl.equip_weapon_by_id("knife")
+	player._rebuild_viewmodel("knife")
+	player._vm_anim.play("inspect")
+	player._vm_anim.pause()
+	player._vm_anim.seek(player._vm_anim.get_animation("inspect").length * 0.5, true)
+	validate(player._vm_model_root)
+	await capture("native_karambit_inspect")
 	player.free()
 	# Install every supported weapon/knife and agent, with original defaults and
 	# Smoke Out. Exercise original animation resources, not synthetic tracks.
+	var models: Array = AgentViewArms.catalog().targets.keys()
+	for option in GameData.get_knife_options():
+		if not String(option.v_model) in models: models.append(String(option.v_model))
 	for glove in ["classic", "5033_10078"]:
 		GameData.select_glove(glove)
-		for model in AgentViewArms.catalog().targets:
+		for model in models:
 			for avatar in NativeViewRig.catalog().agents:
 				var root := GameData.get_model_scene("weapons/" + String(model)).instantiate() as Node3D
 				add_child(root)
-				expect(NativeViewRig.install(root, model, avatar), "install " + model + "/" + avatar + "/" + glove)
+				expect(NativeViewRig.install(root, GameData.get_knife_glove_model(model), avatar), "install " + model + "/" + avatar + "/" + glove)
 				var animation := find_animation(root)
 				if animation != null:
 					for clip in animation.get_animation_list():

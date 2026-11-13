@@ -73,6 +73,9 @@ jobs:
       - name: Render native_leet_ak47_idle
         if: always()
         run: python tools/publish_modern_capture.py native_leet_ak47_idle
+      - name: Render native_karambit_inspect
+        if: always()
+        run: python tools/publish_modern_capture.py native_karambit_inspect
       - uses: actions/upload-artifact@v4
         if: always()
         timeout-minutes: 3

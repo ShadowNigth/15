@@ -57,7 +57,7 @@ def export(key, path, glove=False):
                 mapped='arm_upper_'+name[-1]
                 reference=mapped
             if mapped not in tf:
-                side=name[-1]
+                side=reference[-1]
                 if side not in ['L','R']: continue
                 if name.startswith('finger_') and '_meta_' in name:
                     mapped='hand_'+side
