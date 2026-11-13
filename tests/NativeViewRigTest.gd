@@ -177,14 +177,23 @@ func run() -> void:
 					var original := hand_rest.affine_inverse() * rest
 					var actual := rig.get_bone_global_pose(hand).affine_inverse() * rig.get_bone_global_pose(bone)
 					expect(actual.origin.distance_to(original.origin) < 0.0001, "preview keeps native 3D shape, not a squashed weapon pose")
-	for root in menu._viewer_pivot.get_children():
-		if not root.has_meta("native_view_rig"): continue
-		var native := root.get_meta("native_view_rig") as NativeViewRig
-		for phase in [0.0, 0.25, 0.75]:
-			native.preview_phase = phase
+	# Inspection takes from distinct orbit positions: the bone-override
+	# preview rotation does not mark the SubViewport dirty, so each take uses
+	# a different pivot rotation to capture the formed hand from another angle.
+	var inspect_views := {
+		"start": Vector3(-0.10, -0.70, 0.0),
+		"mid": Vector3(-0.10, 0.70, 0.0),
+		"end": Vector3(0.0, 0.0, 0.0),
+	}
+	for view_name in inspect_views:
+		menu._viewer_pivot.rotation = inspect_views[view_name]
+		for root in menu._viewer_pivot.get_children():
+			if not root.has_meta("native_view_rig"): continue
+			var native := root.get_meta("native_view_rig") as NativeViewRig
+			native.preview_phase = 0.0
 			native.sync_pose()
-			var suffix := "start" if phase == 0.0 else ("mid" if phase == 0.25 else "end")
-			await capture("native_arsenal_inspect_" + suffix, menu._viewer_viewport)
+		await capture("native_arsenal_inspect_" + view_name, menu._viewer_viewport)
+	menu._viewer_pivot.rotation = Vector3.ZERO
 	menu._inspect_gloves()
 	menu._glove_tween.pause()
 	menu._glove_tween.custom_step(0.9)
