@@ -132,6 +132,7 @@ static func fit(root: Node3D, rig: Skeleton3D, mesh: ArrayMesh, skin: Skin, key:
 			for sample in samples:
 				if sample.side != side: continue
 				var distance: float = vertices[vertex].distance_squared_to(sample.point)
+				if neighbours.size() == 8 and distance >= float(neighbours[-1].distance): continue
 				var at := neighbours.size()
 				for index in neighbours.size():
 					if distance < float(neighbours[index].distance):
