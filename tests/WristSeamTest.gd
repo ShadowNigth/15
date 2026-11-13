@@ -50,7 +50,17 @@ func validate(root: Node3D, baseline: Node3D, label: String) -> void:
 		var direction := (wrist.origin - elbow.origin).normalized()
 		var reference_points := PackedVector3Array()
 		var rv: PackedVector3Array = reference_arrays[Mesh.ARRAY_VERTEX]
+		var rb: PackedInt32Array = reference_arrays[Mesh.ARRAY_BONES]
+		var rw: PackedFloat32Array = reference_arrays[Mesh.ARRAY_WEIGHTS]
+		var rs: int = rb.size() / rv.size()
 		for vertex in rv.size():
+			var dominant := 0
+			for slot in rs:
+				if rw[vertex * rs + slot] > rw[vertex * rs + dominant]: dominant = slot
+			var bind := rb[vertex * rs + dominant]
+			var name := String(reference.skin.get_bind_name(bind))
+			var original_bone := AgentViewArms._bone(rig, name) if not name.is_empty() else reference.skin.get_bind_bone(bind)
+			if not ("_" + String(side) + "_") in rig.get_bone_name(original_bone): continue
 			var along := (rv[vertex] - wrist.origin).dot(direction)
 			if along < -0.065 or along > 0.025 or rv[vertex].distance_to(wrist.origin) > 0.12: continue
 			reference_points.append(point(reference, reference_arrays, vertex, rig))

@@ -40,6 +40,11 @@ static func fit(root: Node3D, rig: Skeleton3D, mesh: ArrayMesh, skin: Skin, key:
 				var wrist: Vector3 = wrists[side]
 				var axis: Vector3 = (wrist - elbows[side]).normalized()
 				for vertex in vertices.size():
+					var dominant := 0
+					for slot in stride:
+						if weights[vertex * stride + slot] > weights[vertex * stride + dominant]: dominant = slot
+					var target_bind: int = mapped[bones[vertex * stride + dominant]]
+					if target_bind < 0 or not ("_" + String(side) + "_") in rig.get_bone_name(skin.get_bind_bone(target_bind)): continue
 					var along := (vertices[vertex] - wrist).dot(axis)
 					if along < -0.16 or along > 0.03 or vertices[vertex].distance_to(wrist) > 0.2: continue
 					var influence: Dictionary = {}
