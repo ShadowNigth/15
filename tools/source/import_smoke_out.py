@@ -32,6 +32,44 @@ def calibration(source, target):
     return result
 
 
+def anatomical(frames, name):
+    side=name[-1]
+    wrist=frames['hand_'+side][:3,3]
+    middle=frames['finger_middle_0_'+side][:3,3]
+    index=frames['finger_index_0_'+side][:3,3]
+    pinky=frames['finger_pinky_0_'+side][:3,3]
+    origin=frames[name][:3,3]
+    along=middle-wrist
+    if name.startswith('finger_'):
+        parts=name.split('_')
+        segment=parts[-2]
+        if segment.isdigit():
+            step=int(segment)
+            child='_'.join(parts[:-2]+[str(step+1),side])
+            parent='_'.join(parts[:-2]+[str(step-1),side])
+            if child in frames:along=frames[child][:3,3]-origin
+            elif parent in frames:along=origin-frames[parent][:3,3]
+    elif name.startswith('arm_'):along=wrist-origin
+    y=along/np.linalg.norm(along)
+    x=index-pinky
+    x-=y*np.dot(x,y)
+    if np.linalg.norm(x)<1e-5:
+        x=middle-wrist
+        x-=y*np.dot(x,y)
+    x/=np.linalg.norm(x)
+    result=np.eye(4)
+    result[:3,:3]=np.column_stack([x,y,np.cross(x,y)])
+    result[:3,3]=origin
+    return result
+
+
+def bone_transform(source,target,source_name,target_name):
+    a=anatomical(source,source_name)
+    b=anatomical(target,target_name)
+    scale=np.diag([1/0.8128]*3+[1])
+    return b @ scale @ np.linalg.inv(a)
+
+
 def main():
     paint_path = 'skins/gloves/paints/'+ID+'.json'
     paint = json.loads(fetch(PUBLIC+paint_path).read_text())
@@ -66,7 +104,7 @@ def main():
     td,tb = read_glb(ROOT/'assets/models/weapons/v_ak47.glb')
     original = arms.axis_between
     arms.axis_between = calibration
-    try: definition = arms.build('moto_smoke_out','gloves/5033',td,tb,glove_prefix='glove_motorcycle_')
+    try: definition = arms.build('moto_smoke_out','gloves/5033',td,tb,glove_prefix='glove_motorcycle_',bone_transform=bone_transform)
     finally: arms.axis_between = original
     definition.update({'native_glove':True,'item':5033,'paint':10078,'textures':textures,'retarget':'anatomical-same-side','commit':PIN})
     path = ROOT/'data/agent_view_arms.json'

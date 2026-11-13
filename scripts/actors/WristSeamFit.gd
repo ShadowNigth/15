@@ -74,13 +74,10 @@ static func layer_point(point: Vector3, wrist: Vector3, axis: Vector3, profile: 
 	var radial := point - wrist - axis * along
 	if radial.length_squared() < 0.000001: return point
 	var direction := radial.normalized()
-	var radius := 0.05
-	var nearest := -2.0
+	var radius := INF if bare else 0.0
 	for sample in profile.points:
-		var dot_value: float = direction.dot(sample.direction)
-		if dot_value > nearest:
-			nearest = dot_value
-			radius = sample.radius
+		radius = minf(radius, float(sample.radius)) if bare else maxf(radius, float(sample.radius))
+	if not is_finite(radius) or radius <= 0.0: radius = 0.05
 	var target_radius := maxf(0.02, radius - 0.007) if bare else radius + 0.006
 	var blend := smoothstep(float(profile.start) - 0.09, float(profile.start) + 0.008, along)
 	return wrist + axis * along + direction * lerpf(radial.length(), target_radius, blend)
@@ -204,6 +201,11 @@ static func fit(root: Node3D, rig: Skeleton3D, mesh: ArrayMesh, skin: Skin, key:
 					material = chosen.material
 				if side_of(item, skin, rig) == side:
 					item.p = layer_point(item.p, wrists[side], axes[side], profiles[side], is_bare(avatar))
+					var axis: Vector3 = axes[side]
+					var delta: Vector3 = item.p - wrists[side]
+					var radial := (delta - axis * delta.dot(axis)).normalized()
+					var blend := smoothstep(float(profiles[side].start) - 0.09, float(profiles[side].start) + 0.008, delta.dot(axis))
+					item.n = item.n.lerp(radial, blend).normalized()
 				data.append(item)
 			var indices: PackedInt32Array = arrays[Mesh.ARRAY_INDEX]
 			for index in range(0, indices.size(), 3):
@@ -213,7 +215,6 @@ static func fit(root: Node3D, rig: Skeleton3D, mesh: ArrayMesh, skin: Skin, key:
 				var polygon := clip(triangle, wrists[side], axes[side], -0.15, true)
 				emit(tool, clip(polygon, wrists[side], axes[side], end, false))
 		tool.set_material(material)
-		tool.generate_normals()
 		tool.generate_tangents()
 		tool.commit(result)
 	cache[key] = result

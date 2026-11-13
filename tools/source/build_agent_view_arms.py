@@ -44,7 +44,7 @@ def target_frames(doc,blob):
     f=frame(doc,blob,0)
     return {native(n):v for n,v in f.items() if native(n)}
 
-def build(avatar,path,td,tb,glove_prefix=""):
+def build(avatar,path,td,tb,glove_prefix="",bone_transform=None):
     is_glove = avatar == "sport" or bool(glove_prefix)
     if not path.startswith('gloves/'):
         raise ValueError('Only dedicated first-person packages are allowed: '+path)
@@ -88,7 +88,9 @@ def build(avatar,path,td,tb,glove_prefix=""):
             if mapped not in target_by_native:raise ValueError((avatar,bn,mapped))
             # Collapsed helper/upper-arm uses its surviving ancestor's frame.
             ref=mapped if mapped in sf else bn
-            axis=axes['L' if mapped.endswith('_L') else 'R'];x=tf[mapped]@axis@np.linalg.inv(sf[ref]);points=np.c_[v[mask],np.ones(mask.sum())]
+            axis=axes['L' if mapped.endswith('_L') else 'R'];x=tf[mapped]@axis@np.linalg.inv(sf[ref])
+            if bone_transform is not None:x=bone_transform(sf,tf,ref,mapped)
+            points=np.c_[v[mask],np.ones(mask.sum())]
             result[mask]+=(points@x.T)[:,:3]*w[mask,col,None]
             rn[mask]+=(norm[mask]@np.linalg.inv(x[:3,:3]))*w[mask,col,None]
             rj[mask,col]=target_by_native[mapped];rw[mask,col]=w[mask,col]
