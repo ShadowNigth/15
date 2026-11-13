@@ -68,7 +68,7 @@ func validate(root: Node3D, baseline: Node3D, label: String) -> void:
 		var worst := 0.0
 		for mesh in SportGloves._find_meshes(root):
 			if not mesh.has_meta("agent_arms"): continue
-			expect(mesh.get_meta("wrist_seam_fit", "") == "destination-original-cuff-v3", "destination rig wrist fit active " + label)
+			expect(mesh.get_meta("wrist_seam_fit", "") == "authored-cuff-v4", "destination rig wrist fit active " + label)
 			for surface in mesh.mesh.get_surface_count():
 				var arrays := mesh.mesh.surface_get_arrays(surface)
 				var vertices: PackedVector3Array = arrays[Mesh.ARRAY_VERTEX]
@@ -91,9 +91,9 @@ func validate(root: Node3D, baseline: Node3D, label: String) -> void:
 		# Measure against the original forearm envelope through the actual pose,
 		# not just finite/bounded vertices or successful model installation.
 		expect(count > 0 and not reference_points.is_empty(), "both cuff boundaries sampled " + label + side)
-		expect(worst < 0.045, "animated cuff stays in original wrist envelope " + label + side + " distance=" + str(worst))
+		expect(worst < 0.001, "animated cuff stays in original wrist envelope " + label + side + " distance=" + str(worst))
 func run() -> void:
-	WristSeamFit.enabled = true
+	expect(WristSeamFit.enabled, "production wrist repair enabled by default")
 	RoundManager.set_process(false)
 	RoundManager.state = RoundManager.State.LIVE
 	RoundManager.game_world = self
