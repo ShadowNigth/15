@@ -990,13 +990,24 @@
       "family": "Smoke Out",
       "native_model": "moto_smoke_out",
       "native_textures": {
-        "glove_motorcycle_left": "res://assets/textures/moto_smoke_out/glove_motorcycle_left.webp",
-        "glove_motorcycle_right": "res://assets/textures/moto_smoke_out/glove_motorcycle_right.webp"
+        "glove_motorcycle_left": "res://assets/textures/moto_smoke_out_swapped/glove_motorcycle_left.webp",
+        "glove_motorcycle_right": "res://assets/textures/moto_smoke_out_swapped/glove_motorcycle_right.webp"
       },
       "item": 5033,
       "paint": 10078,
       "wear": 0.07,
-      "seed": 1
+      "seed": 1,
+      "native_maps": {
+        "glove_motorcycle_left": {
+          "normal": "res://assets/textures/moto_smoke_out_swapped/glove_motorcycle_left_normal.webp",
+          "orm": "res://assets/textures/moto_smoke_out_swapped/glove_motorcycle_left_orm.webp"
+        },
+        "glove_motorcycle_right": {
+          "normal": "res://assets/textures/moto_smoke_out_swapped/glove_motorcycle_right_normal.webp",
+          "orm": "res://assets/textures/moto_smoke_out_swapped/glove_motorcycle_right_orm.webp"
+        }
+      },
+      "texture_layout": "opposite-hand-palm-back-v1"
     }
   ],
   "rig": "Rootns Rig",

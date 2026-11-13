@@ -42,6 +42,7 @@ func run() -> void:
 	RoundManager.state = RoundManager.State.LIVE
 	RoundManager.game_world = self
 	GameData.select_glove("5033_10078")
+	expect(GameData.get_selected_glove().get("texture_layout", "") == "opposite-hand-palm-back-v1", "Smoke Out: left/right exchange and palm/back reversal")
 	var environment := WorldEnvironment.new()
 	environment.environment = Environment.new()
 	environment.environment.background_mode = Environment.BG_COLOR
