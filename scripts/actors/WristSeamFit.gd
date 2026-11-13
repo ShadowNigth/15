@@ -6,6 +6,7 @@ static var cache: Dictionary = {}
 
 static func fit(root: Node3D, rig: Skeleton3D, mesh: ArrayMesh, skin: Skin, key: String) -> ArrayMesh:
 	var samples: Array[Dictionary] = []
+	var sample_keys: Dictionary = {}
 	var wrists: Dictionary = {}
 	var elbows: Dictionary = {}
 	for source in SportGloves._find_meshes(root):
@@ -53,7 +54,11 @@ static func fit(root: Node3D, rig: Skeleton3D, mesh: ArrayMesh, skin: Skin, key:
 						if weights[offset] <= 0: continue
 						var target: int = mapped[bones[offset]]
 						if target >= 0: influence[target] = float(influence.get(target, 0.0)) + weights[offset]
-					if not influence.is_empty(): samples.append({"side": side, "point": vertices[vertex], "normal": normals[vertex], "weights": influence})
+					if not influence.is_empty():
+						var sample_key := String(side) + ":" + str(vertices[vertex].snapped(Vector3.ONE * 0.0001))
+						if not sample_keys.has(sample_key):
+							samples.append({"side": side, "point": vertices[vertex], "normal": normals[vertex], "weights": influence})
+							sample_keys[sample_key] = true
 	if cache.has(key): return cache[key]
 	if samples.is_empty(): return mesh
 	# Average the original influence mix over each longitudinal wrist ring.
@@ -121,6 +126,29 @@ static func fit(root: Node3D, rig: Skeleton3D, mesh: ArrayMesh, skin: Skin, key:
 				var fraction := (1.0 - (location - float(lower))) if bin_index == lower else location - float(lower)
 				for bind in profiles[profile_key]:
 					target_weights[bind] = float(target_weights.get(bind, 0.0)) + float(profiles[profile_key][bind]) * fraction
+			# Transfer a continuous local neighbourhood, not one arbitrarily
+			# chosen old triangle vertex or an overly rigid whole-ring average.
+			var neighbours: Array[Dictionary] = []
+			for sample in samples:
+				if sample.side != side: continue
+				var distance: float = vertices[vertex].distance_squared_to(sample.point)
+				var at := neighbours.size()
+				for index in neighbours.size():
+					if distance < float(neighbours[index].distance):
+						at = index
+						break
+				if at < 8:
+					neighbours.insert(at, {"distance": distance, "weights": sample.weights})
+					if neighbours.size() > 8: neighbours.pop_back()
+			var local_weights: Dictionary = {}
+			var local_total := 0.0
+			for sample in neighbours:
+				var strength := 1.0 / maxf(float(sample.distance), 0.000025)
+				local_total += strength
+				for bind in sample.weights: local_weights[bind] = float(local_weights.get(bind, 0.0)) + float(sample.weights[bind]) * strength
+			for bind in target_weights: target_weights[bind] *= 0.2
+			if local_total > 0.0:
+				for bind in local_weights: target_weights[bind] = float(target_weights.get(bind, 0.0)) + float(local_weights[bind]) / local_total * 0.8
 			var target_total := 0.0
 			for bind in target_weights: target_total += float(target_weights[bind])
 			if target_total < 0.00001: continue
