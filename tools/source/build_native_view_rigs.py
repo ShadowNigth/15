@@ -61,6 +61,7 @@ def export(key, path, glove=False):
                 elif name.startswith(('arm_','clavicle_')):
                     mapped='arm_lower_'+side
                 else: continue
+                reference=mapped # Retain helper/upper offsets from the surviving ancestor.
             x=bone_transform(source_frames,tf,reference,mapped)
             correction=np.linalg.inv(tf[mapped]) @ x @ rest
             drivers[name]={'target':names[mapped],'correction':correction[:3,:].reshape(-1).tolist()}
