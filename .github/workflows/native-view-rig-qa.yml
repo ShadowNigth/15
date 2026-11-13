@@ -170,3 +170,54 @@ jobs:
           path: |
             /tmp/local-*.log
             /tmp/modern-captures/
+  arsenal-captures:
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install Godot and rendering dependencies
+        run: |
+          curl -fL --retry 3 -o /tmp/godot.zip https://github.com/godotengine/godot-builds/releases/download/4.3-stable/Godot_v4.3-stable_linux.x86_64.zip
+          unzip -q /tmp/godot.zip -d /tmp/godot
+          sudo install -m 755 /tmp/godot/Godot_v4.3-stable_linux.x86_64 /usr/local/bin/godot
+          sudo apt-get update -qq
+          sudo apt-get install -y -qq xvfb libgl1-mesa-dri
+          pip install pillow gdtoolkit==4.3.4
+      - name: Import project
+        run: |
+          set -o pipefail
+          godot --headless --path . --import 2>&1 | tee /tmp/arsenal-import.log
+          ! grep -Eq 'SCRIPT ERROR:|Parse Error:|Compile Error:' /tmp/arsenal-import.log
+      - name: Native AK pilot (Arsenal captures)
+        run: |
+          set -o pipefail
+          LIBGL_ALWAYS_SOFTWARE=1 timeout 240s xvfb-run -a godot --path . --audio-driver Dummy --rendering-method gl_compatibility --fixed-fps 60 --resolution 960x540 res://tests/NativeViewRigTest.tscn -- --pilot-only 2>&1 | tee /tmp/arsenal-native.log
+          ! grep -Eq 'SCRIPT ERROR:|Parse Error:|Compile Error:|^ERROR:|FAIL:' /tmp/arsenal-native.log
+          grep -q '\[NATIVE VIEW\] PASS:' /tmp/arsenal-native.log
+      - name: Render native_arsenal_gloves
+        if: always()
+        run: python tools/publish_modern_capture.py native_arsenal_gloves
+      - name: Render native_arsenal_gloves_left
+        if: always()
+        run: python tools/publish_modern_capture.py native_arsenal_gloves_left
+      - name: Render native_arsenal_gloves_right
+        if: always()
+        run: python tools/publish_modern_capture.py native_arsenal_gloves_right
+      - name: Render native_arsenal_gloves_back
+        if: always()
+        run: python tools/publish_modern_capture.py native_arsenal_gloves_back
+      - name: Render native_arsenal_gloves_top
+        if: always()
+        run: python tools/publish_modern_capture.py native_arsenal_gloves_top
+      - name: Render native_arsenal_gloves_closeup
+        if: always()
+        run: python tools/publish_modern_capture.py native_arsenal_gloves_closeup
+      - name: Render native_arsenal_inspect_start
+        if: always()
+        run: python tools/publish_modern_capture.py native_arsenal_inspect_start
+      - name: Render native_arsenal_inspect_mid
+        if: always()
+        run: python tools/publish_modern_capture.py native_arsenal_inspect_mid
+      - name: Render native_arsenal_inspect_end
+        if: always()
+        run: python tools/publish_modern_capture.py native_arsenal_inspect_end
