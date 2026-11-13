@@ -73,6 +73,26 @@ static func fit(root: Node3D, rig: Skeleton3D, mesh: ArrayMesh, skin: Skin, key:
 		counts[profile_key] = int(counts.get(profile_key, 0)) + 1
 	for profile_key in profiles:
 		for bind in profiles[profile_key]: profiles[profile_key][bind] /= float(counts[profile_key])
+	for side in ["L", "R"]:
+		var occupied: Array[int] = []
+		for bin_index in range(-16, 4):
+			if profiles.has(String(side) + ":" + str(bin_index)): occupied.append(bin_index)
+		if occupied.is_empty(): continue
+		for bin_index in range(-16, 4):
+			var profile_key := String(side) + ":" + str(bin_index)
+			if profiles.has(profile_key): continue
+			var before: int = occupied[0]
+			var after: int = occupied[-1]
+			for candidate in occupied:
+				if candidate <= bin_index: before = candidate
+				if candidate >= bin_index:
+					after = candidate
+					break
+			var fraction := clampf(float(bin_index - before) / float(maxi(after - before, 1)), 0, 1)
+			var mixed: Dictionary = {}
+			for bind in profiles[String(side) + ":" + str(before)]: mixed[bind] = float(profiles[String(side) + ":" + str(before)][bind]) * (1.0 - fraction)
+			for bind in profiles[String(side) + ":" + str(after)]: mixed[bind] = float(mixed.get(bind, 0.0)) + float(profiles[String(side) + ":" + str(after)][bind]) * fraction
+			profiles[profile_key] = mixed
 	var result := ArrayMesh.new()
 	for surface in mesh.get_surface_count():
 		var arrays := mesh.surface_get_arrays(surface)
