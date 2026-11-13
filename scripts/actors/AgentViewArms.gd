@@ -108,7 +108,7 @@ static func install(root: Node3D, model: String, avatar: String, native_textures
 		return false
 	var copy := MeshInstance3D.new()
 	copy.name = "NativeSportGloves" if avatar == "sport" else "AgentSleeves_" + avatar
-	copy.mesh = WristSeamFit.fit(root, rig, converted.mesh, converted.skin, model + ":" + avatar)
+	copy.mesh = WristSeamFit.fit(root, rig, converted.mesh, converted.skin, model + ":" + avatar + ":" + root.scene_file_path)
 	copy.skin = converted.skin
 	copy.layers = 4
 	copy.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF

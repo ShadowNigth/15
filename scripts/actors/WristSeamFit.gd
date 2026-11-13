@@ -86,8 +86,8 @@ static func fit(root: Node3D, rig: Skeleton3D, mesh: ArrayMesh, skin: Skin, key:
 			if nearest < 0: continue
 			var blend := smoothstep(-0.12, -0.045, along)
 			var target: Dictionary = samples[nearest]
-			vertices[vertex] = vertices[vertex].lerp(target.point, blend)
-			normals[vertex] = normals[vertex].lerp(target.normal, blend).normalized()
+			# Keep the dedicated sleeve/skin silhouette smooth: snapping its
+			# vertices to the differently tessellated old cuff creates spikes.
 			var influence: Dictionary = {}
 			for slot in stride:
 				var offset := vertex * stride + slot
