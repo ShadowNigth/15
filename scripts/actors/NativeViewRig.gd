@@ -30,8 +30,10 @@ func sync_pose() -> void:
 		# skeleton's coordinates, not in the camera or mesh coordinates.
 		var space := rig.global_transform.affine_inverse() * target.global_transform
 		var posed: Dictionary = {}
+		var contacts: Dictionary = {}
 		for driver in binding.drivers:
 			var pose: Transform3D = space * target.get_bone_global_pose(driver.target) * driver.correction
+			contacts[driver.source] = pose
 			if binding.preserve_palm and String(rig.get_bone_name(driver.source)).begins_with("finger_"):
 				var parent := rig.get_bone_parent(driver.source)
 				if parent >= 0:
@@ -43,8 +45,59 @@ func sync_pose() -> void:
 					# squeezed the padded Moto palm into a narrow, flat grip.
 					pose.origin = parent_pose * (parent_rest.affine_inverse() * rest.origin)
 			posed[driver.source] = pose
-			rig.set_bone_global_pose_override(driver.source, pose, 1.0, true)
+		if binding.preserve_palm:
+			_fit_finger_contacts(binding, posed, contacts)
+		for bone in posed:
+			rig.set_bone_global_pose_override(bone, posed[bone], 1.0, true)
 		rig.force_update_all_bone_transforms()
+
+
+
+func _fit_finger_contacts(binding: Dictionary, posed: Dictionary, contacts: Dictionary) -> void:
+	var rig: Skeleton3D = binding.rig
+	for side in ["L", "R"]:
+		for finger in ["thumb", "index", "middle", "ring", "pinky"]:
+			var a := rig.find_bone("finger_" + finger + "_0_" + side)
+			var b := rig.find_bone("finger_" + finger + "_1_" + side)
+			var c := rig.find_bone("finger_" + finger + "_2_" + side)
+			if a < 0 or b < 0 or c < 0 or not posed.has(c): continue
+			var p0: Transform3D = posed[a]
+			var p1: Transform3D = posed[b]
+			var p2: Transform3D = posed[c]
+			var r0: Transform3D = binding.rests[a]
+			var r1: Transform3D = binding.rests[b]
+			var r2: Transform3D = binding.rests[c]
+			var offset0 := r0.affine_inverse() * r1.origin
+			var offset1 := r1.affine_inverse() * r2.origin
+			var length0 := (p0.basis * offset0).length()
+			var length1 := (p1.basis * offset1).length()
+			var goal: Transform3D = contacts[c]
+			var hint: Transform3D = contacts[b]
+			var delta := goal.origin - p0.origin
+			var ray := delta.normalized() if delta.length() > 0.00001 else (p0.basis * offset0).normalized()
+			var distance := clampf(delta.length(), absf(length0 - length1) + 0.00001, length0 + length1 - 0.00001)
+			var pole := hint.origin - p0.origin
+			pole -= ray * pole.dot(ray)
+			if pole.length() < 0.00001:
+				pole = p1.origin - p0.origin
+				pole -= ray * pole.dot(ray)
+			if pole.length() < 0.00001:
+				pole = ray.cross(Vector3.UP if absf(ray.dot(Vector3.UP)) < 0.9 else Vector3.RIGHT)
+			pole = pole.normalized()
+			var along := (length0 * length0 - length1 * length1 + distance * distance) / (2.0 * distance)
+			var height := sqrt(maxf(0.0, length0 * length0 - along * along))
+			var joint := p0.origin + ray * along + pole * height
+			var end := p0.origin + ray * distance
+			# Two-bone IK retains native lengths/palm width while following the
+			# existing clip's contact. Merely lengthening the old finger chain
+			# made the fingertips protrude above the AK or miss a knife ring.
+			p0.basis = Basis(Quaternion((p0.basis * offset0).normalized(), (joint - p0.origin).normalized())) * p0.basis
+			p1.origin = joint
+			p1.basis = Basis(Quaternion((p1.basis * offset1).normalized(), (end - joint).normalized())) * p1.basis
+			p2.origin = end
+			posed[a] = p0
+			posed[b] = p1
+			posed[c] = p2
 
 
 func begin_glove_preview() -> bool:
