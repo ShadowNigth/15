@@ -2,6 +2,8 @@ class_name WristSeamFit
 extends RefCounted
 ## Fit in the DESTINATION rig's bind space, after weapon-specific retargeting.
 ## This avoids reinterpreting ForeTwist coordinates through a different bind roll.
+## Disabled in gameplay until the strict motion regression and visuals pass.
+static var enabled: bool = false
 static var cache: Dictionary = {}
 
 static func fit(root: Node3D, rig: Skeleton3D, mesh: ArrayMesh, skin: Skin, key: String) -> ArrayMesh:

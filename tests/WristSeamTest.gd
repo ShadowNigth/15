@@ -93,6 +93,7 @@ func validate(root: Node3D, baseline: Node3D, label: String) -> void:
 		expect(count > 0 and not reference_points.is_empty(), "both cuff boundaries sampled " + label + side)
 		expect(worst < 0.045, "animated cuff stays in original wrist envelope " + label + side + " distance=" + str(worst))
 func run() -> void:
+	WristSeamFit.enabled = true
 	RoundManager.set_process(false)
 	RoundManager.state = RoundManager.State.LIVE
 	RoundManager.game_world = self
