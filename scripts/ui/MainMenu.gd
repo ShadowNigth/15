@@ -1342,6 +1342,9 @@ func _load_viewer_gloves() -> void:
 			mesh.hide()
 		else:
 			mesh.mesh = filtered
+	if inst.has_meta("native_view_rig"):
+		var native := inst.get_meta("native_view_rig") as NativeViewRig
+		native.begin_glove_preview()
 	_frame_inspection(inst)
 	_glove_inspection = true
 	_inspect_button.show()
@@ -1356,6 +1359,16 @@ func _inspect_gloves() -> void:
 	if _glove_tween:
 		_glove_tween.kill()
 	_glove_tween = create_tween()
+	for root in _viewer_pivot.get_children():
+		if root.has_meta("native_view_rig"):
+			var native := root.get_meta("native_view_rig") as NativeViewRig
+			if native.glove_preview:
+				var preview_pose := func(phase: float):
+					if is_instance_valid(native):
+						native.preview_phase = phase
+						native.sync_pose()
+				_glove_tween.tween_method(preview_pose, 0.0, 1.0, 2.4)
+				return
 	# Animate the actual wrists, not the camera/orbit. This keeps manual rotation
 	# independent and never borrows weapon sound or event tracks.
 	var rig := SportGloves._find_skeleton(_viewer_pivot)

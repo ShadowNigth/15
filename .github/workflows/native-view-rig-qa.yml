@@ -6,6 +6,7 @@ on:
       - 'data/native_view_rigs.json'
       - 'assets/textures/native_sport/**'
       - 'scripts/actors/NativeViewRig.gd'
+      - 'scripts/ui/MainMenu.gd'
       - 'tests/NativeViewRigTest*'
       - 'data/agent_view_arms.json'
       - 'tests/WristSeamTest*'

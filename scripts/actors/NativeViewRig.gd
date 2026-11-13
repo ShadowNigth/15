@@ -6,6 +6,8 @@ static var enabled := true # Original source skins; legacy path retained only fo
 static var _catalog: Dictionary = {}
 var target: Skeleton3D
 var bindings: Array[Dictionary] = []
+var glove_preview := false
+var preview_phase := 0.0
 
 static func catalog() -> Dictionary:
 	if _catalog.is_empty():
@@ -16,6 +18,9 @@ func _process(_delta: float) -> void:
 	sync_pose()
 
 func sync_pose() -> void:
+	if glove_preview:
+		_sync_glove_preview()
+		return
 	if not is_instance_valid(target):
 		return
 	target.force_update_all_bone_transforms()
@@ -24,9 +29,61 @@ func sync_pose() -> void:
 		# Source skeletons may have their own import root. Express poses in that
 		# skeleton's coordinates, not in the camera or mesh coordinates.
 		var space := rig.global_transform.affine_inverse() * target.global_transform
+		var posed: Dictionary = {}
 		for driver in binding.drivers:
 			var pose: Transform3D = space * target.get_bone_global_pose(driver.target) * driver.correction
+			if binding.preserve_palm and String(rig.get_bone_name(driver.source)).begins_with("finger_"):
+				var parent := rig.get_bone_parent(driver.source)
+				if parent >= 0:
+					var parent_pose: Transform3D = posed.get(parent, rig.get_bone_global_pose(parent))
+					var parent_rest: Transform3D = binding.rests[parent]
+					var rest: Transform3D = binding.rests[driver.source]
+					# Retarget rotations, not the old rig's metacarpal spacing or
+					# phalanx lengths. Pulling every joint to an old weapon anchor
+					# squeezed the padded Moto palm into a narrow, flat grip.
+					pose.origin = parent_pose * (parent_rest.affine_inverse() * rest.origin)
+			posed[driver.source] = pose
 			rig.set_bone_global_pose_override(driver.source, pose, 1.0, true)
+		rig.force_update_all_bone_transforms()
+
+
+func begin_glove_preview() -> bool:
+	var found := false
+	for binding in bindings:
+		if not binding.preserve_palm: continue
+		var rig: Skeleton3D = binding.rig
+		var frames: Dictionary = {}
+		for side in ["L", "R"]:
+			var wrist: Transform3D = binding.rests[rig.find_bone("hand_" + side)]
+			var middle: Transform3D = binding.rests[rig.find_bone("finger_middle_0_" + side)]
+			var index: Transform3D = binding.rests[rig.find_bone("finger_index_0_" + side)]
+			var pinky: Transform3D = binding.rests[rig.find_bone("finger_pinky_0_" + side)]
+			var y := (middle.origin - wrist.origin).normalized()
+			var x := index.origin - pinky.origin
+			x = (x - y * x.dot(y)).normalized()
+			frames[side] = Transform3D(Basis(x, y, x.cross(y)), wrist.origin)
+		binding["preview_frames"] = frames
+		found = true
+	glove_preview = found
+	if found: sync_pose()
+	return found
+
+func _sync_glove_preview() -> void:
+	for binding in bindings:
+		if not binding.has("preview_frames"): continue
+		var rig: Skeleton3D = binding.rig
+		for bone in rig.get_bone_count():
+			var name := String(rig.get_bone_name(bone))
+			var side := "L" if name.contains("_L") else "R"
+			var sign_side := -1.0 if side == "L" else 1.0
+			var orientation := Basis(Vector3.UP, PI if side == "R" else 0.0)
+			orientation = Basis(Vector3.RIGHT, -0.28) * Basis(Vector3.UP, sign_side * (0.22 + sin(preview_phase * TAU) * 0.8)) * Basis(Vector3.FORWARD, sign_side * -0.12) * orientation
+			var display := Transform3D(orientation, Vector3(sign_side * 0.115, -0.07, 0))
+			var frame: Transform3D = binding.preview_frames[side]
+			var rest: Transform3D = binding.rests[bone]
+			# One rigid hand transform on the original rest shape: no weapon
+			# grip compression, vertex scaling or fake inflated shell in Arsenal.
+			rig.set_bone_global_pose_override(bone, display * frame.affine_inverse() * rest, 1.0, true)
 		rig.force_update_all_bone_transforms()
 
 func _prepare(definition: Dictionary, model: String, gloves: bool, custom_glove: bool) -> bool:
@@ -115,7 +172,11 @@ func _prepare(definition: Dictionary, model: String, gloves: bool, custom_glove:
 			if destination < 0:
 				return false
 			drivers.append({"source": bone, "target": destination, "correction": AgentViewArms.matrix(entry.correction)})
-		bindings.append({"rig": rig, "drivers": drivers})
+		drivers.sort_custom(func(a: Dictionary, b: Dictionary) -> bool: return int(a.source) < int(b.source))
+		var rests: Array[Transform3D] = []
+		for index in rig.get_bone_count(): rests.append(rig.get_bone_global_rest(index))
+		bindings.append({"rig": rig, "drivers": drivers, "rests": rests,
+			"preserve_palm": String(definition.get("source", "")) == "gloves/5033"})
 	return found or (custom_glove and not gloves)
 
 static func install(root: Node3D, model: String, avatar: String) -> bool:

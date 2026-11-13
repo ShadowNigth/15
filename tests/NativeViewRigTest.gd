@@ -28,6 +28,15 @@ func validate(root: Node3D) -> void:
 		for driver in binding.drivers:
 			var pose := rig.get_bone_global_pose(driver.source)
 			var expected: Transform3D = rig.global_transform.affine_inverse() * replacement.target.global_transform * replacement.target.get_bone_global_pose(driver.target) * driver.correction
+			if binding.preserve_palm and String(rig.get_bone_name(driver.source)).begins_with("finger_"):
+				var parent := rig.get_bone_parent(driver.source)
+				if parent >= 0:
+					var rest: Transform3D = binding.rests[driver.source]
+					var parent_rest: Transform3D = binding.rests[parent]
+					var expected_offset := parent_rest.affine_inverse() * rest.origin
+					expected.origin = rig.get_bone_global_pose(parent) * expected_offset
+					var actual_offset := rig.get_bone_global_pose(parent).affine_inverse() * pose.origin
+					expect(actual_offset.distance_to(expected_offset) < 0.0001, "Moto retains native palm spacing and phalanx length")
 			expect(pose.origin.is_finite() and absf(pose.basis.determinant()) > 0.001, "finite nonsingular source pose")
 			expect(pose.origin.distance_to(expected.origin) < 0.001 and pose.basis.determinant() * expected.basis.determinant() > 0, "source pose matches driven trajectory and inherited mirror")
 	var visible_native := 0
@@ -109,6 +118,26 @@ func run() -> void:
 	menu._open_arsenal()
 	menu._load_viewer_gloves()
 	await capture("native_arsenal_gloves", menu._viewer_viewport)
+	for root in menu._viewer_pivot.get_children():
+		if not root.has_meta("native_view_rig"): continue
+		var native := root.get_meta("native_view_rig") as NativeViewRig
+		expect(native.glove_preview, "Moto preview is independent of the closed knife grip")
+		for phase in [0.0, 0.2, 0.5, 0.8, 1.0]:
+			native.preview_phase = phase
+			native.sync_pose()
+			for binding in native.bindings:
+				if not binding.preserve_palm: continue
+				var rig: Skeleton3D = binding.rig
+				for bone in rig.get_bone_count():
+					var name := String(rig.get_bone_name(bone))
+					if not (name.contains("_L") or name.contains("_R")): continue
+					var side := "L" if name.contains("_L") else "R"
+					var hand := rig.find_bone("hand_" + side)
+					var hand_rest: Transform3D = binding.rests[hand]
+					var rest: Transform3D = binding.rests[bone]
+					var original := hand_rest.affine_inverse() * rest
+					var actual := rig.get_bone_global_pose(hand).affine_inverse() * rig.get_bone_global_pose(bone)
+					expect(actual.origin.distance_to(original.origin) < 0.0001, "preview keeps native 3D shape, not a squashed weapon pose")
 	menu._inspect_gloves()
 	menu._glove_tween.pause()
 	menu._glove_tween.custom_step(0.9)
