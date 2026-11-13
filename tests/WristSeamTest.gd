@@ -58,6 +58,7 @@ func validate(root: Node3D, baseline: Node3D, label: String) -> void:
 		var worst := 0.0
 		for mesh in SportGloves._find_meshes(root):
 			if not mesh.has_meta("agent_arms"): continue
+			expect(mesh.get_meta("wrist_seam_fit", "") == "destination-original-cuff-v2", "destination rig wrist fit active " + label)
 			for surface in mesh.mesh.get_surface_count():
 				var arrays := mesh.mesh.surface_get_arrays(surface)
 				var vertices: PackedVector3Array = arrays[Mesh.ARRAY_VERTEX]
@@ -97,7 +98,6 @@ func run() -> void:
 		for info in GameData.classes[faction]:
 			player.set_team_and_class(faction, String(info.id))
 			var avatar := ModernAgentPose.role(faction, String(info.id))
-			expect(AgentViewArms.catalog().agents[avatar].get("wrist_seam", "") == "original-wrist-weights-v1", "repaired source " + avatar)
 			for weapon in ["glock18", "ak47", "knife"]:
 				GameData.select_knife("karambit")
 				if weapon != "knife": player.weapon_ctrl.give_weapon(weapon)

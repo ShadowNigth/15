@@ -1,0 +1,112 @@
+class_name WristSeamFit
+extends RefCounted
+## Fit in the DESTINATION rig's bind space, after weapon-specific retargeting.
+## This avoids reinterpreting ForeTwist coordinates through a different bind roll.
+static var cache: Dictionary = {}
+
+static func fit(root: Node3D, rig: Skeleton3D, mesh: ArrayMesh, skin: Skin, key: String) -> ArrayMesh:
+	var samples: Array[Dictionary] = []
+	var wrists: Dictionary = {}
+	var elbows: Dictionary = {}
+	for source in SportGloves._find_meshes(root):
+		if source.skin == null or source.has_meta("native_view_cosmetic") or source.has_meta("sport_gloves"): continue
+		var mapped: Array[int] = []
+		for bind in source.skin.get_bind_count():
+			var name := String(source.skin.get_bind_name(bind))
+			var bone := AgentViewArms._bone(rig, name) if not name.is_empty() else source.skin.get_bind_bone(bind)
+			var target := -1
+			for index in skin.get_bind_count():
+				if skin.get_bind_bone(index) == bone and skin.get_bind_pose(index).is_equal_approx(source.skin.get_bind_pose(bind)):
+					target = index
+					break
+			if target < 0:
+				target = skin.get_bind_count()
+				skin.add_bind(bone, source.skin.get_bind_pose(bind))
+			mapped.append(target)
+			var bone_name := rig.get_bone_name(bone)
+			for side in ["L", "R"]:
+				if ("_" + String(side) + "_Hand") in bone_name: wrists[side] = source.skin.get_bind_pose(bind).affine_inverse().origin
+				if ("_" + String(side) + "_Forearm") in bone_name: elbows[side] = source.skin.get_bind_pose(bind).affine_inverse().origin
+		for surface in source.mesh.get_surface_count():
+			if source.mesh.surface_get_material(surface).resource_name != "ct_arms.bmp": continue
+			var arrays := source.mesh.surface_get_arrays(surface)
+			var vertices: PackedVector3Array = arrays[Mesh.ARRAY_VERTEX]
+			var normals: PackedVector3Array = arrays[Mesh.ARRAY_NORMAL]
+			var bones: PackedInt32Array = arrays[Mesh.ARRAY_BONES]
+			var weights: PackedFloat32Array = arrays[Mesh.ARRAY_WEIGHTS]
+			var stride: int = bones.size() / vertices.size()
+			for side in ["L", "R"]:
+				if not wrists.has(side) or not elbows.has(side): continue
+				var wrist: Vector3 = wrists[side]
+				var axis: Vector3 = (wrist - elbows[side]).normalized()
+				for vertex in vertices.size():
+					var along := (vertices[vertex] - wrist).dot(axis)
+					if along < -0.16 or along > 0.03 or vertices[vertex].distance_to(wrist) > 0.2: continue
+					var influence: Dictionary = {}
+					for slot in stride:
+						var offset := vertex * stride + slot
+						if weights[offset] <= 0: continue
+						var target: int = mapped[bones[offset]]
+						if target >= 0: influence[target] = float(influence.get(target, 0.0)) + weights[offset]
+					if not influence.is_empty(): samples.append({"side": side, "point": vertices[vertex], "normal": normals[vertex], "weights": influence})
+	if cache.has(key): return cache[key]
+	if samples.is_empty(): return mesh
+	var result := ArrayMesh.new()
+	for surface in mesh.get_surface_count():
+		var arrays := mesh.surface_get_arrays(surface)
+		var vertices: PackedVector3Array = arrays[Mesh.ARRAY_VERTEX]
+		var normals: PackedVector3Array = arrays[Mesh.ARRAY_NORMAL]
+		var bones: PackedInt32Array = arrays[Mesh.ARRAY_BONES]
+		var weights: PackedFloat32Array = arrays[Mesh.ARRAY_WEIGHTS]
+		var stride: int = bones.size() / vertices.size()
+		for vertex in vertices.size():
+			var dominant := 0
+			for slot in stride:
+				if weights[vertex * stride + slot] > weights[vertex * stride + dominant]: dominant = slot
+			var bone_name := rig.get_bone_name(skin.get_bind_bone(bones[vertex * stride + dominant]))
+			var side := "L" if "_L_" in bone_name else "R"
+			if not wrists.has(side) or not elbows.has(side): continue
+			var wrist: Vector3 = wrists[side]
+			var axis: Vector3 = (wrist - elbows[side]).normalized()
+			var along := (vertices[vertex] - wrist).dot(axis)
+			if along < -0.12 or vertices[vertex].distance_to(wrist) > 0.2: continue
+			var nearest := -1
+			var distance := INF
+			for sample in samples.size():
+				if samples[sample].side != side: continue
+				var candidate: float = vertices[vertex].distance_squared_to(samples[sample].point)
+				if candidate < distance:
+					distance = candidate
+					nearest = sample
+			if nearest < 0: continue
+			var blend := smoothstep(-0.12, -0.045, along)
+			var target: Dictionary = samples[nearest]
+			vertices[vertex] = vertices[vertex].lerp(target.point, blend)
+			normals[vertex] = normals[vertex].lerp(target.normal, blend).normalized()
+			var influence: Dictionary = {}
+			for slot in stride:
+				var offset := vertex * stride + slot
+				influence[bones[offset]] = float(influence.get(bones[offset], 0.0)) + weights[offset] * (1.0 - blend)
+			for bind in target.weights: influence[bind] = float(influence.get(bind, 0.0)) + float(target.weights[bind]) * blend
+			var ranked := influence.keys()
+			ranked.sort_custom(func(a, b): return influence[a] > influence[b])
+			var total := 0.0
+			for slot in mini(stride, ranked.size()): total += float(influence[ranked[slot]])
+			for slot in stride:
+				var offset := vertex * stride + slot
+				bones[offset] = ranked[slot] if slot < ranked.size() else 0
+				weights[offset] = float(influence[ranked[slot]]) / maxf(total, 0.000001) if slot < ranked.size() else 0.0
+		arrays[Mesh.ARRAY_VERTEX] = vertices
+		arrays[Mesh.ARRAY_NORMAL] = normals
+		arrays[Mesh.ARRAY_BONES] = bones
+		arrays[Mesh.ARRAY_WEIGHTS] = weights
+		arrays[Mesh.ARRAY_TANGENT] = null
+		var temporary := ArrayMesh.new()
+		temporary.add_surface_from_arrays(Mesh.PRIMITIVE_TRIANGLES, arrays)
+		var tool := SurfaceTool.new()
+		tool.create_from(temporary, 0)
+		tool.generate_tangents()
+		tool.set_material(mesh.surface_get_material(surface))
+		tool.commit(result)
+	cache[key] = result
+	return result

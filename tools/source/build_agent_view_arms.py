@@ -133,9 +133,7 @@ def build(avatar,path,td,tb):
     tglobal=frame(td,tb,0);ib=np.array([np.linalg.inv(tglobal[name]).T for name in target_names],dtype='<f4')
     output={'asset':{'version':'2.0','generator':'Canonical agent arms, original native UVs'},'scene':0,'scenes':[{'nodes':[0]}],'nodes':nodes,'meshes':[{'primitives':primitives}],'materials':materials,'images':images,'textures':textures,'skins':[dict(target_skin,inverseBindMatrices=writer.acc(ib.reshape(-1,16),5126,'MAT4'))],'bufferViews':writer.views,'accessors':writer.accessors}
     file=OUT/(avatar+'.glb');write_glb(file,output,writer.bin)
-    from .fit_agent_wrist_seams import repair
-    repair(file,td,tb)
-    return {'wrist_seam':'original-wrist-weights-v1','model':'res://assets/models/agent_arms/'+file.name,'source':'models/'+path+'.glb','extracted_from_body':False,'dedicated_first_person':True,'visual_substitute':avatar in {'fbi','leet','phoenix_a'},'surfaces':stats,'sha256':hashlib.sha256(file.read_bytes()).hexdigest(),'uv_sha256':hashlib.sha256(b''.join(_accessor(output,writer.bin,q['attributes']['TEXCOORD_0']).tobytes() for q in primitives)).hexdigest()}
+    return {'model':'res://assets/models/agent_arms/'+file.name,'source':'models/'+path+'.glb','extracted_from_body':False,'dedicated_first_person':True,'visual_substitute':avatar in {'fbi','leet','phoenix_a'},'surfaces':stats,'sha256':hashlib.sha256(file.read_bytes()).hexdigest(),'uv_sha256':hashlib.sha256(b''.join(_accessor(output,writer.bin,q['attributes']['TEXCOORD_0']).tobytes() for q in primitives)).hexdigest()}
 
 def main():
     OUT.mkdir(parents=True,exist_ok=True);td,tb=read_glb(ROOT/'assets/models/weapons/v_ak47.glb')

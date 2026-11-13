@@ -6,6 +6,7 @@ on:
       - 'data/agent_view_arms.json'
       - 'tests/WristSeamTest*'
       - 'scripts/actors/AgentViewArms.gd'
+      - 'scripts/actors/WristSeamFit.gd'
       - 'scripts/actors/PlayerController.gd'
       - '.github/workflows/wrist-seam-qa.yml'
   workflow_dispatch:
