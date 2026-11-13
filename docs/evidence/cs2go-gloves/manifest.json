@@ -1,0 +1,827 @@
+{
+  "source": "https://github.com/3kh0/cs2go",
+  "commit": "fb970df0ee8175d9b212d310f6a928f9f61014f2",
+  "kind": "Original repository catalogue thumbnails, not modified-game screenshots",
+  "sheets": [
+    {
+      "family": "Sport Gloves",
+      "file": "5030.jpg",
+      "finishes": 19
+    },
+    {
+      "family": "Specialist Gloves",
+      "file": "5034.jpg",
+      "finishes": 19
+    },
+    {
+      "family": "Driver Gloves",
+      "file": "5031.jpg",
+      "finishes": 20
+    },
+    {
+      "family": "Gloves CT (Default)",
+      "file": "5029.jpg",
+      "finishes": 1
+    },
+    {
+      "family": "Gloves T (Default)",
+      "file": "5028.jpg",
+      "finishes": 1
+    },
+    {
+      "family": "Hydra Gloves",
+      "file": "5035.jpg",
+      "finishes": 4
+    },
+    {
+      "family": "Moto Gloves",
+      "file": "5033.jpg",
+      "finishes": 12
+    },
+    {
+      "family": "Hand Wraps",
+      "file": "5032.jpg",
+      "finishes": 12
+    },
+    {
+      "family": "Bloodhound Gloves",
+      "file": "5027.jpg",
+      "finishes": 4
+    },
+    {
+      "family": "Broken Fang Gloves",
+      "file": "4725.jpg",
+      "finishes": 4
+    }
+  ],
+  "options": [
+    {
+      "id": "5030_1417",
+      "item": 5030,
+      "paint": 1417,
+      "name": "Sport Gloves | Occult",
+      "model": "/models/gloves/5030.glb",
+      "image": "/skins/gloves/thumbs/5030_1417.webp"
+    },
+    {
+      "id": "5030_1410",
+      "item": 5030,
+      "paint": 1410,
+      "name": "Sport Gloves | Ultra Violent",
+      "model": "/models/gloves/5030.glb",
+      "image": "/skins/gloves/thumbs/5030_1410.webp"
+    },
+    {
+      "id": "5030_1409",
+      "item": 5030,
+      "paint": 1409,
+      "name": "Sport Gloves | Red Racer",
+      "model": "/models/gloves/5030.glb",
+      "image": "/skins/gloves/thumbs/5030_1409.webp"
+    },
+    {
+      "id": "5030_1408",
+      "item": 5030,
+      "paint": 1408,
+      "name": "Sport Gloves | Creme Pinstripe",
+      "model": "/models/gloves/5030.glb",
+      "image": "/skins/gloves/thumbs/5030_1408.webp"
+    },
+    {
+      "id": "5030_1407",
+      "item": 5030,
+      "paint": 1407,
+      "name": "Sport Gloves | Blaze",
+      "model": "/models/gloves/5030.glb",
+      "image": "/skins/gloves/thumbs/5030_1407.webp"
+    },
+    {
+      "id": "5030_1406",
+      "item": 5030,
+      "paint": 1406,
+      "name": "Sport Gloves | Frosty",
+      "model": "/models/gloves/5030.glb",
+      "image": "/skins/gloves/thumbs/5030_1406.webp"
+    },
+    {
+      "id": "5030_1405",
+      "item": 5030,
+      "paint": 1405,
+      "name": "Sport Gloves | Violet Beadwork",
+      "model": "/models/gloves/5030.glb",
+      "image": "/skins/gloves/thumbs/5030_1405.webp"
+    },
+    {
+      "id": "5034_1437",
+      "item": 5034,
+      "paint": 1437,
+      "name": "Specialist Gloves | Big Swell",
+      "model": "/models/gloves/5034.glb",
+      "image": "/skins/gloves/thumbs/5034_1437.webp"
+    },
+    {
+      "id": "5034_1416",
+      "item": 5034,
+      "paint": 1416,
+      "name": "Specialist Gloves | Sunburst",
+      "model": "/models/gloves/5034.glb",
+      "image": "/skins/gloves/thumbs/5034_1416.webp"
+    },
+    {
+      "id": "5034_1438",
+      "item": 5034,
+      "paint": 1438,
+      "name": "Specialist Gloves | Pillow Punchers",
+      "model": "/models/gloves/5034.glb",
+      "image": "/skins/gloves/thumbs/5034_1438.webp"
+    },
+    {
+      "id": "5034_1415",
+      "item": 5034,
+      "paint": 1415,
+      "name": "Specialist Gloves | Chocolate Chesterfield",
+      "model": "/models/gloves/5034.glb",
+      "image": "/skins/gloves/thumbs/5034_1415.webp"
+    },
+    {
+      "id": "5034_1414",
+      "item": 5034,
+      "paint": 1414,
+      "name": "Specialist Gloves | Blackbook",
+      "model": "/models/gloves/5034.glb",
+      "image": "/skins/gloves/thumbs/5034_1414.webp"
+    },
+    {
+      "id": "5034_1440",
+      "item": 5034,
+      "paint": 1440,
+      "name": "Specialist Gloves | Cloud Chaser",
+      "model": "/models/gloves/5034.glb",
+      "image": "/skins/gloves/thumbs/5034_1440.webp"
+    },
+    {
+      "id": "5034_1413",
+      "item": 5034,
+      "paint": 1413,
+      "name": "Specialist Gloves | Lime Polycam",
+      "model": "/models/gloves/5034.glb",
+      "image": "/skins/gloves/thumbs/5034_1413.webp"
+    },
+    {
+      "id": "5031_1398",
+      "item": 5031,
+      "paint": 1398,
+      "name": "Driver Gloves | Wave Chaser",
+      "model": "/models/gloves/5031.glb",
+      "image": "/skins/gloves/thumbs/5031_1398.webp"
+    },
+    {
+      "id": "5031_1404",
+      "item": 5031,
+      "paint": 1404,
+      "name": "Driver Gloves | Seigaiha",
+      "model": "/models/gloves/5031.glb",
+      "image": "/skins/gloves/thumbs/5031_1404.webp"
+    },
+    {
+      "id": "5031_1412",
+      "item": 5031,
+      "paint": 1412,
+      "name": "Driver Gloves | Plum Quill",
+      "model": "/models/gloves/5031.glb",
+      "image": "/skins/gloves/thumbs/5031_1412.webp"
+    },
+    {
+      "id": "5031_1439",
+      "item": 5031,
+      "paint": 1439,
+      "name": "Driver Gloves | Hand Sweaters",
+      "model": "/models/gloves/5031.glb",
+      "image": "/skins/gloves/thumbs/5031_1439.webp"
+    },
+    {
+      "id": "5031_1402",
+      "item": 5031,
+      "paint": 1402,
+      "name": "Driver Gloves | Garden",
+      "model": "/models/gloves/5031.glb",
+      "image": "/skins/gloves/thumbs/5031_1402.webp"
+    },
+    {
+      "id": "5031_1401",
+      "item": 5031,
+      "paint": 1401,
+      "name": "Driver Gloves | Dragon Fists",
+      "model": "/models/gloves/5031.glb",
+      "image": "/skins/gloves/thumbs/5031_1401.webp"
+    },
+    {
+      "id": "5031_1400",
+      "item": 5031,
+      "paint": 1400,
+      "name": "Driver Gloves | Brocade Flowers",
+      "model": "/models/gloves/5031.glb",
+      "image": "/skins/gloves/thumbs/5031_1400.webp"
+    },
+    {
+      "id": "5031_1399",
+      "item": 5031,
+      "paint": 1399,
+      "name": "Driver Gloves | Brocade Crane",
+      "model": "/models/gloves/5031.glb",
+      "image": "/skins/gloves/thumbs/5031_1399.webp"
+    },
+    {
+      "id": "5029_0",
+      "item": 5029,
+      "paint": 0,
+      "name": "Gloves CT (Default)",
+      "model": "/models/gloves/5029.glb",
+      "image": "/skins/gloves/thumbs/5029_0.webp"
+    },
+    {
+      "id": "5028_0",
+      "item": 5028,
+      "paint": 0,
+      "name": "Gloves T (Default)",
+      "model": "/models/gloves/5028.glb",
+      "image": "/skins/gloves/thumbs/5028_0.webp"
+    },
+    {
+      "id": "5035_10060",
+      "item": 5035,
+      "paint": 10060,
+      "name": "Hydra Gloves | Case Hardened",
+      "model": "/models/gloves/5035.glb",
+      "image": "/skins/gloves/thumbs/5035_10060.webp"
+    },
+    {
+      "id": "5035_10059",
+      "item": 5035,
+      "paint": 10059,
+      "name": "Hydra Gloves | Rattler",
+      "model": "/models/gloves/5035.glb",
+      "image": "/skins/gloves/thumbs/5035_10059.webp"
+    },
+    {
+      "id": "5035_10058",
+      "item": 5035,
+      "paint": 10058,
+      "name": "Hydra Gloves | Mangrove",
+      "model": "/models/gloves/5035.glb",
+      "image": "/skins/gloves/thumbs/5035_10058.webp"
+    },
+    {
+      "id": "5035_10057",
+      "item": 5035,
+      "paint": 10057,
+      "name": "Hydra Gloves | Emerald",
+      "model": "/models/gloves/5035.glb",
+      "image": "/skins/gloves/thumbs/5035_10057.webp"
+    },
+    {
+      "id": "5034_10068",
+      "item": 5034,
+      "paint": 10068,
+      "name": "Specialist Gloves | Field Agent",
+      "model": "/models/gloves/5034.glb",
+      "image": "/skins/gloves/thumbs/5034_10068.webp"
+    },
+    {
+      "id": "5034_10067",
+      "item": 5034,
+      "paint": 10067,
+      "name": "Specialist Gloves | Tiger Strike",
+      "model": "/models/gloves/5034.glb",
+      "image": "/skins/gloves/thumbs/5034_10067.webp"
+    },
+    {
+      "id": "5034_10066",
+      "item": 5034,
+      "paint": 10066,
+      "name": "Specialist Gloves | Lt. Commander",
+      "model": "/models/gloves/5034.glb",
+      "image": "/skins/gloves/thumbs/5034_10066.webp"
+    },
+    {
+      "id": "5034_10065",
+      "item": 5034,
+      "paint": 10065,
+      "name": "Specialist Gloves | Marble Fade",
+      "model": "/models/gloves/5034.glb",
+      "image": "/skins/gloves/thumbs/5034_10065.webp"
+    },
+    {
+      "id": "5034_10064",
+      "item": 5034,
+      "paint": 10064,
+      "name": "Specialist Gloves | Mogul",
+      "model": "/models/gloves/5034.glb",
+      "image": "/skins/gloves/thumbs/5034_10064.webp"
+    },
+    {
+      "id": "5034_10063",
+      "item": 5034,
+      "paint": 10063,
+      "name": "Specialist Gloves | Fade",
+      "model": "/models/gloves/5034.glb",
+      "image": "/skins/gloves/thumbs/5034_10063.webp"
+    },
+    {
+      "id": "5034_10062",
+      "item": 5034,
+      "paint": 10062,
+      "name": "Specialist Gloves | Buckshot",
+      "model": "/models/gloves/5034.glb",
+      "image": "/skins/gloves/thumbs/5034_10062.webp"
+    },
+    {
+      "id": "5034_10061",
+      "item": 5034,
+      "paint": 10061,
+      "name": "Specialist Gloves | Crimson Web",
+      "model": "/models/gloves/5034.glb",
+      "image": "/skins/gloves/thumbs/5034_10061.webp"
+    },
+    {
+      "id": "5034_10035",
+      "item": 5034,
+      "paint": 10035,
+      "name": "Specialist Gloves | Foundation",
+      "model": "/models/gloves/5034.glb",
+      "image": "/skins/gloves/thumbs/5034_10035.webp"
+    },
+    {
+      "id": "5034_10034",
+      "item": 5034,
+      "paint": 10034,
+      "name": "Specialist Gloves | Emerald Web",
+      "model": "/models/gloves/5034.glb",
+      "image": "/skins/gloves/thumbs/5034_10034.webp"
+    },
+    {
+      "id": "5034_10033",
+      "item": 5034,
+      "paint": 10033,
+      "name": "Specialist Gloves | Crimson Kimono",
+      "model": "/models/gloves/5034.glb",
+      "image": "/skins/gloves/thumbs/5034_10033.webp"
+    },
+    {
+      "id": "5034_10030",
+      "item": 5034,
+      "paint": 10030,
+      "name": "Specialist Gloves | Forest DDPAT",
+      "model": "/models/gloves/5034.glb",
+      "image": "/skins/gloves/thumbs/5034_10030.webp"
+    },
+    {
+      "id": "5033_10080",
+      "item": 5033,
+      "paint": 10080,
+      "name": "Moto Gloves | 3rd Commando Company",
+      "model": "/models/gloves/5033.glb",
+      "image": "/skins/gloves/thumbs/5033_10080.webp"
+    },
+    {
+      "id": "5033_10079",
+      "item": 5033,
+      "paint": 10079,
+      "name": "Moto Gloves | Blood Pressure",
+      "model": "/models/gloves/5033.glb",
+      "image": "/skins/gloves/thumbs/5033_10079.webp"
+    },
+    {
+      "id": "5033_10078",
+      "item": 5033,
+      "paint": 10078,
+      "name": "Moto Gloves | Smoke Out",
+      "model": "/models/gloves/5033.glb",
+      "image": "/skins/gloves/thumbs/5033_10078.webp"
+    },
+    {
+      "id": "5033_10077",
+      "item": 5033,
+      "paint": 10077,
+      "name": "Moto Gloves | Finish Line",
+      "model": "/models/gloves/5033.glb",
+      "image": "/skins/gloves/thumbs/5033_10077.webp"
+    },
+    {
+      "id": "5033_10052",
+      "item": 5033,
+      "paint": 10052,
+      "name": "Moto Gloves | Polygon",
+      "model": "/models/gloves/5033.glb",
+      "image": "/skins/gloves/thumbs/5033_10052.webp"
+    },
+    {
+      "id": "5033_10051",
+      "item": 5033,
+      "paint": 10051,
+      "name": "Moto Gloves | Transport",
+      "model": "/models/gloves/5033.glb",
+      "image": "/skins/gloves/thumbs/5033_10051.webp"
+    },
+    {
+      "id": "5033_10050",
+      "item": 5033,
+      "paint": 10050,
+      "name": "Moto Gloves | Turtle",
+      "model": "/models/gloves/5033.glb",
+      "image": "/skins/gloves/thumbs/5033_10050.webp"
+    },
+    {
+      "id": "5033_10049",
+      "item": 5033,
+      "paint": 10049,
+      "name": "Moto Gloves | POW!",
+      "model": "/models/gloves/5033.glb",
+      "image": "/skins/gloves/thumbs/5033_10049.webp"
+    },
+    {
+      "id": "5033_10028",
+      "item": 5033,
+      "paint": 10028,
+      "name": "Moto Gloves | Cool Mint",
+      "model": "/models/gloves/5033.glb",
+      "image": "/skins/gloves/thumbs/5033_10028.webp"
+    },
+    {
+      "id": "5033_10027",
+      "item": 5033,
+      "paint": 10027,
+      "name": "Moto Gloves | Boom!",
+      "model": "/models/gloves/5033.glb",
+      "image": "/skins/gloves/thumbs/5033_10027.webp"
+    },
+    {
+      "id": "5033_10026",
+      "item": 5033,
+      "paint": 10026,
+      "name": "Moto Gloves | Spearmint",
+      "model": "/models/gloves/5033.glb",
+      "image": "/skins/gloves/thumbs/5033_10026.webp"
+    },
+    {
+      "id": "5033_10024",
+      "item": 5033,
+      "paint": 10024,
+      "name": "Moto Gloves | Eclipse",
+      "model": "/models/gloves/5033.glb",
+      "image": "/skins/gloves/thumbs/5033_10024.webp"
+    },
+    {
+      "id": "5032_10084",
+      "item": 5032,
+      "paint": 10084,
+      "name": "Hand Wraps | CAUTION!",
+      "model": "/models/gloves/5032.glb",
+      "image": "/skins/gloves/thumbs/5032_10084.webp"
+    },
+    {
+      "id": "5032_10083",
+      "item": 5032,
+      "paint": 10083,
+      "name": "Hand Wraps | Constrictor",
+      "model": "/models/gloves/5032.glb",
+      "image": "/skins/gloves/thumbs/5032_10083.webp"
+    },
+    {
+      "id": "5032_10082",
+      "item": 5032,
+      "paint": 10082,
+      "name": "Hand Wraps | Giraffe",
+      "model": "/models/gloves/5032.glb",
+      "image": "/skins/gloves/thumbs/5032_10082.webp"
+    },
+    {
+      "id": "5032_10081",
+      "item": 5032,
+      "paint": 10081,
+      "name": "Hand Wraps | Desert Shamagh",
+      "model": "/models/gloves/5032.glb",
+      "image": "/skins/gloves/thumbs/5032_10081.webp"
+    },
+    {
+      "id": "5032_10056",
+      "item": 5032,
+      "paint": 10056,
+      "name": "Hand Wraps | Arboreal",
+      "model": "/models/gloves/5032.glb",
+      "image": "/skins/gloves/thumbs/5032_10056.webp"
+    },
+    {
+      "id": "5032_10055",
+      "item": 5032,
+      "paint": 10055,
+      "name": "Hand Wraps | Duct Tape",
+      "model": "/models/gloves/5032.glb",
+      "image": "/skins/gloves/thumbs/5032_10055.webp"
+    },
+    {
+      "id": "5032_10054",
+      "item": 5032,
+      "paint": 10054,
+      "name": "Hand Wraps | Overprint",
+      "model": "/models/gloves/5032.glb",
+      "image": "/skins/gloves/thumbs/5032_10054.webp"
+    },
+    {
+      "id": "5032_10053",
+      "item": 5032,
+      "paint": 10053,
+      "name": "Hand Wraps | Cobalt Skulls",
+      "model": "/models/gloves/5032.glb",
+      "image": "/skins/gloves/thumbs/5032_10053.webp"
+    },
+    {
+      "id": "5032_10036",
+      "item": 5032,
+      "paint": 10036,
+      "name": "Hand Wraps | Badlands",
+      "model": "/models/gloves/5032.glb",
+      "image": "/skins/gloves/thumbs/5032_10036.webp"
+    },
+    {
+      "id": "5032_10021",
+      "item": 5032,
+      "paint": 10021,
+      "name": "Hand Wraps | Slaughter",
+      "model": "/models/gloves/5032.glb",
+      "image": "/skins/gloves/thumbs/5032_10021.webp"
+    },
+    {
+      "id": "5032_10010",
+      "item": 5032,
+      "paint": 10010,
+      "name": "Hand Wraps | Spruce DDPAT",
+      "model": "/models/gloves/5032.glb",
+      "image": "/skins/gloves/thumbs/5032_10010.webp"
+    },
+    {
+      "id": "5032_10009",
+      "item": 5032,
+      "paint": 10009,
+      "name": "Hand Wraps | Leather",
+      "model": "/models/gloves/5032.glb",
+      "image": "/skins/gloves/thumbs/5032_10009.webp"
+    },
+    {
+      "id": "5031_10072",
+      "item": 5031,
+      "paint": 10072,
+      "name": "Driver Gloves | Black Tie",
+      "model": "/models/gloves/5031.glb",
+      "image": "/skins/gloves/thumbs/5031_10072.webp"
+    },
+    {
+      "id": "5031_10071",
+      "item": 5031,
+      "paint": 10071,
+      "name": "Driver Gloves | Queen Jaguar",
+      "model": "/models/gloves/5031.glb",
+      "image": "/skins/gloves/thumbs/5031_10071.webp"
+    },
+    {
+      "id": "5031_10070",
+      "item": 5031,
+      "paint": 10070,
+      "name": "Driver Gloves | Snow Leopard",
+      "model": "/models/gloves/5031.glb",
+      "image": "/skins/gloves/thumbs/5031_10070.webp"
+    },
+    {
+      "id": "5031_10069",
+      "item": 5031,
+      "paint": 10069,
+      "name": "Driver Gloves | Rezan the Red",
+      "model": "/models/gloves/5031.glb",
+      "image": "/skins/gloves/thumbs/5031_10069.webp"
+    },
+    {
+      "id": "5031_10044",
+      "item": 5031,
+      "paint": 10044,
+      "name": "Driver Gloves | Racing Green",
+      "model": "/models/gloves/5031.glb",
+      "image": "/skins/gloves/thumbs/5031_10044.webp"
+    },
+    {
+      "id": "5031_10043",
+      "item": 5031,
+      "paint": 10043,
+      "name": "Driver Gloves | Overtake",
+      "model": "/models/gloves/5031.glb",
+      "image": "/skins/gloves/thumbs/5031_10043.webp"
+    },
+    {
+      "id": "5031_10042",
+      "item": 5031,
+      "paint": 10042,
+      "name": "Driver Gloves | Imperial Plaid",
+      "model": "/models/gloves/5031.glb",
+      "image": "/skins/gloves/thumbs/5031_10042.webp"
+    },
+    {
+      "id": "5031_10041",
+      "item": 5031,
+      "paint": 10041,
+      "name": "Driver Gloves | King Snake",
+      "model": "/models/gloves/5031.glb",
+      "image": "/skins/gloves/thumbs/5031_10041.webp"
+    },
+    {
+      "id": "5031_10040",
+      "item": 5031,
+      "paint": 10040,
+      "name": "Driver Gloves | Diamondback",
+      "model": "/models/gloves/5031.glb",
+      "image": "/skins/gloves/thumbs/5031_10040.webp"
+    },
+    {
+      "id": "5031_10016",
+      "item": 5031,
+      "paint": 10016,
+      "name": "Driver Gloves | Crimson Weave",
+      "model": "/models/gloves/5031.glb",
+      "image": "/skins/gloves/thumbs/5031_10016.webp"
+    },
+    {
+      "id": "5031_10015",
+      "item": 5031,
+      "paint": 10015,
+      "name": "Driver Gloves | Convoy",
+      "model": "/models/gloves/5031.glb",
+      "image": "/skins/gloves/thumbs/5031_10015.webp"
+    },
+    {
+      "id": "5031_10013",
+      "item": 5031,
+      "paint": 10013,
+      "name": "Driver Gloves | Lunar Weave",
+      "model": "/models/gloves/5031.glb",
+      "image": "/skins/gloves/thumbs/5031_10013.webp"
+    },
+    {
+      "id": "5030_10076",
+      "item": 5030,
+      "paint": 10076,
+      "name": "Sport Gloves | Nocts",
+      "model": "/models/gloves/5030.glb",
+      "image": "/skins/gloves/thumbs/5030_10076.webp"
+    },
+    {
+      "id": "5030_10075",
+      "item": 5030,
+      "paint": 10075,
+      "name": "Sport Gloves | Scarlet Shamagh",
+      "model": "/models/gloves/5030.glb",
+      "image": "/skins/gloves/thumbs/5030_10075.webp"
+    },
+    {
+      "id": "5030_10074",
+      "item": 5030,
+      "paint": 10074,
+      "name": "Sport Gloves | Big Game",
+      "model": "/models/gloves/5030.glb",
+      "image": "/skins/gloves/thumbs/5030_10074.webp"
+    },
+    {
+      "id": "5030_10073",
+      "item": 5030,
+      "paint": 10073,
+      "name": "Sport Gloves | Slingshot",
+      "model": "/models/gloves/5030.glb",
+      "image": "/skins/gloves/thumbs/5030_10073.webp"
+    },
+    {
+      "id": "5030_10048",
+      "item": 5030,
+      "paint": 10048,
+      "name": "Sport Gloves | Vice",
+      "model": "/models/gloves/5030.glb",
+      "image": "/skins/gloves/thumbs/5030_10048.webp"
+    },
+    {
+      "id": "5030_10047",
+      "item": 5030,
+      "paint": 10047,
+      "name": "Sport Gloves | Omega",
+      "model": "/models/gloves/5030.glb",
+      "image": "/skins/gloves/thumbs/5030_10047.webp"
+    },
+    {
+      "id": "5030_10046",
+      "item": 5030,
+      "paint": 10046,
+      "name": "Sport Gloves | Bronze Morph",
+      "model": "/models/gloves/5030.glb",
+      "image": "/skins/gloves/thumbs/5030_10046.webp"
+    },
+    {
+      "id": "5030_10045",
+      "item": 5030,
+      "paint": 10045,
+      "name": "Sport Gloves | Amphibious",
+      "model": "/models/gloves/5030.glb",
+      "image": "/skins/gloves/thumbs/5030_10045.webp"
+    },
+    {
+      "id": "5030_10038",
+      "item": 5030,
+      "paint": 10038,
+      "name": "Sport Gloves | Hedge Maze",
+      "model": "/models/gloves/5030.glb",
+      "image": "/skins/gloves/thumbs/5030_10038.webp"
+    },
+    {
+      "id": "5030_10037",
+      "item": 5030,
+      "paint": 10037,
+      "name": "Sport Gloves | Pandora's Box",
+      "model": "/models/gloves/5030.glb",
+      "image": "/skins/gloves/thumbs/5030_10037.webp"
+    },
+    {
+      "id": "5030_10019",
+      "item": 5030,
+      "paint": 10019,
+      "name": "Sport Gloves | Arid",
+      "model": "/models/gloves/5030.glb",
+      "image": "/skins/gloves/thumbs/5030_10019.webp"
+    },
+    {
+      "id": "5030_10018",
+      "item": 5030,
+      "paint": 10018,
+      "name": "Sport Gloves | Superconductor",
+      "model": "/models/gloves/5030.glb",
+      "image": "/skins/gloves/thumbs/5030_10018.webp"
+    },
+    {
+      "id": "5027_10039",
+      "item": 5027,
+      "paint": 10039,
+      "name": "Bloodhound Gloves | Guerrilla",
+      "model": "/models/gloves/5027.glb",
+      "image": "/skins/gloves/thumbs/5027_10039.webp"
+    },
+    {
+      "id": "5027_10008",
+      "item": 5027,
+      "paint": 10008,
+      "name": "Bloodhound Gloves | Bronzed",
+      "model": "/models/gloves/5027.glb",
+      "image": "/skins/gloves/thumbs/5027_10008.webp"
+    },
+    {
+      "id": "5027_10007",
+      "item": 5027,
+      "paint": 10007,
+      "name": "Bloodhound Gloves | Snakebite",
+      "model": "/models/gloves/5027.glb",
+      "image": "/skins/gloves/thumbs/5027_10007.webp"
+    },
+    {
+      "id": "5027_10006",
+      "item": 5027,
+      "paint": 10006,
+      "name": "Bloodhound Gloves | Charred",
+      "model": "/models/gloves/5027.glb",
+      "image": "/skins/gloves/thumbs/5027_10006.webp"
+    },
+    {
+      "id": "4725_10088",
+      "item": 4725,
+      "paint": 10088,
+      "name": "Broken Fang Gloves | Unhinged",
+      "model": "/models/gloves/4725.glb",
+      "image": "/skins/gloves/thumbs/4725_10088.webp"
+    },
+    {
+      "id": "4725_10087",
+      "item": 4725,
+      "paint": 10087,
+      "name": "Broken Fang Gloves | Needle Point",
+      "model": "/models/gloves/4725.glb",
+      "image": "/skins/gloves/thumbs/4725_10087.webp"
+    },
+    {
+      "id": "4725_10086",
+      "item": 4725,
+      "paint": 10086,
+      "name": "Broken Fang Gloves | Yellow-banded",
+      "model": "/models/gloves/4725.glb",
+      "image": "/skins/gloves/thumbs/4725_10086.webp"
+    },
+    {
+      "id": "4725_10085",
+      "item": 4725,
+      "paint": 10085,
+      "name": "Broken Fang Gloves | Jade",
+      "model": "/models/gloves/4725.glb",
+      "image": "/skins/gloves/thumbs/4725_10085.webp"
+    }
+  ]
+}
