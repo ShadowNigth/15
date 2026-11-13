@@ -26,7 +26,9 @@ func validate(root: Node3D) -> void:
 		expect(rig.find_bone("hand_L") >= 0 and rig.find_bone("hand_R") >= 0, "native hand names retained")
 		for driver in binding.drivers:
 			var pose := rig.get_bone_global_pose(driver.source)
-			expect(pose.origin.is_finite() and pose.basis.determinant() > 0.001, "finite same-handed source pose")
+			var expected: Transform3D = rig.global_transform.affine_inverse() * replacement.target.global_transform * replacement.target.get_bone_global_pose(driver.target) * driver.correction
+			expect(pose.origin.is_finite() and absf(pose.basis.determinant()) > 0.001, "finite nonsingular source pose")
+			expect(pose.origin.distance_to(expected.origin) < 0.001 and pose.basis.determinant() * expected.basis.determinant() > 0, "source pose matches driven trajectory and inherited mirror")
 	var visible_native := 0
 	for mesh in SportGloves._find_meshes(replacement):
 		if mesh.visible:

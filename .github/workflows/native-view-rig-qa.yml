@@ -34,12 +34,23 @@ jobs:
           sudo apt-get update -qq
           sudo apt-get install -y -qq xvfb libgl1-mesa-dri
           pip install pillow gdtoolkit==4.3.4
+      - uses: actions/cache/restore@v4
+        id: godot-import
+        with:
+          path: .godot
+          key: native-view-import-${{ runner.os }}-${{ hashFiles('assets/models/native_view/*.glb') }}
+          restore-keys: native-view-import-${{ runner.os }}-
       - name: Import and static validation
         run: |
           set -o pipefail
           python tools/verify_godot_project.py
           godot --headless --path . --import 2>&1 | tee /tmp/local-import.log
           ! grep -Eq 'SCRIPT ERROR:|Parse Error:|Compile Error:' /tmp/local-import.log
+      - uses: actions/cache/save@v4
+        if: steps.godot-import.outputs.cache-hit != 'true'
+        with:
+          path: .godot
+          key: native-view-import-${{ runner.os }}-${{ hashFiles('assets/models/native_view/*.glb') }}
       - name: Native AK pilot
         run: |
           set -o pipefail

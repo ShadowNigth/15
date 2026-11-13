@@ -76,6 +76,7 @@ func _prepare(definition: Dictionary, model: String, gloves: bool, smoke: bool) 
 			material.transparency = BaseMaterial3D.TRANSPARENCY_DISABLED
 			material.cull_mode = BaseMaterial3D.CULL_DISABLED
 			if gloves and name_lower.begins_with("glove_motorcycle_"):
+				material.albedo_color = Color.WHITE # Replace unpainted native black factor as well as texture.
 				var option := GameData.get_selected_glove()
 				material.albedo_texture = GameData.get_texture(String(option.get("native_textures", {}).get(material.resource_name, "")))
 				if material.albedo_texture == null:
