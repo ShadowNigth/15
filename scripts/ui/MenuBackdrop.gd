@@ -1,8 +1,8 @@
 class_name MenuBackdrop
 extends SubViewportContainer
 ## Presentation-only world: no actors, physics, round registration or gameplay RNG.
-const MAPS := ["de_dust2", "de_aztec", "cs_italy"]
-const LABELS := ["Dust II · Desierto", "Aztec · Ruinas", "Italy · Ciudad"]
+const MAPS := ["de_dust2", "de_aztec", "de_inferno"]
+const LABELS := ["Dust II · Desierto", "Aztec · Ruinas", "Inferno · Pastos"]
 const SETTINGS := "user://menu_presentation.cfg"
 var selection := "de_dust2"
 var motion := true

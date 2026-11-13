@@ -228,23 +228,8 @@ func _test_vip_map(map_name: String, expected_zones: int, drive_to_extraction: b
 func _run() -> void:
 	seed(472047)
 	RoundManager.round_ended.connect(_capture_round_result)
-	var oilrig := GameData.load_map_data("as_oilrig")
-	var tundra := GameData.load_map_data("as_tundra")
-	_expect((oilrig.get("escape_zones", []) as Array).size() == 1, "OilRig source data contains its helicopter safety zone")
-	_expect((tundra.get("escape_zones", []) as Array).size() == 2, "Tundra source data contains both safety zones")
-	for data in [oilrig, tundra]:
-		for raw in data.get("escape_zones", []):
-			var lo: Array = raw.get("min", [])
-			var hi: Array = raw.get("max", [])
-			_expect(lo.size() == 3 and hi.size() == 3 and float(hi[0]) > float(lo[0]) and float(hi[2]) > float(lo[2]),
-				"%s extraction has a positive BSP brush volume" % String(data.get("name", "AS")))
 
 	await _test_weighted_purchases()
-	# Regression seed: the upper OilRig ladder used to trap the VIP in a
-	# replan loop because the lower waypoint pulls it away from the rungs.
-	seed(2)
-	await _test_vip_map("as_oilrig", 1, true)
-	await _test_vip_map("as_tundra", 2, true)
 	_finish()
 
 

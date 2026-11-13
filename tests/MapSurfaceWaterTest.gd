@@ -3,10 +3,6 @@ extends Node
 ##   godot --headless --path . res://tests/MapSurfaceWaterTest.tscn
 
 const EXPECTED_WATER_ZONES := {
-	"as_oilrig": 3,
-	"cs_estate": 1,
-	"cs_militia": 2,
-	"cs_siege": 9,
 	"de_aztec": 3,
 	"de_chateau": 18,
 	"de_piranesi": 1,

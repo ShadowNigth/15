@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """Import official human-curated YaPB (.graph, Unlicense) tactical waypoint graphs
-into data/maps/*.json for all 26 Counter-Strike 1.5 retail maps, cross-validated
+into data/maps/*.json for the retained Counter-Strike 1.5 maps, cross-validated
 against each map's exact CS 1.5 BSP30 Hull-1/Hull-3 clipnodes:
   - Simulates GoldSrc step-walking along every link against BSP Hull-1 clipnodes to
     automatically flag every >=18u ledge/crate step as LINK_JUMP with launch velocity!
@@ -27,7 +27,6 @@ FLAG_NARROW = 1 << 10
 FLAG_SNIPER = 1 << 28
 
 CS15_GRAPH_OVERRIDES = {
-    "as_oilrig": "as_oilrig_1.graph",
     "de_aztec": "de_aztec15.graph",
     "de_cbble": "de_cbble(cs 1.5).graph",
     "de_inferno": "de_inferno(cs 1.5).graph",

@@ -68,7 +68,7 @@ func _run() -> void:
 		var requested := ""
 		if FileAccess.file_exists("res://task47_qa_state.txt"):
 			requested = FileAccess.get_file_as_string("res://task47_qa_state.txt").strip_edges()
-		if requested not in ["texture", "fire", "vip"]:
+		if requested not in ["texture", "fire"]:
 			push_error("[TASK47 QA] Missing or invalid staged state: " + requested)
 			return
 		_state = requested
@@ -78,11 +78,11 @@ func _run() -> void:
 				_state = arg.trim_prefix("state=")
 			elif arg.begins_with("seed="):
 				seed(int(arg.trim_prefix("seed=")))
-		if _state not in ["texture", "fire", "vip"]:
+		if _state not in ["texture", "fire"]:
 			push_error("[TASK47 QA] Invalid native state: " + _state)
 			return
-	GameData.selected_map = "as_oilrig" if _state == "vip" else "de_dust2"
-	GameData.bot_count = 5 if _state == "vip" else 0
+	GameData.selected_map = "de_dust2"
+	GameData.bot_count = 0
 	GameData.start_money = 16000
 	var packed := load("res://scenes/GameWorld.tscn") as PackedScene
 	if packed == null:
@@ -91,7 +91,7 @@ func _run() -> void:
 	_world = packed.instantiate() as GameWorld
 	add_child(_world)
 	print("[TASK47 QA] world added state=%s" % _state)
-	_world._on_player_team_chosen("T" if _state == "vip" else "CT", "terror" if _state == "vip" else "urban", false)
+	_world._on_player_team_chosen("CT", "urban", false)
 	print("[TASK47 QA] team selected")
 	_world.team_menu.close_menu(false)
 	RoundManager.state = RoundManager.State.LIVE
@@ -103,40 +103,25 @@ func _run() -> void:
 	print("[TASK47 QA] physics resumed")
 	_world.player.set_physics_process(false)
 
-	if _state == "vip":
-		# Prevent a stationary human T or an environmental death from producing
-		# a false CT elimination win before the physical extraction assertion.
-		_world.player.team = "SPECTATOR"
-		_world.player.is_alive = false
-		_vip = _find_vip()
-		_vip_start = _vip.global_position if is_instance_valid(_vip) else Vector3.ZERO
-		_camera = Camera3D.new()
-		_camera.name = "Task47VipSpectator"
-		_camera.fov = 72.0
-		_camera.near = 0.06
-		_world.add_child(_camera)
-		_camera.current = true
-		print("[TASK47 QA] VIP initial state pos=%s zones=%d" % [_vip.global_position if _vip else Vector3.ZERO, _world.escape_zones.size()])
-	else:
-		var sites: Array = _world.bombsites
-		var center := sites[0].get_center() as Vector3 if not sites.is_empty() else _world.player.global_position
-		var camera_offset := Vector3(1.8, 0.0, 7.2)
-		_world.player.global_position = _floor_snap(center + camera_offset)
-		_world.player.velocity = Vector3.ZERO
-		_aim_player_at(center + Vector3.UP * 1.15)
-		if _state == "fire":
-			var fire_pos := _floor_snap(center)
-			var projectile := GrenadeProjectile.new()
-			_world.add_child(projectile)
-			projectile.global_position = fire_pos + Vector3.UP * 0.18
-			projectile.setup_grenade("molotov", _world.player, Vector3.ZERO)
-			projectile.set_physics_process(false)
-			projectile._detonate()
-			for child in _world.get_children():
-				if child is IncendiaryArea:
-					_area = child
-					break
-			print("[TASK47 QA] Molotov created at %s" % fire_pos)
+	var sites: Array = _world.bombsites
+	var center := sites[0].get_center() as Vector3 if not sites.is_empty() else _world.player.global_position
+	var camera_offset := Vector3(1.8, 0.0, 7.2)
+	_world.player.global_position = _floor_snap(center + camera_offset)
+	_world.player.velocity = Vector3.ZERO
+	_aim_player_at(center + Vector3.UP * 1.15)
+	if _state == "fire":
+		var fire_pos := _floor_snap(center)
+		var projectile := GrenadeProjectile.new()
+		_world.add_child(projectile)
+		projectile.global_position = fire_pos + Vector3.UP * 0.18
+		projectile.setup_grenade("molotov", _world.player, Vector3.ZERO)
+		projectile.set_physics_process(false)
+		projectile._detonate()
+		for child in _world.get_children():
+			if child is IncendiaryArea:
+				_area = child
+				break
+		print("[TASK47 QA] Molotov created at %s" % fire_pos)
 	print("[TASK47 QA] setup complete")
 	_web_bool("task47Booted", true)
 

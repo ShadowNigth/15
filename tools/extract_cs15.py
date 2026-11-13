@@ -6,7 +6,7 @@ Usage:
   python3 tools/extract_cs15.py [--source /path/to/counterstrike-betas/cstrike] [--output .]
 
 If --source is omitted, clones https://github.com/Ch0wW/counterstrike-betas (branch cs15_retail)
-into a temporary directory and extracts all 26 maps, 110+ models, 379 WAV sounds, HUD sprites,
+into a temporary directory and extracts the retained 15 maps, 110+ models, 379 WAV sounds, HUD sprites,
 VGUI portraits, skyboxes, radar overviews, and cs_i386.so binary weapon statistics.
 """
 
@@ -78,7 +78,7 @@ def main() -> None:
     # 2. Sanitized RIFF PCM WAV sounds (sound/ + media/)
     run_audio_extraction(cstrike_dir, os.path.join(out_assets, "sounds"))
 
-    # 3. Index WAD3 archives & convert all 26 BSP v30 maps + lightmaps + Bot nav graphs
+    # 3. Index WAD3 archives & convert the retained 15 BSP v30 maps + lightmaps + Bot nav graphs
     wad_catalog = collect_wad_catalog(cstrike_dir)
     print(f"[extract_cs15] Indexed {len(wad_catalog)} WAD3 textures across cstrike/*.wad")
     _, used_skies = run_bsp_extraction(

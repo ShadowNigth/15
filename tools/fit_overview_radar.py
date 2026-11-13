@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Fit world->overview-image affine projections for all 26 CS 1.5 maps.
+"""Fit world->overview-image affine projections for the retained CS 1.5 maps.
 
 The extracted overview PNGs (assets/ui/overviews/*.png, resized to 512x384) keep the
 original GoldSrc overview textures, but the .txt `origin`/`zoom` camera convention does

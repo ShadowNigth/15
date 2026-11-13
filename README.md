@@ -10,7 +10,7 @@ Remake jugable de **Counter-Strike 1.5 Retail** construido íntegramente en **Go
 2. Haz clic en **Import** y selecciona el archivo `project.godot` en la raíz del repositorio (en la primera apertura Godot importará automáticamente las texturas y los `.glb`).
 3. Pulsa **F5 (Run Project)**:
    - Se abrirá el **Menú Clásico WON de Counter-Strike 1.5** (`splash.png` original + sonidos `launch_glow1.wav` / `launch_select1.wav`).
-   - Elige **Quick Launch: de_dust2** o **Play CS 1.5 (LAN / Bots)** para escoger cualquiera de los **26 mapas originales**, cantidad de **Bots IA**, nivel de habilidad y dinero inicial (`$800` / `$3500` / `$16000`).
+   - Elige **Quick Launch: de_dust2** o **Play CS 1.5 (LAN / Bots)** para escoger cualquiera de los **15 mapas originales**, cantidad de **Bots IA**, nivel de habilidad y dinero inicial (`$800` / `$3500` / `$16000`).
    - También puedes abrir **3D Arsenal, Skins & Models** para inspeccionar los modelos y animaciones, elegir los **120 acabados anteriores más 44 incorporados al catálogo de armas**, además de los acabados de cuchillo y previsualizar los guantes para la próxima partida. **Original HD** siempre permanece disponible.
 
 ---
@@ -68,7 +68,7 @@ Todo el contenido de `cstrike/` fue procesado mediante la suite de ingeniería i
 
 | Categoría | Origen en `cs15_retail` | Formato en Godot 4 | Cantidad |
 | :--- | :--- | :--- | :--- |
-| **Mapas 3D + Lightmaps** | `maps/*.bsp` (GoldSrc BSP v30 + 23 WAD3) | `assets/maps/*.glb` + `*_lm.png` + `data/maps/*.json` | **26 / 26 mapas** |
+| **Mapas 3D + Lightmaps** | `maps/*.bsp` (GoldSrc BSP v30 + 23 WAD3) | `assets/maps/*.glb` + `*_lm.png` + `data/maps/*.json` | **15 / 15 mapas** |
 | **Grafo de Navegación IA** | Hull 1 (`CLIPNODES`) de cada `.bsp` | `waypoints` A* en `data/maps/*.json` | **26 grafos** (230–340 nodos/mapa) |
 | **Texturas de Mundo + Cielos** | `*.wad` (`de_aztec`, `cs_dust`, `halflife`…) + `gfx/env/*.tga` | PNG originales con mipmaps, sin overrides reescalados | **2,346 texturas originales + 109 caras skybox** |
 | **Materiales HD de armas** | VMT/VTF de `ShadowNigth/archi` | `assets/textures/archi/` + `data/archi_materials.json` | **54 materiales + 136 mapas compartidos de hasta 2K** |
@@ -78,10 +78,9 @@ Todo el contenido de `cstrike/` fue procesado mediante la suite de ingeniería i
 | **Audio Espacial & Radio** | `cs15_retail` + 299 WAV de archi + 130 WAV específicos de CS2 | `assets/sounds/**/*.wav` (PCM 16-bit limpio) | **973 archivos `.wav`** |
 | **Sprites HUD & VGUI** | `sprites/*.spr`, `hud.txt`, `gfx/vgui/*.tga`, `overviews/*.bmp` | `assets/sprites/*.png`, `assets/ui/**`, `data/hud_sprites.json` | **88 sprites + 42 VGUI + 26 radares** |
 
-### Los 26 Mapas Clásicos Incluidos
+### Los 15 Mapas Clásicos Incluidos
 - **Bomb / Defuse (`de_*`)**: `de_aztec`, `de_cbble`, `de_chateau`, `de_dust`, `de_dust2`, `de_inferno`, `de_nuke`, `de_piranesi`, `de_prodigy`, `de_storm`, `de_survivor`, `de_torn`, `de_train`, `de_vegas`, `de_vertigo`.
-- **Hostage Rescue (`cs_*`)**: `cs_747`, `cs_assault`, `cs_backalley`, `cs_estate`, `cs_havana`, `cs_italy`, `cs_militia`, `cs_office`, `cs_siege`.
-- **VIP Assassination (`as_*`)**: `as_oilrig`, `as_tundra`.
+- Los mapas de rescate de rehenes (`cs_*`) y VIP/asesinato (`as_*`) fueron eliminados.
 
 ---
 
@@ -137,7 +136,7 @@ Todo el contenido de `cstrike/` fue procesado mediante la suite de ingeniería i
 ```text
 ├── project.godot                # Configuración de Godot 4 (GL Compatibility, Autoloads)
 ├── scenes/
-│   ├── MainMenu.tscn            # Escena inicial (Menú WON + Selector de 26 mapas + Visor 3D)
+│   ├── MainMenu.tscn            # Escena inicial (Menú WON + Selector de 15 mapas + Visor 3D)
 │   └── GameWorld.tscn           # Escena principal de partida
 ├── scripts/
 │   ├── core/                    # GameData.gd, AudioManager.gd, RoundManager.gd

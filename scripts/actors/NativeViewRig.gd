@@ -229,7 +229,7 @@ func _prepare(definition: Dictionary, model: String, gloves: bool, custom_glove:
 		var rests: Array[Transform3D] = []
 		for index in rig.get_bone_count(): rests.append(rig.get_bone_global_rest(index))
 		bindings.append({"rig": rig, "drivers": drivers, "rests": rests,
-			"preserve_palm": String(definition.get("source", "")) == "gloves/5033"})
+			"preserve_palm": true})
 	return found or (custom_glove and not gloves)
 
 static func install(root: Node3D, model: String, avatar: String) -> bool:

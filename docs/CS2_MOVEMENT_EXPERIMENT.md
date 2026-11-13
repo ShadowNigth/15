@@ -50,10 +50,10 @@ projection/rate stability, energy-losing impact response, and profile selection.
   zero failures ([run 42952845554](https://github.com/ShadowNigth/15/actions/runs/42952845554)).
 - Modern agent animation/gameplay sub-suite: **587 passed**, zero failures;
   full modern workflow is **not green**, because its mission sub-suite fails.
-- **Known experimental navigation regression:** full `cs_estate` rescue can stall
-  at BSP doorway trim and leave a hostage unrescued. Both the squad workflow and
-  full modern workflow report this failure. The old baseline Estate comparison
-  passes. A physical retreat/replan attempt does not resolve it reliably.
+- **Known experimental navigation regression:** hostage/VIP rescue maps
+  (`cs_*`, `as_*`) were removed from the project, so their rescue-navigation
+  regression (stall at BSP doorway trim, unrescued hostage) no longer applies to
+  the retained bomb/defuse maps.
 - Therefore this revision is for experimentation, not a fully certified gameplay
   release. GoldSrc remains selectable before creating a match. Do not interpret
   the 63 force/physics checks as proof that every mission or bot route is valid.

@@ -1,7 +1,7 @@
 class_name CSBot
 extends CSActor
 ## Authentic YaPB-Powered Counter-Strike 1.5 Bot AI:
-##   - Navigates official human-curated YaPB (.graph) directed waypoint graphs across all 26 maps
+##   - Navigates official human-curated YaPB (.graph) directed waypoint graphs across the 15 retained maps
 ##   - Personalities (Rusher, Normal, Careful/Sniper) driving weapon buys, route diversity & danger avoidance
 ##   - Executes YaPB Jump-Links (ballistic launch velocity + crouch-jump), Crouch vents, Ladders & Doors
 ##   - Holds human-authored Camp & Sniper sightlines (start/end sweep vectors + node reservation)

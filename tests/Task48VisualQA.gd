@@ -12,9 +12,9 @@ func _run() -> void:
 		output = OS.get_user_data_dir().path_join("task48-captures")
 	DirAccess.make_dir_recursive_absolute(output)
 	var cases := [
-		{"map": "as_oilrig", "bots": 8, "seed": 2, "frames": 1800},
-		{"map": "cs_747", "bots": 10, "seed": 4807, "frames": 1800},
-		{"map": "cs_estate", "bots": 6, "seed": 4808, "frames": 1800},
+		{"map": "de_dust2", "bots": 8, "seed": 2, "frames": 1800},
+		{"map": "de_inferno", "bots": 10, "seed": 4807, "frames": 1800},
+		{"map": "de_train", "bots": 6, "seed": 4808, "frames": 1800},
 	]
 	var manifest: Array[Dictionary] = []
 	for entry in cases:
@@ -28,7 +28,7 @@ func _run() -> void:
 			await get_tree().physics_frame
 			if RoundManager.state != RoundManager.State.LIVE:
 				break
-		var subject: Node3D = _find_vip(world) if map_name == "as_oilrig" else null
+		var subject: Node3D = null
 		if subject == null:
 			for hostage in RoundManager.hostages:
 				if is_instance_valid(hostage) and not hostage.is_rescued and is_instance_valid(hostage.leader):

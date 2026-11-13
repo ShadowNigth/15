@@ -36,7 +36,7 @@ func validate(root: Node3D) -> void:
 					var expected_offset := parent_rest.affine_inverse() * rest.origin
 					expected.origin = rig.get_bone_global_pose(parent) * expected_offset
 					var actual_offset := rig.get_bone_global_pose(parent).affine_inverse() * pose.origin
-					expect(actual_offset.distance_to(expected_offset) < 0.0001, "Moto retains native palm spacing and phalanx length")
+					expect(actual_offset.distance_to(expected_offset) < 0.0001, "native retains palm spacing and phalanx length")
 			expect(pose.origin.is_finite() and absf(pose.basis.determinant()) > 0.001, "finite nonsingular source pose")
 			expect(pose.origin.distance_to(expected.origin) < 0.001 and pose.basis.determinant() * expected.basis.determinant() > 0, "source pose matches driven trajectory and inherited mirror")
 	var visible_native := 0

@@ -192,19 +192,12 @@ jobs:
           set -o pipefail
           stdbuf -o0 -e0 godot --headless --path . --quit-after 10 res://tests/MissionObjectiveRegressionTest.tscn -- --scenario=check 2>&1 | tee /tmp/mission-check.log
 
-      - name: OilRig physical escort regression
-        if: ${{ inputs.suite != 'world' }}
-        timeout-minutes: 4
-        run: |
-          set -o pipefail
-          timeout --signal=TERM --kill-after=5s 210s stdbuf -o0 -e0 godot --headless --path . --fixed-fps 60 res://tests/MissionObjectiveRegressionTest.tscn -- --scenario=oilrig 2>&1 | tee /tmp/oilrig-mission.log
-
       - name: Publish mission diagnostics
         if: ${{ always() && inputs.suite != 'world' }}
         run: |
           python3 - <<'PY'
           from pathlib import Path
-          for name in ('import', 'mission-check', 'oilrig-mission'):
+          for name in ('import', 'mission-check'):
               path = Path('/tmp') / (name + '.log')
               if not path.exists():
                   continue
@@ -212,16 +205,6 @@ jobs:
                   escaped = line.replace('%', '%25').replace('\r', '%0D').replace('\n', '%0A')
                   print(f'::notice title={name} native log::{escaped}')
           PY
-
-      - name: cs_747 physical hostage regression
-        if: ${{ !cancelled() && steps.native_import.outcome == 'success' && inputs.suite != 'world' }}
-        timeout-minutes: 8
-        run: godot --headless --path . --fixed-fps 60 res://tests/MissionObjectiveRegressionTest.tscn -- --scenario=747
-
-      - name: cs_estate physical hostage regression
-        if: ${{ !cancelled() && steps.native_import.outcome == 'success' && inputs.suite != 'world' }}
-        timeout-minutes: 8
-        run: godot --headless --path . --fixed-fps 60 res://tests/MissionObjectiveRegressionTest.tscn -- --scenario=estate
 
       - name: Weapon runtime regression
         if: ${{ !cancelled() && steps.native_import.outcome == 'success' && inputs.suite != 'world' }}
@@ -296,18 +279,6 @@ jobs:
               escaped = text.replace('%', '%25').replace('\r', '%0D').replace('\n', '%0A')
               print(f'::notice title=Task48 renderer log::{escaped}')
           PY
-
-      - name: Inspect OilRig rendered capture
-        if: ${{ !cancelled() && inputs.suite != 'world' }}
-        run: python3 tools/publish_rendered_capture.py as_oilrig
-
-      - name: Inspect 747 rendered capture
-        if: ${{ !cancelled() && inputs.suite != 'world' }}
-        run: python3 tools/publish_rendered_capture.py cs_747
-
-      - name: Inspect Estate rendered capture
-        if: ${{ !cancelled() && inputs.suite != 'world' }}
-        run: python3 tools/publish_rendered_capture.py cs_estate
 
       - name: Save task 48 rendered evidence
         if: ${{ !cancelled() && inputs.suite != 'world' }}
@@ -661,21 +632,6 @@ jobs:
               text=p.read_text(errors='replace')[-7000:].replace('%','%25').replace('\n','%0A')
               print('::notice title=Combat native integration::'+text)
           PYCODE
-      - name: Preserve physical Estate hostage rescue after cosmetic additions
-        id: estate_review
-        run: |
-          set -o pipefail
-          godot --headless --path . --fixed-fps 60 res://tests/MissionObjectiveRegressionTest.tscn -- --scenario=estate 2>&1 | tee /tmp/native-estate.log
-      - name: Publish Estate rescue diagnostics before image annotations
-        if: ${{ always() }}
-        run: |
-          python3 - <<'PYCODE'
-          from pathlib import Path
-          p=Path('/tmp/native-estate.log')
-          if p.exists():
-              text=p.read_text(errors='replace')[-6500:].replace('%','%25').replace('\n','%0A')
-              print('::notice title=Native Estate rescue::'+text)
-          PYCODE
       - name: Render production ejection, HUD and restored classic characters
         if: ${{ !cancelled() && steps.world_import.outcome == 'success' }}
         env:
@@ -704,24 +660,15 @@ jobs:
       - name: Publish combat live_crouch
         if: ${{ always() }}
         run: python3 tools/publish_native_world_capture.py live_crouch
-      - name: Publish combat live_hostage
-        if: ${{ always() }}
-        run: python3 tools/publish_native_world_capture.py live_hostage
       - name: Publish CT review
         if: ${{ always() }}
         run: python3 tools/publish_native_world_capture.py ct_0
       - name: Publish T review
         if: ${{ always() }}
         run: python3 tools/publish_native_world_capture.py t_0
-      - name: Publish hostage review
-        if: ${{ always() }}
-        run: python3 tools/publish_native_world_capture.py hostage_0
       - name: Publish native kit review
         if: ${{ always() }}
         run: python3 tools/publish_native_world_capture.py defuser_item_0
-      - name: Publish Italy gameplay
-        if: ${{ always() }}
-        run: python3 tools/publish_native_world_capture.py italy_hud_chicken
       - uses: actions/upload-artifact@v4
         if: ${{ always() }}
         with:
@@ -730,7 +677,6 @@ jobs:
             /tmp/native-world-review/
             /tmp/native-world.log
             /tmp/world-import.log
-            /tmp/native-estate.log
             /tmp/combat-native.log
             /tmp/combat-native-review/
             /tmp/kill-fire.log

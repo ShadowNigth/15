@@ -40,7 +40,7 @@ func _run() -> void:
 	for wid in ["ak47", "bizon", "m249", "awp", "p90", "revolver", "m3", "usp"]:
 		expect(GameData.ammo_icon_for(wid) != null, "Engine decodes icon " + wid)
 	expect(GameData.ammo_icon_for("knife") == null, "No ammunition icon for melee")
-	GameData.selected_map = "cs_italy"
+	GameData.selected_map = "de_dust2"
 	GameData.bot_count = 2
 	var world := (load("res://scenes/GameWorld.tscn") as PackedScene).instantiate() as GameWorld
 	add_child(world)

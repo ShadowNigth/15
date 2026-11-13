@@ -83,7 +83,7 @@ def main() -> int:
             if not os.path.exists(os.path.join(root, "assets", "sounds", it["sound"])):
                 errors.append(f"[Missing radio sound] {it['sound']}")
 
-    # 4. Validate all 26 maps + GLBs + external texture URIs
+    # 4. Validate all 15 maps + GLBs + external texture URIs
     midx = json.load(open(os.path.join(root, "data", "maps_index.json"), encoding="utf-8"))
     glb_files = sorted(
         glob.glob(os.path.join(root, "assets", "maps", "*.glb"))

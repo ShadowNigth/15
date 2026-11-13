@@ -683,7 +683,7 @@ def extract_ui_and_overviews(cstrike_dir: str, out_ui_dir: str, out_sky_dir: str
     with open(os.path.join(out_data_dir, "overviews.json"), "w", encoding="utf-8") as f:
         json.dump(overviews_meta, f, indent=2)
 
-    # 5. Skyboxes (gfx/env/*.tga) for all skies referenced by the 26 maps
+    # 5. Skyboxes (gfx/env/*.tga) for all skies referenced by the 15 retained maps
     os.makedirs(out_sky_dir, exist_ok=True)
     env_dir = os.path.join(cstrike_dir, "gfx", "env")
     env_files = {os.path.basename(p).lower(): p for p in glob.glob(os.path.join(env_dir, "*"))}

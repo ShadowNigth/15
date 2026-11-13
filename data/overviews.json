@@ -1,470 +1,272 @@
 {
- "as_oilrig": {
-  "zoom": 2.67,
-  "origin": [
-   647.0,
-   -732.0,
-   -1110.0
-  ],
-  "rotated": 1,
-  "image": "res://assets/ui/overviews/as_oilrig.png",
-  "affine": [
-   -0.1625,
-   152.1448,
-   0.1625,
-   74.7688
-  ],
-  "fit_coverage": 0.9728,
-  "fit_rot": 1
- },
- "as_tundra": {
-  "zoom": 1.12,
-  "origin": [
-   20.0,
-   143.0,
-   -800.0
-  ],
-  "rotated": 1,
-  "image": "res://assets/ui/overviews/as_tundra.png",
-  "affine": [
-   0.04,
-   141.1533,
-   -0.04,
-   233.2416
-  ],
-  "fit_coverage": 0.9965,
-  "fit_rot": 1
- },
- "cs_747": {
-  "zoom": 1.63,
-  "origin": [
-   32.0,
-   -578.0,
-   -256.0
-  ],
-  "rotated": 0,
-  "image": "res://assets/ui/overviews/cs_747.png",
-  "affine": [
-   0.0775,
-   305.431,
-   -0.0775,
-   156.1175
-  ],
-  "fit_coverage": 1.0,
-  "fit_rot": 0
- },
- "cs_assault": {
-  "zoom": 2.13,
-  "origin": [
-   -531.0,
-   1390.0,
-   0.0
-  ],
-  "rotated": 0,
-  "image": "res://assets/ui/overviews/cs_assault.png",
-  "affine": [
-   0.085,
-   407.8475,
-   0.085,
-   140.8
-  ],
-  "fit_coverage": 0.9868,
-  "fit_rot": 0
- },
- "cs_backalley": {
-  "zoom": 2.17,
-  "origin": [
-   213.0,
-   1229.0,
-   -656.0
-  ],
-  "rotated": 0,
-  "image": "res://assets/ui/overviews/cs_backalley.png",
-  "affine": [
-   0.1365,
-   424.9076,
-   0.1365,
-   221.8485
-  ],
-  "fit_coverage": 0.9573,
-  "fit_rot": 0
- },
- "cs_estate": {
-  "zoom": 2.08,
-  "origin": [
-   -144.0,
-   -925.0,
-   -800.0
-  ],
-  "rotated": 0,
-  "image": "res://assets/ui/overviews/cs_estate.png",
-  "affine": [
-   0.09,
-   271.6406,
-   0.09,
-   107.2234
-  ],
-  "fit_coverage": 0.9749,
-  "fit_rot": 1
- },
- "cs_havana": {
-  "zoom": 1.36,
-  "origin": [
-   256.0,
-   56.0,
-   0.0
-  ],
-  "rotated": 1,
-  "image": "res://assets/ui/overviews/cs_havana.png",
-  "affine": [
-   -0.085,
-   232.84,
-   0.085,
-   195.0003
-  ],
-  "fit_coverage": 0.9624,
-  "fit_rot": 1
- },
- "cs_italy": {
-  "zoom": 1.76,
-  "origin": [
-   -212.0,
-   243.0,
-   -240.0
-  ],
-  "rotated": 0,
-  "image": "res://assets/ui/overviews/cs_italy.png",
-  "affine": [
-   0.11,
-   280.84,
-   0.11,
-   166.92
-  ],
-  "fit_coverage": 0.9833,
-  "fit_rot": 0
- },
- "cs_militia": {
-  "zoom": 1.72,
-  "origin": [
-   615.0,
-   -476.0,
-   -380.0
-  ],
-  "rotated": 0,
-  "image": "res://assets/ui/overviews/cs_militia.png",
-  "affine": [
-   0.065,
-   145.9379,
-   -0.065,
-   153.1918
-  ],
-  "fit_coverage": 0.9756,
-  "fit_rot": 0
- },
- "cs_office": {
-  "zoom": 1.56,
-  "origin": [
-   280.0,
-   -351.0,
-   -435.0
-  ],
-  "rotated": 1,
-  "image": "res://assets/ui/overviews/cs_office.png",
-  "affine": [
-   -0.0975,
-   227.2769,
-   0.0975,
-   156.4169
-  ],
-  "fit_coverage": 1.0,
-  "fit_rot": 1
- },
- "cs_siege": {
-  "zoom": 1.14,
-  "origin": [
-   564.0,
-   1252.0,
-   -640.0
-  ],
-  "rotated": 1,
-  "image": "res://assets/ui/overviews/cs_siege.png",
-  "affine": [
-   -0.0725,
-   213.0741,
-   0.0725,
-   279.8662
-  ],
-  "fit_coverage": 0.9847,
-  "fit_rot": 1
- },
- "de_aztec": {
-  "zoom": 1.39,
-  "origin": [
-   767.0,
-   -98.0,
-   -545.0
-  ],
-  "rotated": 1,
-  "image": "res://assets/ui/overviews/de_aztec.png",
-  "affine": [
-   -0.0875,
-   188.6,
-   0.0875,
-   183.7972
-  ],
-  "fit_coverage": 1.0,
-  "fit_rot": 1
- },
- "de_cbble": {
-  "zoom": 1.16,
-  "origin": [
-   -832.0,
-   332.0,
-   -256.0
-  ],
-  "rotated": 1,
-  "image": "res://assets/ui/overviews/de_cbble.png",
-  "affine": [
-   -0.0725,
-   316.3977,
-   0.0725,
-   216.2777
-  ],
-  "fit_coverage": 0.9722,
-  "fit_rot": 1
- },
- "de_chateau": {
-  "zoom": 1.61,
-  "origin": [
-   1258.56,
-   652.56,
-   -176.0
-  ],
-  "rotated": 0,
-  "image": "res://assets/ui/overviews/de_chateau.png",
-  "affine": [
-   0.1,
-   320.5968,
-   0.1,
-   318.4
-  ],
-  "fit_coverage": 0.9924,
-  "fit_rot": 0
- },
- "de_dust": {
-  "zoom": 1.2,
-  "origin": [
-   101.0,
-   1071.0,
-   -192.0
-  ],
-  "rotated": 0,
-  "image": "res://assets/ui/overviews/de_dust.png",
-  "affine": [
-   0.075,
-   334.8448,
-   0.075,
-   197.9976
-  ],
-  "fit_coverage": 1.0,
-  "fit_rot": 0
- },
- "de_dust2": {
-  "zoom": 1.5,
-  "origin": [
-   -223.0,
-   1097.0,
-   -192.0
-  ],
-  "rotated": 0,
-  "image": "res://assets/ui/overviews/de_dust2.png",
-  "affine": [
-   0.093,
-   358.157,
-   0.093,
-   170.168
-  ],
-  "fit_coverage": 0.9976,
-  "fit_rot": 0
- },
- "de_inferno": {
-  "zoom": 1.49,
-  "origin": [
-   404.0,
-   1282.0,
-   -64.0
-  ],
-  "rotated": 1,
-  "image": "res://assets/ui/overviews/de_inferno.png",
-  "affine": [
-   -0.0925,
-   217.7087,
-   0.0925,
-   310.357
-  ],
-  "fit_coverage": 1.0,
-  "fit_rot": 1
- },
- "de_nuke": {
-  "zoom": 1.24,
-  "origin": [
-   264.0,
-   -912.0,
-   -768.0
-  ],
-  "rotated": 1,
-  "image": "res://assets/ui/overviews/de_nuke.png",
-  "affine": [
-   0.045,
-   356.7658,
-   0.045,
-   180.4045
-  ],
-  "fit_coverage": 0.9268,
-  "fit_rot": 1
- },
- "de_piranesi": {
-  "zoom": 1.37,
-  "origin": [
-   48.0,
-   864.0,
-   400.0
-  ],
-  "rotated": 1,
-  "image": "res://assets/ui/overviews/de_piranesi.png",
-  "affine": [
-   -0.085,
-   250.44,
-   0.085,
-   264.0384
-  ],
-  "fit_coverage": 1.0,
-  "fit_rot": 1
- },
- "de_prodigy": {
-  "zoom": 2.24,
-  "origin": [
-   1623.0,
-   -272.0,
-   -480.0
-  ],
-  "rotated": 1,
-  "image": "res://assets/ui/overviews/de_prodigy.png",
-  "affine": [
-   -0.14,
-   29.2355,
-   0.14,
-   151.9155
-  ],
-  "fit_coverage": 0.9652,
-  "fit_rot": 1
- },
- "de_storm": {
-  "zoom": 1.56,
-  "origin": [
-   -14.0,
-   -50.0,
-   -520.0
-  ],
-  "rotated": 0,
-  "image": "res://assets/ui/overviews/de_storm.png",
-  "affine": [
-   0.0975,
-   249.5467,
-   0.0975,
-   188.8802
-  ],
-  "fit_coverage": 1.0,
-  "fit_rot": 0
- },
- "de_survivor": {
-  "zoom": 1.43,
-  "origin": [
-   837.0,
-   955.0,
-   -480.0
-  ],
-  "rotated": 1,
-  "image": "res://assets/ui/overviews/de_survivor.png",
-  "affine": [
-   -0.09,
-   180.4451,
-   0.09,
-   277.4986
-  ],
-  "fit_coverage": 0.967,
-  "fit_rot": 1
- },
- "de_torn": {
-  "zoom": 1.35,
-  "origin": [
-   82.0,
-   663.0,
-   -470.0
-  ],
-  "rotated": 0,
-  "image": "res://assets/ui/overviews/de_torn.png",
-  "affine": [
-   0.083,
-   310.6,
-   0.083,
-   199.2213
-  ],
-  "fit_coverage": 0.9932,
-  "fit_rot": 0
- },
- "de_train": {
-  "zoom": 1.56,
-  "origin": [
-   32.0,
-   156.0,
-   -360.0
-  ],
-  "rotated": 1,
-  "image": "res://assets/ui/overviews/de_train.png",
-  "affine": [
-   -0.0975,
-   251.7504,
-   0.0975,
-   207.1158
-  ],
-  "fit_coverage": 0.9823,
-  "fit_rot": 1
- },
- "de_vegas": {
-  "zoom": 1.63,
-  "origin": [
-   1903.0,
-   -1283.0,
-   -1088.0
-  ],
-  "rotated": 0,
-  "image": "res://assets/ui/overviews/de_vegas.png",
-  "affine": [
-   0.1025,
-   125.44,
-   0.1025,
-   387.8737
-  ],
-  "fit_coverage": 0.9714,
-  "fit_rot": 0
- },
- "de_vertigo": {
-  "zoom": 2.39,
-  "origin": [
-   -1280.0,
-   -256.0,
-   -288.0
-  ],
-  "rotated": 1,
-  "image": "res://assets/ui/overviews/de_vertigo.png",
-  "affine": [
-   -0.15,
-   448.2288,
-   0.15,
-   154.8
-  ],
-  "fit_coverage": 1.0,
-  "fit_rot": 1
- }
+  "de_aztec": {
+    "zoom": 1.39,
+    "origin": [
+      767.0,
+      -98.0,
+      -545.0
+    ],
+    "rotated": 1,
+    "image": "res://assets/ui/overviews/de_aztec.png",
+    "affine": [
+      -0.0875,
+      188.6,
+      0.0875,
+      183.7972
+    ],
+    "fit_coverage": 1.0,
+    "fit_rot": 1
+  },
+  "de_cbble": {
+    "zoom": 1.16,
+    "origin": [
+      -832.0,
+      332.0,
+      -256.0
+    ],
+    "rotated": 1,
+    "image": "res://assets/ui/overviews/de_cbble.png",
+    "affine": [
+      -0.0725,
+      316.3977,
+      0.0725,
+      216.2777
+    ],
+    "fit_coverage": 0.9722,
+    "fit_rot": 1
+  },
+  "de_chateau": {
+    "zoom": 1.61,
+    "origin": [
+      1258.56,
+      652.56,
+      -176.0
+    ],
+    "rotated": 0,
+    "image": "res://assets/ui/overviews/de_chateau.png",
+    "affine": [
+      0.1,
+      320.5968,
+      0.1,
+      318.4
+    ],
+    "fit_coverage": 0.9924,
+    "fit_rot": 0
+  },
+  "de_dust": {
+    "zoom": 1.2,
+    "origin": [
+      101.0,
+      1071.0,
+      -192.0
+    ],
+    "rotated": 0,
+    "image": "res://assets/ui/overviews/de_dust.png",
+    "affine": [
+      0.075,
+      334.8448,
+      0.075,
+      197.9976
+    ],
+    "fit_coverage": 1.0,
+    "fit_rot": 0
+  },
+  "de_dust2": {
+    "zoom": 1.5,
+    "origin": [
+      -223.0,
+      1097.0,
+      -192.0
+    ],
+    "rotated": 0,
+    "image": "res://assets/ui/overviews/de_dust2.png",
+    "affine": [
+      0.093,
+      358.157,
+      0.093,
+      170.168
+    ],
+    "fit_coverage": 0.9976,
+    "fit_rot": 0
+  },
+  "de_inferno": {
+    "zoom": 1.49,
+    "origin": [
+      404.0,
+      1282.0,
+      -64.0
+    ],
+    "rotated": 1,
+    "image": "res://assets/ui/overviews/de_inferno.png",
+    "affine": [
+      -0.0925,
+      217.7087,
+      0.0925,
+      310.357
+    ],
+    "fit_coverage": 1.0,
+    "fit_rot": 1
+  },
+  "de_nuke": {
+    "zoom": 1.24,
+    "origin": [
+      264.0,
+      -912.0,
+      -768.0
+    ],
+    "rotated": 1,
+    "image": "res://assets/ui/overviews/de_nuke.png",
+    "affine": [
+      0.045,
+      356.7658,
+      0.045,
+      180.4045
+    ],
+    "fit_coverage": 0.9268,
+    "fit_rot": 1
+  },
+  "de_piranesi": {
+    "zoom": 1.37,
+    "origin": [
+      48.0,
+      864.0,
+      400.0
+    ],
+    "rotated": 1,
+    "image": "res://assets/ui/overviews/de_piranesi.png",
+    "affine": [
+      -0.085,
+      250.44,
+      0.085,
+      264.0384
+    ],
+    "fit_coverage": 1.0,
+    "fit_rot": 1
+  },
+  "de_prodigy": {
+    "zoom": 2.24,
+    "origin": [
+      1623.0,
+      -272.0,
+      -480.0
+    ],
+    "rotated": 1,
+    "image": "res://assets/ui/overviews/de_prodigy.png",
+    "affine": [
+      -0.14,
+      29.2355,
+      0.14,
+      151.9155
+    ],
+    "fit_coverage": 0.9652,
+    "fit_rot": 1
+  },
+  "de_storm": {
+    "zoom": 1.56,
+    "origin": [
+      -14.0,
+      -50.0,
+      -520.0
+    ],
+    "rotated": 0,
+    "image": "res://assets/ui/overviews/de_storm.png",
+    "affine": [
+      0.0975,
+      249.5467,
+      0.0975,
+      188.8802
+    ],
+    "fit_coverage": 1.0,
+    "fit_rot": 0
+  },
+  "de_survivor": {
+    "zoom": 1.43,
+    "origin": [
+      837.0,
+      955.0,
+      -480.0
+    ],
+    "rotated": 1,
+    "image": "res://assets/ui/overviews/de_survivor.png",
+    "affine": [
+      -0.09,
+      180.4451,
+      0.09,
+      277.4986
+    ],
+    "fit_coverage": 0.967,
+    "fit_rot": 1
+  },
+  "de_torn": {
+    "zoom": 1.35,
+    "origin": [
+      82.0,
+      663.0,
+      -470.0
+    ],
+    "rotated": 0,
+    "image": "res://assets/ui/overviews/de_torn.png",
+    "affine": [
+      0.083,
+      310.6,
+      0.083,
+      199.2213
+    ],
+    "fit_coverage": 0.9932,
+    "fit_rot": 0
+  },
+  "de_train": {
+    "zoom": 1.56,
+    "origin": [
+      32.0,
+      156.0,
+      -360.0
+    ],
+    "rotated": 1,
+    "image": "res://assets/ui/overviews/de_train.png",
+    "affine": [
+      -0.0975,
+      251.7504,
+      0.0975,
+      207.1158
+    ],
+    "fit_coverage": 0.9823,
+    "fit_rot": 1
+  },
+  "de_vegas": {
+    "zoom": 1.63,
+    "origin": [
+      1903.0,
+      -1283.0,
+      -1088.0
+    ],
+    "rotated": 0,
+    "image": "res://assets/ui/overviews/de_vegas.png",
+    "affine": [
+      0.1025,
+      125.44,
+      0.1025,
+      387.8737
+    ],
+    "fit_coverage": 0.9714,
+    "fit_rot": 0
+  },
+  "de_vertigo": {
+    "zoom": 2.39,
+    "origin": [
+      -1280.0,
+      -256.0,
+      -288.0
+    ],
+    "rotated": 1,
+    "image": "res://assets/ui/overviews/de_vertigo.png",
+    "affine": [
+      -0.15,
+      448.2288,
+      0.15,
+      154.8
+    ],
+    "fit_coverage": 1.0,
+    "fit_rot": 1
+  }
 }
