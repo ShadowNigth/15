@@ -114,7 +114,7 @@ static func install(root: Node3D, model: String, avatar: String, native_textures
 	copy.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
 	copy.set_meta("native_view_cosmetic", true)
 	copy.set_meta("agent_arms", avatar)
-	copy.set_meta("wrist_seam_fit", "destination-original-cuff-v2")
+	copy.set_meta("wrist_seam_fit", "destination-original-cuff-v3")
 	for surface in copy.mesh.get_surface_count():
 		var material := copy.mesh.surface_get_material(surface).duplicate() as BaseMaterial3D
 		material.cull_mode = BaseMaterial3D.CULL_DISABLED

@@ -68,7 +68,7 @@ func validate(root: Node3D, baseline: Node3D, label: String) -> void:
 		var worst := 0.0
 		for mesh in SportGloves._find_meshes(root):
 			if not mesh.has_meta("agent_arms"): continue
-			expect(mesh.get_meta("wrist_seam_fit", "") == "destination-original-cuff-v2", "destination rig wrist fit active " + label)
+			expect(mesh.get_meta("wrist_seam_fit", "") == "destination-original-cuff-v3", "destination rig wrist fit active " + label)
 			for surface in mesh.mesh.get_surface_count():
 				var arrays := mesh.mesh.surface_get_arrays(surface)
 				var vertices: PackedVector3Array = arrays[Mesh.ARRAY_VERTEX]

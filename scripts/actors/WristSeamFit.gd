@@ -56,6 +56,23 @@ static func fit(root: Node3D, rig: Skeleton3D, mesh: ArrayMesh, skin: Skin, key:
 					if not influence.is_empty(): samples.append({"side": side, "point": vertices[vertex], "normal": normals[vertex], "weights": influence})
 	if cache.has(key): return cache[key]
 	if samples.is_empty(): return mesh
+	# Average the original influence mix over each longitudinal wrist ring.
+	# Nearest individual old-cuff vertices have angular weight discontinuities
+	# that create spikes on bare skin with a different topology.
+	var profiles: Dictionary = {}
+	var counts: Dictionary = {}
+	for sample in samples:
+		var side: String = sample.side
+		var axis: Vector3 = (wrists[side] - elbows[side]).normalized()
+		var along: float = (sample.point - wrists[side]).dot(axis)
+		var bin_index := int(floor(along / 0.01))
+		var profile_key := side + ":" + str(bin_index)
+		if not profiles.has(profile_key): profiles[profile_key] = {}
+		for bind in sample.weights:
+			profiles[profile_key][bind] = float(profiles[profile_key].get(bind, 0.0)) + float(sample.weights[bind])
+		counts[profile_key] = int(counts.get(profile_key, 0)) + 1
+	for profile_key in profiles:
+		for bind in profiles[profile_key]: profiles[profile_key][bind] /= float(counts[profile_key])
 	var result := ArrayMesh.new()
 	for surface in mesh.get_surface_count():
 		var arrays := mesh.surface_get_arrays(surface)
@@ -75,24 +92,25 @@ static func fit(root: Node3D, rig: Skeleton3D, mesh: ArrayMesh, skin: Skin, key:
 			var axis: Vector3 = (wrist - elbows[side]).normalized()
 			var along := (vertices[vertex] - wrist).dot(axis)
 			if along < -0.12 or vertices[vertex].distance_to(wrist) > 0.2: continue
-			var nearest := -1
-			var distance := INF
-			for sample in samples.size():
-				if samples[sample].side != side: continue
-				var candidate: float = vertices[vertex].distance_squared_to(samples[sample].point)
-				if candidate < distance:
-					distance = candidate
-					nearest = sample
-			if nearest < 0: continue
+			var location := clampf(along / 0.01, -15.0, 1.0)
+			var lower := int(floor(location))
+			var target_weights: Dictionary = {}
+			for bin_index in [lower, lower + 1]:
+				var profile_key := side + ":" + str(bin_index)
+				if not profiles.has(profile_key): continue
+				var fraction := (1.0 - (location - float(lower))) if bin_index == lower else location - float(lower)
+				for bind in profiles[profile_key]:
+					target_weights[bind] = float(target_weights.get(bind, 0.0)) + float(profiles[profile_key][bind]) * fraction
+			var target_total := 0.0
+			for bind in target_weights: target_total += float(target_weights[bind])
+			if target_total < 0.00001: continue
+			for bind in target_weights: target_weights[bind] /= target_total
 			var blend := smoothstep(-0.12, -0.045, along)
-			var target: Dictionary = samples[nearest]
-			# Keep the dedicated sleeve/skin silhouette smooth: snapping its
-			# vertices to the differently tessellated old cuff creates spikes.
 			var influence: Dictionary = {}
 			for slot in stride:
 				var offset := vertex * stride + slot
 				influence[bones[offset]] = float(influence.get(bones[offset], 0.0)) + weights[offset] * (1.0 - blend)
-			for bind in target.weights: influence[bind] = float(influence.get(bind, 0.0)) + float(target.weights[bind]) * blend
+			for bind in target_weights: influence[bind] = float(influence.get(bind, 0.0)) + float(target_weights[bind]) * blend
 			var ranked := influence.keys()
 			ranked.sort_custom(func(a, b): return influence[a] > influence[b])
 			var total := 0.0
