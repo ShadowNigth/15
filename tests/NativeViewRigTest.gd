@@ -180,10 +180,10 @@ func run() -> void:
 	for root in menu._viewer_pivot.get_children():
 		if not root.has_meta("native_view_rig"): continue
 		var native := root.get_meta("native_view_rig") as NativeViewRig
-		for phase in [0.0, 0.5, 1.0]:
+		for phase in [0.0, 0.25, 0.75]:
 			native.preview_phase = phase
 			native.sync_pose()
-			var suffix := "start" if phase == 0.0 else ("mid" if phase == 0.5 else "end")
+			var suffix := "start" if phase == 0.0 else ("mid" if phase == 0.25 else "end")
 			await capture("native_arsenal_inspect_" + suffix, menu._viewer_viewport)
 	menu._inspect_gloves()
 	menu._glove_tween.pause()
