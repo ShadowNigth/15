@@ -23,9 +23,6 @@ def export(key, path, glove=False):
             keep=False # Native Leet sleeve group is torso/neck clothing, not bare arms.
         if keep:
             chosen.append(i)
-            if glove:
-                mesh=doc['meshes'][node['mesh']]
-                mesh['primitives']=[p for p in mesh['primitives'] if doc['materials'][p['material']]['name'].startswith('glove_motorcycle_')]
         else:
             node.pop('mesh',None);node.pop('skin',None)
     # Preserve original native inverse binds, nodes, JOINTS and WEIGHTS.

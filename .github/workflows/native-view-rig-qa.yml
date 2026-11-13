@@ -40,10 +40,10 @@ jobs:
           python tools/verify_godot_project.py
           godot --headless --path . --import 2>&1 | tee /tmp/local-import.log
           ! grep -Eq 'SCRIPT ERROR:|Parse Error:|Compile Error:' /tmp/local-import.log
-      - name: Native skeleton pilot and full animation matrix
+      - name: Native AK pilot
         run: |
           set -o pipefail
-          LIBGL_ALWAYS_SOFTWARE=1 timeout 1200s xvfb-run -a godot --path . --audio-driver Dummy --rendering-method gl_compatibility --fixed-fps 60 --resolution 960x540 res://tests/NativeViewRigTest.tscn 2>&1 | tee /tmp/local-native.log
+          LIBGL_ALWAYS_SOFTWARE=1 timeout 240s xvfb-run -a godot --path . --audio-driver Dummy --rendering-method gl_compatibility --fixed-fps 60 --resolution 960x540 res://tests/NativeViewRigTest.tscn -- --pilot-only 2>&1 | tee /tmp/local-native.log
           ! grep -Eq 'SCRIPT ERROR:|Parse Error:|Compile Error:|FAIL:' /tmp/local-native.log
           grep -q '\[NATIVE VIEW\] PASS:' /tmp/local-native.log
       - name: Execution diagnostics
@@ -76,6 +76,22 @@ jobs:
       - name: Render native_karambit_inspect
         if: always()
         run: python tools/publish_modern_capture.py native_karambit_inspect
+      - name: Full native weapon knife and agent animation matrix
+        run: |
+          set -o pipefail
+          LIBGL_ALWAYS_SOFTWARE=1 timeout 1200s xvfb-run -a godot --path . --audio-driver Dummy --rendering-method gl_compatibility --fixed-fps 60 --resolution 960x540 res://tests/NativeViewRigTest.tscn 2>&1 | tee /tmp/local-matrix.log
+          ! grep -Eq 'SCRIPT ERROR:|Parse Error:|Compile Error:|FAIL:' /tmp/local-matrix.log
+          grep -q '\[NATIVE VIEW\] PASS:' /tmp/local-matrix.log
+      - name: Matrix diagnostics
+        if: always()
+        run: |
+          python - <<'PY_DIAG'
+          from pathlib import Path
+          p=Path('/tmp/local-matrix.log')
+          if p.exists():
+              text='\n'.join(x for x in p.read_text(errors='replace').splitlines() if any(k in x for k in ['SCRIPT ERROR','ERROR:','at:','PASS:','FAIL:']))[-6000:]
+              print('::notice title=local-matrix::'+text.replace('%','%25').replace('\n','%0A'))
+          PY_DIAG
       - uses: actions/upload-artifact@v4
         if: always()
         timeout-minutes: 3

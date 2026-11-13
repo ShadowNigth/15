@@ -39,6 +39,11 @@ func _prepare(definition: Dictionary, model: String, gloves: bool, smoke: bool) 
 	var found := false
 	var rigs: Dictionary = {}
 	for mesh in SportGloves._find_meshes(source):
+		# A full-cover native glove includes its matching forearm endpoint.
+		# Never render the default agent hands underneath a second pair.
+		if smoke and not gloves and String(mesh.name).begins_with("agent_hands_"):
+			mesh.hide()
+			continue
 		var rig := mesh.get_node_or_null(mesh.skeleton) as Skeleton3D
 		if rig == null or mesh.skin == null:
 			return false
@@ -70,7 +75,7 @@ func _prepare(definition: Dictionary, model: String, gloves: bool, smoke: bool) 
 			material.albedo_color.a = 1.0
 			material.transparency = BaseMaterial3D.TRANSPARENCY_DISABLED
 			material.cull_mode = BaseMaterial3D.CULL_DISABLED
-			if gloves:
+			if gloves and name_lower.begins_with("glove_motorcycle_"):
 				var option := GameData.get_selected_glove()
 				material.albedo_texture = GameData.get_texture(String(option.get("native_textures", {}).get(material.resource_name, "")))
 				if material.albedo_texture == null:
@@ -108,7 +113,7 @@ func _prepare(definition: Dictionary, model: String, gloves: bool, smoke: bool) 
 				return false
 			drivers.append({"source": bone, "target": destination, "correction": AgentViewArms.matrix(entry.correction)})
 		bindings.append({"rig": rig, "drivers": drivers})
-	return found
+	return found or (smoke and not gloves)
 
 static func install(root: Node3D, model: String, avatar: String) -> bool:
 	var target_rig := SportGloves._find_skeleton(root)

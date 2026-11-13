@@ -30,7 +30,7 @@ func validate(root: Node3D) -> void:
 	var visible_native := 0
 	for mesh in SportGloves._find_meshes(replacement):
 		if mesh.visible:
-			visible_native += 1
+			visible_native += mesh.mesh.get_surface_count()
 			expect(mesh.skin != null and mesh.has_meta("native_source_skin"), "original native skin")
 	expect(visible_native >= 2, "native forearms and gloves visible")
 func run() -> void:
@@ -89,6 +89,10 @@ func run() -> void:
 	validate(player._vm_model_root)
 	await capture("native_karambit_inspect")
 	player.free()
+	if "--pilot-only" in OS.get_cmdline_user_args():
+		print("[NATIVE VIEW] ", "PASS: " if failures == 0 else "FAIL: ", checks, " pilot checks; ", failures, " failures")
+		get_tree().quit(0 if failures == 0 else 1)
+		return
 	# Install every supported weapon/knife and agent, with original defaults and
 	# Smoke Out. Exercise original animation resources, not synthetic tracks.
 	var models: Array = AgentViewArms.catalog().targets.keys()
