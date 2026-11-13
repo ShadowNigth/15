@@ -71,6 +71,21 @@ func run() -> void:
 	player.weapon_ctrl.equip_weapon_by_id("ak47")
 	player._rebuild_viewmodel("ak47")
 	print("[NATIVE VIEW] AK clips: ", player._vm_anim.get_animation_list())
+	if "--karambit-only" in OS.get_cmdline_user_args():
+		GameData.select_glove("5033_10078")
+		GameData.select_knife("karambit")
+		player.weapon_ctrl.equip_weapon_by_id("knife")
+		player._rebuild_viewmodel("knife")
+		player._vm_anim.play("inspect")
+		player._vm_anim.pause()
+		for phase in [0.0, 0.5, 0.95]:
+			player._vm_anim.seek(player._vm_anim.get_animation("inspect").length * phase, true)
+			validate(player._vm_model_root)
+			var suffix := "start" if phase == 0.0 else ("mid" if phase == 0.5 else "end")
+			await capture("native_karambit_inspect_" + suffix)
+		print("[NATIVE VIEW] ", "PASS: " if failures == 0 else "FAIL: ", checks, " karambit checks; ", failures, " failures")
+		get_tree().quit(0 if failures == 0 else 1)
+		return
 	for action in ["idle", "shoot", "reload", "inspect"]:
 		var clip := ""
 		for candidate in player._vm_anim.get_animation_list():
