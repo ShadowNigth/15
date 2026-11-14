@@ -23,6 +23,8 @@ jobs:
       - uses: actions/checkout@v4
         with:
           fetch-depth: 0
+      - name: Unpack asset archives (packs/ -> assets/)
+        run: python3 tools/pak.py unpack
       - name: Validate texture-preserving repair and create baseline
         run: |
           python tests/check_aztec_polish.py

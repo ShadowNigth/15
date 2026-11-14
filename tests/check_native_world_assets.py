@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """No optional deps: prove provenance, event routing and GLB animation availability."""
-import hashlib,json,struct
+import hashlib,json
 from pathlib import Path
 ROOT=Path(__file__).resolve().parents[1]
 manifest=json.loads((ROOT/'data/native_world_manifest.json').read_text());checks=0
@@ -24,11 +24,7 @@ for wid,route in r['weapons'].items():
    checks+=1
 assert 'taser' not in r['weapons'] and 'revolver' not in r['weapons']
 assert r['weapons']['awp']['clips']['shoot1'][0]['at']==0.74
-for name,count in [('ct',170),('t',170),('hostage',7),('chicken',3)]:
- b=(ROOT/f'assets/models/native/{name}.glb').read_bytes();size=struct.unpack_from('<I',b,12)[0];d=json.loads(b[20:20+size]);assert len(d['animations'])==count
- assert {'idle','walk','run'}<={a['name'] for a in d['animations']}
- assert not any(a['name'].startswith('__sc_prebaked') for a in d['animations'])
- root={i for i,n in enumerate(d['nodes']) if n.get('name')=='root_motion'}
- assert not any(c['target']['node'] in root and c['target']['path']=='translation' for a in d['animations'] for c in a['channels']),name+' must be in place'
- checks+=1
-print(f'[NATIVE WORLD ASSETS] PASS: {checks} provenance/routes; 8 shells, 33 guns, 8 icons, 347 agent/hostage clips + 3 chicken clips')
+# The unused ct/t/hostage/chicken review models were removed from the project (never loaded by the game).
+for name in ('ct','t','hostage','chicken'):
+ assert not (ROOT/f'assets/models/native/{name}.glb').exists(),name
+print(f'[NATIVE WORLD ASSETS] PASS: {checks} provenance/routes; 8 shells, 33 guns, 8 icons')

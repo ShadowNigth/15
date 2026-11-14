@@ -155,49 +155,11 @@
       "source_sha256": "e51429c108169e6775c1ae4648a247c71833c1939355e3ee845b22e3f41ff920"
     },
     {
-      "source": "src/ScCsgoKnives/Assets/Models/ScCsgoKnives/chicken.glb",
-      "path": "res://assets/models/native/chicken.glb",
-      "source_sha256": "db3768317236b1ff5c12e81fe860e06ce3fb4c892326ac5566481b97e7d7576c",
-      "sha256": "db3768317236b1ff5c12e81fe860e06ce3fb4c892326ac5566481b97e7d7576c",
-      "operation": "unchanged bytes"
-    },
-    {
-      "source": "src/ScCsgoTactical/Assets/Models/ScCsgoTactical/hostage.glb",
-      "path": "res://assets/models/native/hostage.glb",
-      "source_sha256": "42f44c081860534b097114364d978ad3f01c048df2d4d47b10c3b894a93155fa",
-      "sha256": "42f44c081860534b097114364d978ad3f01c048df2d4d47b10c3b894a93155fa",
-      "operation": "unchanged bytes"
-    },
-    {
       "source": "src/ScCsgoTactical/Assets/Models/ScCsgoTactical/defuser_item.glb",
       "path": "res://assets/models/native/defuser_item.glb",
       "source_sha256": "e076baec7f0ad64d402698c0f5818f944f5683a7c5e36f3d41abb13e10612a9a",
       "sha256": "e076baec7f0ad64d402698c0f5818f944f5683a7c5e36f3d41abb13e10612a9a",
       "operation": "unchanged bytes"
-    },
-    {
-      "source": "src/ScCsgoTactical/Assets/Models/ScCsgoTactical/ct.glb",
-      "path": "res://assets/models/native/ct.glb",
-      "source_sha256": "3413f08276be4e319a4cdf83e14007a9c64a1395e7617e0f2dc238c90951f110",
-      "sha256": "a7f473c7f34ae080e69e73e510ed0b31f503782b6f228b15fbf9909bea40caa1",
-      "operation": "Geometry, skins and embedded images exact; restore 170 external local-TRS clips; root travel omitted"
-    },
-    {
-      "source": "src/ScCsgoTactical/Assets/Animations/ScCsgoTactical/ct.scanim",
-      "source_sha256": "12aa671a5ecc5343403e06fb414ac41d920609ea0676b49ea3e16c29965fcdf1",
-      "embedded_in": "res://assets/models/native/ct.glb"
-    },
-    {
-      "source": "src/ScCsgoTactical/Assets/Models/ScCsgoTactical/t.glb",
-      "path": "res://assets/models/native/t.glb",
-      "source_sha256": "5bf6c391ecd12e8f5a2c3f4340b49186d278dc4eb8f5a815c07eed3c0c96b1b5",
-      "sha256": "ce2b81a3e381eeb2b17744caa708b79f6bd329e50b04d163979588c7aae4a050",
-      "operation": "Geometry, skins and embedded images exact; restore 170 external local-TRS clips; root travel omitted"
-    },
-    {
-      "source": "src/ScCsgoTactical/Assets/Animations/ScCsgoTactical/t.scanim",
-      "source_sha256": "d98e766337f39d262281c7e0bde11fd6088214dd4f5be72691dc2d1fa6cbe671",
-      "embedded_in": "res://assets/models/native/t.glb"
     },
     {
       "source": "src/ScCsgoKnives/AnimationData/cs2_casings.json",

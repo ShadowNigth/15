@@ -108,9 +108,11 @@ func _run() -> void:
 	player.has_defuser = false
 	expect(player.try_pickup_dropped(kit), "Native kit still picked up by CT")
 	expect(player.has_defuser, "Pickup grants real defuser flag")
+	# The unused native ct/t/hostage/chicken review models were removed from the
+	# project; the game never loaded them (classic players/<class> rigs are used).
 	for resource in ["ct", "t", "hostage", "chicken"]:
 		var scene := GameData.get_model_scene("native/" + resource)
-		expect(scene != null, "Engine loads reviewed model " + resource)
+		expect(scene == null, "Unused review model is no longer shipped " + resource)
 		if scene == null:
 			continue
 		var instance := scene.instantiate() as Node3D

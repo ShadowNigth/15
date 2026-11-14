@@ -19,6 +19,10 @@ import sys
 def main() -> int:
     root = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
     errors = []
+    if not os.path.isdir(os.path.join(root, "assets", "models")):
+        print("[verify] assets/ has not been unpacked. Run `python tools/pak.py unpack` first "
+              "(see docs/ASSET_PACKS.md).")
+        return 1
 
     # 1. GDScript AST validation
     gd_files = sorted(glob.glob(os.path.join(root, "scripts", "**", "*.gd"), recursive=True))

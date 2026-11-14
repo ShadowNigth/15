@@ -6,6 +6,7 @@ Remake jugable de **Counter-Strike 1.5 Retail** construido íntegramente en **Go
 
 ## Cómo abrir y jugar en Godot 4
 
+0. **Desempaqueta los assets una sola vez** (modelos, mapas, texturas y sonidos vienen comprimidos sin pérdida en `packs/`, al estilo de los `.vpk` de Source): doble clic en `unpack_assets.bat` (Windows) o `./unpack_assets.sh` (Linux/macOS). Equivale a `python tools/pak.py unpack`; solo necesita Python 3.8+ y tarda unos segundos. Detalles en [`docs/ASSET_PACKS.md`](docs/ASSET_PACKS.md).
 1. Abre **Godot Engine 4.3+** (compatible con Godot 4.3, 4.4, 4.5, 4.6+ en Windows, Linux, macOS y exportación HTML5/Web gracias al renderer `GL Compatibility`).
 2. Haz clic en **Import** y selecciona el archivo `project.godot` en la raíz del repositorio (en la primera apertura Godot importará automáticamente las texturas y los `.glb`).
 3. Pulsa **F5 (Run Project)**:

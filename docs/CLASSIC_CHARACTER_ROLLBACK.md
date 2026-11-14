@@ -33,3 +33,9 @@ CombatNativeIntegrationTest retains its historical scene name but now tests
 classic rigs and head regions, real wall penetration, repeatable recoil, and
 standing/crouched/scoped optical rays. Physical wall hit positions must project
 onto the reticle within half a pixel, with nonzero recoil and camera roll.
+
+> **Update (asset packs):** the unused review models `assets/models/native/ct.glb`,
+> `t.glb`, `hostage.glb` and `chicken.glb` (≈85 MB, never loaded by the game)
+> were removed from the project when assets moved to `packs/`. See
+> [ASSET_PACKS.md](ASSET_PACKS.md). They can be regenerated with
+> `tools/source/fetch_native_world_assets.py` + `build_native_world_assets.py`.

@@ -43,6 +43,8 @@ Configuration & Controls. No se escribe configuración personal en el proyecto.
 
 ## CT/T y rehén: revisión, no sustitución ciega
 
+> **Actualización:** los modelos de revisión `native/ct`, `native/t`, `native/hostage` y `native/chicken` ya no se distribuyen (el juego nunca los cargaba; ver [ASSET_PACKS.md](ASSET_PACKS.md)). El texto siguiente se conserva como registro histórico.
+
 En el Arsenal aparecen `[Native review] ct`, `t`, `hostage`, `defuser_item` y
 `chicken`. El selector permite reproducir sus clips.
 

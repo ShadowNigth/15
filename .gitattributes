@@ -1,0 +1,5 @@
+# Compressed asset archives: never diff, merge or convert line endings.
+packs/*.pak binary
+packs/*.idx binary
+*.bat text eol=crlf
+*.sh text eol=lf

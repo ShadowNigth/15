@@ -14,3 +14,10 @@ __pycache__/
 # Development-only agent conversion dependencies
 node_modules/
 tools/source/modern_agents/msc.cjs
+
+# Models, maps, textures and sounds are versioned as compressed archives in
+# packs/ (see docs/ASSET_PACKS.md). assets/ is rebuilt by
+# `python tools/pak.py unpack`; only the shaders stay as plain files.
+/assets/*
+!/assets/shaders/
+/packs/.local_state.json

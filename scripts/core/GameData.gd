@@ -89,9 +89,21 @@ var _styled_mat_cache: Dictionary = {}
 
 
 func _ready() -> void:
+	_warn_if_assets_missing()
 	_ensure_input_map()
 	_load_all_databases()
 	_load_cosmetic_preferences()
+
+
+func _warn_if_assets_missing() -> void:
+	# Models, maps, textures and sounds are stored compressed in res://packs and
+	# must be restored into res://assets once (see docs/ASSET_PACKS.md).
+	if DirAccess.dir_exists_absolute("res://assets/models") or ResourceLoader.exists("res://assets/sprites/ledglow.png"):
+		return
+	var message := "No se encuentra la carpeta assets/.\n\nCierra Godot, ejecuta unpack_assets.bat (Windows) o ./unpack_assets.sh (Linux/macOS) — equivale a `python tools/pak.py unpack` — y vuelve a abrir el proyecto."
+	push_error("[GameData] " + message)
+	if DisplayServer.get_name() != "headless":
+		OS.alert(message, "Counter-Strike 1.5 — assets sin desempaquetar")
 
 
 func _load_json(path: String) -> Variant:
