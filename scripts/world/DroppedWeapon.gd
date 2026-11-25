@@ -294,7 +294,7 @@ func _play_bounce_clatter(pos_w: Vector3, impact_spd: float) -> void:
 	if _is_grenade:
 		AudioManager.play_3d("weapons/archi/cs2_flashbang/hit1.wav", pos_w, vol_db, 18.0, randf_range(0.95, 1.08))
 	else:
-		AudioManager.play_3d("player/pl_shell%d.wav" % randi_range(1, 3), pos_w, vol_db, 18.0, randf_range(0.64, 0.80))
+		AudioManager.play_3d("native/sccsgoknives/casing_metal.wav", pos_w, vol_db, 18.0, randf_range(0.64, 0.80))
 
 
 func _physics_process(delta: float) -> void:

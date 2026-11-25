@@ -1,0 +1,20 @@
+{
+  "mode": "opposite-hand-palm-back-v1",
+  "mesh_edited": false,
+  "hands": {
+    "left": {
+      "source_texture_hand": "right",
+      "palm_back_reversed": true,
+      "covered_texels": 652767,
+      "distance_p50_m": 0.003576434630121324,
+      "distance_p99_m": 0.017736942861094347
+    },
+    "right": {
+      "source_texture_hand": "left",
+      "palm_back_reversed": true,
+      "covered_texels": 652738,
+      "distance_p50_m": 0.0035763698046196667,
+      "distance_p99_m": 0.01773547672734997
+    }
+  }
+}

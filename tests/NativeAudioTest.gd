@@ -16,7 +16,7 @@ func expect(ok: bool, message: String) -> void:
 func _run() -> void:
 	var manifest: Dictionary = GameData._load_json("res://data/native_audio_manifest.json")
 	var files: Array = manifest.get("files", [])
-	expect(files.size() == 649, "All 649 upstream recordings installed")
+	expect(files.size() == 539, "All 539 shipped upstream recordings installed")
 	for entry in files:
 		var path := String(entry["path"])
 		var stream := GameData.get_sound(path)
@@ -32,9 +32,11 @@ func _run() -> void:
 			expect(String(path).begins_with("native/sccsgoknives/"), "Native firing sound " + wid)
 			expect(not owners.has(path) or owners[path] == wid, "No cross-weapon firing substitution " + wid)
 			owners[path] = wid
-	for model in GameData.native_audio.get("model_events", {}):
+	for model in GameData.models_meta:
 		var meta: Dictionary = GameData.models_meta[model]
-		for clip in GameData.native_audio["model_events"][model]:
+		if not meta.has("seq_events"):
+			continue
+		for clip in meta["seq_events"]:
 			var previous: float = -1.0
 			for event in meta["seq_events"][clip]:
 				var at := float(event["t"])
@@ -42,11 +44,8 @@ func _run() -> void:
 				expect(at <= float(meta["seq_durations"].get(clip, 9999.0)) + 0.001, "Cue within clip " + model + ":" + clip)
 				expect(GameData.get_sound(String(event["wav"])) != null, "Playable native cue " + String(event["wav"]))
 				previous = at
-	for language in ["en", "zh"]:
-		GameData.voice_language = language
-		for team in ["CT", "T"]:
-			expect(AudioManager.play_voice("radio.letsgo", team), "Language/team route " + language + ":" + team)
-	GameData.voice_language = "en"
+	for team in ["CT", "T"]:
+		expect(AudioManager.play_voice("radio.letsgo", team), "English team route " + team)
 	var radio_index := AudioManager._idx_2d
 	AudioManager.play_radio("radio/ct_inpos.wav", "T")
 	var radio_stream := AudioManager._players_2d[radio_index].stream
@@ -77,7 +76,7 @@ func _run() -> void:
 	controller.free()
 	AudioManager.stop_all()
 	await get_tree().process_frame
-	print("[NATIVE AUDIO] %s: %d checks, 649 decoded recordings, 43 weapon routes, 64 animation rigs" % ["PASS" if failures.is_empty() else "FAIL", checks])
+	print("[NATIVE AUDIO] %s: %d checks, 539 decoded recordings, 43 weapon routes, 64 animation rigs" % ["PASS" if failures.is_empty() else "FAIL", checks])
 	get_tree().quit(0 if failures.is_empty() else 1)
 
 func _on_heard(_pos: Vector3, _radius: float, _team: String) -> void:

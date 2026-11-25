@@ -56,7 +56,7 @@ func _run() -> void:
 	expect(RoundManager.actors.size() == 7, "Human and six real bots")
 	expect(world.player.weapon_ctrl.current_weapon_id == "m4a1", "Selected free primary")
 	for actor in RoundManager.actors:
-		expect(actor.armor == 100 and actor.has_helmet and not actor.is_vip, "Armor/helmet, no VIP: " + actor.actor_name)
+		expect(actor.armor == 100 and actor.has_helmet, "Armor/helmet: " + actor.actor_name)
 		expect(String(actor.weapon_ctrl.slots.get(5, "")) != "c4", "No DM bomb: " + actor.actor_name)
 	var enemy: CSBot
 	for bot in world.bots:
@@ -141,11 +141,10 @@ func _run() -> void:
 	await capture("smoke_live_volume")
 	await free_world(world)
 	world = make_world("de_dust2", "deathmatch", 0)
-	expect(RoundManager.hostages.is_empty(), "DM on any map disables rescue objective")
 	await free_world(world)
 	world = make_world("de_dust2", "classic", 0)
 	expect(RoundManager.map_mode == "de" and RoundManager.state == RoundManager.State.FREEZE, "Classic DE mode/freeze preserved")
-	expect(RoundManager.hostages.is_empty() and RoundManager.can_buy_now(), "Classic DE has no hostages and allows buying")
+	expect(RoundManager.can_buy_now(), "Classic DE allows buying")
 	await free_world(world)
 	world = make_world("de_dust2", "classic", 2)
 	expect(RoundManager.map_mode == "de", "Classic DE remains map-driven")

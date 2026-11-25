@@ -13,7 +13,6 @@ const MOLOTOV_GLASS_SHADER: Shader = preload("res://assets/shaders/molotov_glass
 const MOLOTOV_LIQUID_SHADER: Shader = preload("res://assets/shaders/molotov_liquid.gdshader")
 
 var native_audio: Dictionary = {}
-var voice_language: String = "en"
 var weapons: Dictionary = {}
 var ammo_types: Dictionary = {}
 var equipment: Dictionary = {}
@@ -67,7 +66,6 @@ var native_casings: Dictionary = {}
 var native_casings_enabled: bool = true
 var native_ammo_icons: bool = false
 var low_ammo_warning: bool = true
-var ambient_chickens_enabled: bool = false
 var native_defuser_model: bool = true
 
 # Player preferences
@@ -145,7 +143,6 @@ func _load_all_databases() -> void:
 	if selected_glove_id.is_empty() or selected_glove_id.begins_with("cs2go_5030_"):
 		selected_glove_id = String(sport_gloves.get("default", "classic"))
 	native_audio = _load_json("res://data/native_audio.json")
-	_apply_native_audio()
 	knife_models = _load_json("res://data/knife_models.json")
 	_original_knife_spec = (weapons.get("knife", {}) as Dictionary).duplicate(true)
 	if not select_knife(selected_knife_id):
@@ -159,18 +156,6 @@ func _load_all_databases() -> void:
 			_skin_material_owners[String(raw_material).to_lower()] = String(raw_wid)
 
 
-func _apply_native_audio() -> void:
-	# Sound-only overlays: source assets/gameplay data remain independently rebuildable.
-	for wid in native_audio.get("weapons", {}):
-		if weapons.has(wid):
-			weapons[wid].merge(native_audio["weapons"][wid], true)
-	for model in native_audio.get("model_events", {}):
-		if models_meta.has(model):
-			var events: Dictionary = models_meta[model].get("seq_events", {}).duplicate(true)
-			events.merge(native_audio["model_events"][model], true)
-			models_meta[model]["seq_events"] = events
-
-
 func sound_variant(event: Dictionary) -> String:
 	var variants: Array = event.get("variants", [])
 	return String(variants.pick_random()) if not variants.is_empty() else String(event.get("wav", ""))
@@ -181,9 +166,9 @@ func sound_gain_db(path: String) -> float:
 
 
 func resolve_sound_path(rel_path: String) -> String:
-	var key := rel_path.trim_prefix("res://assets/sounds/").to_lower()
-	var replacements: Array = native_audio.get("replacements", {}).get(key, [])
-	return String(replacements.pick_random()) if not replacements.is_empty() else key
+	# Native recordings are already baked into weapons.json / models_meta.json;
+	# this only normalises the caller's path into an assets/sounds key.
+	return rel_path.trim_prefix("res://assets/sounds/").to_lower()
 
 
 func get_knife_options() -> Array:
@@ -893,7 +878,7 @@ func _ensure_input_map() -> void:
 		InputMap.action_add_event("attack2", m2)
 
 
-const COSMETIC_KEYS := ["native_casings_enabled", "native_ammo_icons", "low_ammo_warning", "ambient_chickens_enabled", "native_defuser_model"]
+const COSMETIC_KEYS := ["native_casings_enabled", "native_ammo_icons", "low_ammo_warning", "native_defuser_model"]
 
 func _load_cosmetic_preferences() -> void:
 	var config := ConfigFile.new()

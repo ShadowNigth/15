@@ -91,16 +91,6 @@ func run() -> void:
 				expect((head.area as Area3D).collision_layer == 0, "dead actor hitboxes disabled")
 				actor.free()
 	GameData.modern_agents.classes = original_classes
-	var vip := CSActor.new()
-	vip.is_vip = true
-	vip.is_alive = true
-	add_child(vip)
-	vip.set_physics_process(false)
-	vip.set_process(false)
-	vip.weapon_ctrl.set_process(false)
-	vip.set_team_and_class("CT", "urban")
-	expect(int(vip._bullet_hitboxes.entries[0].get("fitted_vertices", 0)) >= 12, "VIP head is fitted too")
-	vip.free()
 	var controller := WeaponController.new()
 	var actor := CSActor.new()
 	actor.is_alive = true

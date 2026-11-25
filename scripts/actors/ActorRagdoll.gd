@@ -32,7 +32,7 @@ func start(actor, skeleton: Skeleton3D, initial_velocity: Vector3, impulse: Vect
 	# All bone transforms must be sampled BEFORE any overrides are written.
 	rig.force_update_all_bone_transforms()
 	var by_name: Dictionary = {}
-	var size_scale: float = actor.BOT_VISUAL_SCALE if not actor.is_human and not actor.is_vip and ModernAgentPose.is_modern(rig) else 1.0
+	var size_scale: float = actor.BOT_VISUAL_SCALE if not actor.is_human and ModernAgentPose.is_modern(rig) else 1.0
 	for part in PARTS:
 		var index := bone(part[0])
 		if index < 0: continue

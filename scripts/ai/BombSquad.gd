@@ -21,7 +21,7 @@ static func elect_defuser(bomb: PlantedC4, actors: Array, nav: BotNavigator = nu
 		if distance > 2.35 and nav != null:
 			var goal := nav.get_nearest_node(bomb.global_position)
 			var banned: Dictionary = actor.call("get_bomb_banned_nodes") if actor.has_method("get_bomb_banned_nodes") else {}
-			var path := nav.plan_node_path(actor.global_position, goal, "CT", BotNavigator.PATH_FAST, false, actor.get_world_3d().direct_space_state, 0, banned)
+			var path := nav.plan_node_path(actor.global_position, goal, "CT", BotNavigator.PATH_FAST, actor.get_world_3d().direct_space_state, 0, banned)
 			if goal < 0 or path.is_empty():
 				continue
 			cost = (actor.global_position.distance_to(nav.get_node_pos(path[0])) + nav.get_path_tactical_cost(path, "CT"))/5.0 + required
@@ -69,7 +69,7 @@ static func objective_node(actor: CSActor, center: Vector3, nav: BotNavigator, a
 				if occupied.distance_squared_to(p) < 6.25:
 					crowded = true
 					break
-		if crowded or nav.plan_node_path(actor.global_position, i, actor.team, BotNavigator.PATH_SAFE, false, null, 0, banned).is_empty():
+		if crowded or nav.plan_node_path(actor.global_position, i, actor.team, BotNavigator.PATH_SAFE, null, 0, banned).is_empty():
 			continue
 		best = i
 		best_score = score

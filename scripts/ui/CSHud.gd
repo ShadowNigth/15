@@ -1027,7 +1027,7 @@ func _draw_radar() -> void:
 	var pgs := Vector2(ppos.x / GameData.SCALE, ppos.z / GameData.SCALE)
 	var ppx := _ov_world_to_px(pgs.x, pgs.y) * fit + _ov_fit_off
 
-	# Teammate blips (team colored), VIP highlighted
+	# Teammate blips (team colored)
 	for a in RoundManager.actors:
 		if not is_instance_valid(a) or a == player or not bool(a.get("is_alive")):
 			continue
@@ -1035,19 +1035,8 @@ func _draw_radar() -> void:
 			continue
 		var ap: Vector3 = a.global_position
 		var p := _ov_world_to_px(ap.x / GameData.SCALE, ap.z / GameData.SCALE) * fit + _ov_fit_off
-		if bool(a.get("is_vip")):
-			_radar_ctrl.draw_circle(p, 5.0, Color(0.45, 0.92, 1.0))
-			_radar_ctrl.draw_arc(p, 6.5, 0.0, TAU, 16, Color(0.45, 0.92, 1.0, 0.6), 1.4)
-		else:
-			var mate_col := CT_COLOR if player.team == "CT" else T_COLOR
-			_radar_ctrl.draw_circle(p, 3.6, Color(mate_col.r, mate_col.g, mate_col.b, 0.95))
-
-	# Hostages
-	for h in RoundManager.hostages:
-		if is_instance_valid(h) and h.is_alive and not h.is_rescued:
-			var hp_pos: Vector3 = h.global_position
-			var ph := _ov_world_to_px(hp_pos.x / GameData.SCALE, hp_pos.z / GameData.SCALE) * fit + _ov_fit_off
-			_radar_ctrl.draw_circle(ph, 3.4, Color(0.4, 0.85, 1.0))
+		var mate_col := CT_COLOR if player.team == "CT" else T_COLOR
+		_radar_ctrl.draw_circle(p, 3.6, Color(mate_col.r, mate_col.g, mate_col.b, 0.95))
 
 	# Blinking planted bomb
 	if _is_bomb_planted and sin(_c4_blink_phase * 2.5) > -0.2:

@@ -28,6 +28,13 @@ func validate(root: Node3D) -> void:
 		for driver in binding.drivers:
 			var pose := rig.get_bone_global_pose(driver.source)
 			var expected: Transform3D = rig.global_transform.affine_inverse() * replacement.target.global_transform * replacement.target.get_bone_global_pose(driver.target) * driver.correction
+			var bone_name := String(rig.get_bone_name(driver.source))
+			if binding.get("anchor_cuff", false) and (bone_name.begins_with("arm_lower_") or bone_name.begins_with("arm_upper_")):
+				var side := "L" if bone_name.contains("_L") else "R"
+				var hand := rig.find_bone("hand_" + side)
+				var hand_rest: Transform3D = binding.rests[hand]
+				var anchored: Transform3D = rig.get_bone_global_pose(hand) * hand_rest.affine_inverse() * binding.rests[driver.source]
+				expected = expected.interpolate_with(anchored, 0.5 if bone_name.begins_with("arm_upper_") else 1.0)
 			if binding.preserve_palm and String(rig.get_bone_name(driver.source)).begins_with("finger_"):
 				var parent := rig.get_bone_parent(driver.source)
 				if parent >= 0:
@@ -51,7 +58,7 @@ func run() -> void:
 	RoundManager.state = RoundManager.State.LIVE
 	RoundManager.game_world = self
 	GameData.select_glove("5033_10078")
-	expect(GameData.get_selected_glove().get("texture_layout", "") == "opposite-hand-palm-back-v1", "Smoke Out: left/right exchange and palm/back reversal")
+	expect(GameData.get_selected_glove().get("texture_layout", "") == "native-anatomical-v1", "Smoke Out: native anatomical texture layout")
 	var environment := WorldEnvironment.new()
 	environment.environment = Environment.new()
 	environment.environment.background_mode = Environment.BG_COLOR

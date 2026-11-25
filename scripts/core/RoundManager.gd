@@ -1,6 +1,6 @@
 extends Node
 ## Manages Counter-Strike 1.5 match state, round loop, economy, win conditions,
-## active actors, planted C4, hostages, smoke clouds, and radio commands.
+## active actors, planted C4, smoke clouds, and radio commands.
 
 signal round_started(round_num: int)
 signal freeze_ended()
@@ -25,20 +25,17 @@ var t_loss_streak: int = 0
 
 var state_timer: float = 0.0
 var buy_time_left: float = 0.0
-var map_mode: String = "de"  # "de", "cs", "as"
+var map_mode: String = "de"  # "de" (defuse) or "dm" (team deathmatch)
 var current_map_data: Dictionary = {}
 
 # Active match entities
 var game_world: Node3D = null
 var actors: Array = []  # Array of CSActor
-var hostages: Array = []  # Array of HostageNPC
 var dropped_items: Array = []
 var smoke_clouds: Array = []  # Array of {pos: Vector3, radius: float, expire: float}
 var smoke_volumes: Array = []  # Array of SmokeCloudVolume
 var incendiary_areas: Array = []  # Active procedural fires, for tactical path costs
 var planted_c4: Node3D = null
-var hostages_rescued_this_round: int = 0
-var total_hostages_in_round: int = 0
 
 
 func reset_match(map_data: Dictionary, world_node: Node3D) -> void:
@@ -52,7 +49,6 @@ func reset_match(map_data: Dictionary, world_node: Node3D) -> void:
 	ct_loss_streak = 0
 	t_loss_streak = 0
 	actors.clear()
-	hostages.clear()
 	dropped_items.clear()
 	smoke_clouds.clear()
 	smoke_volumes.clear()
@@ -112,13 +108,11 @@ func start_new_round() -> void:
 	if not is_instance_valid(game_world):
 		return
 	round_number += 1
-	hostages_rescued_this_round = 0
 	_clear_round_hazards()
 
 	if game_world.has_method("prepare_round_entities"):
 		game_world.call("prepare_round_entities", round_number == 1)
 
-	total_hostages_in_round = hostages.size()
 	state = State.FREEZE
 	state_timer = maxf(0.5, GameData.freeze_time)
 	buy_time_left = 90.0
@@ -191,29 +185,12 @@ func apply_world_explosion_physics(blast_pos: Vector3, blast_radius: float, weap
 		for brk in brks:
 			if is_instance_valid(brk) and brk.has_method("apply_explosion_impulse"):
 				brk.call("apply_explosion_impulse", blast_pos, blast_radius * 0.92, 95.0 * smoke_strength)
-	for chicken in get_tree().get_nodes_in_group("ambient_chickens"):
-		if chicken.is_alive and chicken.global_position.distance_to(blast_pos) < minf(blast_radius, 8.0):
-			var ray := PhysicsRayQueryParameters3D.create(blast_pos + Vector3.UP * 0.1, chicken.global_position + Vector3.UP * 0.2, 1)
-			if chicken.get_world_3d().direct_space_state.intersect_ray(ray).is_empty():
-				chicken.take_damage(null, 30.0)
-	for h in hostages:
-		if is_instance_valid(h) and h.has_method("notify_nearby_danger"):
-			h.call("notify_nearby_danger", blast_pos, blast_radius * 1.35)
 
 
 func apply_world_bullet_wake(seg_a: Vector3, seg_b: Vector3, strength: float = 1.0) -> void:
 	for sv in smoke_volumes:
 		if is_instance_valid(sv) and sv.has_method("apply_bullet_wake"):
 			sv.call("apply_bullet_wake", seg_a, seg_b, strength)
-	var ab: Vector3 = seg_b - seg_a
-	var len_sq: float = ab.length_squared()
-	if len_sq > 0.01:
-		for h in hostages:
-			if is_instance_valid(h) and h.has_method("notify_nearby_danger"):
-				var hp: Vector3 = (h as Node3D).global_position + Vector3(0.0, 1.0, 0.0)
-				var t: float = clampf((hp - seg_a).dot(ab) / len_sq, 0.0, 1.0)
-				if (seg_a + ab * t).distance_squared_to(hp) < 12.25:
-					h.call("notify_nearby_danger", seg_a, 6.0)
 
 
 func add_smoke_cloud(pos: Vector3, radius: float = 4.6, duration: float = 18.0) -> void:
@@ -302,11 +279,6 @@ func notify_actor_killed(victim: Node3D, killer: Node3D, weapon_id: String, head
 			finish_deathmatch()
 		return
 
-	# VIP assassination check
-	if map_mode == "as" and bool(victim.get("is_vip")):
-		end_round("T", "The VIP has been assassinated!", "radio/terwin.wav", 3250)
-		return
-
 	_check_team_elimination()
 
 
@@ -371,34 +343,8 @@ func notify_bomb_exploded() -> void:
 	end_round("T", "Target Succesfully Bombed!\nTerrorists Win!", "radio/terwin.wav", 3500)
 
 
-func notify_hostage_rescued(rescuer: Node3D) -> void:
-	hostages_rescued_this_round += 1
-	AudioManager.play_radio("radio/rescued.wav")
-	center_message.emit("A hostage has been rescued!", 2.5)
-	if is_instance_valid(rescuer) and rescuer.has_method("add_money"):
-		rescuer.call("add_money", int(GameData.economy.get("hostage_rescue_reward", 1000)))
-	if total_hostages_in_round > 0 and hostages_rescued_this_round >= total_hostages_in_round:
-		end_round("CT", "All Hostages Rescued!\nCounter-Terrorists Win!", "radio/ctwin.wav", 3250)
-
-
-func notify_vip_escaped(vip_actor: Node3D) -> void:
-	if state == State.ROUND_OVER:
-		return
-	AudioManager.play_radio("radio/vip.wav")
-	if is_instance_valid(vip_actor) and vip_actor.has_method("add_money"):
-		vip_actor.call("add_money", 1000)
-	end_round("CT", "The VIP has escaped!\nCounter-Terrorists Win!", "radio/ctwin.wav", 3500)
-
-
 func _on_time_expired() -> void:
-	if map_mode == "de":
-		end_round("CT", "Target has been saved!\nCounter-Terrorists Win!", "radio/ctwin.wav", 3250)
-	elif map_mode == "cs":
-		end_round("T", "Hostages have not been rescued!\nTerrorists Win!", "radio/terwin.wav", 3250)
-	elif map_mode == "as":
-		end_round("T", "VIP has not escaped!\nTerrorists Win!", "radio/terwin.wav", 3250)
-	else:
-		end_round("DRAW", "Round Draw!", "radio/rounddraw.wav", 1500)
+	end_round("CT", "Target has been saved!\nCounter-Terrorists Win!", "radio/ctwin.wav", 3250)
 
 
 func end_round(winner: String, banner_text: String, radio_wav: String, win_money: int) -> void:
@@ -421,12 +367,6 @@ func end_round(winner: String, banner_text: String, radio_wav: String, win_money
 
 	var ct_reward := win_money if winner == "CT" else mini(3400, 1400 + ct_loss_streak * 500)
 	var t_reward := win_money if winner == "T" else mini(3400, 1400 + t_loss_streak * 500)
-	if winner == "T" and planted_c4 != null:
-		ct_reward += 0
-	elif winner == "CT" and map_mode == "de" and planted_c4 == null:
-		# Bonus if T managed to plant earlier this round handled on defuse
-		pass
-
 	for a in actors:
 		if not is_instance_valid(a) or not a.has_method("add_money"):
 			continue

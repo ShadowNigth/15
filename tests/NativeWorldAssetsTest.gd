@@ -21,7 +21,6 @@ func shot(player: PlayerController, wid: String) -> void:
 
 func _run() -> void:
 	GameData.native_casings_enabled = true
-	GameData.ambient_chickens_enabled = true
 	GameData.native_ammo_icons = true
 	GameData.native_defuser_model = true
 	RoundManager.set_process(false)
@@ -54,7 +53,6 @@ func _run() -> void:
 	await get_tree().physics_frame
 	await get_tree().physics_frame
 	await get_tree().physics_frame
-	expect(world.ambient_chickens.is_empty(), "Chicken without native death animation has been removed")
 	var actor_count := RoundManager.actors.size()
 	var system := world.native_casing_system
 	system.set_physics_process(false)
@@ -108,40 +106,6 @@ func _run() -> void:
 	player.has_defuser = false
 	expect(player.try_pickup_dropped(kit), "Native kit still picked up by CT")
 	expect(player.has_defuser, "Pickup grants real defuser flag")
-	# The unused native ct/t/hostage/chicken review models were removed from the
-	# project; the game never loaded them (classic players/<class> rigs are used).
-	for resource in ["ct", "t", "hostage", "chicken"]:
-		var scene := GameData.get_model_scene("native/" + resource)
-		expect(scene == null, "Unused review model is no longer shipped " + resource)
-		if scene == null:
-			continue
-		var instance := scene.instantiate() as Node3D
-		add_child(instance)
-		var players := instance.find_children("*", "AnimationPlayer", true, false)
-		expect(not players.is_empty(), "Reviewed model has real animations " + resource)
-		if not players.is_empty():
-			var anim := players[0] as AnimationPlayer
-			var expected := 170 if resource in ["ct", "t"] else 7 if resource == "hostage" else 3
-			expect(anim.get_animation_list().size() >= expected, "Native clip count " + resource)
-			for clip in ["walk", "run", "idle"]:
-				if anim.has_animation(clip):
-					anim.get_animation(clip).loop_mode = Animation.LOOP_LINEAR
-					anim.play(clip)
-					anim.advance(0.0)
-					var skeletons := instance.find_children("*", "Skeleton3D", true, false)
-					var before: Array[Transform3D] = []
-					if not skeletons.is_empty():
-						for bone in range(skeletons[0].get_bone_count()):
-							before.append(skeletons[0].get_bone_pose(bone))
-					anim.advance(0.35)
-					if clip != "idle" and not skeletons.is_empty():
-						var moving := 0
-						for bone in range(before.size()):
-							if not before[bone].is_equal_approx(skeletons[0].get_bone_pose(bone)):
-								moving += 1
-						expect(moving >= 3, "Native skeletal motion, not frozen bind pose: " + resource + ":" + clip)
-					expect(anim.current_animation == clip, "Real playback " + resource + ":" + clip)
-		instance.queue_free()
 	if capture:
 		await _capture_gameplay(world, player)
 	system.clear_all()
@@ -190,13 +154,13 @@ func _capture_gameplay(world: GameWorld, player: PlayerController) -> void:
 	light.rotation_degrees = Vector3(-35, -25, 0)
 	light.light_energy = 1.5
 	add_child(light)
-	for resource in ["ct", "t", "hostage", "defuser_item"]:
-		var path: String = {"ct": "players/urban", "t": "players/terror", "hostage": "players/hostage"}.get(resource, "native/" + resource)
+	for resource in ["ct", "t", "defuser_item"]:
+		var path: String = {"ct": "players/urban", "t": "players/terror"}.get(resource, "native/" + resource)
 		var instance := GameData.get_model_scene(path).instantiate() as Node3D
 		add_child(instance)
 		if resource == "defuser_item":
 			GameData.apply_native_world_material(instance, resource)
-		if resource in ["defuser_item", "chicken"]:
+		if resource == "defuser_item":
 			instance.scale = Vector3.ONE * 2.2
 			instance.position.y = 0.65
 		var players := instance.find_children("*", "AnimationPlayer", true, false)

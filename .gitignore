@@ -2,6 +2,8 @@
 .godot/
 export/
 *.import.tmp
+# Godot regenera los sidecars .import al importar; no son contenido del proyecto.
+*.import
 
 # Python bytecode & virtualenvs
 __pycache__/

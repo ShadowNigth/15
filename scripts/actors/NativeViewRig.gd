@@ -47,6 +47,22 @@ func sync_pose() -> void:
 			posed[driver.source] = pose
 		if binding.preserve_palm:
 			_fit_finger_contacts(binding, posed, contacts)
+		# Keep both glove and sleeve forearms aligned at the wrist; retain half
+		# of the authored upper-arm motion rather than locking the whole arm.
+		if binding.get("anchor_cuff", false):
+			for side in ["L", "R"]:
+				var hand := rig.find_bone("hand_" + side)
+				if hand < 0 or not posed.has(hand): continue
+				var hand_pose: Transform3D = posed[hand]
+				var hand_rest: Transform3D = binding.rests[hand]
+				for bone in posed:
+					var name := String(rig.get_bone_name(bone))
+					if name.begins_with("arm_lower_" + side) or name.begins_with("arm_upper_" + side):
+						var rest: Transform3D = binding.rests[bone]
+						var influence := 0.5 if name.begins_with("arm_upper_") else 1.0
+						var anchored := hand_pose * hand_rest.affine_inverse() * rest
+						var original: Transform3D = posed[bone]
+						posed[bone] = original.interpolate_with(anchored, influence)
 		for bone in posed:
 			rig.set_bone_global_pose_override(bone, posed[bone], 1.0, true)
 		rig.force_update_all_bone_transforms()
@@ -229,7 +245,7 @@ func _prepare(definition: Dictionary, model: String, gloves: bool, custom_glove:
 		var rests: Array[Transform3D] = []
 		for index in rig.get_bone_count(): rests.append(rig.get_bone_global_rest(index))
 		bindings.append({"rig": rig, "drivers": drivers, "rests": rests,
-			"preserve_palm": true})
+			"preserve_palm": true, "anchor_cuff": custom_glove})
 	return found or (custom_glove and not gloves)
 
 static func install(root: Node3D, model: String, avatar: String) -> bool:

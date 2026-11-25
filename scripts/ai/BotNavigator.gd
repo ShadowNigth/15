@@ -16,7 +16,6 @@ const FLAG_GOAL: int = 1 << 4
 const FLAG_LADDER: int = 1 << 5
 const FLAG_RESCUE: int = 1 << 6
 const FLAG_CAMP: int = 1 << 7
-const FLAG_NO_HOSTAGE: int = 1 << 8
 const FLAG_DOUBLE_JUMP: int = 1 << 9
 const FLAG_NARROW: int = 1 << 10
 const FLAG_SNIPER: int = 1 << 28
@@ -45,7 +44,6 @@ var wp_camp: Dictionary = {}  # int node_idx -> [Vector3 start_dir, Vector3 end_
 var goal_nodes: PackedInt32Array = PackedInt32Array()
 var camp_nodes: PackedInt32Array = PackedInt32Array()
 var sniper_nodes: PackedInt32Array = PackedInt32Array()
-var rescue_nodes: PackedInt32Array = PackedInt32Array()
 var crossing_nodes: PackedInt32Array = PackedInt32Array()
 
 # Per-team tactical danger / practice experience & congestion
@@ -83,7 +81,6 @@ func setup_from_map(map_data: Dictionary) -> void:
 	var goals_tmp: Array[int] = []
 	var camps_tmp: Array[int] = []
 	var snipers_tmp: Array[int] = []
-	var rescues_tmp: Array[int] = []
 	var cross_tmp: Array[int] = []
 
 	for i in range(n):
@@ -99,8 +96,6 @@ func setup_from_map(map_data: Dictionary) -> void:
 			camps_tmp.append(i)
 		if (fl & FLAG_SNIPER) != 0:
 			snipers_tmp.append(i)
-		if (fl & FLAG_RESCUE) != 0:
-			rescues_tmp.append(i)
 		if (fl & FLAG_CROSSING) != 0:
 			cross_tmp.append(i)
 
@@ -125,7 +120,6 @@ func setup_from_map(map_data: Dictionary) -> void:
 	goal_nodes = PackedInt32Array(goals_tmp)
 	camp_nodes = PackedInt32Array(camps_tmp)
 	sniper_nodes = PackedInt32Array(snipers_tmp)
-	rescue_nodes = PackedInt32Array(rescues_tmp)
 	crossing_nodes = PackedInt32Array(cross_tmp)
 
 
@@ -343,17 +337,15 @@ func _is_solid_wall_between(space: PhysicsDirectSpaceState3D, a: Vector3, b: Vec
 	return false
 
 
-## Directed A* planner matching YaPB's PlannerHeuristic (Fast / Optimal / Safe / Diversity + Hostage).
+## Directed A* planner matching YaPB's PlannerHeuristic (Fast / Optimal / Safe / Diversity).
 func plan_node_path(
 	from_pos: Vector3,
 	goal_idx: int,
 	team: String = "T",
 	path_mode: int = PATH_OPTIMAL,
-	leading_hostage: bool = false,
 	space: PhysicsDirectSpaceState3D = null,
 	diversity_seed: int = 0,
-	banned_nodes: Dictionary = {},
-	allow_unsafe_hostage_fallback: bool = true
+	banned_nodes: Dictionary = {}
 ) -> PackedInt32Array:
 	var n: int = waypoints.size()
 	if n == 0 or goal_idx < 0 or goal_idx >= n:
@@ -432,11 +424,6 @@ func plan_node_path(
 			var lflags: int = int(e[1]) if e.size() >= 2 else 0
 			var v_flags: int = wp_flags[v]
 
-			# YaPB Hostage constraint: never route hostages over Jump links, Ladders, or NoHostage nodes!
-			if leading_hostage:
-				if (v_flags & (FLAG_NO_HOSTAGE | FLAG_LADDER)) != 0 or (lflags & LINK_JUMP) != 0:
-					continue
-
 			var step_d: float = u_pos.distance_to(waypoints[v])
 			if (v_flags & FLAG_CROUCH) != 0:
 				step_d *= 1.45
@@ -485,11 +472,6 @@ func plan_node_path(
 					else:
 						break
 
-	# Ordinary CT movement may deliberately fall back when a graph has no safe
-	# hostage route. Rescue selection and HostageNPC itself disable this fallback
-	# so they never commit a follower to a jump, ladder or NoHostage link.
-	if parent[goal_idx] == -1 and leading_hostage and allow_unsafe_hostage_fallback:
-		return plan_node_path(from_pos, goal_idx, team, path_mode, false, space, diversity_seed, banned_nodes)
 	if parent[goal_idx] == -1:
 		return PackedInt32Array([start_idx])
 
@@ -518,22 +500,6 @@ func plan_node_path(
 				rev.remove_at(0)
 
 	return PackedInt32Array(rev)
-
-
-## World-position convenience wrapper (used by HostageNPC and fallback callers).
-func find_path(from_pos: Vector3, to_pos: Vector3, space: PhysicsDirectSpaceState3D = null) -> Array[Vector3]:
-	var out: Array[Vector3] = []
-	if waypoints.is_empty():
-		out.append(to_pos)
-		return out
-	var g_idx := get_nearest_node(to_pos, null, 6.0)
-	if g_idx < 0:
-		out.append(to_pos)
-		return out
-	var node_ids := plan_node_path(from_pos, g_idx, "CT", PATH_FAST, true, space, 0, {}, false)
-	for nid in node_ids:
-		out.append(waypoints[nid])
-	return out
 
 
 func pick_camp_or_sniper_node(

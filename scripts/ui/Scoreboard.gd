@@ -103,8 +103,6 @@ func _add_team_section(title: String, tm: String, score: int, col: Color) -> voi
 		var status := ""
 		if not bool(a.get("is_alive")):
 			status = "DEAD"
-		elif bool(a.get("is_vip")):
-			status = "VIP"
 		elif String((a as CSActor).weapon_ctrl.slots.get(5, "")) == "c4":
 			status = "BOMB"
 

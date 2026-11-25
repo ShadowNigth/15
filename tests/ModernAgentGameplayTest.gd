@@ -94,7 +94,7 @@ func _run() -> void:
 			expect(clips.has("idle"), "native hold " + wid)
 			if int(spec.get("slot", 0)) in [1, 2]:
 				expect(clips.has("shoot") and clips.has("reload"), "native firearm actions " + wid)
-		actor.weapon_ctrl.reset_loadout(actor.team, false)
+		actor.weapon_ctrl.reset_loadout(actor.team)
 		actor.weapon_ctrl.give_weapon("ak47", 30, 90)
 		actor.weapon_ctrl.equip_weapon_by_id("ak47")
 		actor._modern_pose.action = ""
@@ -230,10 +230,5 @@ func _run() -> void:
 		actor.spawn_for_round(Vector3.ZERO, 0, true)
 		actor._evaluate_character_pose(0.1)
 		expect(actor.is_alive and absf(actor._body_root.rotation.x) < 0.01, "respawn resets death pose")
-	var vip := CSActor.new()
-	vip.is_vip = true
-	add_child(vip)
-	vip.spawn_for_round(Vector3(4, 0.03, 0), 0, true)
-	expect(vip._modern_pose == null and vip._skel.find_bone("Bip01 Head") >= 0, "VIP preserved")
 	print("PASS: Modern gameplay ", checks, " checks; ", failures, " failures")
 	get_tree().quit(0 if failures == 0 else 1)

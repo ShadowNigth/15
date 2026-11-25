@@ -5,7 +5,7 @@ extends CSActor
 ##   - Personalities (Rusher, Normal, Careful/Sniper) driving weapon buys, route diversity & danger avoidance
 ##   - Executes YaPB Jump-Links (ballistic launch velocity + crouch-jump), Crouch vents, Ladders & Doors
 ##   - Holds human-authored Camp & Sniper sightlines (start/end sweep vectors + node reservation)
-##   - Full DE (plant/guard/defuse C4), CS (hostage-safe escort & defense), and AS (VIP escort/ambush) tactics
+##   - Full DE (plant/guard/defuse C4) tactics plus Team Deathmatch roaming
 ##   - Counter-strafed rifle bursts, recoil compensation, reload cover-seeking, grenades & squad callouts
 
 const BOT_NAMES: Array[String] = [
@@ -87,19 +87,6 @@ var _bought_this_round: bool = false
 var _last_bought_primary: String = ""
 
 # AS squad coordination / extraction state
-var _vip_escape_node: int = -1
-var _vip_route_rethink: float = 0.0
-var _vip_direct_active: bool = false
-var _vip_direct_goal: Vector3 = Vector3.ZERO
-var _vip_direct_elapsed: float = 0.0
-var _vip_escort_slot: int = 0
-var _vip_escort_direct_active: bool = false
-var _vip_escort_direct_goal: Vector3 = Vector3.ZERO
-var _vip_escort_direct_elapsed: float = 0.0
-var _vip_escort_repath: float = 0.0
-var _vip_escort_wait_since: float = -1.0
-var _vip_route_history := PackedInt32Array()
-var _vip_breadcrumb_active: bool = false
 var _contact_report_cd: float = 0.0
 var _cover_dir: Vector3 = Vector3.ZERO
 var _cover_check_timer: float = 0.0
@@ -117,21 +104,6 @@ var _disengage_check_cd: float = 0.0
 # Team economy: freezetime weapon-share gift pickup task
 var _share_checked: bool = false
 var _pending_share_drop: DroppedWeapon = null
-
-# Hostage pickup / escort mission state. The final metres to an NPC or a real
-# rescue brush are a direct objective, not an approximation to its nearest node.
-const HOSTAGE_DIRECT_PICKUP: int = 0
-const HOSTAGE_DIRECT_RESCUE: int = 1
-const HOSTAGE_DIRECT_REGROUP: int = 2
-var _hostage_target: HostageNPC = null
-var _hostage_rescue_zone_idx: int = -1
-var _hostage_repath: float = 0.0
-var _hostage_direct_active: bool = false
-var _hostage_direct_mode: int = HOSTAGE_DIRECT_PICKUP
-var _hostage_direct_target: HostageNPC = null
-var _hostage_direct_goal: Vector3 = Vector3.ZERO
-var _hostage_direct_elapsed: float = 0.0
-var _hostage_direct_stuck: float = 0.0
 
 var _supply_scan_left: float = 0.0
 var _supply_target: DroppedWeapon = null
@@ -159,7 +131,7 @@ func _assign_personality() -> void:
 
 
 func _on_bot_freeze_ended() -> void:
-	if not is_alive or is_vip:
+	if not is_alive:
 		return
 	_assign_personality()
 	_diversity_seed = randi()
@@ -227,31 +199,9 @@ func spawn_for_round(pos: Vector3, yaw_rad: float, reset_weapons: bool) -> void:
 	_disengage_check_cd = randf_range(0.5, 1.2)
 	_share_checked = false
 	_pending_share_drop = null
-	_vip_escape_node = -1
-	_vip_route_rethink = 0.0
-	_vip_direct_active = false
-	_vip_direct_goal = Vector3.ZERO
-	_vip_direct_elapsed = 0.0
-	_vip_escort_slot = 0
-	_vip_escort_direct_active = false
-	_vip_escort_direct_goal = Vector3.ZERO
-	_vip_escort_direct_elapsed = 0.0
-	_vip_escort_repath = 0.0
-	_vip_escort_wait_since = -1.0
-	_vip_route_history = PackedInt32Array()
-	_vip_breadcrumb_active = false
 	_contact_report_cd = 0.0
 	_cover_dir = Vector3.ZERO
 	_cover_check_timer = 0.0
-	_hostage_target = null
-	_hostage_rescue_zone_idx = -1
-	_hostage_repath = 0.0
-	_hostage_direct_active = false
-	_hostage_direct_mode = HOSTAGE_DIRECT_PICKUP
-	_hostage_direct_target = null
-	_hostage_direct_goal = Vector3.ZERO
-	_hostage_direct_elapsed = 0.0
-	_hostage_direct_stuck = 0.0
 
 
 func _release_camp_spot() -> void:
@@ -374,7 +324,7 @@ func _take_weighted_primary(market: Array[Dictionary]) -> String:
 
 func _perform_bot_buy() -> void:
 	_bought_this_round = true
-	if is_vip or not can_use_buy_menu():
+	if not can_use_buy_menu():
 		return
 
 	# --- Team economy survey: how many teammates are broke & how many snipers already deployed? ---
@@ -389,7 +339,7 @@ func _perform_bot_buy() -> void:
 		if String(a.get("team")) != team:
 			continue
 		var tm_a := a as CSActor
-		if tm_a == null or not is_instance_valid(tm_a) or tm_a.is_vip:
+		if tm_a == null or not is_instance_valid(tm_a):
 			continue
 		team_mates.append(tm_a)
 		if tm_a.money < 1600:
@@ -407,7 +357,7 @@ func _perform_bot_buy() -> void:
 
 	# CT defusal kit on DE maps when affordable (huge round-win value; reserve the $200 first!)
 	var kit_cost: int = 0
-	if team == "CT" and RoundManager.map_mode == "de" and not has_defuser and money >= 1200:
+	if team == "CT" and not has_defuser and money >= 1200:
 		kit_cost = 200
 
 	# Plan the armor budget AFTER the primary so Kevlar never eats the rifle fund!
@@ -531,16 +481,10 @@ func _physics_process(delta: float) -> void:
 		_air_crouch_timer = maxf(0.0, _air_crouch_timer - delta)
 	if _disengage_check_cd > 0.0:
 		_disengage_check_cd = maxf(0.0, _disengage_check_cd - delta)
-	if _vip_route_rethink > 0.0:
-		_vip_route_rethink = maxf(0.0, _vip_route_rethink - delta)
 	if _contact_report_cd > 0.0:
 		_contact_report_cd = maxf(0.0, _contact_report_cd - delta)
 	if _cover_check_timer > 0.0:
 		_cover_check_timer = maxf(0.0, _cover_check_timer - delta)
-	if _vip_escort_repath > 0.0:
-		_vip_escort_repath = maxf(0.0, _vip_escort_repath - delta)
-	if _hostage_repath > 0.0:
-		_hostage_repath = maxf(0.0, _hostage_repath - delta)
 	_last_enemy_seen_age += delta
 
 	# Priority 0.5: FLEE the C4 blast zone with the knife out — equipment preservation!
@@ -646,20 +590,8 @@ func _physics_process(delta: float) -> void:
 					weapon_ctrl.trigger_primary(false, delta)
 					return
 
-	# Priority 4: finish unobstructed mission approaches instead of stopping at
-	# the nearest graph node (VIP brush, moving escort slot, hostage or rescue).
-	if is_vip and _vip_direct_active:
-		_follow_vip_direct_path(delta)
-		return
-	if _vip_escort_direct_active:
-		_follow_vip_escort_direct(delta)
-		return
-	if _hostage_direct_active:
-		_follow_hostage_direct(delta)
-		return
-
 	# Priority 4.5: Active YaPB Camp / Sniper Sightline Holding (TaskId::Camp)!
-	if not _has_usable_gun() and not is_vip and not _is_leading_hostage() and not is_instance_valid(RoundManager.planted_c4):
+	if not _has_usable_gun() and not is_instance_valid(RoundManager.planted_c4):
 		if _seek_visible_supply(delta):
 			return
 	if _camp_timer > 0.0 and _camping_node_idx >= 0:
@@ -667,13 +599,8 @@ func _physics_process(delta: float) -> void:
 		return
 
 	# Weapon discipline during navigation: Knife rush out of spawn, then draw Primary Rifle before contact!
-	# Assigned escorts also use the knife to match the lighter VIP while catching up.
-	if _is_assigned_vip_escort():
-		var vip := _find_live_vip()
-		if is_instance_valid(vip):
-			_update_vip_escort_weapon(vip)
-	elif not weapon_ctrl.is_reloading:
-		if _knife_rush_timer > 0.0 and _sound_investigate_timer <= 0.0 and not is_vip:
+	if not weapon_ctrl.is_reloading:
+		if _knife_rush_timer > 0.0 and _sound_investigate_timer <= 0.0:
 			if weapon_ctrl.current_weapon_id != "knife":
 				weapon_ctrl.equip_slot(3)
 		elif _is_utility_weapon(weapon_ctrl.current_weapon_id):
@@ -734,14 +661,13 @@ func _scan_for_enemies() -> void:
 		target_enemy = null
 		return
 	if is_instance_valid(target_enemy) and target_enemy.is_alive and _can_see_actor(target_enemy):
-		if not is_vip or global_position.distance_to(target_enemy.global_position) <= 12.0:
-			return
+		return
 	target_enemy = null
 
 	# Fleeing the blast: only enemies that cut across the escape path at close
 	# range get committed to — but they DO get committed (both teams must fight
 	# when they run into each other), instead of being ignored entirely.
-	var max_d: float = 24.0 if _bomb_escape_active else (12.0 if is_vip else 105.0)
+	var max_d: float = 24.0 if _bomb_escape_active else 105.0
 	var best_score := 1e9
 	var my_eye := get_eye_position()
 	var my_fwd := get_look_forward()
@@ -762,10 +688,8 @@ func _scan_for_enemies() -> void:
 		if d > 4.8 and cos_ang < -0.20:
 			continue
 		if _can_see_actor(a_actor):
-			# YaPB target priority: closer + closer to crosshair + VIP/C4 priority
+			# YaPB target priority: closer + closer to crosshair.
 			var threat_score: float = d - cos_ang * 6.0
-			if a_actor.is_vip:
-				threat_score -= 18.0
 			if threat_score < best_score:
 				best_score = threat_score
 				target_enemy = a_actor
@@ -839,7 +763,7 @@ func _find_cover_direction(threat_pos: Vector3) -> Vector3:
 
 
 func _combat_objective_is_urgent() -> bool:
-	return is_vip or _is_assigned_vip_escort() or _is_leading_hostage() or bomb_role == "defuse" or (team == "T" and String(weapon_ctrl.slots.get(5, "")) == "c4")
+	return bomb_role == "defuse" or (team == "T" and String(weapon_ctrl.slots.get(5, "")) == "c4")
 
 
 func _engage_enemy(delta: float) -> void:
@@ -1033,7 +957,7 @@ func _find_visible_supply() -> DroppedWeapon:
 			continue
 		if gap.length() > 2.0 and get_look_forward().dot(gap.normalized()) < 0.15:
 			continue
-		if not UseSelection.visible(self, drop.global_position + Vector3.UP * 0.12) or not _has_wide_corridor_sight(global_position, drop.global_position) or not _has_vip_escort_floor_path(global_position, drop.global_position):
+		if not UseSelection.visible(self, drop.global_position + Vector3.UP * 0.12) or not _has_wide_corridor_sight(global_position, drop.global_position) or not _has_floor_path(global_position, drop.global_position):
 			continue
 		best = drop
 		best_distance = gap.length()
@@ -1041,7 +965,7 @@ func _find_visible_supply() -> DroppedWeapon:
 
 func try_pickup_dropped(drop: DroppedWeapon) -> bool:
 	# Automatic pickup also needs the same reach/visibility/lock rules as pursuit.
-	if not is_instance_valid(drop) or drop.is_queued_for_deletion() or drop._pickup_cooldown > 0.0 or is_vip:
+	if not is_instance_valid(drop) or drop.is_queued_for_deletion() or drop._pickup_cooldown > 0.0:
 		return false
 	if drop.pickup_lock_actor == self and drop.pickup_lock_time > 0.0:
 		return false
@@ -1063,8 +987,6 @@ func try_pickup_dropped(drop: DroppedWeapon) -> bool:
 	return super.try_pickup_dropped(drop)
 
 func _seek_visible_supply(delta: float) -> bool:
-	if is_vip:
-		return false
 	if _supply_scan_left <= 0.0:
 		_supply_target = _find_visible_supply()
 		_supply_scan_left = 0.4
@@ -1119,7 +1041,7 @@ func _engage_without_ammo(delta: float) -> void:
 		var nav: BotNavigator = RoundManager.game_world.get("bot_navigator")
 		if nav != null:
 			if _supply_repath_left <= 0.0:
-				_plan_to_world_pos(nav, goal, false, BotNavigator.PATH_FAST)
+				_plan_to_world_pos(nav, goal, BotNavigator.PATH_FAST)
 				_supply_repath_left = 0.7
 			_follow_navigation_path(delta)
 	if global_position.distance_to(goal) < 1.8 and get_look_forward().dot((aim-get_eye_position()).normalized()) > 0.8:
@@ -1151,10 +1073,6 @@ func _safe_local_direction(desired: Vector3) -> Vector3:
 	return Vector3.ZERO
 
 func _can_opportunistic_jump(direction: Vector3) -> bool:
-	# Estate's authored stair recovery needs the delivered jump timing. Keep
-	# this mission-compatible route until stricter probes pass its full rescue.
-	if team == "CT" and RoundManager.map_mode == "cs":
-		return _is_jumpable_ledge(direction)
 	if not _is_jumpable_ledge(direction):
 		return false
 	var space := get_world_3d().direct_space_state
@@ -1166,23 +1084,13 @@ func _can_opportunistic_jump(direction: Vector3) -> bool:
 	return not hit.is_empty() and (hit.normal as Vector3).y >= 0.65
 
 
-func _is_leading_hostage() -> bool:
-	if team != "CT" or RoundManager.map_mode != "cs":
-		return false
-	for h in RoundManager.hostages:
-		var h_npc := h as HostageNPC
-		if is_instance_valid(h_npc) and h_npc.is_alive and not h_npc.is_rescued and h_npc.leader == self:
-			return true
-	return false
-
-
 func _uses_sniper() -> bool:
 	var p_id := String(weapon_ctrl.slots.get(1, ""))
 	return p_id in ["awp", "scout", "g3sg1", "sg550"]
 
 
 func _pick_path_mode() -> int:
-	if is_vip or String(weapon_ctrl.slots.get(5, "")) == "c4" or health < 40 or personality == PERSONALITY_CAREFUL:
+	if String(weapon_ctrl.slots.get(5, "")) == "c4" or health < 40 or personality == PERSONALITY_CAREFUL:
 		return BotNavigator.PATH_SAFE
 	if personality == PERSONALITY_RUSHER:
 		return BotNavigator.PATH_DIVERSITY
@@ -1200,193 +1108,7 @@ func _find_dropped_c4() -> DroppedWeapon:
 	return null
 
 
-func _find_live_vip() -> CSActor:
-	for raw in RoundManager.actors:
-		var actor := raw as CSActor
-		if is_instance_valid(actor) and actor.is_alive and actor.is_vip:
-			return actor
-	return null
-
-
-func _is_assigned_vip_escort() -> bool:
-	return RoundManager.map_mode == "as" and team == "CT" and not is_vip and _vip_escort_slot >= 0 and _vip_escort_slot < 3
-
-
-func _record_vip_route_node(node_idx: int) -> void:
-	if not is_vip or RoundManager.map_mode != "as" or node_idx < 0:
-		return
-	if _vip_route_history.is_empty() or _vip_route_history[_vip_route_history.size() - 1] != node_idx:
-		_vip_route_history.append(node_idx)
-
-
-func _vip_escort_proximity(radius: float) -> Vector2i:
-	var escorts: Array[CSBot] = []
-	for raw in RoundManager.actors:
-		var bot := raw as CSBot
-		if is_instance_valid(bot) and bot != self and bot.is_alive and bot.team == "CT" and not bot.is_vip:
-			escorts.append(bot)
-	escorts.sort_custom(func(a: CSBot, b: CSBot) -> bool: return a.get_instance_id() < b.get_instance_id())
-	var close := 0
-	var designated := mini(3, escorts.size())
-	for i in range(designated):
-		if escorts[i].global_position.distance_to(global_position) <= radius:
-			close += 1
-	return Vector2i(designated, close)
-
-
-func _update_vip_escape(nav: BotNavigator, gw: Node3D) -> void:
-	var zones: Array = gw.get("escape_zones")
-	if zones.is_empty():
-		# Defensive fallback for third-party/incomplete AS conversions. All shipped
-		# AS maps now contain their real func_vip_safetyzone volumes.
-		if _node_path.is_empty() or not _has_goal:
-			_plan_to_node(nav, nav.pick_roam_node(global_position, team), false, BotNavigator.PATH_SAFE)
-		return
-
-	# Do not cross the extraction brush alone while a living escort group is
-	# still completing the same stairs/ladders. The bounded wait preserves round
-	# momentum and is skipped when combat has left fewer than two escorts alive.
-	if _vip_escape_node >= 0 and not bool(gw.call("is_in_escape_zone", global_position)):
-		var proximity := _vip_escort_proximity(16.0)
-		var near_threshold := global_position.distance_to(_vip_direct_goal) < 9.0
-		if proximity.x >= 2 and proximity.y < 2 and near_threshold:
-			if _vip_escort_wait_since < 0.0:
-				_vip_escort_wait_since = _nav_clock
-			if _nav_clock - _vip_escort_wait_since < 15.0:
-				_vip_direct_active = false
-				_node_path = PackedInt32Array()
-				_has_goal = false
-				_hold_pos_timer = maxf(_hold_pos_timer, 0.30)
-				return
-		elif proximity.y >= 2 or not near_threshold:
-			_vip_escort_wait_since = -1.0
-	if bool(gw.call("is_in_escape_zone", global_position)):
-		_vip_direct_active = false
-		return
-	if _vip_direct_active:
-		return
-
-	# Keep a working route instead of restarting it every few seconds. Periodic
-	# replans could snap back to a node behind the VIP and undo real progress.
-	# Re-evaluate an established path for new incendiary danger; physical blocks
-	# are handled by the follower's ordinary stuck recovery and directed links.
-	if not _node_path.is_empty() and _has_goal:
-		if _vip_route_rethink > 0.0:
-			return
-		var route_threatened := false
-		for route_node in _node_path:
-			if RoundManager.get_incendiary_danger_at(nav.get_node_pos(route_node)) > 0.72:
-				route_threatened = true
-				break
-		if not route_threatened:
-			_vip_route_rethink = 0.8
-			return
-
-	# YaPB's goal node is often on the edge of a large helicopter/vehicle brush.
-	# Finish the last metres towards the actual extraction centre when a wide,
-	# physical corridor confirms that doing so cannot cross a wall.
-	if _node_path.is_empty() and _vip_escape_node >= 0:
-		var finish_delta := _vip_direct_goal - global_position
-		finish_delta.y = 0.0
-		if finish_delta.length() < 13.5 and _has_wide_corridor_sight(global_position, _vip_direct_goal):
-			_vip_direct_active = true
-			_vip_direct_elapsed = 0.0
-			_has_goal = false
-			_stuck_timer = 0.0
-			return
-
-	var space: PhysicsDirectSpaceState3D = get_world_3d().direct_space_state if get_world_3d() else null
-	var best_node := -1
-	var best_center := Vector3.ZERO
-	var best_cost := 1e12
-	for zone_index in range(zones.size()):
-		var zone := zones[zone_index] as AABB
-		var center := zone.get_center()
-		var candidates: Array[int] = []
-		var nearest := nav.get_nearest_node(center, null, 7.0)
-		if nearest >= 0:
-			candidates.append(nearest)
-		var authored := nav.pick_goal_node_near(center, 24.0)
-		if authored >= 0 and not candidates.has(authored):
-			candidates.append(authored)
-		var expanded := zone.grow(0.75)
-		for goal_node in nav.goal_nodes:
-			if not candidates.has(goal_node) and expanded.has_point(nav.get_node_pos(goal_node)):
-				candidates.append(goal_node)
-
-		for node_idx in candidates:
-			var path := nav.plan_node_path(
-				global_position, node_idx, team, BotNavigator.PATH_SAFE, false,
-				space, _diversity_seed, _banned_nodes
-			)
-			if path.is_empty() or path[path.size() - 1] != node_idx:
-				continue
-			var cost := nav.get_path_tactical_cost(path, team)
-			cost += nav.get_node_pos(node_idx).distance_to(center) * 0.35
-			# Tiny stable preference difference prevents identical choices when two
-			# routes are genuinely equivalent; safety and travel dominate the score.
-			cost += float((absi(_diversity_seed) + zone_index * 17) % 11) * 0.08
-			if cost < best_cost:
-				best_cost = cost
-				best_node = node_idx
-				best_center = center
-
-	if best_node >= 0:
-		_vip_escape_node = best_node
-		_vip_direct_goal = best_center
-		_vip_direct_elapsed = 0.0
-		_vip_route_rethink = randf_range(2.4, 3.8)
-		_plan_to_node(nav, best_node, false, BotNavigator.PATH_SAFE)
-		return
-
-	# No complete candidate path: retain motion and retry from the next node
-	# instead of freezing forever. The direct-approach/stuck systems can replan.
-	var nearest_zone := zones[0] as AABB
-	var nearest_distance := global_position.distance_to(nearest_zone.get_center())
-	for raw_zone in zones:
-		var zone := raw_zone as AABB
-		var distance := global_position.distance_to(zone.get_center())
-		if distance < nearest_distance:
-			nearest_distance = distance
-			nearest_zone = zone
-	_vip_direct_goal = nearest_zone.get_center()
-	_plan_to_world_pos(nav, _vip_direct_goal, false, BotNavigator.PATH_SAFE)
-	_vip_escape_node = _goal_node_idx
-	_vip_route_rethink = 1.0
-
-
-func _follow_vip_direct_path(delta: float) -> void:
-	if not _vip_direct_active:
-		return
-	_vip_direct_elapsed += delta
-	var raw_dir := _vip_direct_goal - global_position
-	raw_dir.y = 0.0
-	if raw_dir.length() < 0.38:
-		_vip_direct_active = false
-		apply_goldsrc_movement(Vector3.ZERO, false, false, false, delta)
-		return
-	raw_dir = raw_dir.normalized()
-	if RoundManager.get_incendiary_danger_at(global_position + raw_dir * 1.1) > 0.78:
-		_vip_direct_active = false
-		_vip_escape_node = -1
-		_vip_route_rethink = 0.0
-		apply_goldsrc_movement(Vector3.ZERO, false, false, false, delta)
-		return
-	var move_dir := _steer_around_obstacles(raw_dir)
-	_smoothed_move_dir = _blend_move_dir(_smoothed_move_dir, move_dir, delta * 10.0)
-	_look_smoothly_toward(global_position + raw_dir * 5.0 + Vector3(0.0, 1.4, 0.0), delta * 7.0)
-	apply_goldsrc_movement(_smoothed_move_dir, false, false, false, delta)
-	var moved := global_position.distance_to(_last_pos)
-	_stuck_timer = _stuck_timer + delta if moved < 0.35 * delta else maxf(0.0, _stuck_timer - delta * 2.0)
-	_last_pos = global_position
-	if _vip_direct_elapsed > 5.5 or _stuck_timer > 0.75:
-		_vip_direct_active = false
-		_vip_escape_node = -1
-		_vip_route_rethink = 0.0
-		_stuck_timer = 0.0
-
-
-func _has_vip_escort_floor_path(from_p: Vector3, to_p: Vector3) -> bool:
+func _has_floor_path(from_p: Vector3, to_p: Vector3) -> bool:
 	if absf(to_p.y - from_p.y) > 1.10:
 		return false
 	var flat := to_p - from_p
@@ -1410,471 +1132,6 @@ func _has_vip_escort_floor_path(from_p: Vector3, to_p: Vector3) -> bool:
 			return false
 		previous_y = floor_y
 	return true
-
-
-func _start_vip_escort_direct(goal: Vector3) -> void:
-	_vip_escort_direct_goal = goal
-	_vip_breadcrumb_active = false
-	_vip_escort_direct_elapsed = 0.0
-	_vip_escort_direct_active = true
-	_node_path = PackedInt32Array()
-	_has_goal = false
-	_hold_pos_timer = 0.0
-	_stuck_timer = 0.0
-
-
-func _update_vip_escort_weapon(vip: CSActor) -> void:
-	if weapon_ctrl.is_reloading:
-		return
-	var catch_up := global_position.distance_to(vip.global_position) > 4.5 and _sound_investigate_timer <= 0.0
-	if catch_up:
-		if weapon_ctrl.current_weapon_id != "knife":
-			weapon_ctrl.equip_slot(3)
-	elif _is_utility_weapon(weapon_ctrl.current_weapon_id):
-		if not weapon_ctrl.equip_slot(1):
-			weapon_ctrl.equip_slot(2)
-
-
-func _follow_vip_escort_direct(delta: float) -> void:
-	var vip := _find_live_vip()
-	if not is_instance_valid(vip):
-		_vip_escort_direct_active = false
-		return
-	_update_vip_escort_weapon(vip)
-	_vip_escort_direct_elapsed += delta
-	var raw_dir := _vip_escort_direct_goal - global_position
-	raw_dir.y = 0.0
-	var distance := raw_dir.length()
-	if distance < 0.82:
-		apply_goldsrc_movement(Vector3.ZERO, false, false, false, delta)
-		_last_pos = global_position
-		return
-	raw_dir /= maxf(distance, 0.001)
-	var move_dir := _steer_around_obstacles(raw_dir)
-	_smoothed_move_dir = _blend_move_dir(_smoothed_move_dir, move_dir, delta * 12.0)
-	if not _has_vip_escort_floor_path(global_position, global_position + _smoothed_move_dir * 1.10):
-		_vip_escort_direct_active = false
-		_vip_escort_repath = 0.65
-		_stuck_timer = 0.0
-		apply_goldsrc_movement(Vector3.ZERO, false, false, false, delta)
-		_last_pos = global_position
-		return
-	_look_smoothly_toward(vip.global_position + Vector3(0.0, 1.35, 0.0), delta * 8.0)
-	apply_goldsrc_movement(_smoothed_move_dir, false, false, false, delta)
-	var moved := global_position.distance_to(_last_pos)
-	_stuck_timer = _stuck_timer + delta if moved < 0.35 * delta else maxf(0.0, _stuck_timer - delta * 2.0)
-	_last_pos = global_position
-	# A moving VIP can turn a previously open formation slot into a wall-corner
-	# shortcut. Return to A* instead of pushing indefinitely against geometry.
-	if _vip_escort_direct_elapsed > 3.0 or _stuck_timer > 0.55 or distance > 16.0:
-		_vip_escort_direct_active = false
-		_vip_escort_repath = 0.65
-		_stuck_timer = 0.0
-
-
-func _follow_vip_breadcrumbs(nav: BotNavigator, vip: CSActor) -> bool:
-	var vip_bot := vip as CSBot
-	if vip_bot == null:
-		return false
-	var route := PackedInt32Array()
-	for node_idx in vip_bot._vip_route_history:
-		if route.is_empty() or route[route.size() - 1] != node_idx:
-			route.append(node_idx)
-	for node_idx in vip_bot._node_path:
-		if route.is_empty() or route[route.size() - 1] != node_idx:
-			route.append(node_idx)
-	if route.is_empty():
-		return false
-
-	if _vip_breadcrumb_active:
-		if not _node_path.is_empty() and route.find(_node_path[0]) >= 0:
-			return true
-		_node_path = PackedInt32Array()
-		_has_goal = false
-	_vip_breadcrumb_active = false
-
-	# Merge with the closest few points of the VIP's actual route, then retain
-	# its suffix. Only this short merge needs a fresh A* search.
-	var candidates: Array[int] = []
-	for i in range(route.size()):
-		candidates.append(i)
-	candidates.sort_custom(func(a: int, b: int) -> bool:
-		var da := global_position.distance_squared_to(nav.get_node_pos(route[a]))
-		var db := global_position.distance_squared_to(nav.get_node_pos(route[b]))
-		return da < db
-	)
-	var space := get_world_3d().direct_space_state
-	for candidate_i in range(mini(4, candidates.size())):
-		var route_idx := candidates[candidate_i]
-		var merge_node := route[route_idx]
-		var prefix := nav.plan_node_path(global_position, merge_node, team, BotNavigator.PATH_FAST, false, space, _diversity_seed, _banned_nodes)
-		if prefix.is_empty() or prefix[prefix.size() - 1] != merge_node:
-			continue
-		var combined := PackedInt32Array()
-		combined.append_array(prefix)
-		for j in range(route_idx + 1, route.size()):
-			if combined.is_empty() or combined[combined.size() - 1] != route[j]:
-				combined.append(route[j])
-		if combined.is_empty():
-			continue
-		_node_path = combined
-		_goal_node_idx = combined[combined.size() - 1]
-		_goal_pos = vip.global_position
-		_has_goal = true
-		_prev_node_idx = nav.get_nearest_node(global_position, space, 3.6, true)
-		_advance_to_node_entry(nav, _node_path[0])
-		_vip_breadcrumb_active = true
-		return true
-	return false
-
-
-func _update_as_squad_objective(nav: BotNavigator, gw: Node3D) -> bool:
-	var vip := _find_live_vip()
-	if not is_instance_valid(vip):
-		return false
-	var zones: Array = gw.get("escape_zones")
-
-	if team == "CT":
-		var escorts: Array[CSBot] = []
-		for raw in RoundManager.actors:
-			var bot := raw as CSBot
-			if is_instance_valid(bot) and bot.is_alive and bot.team == "CT" and not bot.is_vip:
-				escorts.append(bot)
-		escorts.sort_custom(func(a: CSBot, b: CSBot) -> bool: return a.get_instance_id() < b.get_instance_id())
-		_vip_escort_slot = escorts.find(self)
-		if _vip_escort_slot >= 0 and _vip_escort_slot < mini(3, escorts.size()):
-			_hostage_direct_active = false
-			if _camp_timer > 0.0:
-				_release_camp_spot()
-			var forward := vip.get_look_forward()
-			forward.y = 0.0
-			if forward.length_squared() < 0.01:
-				forward = Vector3.FORWARD
-			forward = forward.normalized()
-			var right := forward.cross(Vector3.UP).normalized()
-			var offsets: Array[Vector3] = [
-				-forward * 2.3 - right * 1.7,
-				-forward * 2.7 + right * 1.7,
-				forward * 3.8,
-			]
-			var formation_pos := vip.global_position + offsets[_vip_escort_slot]
-			var formation_distance := global_position.distance_to(formation_pos)
-			# Nearby escorts track the moving formation directly. This avoids
-			# repeatedly snapping back to an old node while the VIP advances.
-			if _vip_escort_repath <= 0.0 and formation_distance < 12.0 and _has_wide_corridor_sight(global_position, formation_pos) and _has_vip_escort_floor_path(global_position, formation_pos):
-				if not _vip_escort_direct_active or _vip_escort_direct_goal.distance_to(formation_pos) > 0.45:
-					_start_vip_escort_direct(formation_pos)
-				else:
-					_vip_escort_direct_goal = formation_pos
-			else:
-				_vip_escort_direct_active = false
-				# Reuse the VIP's actual directed route before considering an
-				# independent pursuit. This preserves deck/ladder transitions.
-				var following_breadcrumbs := _follow_vip_breadcrumbs(nav, vip)
-				if not following_breadcrumbs:
-					var vip_goal_node := nav.get_nearest_node(vip.global_position, null, 6.5)
-					if vip_goal_node >= 0 and (_node_path.is_empty() or not _has_goal or (_vip_route_rethink <= 0.0 and vip_goal_node != _goal_node_idx)):
-						_plan_to_node(nav, vip_goal_node, false, BotNavigator.PATH_FAST)
-						_goal_pos = vip.global_position
-						_vip_route_rethink = 8.0
-					if not _has_goal:
-						_plan_to_world_pos(nav, formation_pos, false, BotNavigator.PATH_SAFE)
-			return true
-		_vip_escort_direct_active = false
-		_vip_breadcrumb_active = false
-
-		# Additional CTs move ahead and hold extraction approaches instead of
-		# stacking in one formation. They remain available for normal combat.
-		if not zones.is_empty() and (_node_path.is_empty() or not _has_goal):
-			var zone := zones[absi(_diversity_seed) % zones.size()] as AABB
-			var advance := nav.pick_camp_or_sniper_node(zone.get_center(), "CT", _uses_sniper(), 24.0, self)
-			if advance >= 0:
-				_plan_to_node(nav, advance, false, _pick_path_mode())
-			else:
-				_plan_to_world_pos(nav, zone.get_center(), false, BotNavigator.PATH_SAFE)
-		return true
-
-	if team == "T":
-		# Hunt only last actually observed contact; never read the VIP's hidden
-		# live position. Otherwise split between spawn pressure and extraction
-		# ambushes using static map knowledge available to every player.
-		if _last_enemy_seen_age < 4.5 and health >= 42:
-			if _node_path.is_empty() or _goal_pos.distance_to(_last_enemy_pos) > 3.5:
-				_plan_to_world_pos(nav, _last_enemy_pos, false, BotNavigator.PATH_OPTIMAL)
-			return true
-		if _node_path.is_empty() or not _has_goal:
-			var ambush := personality == PERSONALITY_CAREFUL or _uses_sniper() or absi(_diversity_seed) % 3 == 0
-			if ambush and not zones.is_empty():
-				var zone := zones[absi(_diversity_seed) % zones.size()] as AABB
-				var nest := nav.pick_camp_or_sniper_node(zone.get_center(), "T", _uses_sniper(), 30.0, self)
-				if nest >= 0:
-					_plan_to_node(nav, nest, false, _pick_path_mode())
-				else:
-					_plan_to_world_pos(nav, zone.get_center(), false, _pick_path_mode())
-			else:
-				var raw_map: Dictionary = gw.get("map_data")
-				var spawn_list: Array = raw_map.get("vip_spawns", [])
-				if spawn_list.is_empty():
-					spawn_list = raw_map.get("ct_spawns", [])
-				if not spawn_list.is_empty():
-					var entry: Dictionary = spawn_list[absi(_diversity_seed) % spawn_list.size()]
-					var p: Array = entry.get("pos", [0.0, 0.0, 0.0])
-					_plan_to_world_pos(nav, Vector3(float(p[0]), float(p[1]), float(p[2])), false, _pick_path_mode())
-		return true
-	return false
-
-
-func _clear_hostage_direct() -> void:
-	_hostage_direct_active = false
-	_hostage_direct_target = null
-	_hostage_direct_elapsed = 0.0
-	_hostage_direct_stuck = 0.0
-
-
-func _start_hostage_direct(mode: int, target: HostageNPC, goal: Vector3) -> void:
-	_hostage_direct_mode = mode
-	_hostage_direct_target = target
-	_hostage_direct_goal = goal
-	_hostage_direct_elapsed = 0.0
-	_hostage_direct_stuck = 0.0
-	_hostage_direct_active = true
-	_node_path = PackedInt32Array()
-	_has_goal = false
-	_hold_pos_timer = 0.0
-	_stuck_timer = 0.0
-
-
-func _follow_hostage_direct(delta: float) -> void:
-	if not _hostage_direct_active:
-		return
-	_hostage_direct_elapsed += delta
-	var target := _hostage_direct_target
-	if _hostage_direct_mode in [HOSTAGE_DIRECT_PICKUP, HOSTAGE_DIRECT_REGROUP]:
-		if not is_instance_valid(target) or not target.is_alive or target.is_rescued:
-			_clear_hostage_direct()
-			return
-		if _hostage_direct_mode == HOSTAGE_DIRECT_PICKUP and target.leader != null and target.leader != self:
-			_clear_hostage_direct()
-			return
-		_hostage_direct_goal = target.global_position
-	elif not _is_leading_hostage():
-		_clear_hostage_direct()
-		return
-
-	var raw_dir := _hostage_direct_goal - global_position
-	raw_dir.y = 0.0
-	var distance := raw_dir.length()
-	if _hostage_direct_mode == HOSTAGE_DIRECT_PICKUP and distance < 2.12:
-		target.interact(self)
-		_hostage_target = target
-		_clear_hostage_direct()
-		_node_path = PackedInt32Array()
-		_has_goal = false
-		apply_goldsrc_movement(Vector3.ZERO, false, false, false, delta)
-		_last_pos = global_position
-		return
-	if _hostage_direct_mode == HOSTAGE_DIRECT_REGROUP and distance < 2.35:
-		_clear_hostage_direct()
-		_hostage_repath = 0.0
-		apply_goldsrc_movement(Vector3.ZERO, false, false, false, delta)
-		_last_pos = global_position
-		return
-	if _hostage_direct_mode == HOSTAGE_DIRECT_RESCUE and distance < 0.72:
-		_clear_hostage_direct()
-		_hold_pos_timer = 0.26
-		apply_goldsrc_movement(Vector3.ZERO, false, false, false, delta)
-		_last_pos = global_position
-		return
-
-	raw_dir /= maxf(distance, 0.001)
-	if RoundManager.get_incendiary_danger_at(global_position + raw_dir * 1.1) > 0.82:
-		_clear_hostage_direct()
-		_hostage_repath = 0.0
-		apply_goldsrc_movement(Vector3.ZERO, false, false, false, delta)
-		return
-	var move_dir := _steer_around_obstacles(raw_dir)
-	_smoothed_move_dir = _blend_move_dir(_smoothed_move_dir, move_dir, delta * 12.0)
-	_look_smoothly_toward(global_position + raw_dir * 4.0 + Vector3(0.0, 1.35, 0.0), delta * 8.0)
-	apply_goldsrc_movement(_smoothed_move_dir, false, false, false, delta)
-	var moved := global_position.distance_to(_last_pos)
-	_hostage_direct_stuck = _hostage_direct_stuck + delta if moved < 0.32 * delta else maxf(0.0, _hostage_direct_stuck - delta * 2.0)
-	_last_pos = global_position
-	if _hostage_direct_elapsed > 5.0 or _hostage_direct_stuck > 0.58 or distance > 15.5:
-		_clear_hostage_direct()
-		_hostage_repath = 0.0
-
-
-func _led_hostages() -> Array[HostageNPC]:
-	var result: Array[HostageNPC] = []
-	if team != "CT" or RoundManager.map_mode != "cs":
-		return result
-	for raw in RoundManager.hostages:
-		var hostage := raw as HostageNPC
-		if is_instance_valid(hostage) and hostage.is_alive and not hostage.is_rescued and hostage.leader == self:
-			result.append(hostage)
-	return result
-
-
-func _hostage_claimed_by_other(candidate: HostageNPC) -> bool:
-	for raw in RoundManager.actors:
-		var bot := raw as CSBot
-		if is_instance_valid(bot) and bot != self and bot.is_alive and bot.team == "CT" and bot._hostage_target == candidate:
-			return true
-	return false
-
-
-func _best_hostage_rescue(nav: BotNavigator, gw: Node3D) -> Dictionary:
-	var zones: Array = gw.get("rescue_zones")
-	if zones.is_empty():
-		return {}
-	var space := get_world_3d().direct_space_state
-	var best: Dictionary = {}
-	var best_cost := 1e12
-	for zone_idx in range(zones.size()):
-		var zone := zones[zone_idx] as AABB
-		var center := zone.get_center()
-		var candidates: Array[int] = []
-		var nearest := nav.get_nearest_node(center, space, 8.0)
-		if nearest >= 0:
-			candidates.append(nearest)
-		for node_idx in nav.rescue_nodes:
-			if not candidates.has(node_idx) and nav.get_node_pos(node_idx).distance_to(center) < 28.0:
-				candidates.append(node_idx)
-		# Rescue flags can lie below a trigger or omit a ramp landing entirely.
-		# Any physically intersecting node is a legitimate safe-route endpoint.
-		for node_idx in range(nav.waypoints.size()):
-			if not candidates.has(node_idx) and GameWorld.capsule_overlaps_zone(nav.get_node_pos(node_idx), 1.90, 0.36, zone):
-				candidates.append(node_idx)
-		for node_idx in candidates:
-			var node_pos := nav.get_node_pos(node_idx)
-			var node_in_zone := GameWorld.capsule_overlaps_zone(node_pos, 1.90, 0.36, zone)
-			var direct_goal := node_pos if node_in_zone else center
-			if not node_in_zone:
-				var flat := Vector2(node_pos.x - center.x, node_pos.z - center.z).length()
-				if flat > 14.5 or not _has_wide_corridor_sight(node_pos, center):
-					continue
-			var path := nav.plan_node_path(global_position, node_idx, team, BotNavigator.PATH_SAFE, true, space, _diversity_seed, _banned_nodes, false)
-			if path.is_empty() or path[path.size() - 1] != node_idx:
-				continue
-			var cost := nav.get_path_tactical_cost(path, team)
-			cost += node_pos.distance_to(center) * 0.22
-			if zone_idx == _hostage_rescue_zone_idx:
-				cost -= 1.5
-			if cost < best_cost:
-				best_cost = cost
-				best = {"zone": zone_idx, "node": node_idx, "goal": direct_goal}
-	return best
-
-
-func _update_ct_hostage_objective(nav: BotNavigator, gw: Node3D, live_hostages: Array[HostageNPC]) -> bool:
-	var led := _led_hostages()
-	if not led.is_empty():
-		_hostage_target = led[0]
-		var lagging: HostageNPC = led[0]
-		var lagging_distance := -1.0
-		for hostage in led:
-			var distance := global_position.distance_to(hostage.global_position)
-			if distance > lagging_distance:
-				lagging = hostage
-				lagging_distance = distance
-		# Never finish the escort alone. Return to a blocked or distant hostage,
-		# then resume the rescue with a fresh follower path.
-		if lagging_distance > 7.0 or (lagging.needs_navigation_help() and lagging_distance > 2.8):
-			if _hostage_direct_mode != HOSTAGE_DIRECT_REGROUP:
-				_clear_hostage_direct()
-			if lagging_distance < 6.5 and _has_wide_corridor_sight(global_position, lagging.global_position):
-				if not _hostage_direct_active or _hostage_direct_target != lagging:
-					_start_hostage_direct(HOSTAGE_DIRECT_REGROUP, lagging, lagging.global_position)
-			elif _hostage_repath <= 0.0 and (_node_path.is_empty() or not _has_goal or _goal_pos.distance_to(lagging.global_position) > 2.0):
-				_clear_hostage_direct()
-				_plan_to_world_pos(nav, lagging.global_position, false, BotNavigator.PATH_FAST)
-				_hostage_repath = 0.65
-			return true
-
-		if not _hostage_direct_active and bool(gw.call("is_in_rescue_zone", global_position + Vector3(0.0, 0.95, 0.0))):
-			_node_path = PackedInt32Array()
-			_has_goal = false
-			_hold_pos_timer = maxf(_hold_pos_timer, 0.28)
-			return true
-
-		# Keep a valid safe route instead of solving every rescue candidate on
-		# each 0.12–0.22 s think tick. Lagging followers are handled above and
-		# still interrupt the route immediately when they need help.
-		if not _hostage_direct_active and _hostage_rescue_zone_idx >= 0 and _has_goal and not _node_path.is_empty():
-			return true
-
-		var best := _best_hostage_rescue(nav, gw)
-		if best.is_empty():
-			# Third-party incomplete graphs retain motion while safer candidates
-			# are re-evaluated instead of freezing beside the followers.
-			if _node_path.is_empty():
-				var zones: Array = gw.get("rescue_zones")
-				if not zones.is_empty():
-					_plan_to_world_pos(nav, (zones[0] as AABB).get_center(), true, BotNavigator.PATH_SAFE)
-			return true
-		var zone_idx := int(best["zone"])
-		var rescue_goal := best["goal"] as Vector3
-		var rescue_distance := global_position.distance_to(rescue_goal)
-		if rescue_distance < 14.5 and _has_wide_corridor_sight(global_position, rescue_goal):
-			if not _hostage_direct_active or _hostage_direct_mode != HOSTAGE_DIRECT_RESCUE or _hostage_direct_goal.distance_to(rescue_goal) > 0.45:
-				_hostage_rescue_zone_idx = zone_idx
-				_start_hostage_direct(HOSTAGE_DIRECT_RESCUE, null, rescue_goal)
-			return true
-		_clear_hostage_direct()
-		if _node_path.is_empty() or not _has_goal or zone_idx != _hostage_rescue_zone_idx:
-			_hostage_rescue_zone_idx = zone_idx
-			_plan_to_node(nav, int(best["node"]), true, BotNavigator.PATH_SAFE)
-		return true
-
-	if _hostage_direct_mode != HOSTAGE_DIRECT_PICKUP:
-		_clear_hostage_direct()
-	var best_free: HostageNPC = null
-	var best_free_distance := 1e12
-	for hostage in live_hostages:
-		if hostage.leader != null or _hostage_claimed_by_other(hostage):
-			continue
-		var distance := global_position.distance_to(hostage.global_position)
-		if distance < best_free_distance:
-			best_free_distance = distance
-			best_free = hostage
-	if is_instance_valid(best_free):
-		if _hostage_target != best_free:
-			_clear_hostage_direct()
-			_hostage_rescue_zone_idx = -1
-		_hostage_target = best_free
-		if best_free_distance < 2.12:
-			best_free.interact(self)
-			_clear_hostage_direct()
-			_node_path = PackedInt32Array()
-			_has_goal = false
-		elif best_free_distance < 6.5 and _has_wide_corridor_sight(global_position, best_free.global_position):
-			if not _hostage_direct_active or _hostage_direct_mode != HOSTAGE_DIRECT_PICKUP or _hostage_direct_target != best_free:
-				_start_hostage_direct(HOSTAGE_DIRECT_PICKUP, best_free, best_free.global_position)
-		else:
-			_clear_hostage_direct()
-			if _hostage_repath <= 0.0 and (_node_path.is_empty() or not _has_goal or _goal_pos.distance_to(best_free.global_position) > 1.75):
-				_plan_to_world_pos(nav, best_free.global_position, false, BotNavigator.PATH_FAST)
-				_hostage_repath = 0.65
-		return true
-
-	_hostage_target = null
-	_clear_hostage_direct()
-	# Other CTs already lead every remaining hostage. Secure a real rescue
-	# brush rather than crowding a follower or waiting beside an untouched NPC.
-	var zones: Array = gw.get("rescue_zones")
-	if not zones.is_empty():
-		var nearest_zone := zones[0] as AABB
-		var nearest_distance := global_position.distance_to(nearest_zone.get_center())
-		for raw_zone in zones:
-			var zone := raw_zone as AABB
-			var distance := global_position.distance_to(zone.get_center())
-			if distance < nearest_distance:
-				nearest_zone = zone
-				nearest_distance = distance
-		if not bool(gw.call("is_in_rescue_zone", global_position + Vector3(0.0, 0.95, 0.0))) and (_node_path.is_empty() or not _has_goal):
-			_plan_to_world_pos(nav, nearest_zone.get_center(), false, BotNavigator.PATH_SAFE)
-		return true
-	return false
 
 
 func _update_tactical_objective() -> void:
@@ -1905,10 +1162,10 @@ func _update_tactical_objective() -> void:
 		for ek in expired:
 			_banned_nodes.erase(ek)
 
-	# Radio order follow (the VIP never abandons extraction to become a follower)
-	if not is_vip and not is_instance_valid(RoundManager.planted_c4) and is_instance_valid(_follow_target) and bool(_follow_target.get("is_alive")):
+	# Radio order follow.
+	if not is_instance_valid(RoundManager.planted_c4) and is_instance_valid(_follow_target) and bool(_follow_target.get("is_alive")):
 		if global_position.distance_to(_follow_target.global_position) > 3.8:
-			_plan_to_world_pos(nav, _follow_target.global_position, false)
+			_plan_to_world_pos(nav, _follow_target.global_position)
 		return
 
 	# Weapon-share pickup task: fetch a teammate's gifted primary before rolling out!
@@ -1920,7 +1177,7 @@ func _update_tactical_objective() -> void:
 			try_pickup_dropped(gift_take)
 		else:
 			if _node_path.is_empty() or not _has_goal or _goal_pos.distance_to(gift_pos) > 1.4:
-				_plan_to_world_pos(nav, gift_pos, false, BotNavigator.PATH_FAST)
+				_plan_to_world_pos(nav, gift_pos, BotNavigator.PATH_FAST)
 			return
 	elif _pending_share_drop != null:
 		_pending_share_drop = null
@@ -1950,13 +1207,8 @@ func _update_tactical_objective() -> void:
 					if my_d <= 1.6:
 						try_pickup_dropped(drop_c4)
 					elif _node_path.is_empty() or not _has_goal or _goal_pos.distance_to(dc4_pos) > 1.5:
-						_plan_to_world_pos(nav, dc4_pos, false, BotNavigator.PATH_FAST)
+						_plan_to_world_pos(nav, dc4_pos, BotNavigator.PATH_FAST)
 					return
-
-	# Extraction outranks camping/hold commands for the VIP itself.
-	if is_vip and RoundManager.map_mode == "as":
-		_update_vip_escape(nav, gw)
-		return
 
 	if (_hold_pos_timer > 0.0 or _camp_timer > 0.0) and not is_instance_valid(RoundManager.planted_c4):
 		return
@@ -1978,7 +1230,7 @@ func _update_tactical_objective() -> void:
 		bomb_role = role
 		if role == "defuse":
 			if not _has_goal or _node_path.is_empty() or _goal_pos.distance_to(bomb.global_position) > 2.4:
-				_plan_to_world_pos(nav, bomb.global_position, false, BotNavigator.PATH_FAST)
+				_plan_to_world_pos(nav, bomb.global_position, BotNavigator.PATH_FAST)
 		else:
 			if _bomb_role_node >= 0 and _banned_nodes.has(_bomb_role_node):
 				_release_camp_spot()
@@ -1989,14 +1241,10 @@ func _update_tactical_objective() -> void:
 					nav.claim_node(_bomb_role_node, self)
 					_camping_node_idx = _bomb_role_node
 			if _bomb_role_node >= 0 and (not _has_goal or _node_path.is_empty()) and global_position.distance_to(nav.get_node_pos(_bomb_role_node)) > 1.3:
-				_plan_to_node(nav, _bomb_role_node, false, BotNavigator.PATH_SAFE)
+				_plan_to_node(nav, _bomb_role_node, BotNavigator.PATH_SAFE)
 		return
 	bomb_role = "none"
 	_bomb_role_node = -1
-
-	# Assassination squad roles: CT formation/advance escort, T hunt/ambush.
-	if RoundManager.map_mode == "as" and _update_as_squad_objective(nav, gw):
-		return
 
 	# Bomb Carrier T -> head to a YaPB Goal node inside Bombsite A or B!
 	if team == "T" and String(weapon_ctrl.slots.get(5, "")) == "c4":
@@ -2004,7 +1252,7 @@ func _update_tactical_objective() -> void:
 		if not bsites.is_empty() and (_node_path.is_empty() or not _has_goal):
 			var site_aabb: AABB = bsites[absi(_diversity_seed) % bsites.size()]
 			var g_bomb := nav.pick_goal_node_near(site_aabb.get_center(), 14.0)
-			_plan_to_node(nav, g_bomb, false, BotNavigator.PATH_SAFE)
+			_plan_to_node(nav, g_bomb, BotNavigator.PATH_SAFE)
 		return
 
 	# Two nearby T bots support the carrier; other Ts keep independent flank routes.
@@ -2014,40 +1262,21 @@ func _update_tactical_objective() -> void:
 			bomb_role = "escort"
 			var carrier := support.carrier as CSActor
 			if global_position.distance_to(carrier.global_position) > 5.0 and (_node_path.is_empty() or _goal_pos.distance_to(carrier.global_position) > 4.0):
-				_plan_to_world_pos(nav, carrier.global_position, false, BotNavigator.PATH_SAFE)
+				_plan_to_world_pos(nav, carrier.global_position, BotNavigator.PATH_SAFE)
 			return
-
-	# Hostage Rescue Mode (cs_*)
-	if RoundManager.map_mode == "cs":
-		var live_hostages: Array[HostageNPC] = []
-		for h in RoundManager.hostages:
-			var h_npc := h as HostageNPC
-			if is_instance_valid(h_npc) and h_npc.is_alive and not h_npc.is_rescued:
-				live_hostages.append(h_npc)
-
-		if team == "CT" and not live_hostages.is_empty():
-			if _update_ct_hostage_objective(nav, gw, live_hostages):
-				return
-		elif team == "T" and not live_hostages.is_empty():
-			if (_node_path.is_empty() or not _has_goal) and (personality == PERSONALITY_CAREFUL or _uses_sniper() or randf() < 0.45):
-				var guard_h: HostageNPC = live_hostages[randi() % live_hostages.size()]
-				var camp_h := nav.pick_camp_or_sniper_node(guard_h.global_position, "T", _uses_sniper(), 26.0, self)
-				if camp_h >= 0:
-					_plan_to_node(nav, camp_h, false, _pick_path_mode())
-					return
 
 	# Pursue recent enemy contact or heard gunfire/footsteps (YaPB TaskId::Hunt)!
 	if _last_enemy_seen_age < 4.5 and health >= 42 and personality != PERSONALITY_CAREFUL:
 		if _node_path.is_empty() or _goal_pos.distance_to(_last_enemy_pos) > 4.0:
-			_plan_to_world_pos(nav, _last_enemy_pos, false, BotNavigator.PATH_OPTIMAL)
+			_plan_to_world_pos(nav, _last_enemy_pos, BotNavigator.PATH_OPTIMAL)
 		return
 	if _sound_investigate_timer > 0.4 and (_node_path.is_empty() or _goal_pos.distance_to(_sound_investigate_pos) > 4.5):
-		_plan_to_world_pos(nav, _sound_investigate_pos, false, BotNavigator.PATH_OPTIMAL)
+		_plan_to_world_pos(nav, _sound_investigate_pos, BotNavigator.PATH_OPTIMAL)
 		return
 
 	if RoundManager.map_mode == "dm":
 		if _node_path.is_empty() or not _has_goal:
-			_plan_to_node(nav, nav.pick_roam_node(global_position, team), false, BotNavigator.PATH_FAST)
+			_plan_to_node(nav, nav.pick_roam_node(global_position, team), BotNavigator.PATH_FAST)
 		return
 
 	# DE Mode CT Bombsite Defense & Sniper Nest Selection + T Split-Push!
@@ -2056,31 +1285,31 @@ func _update_tactical_objective() -> void:
 		if _uses_sniper() and _camp_cooldown <= 0.0 and randf() < 0.65:
 			var snp_idx := nav.pick_camp_or_sniper_node(global_position, team, true, 65.0, self)
 			if snp_idx >= 0:
-				_plan_to_node(nav, snp_idx, false, BotNavigator.PATH_SAFE)
+				_plan_to_node(nav, snp_idx, BotNavigator.PATH_SAFE)
 				return
 		if not bsites2.is_empty():
 			var s_aabb: AABB = bsites2[randi() % bsites2.size()]
 			if team == "CT" and _camp_cooldown <= 0.0 and randf() < 0.58:
 				var def_camp := nav.pick_camp_or_sniper_node(s_aabb.get_center(), "CT", _uses_sniper(), 22.0, self)
 				if def_camp >= 0:
-					_plan_to_node(nav, def_camp, false, _pick_path_mode())
+					_plan_to_node(nav, def_camp, _pick_path_mode())
 					return
 			var g_site := nav.pick_goal_node_near(s_aabb.get_center(), 16.0)
 			if g_site >= 0 and randf() < 0.72:
-				_plan_to_node(nav, g_site, false, _pick_path_mode())
+				_plan_to_node(nav, g_site, _pick_path_mode())
 				return
 		var roam_idx := nav.pick_roam_node(global_position, team)
-		_plan_to_node(nav, roam_idx, false, _pick_path_mode())
+		_plan_to_node(nav, roam_idx, _pick_path_mode())
 
 
-func _plan_to_world_pos(nav: BotNavigator, dest: Vector3, hostage_safe: bool, mode: int = -1) -> void:
+func _plan_to_world_pos(nav: BotNavigator, dest: Vector3, mode: int = -1) -> void:
 	var g_idx := nav.get_nearest_node(dest, null, 6.5)
 	if g_idx >= 0:
-		_plan_to_node(nav, g_idx, hostage_safe, mode if mode >= 0 else _pick_path_mode())
+		_plan_to_node(nav, g_idx, mode if mode >= 0 else _pick_path_mode())
 		_goal_pos = dest
 
 
-func _plan_to_node(nav: BotNavigator, goal_idx: int, hostage_safe: bool, mode: int = -1) -> void:
+func _plan_to_node(nav: BotNavigator, goal_idx: int, mode: int = -1) -> void:
 	if goal_idx < 0 or goal_idx >= nav.waypoints.size():
 		return
 	var space: PhysicsDirectSpaceState3D = get_world_3d().direct_space_state if (is_inside_tree() and get_world_3d()) else null
@@ -2088,8 +1317,8 @@ func _plan_to_node(nav: BotNavigator, goal_idx: int, hostage_safe: bool, mode: i
 	_goal_node_idx = goal_idx
 	_goal_pos = nav.get_node_pos(goal_idx)
 	_has_goal = true
-	_node_path = nav.plan_node_path(global_position, goal_idx, team, use_mode, hostage_safe, space, _diversity_seed, _banned_nodes)
-	_has_goal = true if team == "CT" and RoundManager.map_mode == "cs" else not _node_path.is_empty()
+	_node_path = nav.plan_node_path(global_position, goal_idx, team, use_mode, space, _diversity_seed, _banned_nodes)
+	_has_goal = not _node_path.is_empty()
 	_prev_node_idx = nav.get_nearest_node(global_position, space, 3.6, true)
 	if not _node_path.is_empty():
 		_advance_to_node_entry(nav, _node_path[0])
@@ -2097,10 +1326,6 @@ func _plan_to_node(nav: BotNavigator, goal_idx: int, hostage_safe: bool, mode: i
 
 func _advance_to_node_entry(nav: BotNavigator, next_idx: int) -> void:
 	_cur_node_elapsed = 0.0
-	# Extraction routes favour reproducible waypoint centres over roam jitter.
-	if is_vip:
-		_cur_node_offset = Vector3.ZERO
-		return
 	var fl := nav.get_node_flags(next_idx)
 	var rad := nav.get_node_radius(next_idx)
 	var lnk := nav.get_link_info(_prev_node_idx, next_idx)
@@ -2146,27 +1371,20 @@ func _follow_navigation_path(delta: float) -> void:
 		_last_pos = global_position
 		if _escape_timer <= 0.0:
 			_diversity_seed = randi()
-			# Extraction is an explicit mission goal, not a roaming preference.
-			# Generic stuck recovery must never replace it with a random waypoint:
-			# doing so made the VIP tour the map between repeated rescue replans.
-			if is_vip and _vip_escape_node >= 0:
-				_rechoice_count = 0
-				_banned_nodes.erase(_vip_escape_node)
-				_plan_to_node(nav, _vip_escape_node, false, BotNavigator.PATH_DIVERSITY)
-			elif _rechoice_count >= 2 or _goal_node_idx < 0 or _banned_nodes.has(_goal_node_idx):
+			if _rechoice_count >= 2 or _goal_node_idx < 0 or _banned_nodes.has(_goal_node_idx):
 				_rechoice_count = 0
 				_has_goal = false
-				_plan_to_node(nav, nav.pick_roam_node(global_position, team), false, BotNavigator.PATH_DIVERSITY)
+				_plan_to_node(nav, nav.pick_roam_node(global_position, team), BotNavigator.PATH_DIVERSITY)
 			else:
-				_plan_to_node(nav, _goal_node_idx, _is_leading_hostage(), BotNavigator.PATH_DIVERSITY)
+				_plan_to_node(nav, _goal_node_idx, BotNavigator.PATH_DIVERSITY)
 		return
 
-	if _hold_pos_timer <= 0.0 and _node_path.is_empty() and not is_vip and bomb_role == "none" and RoundManager.map_mode not in ["cs", "as"]:
+	if _hold_pos_timer <= 0.0 and _node_path.is_empty() and bomb_role == "none":
 		_empty_route_time += delta
 		if _empty_route_time > 1.6:
 			_empty_route_time = 0.0
 			_has_goal = false
-			_plan_to_node(nav, nav.pick_roam_node(global_position, team), false, BotNavigator.PATH_DIVERSITY)
+			_plan_to_node(nav, nav.pick_roam_node(global_position, team), BotNavigator.PATH_DIVERSITY)
 	else:
 		_empty_route_time = 0.0
 	if _hold_pos_timer > 0.0 or _node_path.is_empty():
@@ -2190,7 +1408,6 @@ func _follow_navigation_path(delta: float) -> void:
 			var p_next := nav.get_node_pos(next_id)
 			if absf(p_next.y - global_position.y) < 0.32 and global_position.distance_to(p_next) < 5.0:
 				if _has_wide_corridor_sight(global_position, p_next):
-					_record_vip_route_node(cur_id)
 					_prev_node_idx = cur_id
 					_node_path.remove_at(0)
 					cur_id = _node_path[0]
@@ -2216,7 +1433,6 @@ func _follow_navigation_path(delta: float) -> void:
 	# while still falling. Finish the vault and actually land before advancing.
 	var arrival_supported := not leaving_ladder_top or is_on_floor()
 	if flat_d < touch_r and vert_d < max_vert_touch and arrival_supported:
-		_record_vip_route_node(cur_id)
 		_prev_node_idx = cur_id
 		_node_path.remove_at(0)
 		_stuck_timer = 0.0
@@ -2264,7 +1480,7 @@ func _follow_navigation_path(delta: float) -> void:
 
 	# Pure-pursuit corner rounding ONLY on flat, non-action, non-jump links
 	var steer_target: Vector3 = wp
-	if not is_vip and not on_ladder and not is_jump_link and (cur_flags & BotNavigator.ACTION_FLAGS) == 0 and _node_path.size() >= 2 and flat_d < 2.0:
+	if not on_ladder and not is_jump_link and (cur_flags & BotNavigator.ACTION_FLAGS) == 0 and _node_path.size() >= 2 and flat_d < 2.0:
 		var next_id2: int = _node_path[1]
 		if (nav.get_node_flags(next_id2) & BotNavigator.ACTION_FLAGS) == 0 and nav.are_directly_linked(cur_id, next_id2):
 			var wp2 := nav.get_node_pos(next_id2)
@@ -2309,10 +1525,8 @@ func _follow_navigation_path(delta: float) -> void:
 
 	# Do NOT let obstacle whiskers deflect away from a climbable step/ledge when heading to a higher node!
 	var is_climb_step: bool = (not on_ladder) and (is_jump_link or (signed_dy > 0.44 and signed_dy < 1.90 and flat_d < 2.6 and _is_jumpable_ledge(raw_dir)))
-	# Narrow/action waypoints already encode the safe corridor. Objective actors
-	# use exact input there; obstacle steering remains for open combat/roaming.
-	var precision_route: bool = (is_vip or _vip_breadcrumb_active or is_instance_valid(_hostage_target)) and ((cur_flags & BotNavigator.ACTION_FLAGS) != 0 or _node_path.size() <= 2)
-	var exact_input: bool = on_ladder or is_climb_step or precision_route or ladder_entry_exact
+	# Narrow/action waypoints already encode the safe corridor.
+	var exact_input: bool = on_ladder or is_climb_step or ladder_entry_exact
 	# Precision removes lateral steering, not world interaction. Authored
 	# crouch routes can pass through breakable windows (e.g. the 747 cabin).
 	# Still open doors/clear panels, then keep the exact waypoint direction.
@@ -2396,21 +1610,11 @@ func _follow_navigation_path(delta: float) -> void:
 			_cur_node_elapsed = 0.0
 			_rechoice_count += 1
 			_avoid_side = -_avoid_side
-			if is_vip:
-				# Retry through A* from the actual blocked position. A long random
-				# escape maneuver can throw the VIP back across a directed junction.
-				_banned_nodes[cur_id] = _nav_clock + 3.0
-				_node_path = PackedInt32Array()
-				_has_goal = false
-				_vip_route_rethink = 0.0
-				_smoothed_move_dir = Vector3.ZERO
-				move_dir = Vector3.ZERO
-			else:
-				_banned_nodes[cur_id] = _nav_clock + 18.0
-				nav.report_blocked_segment(global_position, wp)
-				_escape_dir = _pick_open_escape_direction(raw_dir)
-				_escape_timer = 0.92
-				_node_path = PackedInt32Array()
+			_banned_nodes[cur_id] = _nav_clock + 18.0
+			nav.report_blocked_segment(global_position, wp)
+			_escape_dir = _pick_open_escape_direction(raw_dir)
+			_escape_timer = 0.92
+			_node_path = PackedInt32Array()
 		_last_pos = global_position
 
 	# Dismount only near the exit waypoint's height. Testing merely "target is
@@ -2428,9 +1632,9 @@ func _follow_navigation_path(delta: float) -> void:
 func _try_enter_camp_at_node(nav: BotNavigator, node_idx: int) -> void:
 	if bomb_role in ["cover", "guard", "escort"]:
 		return
-	if _camp_cooldown > 0.0 or is_vip or _is_leading_hostage() or _is_assigned_vip_escort():
+	if _camp_cooldown > 0.0:
 		return
-	if team == "T" and RoundManager.map_mode == "de" and not is_instance_valid(RoundManager.planted_c4) and String(weapon_ctrl.slots.get(5, "")) == "c4":
+	if team == "T" and not is_instance_valid(RoundManager.planted_c4) and String(weapon_ctrl.slots.get(5, "")) == "c4":
 		return
 	var fl := nav.get_node_flags(node_idx)
 	if (fl & (BotNavigator.FLAG_CAMP | BotNavigator.FLAG_SNIPER)) == 0:
@@ -2504,8 +1708,7 @@ func _pick_open_escape_direction(blocked_dir: Vector3) -> Vector3:
 	var space := get_world_3d().direct_space_state
 	var shin := global_position + Vector3(0.0, 0.58, 0.0)
 	var chest := global_position + Vector3(0.0, 1.05, 0.0)
-	var legacy_rescue := team == "CT" and RoundManager.map_mode == "cs"
-	var best_dir := -blocked_dir if legacy_rescue else Vector3.ZERO
+	var best_dir := Vector3.ZERO
 	var best_score := -1e9
 	var base := blocked_dir if blocked_dir.length_squared() > 0.01 else Vector3.FORWARD
 	for i in range(8):
@@ -2527,13 +1730,9 @@ func _pick_open_escape_direction(blocked_dir: Vector3) -> Vector3:
 		var floor_q := PhysicsRayQueryParameters3D.create(floor_probe + Vector3(0.0, 0.65, 0.0), floor_probe - Vector3(0.0, 1.45, 0.0))
 		floor_q.collision_mask = 1
 		var floor_hit := space.intersect_ray(floor_q)
-		var floor_penalty := 0.0
-		if legacy_rescue:
-			if floor_hit.is_empty() or (floor_hit.get("normal", Vector3.UP) as Vector3).y < 0.45:
-				floor_penalty = 12.0
-		elif floor_hit.is_empty() or (floor_hit.get("normal", Vector3.UP) as Vector3).y < 0.65 or not _has_local_floor(cand, 1.15):
+		if floor_hit.is_empty() or (floor_hit.get("normal", Vector3.UP) as Vector3).y < 0.65 or not _has_local_floor(cand, 1.15):
 			continue
-		var score := free_d + away_bonus + randf_range(-0.12, 0.12) - floor_penalty
+		var score := free_d + away_bonus + randf_range(-0.12, 0.12)
 		if score > best_score:
 			best_score = score
 			best_dir = cand
@@ -2612,12 +1811,9 @@ func _steer_around_obstacles(desired_dir: Vector3) -> Vector3:
 				else:
 					steer = desired_dir.rotated(Vector3.UP, deg_to_rad(115.0 * _avoid_side))
 
-	# Keep the proven close steering for CT hostage missions, whose authored
-	# basement/stair approaches depend on it. Other teammates use negotiation.
-	var preserve_hostage_steering := team == "CT" and RoundManager.map_mode == "cs"
 	var sep_accum := Vector3.ZERO
 	for a in RoundManager.actors:
-		if not is_instance_valid(a) or a == self or not bool(a.get("is_alive")) or (String(a.get("team")) == team and not preserve_hostage_steering):
+		if not is_instance_valid(a) or a == self or not bool(a.get("is_alive")) or String(a.get("team")) == team:
 			continue
 		var a_node := a as Node3D
 		if a_node == null or absf(a_node.global_position.y - global_position.y) > 1.6:
@@ -2736,9 +1932,7 @@ func _on_taken_damage_from(attacker: Node3D, hit_pos: Vector3) -> void:
 				_last_enemy_seen_age = 0.0
 			_sound_investigate_pos = known_pos
 			_sound_investigate_timer = 3.5
-			if is_vip:
-				_vip_route_rethink = 0.0
-			if target_enemy == null and visible and (not is_vip or global_position.distance_to(known_pos) <= 12.0):
+			if target_enemy == null and visible:
 				target_enemy = enemy
 				var fast_react: float = float([0.22, 0.14, 0.09, 0.045][clampi(skill_level, 0, 3)])
 				_reaction_timer = fast_react
@@ -2861,13 +2055,13 @@ func _update_bomb_flee_path() -> void:
 		if _bomb_flee_node < 0:
 			return
 	if _node_path.is_empty() or not _has_goal or _goal_node_idx != _bomb_flee_node:
-		_plan_to_node(nav, _bomb_flee_node, false, BotNavigator.PATH_FAST)
+		_plan_to_node(nav, _bomb_flee_node, BotNavigator.PATH_FAST)
 
 
 # --- TEAM ECONOMY: freezetime weapon sharing — a rich survivor gifts its primary to a broke teammate! ---
 
 func _maybe_share_loadout() -> void:
-	if is_vip or not is_alive or not RoundManager.can_buy_now():
+	if not is_alive or not RoundManager.can_buy_now():
 		return
 	if RoundManager.state != RoundManager.State.FREEZE:
 		return
@@ -2881,7 +2075,7 @@ func _maybe_share_loadout() -> void:
 	# Only share when an equal-or-better rebuy PLUS full equipment is still affordable afterwards!
 	var own_price := int(spec.get("price", 0))
 	var equip_reserve: int = 1000  # kevlar + helmet
-	if team == "CT" and RoundManager.map_mode == "de" and not has_defuser:
+	if team == "CT" and not has_defuser:
 		equip_reserve += 200
 	equip_reserve += 500  # ammo top-up / grenade buffer
 	if money < own_price + equip_reserve:
@@ -2897,7 +2091,7 @@ func _maybe_share_loadout() -> void:
 		if String(a.get("team")) != team:
 			continue
 		var rec := a as CSActor
-		if rec == null or not is_instance_valid(rec) or rec.is_vip:
+		if rec == null or not is_instance_valid(rec):
 			continue
 		if not String(rec.weapon_ctrl.slots.get(1, "")).is_empty():
 			continue
@@ -2954,26 +2148,13 @@ func apply_goldsrc_movement(wish_dir_world: Vector3, want_jump: bool, want_crouc
 			_experimental_retreat_time = 1.1
 			_experimental_stall_time = 0
 			_node_path = PackedInt32Array()
-			_clear_hostage_direct()
-			_hostage_repath = 0
 			_has_goal = false
 			super.apply_goldsrc_movement(_experimental_retreat_dir, false, true, false, delta)
 			return
 	else:
 		_experimental_stall_time = 0
 		_experimental_retreat_time = 0
-	# Preserve the existing CT hostage mission controller end-to-end. Its exact
-	# approach steering is not interchangeable with free corridor negotiation.
-	if team == "CT" and RoundManager.map_mode == "cs":
-		traffic.reset()
-		super.apply_goldsrc_movement(wish_dir_world, want_jump, want_crouch, want_walk, delta)
-		return
 	var negotiated := traffic.steer(self, wish_dir_world, RoundManager.actors, delta)
-	# Authored hostage/VIP approaches may negotiate a wait, never a lateral or
-	# reverse detour off their precise staircase, doorway or extraction route.
-	var precision_route: bool = is_vip or is_instance_valid(_hostage_target) or _is_leading_hostage() or _hostage_direct_active or _vip_escort_direct_active
-	if precision_route and traffic.mode in ["sidestep", "yield"]:
-		negotiated = Vector3.ZERO
 	if traffic.mode in ["wait", "yield", "follow", "sidestep"]:
 		want_jump = false
 		_stuck_timer = 0.0

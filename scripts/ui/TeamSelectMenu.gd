@@ -251,7 +251,7 @@ func _choose_team(tm: String) -> void:
 		return
 	var chosen: Dictionary = classes[_rng.randi_range(0, classes.size() - 1)]
 	var cid := String(chosen.get("id", ""))
-	if cid.is_empty() or cid == "vip":
+	if cid.is_empty():
 		return
 	_committing = true
 	for button in _buttons.values():
