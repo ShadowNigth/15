@@ -110,6 +110,12 @@ Pasada de limpieza centrada en quitar peso muerto **sin cambiar ninguna partida*
 - Puerta de aceptación: `python3 tools/pak.py verify --deep` reconstruye los
   5 230 archivos byte a byte y `python3 tools/verify_godot_project.py` pasa con
   **cero errores** (60 scripts, 43 armas, 627 rutas de audio, 15 mapas, 374 GLB).
+- **Validado con el motor real**: el repositorio ahora incluye Godot 4.3 en
+  [`tools/godot/`](tools/godot/README.md), así que las suites se ejecutan de verdad.
+  Nueve suites pasan completas (incluidas `TacticalAIRegressionTest`,
+  `NativeAudioTest` con 5 427 comprobaciones y `HitboxAccuracyTest` con 3 871);
+  los fallos restantes son de materiales en modo `--headless` o desajustes
+  previos a la limpieza. Detalle: [docs/ENGINE_VALIDATION.md](docs/ENGINE_VALIDATION.md).
 
 ---
 
@@ -187,12 +193,15 @@ Para volver a ejecutar la extracción desde un clon local de `cs15_retail` o val
 python3 tools/extract_cs15.py --src /ruta/a/counterstrike-betas/cstrike --out .
 python3 tools/verify_godot_project.py
 
+# El motor Godot 4.3 va incluido en el repositorio (tools/godot/):
+tools/godot/godot --headless --path . --import
+
 # Después de la primera importación, pruebas reales de recursos y mecánicas:
-godot --headless --path . res://tests/ArchiWeaponRuntimeTest.tscn
-godot --headless --path . --fixed-fps 60 res://tests/ArchiGameWorldSmokeTest.tscn
-godot --headless --path . --fixed-fps 60 res://tests/IncendiaryProceduralTest.tscn
-godot --headless --path . --fixed-fps 60 res://tests/MapSurfaceWaterTest.tscn
-godot --headless --path . --fixed-fps 60 res://tests/TacticalAIRegressionTest.tscn
+tools/godot/godot --headless --path . res://tests/ArchiWeaponRuntimeTest.tscn
+tools/godot/godot --headless --path . --fixed-fps 60 res://tests/ArchiGameWorldSmokeTest.tscn
+tools/godot/godot --headless --path . --fixed-fps 60 res://tests/IncendiaryProceduralTest.tscn
+tools/godot/godot --headless --path . --fixed-fps 60 res://tests/MapSurfaceWaterTest.tscn
+tools/godot/godot --headless --path . --fixed-fps 60 res://tests/TacticalAIRegressionTest.tscn
 ```
 
 ## Cuchillos y proyecto para Godot

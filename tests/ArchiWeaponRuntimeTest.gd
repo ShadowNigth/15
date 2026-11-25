@@ -4,8 +4,10 @@ extends Node
 ##   godot --headless --path . res://tests/ArchiWeaponRuntimeTest.tscn
 
 const EXPECTED_WEAPONS := 43
-const EXPECTED_ARCHI_WAVS := 299
-const EXPECTED_CS2_WAVS := 130
+# Only the classic recordings still routed by weapons.json are shipped: the
+# rest of the archi/CS2 layer was replaced by the native ScCsgoKnives audio.
+const EXPECTED_ARCHI_WAVS := 19
+const EXPECTED_CS2_WAVS := 3
 const EXPECTED_INSPECTIONS := {
 	"deagle": ["inspect", "inspect_2"],
 	"c4": ["inspect", "inspect_2", "inspect_3"],
@@ -109,7 +111,7 @@ func _run() -> void:
 	await _test_fire_spread()
 
 	if _failures.is_empty():
-		print("[ARCHI TEST] PASS: %d checks; 43 slots, 129 GLBs, 299 archi WAVs and 130 dedicated CS2 WAVs." % _checks)
+		print("[ARCHI TEST] PASS: %d checks; 43 slots, 129 GLBs, 19 retained archi WAVs and 3 retained CS2 WAVs." % _checks)
 	else:
 		print("[ARCHI TEST] FAIL: %d of %d checks failed." % [_failures.size(), _checks])
 	# Radio/weapon playback runs on the audio thread; stop it before the test's
@@ -180,7 +182,7 @@ func _test_assets() -> void:
 
 	var wavs: Array[String] = []
 	_collect_wavs("res://assets/sounds/weapons/archi", wavs)
-	_expect(wavs.size() == EXPECTED_ARCHI_WAVS, "all 299 archi WAVs must be installed (found %d)" % wavs.size())
+	_expect(wavs.size() == EXPECTED_ARCHI_WAVS, "all %d retained archi WAVs must be installed (found %d)" % [EXPECTED_ARCHI_WAVS, wavs.size()])
 	for path in wavs:
 		var stream := load(path) as AudioStream
 		_expect(stream != null, "Godot must decode " + path)
@@ -722,7 +724,7 @@ func _test_sport_gloves() -> void:
 func _test_cs2_audio() -> void:
 	var wavs: Array[String] = []
 	_collect_wavs("res://assets/sounds/weapons/cs2", wavs)
-	_expect(wavs.size() == EXPECTED_CS2_WAVS, "all 130 dedicated CS2 WAVs must be installed (found %d)" % wavs.size())
+	_expect(wavs.size() == EXPECTED_CS2_WAVS, "all %d retained CS2 WAVs must be installed (found %d)" % [EXPECTED_CS2_WAVS, wavs.size()])
 	for path in wavs:
 		var stream := load(path) as AudioStream
 		_expect(stream != null, "Godot must decode " + path)

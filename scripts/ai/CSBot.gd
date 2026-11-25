@@ -1730,13 +1730,9 @@ func _pick_open_escape_direction(blocked_dir: Vector3) -> Vector3:
 		var floor_q := PhysicsRayQueryParameters3D.create(floor_probe + Vector3(0.0, 0.65, 0.0), floor_probe - Vector3(0.0, 1.45, 0.0))
 		floor_q.collision_mask = 1
 		var floor_hit := space.intersect_ray(floor_q)
-		var floor_penalty := 0.0
-		if legacy_rescue:
-			if floor_hit.is_empty() or (floor_hit.get("normal", Vector3.UP) as Vector3).y < 0.45:
-				floor_penalty = 12.0
-		elif floor_hit.is_empty() or (floor_hit.get("normal", Vector3.UP) as Vector3).y < 0.65 or not _has_local_floor(cand, 1.15):
+		if floor_hit.is_empty() or (floor_hit.get("normal", Vector3.UP) as Vector3).y < 0.65 or not _has_local_floor(cand, 1.15):
 			continue
-		var score := free_d + away_bonus + randf_range(-0.12, 0.12) - floor_penalty
+		var score := free_d + away_bonus + randf_range(-0.12, 0.12)
 		if score > best_score:
 			best_score = score
 			best_dir = cand
