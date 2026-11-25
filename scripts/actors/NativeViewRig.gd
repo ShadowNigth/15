@@ -116,6 +116,70 @@ func _fit_finger_contacts(binding: Dictionary, posed: Dictionary, contacts: Dict
 			posed[c] = p2
 
 
+# Rigid anatomical frame: x points toward the index finger, y along the hand.
+# These frames are right-handed on both sides. Mapping one to the other is a
+# rotation, not a reflection: literally transferring the opposite glove puts
+# its original back on the other hand's palm (and vice versa).
+static func _hand_rest_frame(rig: Skeleton3D, side: String) -> Transform3D:
+	var wrist := rig.get_bone_global_rest(rig.find_bone("hand_" + side))
+	var middle := rig.get_bone_global_rest(rig.find_bone("finger_middle_0_" + side))
+	var index := rig.get_bone_global_rest(rig.find_bone("finger_index_0_" + side))
+	var pinky := rig.get_bone_global_rest(rig.find_bone("finger_pinky_0_" + side))
+	var y := (middle.origin - wrist.origin).normalized()
+	var x := index.origin - pinky.origin
+	x = (x - y * x.dot(y)).normalized()
+	return Transform3D(Basis(x, y, x.cross(y)), wrist.origin)
+
+
+# Swap the actual glove geometry and its bone influences, not merely textures.
+# Keep each source surface and material together. The corresponding opposite
+# hand drives the geometry through its original Skin bind indices.
+static func _swap_glove_surface(arrays: Array, skin: Skin, rig: Skeleton3D, source_side: String) -> bool:
+	var destination := "R" if source_side == "L" else "L"
+	for side in [source_side, destination]:
+		for bone in ["hand_", "finger_middle_0_", "finger_index_0_", "finger_pinky_0_"]:
+			if rig.find_bone(bone + side) < 0: return false
+	var binds: Dictionary = {}
+	for bind in skin.get_bind_count():
+		var name := String(skin.get_bind_name(bind))
+		if name.is_empty():
+			var bone := skin.get_bind_bone(bind)
+			if bone < 0 or bone >= rig.get_bone_count(): return false
+			name = String(rig.get_bone_name(bone))
+		binds[name] = bind
+	var vertices: PackedVector3Array = arrays[Mesh.ARRAY_VERTEX]
+	var normals: PackedVector3Array = arrays[Mesh.ARRAY_NORMAL]
+	var tangents: PackedFloat32Array = arrays[Mesh.ARRAY_TANGENT]
+	var bones: PackedInt32Array = arrays[Mesh.ARRAY_BONES]
+	var weights: PackedFloat32Array = arrays[Mesh.ARRAY_WEIGHTS]
+	if bones.size() != weights.size(): return false
+	for offset in bones.size():
+		if weights[offset] <= 0.00001: continue
+		var bind := bones[offset]
+		if bind < 0 or bind >= skin.get_bind_count(): return false
+		var name := String(skin.get_bind_name(bind))
+		if name.is_empty(): name = String(rig.get_bone_name(skin.get_bind_bone(bind)))
+		var marker := "_" + source_side
+		var position := name.find(marker)
+		if position < 0: return false
+		var other := name.substr(0, position) + "_" + destination + name.substr(position + 2)
+		if not binds.has(other): return false
+		bones[offset] = binds[other]
+	var transform := _hand_rest_frame(rig, destination) * _hand_rest_frame(rig, source_side).affine_inverse()
+	for i in vertices.size(): vertices[i] = transform * vertices[i]
+	for i in normals.size(): normals[i] = transform.basis * normals[i]
+	for i in range(0, tangents.size(), 4):
+		var direction := transform.basis * Vector3(tangents[i], tangents[i + 1], tangents[i + 2])
+		tangents[i] = direction.x
+		tangents[i + 1] = direction.y
+		tangents[i + 2] = direction.z
+	arrays[Mesh.ARRAY_VERTEX] = vertices
+	arrays[Mesh.ARRAY_NORMAL] = normals
+	arrays[Mesh.ARRAY_TANGENT] = tangents
+	arrays[Mesh.ARRAY_BONES] = bones
+	return true
+
+
 func begin_glove_preview() -> bool:
 	var found := false
 	for binding in bindings:
@@ -194,8 +258,13 @@ func _prepare(definition: Dictionary, model: String, gloves: bool, custom_glove:
 				if not driver_table.has(name):
 					push_error("Native view: unmapped weighted source bone " + name)
 					return false
-			# Arrays are copied unchanged: no projection, clipping, compression,
-			# new cuff geometry, remapped joint indices or reweighted vertices.
+			# Transfer each complete glove, including its material, to the opposite
+			# hand. Bare forearms and the agent's sleeves remain untouched.
+			if gloves and name_lower.begins_with("glove_"):
+				var side := "L" if name_lower.ends_with("_left") else ("R" if name_lower.ends_with("_right") else "")
+				if side.is_empty() or not _swap_glove_surface(arrays, mesh.skin, rig, side):
+					push_error("Native view: cannot exchange glove surface " + name_lower)
+					return false
 			filtered.add_surface_from_arrays(Mesh.PRIMITIVE_TRIANGLES, arrays)
 			var material := mat.duplicate() as BaseMaterial3D
 			material.albedo_color.a = 1.0

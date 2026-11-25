@@ -63,6 +63,16 @@ jobs:
             exit 1
           fi
 
+      - name: Literal glove hand exchange
+        timeout-minutes: 5
+        run: |
+          set -o pipefail
+          godot --headless --path . res://tests/GloveHandExchangeTest.tscn 2>&1 | tee /tmp/glove-hand-exchange.log
+          godot --headless --path . res://tests/GloveHandExchangeIntegrationTest.tscn 2>&1 | tee /tmp/glove-hand-integration.log
+          if grep -Eq 'SCRIPT ERROR:|Parse Error:|Compile Error:' /tmp/glove-hand-exchange.log /tmp/glove-hand-integration.log; then exit 1; fi
+          grep -q '0 failures' /tmp/glove-hand-exchange.log
+          grep -q '0 failures' /tmp/glove-hand-integration.log
+
       - name: Native gun and utility full skeletal regression
         timeout-minutes: 8
         run: |
