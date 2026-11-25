@@ -7,12 +7,13 @@ La carpeta `assets/` se reconstruye a partir de ellos y **cada archivo queda
 idéntico byte a byte al original** (se comprueba su SHA-256): no se recodifica
 ninguna textura, malla, animación ni sonido, así que no hay pérdida de calidad.
 
-| | Antes | Ahora |
+| | Entrega original | Tras la limpieza |
 | :--- | ---: | ---: |
-| Assets en el repositorio | 1,24 GB sueltos (6 739 archivos) | **580 MB** en 19 archivos `.pak` |
-| Modelos + mapas (`.glb`) | 776 MB | 193 MB |
-| Sonidos | 102 MB | 44 MB |
-| Texturas, sprites e interfaz | 345 MB | 342 MB (ya eran PNG/JPG/WebP) |
+| Assets en el repositorio | 580 MB en 19 `.pak` (6 238 archivos) | **540 MB** en 19 `.pak` (5 230 archivos) |
+| Assets sueltos restaurados | 1,13 GB | **1,01 GB** |
+| Modelos + mapas (`.glb`) | 193 MB | 192 MB |
+| Sonidos | 44 MB | 14 MB |
+| Texturas, sprites e interfaz | 342 MB | 334 MB |
 
 El desglose actualizado está siempre en [`packs/CONTENTS.md`](../packs/CONTENTS.md).
 
@@ -87,12 +88,31 @@ parte en trozos de ≤ 48 MB para no superar los límites de GitHub.
   modelos de revisión que el juego no carga desde la vuelta a los personajes
   clásicos (`docs/CLASSIC_CHARACTER_ROLLBACK.md`). Se retiraron también sus
   entradas en `data/native_world_manifest.json` y las comprobaciones asociadas.
+* **1 008 archivos / 91 MB** retirados en la pasada de aligerado, todos sin
+  ninguna ruta de carga en el juego (verificado con un escaneo de referencias
+  que resuelve también los patrones dinámicos: bancos de pisadas, caras del
+  cielo, iconos de munición, plantillas `printf`):
+  - `sounds/weapons/` (716 archivos, 71 MB): la capa clásica que quedó sustituida
+    por el audio nativo. Antes de borrarla, las rutas nativas se **hornearon**
+    dentro de `data/weapons.json` y `data/models_meta.json`, de modo que
+    `GameData` ya no fusiona un segundo catálogo en arranque.
+  - `sounds/native/` zh + gallinas (110 archivos) y `sounds/hostage/`,
+    `sounds/misc/`, parte de `sounds/ambience/`, `radio/`, `player/`, `plats/`.
+  - `models/players/{vip,hostage,scientist}.glb`, `models/props/` (todo menos
+    `shrapnel.glb`) y `models/native_view/phoenix_a.glb` (byte a byte idéntico a
+    `phoenix.glb`; ahora el rig `phoenix_a` apunta al mismo archivo).
+  - `textures/moto_smoke_out/` (texturas previas al intercambio de superficies,
+    ya sustituidas), 36 caras de cielo de mapas no enviados, 39 imágenes de
+    `ui/shell/` y 8 de `ui/vgui/` sin uso.
+* Código, datos y pruebas de los modos retirados: rehenes (`cs_*`), VIP
+  (`as_*`), gallinas ambientales y el doblaje chino. Los 15 mapas enviados ya
+  eran todos `de_*`, así que no se borró ningún mapa.
 
 ## Límites honestos
 
 * El editor de Godot necesita los archivos sueltos para importarlos, por eso
   hay que desempaquetar: con `assets/` restaurado la carpeta de trabajo ocupa
-  `packs/` (580 MB) + `assets/` (1,1 GB). Lo que se reduce es el repositorio,
+  `packs/` (540 MB) + `assets/` (1,01 GB). Lo que se reduce es el repositorio,
   la descarga y cada commit.
 * El 60 % de lo que queda son texturas ya comprimidas. Bajar más exigiría
   compresión **con pérdida** o menor resolución (p. ej. los mapas 2K de

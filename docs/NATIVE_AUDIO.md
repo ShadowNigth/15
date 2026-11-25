@@ -2,15 +2,20 @@
 
 ## Inventory and provenance
 
-All **649 audio files** from `zh667/ScCsgoKnives`, pinned to
+All **539 shipped audio files** from `zh667/ScCsgoKnives`, pinned to
 `1eb8067fd0b7214df5bccf3ac3807fbaa3aee70d`, are included byte-for-byte in
 `assets/sounds/native/`, preserving module, language and team directories:
 
-- ScCsgoKnives: 436 (weapons, utilities, knife effects, movement, hits, casings,
-  chicken sounds and kill confirmation).
-- ScCsgoVoice: 204 (17 commands × three takes × CT/T × English/Chinese).
+- ScCsgoKnives: 428 (weapons, utilities, knife effects, movement, hits, casings
+  and kill confirmation).
+- ScCsgoVoice: 102 (17 commands × three takes × CT/T, English only).
 - ScCsgoTactical: seven shield impacts.
 - ScCsgoDeathmatch: respawn and match-end effects.
+
+The Chinese dub and the chicken recordings were dropped from the delivery: no
+game action routes to them. Removing them also removed the runtime overlay —
+`data/weapons.json` and `data/models_meta.json` now carry the native routes
+directly and `data/native_audio.json` only holds gains, cues and voices.
 
 `data/native_audio_manifest.json` records every original path, Git blob hash,
 SHA-256 and byte count. Files retain their original OGG/WAV encoding; there is
@@ -60,18 +65,15 @@ bot-hearing events/radii and teams. First-person foley is owned by the current
 player action: switching/restarting clips, rebuilding the viewmodel or dying
 cancels old playback instead of leaving a previous inspection/reload audible.
 
-English/Chinese voice takes are selected by both speaker team and command.
-Configuration → **Radio voices** switches language. Unmatched classic radio
-messages and unrelated map ambience/footsteps remain unchanged.
+English voice takes are selected by speaker team and command. Unmatched classic
+radio messages and unrelated map ambience/footsteps remain unchanged.
 
 ## Audition and unrepresented mechanics
 
-The Arsenal has an audio selector with **all 649 recordings**, plus Listen/Stop.
-This includes both voice languages and files for mechanics not present in this
-classic game: chicken voices, shield hits and the deathmatch match-end jingle.
-Importing these sounds does not invent chicken actors, shields or a deathmatch
-mode, nor play them on unrelated impacts. They are available for editing and
-individual audition. The old audio tree remains for precise fallback coverage;
+The Arsenal has an audio selector with **all 539 recordings**, plus Listen/Stop.
+Shield impacts and the deathmatch match-end jingle are kept for audition even
+though this classic game has no shield or deathmatch mode; they are never played
+on unrelated impacts. The old audio tree remains for precise fallback coverage;
 it is not an additional simultaneous firing layer.
 
 ## Rebuild and validation
@@ -92,9 +94,9 @@ verification. The builder uses the small upstream timing table cached by the
 downloader, not a second animation conversion. The static test checks the whole
 inventory, hashes, native source-event times and all referenced paths. The
 Godot test exercises decoding, nonzero durations, every configured cue, distinct
-weapon firing routes, language/team selection, first-person cancellation and
+weapon firing routes, team selection, first-person cancellation and
 AI perception emission. The normal native gun/cosmetic/world regressions remain
-in CI. All 649 files were also fully decoded locally and checked for non-silent
+in CI. All 539 files were also fully decoded locally and checked for non-silent
 sample data; original source formats were retained.
 
 To regenerate decoded levels, install NumPy/SoundFile and run

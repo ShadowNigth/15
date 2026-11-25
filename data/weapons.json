@@ -33,8 +33,7 @@
       "p_model": "p_knife",
       "vgui": "640_knife",
       "fire_sounds": [
-        "weapons/cs2/knife/knife_slash1.wav",
-        "weapons/cs2/knife/knife_slash2.wav"
+        "native/sccsgoknives/knife_slash.ogg"
       ],
       "hit_sounds": [
         "weapons/cs2/knife/knife_hit1.wav",
@@ -42,7 +41,7 @@
       ],
       "wall_sound": "weapons/knife_hitwall1.wav",
       "stab_sound": "weapons/cs2/knife/knife_stab.wav",
-      "deploy_sound": "weapons/archi/cs2_hegren/grenade_throw.wav",
+      "deploy_sound": "native/sccsgoknives/knife_deploy.ogg",
       "max_speed": 260.0,
       "zoomed_speed": 260.0,
       "description": "",
@@ -171,17 +170,17 @@
       "p_model": "p_usp",
       "vgui": "640_usp",
       "fire_sounds": [
-        "weapons/cs2/usp/usp_unsilenced_01.wav",
-        "weapons/cs2/usp/usp_unsilenced_02.wav",
-        "weapons/cs2/usp/usp_unsilenced_03.wav"
+        "native/sccsgoknives/usp_silencer_fire_1.ogg",
+        "native/sccsgoknives/usp_silencer_fire_2.ogg",
+        "native/sccsgoknives/usp_silencer_fire_3.ogg"
       ],
       "silenced_sounds": [
-        "weapons/cs2/usp/usp_01.wav",
-        "weapons/cs2/usp/usp_02.wav",
-        "weapons/cs2/usp/usp_03.wav"
+        "native/sccsgoknives/usp_silencer_fire_silenced_1.ogg",
+        "native/sccsgoknives/usp_silencer_fire_silenced_2.ogg",
+        "native/sccsgoknives/usp_silencer_fire_silenced_3.ogg"
       ],
-      "reload_sound": "weapons/archi/cs2_p2000/clipout.wav",
-      "deploy_sound": "weapons/archi/cs2_p2000/draw.wav",
+      "reload_sound": "native/sccsgoknives/usp_silencer_clipout.ogg",
+      "deploy_sound": "native/sccsgoknives/usp_silencer_draw.ogg",
       "max_speed": 250.0,
       "zoomed_speed": 250.0,
       "description": "Price\t\t\t: $500\nCountry of Origin\t: Germany\nCalibre\t\t: .45 ACP\nClip Capacity\t: 12 rounds\nRate of Fire\t: N/A\nWeight(EMPTY)\t: 1 kg.\nProjectile Weight\t: 15.2 grams\nMuzzle Velocity\t: 886 feet/second\nMuzzle Energy\t: 553 joules",
@@ -312,12 +311,11 @@
       "p_model": "p_glock18",
       "vgui": "640_glock18",
       "fire_sounds": [
-        "weapons/cs2/glock18/glock_01.wav",
-        "weapons/cs2/glock18/glock_02.wav"
+        "native/sccsgoknives/glock18_fire_1.ogg"
       ],
-      "burst_sound": "weapons/cs2/glock18/glock_02.wav",
-      "reload_sound": "weapons/archi/cs2_glock18/clipout.wav",
-      "deploy_sound": "weapons/archi/cs2_glock18/draw.wav",
+      "burst_sound": "native/sccsgoknives/glock18_fire_1.ogg",
+      "reload_sound": "native/sccsgoknives/glock18_clipout.ogg",
+      "deploy_sound": "native/sccsgoknives/glock18_draw.ogg",
       "max_speed": 250.0,
       "zoomed_speed": 250.0,
       "description": "Price\t\t\t: $400\nCountry of Origin\t: Austria\nCalibre\t\t: 9mm Parabellum\nClip Capacity\t: 20 rounds\nRate of Fire\t: N/A\nWeight(LOADED)\t: 0.9 kg.\nProjectile Weight\t: 8 grams\nMuzzle Velocity\t: 1132 feet/second\nMuzzle Energy\t: 475 joules",
@@ -445,11 +443,11 @@
       "p_model": "p_deagle",
       "vgui": "640_deagle",
       "fire_sounds": [
-        "weapons/cs2/deagle/deagle_01.wav",
-        "weapons/cs2/deagle/deagle_02.wav"
+        "native/sccsgoknives/deagle_fire_1.ogg",
+        "native/sccsgoknives/deagle_fire_2.ogg"
       ],
-      "reload_sound": "weapons/archi/cs2_deagle/clipout.wav",
-      "deploy_sound": "weapons/archi/cs2_deagle/draw.wav",
+      "reload_sound": "native/sccsgoknives/deagle_clipout.ogg",
+      "deploy_sound": "native/sccsgoknives/deagle_draw.ogg",
       "max_speed": 250.0,
       "zoomed_speed": 250.0,
       "description": "Price\t\t\t: $650\nCountry of Origin\t: Israel\nCalibre\t\t: .50 Action Express\nClip Capacity(CS)\t: 7\nRate of Fire\t: N/A\nWeight(EMPTY)\t: 1.8 kg\nProjectile Weight\t: 19.4 grams\nMuzzle Velocity\t: 1380 feet/second\nMuzzle Energy\t: 1650 joules",
@@ -577,10 +575,10 @@
       "p_model": "p_p228",
       "vgui": "640_p228",
       "fire_sounds": [
-        "weapons/cs2/p250/p250_01.wav"
+        "native/sccsgoknives/p250_fire_1.ogg"
       ],
-      "reload_sound": "weapons/archi/cs2_p250/clipout.wav",
-      "deploy_sound": "weapons/archi/cs2_p250/draw.wav",
+      "reload_sound": "native/sccsgoknives/p250_clipout.ogg",
+      "deploy_sound": "native/sccsgoknives/p250_draw.ogg",
       "max_speed": 250.0,
       "zoomed_speed": 250.0,
       "description": "Price\t\t\t: $600\nCountry of Origin\t: Switzerland/Germany\nCalibre\t\t: .357 SIG\nClip Capacity(CS)\t: 13 rounds\nRate of Fire\t: N/A\nWeight(EMPTY)\t: 1.03 kg.\nProjectile Weight\t: 8.1 grams\nMuzzle Velocity\t: 1400 feet/second\nMuzzle Energy\t: 600 joules",
@@ -708,13 +706,13 @@
       "p_model": "p_elite",
       "vgui": "640_elite",
       "fire_sounds": [
-        "weapons/cs2/elite/elites_01.wav",
-        "weapons/cs2/elite/elites_02.wav",
-        "weapons/cs2/elite/elites_03.wav",
-        "weapons/cs2/elite/elites_04.wav"
+        "native/sccsgoknives/elite_fire_1.ogg",
+        "native/sccsgoknives/elite_fire_2.ogg",
+        "native/sccsgoknives/elite_fire_3.ogg",
+        "native/sccsgoknives/elite_fire_4.ogg"
       ],
-      "reload_sound": "weapons/archi/cs2_elites/clipout.wav",
-      "deploy_sound": "weapons/archi/cs2_elites/draw.wav",
+      "reload_sound": "native/sccsgoknives/elite_clipout.ogg",
+      "deploy_sound": "native/sccsgoknives/elite_draw.ogg",
       "max_speed": 250.0,
       "zoomed_speed": 250.0,
       "description": "Price\t\t\t: $1000\nCountry of Origin\t: Italy\nCalibre\t\t: 9mm Parabellum\nClip Capacity\t: 15 rounds\nRate of Fire\t: N/A\nWeight(LOADED)\t: 1.15 kg.\nProjectile Weight\t: 8 grams\nMuzzle Velocity\t: 1280 feet/second\nMuzzle Energy\t: 606 joules",
@@ -842,10 +840,10 @@
       "p_model": "p_fiveseven",
       "vgui": "640_fiveseven",
       "fire_sounds": [
-        "weapons/cs2/fiveseven/fiveseven_01.wav"
+        "native/sccsgoknives/fiveseven_fire_1.ogg"
       ],
-      "reload_sound": "weapons/archi/cs2_fiveseven/clipout.wav",
-      "deploy_sound": "weapons/archi/cs2_fiveseven/draw.wav",
+      "reload_sound": "native/sccsgoknives/fiveseven_clipout.ogg",
+      "deploy_sound": "native/sccsgoknives/fiveseven_draw.ogg",
       "max_speed": 250.0,
       "zoomed_speed": 250.0,
       "description": "Price\t\t\t: $750\nCountry of Origin\t: Belgium\nCalibre\t\t: 5.7 x 28mm\nClip Capacity\t: 20 rounds\nRate of Fire\t: N/A\nWeight(LOADED)\t: 0.618 kg.\nProjectile Weight\t: 2 grams\nMuzzle Velocity\t: 2345 feet/second\nMuzzle Energy\t: 465 joules",
@@ -975,10 +973,10 @@
       "p_model": "p_m3",
       "vgui": "640_m3",
       "fire_sounds": [
-        "weapons/cs2/nova/nova-1.wav"
+        "native/sccsgoknives/nova_fire_1.ogg"
       ],
-      "reload_sound": "",
-      "deploy_sound": "weapons/archi/cs2_nova/draw.wav",
+      "reload_sound": "native/sccsgoknives/nova_insertshell.ogg",
+      "deploy_sound": "native/sccsgoknives/nova_draw.ogg",
       "max_speed": 230.0,
       "zoomed_speed": 230.0,
       "description": "Price\t\t\t: $1700\nCountry of Origin\t: Italy\nCalibre\t\t: 12 gauge\nClip Capacity(CS)\t: 8 rounds\nRate of Fire\t: N/A\nWeight(EMPTY)\t: 3.5 kg\nProjectile Weight\t: 3.8 grams/pellet\nMuzzle Velocity\t: 1250 feet/second\nMuzzle Energy\t: 2429 joules",
@@ -1074,7 +1072,7 @@
           ]
         }
       },
-      "insert_sound": "weapons/archi/cs2_nova/insertshell_01.wav",
+      "insert_sound": "native/sccsgoknives/nova_insertshell.ogg",
       "pump_sound": "weapons/archi/cs2_nova/pump.wav",
       "dryfire_sound": "weapons/archi/cs2_revolver/hammer.wav",
       "world_scale": 1.0
@@ -1110,10 +1108,10 @@
       "p_model": "p_xm1014",
       "vgui": "640_xm1014",
       "fire_sounds": [
-        "weapons/cs2/xm1014/xm1014-1.wav"
+        "native/sccsgoknives/xm1014_fire_1.ogg"
       ],
-      "reload_sound": "",
-      "deploy_sound": "weapons/archi/cs2_xm1014/draw.wav",
+      "reload_sound": "native/sccsgoknives/xm1014_insertshell.ogg",
+      "deploy_sound": "native/sccsgoknives/xm1014_draw.ogg",
       "max_speed": 240.0,
       "zoomed_speed": 240.0,
       "description": "Price\t\t\t: $3000\nCountry of Origin\t: Italy\nCalibre\t\t: 12 gauge\nClip Capacity\t: 7 rounds\nRate of Fire(CS)\t: 400 rpm\nWeight(EMPTY)\t: 4 kg.\nProjectile Weight\t: 3.8 grams/pellet\nMuzzle Velocity\t: 1250 feet/second\nMuzzle Energy\t: 2429 joules",
@@ -1245,7 +1243,7 @@
           ]
         }
       },
-      "insert_sound": "weapons/archi/cs2_xm1014/insertshell_01.wav",
+      "insert_sound": "native/sccsgoknives/xm1014_insertshell.ogg",
       "dryfire_sound": "weapons/archi/cs2_revolver/hammer.wav",
       "world_scale": 1.0
     },
@@ -1278,10 +1276,10 @@
       "p_model": "p_mp5",
       "vgui": "640_mp5",
       "fire_sounds": [
-        "weapons/cs2/mp5/mp5_01.wav"
+        "native/sccsgoknives/mp5sd_fire_1.ogg"
       ],
-      "reload_sound": "weapons/archi/cs2_mp5sd/slideback.wav",
-      "deploy_sound": "weapons/archi/cs2_mp5sd/draw.wav",
+      "reload_sound": "native/sccsgoknives/mp5sd_clipout.ogg",
+      "deploy_sound": "native/sccsgoknives/mp5sd_draw.ogg",
       "class_key": "mp5",
       "max_speed": 250.0,
       "zoomed_speed": 250.0,
@@ -1379,7 +1377,10 @@
         }
       },
       "dryfire_sound": "weapons/archi/cs2_revolver/hammer.wav",
-      "world_scale": 1.0
+      "world_scale": 1.0,
+      "silenced_sounds": [
+        "native/sccsgoknives/mp5sd_fire_silenced_1.ogg"
+      ]
     },
     "tmp": {
       "id": "tmp",
@@ -1411,13 +1412,13 @@
       "p_model": "p_tmp",
       "vgui": "640_tmp",
       "fire_sounds": [
-        "weapons/cs2/mp9/mp9_01.wav",
-        "weapons/cs2/mp9/mp9_02.wav",
-        "weapons/cs2/mp9/mp9_03.wav",
-        "weapons/cs2/mp9/mp9_04.wav"
+        "native/sccsgoknives/mp9_fire_1.ogg",
+        "native/sccsgoknives/mp9_fire_2.ogg",
+        "native/sccsgoknives/mp9_fire_3.ogg",
+        "native/sccsgoknives/mp9_fire_4.ogg"
       ],
-      "reload_sound": "weapons/archi/cs2_mp9/clipout.wav",
-      "deploy_sound": "weapons/archi/cs2_mp9/draw.wav",
+      "reload_sound": "native/sccsgoknives/mp9_clipout.ogg",
+      "deploy_sound": "native/sccsgoknives/mp9_draw.ogg",
       "max_speed": 250.0,
       "zoomed_speed": 250.0,
       "description": "Price\t\t\t: $1250\nCountry of Origin\t: Austria\nCalibre\t\t: 9mm Parabellum\nClip Capacity\t: 30 rounds\nRate of Fire(CS)\t: 857 rpm\nWeight(EMPTY)\t: 1.3 kg.\nProjectile Weight\t: 8 grams\nMuzzle Velocity\t: 1280 feet/second\nMuzzle Energy\t: 606 joules",
@@ -1545,11 +1546,11 @@
       "p_model": "p_p90",
       "vgui": "640_p90",
       "fire_sounds": [
-        "weapons/cs2/p90/p90_01.wav",
-        "weapons/cs2/p90/p90_02.wav"
+        "native/sccsgoknives/p90_fire_1.ogg",
+        "native/sccsgoknives/p90_fire_2.ogg"
       ],
-      "reload_sound": "weapons/archi/cs2_p90/cliprelease.wav",
-      "deploy_sound": "weapons/archi/cs2_p90/draw.wav",
+      "reload_sound": "native/sccsgoknives/p90_clipout.ogg",
+      "deploy_sound": "native/sccsgoknives/p90_draw.ogg",
       "max_speed": 245.0,
       "zoomed_speed": 245.0,
       "description": "Price\t\t\t: $2350\nCountry of Origin\t: Belgium\nCalibre\t\t: .338 Lapua Magnum\nClip Capacity\t: 50 rounds\nRate of Fire\t: 900\nWeight(LOADED)\t: 3 kg.\nProjectile Weight\t: 2 grams\nMuzzle Velocity\t: 2345 feet/second\nMuzzle Energy\t: 465 joules",
@@ -1677,11 +1678,11 @@
       "p_model": "p_mac10",
       "vgui": "640_mac10",
       "fire_sounds": [
-        "weapons/cs2/mac10/mac10_01.wav",
-        "weapons/cs2/mac10/mac10_02.wav"
+        "native/sccsgoknives/mac10_fire_1.ogg",
+        "native/sccsgoknives/mac10_fire_2.ogg"
       ],
-      "reload_sound": "weapons/archi/cs2_mac10/clipout.wav",
-      "deploy_sound": "weapons/archi/cs2_mac10/draw.wav",
+      "reload_sound": "native/sccsgoknives/mac10_clipout.ogg",
+      "deploy_sound": "native/sccsgoknives/mac10_draw.ogg",
       "max_speed": 250.0,
       "zoomed_speed": 250.0,
       "description": "Price\t\t\t: $1400\nCountry of Origin\t: United States of America\nCalibre\t\t: .45 ACP\nClip Capacity\t: 30 rounds\nRate of Fire(CS)\t: 857 rpm\nWeight(EMPTY)\t: 3.82 kg.\nProjectile Weight\t: 15.2 grams\nMuzzle Velocity\t: 919 feet/second\nMuzzle Energy\t: 584 joules",
@@ -1809,10 +1810,10 @@
       "p_model": "p_ump45",
       "vgui": "640_ump45",
       "fire_sounds": [
-        "weapons/cs2/ump45/ump45_02.wav"
+        "native/sccsgoknives/ump45_fire_1.ogg"
       ],
-      "reload_sound": "weapons/archi/cs2_ump45/clipout.wav",
-      "deploy_sound": "weapons/archi/cs2_ump45/draw.wav",
+      "reload_sound": "native/sccsgoknives/ump45_clipout.ogg",
+      "deploy_sound": "native/sccsgoknives/ump45_draw.ogg",
       "max_speed": 250.0,
       "zoomed_speed": 250.0,
       "description": "Price\t\t\t: $1700\nCountry of Origin\t: Germany\nCalibre\t\t: .45 ACP\nClip Capacity(CS)\t: 25 rounds\nRate of Fire\t: 600 rpm\nWeight(EMPTY)\t: 2.27 kg\nProjectile Weight\t: 15.2 grams\nMuzzle Velocity\t: 1005 feet/second\nMuzzle Energy\t: 625 joules",
@@ -1940,13 +1941,12 @@
       "p_model": "p_ak47",
       "vgui": "640_ak47",
       "fire_sounds": [
-        "weapons/cs2/ak47/ak47_01.wav",
-        "weapons/cs2/ak47/ak47_02.wav",
-        "weapons/cs2/ak47/ak47_03.wav",
-        "weapons/cs2/ak47/ak47_04.wav"
+        "native/sccsgoknives/ak47_fire_1.ogg",
+        "native/sccsgoknives/ak47_fire_2.ogg",
+        "native/sccsgoknives/ak47_fire_3.ogg"
       ],
-      "reload_sound": "weapons/archi/cs2_ak47/clipout.wav",
-      "deploy_sound": "weapons/archi/cs2_ak47/draw.wav",
+      "reload_sound": "native/sccsgoknives/ak47_clipout.ogg",
+      "deploy_sound": "native/sccsgoknives/ak47_draw.ogg",
       "max_speed": 221.0,
       "zoomed_speed": 221.0,
       "description": "Price\t\t\t: $2500\nCountry of Origin\t: Russia\nCalibre\t\t: 7.62mm NATO\nClip Capacity\t: 30 rounds\nRate of Fire\t: 600 rpm\nWeight(LOADED)\t: 4.79 kg.\nProjectile Weight\t: 7.9 grams\nMuzzle Velocity\t: 2329 feet/second\nMuzzle Energy\t: 1992 joules",
@@ -2078,13 +2078,13 @@
       "p_model": "p_sg552",
       "vgui": "640_sg552",
       "fire_sounds": [
-        "weapons/cs2/sg556/sg556_01.wav",
-        "weapons/cs2/sg556/sg556_02.wav",
-        "weapons/cs2/sg556/sg556_03.wav",
-        "weapons/cs2/sg556/sg556_04.wav"
+        "native/sccsgoknives/sg556_fire_1.ogg",
+        "native/sccsgoknives/sg556_fire_2.ogg",
+        "native/sccsgoknives/sg556_fire_3.ogg",
+        "native/sccsgoknives/sg556_fire_4.ogg"
       ],
-      "reload_sound": "weapons/archi/cs2_sg553/clipout.wav",
-      "deploy_sound": "weapons/archi/cs2_sg553/draw.wav",
+      "reload_sound": "native/sccsgoknives/sg556_clipout.ogg",
+      "deploy_sound": "native/sccsgoknives/sg556_draw.ogg",
       "max_speed": 235.0,
       "zoomed_speed": 200.0,
       "description": "Price\t\t\t: $3500\nCountry of Origin\t: Switzerland\nCalibre\t\t: 5.56mm NATO\nClip Capacity\t: 30 rounds\nRate of Fire(CS)\t: 727 rpm\nWeight(EMPTY)\t: 3.1 kg.\nProjectile Weight\t: 4 grams\nMuzzle Velocity\t: 2900 feet/second\nMuzzle Energy\t: 1570 joules",
@@ -2181,7 +2181,7 @@
         }
       },
       "dryfire_sound": "weapons/archi/cs2_revolver/hammer.wav",
-      "zoom_sound": "weapons/archi/cs2_sg553/zoom_in.wav",
+      "zoom_sound": "native/sccsgoknives/sg556_zoom.ogg",
       "world_scale": 1.0
     },
     "m4a1": {
@@ -2215,16 +2215,16 @@
       "p_model": "p_m4a1",
       "vgui": "640_m4a1",
       "fire_sounds": [
-        "weapons/cs2/m4a1/m4a1_us_01.wav",
-        "weapons/cs2/m4a1/m4a1_us_02.wav",
-        "weapons/cs2/m4a1/m4a1_us_03.wav",
-        "weapons/cs2/m4a1/m4a1_us_04.wav"
+        "native/sccsgoknives/m4a1s_fire_1.ogg",
+        "native/sccsgoknives/m4a1s_fire_2.ogg",
+        "native/sccsgoknives/m4a1s_fire_3.ogg",
+        "native/sccsgoknives/m4a1s_fire_4.ogg"
       ],
       "silenced_sounds": [
-        "weapons/cs2/m4a1/m4a1_silencer_01.wav"
+        "native/sccsgoknives/m4a1s_fire_silenced_1.ogg"
       ],
-      "reload_sound": "weapons/archi/cs2_m4a1s/clipout.wav",
-      "deploy_sound": "weapons/archi/cs2_m4a1s/draw.wav",
+      "reload_sound": "native/sccsgoknives/m4a1s_clipout.ogg",
+      "deploy_sound": "native/sccsgoknives/m4a1s_draw.ogg",
       "max_speed": 230.0,
       "zoomed_speed": 230.0,
       "description": "Price\t\t\t: $3100\nCountry of Origin\t: United States of America\nCalibre\t\t: 5.56mm NATO\nClip Capacity(CS)\t: 30 rounds\nRate of Fire(CS)\t: 685 rpm\nWeight(EMPTY)\t: 3.22 kg\nProjectile Weight\t: 4 grams\nMuzzle Velocity\t: 2900 feet/second\nMuzzle Energy\t: 1570 joules",
@@ -2321,8 +2321,8 @@
         }
       },
       "dryfire_sound": "weapons/archi/cs2_revolver/hammer.wav",
-      "silencer_on_sound": "weapons/archi/cs2_m4a1s/sil_on.wav",
-      "silencer_off_sound": "weapons/archi/cs2_m4a1s/sil_off.wav",
+      "silencer_on_sound": "native/sccsgoknives/m4a1s_silencer_on.ogg",
+      "silencer_off_sound": "native/sccsgoknives/m4a1s_silencer_off.ogg",
       "world_scale": 1.0
     },
     "aug": {
@@ -2358,13 +2358,13 @@
       "p_model": "p_aug",
       "vgui": "640_aug",
       "fire_sounds": [
-        "weapons/cs2/aug/aug_01.wav",
-        "weapons/cs2/aug/aug_02.wav",
-        "weapons/cs2/aug/aug_03.wav",
-        "weapons/cs2/aug/aug_04.wav"
+        "native/sccsgoknives/aug_fire_1.ogg",
+        "native/sccsgoknives/aug_fire_2.ogg",
+        "native/sccsgoknives/aug_fire_3.ogg",
+        "native/sccsgoknives/aug_fire_4.ogg"
       ],
-      "reload_sound": "weapons/archi/cs2_aug/clipout.wav",
-      "deploy_sound": "weapons/archi/cs2_aug/draw.wav",
+      "reload_sound": "native/sccsgoknives/aug_clipout.ogg",
+      "deploy_sound": "native/sccsgoknives/aug_draw.ogg",
       "max_speed": 240.0,
       "zoomed_speed": 240.0,
       "description": "Price\t\t\t: $3500\nCountry of Origin\t: Austria\nCalibre\t\t: 5.56mm NATO\nClip Capacity\t: 30 rounds\nRate of Fire(CS)\t: 727 rpm\nWeight(LOADED)\t: 4.09 kg.\nProjectile Weight\t: 4 grams\nMuzzle Velocity\t: 2900 feet/second\nMuzzle Energy\t: 1570 joules",
@@ -2461,7 +2461,7 @@
         }
       },
       "dryfire_sound": "weapons/archi/cs2_revolver/hammer.wav",
-      "zoom_sound": "weapons/archi/cs2_aug/zoom_in.wav",
+      "zoom_sound": "native/sccsgoknives/aug_zoom.ogg",
       "world_scale": 1.0
     },
     "scout": {
@@ -2499,10 +2499,10 @@
       "p_model": "p_scout",
       "vgui": "640_scout",
       "fire_sounds": [
-        "weapons/cs2/ssg08/ssg08_01.wav"
+        "native/sccsgoknives/ssg08_fire_1.ogg"
       ],
-      "reload_sound": "weapons/archi/cs2_ssg08/clipout.wav",
-      "deploy_sound": "weapons/archi/cs2_ssg08/draw.wav",
+      "reload_sound": "native/sccsgoknives/ssg08_clipout.ogg",
+      "deploy_sound": "native/sccsgoknives/ssg08_draw.ogg",
       "max_speed": 260.0,
       "zoomed_speed": 220.0,
       "description": "Price\t\t\t: $2750\nCountry of Origin\t: Austria\nCalibre\t\t: 7.62mm NATO\nClip Capacity\t: 10 rounds\nRate of Fire\t: N/A\nWeight(EMPTY)\t: 3.3 kg.\nProjectile Weight\t: 8 grams\nMuzzle Velocity\t: 2800 feet/second\nMuzzle Energy\t: 2200 joules",
@@ -2635,7 +2635,7 @@
         }
       },
       "dryfire_sound": "weapons/archi/cs2_revolver/hammer.wav",
-      "zoom_sound": "weapons/archi/cs2_ssg08/zoom.wav",
+      "zoom_sound": "native/sccsgoknives/ssg08_zoom.ogg",
       "world_scale": 1.0
     },
     "awp": {
@@ -2673,11 +2673,11 @@
       "p_model": "p_awp",
       "vgui": "640_awp",
       "fire_sounds": [
-        "weapons/cs2/awp/awp_01.wav",
-        "weapons/cs2/awp/awp_02.wav"
+        "native/sccsgoknives/awp_fire_1.ogg",
+        "native/sccsgoknives/awp_fire_2.ogg"
       ],
-      "reload_sound": "weapons/archi/cs2_awp/clipout.wav",
-      "deploy_sound": "weapons/archi/cs2_awp/draw.wav",
+      "reload_sound": "native/sccsgoknives/awp_clipout.ogg",
+      "deploy_sound": "native/sccsgoknives/awp_draw.ogg",
       "max_speed": 210.0,
       "zoomed_speed": 150.0,
       "description": "Price\t\t\t: $4750\nCountry of Origin\t: United Kingdom\nCalibre\t\t: .338 Lapua Magnum\nClip Capacity(CS)\t: 10 rounds\nRate of Fire\t: N/A\nWeight(EMPTY)\t: 6 kg.\nProjectile Weight\t: 16.2 grams\nMuzzle Velocity\t: 3000 feet/second\nMuzzle Energy\t: 7000 joules",
@@ -2810,7 +2810,7 @@
         }
       },
       "dryfire_sound": "weapons/archi/cs2_revolver/hammer.wav",
-      "zoom_sound": "weapons/archi/cs2_awp/zoom_in.wav",
+      "zoom_sound": "native/sccsgoknives/awp_zoom.ogg",
       "world_scale": 1.0
     },
     "g3sg1": {
@@ -2848,12 +2848,12 @@
       "p_model": "p_g3sg1",
       "vgui": "640_g3sg1",
       "fire_sounds": [
-        "weapons/cs2/g3sg1/g3sg1_01.wav",
-        "weapons/cs2/g3sg1/g3sg1_02.wav",
-        "weapons/cs2/g3sg1/g3sg1_03.wav"
+        "native/sccsgoknives/g3sg1_fire_1.ogg",
+        "native/sccsgoknives/g3sg1_fire_2.ogg",
+        "native/sccsgoknives/g3sg1_fire_3.ogg"
       ],
-      "reload_sound": "weapons/archi/cs2_g3sg1/clipout.wav",
-      "deploy_sound": "weapons/archi/cs2_g3sg1/draw.wav",
+      "reload_sound": "native/sccsgoknives/g3sg1_clipout.ogg",
+      "deploy_sound": "native/sccsgoknives/g3sg1_draw.ogg",
       "max_speed": 210.0,
       "zoomed_speed": 150.0,
       "description": "Price\t\t\t: $5000\nCountry of Origin\t: Germany\nCalibre\t\t: 7.62mm NATO\nClip Capacity(CS)\t: 20 rounds\nRate of Fire\t: N/A\nWeight(EMPTY)\t: 4.41 kg\nProjectile Weight\t: 8 grams\nMuzzle Velocity\t: 2800 feet/second\nMuzzle Energy\t: 2200 joules",
@@ -2986,7 +2986,7 @@
         }
       },
       "dryfire_sound": "weapons/archi/cs2_revolver/hammer.wav",
-      "zoom_sound": "weapons/archi/cs2_g3sg1/zoom_in.wav",
+      "zoom_sound": "native/sccsgoknives/g3sg1_zoom.ogg",
       "world_scale": 1.0
     },
     "sg550": {
@@ -3024,12 +3024,12 @@
       "p_model": "p_sg550",
       "vgui": "640_sg550",
       "fire_sounds": [
-        "weapons/cs2/scar20/scar20_01.wav",
-        "weapons/cs2/scar20/scar20_02.wav",
-        "weapons/cs2/scar20/scar20_03.wav"
+        "native/sccsgoknives/scar20_fire_1.ogg",
+        "native/sccsgoknives/scar20_fire_2.ogg",
+        "native/sccsgoknives/scar20_fire_3.ogg"
       ],
-      "reload_sound": "weapons/archi/cs2_scar20/clipout.wav",
-      "deploy_sound": "weapons/archi/cs2_scar20/draw.wav",
+      "reload_sound": "native/sccsgoknives/scar20_clipout.ogg",
+      "deploy_sound": "native/sccsgoknives/scar20_draw.ogg",
       "max_speed": 210.0,
       "zoomed_speed": 150.0,
       "description": "Price\t\t\t: $4200\nCountry of Origin\t: Switzerland\nCalibre\t\t: 5.56mm NATO\nClip Capacity\t: 30 rounds\nRate of Fire(CS)\t: N/A\nWeight(EMPTY)\t: 7.02 kg.\nProjectile Weight\t: 4 grams\nMuzzle Velocity\t: 3100 feet/second\nMuzzle Energy\t: 1650 joules",
@@ -3162,7 +3162,7 @@
         }
       },
       "dryfire_sound": "weapons/archi/cs2_revolver/hammer.wav",
-      "zoom_sound": "weapons/archi/cs2_scar20/zoom.wav",
+      "zoom_sound": "native/sccsgoknives/scar20_zoom.ogg",
       "world_scale": 1.0
     },
     "m249": {
@@ -3194,12 +3194,12 @@
       "p_model": "p_m249",
       "vgui": "640_m249",
       "fire_sounds": [
-        "weapons/cs2/m249/m249_01.wav",
-        "weapons/cs2/m249/m249_02.wav",
-        "weapons/cs2/m249/m249_03.wav"
+        "native/sccsgoknives/m249_fire_1.ogg",
+        "native/sccsgoknives/m249_fire_2.ogg",
+        "native/sccsgoknives/m249_fire_3.ogg"
       ],
-      "reload_sound": "weapons/archi/cs2_m249/coverup.wav",
-      "deploy_sound": "weapons/archi/cs2_m249/draw.wav",
+      "reload_sound": "native/sccsgoknives/m249_boxout.ogg",
+      "deploy_sound": "native/sccsgoknives/m249_draw.ogg",
       "max_speed": 220.0,
       "zoomed_speed": 220.0,
       "description": "Price\t\t\t: $5750\nCountry of Origin\t: Belgium\nCalibre\t\t: 5.56mm Nato\nClip Capacity(CS)\t: 100 rounds\nRate of Fire\t: 600 rpm\nWeight(EMPTY)\t: 6 kg.\nProjectile Weight\t: 4 grams\nMuzzle Velocity\t: 3000 feet/second\nMuzzle Energy\t: 1600 joules",
@@ -3325,8 +3325,7 @@
       "vgui": "640_flashbang",
       "fire_sounds": [],
       "explode_sounds": [
-        "weapons/archi/core/flashbang-1.wav",
-        "weapons/archi/core/flashbang-2.wav"
+        "native/sccsgoknives/grenade_flashbang_explode.wav"
       ],
       "bounce_sounds": [
         "weapons/archi/cs2_flashbang/hit1.wav"
@@ -3426,10 +3425,10 @@
           ]
         }
       },
-      "deploy_sound": "weapons/archi/cs2_flashbang/draw.wav",
-      "pinpull_sound": "weapons/archi/cs2_flashbang/pinpull_start.wav",
-      "throw_sound": "weapons/archi/cs2_hegren/grenade_throw.wav",
-      "bounce_sound": "weapons/archi/cs2_hegren/he_bounce-1.wav",
+      "deploy_sound": "native/sccsgoknives/grenade_flashbang_draw.wav",
+      "pinpull_sound": "native/sccsgoknives/grenade_flashbang_pin.wav",
+      "throw_sound": "native/sccsgoknives/grenade_flashbang_throw.wav",
+      "bounce_sound": "native/sccsgoknives/grenade_flashbang_bounce.wav",
       "world_scale": 0.9
     },
     "hegrenade": {
@@ -3459,8 +3458,7 @@
       "vgui": "640_hegrenade",
       "fire_sounds": [],
       "explode_sounds": [
-        "weapons/archi/core/hegrenade-1.wav",
-        "weapons/archi/core/hegrenade-2.wav"
+        "native/sccsgoknives/grenade_hegrenade_explode.wav"
       ],
       "bounce_sounds": [
         "weapons/archi/cs2_hegren/he_bounce-1.wav"
@@ -3560,10 +3558,10 @@
           ]
         }
       },
-      "deploy_sound": "weapons/archi/cs2_hegren/he_draw.wav",
-      "pinpull_sound": "weapons/archi/cs2_hegren/pinpull_start.wav",
-      "throw_sound": "weapons/archi/cs2_hegren/grenade_throw.wav",
-      "bounce_sound": "weapons/archi/cs2_hegren/he_bounce-1.wav",
+      "deploy_sound": "native/sccsgoknives/grenade_hegrenade_draw.wav",
+      "pinpull_sound": "native/sccsgoknives/grenade_hegrenade_pin.wav",
+      "throw_sound": "native/sccsgoknives/grenade_hegrenade_throw.wav",
+      "bounce_sound": "native/sccsgoknives/grenade_hegrenade_bounce.wav",
       "world_scale": 0.9
     },
     "smokegrenade": {
@@ -3693,10 +3691,10 @@
           ]
         }
       },
-      "deploy_sound": "weapons/archi/cs2_smokegren/s_draw.wav",
-      "pinpull_sound": "weapons/archi/cs2_smokegren/pinpull_start.wav",
-      "throw_sound": "weapons/archi/cs2_hegren/grenade_throw.wav",
-      "bounce_sound": "weapons/archi/cs2_hegren/he_bounce-1.wav",
+      "deploy_sound": "native/sccsgoknives/grenade_smokegrenade_draw.wav",
+      "pinpull_sound": "native/sccsgoknives/grenade_smokegrenade_pin.wav",
+      "throw_sound": "native/sccsgoknives/grenade_smokegrenade_throw.wav",
+      "bounce_sound": "native/sccsgoknives/grenade_smokegrenade_bounce.wav",
       "world_scale": 0.9
     },
     "c4": {
@@ -3730,11 +3728,11 @@
         "weapons/archi/core/hegrenade-1.wav"
       ],
       "beep_sounds": [
-        "weapons/archi/cs2_c4/key_press1.wav",
-        "weapons/archi/cs2_c4/key_press2.wav",
-        "weapons/archi/cs2_c4/key_press3.wav",
-        "weapons/archi/cs2_c4/key_press4.wav",
-        "weapons/archi/cs2_c4/key_press5.wav"
+        "native/sccsgoknives/c4_key_press1.ogg",
+        "native/sccsgoknives/c4_key_press2.ogg",
+        "native/sccsgoknives/c4_key_press3.ogg",
+        "native/sccsgoknives/c4_key_press4.ogg",
+        "native/sccsgoknives/c4_key_press5.ogg"
       ],
       "max_speed": 250.0,
       "zoomed_speed": 250.0,
@@ -3795,7 +3793,7 @@
           ]
         }
       },
-      "deploy_sound": "weapons/archi/cs2_c4/c4_draw.wav",
+      "deploy_sound": "native/sccsgoknives/c4_draw.ogg",
       "world_scale": 1.0
     },
     "p2000": {
@@ -3827,12 +3825,12 @@
       "p_model": "p_p2000",
       "vgui": "640_p2000",
       "fire_sounds": [
-        "weapons/cs2/hkp2000/hkp2000_01.wav",
-        "weapons/cs2/hkp2000/hkp2000_02.wav",
-        "weapons/cs2/hkp2000/hkp2000_03.wav"
+        "native/sccsgoknives/hkp2000_fire_1.ogg",
+        "native/sccsgoknives/hkp2000_fire_2.ogg",
+        "native/sccsgoknives/hkp2000_fire_3.ogg"
       ],
-      "reload_sound": "weapons/archi/cs2_p2000/clipout.wav",
-      "deploy_sound": "weapons/archi/cs2_p2000/draw.wav",
+      "reload_sound": "native/sccsgoknives/hkp2000_clipout.ogg",
+      "deploy_sound": "native/sccsgoknives/hkp2000_draw.ogg",
       "max_speed": 250.0,
       "zoomed_speed": 250.0,
       "description": "P2000 from the ShadowNigth/archi CS2GO weapon set.",
@@ -3960,12 +3958,12 @@
       "p_model": "p_cz75",
       "vgui": "640_cz75",
       "fire_sounds": [
-        "weapons/cs2/cz75a/cz75_01.wav",
-        "weapons/cs2/cz75a/cz75_02.wav",
-        "weapons/cs2/cz75a/cz75_03.wav"
+        "native/sccsgoknives/cz75a_fire_1.ogg",
+        "native/sccsgoknives/cz75a_fire_2.ogg",
+        "native/sccsgoknives/cz75a_fire_3.ogg"
       ],
-      "reload_sound": "weapons/cs2/cz75a/cz75_clipin_01.wav",
-      "deploy_sound": "weapons/archi/cs2_p250/draw.wav",
+      "reload_sound": "native/sccsgoknives/cz75a_clipout.ogg",
+      "deploy_sound": "native/sccsgoknives/cz75a_draw.ogg",
       "max_speed": 250.0,
       "zoomed_speed": 250.0,
       "description": "CZ75-Auto from the ShadowNigth/archi CS2GO weapon set.",
@@ -4093,10 +4091,10 @@
       "p_model": "p_revolver",
       "vgui": "640_revolver",
       "fire_sounds": [
-        "weapons/cs2/revolver/revolver-1_01.wav"
+        "native/sccsgoknives/revolver_fire_1.ogg"
       ],
-      "reload_sound": "weapons/archi/cs2_revolver/siderelease.wav",
-      "deploy_sound": "weapons/archi/cs2_revolver/draw.wav",
+      "reload_sound": "native/sccsgoknives/revolver_clipout.ogg",
+      "deploy_sound": "native/sccsgoknives/revolver_draw.ogg",
       "max_speed": 240.0,
       "zoomed_speed": 250.0,
       "description": "R8 Revolver from the ShadowNigth/archi CS2GO weapon set.",
@@ -4198,7 +4196,7 @@
       "alt_cycle_time": 0.12,
       "alt_spread": 0.065,
       "alt_recoil": 5.2,
-      "prepare_sound": "weapons/archi/cs2_revolver/prepare.wav",
+      "prepare_sound": "native/sccsgoknives/revolver_prepare.ogg",
       "world_scale": 1.0
     },
     "tec9": {
@@ -4230,10 +4228,10 @@
       "p_model": "p_tec9",
       "vgui": "640_tec9",
       "fire_sounds": [
-        "weapons/cs2/tec9/tec9_02.wav"
+        "native/sccsgoknives/tec9_fire_1.ogg"
       ],
-      "reload_sound": "weapons/cs2/tec9/tec9_clipin.wav",
-      "deploy_sound": "weapons/cs2/tec9/tec9_draw.wav",
+      "reload_sound": "native/sccsgoknives/tec9_clipout.ogg",
+      "deploy_sound": "native/sccsgoknives/tec9_draw.ogg",
       "max_speed": 250.0,
       "zoomed_speed": 250.0,
       "description": "Tec-9 from the ShadowNigth/archi CS2GO weapon set.",
@@ -4361,12 +4359,12 @@
       "p_model": "p_famas",
       "vgui": "640_famas",
       "fire_sounds": [
-        "weapons/cs2/famas/famas_01.wav",
-        "weapons/cs2/famas/famas_02.wav",
-        "weapons/cs2/famas/famas_03.wav"
+        "native/sccsgoknives/famas_fire_1.ogg",
+        "native/sccsgoknives/famas_fire_2.ogg",
+        "native/sccsgoknives/famas_fire_3.ogg"
       ],
-      "reload_sound": "weapons/archi/cs2_famas/clipout.wav",
-      "deploy_sound": "weapons/archi/cs2_famas/draw.wav",
+      "reload_sound": "native/sccsgoknives/famas_clipout.ogg",
+      "deploy_sound": "native/sccsgoknives/famas_draw.ogg",
       "max_speed": 230.0,
       "zoomed_speed": 230.0,
       "description": "FAMAS from the ShadowNigth/archi CS2GO weapon set.",
@@ -4498,13 +4496,10 @@
       "p_model": "p_galil",
       "vgui": "640_galil",
       "fire_sounds": [
-        "weapons/cs2/galilar/galil_01.wav",
-        "weapons/cs2/galilar/galil_02.wav",
-        "weapons/cs2/galilar/galil_03.wav",
-        "weapons/cs2/galilar/galil_04.wav"
+        "native/sccsgoknives/galilar_fire_1.ogg"
       ],
-      "reload_sound": "weapons/archi/cs2_galilar/clipout.wav",
-      "deploy_sound": "weapons/archi/cs2_galilar/draw.wav",
+      "reload_sound": "native/sccsgoknives/galilar_clipout.ogg",
+      "deploy_sound": "native/sccsgoknives/galilar_draw.ogg",
       "max_speed": 225.0,
       "zoomed_speed": 221.0,
       "description": "Galil AR from the ShadowNigth/archi CS2GO weapon set.",
@@ -4632,13 +4627,11 @@
       "p_model": "p_m4a4",
       "vgui": "640_m4a4",
       "fire_sounds": [
-        "weapons/cs2/m4a1/m4a1_01.wav",
-        "weapons/cs2/m4a1/m4a1_02.wav",
-        "weapons/cs2/m4a1/m4a1_03.wav",
-        "weapons/cs2/m4a1/m4a1_04.wav"
+        "native/sccsgoknives/m4a4_fire_1.ogg",
+        "native/sccsgoknives/m4a4_fire_2.ogg"
       ],
-      "reload_sound": "weapons/cs2/m4a1/m4a1_clipin.wav",
-      "deploy_sound": "weapons/cs2/m4a1/m4a1_draw.wav",
+      "reload_sound": "native/sccsgoknives/m4a1s_clipout.ogg",
+      "deploy_sound": "native/sccsgoknives/m4a1s_draw.ogg",
       "max_speed": 225.0,
       "zoomed_speed": 230.0,
       "description": "M4A4 from the ShadowNigth/archi CS2GO weapon set.",
@@ -4767,11 +4760,11 @@
       "p_model": "p_mag7",
       "vgui": "640_mag7",
       "fire_sounds": [
-        "weapons/cs2/mag7/mag7_01.wav",
-        "weapons/cs2/mag7/mag7_02.wav"
+        "native/sccsgoknives/mag7_fire_1.ogg",
+        "native/sccsgoknives/mag7_fire_2.ogg"
       ],
-      "reload_sound": "weapons/cs2/mag7/mag7_clipin.wav",
-      "deploy_sound": "weapons/cs2/mag7/mag7_draw.wav",
+      "reload_sound": "native/sccsgoknives/mag7_clipout.ogg",
+      "deploy_sound": "native/sccsgoknives/mag7_draw.ogg",
       "max_speed": 225.0,
       "zoomed_speed": 240.0,
       "description": "MAG-7 from the ShadowNigth/archi CS2GO weapon set.",
@@ -4938,10 +4931,10 @@
       "p_model": "p_sawedoff",
       "vgui": "640_sawedoff",
       "fire_sounds": [
-        "weapons/cs2/sawedoff/sawedoff-1.wav"
+        "native/sccsgoknives/sawedoff_fire_1.ogg"
       ],
-      "reload_sound": "",
-      "deploy_sound": "weapons/archi/cs2_sawedoff/draw.wav",
+      "reload_sound": "native/sccsgoknives/sawedoff_insertshell.ogg",
+      "deploy_sound": "native/sccsgoknives/sawedoff_draw.ogg",
       "max_speed": 230.0,
       "zoomed_speed": 230.0,
       "description": "Sawed-Off from the ShadowNigth/archi CS2GO weapon set.",
@@ -5037,7 +5030,7 @@
           ]
         }
       },
-      "insert_sound": "weapons/archi/cs2_sawedoff/insertshell_01.wav",
+      "insert_sound": "native/sccsgoknives/sawedoff_insertshell.ogg",
       "pump_sound": "weapons/archi/cs2_sawedoff/pump.wav",
       "dryfire_sound": "weapons/archi/cs2_revolver/hammer.wav",
       "world_scale": 1.0
@@ -5071,11 +5064,11 @@
       "p_model": "p_negev",
       "vgui": "640_negev",
       "fire_sounds": [
-        "weapons/cs2/negev/negev_01.wav",
-        "weapons/cs2/negev/negev_02.wav"
+        "native/sccsgoknives/negev_fire_1.ogg",
+        "native/sccsgoknives/negev_fire_2.ogg"
       ],
-      "reload_sound": "weapons/archi/cs2_negev/coverup.wav",
-      "deploy_sound": "weapons/archi/cs2_negev/draw.wav",
+      "reload_sound": "native/sccsgoknives/negev_boxout.ogg",
+      "deploy_sound": "native/sccsgoknives/negev_draw.ogg",
       "max_speed": 195.0,
       "zoomed_speed": 220.0,
       "description": "Negev from the ShadowNigth/archi CS2GO weapon set.",
@@ -5203,11 +5196,11 @@
       "p_model": "p_bizon",
       "vgui": "640_bizon",
       "fire_sounds": [
-        "weapons/cs2/bizon/bizon_01.wav",
-        "weapons/cs2/bizon/bizon_02.wav"
+        "native/sccsgoknives/bizon_fire_1.ogg",
+        "native/sccsgoknives/bizon_fire_2.ogg"
       ],
-      "reload_sound": "weapons/cs2/bizon/bizon_clipin.wav",
-      "deploy_sound": "weapons/cs2/bizon/bizon_draw.wav",
+      "reload_sound": "native/sccsgoknives/bizon_clipout.ogg",
+      "deploy_sound": "native/sccsgoknives/bizon_draw.ogg",
       "max_speed": 250.0,
       "zoomed_speed": 250.0,
       "description": "PP-Bizon from the ShadowNigth/archi CS2GO weapon set.",
@@ -5335,13 +5328,12 @@
       "p_model": "p_mp7",
       "vgui": "640_mp7",
       "fire_sounds": [
-        "weapons/cs2/mp7/mp7_01.wav",
-        "weapons/cs2/mp7/mp7_02.wav",
-        "weapons/cs2/mp7/mp7_03.wav",
-        "weapons/cs2/mp7/mp7_04.wav"
+        "native/sccsgoknives/mp7_fire_1.ogg",
+        "native/sccsgoknives/mp7_fire_2.ogg",
+        "native/sccsgoknives/mp7_fire_3.ogg"
       ],
-      "reload_sound": "weapons/archi/cs2_mp7/clipout.wav",
-      "deploy_sound": "weapons/archi/cs2_mp7/draw.wav",
+      "reload_sound": "native/sccsgoknives/mp7_clipout.ogg",
+      "deploy_sound": "native/sccsgoknives/mp7_draw.ogg",
       "class_key": "mp5",
       "max_speed": 250.0,
       "zoomed_speed": 250.0,
@@ -5470,10 +5462,10 @@
       "p_model": "p_taser",
       "vgui": "640_taser",
       "fire_sounds": [
-        "weapons/cs2/taser/taser_shoot.wav"
+        "native/sccsgoknives/taser_fire_1.ogg"
       ],
       "reload_sound": "",
-      "deploy_sound": "weapons/archi/cs2_taser/taser_charging.wav",
+      "deploy_sound": "native/sccsgoknives/taser_draw.ogg",
       "max_speed": 245.0,
       "zoomed_speed": 250.0,
       "description": "Zeus x27 from the ShadowNigth/archi CS2GO weapon set.",
@@ -5699,9 +5691,9 @@
           ]
         }
       },
-      "deploy_sound": "weapons/cs2/decoy/decoy_draw.wav",
-      "pinpull_sound": "weapons/cs2/decoy/pinpull_start.wav",
-      "throw_sound": "weapons/archi/cs2_hegren/grenade_throw.wav",
+      "deploy_sound": "native/sccsgoknives/grenade_decoy_draw.wav",
+      "pinpull_sound": "native/sccsgoknives/grenade_decoy_pin.wav",
+      "throw_sound": "native/sccsgoknives/grenade_decoy_throw.wav",
       "bounce_sound": "weapons/archi/cs2_hegren/he_bounce-1.wav",
       "world_scale": 0.9
     },
@@ -5732,9 +5724,7 @@
       "vgui": "640_molotov",
       "fire_sounds": [],
       "explode_sounds": [
-        "weapons/cs2/molotov/molotov_detonate_1.wav",
-        "weapons/cs2/molotov/molotov_detonate_2.wav",
-        "weapons/cs2/molotov/molotov_detonate_3.wav"
+        "native/sccsgoknives/grenade_molotov_explode.wav"
       ],
       "bounce_sounds": [
         "weapons/archi/cs2_hegren/he_bounce-1.wav"
@@ -5834,9 +5824,9 @@
           ]
         }
       },
-      "deploy_sound": "weapons/cs2/molotov/molotov_draw.wav",
-      "pinpull_sound": "weapons/cs2/molotov/molotov_draw.wav",
-      "throw_sound": "weapons/cs2/molotov/grenade_throw.wav",
+      "deploy_sound": "native/sccsgoknives/grenade_molotov_draw.wav",
+      "pinpull_sound": "native/sccsgoknives/grenade_molotov_pin.wav",
+      "throw_sound": "native/sccsgoknives/grenade_molotov_throw.wav",
       "bounce_sound": "weapons/archi/cs2_hegren/he_bounce-1.wav",
       "world_scale": 0.9
     },
@@ -5867,9 +5857,7 @@
       "vgui": "640_incendiary",
       "fire_sounds": [],
       "explode_sounds": [
-        "weapons/cs2/incgrenade/inc_grenade_detonate_1.wav",
-        "weapons/cs2/incgrenade/inc_grenade_detonate_2.wav",
-        "weapons/cs2/incgrenade/inc_grenade_detonate_3.wav"
+        "native/sccsgoknives/grenade_incendiary_explode.wav"
       ],
       "bounce_sounds": [
         "weapons/archi/cs2_hegren/he_bounce-1.wav"
@@ -5969,9 +5957,9 @@
           ]
         }
       },
-      "deploy_sound": "weapons/cs2/incgrenade/inc_grenade_draw.wav",
-      "pinpull_sound": "weapons/cs2/incgrenade/pinpull_start.wav",
-      "throw_sound": "weapons/cs2/incgrenade/inc_grenade_throw.wav",
+      "deploy_sound": "native/sccsgoknives/grenade_incendiary_draw.wav",
+      "pinpull_sound": "native/sccsgoknives/grenade_incendiary_pin.wav",
+      "throw_sound": "native/sccsgoknives/grenade_incendiary_throw.wav",
       "bounce_sound": "weapons/archi/cs2_hegren/he_bounce-1.wav",
       "world_scale": 0.9
     }
@@ -6088,8 +6076,6 @@
     "max_money": 16000,
     "kill_reward": 300,
     "teamkill_penalty": -3300,
-    "hostage_touch_reward": 150,
-    "hostage_rescue_reward": 1000,
     "round_win_elimination": 3250,
     "round_win_bomb_exploded": 3500,
     "round_win_bomb_defused": 3250,

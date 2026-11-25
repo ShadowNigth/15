@@ -21,13 +21,9 @@ func reset() -> void:
 static func priority(actor: CSActor) -> int:
 	if actor.is_human:
 		return 100
-	if actor.is_vip:
-		return 80
 	var planted := RoundManager.planted_c4 as PlantedC4
 	if planted != null and planted.defuser_actor == actor:
 		return 90
-	if actor.has_method("_is_leading_hostage") and bool(actor.call("_is_leading_hostage")):
-		return 70
 	if actor.weapon_ctrl != null and String(actor.weapon_ctrl.slots.get(5, "")) == "c4":
 		return 60
 	return 0

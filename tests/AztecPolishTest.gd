@@ -184,7 +184,7 @@ func run() -> void:
 		var surface: Vector3 = (zone as AABB).get_center()
 		surface.y = (zone as AABB).end.y
 		expect(ray(surface + Vector3.UP * 0.15, surface - Vector3.UP * 0.15).is_empty(), "Water surface never becomes a solid invisible floor")
-	expect(built.bombsites.size() == 2 and built.rescue_zones.is_empty() and built.escape_zones.is_empty(), "Authentic bomb objectives, no invented hostage/VIP goals")
+	expect(built.bombsites.size() == 2, "Authentic bomb objectives")
 	await screenshots(repaired, "after")
 	repaired.queue_free()
 	await get_tree().physics_frame

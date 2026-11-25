@@ -75,7 +75,6 @@ func _run() -> void:
 	RoundManager.set_process(false)
 	RoundManager.state = RoundManager.State.LIVE
 	RoundManager.actors.clear()
-	RoundManager.hostages.clear()
 	RoundManager.dropped_items.clear()
 	RoundManager.planted_c4 = null
 	RoundManager.smoke_clouds.clear()

@@ -594,7 +594,7 @@ func _cancel_use() -> void:
 	defuse_progress_changed.emit(0.0)
 
 func _handle_use_interaction(delta: float) -> void:
-	# Defuse owns E for this tick: never also toggle a hostage/door or pick up a gun.
+	# Defuse owns E for this tick: never also toggle a door or pick up a gun.
 	if team == "CT" and Input.is_action_pressed("use") and is_instance_valid(RoundManager.planted_c4):
 		var c4 := RoundManager.planted_c4 as PlantedC4
 		if global_position.distance_to(c4.global_position) <= 2.5 and UseSelection.visible(self, c4.global_position+Vector3.UP*0.15):
@@ -637,9 +637,6 @@ func perform_use_selection(selection: Dictionary) -> bool:
 				weapon_ctrl.slots[slot] = old_id
 				RoundManager.dropped_items.erase(outgoing)
 				outgoing.queue_free()
-		"hostage":
-			(target as HostageNPC).interact(self)
-			return true
 		"door":
 			if target.has_method("interact"):
 				target.call("interact", self)

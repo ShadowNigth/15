@@ -29,7 +29,6 @@ var class_id: String = "urban"
 var is_human: bool = false
 var dm_protection: float = 0.0
 var is_alive: bool = false
-var is_vip: bool = false
 
 var health: int = 100
 var armor: int = 0
@@ -183,8 +182,7 @@ func _rebuild_character_model() -> void:
 	_death_anim_time = 0.0
 	_gait_yaw = look_yaw
 
-	var mdl_id := "vip" if is_vip else class_id
-	var sc := GameData.get_model_scene("players/" + mdl_id)
+	var sc := GameData.get_model_scene("players/" + class_id)
 	if sc:
 		var inst := sc.instantiate()
 		_configure_character_meshes(inst)
@@ -193,7 +191,7 @@ func _rebuild_character_model() -> void:
 		_body_anim = _find_anim(inst)
 		_skel = _find_skeleton(inst)
 		if ModernAgentPose.is_modern(_skel):
-			if not is_human and not is_vip:
+			if not is_human:
 				_body_root.scale = Vector3.ONE * BOT_VISUAL_SCALE
 			_modern_pose = ModernAgentPose.new()
 		if _body_anim and _skel:
@@ -790,17 +788,13 @@ func spawn_for_round(pos: Vector3, yaw_rad: float, reset_weapons: bool) -> void:
 	_col_shape.disabled = false
 	_update_hull_height(false)
 
-	if is_vip:
-		armor = 200
-		has_helmet = true
-		weapon_ctrl.reset_loadout("CT", true)
-	elif reset_weapons or not was_alive:
+	if reset_weapons or not was_alive:
 		armor = 0
 		has_helmet = false
 		has_defuser = false
 		has_nvg = false
 		nvg_active = false
-		weapon_ctrl.reset_loadout(team, false)
+		weapon_ctrl.reset_loadout(team)
 	else:
 		# Survived previous round: refill active weapon clip if player has reserve, keep gear!
 		weapon_ctrl.slots[5] = ""
@@ -1100,11 +1094,6 @@ func apply_goldsrc_movement(wish_dir_world: Vector3, want_jump: bool, want_crouc
 	_tick_footsteps(delta, false)
 	_update_third_person_anim()
 
-	# Check VIP escape zone on as_* maps!
-	if is_vip and is_instance_valid(RoundManager.game_world) and RoundManager.game_world.has_method("is_in_escape_zone"):
-		if bool(RoundManager.game_world.call("is_in_escape_zone", global_position)):
-			RoundManager.notify_vip_escaped(self)
-
 
 func _tick_footsteps(delta: float, climbing_ladder: bool) -> void:
 	if climbing_ladder:
@@ -1238,10 +1227,10 @@ func take_bullet_damage(
 			new_dmg = dmg - float(armor) * 2.0
 		armor = maxi(0, armor - maxi(1, armor_loss))
 		dmg = new_dmg
-		var awav := AudioManager.cue_path("headshot_armor") if hitgroup == 1 else "player/bhit_kevlar-1.wav"
+		var awav := AudioManager.cue_path("headshot_armor") if hitgroup == 1 else "native/sccsgoknives/hits/kevlar.ogg"
 		AudioManager.play_3d(awav, hit_pos, 0.0, 26.0)
 	else:
-		var fwav := ("player/headshot%d.wav" % randi_range(1, 3)) if hitgroup == 1 else ("player/bhit_flesh-%d.wav" % randi_range(1, 3))
+		var fwav := "native/sccsgoknives/hits/headshot_noarmor.ogg" if hitgroup == 1 else ("player/bhit_flesh-%d.wav" % randi_range(1, 3))
 		AudioManager.play_3d(fwav, hit_pos, 0.0, 26.0)
 
 	# CS 1.5 bullet tagging slowdown, directional torso jolt & hit flinch
@@ -1543,8 +1532,6 @@ func _spawn_drop_entity(item_id: String, spread_idx: int = 0) -> DroppedWeapon:
 	return drop
 
 func try_pickup_dropped(drop: DroppedWeapon) -> bool:
-	if is_vip:
-		return false
 	var id := drop.item_id
 	if id == "defuser":
 		if team == "CT" and not has_defuser:
@@ -1613,7 +1600,7 @@ func drop_weapon_gift(recipient: CSActor, wid: String, clip: int, reserve: int) 
 # --- ECONOMY & BUYING ---
 
 func can_use_buy_menu() -> bool:
-	if not is_alive or is_vip or not RoundManager.can_buy_now():
+	if not is_alive or not RoundManager.can_buy_now():
 		return false
 	if is_instance_valid(RoundManager.game_world) and RoundManager.game_world.has_method("is_in_buyzone"):
 		return bool(RoundManager.game_world.call("is_in_buyzone", global_position, team))

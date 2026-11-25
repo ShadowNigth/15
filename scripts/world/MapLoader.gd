@@ -8,8 +8,6 @@ static func build_map(parent: Node3D, map_data: Dictionary) -> Dictionary:
 
 	var ladders_typed: Array[AABB] = []
 	var bombsites_typed: Array[AABB] = []
-	var rescue_typed: Array[AABB] = []
-	var escape_typed: Array[AABB] = []
 	var water_typed: Array[AABB] = []
 
 	var result := {
@@ -21,8 +19,6 @@ static func build_map(parent: Node3D, map_data: Dictionary) -> Dictionary:
 		"triggers": [],
 		"bombsites": bombsites_typed,
 		"buyzones": [],
-		"rescue_zones": rescue_typed,
-		"escape_zones": escape_typed,
 		"water_zones": water_typed,
 	}
 
@@ -317,8 +313,6 @@ static func build_map(parent: Node3D, map_data: Dictionary) -> Dictionary:
 
 	water_typed.assign(_parse_aabbs(map_data.get("water_zones", []), 0.0))
 	result["bombsites"] = _parse_aabbs(map_data.get("bombsites", []), 0.5)
-	result["rescue_zones"] = _parse_aabbs(map_data.get("rescue_zones", []), 0.6)
-	result["escape_zones"] = _parse_aabbs(map_data.get("escape_zones", []), 0.6)
 
 	for bz in map_data.get("buyzones", []):
 		var aabb := _dict_to_aabb(bz, 0.5)
@@ -334,14 +328,6 @@ static func build_map(parent: Node3D, map_data: Dictionary) -> Dictionary:
 			var p2: Array = sp["pos"]
 			var v2 := Vector3(float(p2[0]), float(p2[1]), float(p2[2]))
 			result["buyzones"].append({"aabb": AABB(v2 - Vector3(6, 3, 6), Vector3(12, 6, 12)), "team": "1"})
-
-	# Fallback rescue zone near CT spawn on cs_* maps if omitted
-	if String(map_data.get("mode", "")) == "cs" and result["rescue_zones"].is_empty():
-		var cts: Array = map_data.get("ct_spawns", [])
-		if not cts.is_empty():
-			var p3: Array = cts[0]["pos"]
-			var v3 := Vector3(float(p3[0]), float(p3[1]), float(p3[2]))
-			result["rescue_zones"].append(AABB(v3 - Vector3(5, 3, 5), Vector3(10, 6, 10)))
 
 	# 4. Subtle Bombsite decal markers on A / B centers
 	for i in range(result["bombsites"].size()):

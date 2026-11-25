@@ -22,11 +22,14 @@ def main():
         material = 'glove_motorcycle_' + side
         for path in [option['native_textures'][material], *option['native_maps'][material].values()]:
             assert Image.open(ROOT/path[6:]).size == (1024,1024)
-        old = np.asarray(Image.open(ROOT/f'assets/textures/moto_smoke_out/{material}.webp')).astype(float)
         new = np.asarray(Image.open(ROOT/option['native_textures'][material][6:])).astype(float)
-        # This reference island was the large pale dorsal pad. It must now
-        # carry the darker palm artwork, not just reversed lettering.
-        assert new[390:460,140:310].mean() < old[390:460,140:310].mean() - 20
+        # This reference island was the large pale dorsal pad of the upstream
+        # finish (mean luminance ~144). The pre-swap source textures are no
+        # longer shipped, so the recorded measurement guards the exchange: the
+        # island must carry the darker palm artwork, not reversed lettering.
+        recorded = row['dorsal_pad_mean']
+        assert recorded < 144.0 - 20
+        assert abs(float(new[390:460,140:310].mean()) - recorded) < 2.0
     assert len(catalog['options']) == 27
     assert sum(o.get('native_model') == 'sport_native' for o in catalog['options']) == 26
     print('PASS: Smoke Out sides and palm/back exchanged; native mesh unchanged; 26 other finishes retained')

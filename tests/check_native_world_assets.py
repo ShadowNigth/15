@@ -24,7 +24,7 @@ for wid,route in r['weapons'].items():
    checks+=1
 assert 'taser' not in r['weapons'] and 'revolver' not in r['weapons']
 assert r['weapons']['awp']['clips']['shoot1'][0]['at']==0.74
-# The unused ct/t/hostage/chicken review models were removed from the project (never loaded by the game).
+# Unused review models stay out of the project (the game loads players/<class> rigs).
 for name in ('ct','t','hostage','chicken'):
  assert not (ROOT/f'assets/models/native/{name}.glb').exists(),name
 print(f'[NATIVE WORLD ASSETS] PASS: {checks} provenance/routes; 8 shells, 33 guns, 8 icons')

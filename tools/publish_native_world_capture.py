@@ -2,8 +2,8 @@
 import base64,sys
 from pathlib import Path
 name=sys.argv[1]
-combat = name in ['live_ct_t','live_crouch','live_hostage','chicken_scale']
-assert combat or name in ['ct_0','t_0','hostage_0','chicken_0','defuser_item_0','italy_hud_chicken']
+combat = name in ['live_ct_t','live_crouch']
+assert combat or name in ['ct_0','t_0','defuser_item_0','italy_hud']
 p=Path('/tmp/combat-native-review' if combat else '/tmp/native-world-review')/(name+'.jpg')
 if not p.exists():raise SystemExit('Missing actual framebuffer '+str(p))
 s=base64.b64encode(p.read_bytes()).decode()

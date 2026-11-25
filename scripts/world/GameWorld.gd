@@ -1,7 +1,7 @@
 class_name GameWorld
 extends Node3D
 ## Main match coordinator for Counter-Strike 1.5 in Godot 4.
-## Loads the BSP map, spawns Player + Bots + Hostages, wires HUD & VGUI menus, and runs rounds.
+## Loads the BSP map, spawns Player + Bots, wires HUD & VGUI menus, and runs rounds.
 
 var map_data: Dictionary = {}
 var map_runtime: Dictionary = {}
@@ -14,14 +14,10 @@ var ladder_volumes: Array = []
 var trigger_zones: Array = []
 var bombsites: Array[AABB] = []
 var buyzones: Array = []
-var rescue_zones: Array[AABB] = []
-var escape_zones: Array[AABB] = []
 var water_zones: Array[AABB] = []
 var water: WaterEffects = null
 
 var native_casing_system: NativeCasings = null
-var ambient_chickens: Array[AmbientChicken] = []
-var _ambient_initialized: bool = false
 
 var player: PlayerController = null
 var bots: Array[CSBot] = []
@@ -56,8 +52,6 @@ func _ready() -> void:
 	trigger_zones = map_runtime.get("triggers", [])
 	bombsites.assign(map_runtime.get("bombsites", []))
 	buyzones = map_runtime.get("buyzones", [])
-	rescue_zones.assign(map_runtime.get("rescue_zones", []))
-	escape_zones.assign(map_runtime.get("escape_zones", []))
 	water_zones.assign(map_runtime.get("water_zones", []))
 	water = WaterEffects.new()
 	water.name = "BSPWaterEffects"
@@ -68,23 +62,10 @@ func _ready() -> void:
 	bot_navigator = BotNavigator.new()
 	bot_navigator.setup_from_map(map_data)
 
-	# 3. Spawn Hostage NPCs on cs_* maps
-	for hinfo in ([] if RoundManager.map_mode == "dm" else map_data.get("hostages", [])):
-		var h := HostageNPC.new()
-		var p: Array = hinfo["pos"]
-		h.spawn_pos = Vector3(float(p[0]), float(p[1]), float(p[2]))
-		h.spawn_yaw = float(hinfo.get("yaw", 0.0))
-		h._avoid_side = 1.0 if RoundManager.hostages.size() % 2 == 0 else -1.0
-		add_child(h)
-		RoundManager.hostages.append(h)
-
-	# Objective NPCs use instance parity for their initial avoidance side. Keep
-	# their construction ahead of cosmetic-only nodes; do not perturb rescue AI.
+	# 3. Cosmetic world systems, built ahead of the actors that use them.
 	native_casing_system = NativeCasings.new()
 	native_casing_system.name = "NativeCasings"
 	add_child(native_casing_system)
-
-	_initialize_ambient_chickens.call_deferred()
 
 	# 4. Create Human Player (initially waiting for Team Select)
 	player = PlayerController.new()
@@ -242,8 +223,6 @@ func prepare_round_entities(reset_all_gear: bool) -> void:
 	ImpactEffects.clear_decals()
 	if native_casing_system != null:
 		native_casing_system.clear_all()
-	if _ambient_initialized:
-		_reset_ambient_chickens()
 	if bot_navigator != null:
 		bot_navigator.reset_round_weights()
 
@@ -257,16 +236,13 @@ func prepare_round_entities(reset_all_gear: bool) -> void:
 		RoundManager.planted_c4.queue_free()
 		RoundManager.planted_c4 = null
 
-	# 2. Reset doors, breakables, and hostages
+	# 2. Reset doors and breakables
 	for dr in doors:
 		if is_instance_valid(dr) and dr.has_method("reset_for_round"):
 			dr.reset_for_round()
 	for br in breakables:
 		if is_instance_valid(br) and br.has_method("reset_for_round"):
 			br.reset_for_round()
-	for h in RoundManager.hostages:
-		if is_instance_valid(h) and h.has_method("reset_for_round"):
-			h.reset_for_round()
 
 	# 3. Reset player camera top_level in case they were spectating
 	player.camera.top_level = false
@@ -288,7 +264,6 @@ func prepare_round_entities(reset_all_gear: bool) -> void:
 		if not is_instance_valid(a):
 			continue
 		var actor := a as CSActor
-		actor.is_vip = false
 		if reset_all_gear:
 			actor.money = GameData.start_money
 		if actor.team == "CT":
@@ -296,13 +271,8 @@ func prepare_round_entities(reset_all_gear: bool) -> void:
 		else:
 			t_actors.append(actor)
 
-	# Designate 1 CT as VIP on as_* Assassination maps
-	if String(map_data.get("mode", "")) == "as" and not ct_actors.is_empty():
-		var vip_actor: CSActor = ct_actors[randi() % ct_actors.size()]
-		vip_actor.is_vip = true
-
 	for ca in ct_actors:
-		var sp := _pick_spawn_for_team("VIP" if ca.is_vip else "CT", ct_idx)
+		var sp := _pick_spawn_for_team("CT", ct_idx)
 		ct_idx += 1
 		ca.spawn_for_round(sp["pos"], sp["yaw"], reset_all_gear)
 
@@ -329,9 +299,7 @@ func prepare_round_entities(reset_all_gear: bool) -> void:
 
 func _pick_spawn_for_team(tm: String, index: int) -> Dictionary:
 	var list: Array = []
-	if tm == "VIP" and not map_data.get("vip_spawns", []).is_empty():
-		list = map_data["vip_spawns"]
-	elif tm in ["CT", "VIP"]:
+	if tm == "CT":
 		list = map_data.get("ct_spawns", [])
 	else:
 		list = map_data.get("t_spawns", [])
@@ -389,38 +357,6 @@ func is_in_buyzone(pos: Vector3, tm: String) -> bool:
 func is_in_bombsite(pos: Vector3) -> bool:
 	for b in bombsites:
 		if b.has_point(pos):
-			return true
-	return false
-
-
-func is_in_rescue_zone(pos: Vector3) -> bool:
-	for r in rescue_zones:
-		if r.has_point(pos):
-			return true
-	return false
-
-
-static func capsule_overlaps_zone(feet: Vector3, height: float, radius: float, zone: AABB) -> bool:
-	# A vertical capsule is a line segment swept by a sphere. Measure the
-	# exact segment/AABB distance, including the rounded head and shoulders.
-	var segment_bottom := feet.y + radius
-	var segment_top := feet.y + height - radius
-	var dx := maxf(maxf(zone.position.x - feet.x, feet.x - zone.end.x), 0.0)
-	var dz := maxf(maxf(zone.position.z - feet.z, feet.z - zone.end.z), 0.0)
-	var dy := maxf(maxf(zone.position.y - segment_top, segment_bottom - zone.end.y), 0.0)
-	return dx * dx + dy * dy + dz * dz <= radius * radius
-
-
-func is_hostage_in_rescue_zone(feet: Vector3) -> bool:
-	for zone in rescue_zones:
-		if capsule_overlaps_zone(feet, 1.90, 0.36, zone):
-			return true
-	return false
-
-
-func is_in_escape_zone(pos: Vector3) -> bool:
-	for e in escape_zones:
-		if e.has_point(pos):
 			return true
 	return false
 
@@ -505,22 +441,6 @@ func _physics_process(_delta: float) -> void:
 
 
 
-func _reset_ambient_chickens() -> void:
-	# Source chicken has idle/walk/run only, no authored skeletal death.
-	# Explicit user request: remove it rather than substitute a rotated corpse.
-	for chicken in ambient_chickens:
-		if is_instance_valid(chicken):
-			chicken.queue_free()
-	ambient_chickens.clear()
-
-
-func _initialize_ambient_chickens() -> void:
-	await get_tree().physics_frame
-	await get_tree().physics_frame
-	_ambient_initialized = true
-	_reset_ambient_chickens()
-
-
 func respawn_deathmatch_actor(actor: CSActor) -> void:
 	# Score all authored spawn points, retaining the BSP floor snapping in spawn_for_round.
 	var candidates: Array = map_data.get("ct_spawns", []).duplicate()
@@ -549,7 +469,6 @@ func respawn_deathmatch_actor(actor: CSActor) -> void:
 		if score > best_score:
 			best_score = score
 			best = {"pos": point, "yaw": float(candidate.get("yaw", 0.0))}
-	actor.is_vip = false
 	actor.spawn_for_round(best["pos"], best["yaw"], true)
 	actor.dm_protection = 2.0
 	actor.armor = 100

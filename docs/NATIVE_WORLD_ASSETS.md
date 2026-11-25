@@ -1,4 +1,4 @@
-# Casquillos, HUD, revisión de personajes y gallinas
+# Casquillos, HUD y revisión de personajes
 
 Fuente fijada: `zh667/ScCsgoKnives`, commit
 `1eb8067fd0b7214df5bccf3ac3807fbaa3aee70d`.
@@ -41,12 +41,12 @@ No se reemplaza el HUD, el menú circular, radar, objetivos ni killfeed.
 Las cinco preferencias cosméticas se guardan en `user://cosmetics.cfg` desde
 Configuration & Controls. No se escribe configuración personal en el proyecto.
 
-## CT/T y rehén: revisión, no sustitución ciega
+## CT/T: revisión, no sustitución ciega
 
-> **Actualización:** los modelos de revisión `native/ct`, `native/t`, `native/hostage` y `native/chicken` ya no se distribuyen (el juego nunca los cargaba; ver [ASSET_PACKS.md](ASSET_PACKS.md)). El texto siguiente se conserva como registro histórico.
+> **Actualización:** los modelos de revisión `native/ct`, `native/t`, `native/hostage` y `native/chicken` ya no se distribuyen (el juego nunca los cargaba; ver [ASSET_PACKS.md](ASSET_PACKS.md)). El modo de rehenes y el VIP se retiraron del proyecto. El texto siguiente se conserva como registro histórico.
 
-En el Arsenal aparecen `[Native review] ct`, `t`, `hostage`, `defuser_item` y
-`chicken`. El selector permite reproducir sus clips.
+En el Arsenal aparecen `[Native review] ct`, `t` y `defuser_item`. El selector
+permite reproducir sus clips.
 
 - CT SAS y T Phoenix: los GLB upstream traen sólo un marcador
   `__sc_prebaked_*`, **no las animaciones ejecutables**. Se decodifican los
@@ -54,11 +54,8 @@ En el Arsenal aparecen `[Native review] ct`, `t`, `hostage`, `defuser_item` y
   y se reconstruyen los 170 clips de cada uno por nombre de nodo. Mallas, UV,
   pesos, inverse binds, materiales y bytes de imágenes permanecen intactos.
   Se omiten únicamente las traslaciones de `root_motion` para revisión en sitio.
-- El rehén conserva el GLB upstream byte a byte: siete clips. Upstream adapta
-  poses rifle/knife de personajes por nombre de hueso; no son siete acciones
-  originales específicas de rescate de rehenes de CS2.
-- **Los personajes jugables, bots, clases, VIP y rehenes clásicos no se reemplazan.**
-  Su mezcla gait/upper-body, arma adjunta, crouch, muerte, navegación y rescate
+- **Los personajes jugables, bots y clases clásicos no se reemplazan.**
+  Su mezcla gait/upper-body, arma adjunta, crouch, muerte y navegación
   continúan usando los esqueletos y reglas probados. Los modelos candidatos aún
   requieren esa integración específica antes de sustituirlos en partidas.
 - El kit sí se integra: `defuser_item.glb`, la bolsa de herramientas de cintura
@@ -67,47 +64,21 @@ En el Arsenal aparecen `[Native review] ct`, `t`, `hostage`, `defuser_item` y
   sistema de física/AABB, compra y recogida por CT y 5/10 segundos de desactivación.
   Existe fallback al thighpack clásico si se desactiva o falta el candidato.
 
-## Gallinas ambientales
+## Gallinas ambientales (retiradas)
 
-GLB upstream con idle/walk/run y textura embebida, byte a byte. El propio upstream
-ya elimina el desplazamiento root_motion: nuestro CharacterBody3D mueve el cuerpo
-sin sumar dos veces la distancia del clip.
-
-- Italy: hasta cuatro; Inferno y Cobble: hasta tres cada uno. Sin gallinas en
-  OilRig, Tundra, aviones, oficinas ni los demás mapas.
-- Selección determinista y espaciada de puntos sobre el suelo BSP. Se validan
-  pendiente, suelo, altura, separación y exclusión de agua/escaleras/objetivos/spawns.
-  Si no hay suficientes sitios válidos se crean menos, nunca dentro de la pared.
-- Alternan reposo y paseo, huyen al oír disparos, evitan paredes y desniveles y
-  permanecen cerca de su zona. Voces espaciales originales a intervalos limitados.
-- Reciben disparos/cuchillo, fuego y explosiones sin cobertura. Muerte con caída
-  visual adaptada; no se afirma que haya un clip nativo de muerte o ragdoll.
-- No forman parte de actores de equipos, blancos de los bots, economía,
-  killfeed ni condiciones de victoria. No bloquean el paso. Se restauran por ronda.
-- Opción para ocultarlas y desactivar su colisión y actividad.
-
-## Reconstrucción (sólo desarrollo)
-
-```
-python tools/source/fetch_native_world_assets.py /RUTA/world-source
-python tools/source/fetch_native_gun_animations.py /RUTA/gun-json
-# numpy y scipy como dependencias de desarrollo, no de ejecución:
-python -m tools.source.build_native_world_assets /RUTA/world-source /RUTA/gun-json
-python tests/check_native_world_assets.py
-```
-
-Godot abre los recursos ya generados sin Python, gh, extracciones locales ni red.
-Las entradas y el ejecutable Godot no se incluyen en el ZIP editable.
+Las gallinas decorativas de Italy, Inferno y Cobble se eliminaron por completo:
+script, GLB, audio y spawns. No afectaban a equipos, economía ni condiciones de
+victoria, y su retirada no cambia ninguna partida.
 
 ## Validación
 
 `NativeWorldAssetsTest.tscn` utiliza la partida real de Italy, disparos de producción,
-cola de eventos, mallas cargadas por Godot, iconos, kit recogible, gallinas y
+cola de eventos, mallas cargadas por Godot, iconos, kit recogible y
 reproducción de candidatos. Comprueba AWP antes/después de 0,74 s, cancelación al
-cambiar/morir, exclusión de R8/Zeus y reinicio de los animales. CI captura imágenes
+cambiar/morir y exclusión de R8/Zeus. CI captura imágenes
 OpenGL reales de la partida y dos fases de los modelos en movimiento.
 Ver los resultados del run correspondiente, no tomar la existencia del test como
-prueba de que pasó. Las regresiones completas de armas, audio, cuchillos y misiones
+prueba de que pasó. Las regresiones completas de armas, audio y cuchillos
 se siguen ejecutando en el workflow nativo.
 
 ## Derechos

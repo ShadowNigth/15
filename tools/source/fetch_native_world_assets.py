@@ -13,9 +13,9 @@ def main():
  exact={'src/ScCsgoKnives/AnimationData/cs2_casings.json','src/ScCsgoTactical/Assets/Textures/ScCsgoTactical/defuser_item.png'}
  for role in ['ct','t']:
   exact.add(f'src/ScCsgoTactical/Assets/Animations/ScCsgoTactical/{role}.scanim')
- for name in ['ct','t','hostage','defuser_item']:
+ for name in ['ct','t','defuser_item']:
   exact.add(f'src/ScCsgoTactical/Assets/Models/ScCsgoTactical/{name}.glb')
- wanted=[r for r in tree['tree'] if r['type']=='blob' and (r['path'] in exact or r['path']=='src/ScCsgoKnives/Assets/Models/ScCsgoKnives/chicken.glb' or (r['path'].startswith('src/ScCsgoKnives/Assets/') and ('/casing_' in r['path'] and r['path'].endswith(('.obj','.png')) or '/hud_ammo_' in r['path'])))]
+ wanted=[r for r in tree['tree'] if r['type']=='blob' and (r['path'] in exact or (r['path'].startswith('src/ScCsgoKnives/Assets/') and ('/casing_' in r['path'] and r['path'].endswith(('.obj','.png')) or '/hud_ammo_' in r['path'])))]
  def fetch(r):
   out=args.directory/r['path'];data=out.read_bytes() if out.exists() else None
   def git_hash(b):return hashlib.sha1(b'blob '+str(len(b)).encode()+b'\0'+b).hexdigest()

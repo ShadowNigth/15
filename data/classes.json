@@ -66,11 +66,5 @@
       "model": "gign",
       "description": "Modern agent from cs2go; automatically selected within its faction."
     }
-  ],
-  "VIP": {
-    "id": "vip",
-    "name": "VIP",
-    "vgui": "640_vip",
-    "model": "vip"
-  }
+  ]
 }

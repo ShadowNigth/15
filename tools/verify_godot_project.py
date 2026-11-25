@@ -76,16 +76,71 @@ def main() -> int:
             p_mdl = os.path.join(root, "assets", "models", "players", f"{cinfo['model']}.glb")
             if not os.path.exists(p_mdl):
                 errors.append(f"[Missing player model] {p_mdl}")
-    if not os.path.exists(os.path.join(root, "assets", "models", "players", "vip.glb")):
-        errors.append("[Missing VIP model]")
-    if not os.path.exists(os.path.join(root, "assets", "models", "players", "hostage.glb")):
-        errors.append("[Missing Hostage model]")
-
     rdb = json.load(open(os.path.join(root, "data", "radio.json"), encoding="utf-8"))
     for grp in rdb.values():
         for it in grp["items"]:
             if not os.path.exists(os.path.join(root, "assets", "sounds", it["sound"])):
                 errors.append(f"[Missing radio sound] {it['sound']}")
+
+    # 3b. Every remaining audio route: native cues/voices/gains, baked model events,
+    #     map ambience and the literal / printf-style paths used by GDScript.
+    sounds_root = os.path.join(root, "assets", "sounds")
+    adb = json.load(open(os.path.join(root, "data", "native_audio.json"), encoding="utf-8"))
+    mmdb = json.load(open(os.path.join(root, "data", "models_meta.json"), encoding="utf-8"))
+    audio_refs = set()
+
+    def collect(value):
+        if isinstance(value, dict):
+            for v in value.values():
+                collect(v)
+        elif isinstance(value, list):
+            for v in value:
+                collect(v)
+        elif isinstance(value, str) and value.endswith((".wav", ".ogg")):
+            audio_refs.add(value)
+
+    collect(adb)
+    collect(mmdb)
+    audio_refs.update(adb.get("gains", {}).keys())
+    # Map ambience is best-effort: MapLoader skips cues the retail WAD never shipped.
+    optional_audio = set()
+    for map_file in sorted(glob.glob(os.path.join(root, "data", "maps", "*.json"))):
+        for amb in json.load(open(map_file, encoding="utf-8")).get("ambient_sounds", []):
+            optional_audio.add(str(amb.get("sound", "")))
+    for gf in gd_files:
+        text = open(gf, encoding="utf-8").read()
+        ui_args = set(re.findall(r'play_ui\("([^"]+)"\)', text))
+        for lit in re.findall(r'"([^"\n]*\.(?:wav|ogg))"', text):
+            if lit not in ui_args:
+                audio_refs.add(lit)
+        for lit in ui_args:
+            audio_refs.add("ui/" + lit)
+    # AudioManager.play_footstep surface banks
+    for prefix, count in (("pl_step", 4), ("pl_metal", 4), ("pl_dirt", 4), ("pl_tile", 5),
+                          ("pl_duct", 4), ("pl_grate", 4), ("pl_snow", 6), ("pl_ladder", 4),
+                          ("pl_slosh", 4)):
+        for i in range(1, count + 1):
+            audio_refs.add(f"player/{prefix}{i}.wav")
+    checked_audio = 0
+    all_sounds = {os.path.relpath(p, sounds_root)
+                  for p in glob.glob(os.path.join(sounds_root, "**", "*"), recursive=True)
+                  if os.path.isfile(p)}
+    for rel in sorted(audio_refs):
+        if rel.startswith("%s"):
+            continue  # play_footstep builds these; its banks are checked above.
+        if "%" in rel:
+            pattern = re.escape(rel).replace("%s", "[A-Za-z0-9_-]+").replace("%d", r"\d+")
+            if not any(re.fullmatch(pattern, s) for s in all_sounds):
+                errors.append(f"[Missing sound pattern] {rel}")
+            continue
+        checked_audio += 1
+        if not os.path.exists(os.path.join(sounds_root, rel)):
+            errors.append(f"[Missing sound] {rel}")
+    missing_ambience = sorted(r for r in optional_audio if r and r not in all_sounds)
+    print(f"[verify] Verified {checked_audio} audio routes (cues, voices, model events, code).")
+    if missing_ambience:
+        print(f"[verify] {len(missing_ambience)} optional map ambience cues absent from the retail WAD "
+              "(skipped by MapLoader).")
 
     # 4. Validate all 15 maps + GLBs + external texture URIs
     midx = json.load(open(os.path.join(root, "data", "maps_index.json"), encoding="utf-8"))

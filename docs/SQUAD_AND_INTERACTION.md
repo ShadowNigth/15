@@ -7,17 +7,14 @@ audio, materiales y renderer `gl_compatibility` existentes.
 
 ## Cambios
 
-- `TeammateTraffic`: negociación virtual de encuentros, prioridad humana/VIP/
+- `TeammateTraffic`: negociación virtual de encuentros, prioridad humana/
   defusor/portador, seguimiento, espera, desplazamiento lateral y retroceso.
   Comprueba cápsula y apoyo antes de escapar lateralmente. Mantiene dirección
-  durante el encuentro. Prioriza también al rescatador que ya lleva un rehén.
+  durante el encuentro.
   Si varios bots quedan sin progreso, un reintento acotado devuelve el control
-  a su navegación original sin teletransportes ni saltos forzados. Los tramos
-  precisos del VIP sólo aceptan espera: no se desvían lateralmente ni retroceden
-  fuera de sus accesos. **Excepción de compatibilidad:** los CT en mapas `cs_*`
-  conservan íntegramente el controlador y la separación clásicos de rescate,
-  sin aplicar la nueva negociación. Su sustitución queda pendiente de una
-  adaptación específica que pase también la aproximación del sótano de Estate.
+  a su navegación original sin teletransportes ni saltos forzados. Como sólo se
+  envían mapas `de_*`, la negociación se aplica en todos los mapas sin la
+  antigua excepción de rescate.
   La espera no consume los temporizadores que saltan o
   descartan nodos de navegación. No modifica las máscaras 2/1 ni la función
   GoldSrc de `CSActor`.
@@ -66,7 +63,7 @@ de fuego/humo/rebote.
 
 El workflow `squad-systems-qa.yml` importa con Godot 4.3 y ejecuta estas pruebas
 además de `NativeGunAnimationTest`, `NativeAudioTest`, `KillFirePolishTest`,
-`IncendiaryProceduralTest`, `TacticalAIRegressionTest` y `MissionObjectiveRegressionTest`.
+`IncendiaryProceduralTest` y `TacticalAIRegressionTest`.
 La caché de recursos importados del workflow es exclusivamente de compilación en
 CI: no agrega precarga, pantallas de progreso ni cachés nuevas al juego.
 El test de apuntado compara la dirección con la cámara visible (incluido recoil),

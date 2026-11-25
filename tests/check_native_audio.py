@@ -8,7 +8,7 @@ ROOT = Path(__file__).resolve().parents[1]
 manifest = json.loads((ROOT/'data/native_audio_manifest.json').read_text())
 catalog = json.loads((ROOT/'data/native_audio.json').read_text())
 assert manifest['commit'] == catalog['commit'] == '1eb8067fd0b7214df5bccf3ac3807fbaa3aee70d'
-assert len(manifest['files']) == 649
+assert len(manifest['files']) == 539
 levels = json.loads((ROOT/'data/native_audio_levels.json').read_text())
 paths = set()
 for entry in manifest['files']:
@@ -34,17 +34,22 @@ def check_paths(value):
     elif isinstance(value, str) and value.startswith(('native/', 'weapons/')):
         assert (ROOT/'assets/sounds'/value).is_file(), value
 check_paths(catalog)
-assert len(catalog['weapons']) == 43 and len(catalog['model_events']) == 64
-assert catalog['weapons']['m4a4']['fire_sounds'] != catalog['weapons']['m4a1']['fire_sounds']
-for lang in ('en','zh'):
-    for team in ('ct','t'):
-        assert len(catalog['voices'][lang][team]) == 17
+# Native audio is baked into the source databases; no runtime overlay remains.
+assert 'weapons' not in catalog and 'model_events' not in catalog and 'replacements' not in catalog
+weapons_db = json.loads((ROOT/'data/weapons.json').read_text())['weapons']
+models_db = json.loads((ROOT/'data/models_meta.json').read_text())
+rigs = [m for m, meta in models_db.items() if meta.get('seq_events')]
+assert len(rigs) >= 64
+assert weapons_db['m4a4']['fire_sounds'] != weapons_db['m4a1']['fire_sounds']
+for team in ('ct','t'):
+    assert len(catalog['voices']['en'][team]) == 17
+assert list(catalog['voices']) == ['en']
 reports = json.loads((ROOT/'data/native_gun_animation_report.json').read_text())
-weapons = json.loads((ROOT/'data/weapons.json').read_text())['weapons']
+weapons = weapons_db
 count = 0
 for wid, report in reports.items():
     model = 'weapons/'+weapons[wid]['v_model']
-    for clip, events in catalog['model_events'][model].items():
+    for clip, events in models_db[model]['seq_events'].items():
         assert events == sorted(events, key=lambda e:e['t'])
         start = report['shotgun_segments'].get(clip, [0])[0]
         raw = report['source_events'].get('draw' if wid == 'usp' and clip == 'draw_unsil' else clip)
@@ -57,4 +62,4 @@ for wid, report in reports.items():
                 assert any(e['Class'] == 'CNmClipDocEvent_Sound' and e['Name'] == source and abs(float(e['At'])-start-event['t']) < 0.00002 for e in raw), (wid, clip, event)
                 assert '_fire_' not in event['wav'], 'Gunshots must not play twice from animation and controller'
                 count += 1
-print(f'[NATIVE AUDIO ASSETS] PASS: 649 byte-exact recordings, 43 slots, 64 rigs, {count} verified native event times, EN/ZH CT/T voices')
+print(f'[NATIVE AUDIO ASSETS] PASS: 539 byte-exact recordings, 43 slots, {len(rigs)} rigs, {count} verified native event times, EN CT/T voices')

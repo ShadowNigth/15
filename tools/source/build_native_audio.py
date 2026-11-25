@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Build explicit sound-only overrides; never re-export animation/model geometry.
+"""Bake sound-only routes into weapons.json/models_meta.json; never re-export geometry.
 Run fetch_native_audio first. JSON event names come from the pinned native pose
 report, not guessed animation fractions. Legacy audio stays as a narrow fallback.
 """
@@ -145,8 +145,26 @@ def build():
             command = name.rsplit('-',1)[0]
             voices.setdefault(language,{}).setdefault(team,{}).setdefault(command,[]).append(p)
     levels = json.loads((ROOT/'data/native_audio_levels.json').read_text())
-    catalog = dict(commit=manifest['commit'], gains={p: v['gain_db'] for p,v in levels.items()}, weapons=specs, model_events=events,
-                   replacements=replacements, cues=cues, voices=voices,
+    # The shipped project has no runtime overlay: bake the routes straight into
+    # the source databases so GameData never merges a second audio layer.
+    resolved = {old: new[0] for old, new in replacements.items() if new}
+    def inline(node):
+        if isinstance(node, str):
+            return resolved.get(node, node)
+        if isinstance(node, list):
+            return [inline(v) for v in node]
+        if isinstance(node, dict):
+            return {k: inline(v) for k, v in node.items()}
+        return node
+    weapons_db = json.loads((ROOT/'data/weapons.json').read_text())
+    for wid, patch in specs.items():
+        weapons_db['weapons'][wid].update(inline(patch))
+    (ROOT/'data/weapons.json').write_text(json.dumps(weapons_db, indent=2)+'\n')
+    for model, clips in events.items():
+        models.setdefault(model, {})['seq_events'] = inline(clips)
+    (ROOT/'data/models_meta.json').write_text(json.dumps(models, indent=2)+'\n')
+    catalog = dict(commit=manifest['commit'], gains={p: v['gain_db'] for p,v in levels.items()},
+                   cues=cues, voices=voices,
                    unresolved_events={k:sorted(v) for k,v in unresolved.items()})
     (ROOT/'data/native_audio.json').write_text(json.dumps(catalog, indent=2)+'\n')
     print('Audio routes:', len(specs), 'slots;',len(events),'rigs;',sum(len(v) for clips in events.values() for v in clips.values()),'timed cues')

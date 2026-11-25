@@ -79,15 +79,6 @@ func _run() -> void:
 		await save_frame("live_crouch")
 	for actor in actors:
 		actor.visible = false
-	var hostage := HostageNPC.new()
-	add_child(hostage)
-	hostage.set_physics_process(false)
-	var rigs := hostage.find_children("*", "Skeleton3D", true, false)
-	expect(not rigs.is_empty(), "Classic hostage has original animated skeleton")
-	expect(hostage._anim_player != null and hostage._anim_player.has_animation("gutshot"), "Classic hostage retains authored death")
-	if "--capture" in OS.get_cmdline_user_args():
-		await save_frame("live_hostage")
-	hostage.visible = false
 	var wall := block(Vector3(5, 1, 0), Vector3(0.2, 2, 2))
 	await get_tree().physics_frame
 	var space := get_world_3d().direct_space_state

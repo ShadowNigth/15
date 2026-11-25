@@ -6,18 +6,18 @@ Restore the editable `assets/` tree with `python tools/pak.py unpack`.
 | Archive | Parts | Files | Original | Packed | Contents (`assets/…`) |
 | :--- | ---: | ---: | ---: | ---: | :--- |
 | `maps_NNN.pak` | 1 | 36 | 32.8 MB | 6.7 MB | `maps` (36) |
-| `models_weapons_NNN.pak` | 3 | 265 | 342.9 MB | 92.6 MB | `models/native` (10), `models/props` (10), `models/weapons` (245) |
+| `models_weapons_NNN.pak` | 3 | 256 | 342.3 MB | 92.1 MB | `models/native` (10), `models/props` (1), `models/weapons` (245) |
 | `models_held_NNN.pak` | 1 | 67 | 66.0 MB | 17.3 MB | `models/held` (67) |
-| `models_arms_NNN.pak` | 1 | 62 | 90.6 MB | 36.9 MB | `models/agent_arms` (9), `models/native_view` (10), `models/sport_gloves` (43) |
-| `models_players_NNN.pak` | 1 | 19 | 125.5 MB | 39.0 MB | `models/modern` (8), `models/players` (11) |
-| `textures_world_NNN.pak` | 1 | 2458 | 24.1 MB | 23.2 MB | `textures/graffiti` (3), `textures/sky` (109), `textures/world` (2346) |
+| `models_arms_NNN.pak` | 1 | 61 | 83.7 MB | 36.9 MB | `models/agent_arms` (9), `models/native_view` (9), `models/sport_gloves` (43) |
+| `models_players_NNN.pak` | 1 | 16 | 123.0 MB | 38.9 MB | `models/modern` (8), `models/players` (8) |
+| `textures_world_NNN.pak` | 1 | 2422 | 22.8 MB | 21.9 MB | `textures/graffiti` (3), `textures/sky` (73), `textures/world` (2346) |
 | `textures_weapons_NNN.pak` | 5 | 851 | 229.7 MB | 227.9 MB | `textures/archi` (273), `textures/cs2_catalog` (182), `textures/cs2go` (68), `textures/weapon_skins` (328) |
-| `textures_gloves_NNN.pak` | 2 | 429 | 78.4 MB | 78.3 MB | `textures/moto_smoke_out` (6), `textures/moto_smoke_out_swapped` (7), `textures/native_sport` (156), `textures/sport_gloves` (260) |
-| `sounds_weapons_NNN.pak` | 1 | 748 | 69.9 MB | 27.6 MB | `sounds/weapons` (748) |
-| `sounds_native_NNN.pak` | 1 | 649 | 17.5 MB | 11.2 MB | `sounds/native` (649) |
-| `sounds_world_NNN.pak` | 1 | 225 | 11.5 MB | 4.8 MB | `sounds/ambience` (57), `sounds/buttons` (1), `sounds/de_torn` (11), `sounds/doors` (2), `sounds/hostage` (5), `sounds/items` (5), `sounds/misc` (5), `sounds/plats` (9), `sounds/player` (79), `sounds/radio` (43), `sounds/storm` (1), `sounds/ui` (7) |
-| `ui_NNN.pak` | 1 | 429 | 12.9 MB | 12.8 MB | `polish` (55), `sprites` (226), `ui/knives` (23), `ui/native` (8), `ui/overviews` (15), `ui/shell` (40), `ui/teams` (2), `ui/vgui` (60) |
-| **Total** | **19** | **6238** | **1.1 GB** | **578.4 MB** | |
+| `textures_gloves_NNN.pak` | 2 | 423 | 72.1 MB | 72.0 MB | `textures/moto_smoke_out_swapped` (7), `textures/native_sport` (156), `textures/sport_gloves` (260) |
+| `sounds_weapons_NNN.pak` | 1 | 32 | 2.0 MB | 1.2 MB | `sounds/weapons` (32) |
+| `sounds_native_NNN.pak` | 1 | 539 | 15.8 MB | 11.0 MB | `sounds/native` (539) |
+| `sounds_world_NNN.pak` | 1 | 147 | 6.1 MB | 2.1 MB | `sounds/ambience` (32), `sounds/buttons` (1), `sounds/de_torn` (11), `sounds/doors` (2), `sounds/items` (5), `sounds/plats` (1), `sounds/player` (58), `sounds/radio` (30), `sounds/storm` (1), `sounds/ui` (6) |
+| `ui_NNN.pak` | 1 | 380 | 11.9 MB | 11.9 MB | `polish` (54), `sprites` (226), `ui/knives` (23), `ui/native` (8), `ui/overviews` (15), `ui/shell` (1), `ui/teams` (2), `ui/vgui` (51) |
+| **Total** | **19** | **5230** | **1008.1 MB** | **539.8 MB** | |
 
 An archive may be smaller than its share of the content: a piece that is
 identical to one already stored by an earlier archive (for example the arm

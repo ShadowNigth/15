@@ -52,11 +52,11 @@ Más detalles y reproducción de pruebas: [`docs/NATIVE_WEAPON_ANIMATIONS.md`](d
 
 ## Sonidos nativos de ScCsgoKnives
 
-- **649 grabaciones originales** incorporadas sin recodificar, con hashes y procedencia por archivo.
+- **539 grabaciones originales** incorporadas sin recodificar, con hashes y procedencia por archivo.
 - Disparos por arma y variantes con/sin silenciador, ráfagas, mecanismos y foley sincronizado con las animaciones; cuchillos y sonido propio de Butterfly.
 - Granadas, fuego persistente/extinción, humo, C4 con cuenta atrás y desarmado, impactos, casquillos y confirmación de baja.
-- Voces **CT/T en inglés y chino**, seleccionables en Configuration → Radio voices.
-- El Arsenal permite escuchar cualquiera de los 649 archivos con Listen/Stop, incluidos gallinas, escudos y efectos de modos no implementados; no se asignan a acciones ajenas.
+- Voces **CT/T en inglés** (el doblaje chino y los sonidos de modos no implementados se retiraron para aligerar la entrega).
+- El Arsenal permite escuchar cualquiera de los 539 archivos con Listen/Stop; todos corresponden a acciones implementadas.
 - Los sonidos anteriores permanecen solamente como respaldo donde el origen no ofrece un equivalente; no se duplican los disparos.
 
 Detalles, límites y pruebas: [`docs/NATIVE_AUDIO.md`](docs/NATIVE_AUDIO.md).
@@ -76,12 +76,40 @@ Todo el contenido de `cstrike/` fue procesado mediante la suite de ingeniería i
 | **Skins UV auténticas** | Valve / CS:GO Ports / BDS, vía `cs16-skin-inventory` | `assets/textures/weapon_skins/` + `data/weapon_skins.json` | **120 acabados / 20 familias + Original HD** |
 | **Modelos 3D Animados** | StudioMDL GoldSrc + MDL/VTF de `ShadowNigth/archi` | `assets/models/**/*.glb` (esqueleto + animaciones + winding CCW) | **293 modelos `.glb`** |
 | **Arsenal** | 27 slots clásicos reemplazados + 16 armas/utilidades de archi | `data/weapons.json` | **43 slots + equipamiento** |
-| **Audio Espacial & Radio** | `cs15_retail` + 299 WAV de archi + 130 WAV específicos de CS2 | `assets/sounds/**/*.wav` (PCM 16-bit limpio) | **973 archivos `.wav`** |
-| **Sprites HUD & VGUI** | `sprites/*.spr`, `hud.txt`, `gfx/vgui/*.tga`, `overviews/*.bmp` | `assets/sprites/*.png`, `assets/ui/**`, `data/hud_sprites.json` | **88 sprites + 42 VGUI + 26 radares** |
+| **Audio Espacial & Radio** | `cs15_retail` + WAV de archi + audio nativo de ScCsgoKnives | `assets/sounds/**` (PCM 16-bit limpio) | **219 `.wav` + 499 `.ogg` = 718 archivos** |
+| **Sprites HUD & VGUI** | `sprites/*.spr`, `hud.txt`, `gfx/vgui/*.tga`, `overviews/*.bmp` | `assets/sprites/*.png`, `assets/ui/**`, `data/hud_sprites.json` | **226 sprites + 51 VGUI + 15 radares** |
 
 ### Los 15 Mapas Clásicos Incluidos
 - **Bomb / Defuse (`de_*`)**: `de_aztec`, `de_cbble`, `de_chateau`, `de_dust`, `de_dust2`, `de_inferno`, `de_nuke`, `de_piranesi`, `de_prodigy`, `de_storm`, `de_survivor`, `de_torn`, `de_train`, `de_vegas`, `de_vertigo`.
-- Los mapas de rescate de rehenes (`cs_*`) y VIP/asesinato (`as_*`) fueron eliminados.
+- Los mapas de rescate de rehenes (`cs_*`) y VIP/asesinato (`as_*`) fueron eliminados, junto con su código, NPC, audio y pruebas.
+
+### Aligerado de la entrega
+
+Pasada de limpieza centrada en quitar peso muerto **sin cambiar ninguna partida**:
+
+| | Antes | Ahora |
+| :--- | ---: | ---: |
+| Repositorio (archivos versionados) | 601,0 MB | **562,4 MB** |
+| `packs/` (19 `.pak`) | 578,4 MB | **539,8 MB** |
+| `assets/` restaurado | 1 106,0 MB · 6 253 archivos | **1 008,2 MB · 5 245 archivos** |
+| Scripts GDScript | 62 | **60** |
+| `scripts/ai/CSBot.gd` | 2 992 líneas | **2 177 líneas** |
+
+- **1 008 archivos de assets eliminados (97,8 MB)**, todos sin ninguna ruta de
+  carga real: la capa clásica de `sounds/weapons/` ya sustituida por el audio
+  nativo, el doblaje chino, las gallinas, los sonidos/modelos de rehenes y VIP,
+  caras de cielo de mapas no enviados, texturas previas al intercambio de Smoke
+  Out y un GLB duplicado (`native_view/phoenix_a` ≡ `phoenix`).
+- **Menos trabajo en arranque**: los overlays de audio se hornearon dentro de
+  `data/weapons.json` y `data/models_meta.json`. `GameData` ya no fusiona un
+  segundo catálogo de audio ni resuelve reemplazos en cada reproducción.
+- **Código y pruebas de modos inexistentes retirados**: `HostageNPC.gd`,
+  `AmbientChicken.gd`, el bloque de misiones VIP/rehenes de `CSBot`, las zonas de
+  rescate/extracción, la economía de rescate y cuatro suites de pruebas asociadas.
+- Los 15 mapas enviados **ya eran todos `de_*`**: no se borró ningún mapa.
+- Puerta de aceptación: `python3 tools/pak.py verify --deep` reconstruye los
+  5 230 archivos byte a byte y `python3 tools/verify_godot_project.py` pasa con
+  **cero errores** (60 scripts, 43 armas, 627 rutas de audio, 15 mapas, 374 GLB).
 
 ---
 
@@ -103,11 +131,11 @@ Todo el contenido de `cstrike/` fue procesado mediante la suite de ingeniería i
   - **Brazos y manos nativos cs2go**: los viewmodels conservan las animaciones de sus armas, pero las superficies antiguas `ct_arms.bmp`/`ct_base_glove.bmp` se retiran de la instancia. Brazos y guantes usan sus esqueletos, pesos e inverse binds originales independientes. Se conservan los 26 IDs Sport opcionales, migrados al Sport nativo, y Moto Gloves | Smoke Out. Véase [la migración y su QA](docs/NATIVE_VIEW_RIG_MIGRATION.md).
 - **Economía, Rondas y Objetivos (`RoundManager.gd`, `BuyMenu.gd`)**:
   - Freeze time, Buy time en `func_buyzone`, menú VGUI clásico con previsualización de armas y **atajos rápidos clásicos** (ej. `B-4-1` AK-47, `B-4-3` M4A1, `B-4-6` AWP, `B-8-2` Kevlar+Casco, `,` y `.` para munición primaria/secundaria).
-  - Plantado y desactivación del **C4** (`de_*`, 5s con Defuse Kit / 10s sin Kit), rescate de **Rehenes** (`cs_*` con `E`) y escolta de **VIP** (`as_*`).
+  - Plantado y desactivación del **C4** (`de_*`, 5s con Defuse Kit / 10s sin Kit). Los modos de rehenes y VIP se retiraron junto con sus NPC, zonas y economía.
 - **HUD Ámbar Original y VGUI (`CSHud.gd`, `TeamSelectMenu.gd`, `Scoreboard.gd`, `RadioMenu.gd`)**:
-  - Números ámbar recortados del atlas original `640hud7.spr`, radar giratorio con puntos de aliados/bomba/rehenes, killfeed con iconos `d_*` de `hud.txt`, indicador de zona de compra/C4/Kit, linterna (`F`) y **Visión Nocturna verde (`N`)**.
+  - Números ámbar recortados del atlas original `640hud7.spr`, radar giratorio con puntos de aliados/bomba, killfeed con iconos `d_*` de `hud.txt`, indicador de zona de compra/C4/Kit, linterna (`F`) y **Visión Nocturna verde (`N`)**.
 - **Bots IA estilo PodBot (`CSBot.gd`, `BotNavigator.gd`)**:
-  - Compras legales variadas según presupuesto, personalidad y composición de escuadra; navegación A* compartida sobre el grafo del BSP con costes de contactos y fuego, cobertura física al recargar, plantado/desactivación de C4 y rescate de rehenes. En `as_*`, el VIP bot navega activamente hasta las zonas auténticas `func_vip_safetyzone`, los CT mantienen una escolta móvil sin acampar al quedar asignados y los T cazan o preparan emboscadas. En `cs_*`, los rescatadores reparten objetivos, recorren los últimos metros hasta cada rehén, vuelven a por seguidores bloqueados y escoltan hacia volúmenes reales de rescate. Conservan reacción a sonidos, Flashbang, humo y órdenes de radio (`Z` / `X` / `C`).
+  - Compras legales variadas según presupuesto, personalidad y composición de escuadra; navegación A* compartida sobre el grafo del BSP con costes de contactos y fuego, cobertura física al recargar y plantado/desactivación de C4 con escuadras coordinadas (`BombSquad`). Conservan reacción a sonidos, Flashbang, humo y órdenes de radio (`Z` / `X` / `C`).
 
 ---
 
@@ -144,7 +172,7 @@ Todo el contenido de `cstrike/` fue procesado mediante la suite de ingeniería i
 │   ├── actors/                  # CSActor.gd (física GoldSrc), PlayerController.gd
 │   ├── weapons/                 # WeaponController.gd (balística, retroceso, recarga, C4)
 │   ├── ai/                      # BotNavigator.gd (AStar3D), CSBot.gd (IA táctica)
-│   ├── world/                   # MapLoader.gd, SkyBuilder.gd, PlantedC4.gd, HostageNPC.gd...
+│   ├── world/                   # MapLoader.gd, SkyBuilder.gd, PlantedC4.gd, SmokeCloudVolume.gd...
 │   └── ui/                      # MainMenu.gd, CSHud.gd, BuyMenu.gd, TeamSelectMenu.gd...
 ├── assets/                      # Mapas .glb, lightmaps, modelos .glb, sonidos .wav, sprites, shaders
 ├── data/                        # JSONs de armas, clases, mapas, waypoints, HUD, overviews y radio
@@ -165,7 +193,6 @@ godot --headless --path . --fixed-fps 60 res://tests/ArchiGameWorldSmokeTest.tsc
 godot --headless --path . --fixed-fps 60 res://tests/IncendiaryProceduralTest.tscn
 godot --headless --path . --fixed-fps 60 res://tests/MapSurfaceWaterTest.tscn
 godot --headless --path . --fixed-fps 60 res://tests/TacticalAIRegressionTest.tscn
-godot --headless --path . --fixed-fps 60 res://tests/MissionObjectiveRegressionTest.tscn
 ```
 
 ## Cuchillos y proyecto para Godot
@@ -216,16 +243,14 @@ Las compilaciones ejecutables anteriores no contienen esta corrección; el
 proyecto actualizado sí. Las advertencias del renderer dummy en headless no
 sustituyen la revisión de las capturas reales.
 
-### Casquillos nativos, HUD opcional y fauna ambiental
+### Casquillos nativos y HUD opcional
 
 - Ocho casquillos originales y expulsión por evento para 33 armas (AWP a 0,74 s),
   con puerto animado del jugador, rebotes y limpieza limitada.
 - Ocho iconos de munición, advertencias de poca munición y kit de desactivación
   caído original, con opciones independientes en **Configuration & Controls**.
-- Gallinas animadas ambientales en Italy, Inferno y Cobble, sin alterar equipos,
-  economía ni condiciones de victoria.
-- **Arsenal → [Native review]**: CT SAS/T Phoenix (170 clips cada uno), rehén,
-  gallina y kit. Los personajes clásicos se conservan hasta completar y validar
+- **Arsenal → [Native review]**: CT SAS/T Phoenix (170 clips cada uno) y kit de
+  desactivación. Los personajes clásicos se conservan hasta completar y validar
   la adaptación de esqueletos/armas/acciones; no se sustituyen por modelos sin animar.
 
 Detalles, reconstrucción y límites: [docs/NATIVE_WORLD_ASSETS.md](docs/NATIVE_WORLD_ASSETS.md).
@@ -247,7 +272,7 @@ Dust2 conserva texturas originales, coordenadas UV, lightmap, puntos de aparici�
 recorridos y objetivos. Se reparan triángulos degenerados y uniones T; la geometría
 estática se divide en sectores para descarte por cámara. Tiene un perfil exclusivo
 de iluminación/materiales, con relieve y enfoque más suaves, sin brillo plástico.
-No se añaden agua, rehenes, VIP, decoraciones ni sistemas de precarga.
+No se añaden agua, decoraciones ni sistemas de precarga.
 Ver [alcance, reconstrucción y pruebas](docs/DUST2_POLISH.md).
 
 ### Renovación visual de Dust2

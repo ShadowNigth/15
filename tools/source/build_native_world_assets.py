@@ -41,9 +41,7 @@ def main(source,guns):
         d.update(images=[dict(bufferView=gl.append_view(d,blob,tex.read_bytes()),mimeType='image/png')],textures=[{'source':0}],materials=[{'name':name,'pbrMetallicRoughness':{'baseColorTexture':{'index':0},'metallicFactor':0.65,'roughnessFactor':0.42}}],meshes=[{'primitives':[{'attributes':attr,'material':0}]}])
         dst=ROOT/'assets/models/native'/f'{name}.glb';dst.parent.mkdir(parents=True,exist_ok=True);write_glb(str(dst),d,blob);record(p,dst,'OBJ triangle positions/normals/UV exact; embedded original PNG; no resize')
         entries.append(dict(source=str(tex.relative_to(source)),embedded_in='res://'+str(dst.relative_to(ROOT)),source_sha256=hashlib.sha256(tex.read_bytes()).hexdigest()))
-    for name in ['chicken']:
-        copy(assets+'Models/ScCsgoKnives/'+name+'.glb','assets/models/native/'+name+'.glb')
-    for name in ['hostage','defuser_item']:
+    for name in ['defuser_item']:
         copy('src/ScCsgoTactical/Assets/Models/ScCsgoTactical/'+name+'.glb','assets/models/native/'+name+'.glb')
     copy('src/ScCsgoTactical/Assets/Textures/ScCsgoTactical/defuser_item.png','assets/models/native/defuser_item.png')
     # Restore native cached local TRS samples to the original node names, not a fabricated idle.
@@ -95,5 +93,5 @@ def main(source,guns):
     (ROOT/'data/native_casings.json').write_text(json.dumps(out,indent=2)+'\n')
     entries.append(dict(source='src/ScCsgoKnives/AnimationData/cs2_casings.json',source_sha256=hashlib.sha256((source/'src/ScCsgoKnives/AnimationData/cs2_casings.json').read_bytes()).hexdigest(),path='res://data/native_casings.json',sha256=hashlib.sha256((ROOT/'data/native_casings.json').read_bytes()).hexdigest(),operation='Source timing/attachment/velocity preserved; per-bone idle frame calibration onto existing native viewmodels'))
     (ROOT/'data/native_world_manifest.json').write_text(json.dumps(dict(repository='zh667/ScCsgoKnives',commit=PIN,files=entries),indent=2)+'\n')
-    print('Built',len(entries),'provenance records;',len(routes),'weapon routes; 8 shells, 8 HUD icons, chicken, kit, hostage, 340 agent clips')
+    print('Built',len(entries),'provenance records;',len(routes),'weapon routes; 8 shells, 8 HUD icons, kit, 340 agent clips')
 if __name__=='__main__':main(*sys.argv[1:])

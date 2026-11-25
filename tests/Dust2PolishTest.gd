@@ -124,7 +124,7 @@ func run() -> void:
 	for material in materials.values():
 		expect(is_equal_approx(float(material.get_shader_parameter("lightmap_exponent")), 0.92), "Dust2-only lightmap profile")
 		expect(float(material.get_shader_parameter("relief_depth")) <= 0.0181, "Controlled material relief")
-	expect(built.bombsites.size() == 2 and built.rescue_zones.is_empty() and built.escape_zones.is_empty(), "Authentic bomb objectives, no invented hostage/VIP goals")
+	expect(built.bombsites.size() == 2, "Authentic bomb objectives")
 	await screenshots(repaired, "after")
 	repaired.queue_free()
 	await get_tree().physics_frame

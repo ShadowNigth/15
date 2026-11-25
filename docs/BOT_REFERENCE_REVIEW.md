@@ -25,18 +25,17 @@ Trabajo basado en la entrega `6e8f5ec287ff1c6b33f20713322f517269297160`, recuper
 ## Paso a paso: navegación y objetivos
 
 1. `ReGameDLL_CS/regamedll/dlls/bot/cs_bot_listen.cpp`, `ShouldInvestigateNoise`: contempla disposición, tiempo seguro, diferencia de pisos y distancia de navegación; una distancia euclídea no basta para interpretar un ruido.
-2. Nuestro bot ya dispone de rutas YaPB, personalidades, coberturas, tareas de bomba, escolta VIP y recuperación. No se sustituyó ese conjunto por un único comportamiento de persecución.
-3. La negociación nueva CT en mapas de rehenes sigue desactivada como en la entrega estable: reactivarla sin comprobar Estate volvería a introducir una regresión conocida. Las pruebas de misiones existentes siguen siendo la puerta de aceptación.
+2. Nuestro bot ya dispone de rutas YaPB, personalidades, coberturas, tareas de bomba y recuperación. No se sustituyó ese conjunto por un único comportamiento de persecución.
+3. El proyecto sólo contiene mapas `de_*`; los modos de rehenes (`cs_*`) y asesinato (`as_*`) se retiraron junto con sus NPC, zonas y economía. La negociación de escuadrón se aplica ahora en todos los mapas.
 4. Pendiente de una siguiente iteración: evaluación sistemática de investigación de sonidos entre pisos, reacción/enfoque medidos por dificultad, seguimiento de trayectorias y coordinación táctica contra partidas de referencia. No se presenta como trabajo implementado.
 
-## Paso a paso: rehenes
+## Rehenes (modo retirado)
 
-1. `ReGameDLL_CS/regamedll/dlls/hostage/states/hostage_follow.cpp` separa pérdida/muerte del líder, espera, continuación, caminar/correr, bloqueo por amigos y actualización de ruta. Se examinó esa lógica de estados, no se copiaron umbrales ni código.
-2. `hostage_improv.cpp` distingue amigos delante/en el espacio personal y contempla recuperación de obstáculos. Esto no demuestra que trasladar sus esperas de varios segundos a nuestro grafo sea correcto.
-3. Nuestro seguidor tenía un único umbral de 2,15 m para empezar y detenerse, provocando cambios repetidos de estado al oscilar alrededor del límite.
-4. Cambio propio: histéresis; arranca por encima de 2,15 m y, una vez en marcha, continúa hasta 1,65 m. La excepción de completar rescate sigue acercándolo hasta 0,35 m, para que cruce el volumen en vez de quedarse fuera.
-5. Al perder/morir el líder ahora limpia referencia, ruta y evasión transitoria, cancela seguimiento y activa miedo acotado. No hay teletransporte, rescate forzado ni nuevo rig. Se conservan escaleras, puertas y recuperación de obstáculos.
-6. El nuevo test `BotPerceptionHostageTest` verifica colisión real/visión/memoria/daño oculto y visible, histéresis y muerte del líder. Las misiones completas Estate/747 y VIP deben seguir pasando, además de evidencia animada en la suite de escuadrón. Las pruebas de umbrales no equivalen a prueba visual de rescate.
+La investigación sobre `hostage_follow.cpp` / `hostage_improv.cpp` de ReGameDLL_CS
+queda como referencia histórica. El modo de rehenes ya no forma parte del
+proyecto: se eliminaron `HostageNPC`, las zonas de rescate, la economía de
+rescate y las pruebas asociadas para aligerar la entrega. Los mapas enviados son
+todos de desactivación de bomba.
 
 ## Retirada de objetos de Aztec y Dust2
 

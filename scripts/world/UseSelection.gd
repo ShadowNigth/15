@@ -2,7 +2,7 @@ class_name UseSelection
 extends RefCounted
 ## Aim-selected use. World blockers always win over nearby fallback pickups.
 static func drop_allowed(actor: CSActor, drop: DroppedWeapon) -> bool:
-	if drop.is_queued_for_deletion() or actor.is_vip or drop._pickup_cooldown > 0.0 or (drop.pickup_lock_actor == actor and drop.pickup_lock_time > 0.0):
+	if drop.is_queued_for_deletion() or drop._pickup_cooldown > 0.0 or (drop.pickup_lock_actor == actor and drop.pickup_lock_time > 0.0):
 		return false
 	if drop.item_id == "c4":
 		return actor.team == "T" and String(actor.weapon_ctrl.slots.get(5, "")).is_empty()
@@ -31,8 +31,6 @@ static func select(actor: CSActor) -> Dictionary:
 		var collider: Node = hit.collider
 		if collider is DroppedWeapon and drop_allowed(actor, collider):
 			return {"kind": "drop", "target": collider}
-		if collider is HostageNPC:
-			return {"kind": "hostage", "target": collider}
 		if collider.has_meta("door"):
 			return {"kind": "door", "target": collider.get_meta("door")}
 		if collider.has_meta("button_target"):

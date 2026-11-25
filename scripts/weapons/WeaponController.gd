@@ -67,7 +67,7 @@ func setup_for_actor(owner_actor: CharacterBody3D) -> void:
 	_accuracy_rng.randomize()
 
 
-func reset_loadout(team: String, is_vip: bool = false) -> void:
+func reset_loadout(team: String) -> void:
 	casing_epoch += 1
 	slots = {1: "", 2: "", 3: "knife", 5: ""}
 	grenades = {"hegrenade": 0, "flashbang": 0, "smokegrenade": 0, "decoy": 0, "molotov": 0, "incendiary": 0}
@@ -75,9 +75,7 @@ func reset_loadout(team: String, is_vip: bool = false) -> void:
 	ammo_pool.clear()
 	_reset_states()
 
-	if is_vip:
-		give_weapon("usp", 12, 24)
-	elif team == "CT":
+	if team == "CT":
 		give_weapon("usp", 12, 24)
 	else:
 		give_weapon("glock18", 20, 40)
@@ -352,7 +350,7 @@ func trigger_primary(holding: bool, delta: float) -> void:
 				if plant_progress == 0.0:
 					# the human viewmodel's pressbutton events already play the keypad clicks
 					if not _human_vm_has_events(get_current_spec(), "pressbutton"):
-						AudioManager.play_3d("weapons/archi/cs2_c4/key_press1.wav", actor.global_position, -2.0, 18.0)
+						AudioManager.play_3d("native/sccsgoknives/c4_key_press1.ogg", actor.global_position, -2.0, 18.0)
 					else:
 						AudioManager.world_sound_emitted.emit(actor.global_position, 18.0, String(actor.get("team")))
 					if actor.has_method("play_viewmodel_sequence"):
@@ -807,16 +805,6 @@ func _fire_penetrating_ray(
 			cur_from = hit_pos + dir * 0.25
 			continue
 
-		if col is AmbientChicken:
-			col.take_damage(actor, dmg_at_dist)
-			break
-
-		if col is HostageNPC:
-			if is_instance_valid(RoundManager.game_world):
-				ImpactEffects.spawn_blood_impact(RoundManager.game_world, space, hit_pos, dir, 2, false, dmg_at_dist)
-			(col as HostageNPC).take_damage(actor, dmg_at_dist)
-			break
-
 		# Layer 8 visual metal ladder / grate brush: spark & clank on metal rung, and let bullet pass through gaps!
 		if col is StaticBody3D and (col as StaticBody3D).collision_layer == 8:
 			if pen_left <= 0 or current_weapon_id == "taser":
@@ -1007,13 +995,6 @@ func _swing_knife(heavy_stab: bool) -> void:
 		return
 	if col is DroppedWeapon:
 		(col as DroppedWeapon).apply_bullet_impulse(hpos, dir, 55.0 if heavy_stab else 28.0)
-		return
-	if col is AmbientChicken:
-		col.take_damage(actor, 65.0 if heavy_stab else 20.0)
-		return
-	if col is HostageNPC:
-		col.take_damage(actor, 65.0 if heavy_stab else 20.0)
-		AudioManager.play_3d(String(spec.get("stab_sound", "weapons/archi/cs2_flashbang/hit1.wav")), hpos, 0.0, 20.0)
 		return
 	if col is Node3D and col.has_method("take_bullet_damage"):
 		var dmg := 65.0 if heavy_stab else 20.0

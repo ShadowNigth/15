@@ -579,8 +579,6 @@ def build_weapons_database(maxspeeds: Dict[str, List[float]], descs: Dict[str, s
         "max_money": 16000,
         "kill_reward": 300,
         "teamkill_penalty": -3300,
-        "hostage_touch_reward": 150,
-        "hostage_rescue_reward": 1000,
         "round_win_elimination": 3250,
         "round_win_bomb_exploded": 3500,
         "round_win_bomb_defused": 3250,

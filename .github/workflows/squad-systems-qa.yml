@@ -5,7 +5,6 @@ on:
     paths:
       - 'scripts/**'
       - 'tests/SquadInteractionTest*'
-      - 'tests/BotPerceptionHostageTest*'
       - 'tests/BotResourceMobilityTest*'
       - 'tests/SquadGameplayTest*'
       - 'tests/UtilityPropagationTest*'
@@ -55,7 +54,7 @@ jobs:
         run: |
           set -o pipefail
           status=0
-          for suite in BotCombatDisciplineTest BotResourceMobilityTest BotPerceptionHostageTest SquadInteractionTest SquadGameplayTest UtilityPropagationTest NativeGunAnimationTest NativeAudioTest KillFirePolishTest IncendiaryProceduralTest TacticalAIRegressionTest MissionObjectiveRegressionTest; do
+          for suite in BotCombatDisciplineTest BotResourceMobilityTest SquadInteractionTest SquadGameplayTest UtilityPropagationTest NativeGunAnimationTest NativeAudioTest KillFirePolishTest IncendiaryProceduralTest TacticalAIRegressionTest; do
             if ! timeout 420s godot --headless --path . --fixed-fps 60 "res://tests/$suite.tscn" 2>&1 | tee "/tmp/$suite.log"; then status=1; fi
             if grep -Eq 'SCRIPT ERROR:|Parse Error:|Compile Error:' "/tmp/$suite.log"; then status=1; fi
             if ! grep -q 'PASS:' "/tmp/$suite.log"; then status=1; fi
@@ -102,23 +101,6 @@ jobs:
       - name: Publish classic_pose_and_weapon framebuffer
         if: always()
         run: python tools/publish_squad_capture.py classic_pose_and_weapon
-      - name: Compare baseline Estate if a mission regresses
-        if: ${{ failure() && steps.regressions.outcome == 'failure' }}
-        continue-on-error: true
-        shell: bash
-        run: |
-          python - <<'PY'
-          import subprocess
-          from pathlib import Path
-          paths = subprocess.check_output(['git', 'diff', '194a540e', 'HEAD', '--name-only', '--', 'scripts'], text=True).splitlines()
-          for path in paths:
-              old = subprocess.run(['git', 'show', '194a540e:'+path], capture_output=True)
-              if old.returncode == 0:
-                  Path(path).write_bytes(old.stdout)
-          PY
-          set -o pipefail
-          timeout 210s godot --headless --path . --fixed-fps 60 res://tests/MissionObjectiveRegressionTest.tscn -- --scenario=estate 2>&1 | tee /tmp/BaselineEstateTest.log
-          grep -q 'PASS:' /tmp/BaselineEstateTest.log
       - name: Diagnostic logs
         if: always()
         run: |

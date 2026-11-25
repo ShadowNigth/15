@@ -996,7 +996,6 @@ func _build_options_dialog() -> void:
 	var cosmetic_labels := ["Casquillos y expulsión originales", "Aviso de munición baja", "Modelo original del kit de desactivación"]
 	var keys: Array = GameData.COSMETIC_KEYS.duplicate()
 	keys.erase("native_ammo_icons")
-	keys.erase("ambient_chickens_enabled")
 	for index in range(keys.size()):
 		var label := Label.new()
 		label.text = cosmetic_labels[index]
@@ -1006,16 +1005,6 @@ func _build_options_dialog() -> void:
 		check.button_pressed = GameData.get(key)
 		check.toggled.connect(GameData.set_cosmetic_preference.bind(key))
 		grid.add_child(check)
-
-	var voice_label := Label.new()
-	voice_label.text = "Voces de radio"
-	grid.add_child(voice_label)
-	var voice_options := OptionButton.new()
-	voice_options.add_item("Inglés (CT / T)")
-	voice_options.add_item("Chino (CT / T)")
-	voice_options.select(1 if GameData.voice_language == "zh" else 0)
-	voice_options.item_selected.connect(func(index: int): GameData.voice_language = "zh" if index == 1 else "en")
-	grid.add_child(voice_options)
 
 	var sl := Label.new()
 	sl.text = "Sensibilidad del ratón"
@@ -1088,8 +1077,8 @@ func _load_viewer_native(resource: String) -> void:
 		return
 	var instance := scene.instantiate() as Node3D
 	_viewer_pivot.add_child(instance)
-	instance.scale = Vector3.ONE * (0.5 if resource in ["ct", "t", "hostage"] else 1.8)
-	instance.position.y = -0.35 if resource in ["ct", "t", "hostage"] else -0.15
+	instance.scale = Vector3.ONE * (0.5 if resource in ["ct", "t"] else 1.8)
+	instance.position.y = -0.35 if resource in ["ct", "t"] else -0.15
 	_viewer_anim = _find_anim_recursive(instance)
 	_populate_viewer_animations()
 	if _viewer_anim != null:

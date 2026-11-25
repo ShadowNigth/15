@@ -972,8 +972,6 @@ func _layout_preview() -> void:
 func _preview_class_id() -> String:
 	if not is_instance_valid(player):
 		return "urban"
-	if player.is_vip:
-		return "vip"
 	return String(player.class_id)
 
 
