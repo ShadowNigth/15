@@ -43,6 +43,7 @@ jobs:
           python tests/check_complete_cosmetics.py
           python tests/check_native_gun_animations.py
           python tests/check_native_audio.py
+          python tests/check_native_rig_orientation.py
 
       - name: Install Godot 4.3
         run: |
@@ -72,6 +73,16 @@ jobs:
           if grep -Eq 'SCRIPT ERROR:|Parse Error:|Compile Error:' /tmp/glove-hand-exchange.log /tmp/glove-hand-integration.log; then exit 1; fi
           grep -q '0 failures' /tmp/glove-hand-exchange.log
           grep -q '0 failures' /tmp/glove-hand-integration.log
+
+      - name: Glove deformation and arm orientation audit
+        timeout-minutes: 8
+        run: |
+          set -o pipefail
+          godot --headless --path . res://tests/GloveDeformationAudit.tscn 2>&1 | tee /tmp/glove-deformation.log
+          godot --headless --path . res://tests/NativeArmOrientationAudit.tscn 2>&1 | tee /tmp/native-arm-orientation.log
+          if grep -Eq 'SCRIPT ERROR:|Parse Error:|Compile Error:' /tmp/glove-deformation.log /tmp/native-arm-orientation.log; then exit 1; fi
+          grep -q '132 cases, 0 failures' /tmp/glove-deformation.log
+          grep -q '0 failures' /tmp/native-arm-orientation.log
 
       - name: Native gun and utility full skeletal regression
         timeout-minutes: 8

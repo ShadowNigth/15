@@ -34,8 +34,31 @@ func _ready() -> void:
 				var new_vertices: PackedVector3Array = swapped[Mesh.ARRAY_VERTEX]
 				var old_normals: PackedVector3Array = original[Mesh.ARRAY_NORMAL]
 				var new_normals: PackedVector3Array = swapped[Mesh.ARRAY_NORMAL]
+				var original_bones: PackedInt32Array = original[Mesh.ARRAY_BONES]
+				var original_weights: PackedFloat32Array = original[Mesh.ARRAY_WEIGHTS]
+				var influences := original_bones.size() / old_vertices.size()
 				for i in old_vertices.size():
-					expect(new_vertices[i].distance_to(transform * old_vertices[i]) < 0.00001, "Vertex not transferred rigidly")
+					var adjustment := Vector3.ZERO
+					for influence in influences:
+						var offset := i * influences + influence
+						if original_weights[offset] <= 0.00001: continue
+						var source_name := bind_name(mesh.skin, rig, original_bones[offset])
+						var position := source_name.find("_" + side)
+						var target_name := source_name.substr(0, position) + "_" + other + source_name.substr(position + 2)
+						var source_rest := rig.get_bone_global_rest(rig.find_bone(source_name)).origin
+						var target_rest := rig.get_bone_global_rest(rig.find_bone(target_name)).origin
+						adjustment += (target_rest - transform * source_rest) * original_weights[offset]
+					expect(new_vertices[i].distance_to(transform * old_vertices[i] + adjustment * 0.5) < 0.00001, "Vertex correction must be bounded and follow the opposite joints")
+				# UV/normal seams often duplicate spatial vertices. The joint
+				# adjustment must not pull those copies apart in the rest mesh.
+				var first_at_position: Dictionary = {}
+				for i in old_vertices.size():
+					var p := old_vertices[i]
+					var key := Vector3i(roundi(p.x * 100000.0), roundi(p.y * 100000.0), roundi(p.z * 100000.0))
+					if first_at_position.has(key):
+						expect(new_vertices[i].distance_to(new_vertices[int(first_at_position[key])]) < 0.0001, "Joint adjustment opened a duplicated-vertex seam")
+					else:
+						first_at_position[key] = i
 				for i in old_normals.size():
 					expect(new_normals[i].distance_to(transform.basis * old_normals[i]) < 0.00001, "Normal not rotated")
 				expect(original[Mesh.ARRAY_TEX_UV] == swapped[Mesh.ARRAY_TEX_UV], "UVs must remain with the original glove")

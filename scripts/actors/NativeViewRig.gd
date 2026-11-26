@@ -1,7 +1,8 @@
 class_name NativeViewRig
 extends Node3D
 ## Independent original cs2go skeletons driven by the existing weapon animation.
-## Geometry, source bone names, skin inverse binds and weights are never remapped.
+## Native view skeletons retain their source rigs; custom glove surfaces are
+## transferred to the opposite hand and retain their material and weights.
 static var enabled := true # Original source skins; legacy path retained only for historical tests.
 static var _catalog: Dictionary = {}
 var target: Skeleton3D
@@ -117,9 +118,9 @@ func _fit_finger_contacts(binding: Dictionary, posed: Dictionary, contacts: Dict
 
 
 # Rigid anatomical frame: x points toward the index finger, y along the hand.
-# These frames are right-handed on both sides. Mapping one to the other is a
-# rotation, not a reflection: literally transferring the opposite glove puts
-# its original back on the other hand's palm (and vice versa).
+# Both frames are right-handed, so the established hand exchange uses a
+# rotation rather than an additional reflection. Keep the orientation chosen
+# by the player; do not infer appearance from a transform's determinant.
 static func _hand_rest_frame(rig: Skeleton3D, side: String) -> Transform3D:
 	var wrist := rig.get_bone_global_rest(rig.find_bone("hand_" + side))
 	var middle := rig.get_bone_global_rest(rig.find_bone("finger_middle_0_" + side))
@@ -134,7 +135,7 @@ static func _hand_rest_frame(rig: Skeleton3D, side: String) -> Transform3D:
 # Swap the actual glove geometry and its bone influences, not merely textures.
 # Keep each source surface and material together. The corresponding opposite
 # hand drives the geometry through its original Skin bind indices.
-static func _swap_glove_surface(arrays: Array, skin: Skin, rig: Skeleton3D, source_side: String) -> bool:
+static func _swap_glove_surface(arrays: Array, skin: Skin, rig: Skeleton3D, source_side: String, joint_alignment: float = 0.5) -> bool:
 	var destination := "R" if source_side == "L" else "L"
 	for side in [source_side, destination]:
 		for bone in ["hand_", "finger_middle_0_", "finger_index_0_", "finger_pinky_0_"]:
@@ -147,12 +148,19 @@ static func _swap_glove_surface(arrays: Array, skin: Skin, rig: Skeleton3D, sour
 			if bone < 0 or bone >= rig.get_bone_count(): return false
 			name = String(rig.get_bone_name(bone))
 		binds[name] = bind
+	var transform := _hand_rest_frame(rig, destination) * _hand_rest_frame(rig, source_side).affine_inverse()
+	# A rigid hand exchange leaves many source finger joints far from the
+	# opposite hand's joints. Gently move weighted vertices towards their new
+	# joints to reduce stretching in animations without reflecting the texture.
+	var joint_offsets: Array[Vector3] = []
+	joint_offsets.resize(skin.get_bind_count())
 	var vertices: PackedVector3Array = arrays[Mesh.ARRAY_VERTEX]
 	var normals: PackedVector3Array = arrays[Mesh.ARRAY_NORMAL]
 	var tangents: PackedFloat32Array = arrays[Mesh.ARRAY_TANGENT]
 	var bones: PackedInt32Array = arrays[Mesh.ARRAY_BONES]
 	var weights: PackedFloat32Array = arrays[Mesh.ARRAY_WEIGHTS]
-	if bones.size() != weights.size(): return false
+	if vertices.is_empty() or bones.size() != weights.size() or bones.size() % vertices.size() != 0: return false
+	var influences := bones.size() / vertices.size()
 	for offset in bones.size():
 		if weights[offset] <= 0.00001: continue
 		var bind := bones[offset]
@@ -164,9 +172,27 @@ static func _swap_glove_surface(arrays: Array, skin: Skin, rig: Skeleton3D, sour
 		if position < 0: return false
 		var other := name.substr(0, position) + "_" + destination + name.substr(position + 2)
 		if not binds.has(other): return false
+		var source_bone := rig.find_bone(name)
+		var destination_bone := rig.find_bone(other)
+		if source_bone < 0 or destination_bone < 0: return false
+		joint_offsets[bind] = rig.get_bone_global_rest(destination_bone).origin - transform * rig.get_bone_global_rest(source_bone).origin
+	# Keep the adjustment moderate: full alignment produces a severely warped
+	# open-hand shape. Half the offset improved sampled weapon poses without
+	# introducing a reflection; the remaining stretching still needs review.
+	for i in vertices.size():
+		var offset_sum := Vector3.ZERO
+		for influence in influences:
+			var offset := i * influences + influence
+			if weights[offset] > 0.00001:
+				offset_sum += joint_offsets[bones[offset]] * weights[offset]
+		vertices[i] = transform * vertices[i] + offset_sum * clampf(joint_alignment, 0.0, 0.5)
+	for offset in bones.size():
+		if weights[offset] <= 0.00001: continue
+		var name := String(skin.get_bind_name(bones[offset]))
+		if name.is_empty(): name = String(rig.get_bone_name(skin.get_bind_bone(bones[offset])))
+		var position := name.find("_" + source_side)
+		var other := name.substr(0, position) + "_" + destination + name.substr(position + 2)
 		bones[offset] = binds[other]
-	var transform := _hand_rest_frame(rig, destination) * _hand_rest_frame(rig, source_side).affine_inverse()
-	for i in vertices.size(): vertices[i] = transform * vertices[i]
 	for i in normals.size(): normals[i] = transform.basis * normals[i]
 	for i in range(0, tangents.size(), 4):
 		var direction := transform.basis * Vector3(tangents[i], tangents[i + 1], tangents[i + 2])
